@@ -13,6 +13,15 @@ export const DynamicFormValidation = (form,data) => {
     });
     return newErrors;
   };
+  export const createFormValidation=(form)=>{
+    let newErrors={};
+    let {form_name,form_type,form_description,form_template_select,previous_form}=form;
+    if (!form_name || form_name==="") newErrors.form_name="Form Title is Required";
+    if (!form_type || form_type==="") newErrors.form_type="Form Type is Required";
+    if (!form_description || form_description==="") newErrors.form_description="Form Description is Required";
+    if(form_template_select==="Yes") if (!previous_form || previous_form==="") newErrors.previous_form="Previous Form is Required";
+    return newErrors;
+  }
   export const createOperatingManualValidation=(form)=>{
     let newErrors={};
     let {question,answer,category}=form;
@@ -21,7 +30,7 @@ export const DynamicFormValidation = (form,data) => {
     if (!category || category==="") newErrors.category="Category is Required";
     return newErrors;
   }
-  export const createFormValidation = (form) => {
+  export const createFormFieldValidation = (form) => {
     let newErrors = {};
     let { field_name, field_type, field_label, choices, order, required } = form;
     if (!field_name) newErrors.field_name = "Field Name is Required";

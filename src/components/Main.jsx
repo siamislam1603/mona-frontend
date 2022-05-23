@@ -9,6 +9,9 @@ import UserManagement from "../pages/UserManagement";
 import NewUser from "../pages/NewUser";
 import AddOperatingManual from "../pages/OperatingManual/add";
 import OperatingManual from "../pages/OperatingManual/view";
+import AddFormBuilder from "../pages/FormBuilder/add";
+import ViewFormBuilder from "../pages/FormBuilder/view";
+import AddFormField from "../pages/FormBuilder/FormField/add";
 
 
 const Main = () => {
@@ -36,6 +39,9 @@ const Main = () => {
         <Route path="/new-user" component={NewUser} />
         <Route path="/operatingmanual/add" component={AddOperatingManual}/>
       <Route path="/operatingmanual" component={OperatingManual}/>
+      <Route path="/form/field/add" component={AddFormField} />
+      <Route path="/form/add" component={AddFormBuilder} />
+      <Route path="/form" component={ViewFormBuilder} />
       </Switch>
     </main>
   );
