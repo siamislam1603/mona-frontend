@@ -7,6 +7,8 @@ import Dashboard from "../pages/Dashboard";
 import ResetPassword from "../pages/ResetPassword";
 import UserManagement from "../pages/UserManagement";
 import NewUser from "../pages/NewUser";
+import AddOperatingManual from "../pages/OperatingManual/add";
+import OperatingManual from "../pages/OperatingManual/view";
 
 
 const Main = () => {
@@ -32,6 +34,8 @@ const Main = () => {
         <Route path="/resetpassword" component={ResetPassword} />
         <Route path="/user-management" component={UserManagement} />
         <Route path="/new-user" component={NewUser} />
+        <Route path="/operatingmanual/add" component={AddOperatingManual}/>
+      <Route path="/operatingmanual" component={OperatingManual}/>
       </Switch>
     </main>
   );

@@ -1,0 +1,59 @@
+:root {
+    --black: #333333;
+    --white: #ffffff;
+    --offwhite: #f7f7f7;
+    --primary: #455C58;
+    --secondary: #3E5D58;
+    --drkblue: #151F6D;
+    --red: #D11A2A;
+    --lhtpink: #ECC7CD;
+    --green: #9EB356;
+    --purple: #AA0061;
+    --gray: #e5e5e5;
+    --fontsm: 14px;
+}
+
+.Accordion-menu {
+    background-color: #ebebeb !important;
+    padding: 10px 0px;
+    height: 100vh;
+}
+.menu_search{
+    margin: 10px;
+    width: -webkit-fill-available;
+}
+.accordion-body.menu_list:hover {background-color: #8ea29f;color: #fff;}
+.accordion-item {
+    background-color: transparent;
+}
+.accordion-button.collapsed{
+    background-color: #455c58 !important;
+    color: #fff !important;
+    border-radius: 0 !important;
+    margin: 10px 0;
+}
+.search_menu_list{
+    padding: 1rem 1.25rem;
+}
+.search_menu_list:hover{
+    background-color: #8ea29f;
+    color: #fff;
+}
+.no_records{
+    padding: 1rem 1.25rem;
+    color: #8ea29f;
+}
+
+.menu_active{
+    background-color: #8ea29f;
+    color: #fff;
+}
+.accordion-menu-list {
+    max-height: 100vh;
+    overflow: auto;
+}
+.print_button{
+    text-align: right;
+    margin: 10px 0;
+}
+.print_button .btn {min-width: 47px !important;padding: 3px 3px;}
