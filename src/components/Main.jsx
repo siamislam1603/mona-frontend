@@ -38,10 +38,10 @@ const Main = () => {
         <Route path="/user-management" component={UserManagement} />
         <Route path="/new-user" component={NewUser} />
         <Route path="/operatingmanual/add" component={AddOperatingManual}/>
-      <Route path="/operatingmanual" component={OperatingManual}/>
-      <Route path="/form/field/add" component={AddFormField} />
-      <Route path="/form/add" component={AddFormBuilder} />
-      <Route path="/form" component={ViewFormBuilder} />
+        <Route path="/operatingmanual" component={OperatingManual}/>
+        <Route path="/form/field/add" component={AddFormField} />
+        <Route path="/form/add" component={AddFormBuilder} />
+        <Route path="/form" component={ViewFormBuilder} />
       </Switch>
     </main>
   );

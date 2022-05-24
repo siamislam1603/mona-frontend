@@ -17,7 +17,7 @@ export default function DragDropSingle(props) {
   return (
     <div className="file-upload-form">
       <div {...getRootProps({ className: "dropzone" })}>
-        <input {...getInputProps()} multiple={false} />
+        <input {...getInputProps()} multiple={false} name="profilepic" />
         <div className="picimg">
           <img src="../img/upload.jpg" alt="" />
         </div>
