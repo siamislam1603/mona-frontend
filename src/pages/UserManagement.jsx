@@ -6,8 +6,11 @@ import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import ToolkitProvider, {Search, CSVExport } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import axios from "axios";
 
+const { SearchBar } = Search;
+const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
 const styles = {
   option: (styles, state) => ({
@@ -194,91 +197,105 @@ const UserManagement = () => {
               <div className="sec-column">
                 <TopHeader/>
                 <div className="entry-container">
-                  <header className="title-head">
-                    <h1 className="title-lg">All User</h1>
-                    <div className="othpanel">
-                      <div className="extra-btn">
-                        <Dropdown className="filtercol me-3">
-                          <Dropdown.Toggle id="extrabtn" variant="btn-outline">
-                            <i className="filter-ico"></i> Add Filters
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <header>Filter by:</header>
-                            <div className="custom-radio btn-radio mb-2">
-                              <label>Users:</label>
-                              <Form.Group>
-                                <Form.Check
-                                  inline
-                                  label='Admin'
-                                  value='Admin'
-                                  name="users"
-                                  type="radio"
-                                  id='one'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Co-ordinator'
-                                  value='Co-ordinator'
-                                  name="users"
-                                  type="radio"
-                                  id='two'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Educator'
-                                  value='Educator'
-                                  name="users"
-                                  type="radio"
-                                  id='three'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Parent/Guardian'
-                                  value='Parent-Guardian'
-                                  name="users"
-                                  type="radio"
-                                  id='four'
-                                />
-                              </Form.Group>
-                            </div>
-                            <div className="custom-radio">
-                              <label className="mb-2">Location:</label>
-                              <Form.Group>
-                                <Select
-                                  closeMenuOnSelect={false}
-                                  components={animatedComponents}
-                                  isMulti
-                                  options={training}
-                                />
-                              </Form.Group>
-                            </div>
-                            <footer>
-                              <Button variant="transparent" type="submit">Cancel</Button>
-                              <Button variant="primary" type="submit">Apply</Button>
-                            </footer>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                        <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
-                        <Dropdown>
-                          <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt=""/>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#">Export CSV</Dropdown.Item>
-                            <Dropdown.Item href="#">Delete All Row</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
-                    </div>
-                  </header>
                   <div className="user-management-sec">
-                    <BootstrapTable
+                    <ToolkitProvider
                       keyField="name"
-                      data={userData}
-                      selectRow={ selectRow }
+                      data={products}
                       columns={ columns }
+                      search
+                    >
+                      {
+                        props => (
+                          <>
+                    <header className="title-head">
+                      <h1 className="title-lg">All User</h1>
+                      <div className="othpanel">
+                        <div className="extra-btn">
+                          <div className="data-search me-3">
+                            <SearchBar { ...props.searchProps } />
+                          </div>
+                          <Dropdown className="filtercol me-3">
+                            <Dropdown.Toggle id="extrabtn" variant="btn-outline">
+                              <i className="filter-ico"></i> Add Filters
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <header>Filter by:</header>
+                              <div className="custom-radio btn-radio mb-2">
+                                <label>Users:</label>
+                                <Form.Group>
+                                  <Form.Check
+                                    inline
+                                    label='Admin'
+                                    value='Admin'
+                                    name="users"
+                                    type="radio"
+                                    id='one'
+                                  />
+                                  <Form.Check
+                                    inline
+                                    label='Co-ordinator'
+                                    value='Co-ordinator'
+                                    name="users"
+                                    type="radio"
+                                    id='two'
+                                  />
+                                  <Form.Check
+                                    inline
+                                    label='Educator'
+                                    value='Educator'
+                                    name="users"
+                                    type="radio"
+                                    id='three'
+                                  />
+                                  <Form.Check
+                                    inline
+                                    label='Parent/Guardian'
+                                    value='Parent-Guardian'
+                                    name="users"
+                                    type="radio"
+                                    id='four'
+                                  />
+                                </Form.Group>
+                              </div>
+                              <div className="custom-radio">
+                                <label className="mb-2">Location:</label>
+                                <Form.Group>
+                                  <Select
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    options={training}
+                                  />
+                                </Form.Group>
+                              </div>
+                              <footer>
+                                <Button variant="transparent" type="submit">Cancel</Button>
+                                <Button variant="primary" type="submit">Apply</Button>
+                              </footer>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                          <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
+                          <Dropdown>
+                            <Dropdown.Toggle id="extrabtn" className="ctaact">
+                              <img src="../img/dot-ico.svg" alt=""/>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item><ExportCSVButton { ...props.csvProps }>Export CSV!!</ExportCSVButton></Dropdown.Item>
+                              <Dropdown.Item href="#">Delete All Row</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </div>
+                      </div>
+                    </header>
+                    <BootstrapTable
+                      { ...props.baseProps }
+                      selectRow={ selectRow }
                       pagination={ paginationFactory() }
                     />
+                    </>
+                        )
+                      }
+                    </ToolkitProvider>
                   </div>
                 </div>
               </div>
