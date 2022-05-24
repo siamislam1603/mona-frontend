@@ -228,6 +228,32 @@ button:focus {
 
 .content-toogle {
     margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.content-toogle .user-img {
+    margin-right: 20px;
+    position: relative;
+}
+
+.user-img span {
+    position: absolute;
+    top: -1px;
+    right: -3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 100px;
+    background-color: #D11A2A;
+    font-size: 9px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+    line-height: 13px;
+}
+
+.red-date {
+    color: #D11A2A !important;
 }
 
 .content-title-section h4 {
@@ -242,52 +268,495 @@ button:focus {
     background: transparent !important;
     color: #909090 !important;
 }
-.new-form-title {margin: 25px 0;}
+
+.new-form-title {
+    margin: 25px 0;
+}
+
 .forms-content {
     margin-bottom: 24px;
 }
-.new-form-title {margin: 25px 0;}
 
-.form-select {display: block;
+.new-form-title {
+    margin: 25px 0;
+}
+
+.form-select {
+    display: block;
     width: 100%;
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    
-    
+
+
     background-clip: padding-box;
     border: 1px solid #ced4da;
     appearance: none;
     border-radius: 0.25rem;
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;background-color: #f7f7f7;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    background-color: #f7f7f7;
     box-shadow: none;
     border-color: #e5e5e5;
     color: #333333;
     border-radius: 5px;
-    height: 45px;}
+    height: 45px;
+}
+
 .content-title-section h6 {
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 1px;
 }
-.theme-light {background: transparent !important;border: none;color: #000 !important;}
 
-.theme-light:hover {color: #000;}
+.theme-light {
+    background: transparent !important;
+    border: none;
+    color: #000 !important;
+}
+
+.theme-light:hover {
+    color: #000;
+}
+
 .content-icon {
     border: none;
 }
-.new-form-radio {display: flex;}
 
-.new-form-radio-box label {display: flex;align-items: center;}
+.new-form-radio {
+    display: flex;
+}
+
+.new-form-radio-box label {
+    display: flex;
+    align-items: center;
+}
+
 .new-form-radio-box label p {
     margin: 0;
 }
-.new-form-radio-box + .new-form-radio-box {margin-left: 30px;}
-.new-form-radio-box .radio-round {width: 26px;height: 26px;background: #F7F7F8;
-    border: 1px solid rgba(66, 66, 66, 0.1);border-radius: 100%;margin-right: 15px;position: relative;}
+
+.new-form-radio-box+.new-form-radio-box {
+    margin-left: 30px;
+}
+
+.new-form-radio-box .radio-round {
+    width: 26px;
+    height: 26px;
+    background: #F7F7F8;
+    border: 1px solid rgba(66, 66, 66, 0.1);
+    border-radius: 100%;
+    margin-right: 15px;
+    position: relative;
+}
+
+.new-form-radio-box input {
+    display: none;
+}
+
+.new-form-radio-box input:checked+.radio-round:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    border-radius: 100%;
+    background: #AA0061;
+}
+
+
+/* 24-5-2022   AP*/
+
+.tab-section .nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
+    color: #AA0061 !important;
+    border: none;
+    border-bottom: 3px solid #AA0061 !important;
+    font-weight: 700 !important;
+}
+
+.tab-section .nav-tabs .nav-link {
+    color: #333333;
+    font-size: 18px !important;
+    font-weight: 500 !important;
+    border: 2px transparent;
+}
+
+.tab-section .nav-tabs {
+    border: 2px transparent;
+}
+
+/* ADD-Formfield */
+.mynewForm{
+    font-size: 30px;
+    font-weight: 700;
+    color: #333;
+    padding: 0 12px;
+    margin-bottom: 0;
+}
+.mynewForm-heading{
+    display: flex;
+    align-items: center;
+    margin-top: 39px;
+    margin-bottom: 20px;
+}
+.mynewForm-heading button{
+    background-color: transparent;
+    border: none;
+    padding:0;
+    min-width: 4px !important;
+}
+.mynewForm-heading button:hover, .mynewForm-heading button:focus, .mynewForm-heading button:active{
+    background-color: transparent !important;
+    border: none;
+}
+.myform-details{
+    margin: 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 29px;
+    opacity: 0.5;
+}
+
+
+.toogle-swich .switch {
+    --inactive-bg: #cfd8dc;
+    --active-bg: #00e676;
+    --size: 1.5rem;
+    appearance: none;
+    width: calc(var(--size) * 2.1);
+    height: var(--size);
+    display: inline-block;
+    border-radius: calc(var(--size) / 2);
+    cursor: pointer;
+    background-color: var(--inactive-bg);
+    background-image: radial-gradient(
+        circle calc(var(--size) / 2.0),
+        #fff 100%,
+        #0000 0
+      ),
+      radial-gradient(circle calc(var(--size) / 1.5), #0003 0%, #0000 100%);
+    background-repeat: no-repeat;
+    background-position: calc(var(--size) / -1.75) 0;
+    transition: background 0.2s ease-out;
+    background-color: #C4C4C4;
+box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
+
+  }
+  .toogle-swich .switch:checked {
+    background-position: calc(var(--size) / 1.75) 0;
+    background-color: #9EB356;
+    box-shadow: inset 0px 0px 4px rgb(0 0 0 / 25%);
+  } 
+  .toogle-swich{
+      line-height: 0;
+  } 
+
+
+  .add-g button{
+      background: transparent;
+      padding: 0;
+      border: none;
+      color: #151F6D;
+      font-size: 14px;
+      font-weight: 400;
+      min-width:0;
+  }
+  .add-g button svg{
+      margin-right: 5px;
+  }
+  .add-g button:hover, .add-g button:focus, .add-g button:active{
+    background-color: transparent !important;
+    border: none;
+    color:#151F6D;
+}
+.required p{
+    margin: 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 0 10px 0 20px;
+    opacity: 0.5;
+}
+.add-group-t-button{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+.apply-condition button{
+    background: transparent;
+    padding: 0;
+    border: none;
+    color: #151F6D;
+    font-size: 14px;
+    font-weight: 400;
+    min-width:0;
+}
+.apply-condition button:hover, .apply-condition button:focus, .apply-condition button:active{
+    background-color: transparent !important;
+    border: none;
+    color:#151F6D;
+}
+.apply-section{
+    padding-top: 20px;
+}
+.formlabel{
+    color:#455D58 !important;
+    font-size:14px !important;
+    font-weight:500 !important;
+    margin-bottom: 5px !important;
+    line-height: 0 !important;
+}
+.my-new-formsection{
+    background-color: #F7F7F7;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+}
+.my-new-formsection label, input[type=text] , select{
+    background-color: #fff !important;
+    border: 1px solid #4242421A !important;
+    border-radius: 5px !important;
+
+}
+.my-form-input input{
+    padding: 11px 45px 11px 20px;
+}
+.my-form-input input::placeholder{
+    color: #333333;
+    font-size: 16px;
+}
+.my-form-input{
+    position: relative;
+}
+.input-img{
+    position: absolute;
+    top: 6.5px;
+    right: 5px;
+}
+.text-answer-div{
+    position: relative;
+}
+.input-text-img{
+    position: absolute;
+    top: 10.5px;
+    left: 14px;
+}
+.text-answer-div select{
+ padding-left:35px;
+}
+/* .input-select-arrow{
+    position: absolute;
+    top: 9px;
+    right: 14px;
+}
+.input-select-arrow img{
+    width: 14px;
+} */
+.remove-button{
+    text-align: right;
+}
+.remove-button button{
+    background-color: transparent;
+    color: red;
+    border: none;
+    min-width:0;
+    padding: 0;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+.remove-button button:hover, .remove-button button:focus, .remove-button button:active{
+    background-color: transparent !important;
+    border: none;
+}
+.remove-button button img{
+    margin-right: 5px;
+}
+.delete-icon{
+    position: absolute;
+    top: 10px;
+    right: 13px;
+}
+.my-form-input input{
+    margin-bottom: 20px;
+}
+.apply-condition button{
+    margin-right: 20px;
+}
+.button{
+    text-align: center;
+}
+.add-q button{
+    background-color: transparent;
+    border: 1px solid #3E5D58;
+    padding: 4px;
+    color: #455C58;
+    font-size: 14px;
+    font-weight: 400;
+}
+.add-q button:hover{
+    color: #455C58;
+}
+
+
+.add-q{
+    text-align:right;
+}
+.add-q{
     
-    .new-form-radio-box input {display: none;}
-    
-    .new-form-radio-box input:checked + .radio-round:before {content: "";position: absolute;top: 5px;right: 5px;bottom: 5px;left: 5px;border-radius: 100%;background: #AA0061;}
-    
+    margin-bottom: 36px;
+}
+
+.preview{
+    background-color: transparent !important;
+    border: 1px solid #3E5D58 !important;
+    color: #3E5D58 !important;
+    font-size: 16px !important;
+    margin-right: 20px !important;
+}
+.applyCondition-modal .modal-lg, .modal-xl{
+    max-width: 641px;
+}
+ .modal-heading{
+    font-size: 24px;
+    font-weight: 800 !important;
+    color: #333;
+    margin: 0 !important;
+}
+ .modal-header{
+    padding: 24px 30px;
+}
+ .back{
+    border: none !important;
+    background-color: transparent !important;
+    color: #333 !important;
+    min-width:100px !important;
+}
+ .modal-footer{
+    padding: 15px 30px;
+}
+.applyCondition-modal .modal-lable{
+    font-size: 16px;
+    font-weight: 700;
+}
+ .modal-m-lable{
+    padding-bottom: 15px;
+}
+.text-answer-div select{
+    margin-bottom: 20px;
+}
+.modal-remove-icon{
+    position: inherit;
+    top: -11px;
+    right: 0;
+    margin-left: 14px;
+}
+.my-form-input-modal{
+    display: flex;
+    align-items: center;
+}
+.modal-body{
+    padding: 24px 30px;
+}
+
+
+
+.select-section-modal .modal-lg, .modal-xlg{
+    max-width: 373px !important;
+}
+
+
+
+/* CHECK BOX */
+
+
+.modal-two-check .container {
+    display: block;
+    position: relative;
+    padding-left: 45px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default checkbox */
+  .modal-two-check .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  .modal-two-check .container:hover{
+      background-color: transparent;
+  }
+  /* Create a custom checkbox */
+  .modal-two-check .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 26px;
+    width: 26px;
+    background-color: #F7F7F8;
+    border: 1px solid #42424263;
+    border-radius: 4px;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .modal-two-check .container:hover input ~ .checkmark {
+    background-color: #F7F7F8;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .modal-two-check .container input:checked ~ .checkmark {
+    background-color: #F7F7F8;
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .modal-two-check .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .modal-two-check .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .modal-two-check .container .checkmark:after {
+    left: 8px;
+    top: 3.5px;
+    width: 8px;
+    height: 12px;
+    border: solid #AA0061;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  .modal-two-footer{
+      margin-right: auto;
+  }
+  .done{
+      min-width: 100px !important;
+      border-radius: 5px !important;
+  }
+  .right-button{
+    min-width: 42px !important; 
+    padding: 1px 12px !important;
+    margin-left: 10px;
+    border-radius: 5px !important;
+  }
+  .three-modal-footer{
+      width: 100%;
+  }
