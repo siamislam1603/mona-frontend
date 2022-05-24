@@ -8,7 +8,7 @@ const ChildRegister = () => {
   const [errors, setErrors] = useState({});
   
   const addChild = async (data) => {
-    const res = await axios.post('http://localhost:3000/child/signup', data);
+    const res = await axios.post('http://localhost:4000/child/signup', data);
     if(res.status === 201 && res.data?.status === 'success') {
       window.location.ref = "/dashboard";
     }
