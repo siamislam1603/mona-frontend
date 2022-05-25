@@ -4,544 +4,508 @@ import React, { useState } from "react";
 import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import LeftNavbar from "../../../components/LeftNavbar";
 import TopHeader from "../../../components/TopHeader";
-
-function AddFormField(props) {
+import Multiselect from "multiselect-react-dropdown";
+let counter = 0;
+const AddFormField = (props) => {
   const [conditionFlag, setConditionFlag] = useState(false);
-  const [groupFlag,setGroupFlag]=useState(false);
+  const [groupFlag, setGroupFlag] = useState(false);
+  const [formSettingFlag, setFormSettingFlag] = useState(false);
+  const [count, setCount] = useState(0);
+  const [Index,setIndex]=useState(1);
+  const [form, setForm] = useState([
+    { field_type: "text" },
+    { field_type: "radio", option: ["", ""] },
+    { field_type: "checkbox", option: ["", ""] },
+  ]);
+  const [errors, setErrors] = useState({});
+  const setField = (field, value, index, inner_index) => {
+    counter++;
+    setCount(counter);
+    setIndex(index);
+    if (field === "option") {
+      const tempArr = form;
+      const tempObj = tempArr[index];
+      const tempOption = tempObj["option"];
+      tempOption[inner_index] = value;
+      tempArr[index]["option"] = tempOption;
+      setForm(tempArr);
+    } else if (field === "field_type" && !(value === "text")) {
+      const tempArr = form;
+      const tempObj = tempArr[index];
+      tempObj["option"] = ["", ""];
+      tempObj[field] = value;
+      tempArr[index] = tempObj;
+      setForm(tempArr);
+    } else {
+      const tempArr = form;
+      const tempObj = tempArr[index];
+      tempObj[field] = value;
+      tempArr[index] = tempObj;
+      setForm(tempArr);
+    }
+    if (!!errors[field]) {
+      setErrors({
+        ...errors,
+        [field]: null,
+      });
+    }
+  };
   return (
-    <div id="main">
-      <section className="mainsection">
-        <Container>
-          <div className="admin-wrapper">
-            <aside className="app-sidebar">
-              <LeftNavbar />
-            </aside>
-            <div className="sec-column">
-              <TopHeader />
-              <Row>
-                <Col sm={8}>
-                  <div className="mynewForm-heading">
-                    <Button
-                      onClick={() => {
-                        props.history.push("/form/add");
-                      }}
-                    >
-                      <img src="../../img/back-arrow.svg" />
-                    </Button>
-                    <h4 className="mynewForm">My New Form</h4>
-                    <Button>
-                      <img src="../../img/carbon_settings.svg" />
-                    </Button>
-                  </div>
-                </Col>
-                {/* <Col sm={4}>
+    <>
+      {console.log("form--->", form)}
+      <div id="main">
+        <section className="mainsection">
+          <Container>
+            <div className="admin-wrapper">
+              <aside className="app-sidebar">
+                <LeftNavbar />
+              </aside>
+              <div className="sec-column">
+                <TopHeader />
+                <Row>
+                  <Col sm={8}>
+                    <div className="mynewForm-heading">
+                      <Button
+                        onClick={() => {
+                          props.history.push("/form/add");
+                        }}
+                      >
+                        <img src="../../img/back-arrow.svg" />
+                      </Button>
+                      <h4 className="mynewForm">My New Form</h4>
+                      <Button
+                        onClick={() => {
+                          setFormSettingFlag(true);
+                        }}
+                      >
+                        <img src="../../img/carbon_settings.svg" />
+                      </Button>
+                    </div>
+                  </Col>
+                  {/* <Col sm={4}>
                   <a href="#">Questions</a>
                   <a href="#">Answers</a>
                 </Col> */}
-                <Col sm={12}>
-                  <p className="myform-details">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing
-                    elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua.
-                  </p>
-                </Col>
-              </Row>
-              <Form>
-                <div className="my-new-formsection">
-                  <Row>
-                    <Col sm={12}>
-                      <Form.Label className="formlabel">Label 1</Form.Label>
-                    </Col>
-                  </Row>
-                  <div className="label-one">
-                    <Row>
-                      <Col sm={6}>
-                        <div className="my-form-input">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Some text here for the label"
-                          />
-                          <div className="input-img">
-                            <img src="../../img/input-img.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="text-answer-div">
-                          <Form.Select name="field_type">
-                            <option> Field Type</option>
-                            <option value="text">Text Answer</option>
-                            <option value="radio">Multiple Choice</option>
-                            <option value="checkbox">Checkboxes</option>
-                          </Form.Select>
-                          <div className="input-text-img">
-                            <img src="../../img/input-text-icon.svg" />
-                          </div>
-                          {/* <div className="input-select-arrow">
-                      <img src="../../img/input-select-arrow.svg"/>
-                    </div> */}
-                        </div>
-                      </Col>
-
-                      {/* <Col sm={12}>
-                    <Button>Preview</Button>
-                    <Button className="primary">Save Form</Button>
-                  </Col> */}
-                    </Row>
-                  </div>
-                  <div className="apply-section">
-                    <Row>
-                      <Col sm={6}>
-                        <div className="apply-condition">
-                          <Button
-                            onClick={() => {
-                              setConditionFlag(!conditionFlag);
-                            }}
-                          >
-                            Apply Condition
-                          </Button>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="add-group-t-button">
-                          <div className="add-g">
-                            <Button onClick={()=>{setGroupFlag(!groupFlag)}}>
-                              <FontAwesomeIcon icon={faPlus} />
-                              Add to Group
-                            </Button>
-                          </div>
-                          <div className="required">
-                            <p>Required</p>
-                          </div>
-                          <div className="toogle-swich">
-                            <input class="switch" type="checkbox" />
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                </div>
-                <div className="my-new-formsection">
-                  <Row>
-                    <Col sm={6}>
-                      <Form.Label className="formlabel">Label 2</Form.Label>
-                    </Col>
-                    <Col sm={6}>
-                      <div className="remove-button">
-                        <Button>
-                          <img src="../../img/removeIcon.svg" /> Remove
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                  <div className="label-one">
-                    <Row>
-                      <Col sm={6}>
-                        <div className="my-form-input">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Some text here for the label"
-                          />
-                          <div className="input-img">
-                            <img src="../../img/input-img.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="text-answer-div">
-                          <Form.Select name="field_type">
-                            <option> Field Type</option>
-                            <option value="text">Text Answer</option>
-                            <option value="radio">Multiple Choice</option>
-                            <option value="checkbox">Checkboxes</option>
-                          </Form.Select>
-                          <div className="input-text-img">
-                            <img src="../../img/multiple-choice-icon.svg" />
-                          </div>
-                          {/* <div className="input-select-arrow">
-                      <img src="../../img/input-select-arrow.svg"/>
-                    </div> */}
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="my-form-input">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Option 1"
-                          />
-                          <div className="delete-icon">
-                            <img src="../../img/removeIcon.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="my-form-input">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Option 2"
-                          />
-                          <div className="delete-icon">
-                            <img src="../../img/removeIcon.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      {/* <Col sm={12}>
-                    <Button>Preview</Button>
-                    <Button className="primary">Save Form</Button>
-                  </Col> */}
-                    </Row>
-                  </div>
-                  <div className="apply-section">
-                    <Row>
-                      <Col sm={6}>
-                        <div className="apply-condition">
-                          <Button>
-                            <FontAwesomeIcon icon={faPlus} /> Add Option
-                          </Button>
-                          <Button>Apply Condition</Button>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="add-group-t-button">
-                          <div className="add-g">
-                            <Button>
-                              <FontAwesomeIcon icon={faPlus} />
-                              Add to Group
-                            </Button>
-                          </div>
-                          <div className="required">
-                            <p>Required</p>
-                          </div>
-                          <div className="toogle-swich">
-                            <input class="switch" type="checkbox" />
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                </div>
-                <div className="my-new-formsection">
-                  <Row>
-                    <Col sm={6}>
-                      <Form.Label className="formlabel">Label 3</Form.Label>
-                    </Col>
-                    <Col sm={6}>
-                      <div className="remove-button">
-                        <Button>
-                          <img src="../../img/removeIcon.svg" /> Remove
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                  <div className="label-one">
-                    <Row>
-                      <Col sm={6}>
-                        <div className="my-form-input">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Some text here for the label"
-                          />
-                          <div className="input-img">
-                            <img src="../../img/input-img.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="text-answer-div">
-                          <Form.Select name="field_type">
-                            <option> Field Type</option>
-                            <option value="text">Text Answer</option>
-                            <option value="radio">Multiple Choice</option>
-                            <option value="checkbox">Checkboxes</option>
-                          </Form.Select>
-                          <div className="input-text-img">
-                            <img src="../../img/check_boxIcon.svg" />
-                          </div>
-                          {/* <div className="input-select-arrow">
-                      <img src="../../img/input-select-arrow.svg"/>
-                    </div> */}
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="my-form-input">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Option 1"
-                          />
-                          <div className="delete-icon">
-                            <img src="../../img/removeIcon.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="my-form-input">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Option 2"
-                          />
-                          <div className="delete-icon">
-                            <img src="../../img/removeIcon.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                  <div className="apply-section">
-                    <Row>
-                      <Col sm={6}>
-                        <div className="apply-condition">
-                          <Button>
-                            <FontAwesomeIcon icon={faPlus} /> Add Option
-                          </Button>
-                          <Button>Apply Condition</Button>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="add-group-t-button">
-                          <div className="add-g">
-                            <Button>
-                              <FontAwesomeIcon icon={faPlus} />
-                              Add to Group
-                            </Button>
-                          </div>
-                          <div className="required">
-                            <p>Required</p>
-                          </div>
-                          <div className="toogle-swich">
-                            <input class="switch" type="checkbox" />
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                </div>
-                <Row>
                   <Col sm={12}>
-                    <div className="add-q">
-                      <Button  variant="link">
-                        <FontAwesomeIcon icon={faPlus} /> Add Question
-                      </Button>
-                    </div>
-                    <div className="button">
-                      <Button className="preview">Preview</Button>
-                      <Button className="saveForm">Save Form</Button>
-                    </div>
+                    <p className="myform-details">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                      sed do eiusmod tempor incididunt ut labore et dolore magna
+                      aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing
+                      elit, sed do eiusmod tempor incididunt ut labore et dolore
+                      magna aliqua.
+                    </p>
                   </Col>
                 </Row>
-                <div className="applyCondition-modal">
-                <Modal
-                  show={conditionFlag}
-                  onHide={() => setConditionFlag(false)}
-                  size="lg"
-                  aria-labelledby="contained-modal-title-vcenter"
-                  centered
-                >
-                  <Modal.Header closeButton>
-                    <Modal.Title id="contained-modal-title-vcenter" className="modal-heading">
-                    Condition
-                    </Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <div className="modal-condtion">
-                    <Row>
-                    <Col sm={12}>
-                      <Form.Label className="formlabel modal-m-lable">If <span className="modal-lable">Option 1 </span>is selected,</Form.Label>
-                    </Col>
-                  
-                
-                  <Col sm={12}>
-                        <div className="text-answer-div">
-                          <Form.Select name="field_type">
-                            <option> Field Type</option>
-                            <option value="text">Text Answer</option>
-                            <option value="radio">Multiple Choice</option>
-                            <option value="checkbox">Checkboxes</option>
-                          </Form.Select>
-                          <div className="input-text-img">
-                            <img src="../../img/check_boxIcon.svg" />
-                          </div>
-                          {/* <div className="input-select-arrow">
-                      <img src="../../img/input-select-arrow.svg"/>
-                    </div> */}
+                <Form>
+                  {form?.map((item, index) => {
+                    return (
+                      <div className="my-new-formsection">
+                        <Row>
+                          {index === 0 ? (
+                            <Col sm={12}>
+                              <Form.Label className="formlabel">
+                                Label {index + 1}
+                              </Form.Label>
+                            </Col>
+                          ) : (
+                            <>
+                              <Col sm={6}>
+                                <Form.Label className="formlabel">
+                                  Label {index + 1}
+                                </Form.Label>
+                              </Col>
+                              <Col sm={6}>
+                                <div className="remove-button">
+                                  <Button
+                                    variant="link"
+                                    onClick={() => {
+                                      counter++;
+                                      setCount(counter);
+                                      let data = form;
+                                      data.pop(index);
+                                      setForm(data);
+                                    }}
+                                  >
+                                    <img src="../../img/removeIcon.svg" />{" "}
+                                    Remove
+                                  </Button>
+                                </div>
+                              </Col>
+                            </>
+                          )}
+                        </Row>
+                        <div className="label-one">
+                          <Row>
+                            <Col sm={6}>
+                              <div className="my-form-input">
+                                <Form.Control
+                                  type="text"
+                                  name="form_label"
+                                  onChange={(e) => {
+                                    setField(
+                                      e.target.name,
+                                      e.target.value.trim(),
+                                      index
+                                    );
+                                  }}
+                                  placeholder="Some text here for the label"
+                                />
+                                <div className="input-img">
+                                  <img src="../../img/input-img.svg" />
+                                </div>
+                              </div>
+                            </Col>
+                            <Col sm={6}>
+                              <div className="text-answer-div default-arrow-select">
+                                <Form.Select
+                                  name="field_type"
+                                  onChange={(e) => {
+                                    setField(
+                                      e.target.name,
+                                      e.target.value,
+                                      index
+                                    );
+                                  }}
+                                >
+                                  <option
+                                    value="text"
+                                    selected={
+                                      form[index]?.field_type === "text"
+                                    }
+                                  >
+                                    Text Answer
+                                  </option>
+                                  <option
+                                    value="radio"
+                                    selected={
+                                      form[index]?.field_type === "radio"
+                                    }
+                                  >
+                                    Multiple Choice
+                                  </option>
+                                  <option
+                                    value="checkbox"
+                                    selected={
+                                      form[index]?.field_type === "checkbox"
+                                    }
+                                  >
+                                    Checkboxes
+                                  </option>
+                                </Form.Select>
+                                <div className="input-text-img">
+                                  <img
+                                    src={
+                                      form[index]?.field_type === "text"
+                                        ? "../../img/input-text-icon.svg"
+                                        : form[index]?.field_type === "radio"
+                                        ? "../../img/multiple-choice-icon.svg"
+                                        : form[index]?.field_type === "checkbox"
+                                        ? "../../img/check_boxIcon.svg"
+                                        : null
+                                    }
+                                  />
+                                </div>
+                              </div>
+                            </Col>
+                            {!(form[index]?.field_type === "text") ? (
+                              <>
+                                {form[index]?.option?.map(
+                                  (item, inner_index) => {
+                                    return (
+                                      <Col sm={6}>
+                                        <div className="my-form-input">
+                                          <Form.Control
+                                            type="text"
+                                            name="option"
+                                            onChange={(e) => {
+                                              setField(
+                                                e.target.name,
+                                                e.target.value.trim(),
+                                                index,
+                                                inner_index
+                                              );
+                                            }}
+                                            placeholder={
+                                              "Option " + (inner_index + 1)
+                                            }
+                                          />
+                                          <div className="delete-icon">
+                                            <img
+                                              src="../../img/removeIcon.svg"
+                                              onClick={() => {
+                                                const tempArr = form;
+                                                const tempObj = tempArr[index];
+                                                if (
+                                                  tempObj["option"].length > 2
+                                                ) {
+                                                  counter++;
+                                                  setCount(counter);
+                                                  tempObj["option"].pop(
+                                                    inner_index
+                                                  );
+                                                  tempArr[index] = tempObj;
+                                                  setForm(tempArr);
+                                                }
+                                              }}
+                                            />
+                                          </div>
+                                        </div>
+                                      </Col>
+                                    );
+                                  }
+                                )}
+                              </>
+                            ) : null}
+                          </Row>
                         </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="my-form-input my-form-input-modal">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Option 1"
-                          />
-                          <div className="delete-icon modal-remove-icon">
-                            <img src="../../img/removeIcon.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="my-form-input my-form-input-modal">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Option 2"
-                          />
-                          <div className="delete-icon modal-remove-icon">
-                            <img src="../../img/removeIcon.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      <div className="apply-condition pb-2">
-                          <Button>
-                            <FontAwesomeIcon icon={faPlus} /> Add Option
-                          </Button>
-                          </div>
-                      </Row>
-                      <Row>
-                    <Col sm={12}>
-                      <Form.Label className="formlabel modal-m-lable">If <span className="modal-lable">Option 2 </span>is selected,</Form.Label>
-                    </Col>
-                  
-                
-                  <Col sm={12}>
-                        <div className="text-answer-div">
-                          <Form.Select name="field_type">
-                            <option> Field Type</option>
-                            <option value="text">Text Answer</option>
-                            <option value="radio">Multiple Choice</option>
-                            <option value="checkbox">Checkboxes</option>
-                          </Form.Select>
-                          <div className="input-text-img">
-                            <img src="../../img/check_boxIcon.svg" />
-                          </div>
-                          {/* <div className="input-select-arrow">
-                      <img src="../../img/input-select-arrow.svg"/>
-                    </div> */}
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="my-form-input my-form-input-modal">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Option 1"
-                          />
-                          <div className="delete-icon modal-remove-icon">
-                            <img src="../../img/removeIcon.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm={6}>
-                        <div className="my-form-input my-form-input-modal">
-                          <Form.Control
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder="Option 2"
-                          />
-                          <div className="delete-icon modal-remove-icon">
-                            <img src="../../img/removeIcon.svg" />
-                          </div>
-                        </div>
-                      </Col>
-                      
-                          <div className="apply-condition pb-2">
-                          <Button>
-                            <FontAwesomeIcon icon={faPlus} /> Add Option
-                          </Button>
-                          </div>
-                          <Col sm={12}>
-                    <div className="add-q mb-0">
-                      <Button variant="link">
-                        <FontAwesomeIcon icon={faPlus} /> Add Option
-                      </Button>
-                    </div>
-                  </Col>
-                      </Row>
-                    </div>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button className="back">Back</Button>
-                    <Button className="done">Done</Button>
-                  </Modal.Footer>
-                </Modal>
-                </div>
 
-                <div className="select-section-modal">
-                <Modal
-                  show={groupFlag}
-                  onHide={() => setGroupFlag(false)}
-                  size="md"
-                  aria-labelledby="contained-modal-title-vcenter"
-                  centered
-                >
-                  <Modal.Header closeButton>
-                    <Modal.Title id="contained-modal-title-vcenter" className="modal-heading">
-                    Select Section
-                    </Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <div className="modalTwo-select">
-                        <div className="modal-two-check">
-                        <label class="container">Section Name 1
-                          <input type="checkbox" />
-                          <span class="checkmark"></span>
-                        </label>
-                        <label class="container">Section Name 2
-                          <input type="checkbox" />
-                          <span class="checkmark"></span>
-                        </label>
-                        <label class="container">Section Name 3
-                          <input type="checkbox" />
-                          <span class="checkmark"></span>
-                        </label>
-                        <label class="container">Section Name 4
-                          <input type="checkbox" />
-                          <span class="checkmark"></span>
-                        </label>
-                        <label class="container">Section Name 5
-                          <input type="checkbox" />
-                          <span class="checkmark"></span>
-                        </label>  
+                        <div className="apply-section">
+                          <Row>
+                            <Col sm={6}>
+                              <div className="apply-condition">
+                                {!(form[index]?.field_type === "text") ? (
+                                  <>
+                                    <Button
+                                      onClick={() => {
+                                        counter++;
+                                        setCount(counter);
+                                        const tempArr = form;
+                                        const tempObj = tempArr[index];
+                                        tempObj["option"].push("");
+                                        tempArr[index] = tempObj;
+                                        setForm(tempArr);
+                                      }}
+                                    >
+                                      <FontAwesomeIcon icon={faPlus} /> Add
+                                      Option
+                                    </Button>
+                                    <Button
+                                      onClick={() => {
+                                        setConditionFlag(!conditionFlag);
+                                      }}
+                                    >
+                                      Apply Condition
+                                    </Button>
+                                  </>
+                                ) : null}
+                              </div>
+                            </Col>
+                            <Col sm={6}>
+                              <div className="add-group-t-button">
+                                <div className="add-g">
+                                  <Button
+                                    onClick={() => {
+                                      setGroupFlag(!groupFlag);
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faPlus} />
+                                    Add to Group
+                                  </Button>
+                                </div>
+                                <div className="required">
+                                  <p>Required</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    class="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    onChange={(e) => {
+                                      setField(
+                                        e.target.name,
+                                        e.target.value,
+                                        index
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </Col>
+                          </Row>
                         </div>
-                    </div>
-                  </Modal.Body>
-                  <Modal.Footer>
-                  {/* <div className="apply-condition modal-two-footer pb-2">
+                      </div>
+                    );
+                  })}
+
+                  <Row>
+                    <Col sm={12}>
+                      <div className="add-q">
+                        <Button
+                          variant="link"
+                          onClick={() => {
+                            let data = form;
+                            console.log("data----?", data);
+                            counter++;
+                            setCount(counter);
+                            data.push({ field_type: "text" });
+                            setForm(data);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faPlus} /> Add Question
+                        </Button>
+                      </div>
+                      <div className="button">
+                        <Button className="preview">Preview</Button>
+                        <Button className="saveForm">Save Form</Button>
+                      </div>
+                    </Col>
+                  </Row>
+                  <div className="applyCondition-modal">
+                    <Modal
+                      show={conditionFlag}
+                      onHide={() => setConditionFlag(false)}
+                      size="lg"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title
+                          id="contained-modal-title-vcenter"
+                          className="modal-heading"
+                        >
+                          Condition
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="modal-condtion">
+                          
+                          {form[Index]?.["option"].map((item,index)=>{
+                            return (<Row>
+                              <Col sm={12}>
+                                <Form.Label className="formlabel modal-m-lable">
+                                  If{" "}
+                                  <span className="modal-lable">{item ? item : "Option "+(index+1)} </span>is
+                                  selected,
+                                </Form.Label>
+                              </Col>
+                              <Col sm={12}>
+                              
+                                <Form.Label>Label</Form.Label>
+                                
+                              </Col>
+                              <Col sm={6}>
+                              <Form.Control
+                                  type="text"
+                                  name="form_label"
+                                  placeholder="Some text here for the label"
+                                />
+                              </Col>
+                              <Col sm={6}>
+                                <div className="text-answer-div">
+                                  <Form.Select name="field_type">
+                                    <option> Field Type</option>
+                                    <option value="text">Text Answer</option>
+                                    <option value="radio">Multiple Choice</option>
+                                    <option value="checkbox">Checkboxes</option>
+                                  </Form.Select>
+                                  <div className="input-text-img">
+                                    <img src="../../img/check_boxIcon.svg" />
+                                  </div>
+                                  {/* <div className="input-select-arrow">
+                        <img src="../../img/input-select-arrow.svg"/>
+                      </div> */}
+                                </div>
+                              </Col>
+                              <Col sm={6}>
+                                <div className="my-form-input my-form-input-modal">
+                                  <Form.Control
+                                    type="text"
+                                    name="form_label"
+                                    id="inputPassword5"
+                                    aria-describedby="passwordHelpBlock"
+                                    placeholder="Option 1"
+                                  />
+                                  <div className="delete-icon modal-remove-icon">
+                                    <img src="../../img/removeIcon.svg" />
+                                  </div>
+                                </div>
+                              </Col>
+                              <Col sm={6}>
+                                <div className="my-form-input my-form-input-modal">
+                                  <Form.Control
+                                    type="text"
+                                    name="form_label"
+                                    id="inputPassword5"
+                                    aria-describedby="passwordHelpBlock"
+                                    placeholder="Option 2"
+                                  />
+                                  <div className="delete-icon modal-remove-icon">
+                                    <img src="../../img/removeIcon.svg" />
+                                  </div>
+                                </div>
+                              </Col>
+  
+                              <div className="apply-condition pb-2">
+                                <Button>
+                                  <FontAwesomeIcon icon={faPlus} /> Add Option
+                                </Button>
+                              </div>
+                            </Row>)
+                          })}
+                        </div>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button className="back">Back</Button>
+                        <Button className="done">Done</Button>
+                      </Modal.Footer>
+                    </Modal>
+                  </div>
+
+                  <div className="select-section-modal">
+                    <Modal
+                      show={groupFlag}
+                      onHide={() => setGroupFlag(false)}
+                      size="md"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title
+                          id="contained-modal-title-vcenter"
+                          className="modal-heading"
+                        >
+                          Select Section
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="modalTwo-select">
+                          <div className="modal-two-check">
+                            <label class="container">
+                              Section Name 1
+                              <input type="checkbox" />
+                              <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                              Section Name 2
+                              <input type="checkbox" />
+                              <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                              Section Name 3
+                              <input type="checkbox" />
+                              <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                              Section Name 4
+                              <input type="checkbox" />
+                              <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                              Section Name 5
+                              <input type="checkbox" />
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                        </div>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <div className="apply-condition modal-two-footer pb-2">
                           <Button>
                             <FontAwesomeIcon icon={faPlus} /> Create Section
                           </Button>
-                          </div>
-                    <Button className="done">Done</Button> */}
-                    <div className="three-modal-footer">
+                        </div>
+                        <Button className="done">Done</Button>
+                        {/* <div className="three-modal-footer">
                       <div className="modal-three">
                       <div className="my-form-input my-form-input-modal">
                           <Form.Control
@@ -557,17 +521,226 @@ function AddFormField(props) {
                           </Button>
                         </div>
                       </div>
-                    </div>
-                  </Modal.Footer>
-                </Modal>
-                </div>
-              </Form>
+                    </div> */}
+                      </Modal.Footer>
+                    </Modal>
+                  </div>
+                  <Modal
+                    show={formSettingFlag}
+                    onHide={() => setFormSettingFlag(false)}
+                    size="lg"
+                    className="form-settings-modal"
+                    aria-labelledby="contained-modal-title-vcenter"
+                    centered
+                  >
+                    <Modal.Header closeButton>
+                      <Modal.Title
+                        id="contained-modal-title-vcenter"
+                        className="modal-heading"
+                      >
+                        <img src="../../img/carbon_settings.svg" />
+                        Form Settings
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <div className="form-settings-content">
+                        <Row>
+                          <Col lg={3}>
+                            <Form.Group>
+                              <Form.Label>Start Date</Form.Label>
+                              <Form.Control type="date" name="form_name" />
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3}>
+                            <Form.Group>
+                              <Form.Label>Start Time</Form.Label>
+                              <Form.Control type="time" name="form_name" />
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3}>
+                            <Form.Group>
+                              <Form.Label>End Date</Form.Label>
+                              <Form.Control type="date" name="form_name" />
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3}>
+                            <Form.Group>
+                              <Form.Label>End Time</Form.Label>
+                              <Form.Control type="time" name="form_name" />
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col lg={3}>
+                            <Form.Group>
+                              <Form.Label>
+                                Applicable to all franchisee
+                              </Form.Label>
+                              <div className="new-form-radio">
+                                <div className="new-form-radio-box">
+                                  <label for="yes">
+                                    <input
+                                      type="radio"
+                                      value="Yes"
+                                      name="form_template_select"
+                                      id="yes"
+                                    />
+                                    <span className="radio-round"></span>
+                                    <p>Yes</p>
+                                  </label>
+                                </div>
+                                <div className="new-form-radio-box">
+                                  <label for="no">
+                                    <input
+                                      type="radio"
+                                      value="No"
+                                      name="form_template_select"
+                                      id="no"
+                                    />
+                                    <span className="radio-round"></span>
+                                    <p>No</p>
+                                  </label>
+                                </div>
+                              </div>
+                            </Form.Group>
+                          </Col>
+                          <Col lg={9}>
+                            <Form.Group>
+                              <Form.Label>Select Franchisee</Form.Label>
+                              <Multiselect
+                                displayValue="key"
+                                className="multiselect-box default-arrow-select"
+                                placeholder="Select Franchisee"
+                                onKeyPressFn={function noRefCheck() {}}
+                                onRemove={function noRefCheck() {}}
+                                onSearch={function noRefCheck() {}}
+                                onSelect={function noRefCheck() {}}
+                                options={[
+                                  {
+                                    cat: "Group 1",
+                                    key: "Option 1",
+                                  },
+                                  {
+                                    cat: "Group 1",
+                                    key: "Option 2",
+                                  },
+                                  {
+                                    cat: "Group 1",
+                                    key: "Option 3",
+                                  },
+                                  {
+                                    cat: "Group 2",
+                                    key: "Option 4",
+                                  },
+                                  {
+                                    cat: "Group 2",
+                                    key: "Option 5",
+                                  },
+                                  {
+                                    cat: "Group 2",
+                                    key: "Option 6",
+                                  },
+                                  {
+                                    cat: "Group 2",
+                                    key: "Option 7",
+                                  },
+                                ]}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col lg={3}>
+                            <Form.Group>
+                              <Form.Label>Applicable to all users</Form.Label>
+                              <div className="new-form-radio">
+                                <div className="new-form-radio-box">
+                                  <label for="yes1">
+                                    <input
+                                      type="radio"
+                                      value="Yes"
+                                      name="form_template_select1"
+                                      id="yes1"
+                                    />
+                                    <span className="radio-round"></span>
+                                    <p>Yes</p>
+                                  </label>
+                                </div>
+                                <div className="new-form-radio-box">
+                                  <label for="no1">
+                                    <input
+                                      type="radio"
+                                      value="No"
+                                      name="form_template_select1"
+                                      id="no1"
+                                    />
+                                    <span className="radio-round"></span>
+                                    <p>No</p>
+                                  </label>
+                                </div>
+                              </div>
+                            </Form.Group>
+                          </Col>
+                          <Col lg={9}>
+                            <Form.Group>
+                              <Form.Label>Select User Roles</Form.Label>
+                              <Multiselect
+                                placeholder="Select User Roles"
+                                displayValue="key"
+                                className="multiselect-box default-arrow-select"
+                                onKeyPressFn={function noRefCheck() {}}
+                                onRemove={function noRefCheck() {}}
+                                onSearch={function noRefCheck() {}}
+                                onSelect={function noRefCheck() {}}
+                                options={[
+                                  {
+                                    cat: "Group 1",
+                                    key: "Option 1",
+                                  },
+                                  {
+                                    cat: "Group 1",
+                                    key: "Option 2",
+                                  },
+                                  {
+                                    cat: "Group 1",
+                                    key: "Option 3",
+                                  },
+                                  {
+                                    cat: "Group 2",
+                                    key: "Option 4",
+                                  },
+                                  {
+                                    cat: "Group 2",
+                                    key: "Option 5",
+                                  },
+                                  {
+                                    cat: "Group 2",
+                                    key: "Option 6",
+                                  },
+                                  {
+                                    cat: "Group 2",
+                                    key: "Option 7",
+                                  },
+                                ]}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                      </div>
+                    </Modal.Body>
+                    <Modal.Footer className="justify-content-center">
+                      <Button className="back">Cancel</Button>
+                      <Button className="done">Save Settings</Button>
+                    </Modal.Footer>
+                  </Modal>
+                </Form>
+              </div>
             </div>
-          </div>
-        </Container>
-      </section>
-    </div>
+          </Container>
+        </section>
+      </div>
+    </>
   );
-}
+};
 
 export default AddFormField;

@@ -388,30 +388,36 @@ button:focus {
 }
 
 /* ADD-Formfield */
-.mynewForm{
+.mynewForm {
     font-size: 30px;
     font-weight: 700;
     color: #333;
     padding: 0 12px;
     margin-bottom: 0;
 }
-.mynewForm-heading{
+
+.mynewForm-heading {
     display: flex;
     align-items: center;
     margin-top: 39px;
     margin-bottom: 20px;
 }
-.mynewForm-heading button{
+
+.mynewForm-heading button {
     background-color: transparent;
     border: none;
-    padding:0;
+    padding: 0;
     min-width: 4px !important;
 }
-.mynewForm-heading button:hover, .mynewForm-heading button:focus, .mynewForm-heading button:active{
+
+.mynewForm-heading button:hover,
+.mynewForm-heading button:focus,
+.mynewForm-heading button:active {
     background-color: transparent !important;
     border: none;
 }
-.myform-details{
+
+.myform-details {
     margin: 0;
     color: #333;
     font-size: 16px;
@@ -432,47 +438,52 @@ button:focus {
     border-radius: calc(var(--size) / 2);
     cursor: pointer;
     background-color: var(--inactive-bg);
-    background-image: radial-gradient(
-        circle calc(var(--size) / 2.0),
-        #fff 100%,
-        #0000 0
-      ),
-      radial-gradient(circle calc(var(--size) / 1.5), #0003 0%, #0000 100%);
+    background-image: radial-gradient(circle calc(var(--size) / 2.0),
+            #fff 100%,
+            #0000 0),
+        radial-gradient(circle calc(var(--size) / 1.5), #0003 0%, #0000 100%);
     background-repeat: no-repeat;
     background-position: calc(var(--size) / -1.75) 0;
     transition: background 0.2s ease-out;
     background-color: #C4C4C4;
-box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
 
-  }
-  .toogle-swich .switch:checked {
+}
+
+.toogle-swich .switch:checked {
     background-position: calc(var(--size) / 1.75) 0;
     background-color: #9EB356;
     box-shadow: inset 0px 0px 4px rgb(0 0 0 / 25%);
-  } 
-  .toogle-swich{
-      line-height: 0;
-  } 
+}
+
+.toogle-swich {
+    line-height: 0;
+}
 
 
-  .add-g button{
-      background: transparent;
-      padding: 0;
-      border: none;
-      color: #151F6D;
-      font-size: 14px;
-      font-weight: 400;
-      min-width:0;
-  }
-  .add-g button svg{
-      margin-right: 5px;
-  }
-  .add-g button:hover, .add-g button:focus, .add-g button:active{
+.add-g button {
+    background: transparent;
+    padding: 0;
+    border: none;
+    color: #151F6D;
+    font-size: 14px;
+    font-weight: 400;
+    min-width: 0;
+}
+
+.add-g button svg {
+    margin-right: 5px;
+}
+
+.add-g button:hover,
+.add-g button:focus,
+.add-g button:active {
     background-color: transparent !important;
     border: none;
-    color:#151F6D;
+    color: #151F6D;
 }
-.required p{
+
+.required p {
     margin: 0;
     color: #333;
     font-size: 14px;
@@ -480,73 +491,98 @@ box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
     padding: 0 10px 0 20px;
     opacity: 0.5;
 }
-.add-group-t-button{
+
+.add-group-t-button {
     display: flex;
     align-items: center;
     justify-content: end;
 }
-.apply-condition button{
+
+.apply-condition button {
     background: transparent;
     padding: 0;
     border: none;
     color: #151F6D;
     font-size: 14px;
     font-weight: 400;
-    min-width:0;
+    min-width: 0;
 }
-.apply-condition button:hover, .apply-condition button:focus, .apply-condition button:active{
+
+.apply-condition button:hover,
+.apply-condition button:focus,
+.apply-condition button:active {
     background-color: transparent !important;
     border: none;
-    color:#151F6D;
+    color: #151F6D;
 }
-.apply-section{
+
+.apply-section {
     padding-top: 20px;
 }
-.formlabel{
-    color:#455D58 !important;
-    font-size:14px !important;
-    font-weight:500 !important;
+
+.formlabel {
+    color: #455D58 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
     margin-bottom: 5px !important;
     line-height: 0 !important;
 }
-.my-new-formsection{
+
+.my-new-formsection {
     background-color: #F7F7F7;
     border-radius: 16px;
     padding: 20px;
     margin: 20px 0;
 }
-.my-new-formsection label, input[type=text] , select{
+
+.my-new-formsection label,
+input[type=text],
+select {
     background-color: #fff !important;
     border: 1px solid #4242421A !important;
     border-radius: 5px !important;
 
 }
-.my-form-input input{
+
+.my-form-input input {
     padding: 11px 45px 11px 20px;
 }
-.my-form-input input::placeholder{
+
+.my-form-input input::placeholder {
     color: #333333;
     font-size: 16px;
 }
-.my-form-input{
+
+.my-form-input {
     position: relative;
 }
-.input-img{
+
+.input-img {
     position: absolute;
     top: 6.5px;
     right: 5px;
 }
-.text-answer-div{
+
+.text-answer-div {
     position: relative;
 }
-.input-text-img{
+
+.input-text-img {
     position: absolute;
     top: 10.5px;
     left: 14px;
 }
-.text-answer-div select{
- padding-left:35px;
+
+.text-answer-div select {
+    padding-left: 35px;
 }
+
+.multiselect-box .optionListContainer {
+    z-index: 10;
+}
+
+
+
 /* .input-select-arrow{
     position: absolute;
     top: 9px;
@@ -555,42 +591,51 @@ box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
 .input-select-arrow img{
     width: 14px;
 } */
-.remove-button{
+.remove-button {
     text-align: right;
 }
-.remove-button button{
+
+.remove-button button {
     background-color: transparent;
     color: red;
     border: none;
-    min-width:0;
+    min-width: 0;
     padding: 0;
     line-height: 0;
     display: flex;
     align-items: center;
     margin-left: auto;
 }
-.remove-button button:hover, .remove-button button:focus, .remove-button button:active{
-    background-color: transparent !important;
-    border: none;
+
+.remove-button button:hover,
+.remove-button button:focus,
+.remove-button button:active {
+    color: red !important;
 }
-.remove-button button img{
+
+.remove-button button img {
     margin-right: 5px;
 }
-.delete-icon{
+
+.delete-icon {
     position: absolute;
     top: 10px;
     right: 13px;
 }
-.my-form-input input{
+
+.my-form-input input {
     margin-bottom: 20px;
 }
-.apply-condition button{
+
+.apply-condition button {
     margin-right: 20px;
 }
-.button{
+
+.button {
     text-align: center;
 }
-.add-q button{
+
+.add-q button {
     background-color: transparent;
     border: 1px solid #3E5D58;
     padding: 4px;
@@ -598,74 +643,89 @@ box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
     font-size: 14px;
     font-weight: 400;
 }
-.add-q button:hover{
+
+.add-q button:hover {
     color: #455C58;
 }
 
 
-.add-q{
-    text-align:right;
+.add-q {
+    text-align: right;
 }
-.add-q{
-    
+
+.add-q {
+
     margin-bottom: 36px;
 }
 
-.preview{
+.preview {
     background-color: transparent !important;
     border: 1px solid #3E5D58 !important;
     color: #3E5D58 !important;
     font-size: 16px !important;
     margin-right: 20px !important;
 }
-.applyCondition-modal .modal-lg, .modal-xl{
+
+.applyCondition-modal .modal-lg,
+.modal-xl {
     max-width: 641px;
 }
- .modal-heading{
+
+.modal-heading {
     font-size: 24px;
     font-weight: 800 !important;
     color: #333;
     margin: 0 !important;
 }
- .modal-header{
+
+.modal-header {
     padding: 24px 30px;
 }
- .back{
+
+.back {
     border: none !important;
     background-color: transparent !important;
     color: #333 !important;
-    min-width:100px !important;
+    min-width: 100px !important;
 }
- .modal-footer{
+
+.modal-footer {
     padding: 15px 30px;
 }
-.applyCondition-modal .modal-lable{
+
+.applyCondition-modal .modal-lable {
     font-size: 16px;
     font-weight: 700;
 }
- .modal-m-lable{
+
+.modal-m-lable {
     padding-bottom: 15px;
 }
-.text-answer-div select{
+
+.text-answer-div select {
     margin-bottom: 20px;
 }
-.modal-remove-icon{
+
+.modal-remove-icon {
     position: inherit;
     top: -11px;
     right: 0;
     margin-left: 14px;
 }
-.my-form-input-modal{
+
+.my-form-input-modal {
     display: flex;
     align-items: center;
 }
-.modal-body{
+
+.modal-body {
     padding: 24px 30px;
 }
 
 
 
-.select-section-modal .modal-lg, .modal-xlg{
+.select-section-modal .modal-lg,
+.modal-xlg {
     max-width: 373px !important;
 }
 
@@ -685,21 +745,23 @@ box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-  }
-  
-  /* Hide the browser's default checkbox */
-  .modal-two-check .container input {
+}
+
+/* Hide the browser's default checkbox */
+.modal-two-check .container input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
     height: 0;
     width: 0;
-  }
-  .modal-two-check .container:hover{
-      background-color: transparent;
-  }
-  /* Create a custom checkbox */
-  .modal-two-check .checkmark {
+}
+
+.modal-two-check .container:hover {
+    background-color: transparent;
+}
+
+/* Create a custom checkbox */
+.modal-two-check .checkmark {
     position: absolute;
     top: 0;
     left: 0;
@@ -708,32 +770,32 @@ box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
     background-color: #F7F7F8;
     border: 1px solid #42424263;
     border-radius: 4px;
-  }
-  
-  /* On mouse-over, add a grey background color */
-  .modal-two-check .container:hover input ~ .checkmark {
+}
+
+/* On mouse-over, add a grey background color */
+.modal-two-check .container:hover input~.checkmark {
     background-color: #F7F7F8;
-  }
-  
-  /* When the checkbox is checked, add a blue background */
-  .modal-two-check .container input:checked ~ .checkmark {
+}
+
+/* When the checkbox is checked, add a blue background */
+.modal-two-check .container input:checked~.checkmark {
     background-color: #F7F7F8;
-  }
-  
-  /* Create the checkmark/indicator (hidden when not checked) */
-  .modal-two-check .checkmark:after {
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.modal-two-check .checkmark:after {
     content: "";
     position: absolute;
     display: none;
-  }
-  
-  /* Show the checkmark when checked */
-  .modal-two-check .container input:checked ~ .checkmark:after {
+}
+
+/* Show the checkmark when checked */
+.modal-two-check .container input:checked~.checkmark:after {
     display: block;
-  }
-  
-  /* Style the checkmark/indicator */
-  .modal-two-check .container .checkmark:after {
+}
+
+/* Style the checkmark/indicator */
+.modal-two-check .container .checkmark:after {
     left: 8px;
     top: 3.5px;
     width: 8px;
@@ -743,20 +805,128 @@ box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25);
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
-  }
-  .modal-two-footer{
-      margin-right: auto;
-  }
-  .done{
-      min-width: 100px !important;
-      border-radius: 5px !important;
-  }
-  .right-button{
-    min-width: 42px !important; 
+}
+
+.modal-two-footer {
+    margin-right: auto;
+}
+
+.done {
+    min-width: 100px !important;
+    border-radius: 5px !important;
+}
+
+.right-button {
+    min-width: 42px !important;
     padding: 1px 12px !important;
     margin-left: 10px;
     border-radius: 5px !important;
-  }
-  .three-modal-footer{
-      width: 100%;
-  }
+}
+
+.three-modal-footer {
+    width: 100%;
+}
+
+
+
+/* 25-05-22 */
+.form-settings-modal .modal-title {
+    display: flex;
+    align-items: center;
+}
+
+.form-settings-modal .modal-title img {
+    margin-right: 10px;
+}
+
+.default-arrow-select select {
+    appearance: none;
+    background-image: none;
+}
+
+.default-arrow-select:before {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-image: url(../../../public/img/down-arrow.svg);
+    top: 50%;
+    transform: translateY(-50%);
+    right: 15px;
+    pointer-events: none;
+    z-index: 9;
+}
+
+.form-settings-modal>div {
+    min-width: 1147px !important;
+}
+
+.default-arrow-select {
+    position: relative;
+}
+
+/*************************************/
+
+
+
+.multiselect-box .searchWrapper {
+    background: #f7f7f7;
+    border-color: #e5e5e5;
+    padding: 4px 4px !important;
+}
+
+.multiselect-box .searchWrapper input::placeholder {
+    color: #333333 !important;
+}
+
+.multiselect-box .searchWrapper input {
+    border: none !important;
+    padding: 6px 8px !important;
+    background: transparent !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+.multiselect-box .searchWrapper input::placeholder {
+    color: #333333 !important;
+}
+
+.multiselect-box .chip {
+    border: 1px solid #AA0061;
+    border-radius: 100px;
+    background: rgb(170 0 97 / 20%);
+    color: #AA0061;
+    position: relative;
+    padding: 8px 40px 8px 20px;
+}
+
+.multiselect-box .chip:before {
+    content: "";
+    position: absolute;
+    background-image: url(../../../public/img/x-icon.svg);
+    width: 7px;
+    height: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 11px;
+    pointer-events: none;
+}
+
+.multiselect-box .chip .closeIcon {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    right: 11px;
+}
+
+.multiselect-box .highlightOption {
+    background: transparent;
+    color: #000;
+}
+
+
+.multiselect-box .optionContainer li:hover {
+    background: #AA0061;
+}
