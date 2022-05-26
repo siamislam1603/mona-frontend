@@ -7,14 +7,10 @@ import DragDropSingle from "../components/DragDropSingle";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import validateForm from '../helpers/validateForm';
+import ImageCropper from '../components/ImageCropper';
+import Popup from '../components/Popup';
 
 const animatedComponents = makeAnimated();
-// const styles = {
-//   option: (styles, state) => ({
-//     ...styles,
-//     backgroundColor: state.isSelected ? "#E27235" : "",
-//   }),
-// };
 
 const training = [
   {
@@ -28,21 +24,20 @@ const training = [
 ];
 
 const NewUser = () => {
-
-  const [file, setFile] = useState({});
   const [formErrors, setFormErrors] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
   const [formData, setFormData] = useState({ city: "", phone: "", role: "", trainingCategories: [] })
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
   const [cityData, setCityData] = useState([]);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState(undefined);
+  const [croppedImage, setCroppedImage] = useState(undefined);
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
     const response = await axios.post('http://localhost:4000/auth/signup', data);
-    if(response.status === 201) {
-      console.log(response);
-    }
+    console.log('RESPONSE:', response);
   };
 
   const handleChange = event => {
@@ -59,6 +54,24 @@ const NewUser = () => {
     setIsSubmit(true);
   };
 
+  const onUploadFile = (files) => {
+    if (files && files.length > 0) {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+            return (
+                setImageToCrop(reader.result)
+            );
+        });
+
+        reader.readAsDataURL(files[0]);
+    }
+  };
+
+  const setCroppedImageInPopup = () => {
+    if(croppedImage) {
+      setImageToCrop(croppedImage.croppedImageURL);
+    }
+  }
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST 
   const fetchCountryData = async () => {
@@ -106,17 +119,19 @@ const NewUser = () => {
 
   useEffect(() => {
     if(Object.keys(formErrors).length === 0 && isSubmit === true) {
-      setFormData(prevState => ({
-        ...prevState,
-        file: file.file[0]
-      }));
-      createUser(formData);
+      let data = new FormData();
+      for(let [key, value] of Object.entries(formData)) {
+        data.append(`${key}`, `${value}`);
+      }
+
+      if(imageToCrop) {
+        data.append("file", croppedImage.croppedImageFILE);
+        createUser(data);
+      } else {
+        console.log('Choose & Crop an image first!');
+      }
     }
   }, [formErrors]);
-
-  if(Object.keys(file).length !== 0) {
-    console.log(file.file[0]);
-  }
 
   return (
     <>
@@ -136,9 +151,23 @@ const NewUser = () => {
                   <div className="maincolumn">
                     <div className="new-user-sec">
                       <div className="user-pic-sec">
-                        <DragDropSingle
-                          file={file}
-                          setFile={setFile} />
+                        <DragDropSingle 
+                          imageToCrop={imageToCrop}
+                          onChange={onUploadFile}
+                          setPopupVisible={setPopupVisible} />
+
+                        <Popup show={popupVisible}>
+                          <ImageCropper
+                              imageToCrop={imageToCrop}
+                              onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
+                          />
+                          <input type="submit" className="popup-button" value="CROP" onClick={() => {
+                            return(
+                              setCroppedImageInPopup(),
+                              setPopupVisible(false)
+                            );
+                          }}/>
+                        </Popup>
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
