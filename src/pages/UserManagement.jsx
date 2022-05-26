@@ -12,6 +12,9 @@ import axios from "axios";
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
+
+const BACKEND_BASE_URL='http://localhost:4000';
+
 const styles = {
   option: (styles, state) => ({
     ...styles,
@@ -172,7 +175,7 @@ const UserManagement = () => {
         const { data } = response.data;
         setUserData(data.map(dt => ({
             id: dt.id,
-            name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role}`,
+            name: `${BACKEND_BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role}`,
             email: dt.email,
             number: dt.phone,
             location: dt.city
@@ -200,7 +203,7 @@ const UserManagement = () => {
                   <div className="user-management-sec">
                     <ToolkitProvider
                       keyField="name"
-                      data={products}
+                      data={userData}
                       columns={ columns }
                       search
                     >
