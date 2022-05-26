@@ -11,7 +11,7 @@ const AddUserRole = (props) => {
   // SAVING THE SELECTED PERMISSIONS INSIDE DATABASE
   const savePermissions = async data => {
     console.log('saving permissions!');
-    let response = await axios.post('http://localhost:3000/rbac/addRolePermissions', data);
+    let response = await axios.post('http://localhost:4000/rbac/addRolePermissions', data);
     console.log(response);
   }
 
@@ -43,7 +43,7 @@ const AddUserRole = (props) => {
   }
 
   const loadControllerAndActions = async () => {
-    let response = await axios.get('http://localhost:3000/rbac/fetchControllerAndActions');
+    let response = await axios.get('http://localhost:4000/rbac/fetchControllerAndActions');
     if(response.status === 200) {
       const { dataList } = response.data;
       setData(dataList);

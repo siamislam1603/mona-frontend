@@ -7,6 +7,7 @@ import Dashboard from "../pages/Dashboard";
 import ResetPassword from "../pages/ResetPassword";
 import UserManagement from "../pages/UserManagement";
 import NewUser from "../pages/NewUser";
+import AddUserRole from '../pages/AddUserRole';
 import FranchisorDashboard from "../pages/FranchisorDashboard";
 import FranchiseeDashboard from "../pages/FranchiseeDashboard";
 import EducatorDashboard from "../pages/EducatorDashboard";
@@ -52,6 +53,7 @@ const Main = () => {
         <Route path="/form/field/add" component={AddFormField} />
         <Route path="/form/add" component={AddFormBuilder} />
         <Route path="/form" component={ViewFormBuilder} />
+        <Route path="/add-role" component={AddUserRole} />
       </Switch>
     </main>
   );
