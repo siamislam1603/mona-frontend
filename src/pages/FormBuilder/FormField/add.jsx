@@ -11,13 +11,16 @@ const AddFormField = (props) => {
   const [groupFlag, setGroupFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [count, setCount] = useState(0);
-  const [Index,setIndex]=useState(1);
+  const [Index, setIndex] = useState(1);
   const [form, setForm] = useState([
     { field_type: "text" },
     { field_type: "radio", option: ["", ""] },
     { field_type: "checkbox", option: ["", ""] },
   ]);
+  const [sectionTitle, setSectionTitle] = useState("");
   const [errors, setErrors] = useState({});
+  const [section, setSection] = useState([]);
+  const [createSectionFlag, setCreateSectionFlag] = useState(false);
   const setField = (field, value, index, inner_index) => {
     counter++;
     setCount(counter);
@@ -58,7 +61,7 @@ const AddFormField = (props) => {
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar />
+                <LeftNavbar/>
               </aside>
               <div className="sec-column">
                 <TopHeader />
@@ -109,12 +112,12 @@ const AddFormField = (props) => {
                             </Col>
                           ) : (
                             <>
-                              <Col sm={6}>
+                              <Col xs={6}>
                                 <Form.Label className="formlabel">
                                   Label {index + 1}
                                 </Form.Label>
                               </Col>
-                              <Col sm={6}>
+                              <Col xs={6}>
                                 <div className="remove-button">
                                   <Button
                                     variant="link"
@@ -261,7 +264,7 @@ const AddFormField = (props) => {
 
                         <div className="apply-section">
                           <Row>
-                            <Col sm={6}>
+                            <Col md={6}>
                               <div className="apply-condition">
                                 {!(form[index]?.field_type === "text") ? (
                                   <>
@@ -282,6 +285,7 @@ const AddFormField = (props) => {
                                     <Button
                                       onClick={() => {
                                         setConditionFlag(!conditionFlag);
+                                        setIndex(index);
                                       }}
                                     >
                                       Apply Condition
@@ -290,12 +294,14 @@ const AddFormField = (props) => {
                                 ) : null}
                               </div>
                             </Col>
-                            <Col sm={6}>
+                            <Col md={6}>
                               <div className="add-group-t-button">
                                 <div className="add-g">
                                   <Button
                                     onClick={() => {
                                       setGroupFlag(!groupFlag);
+                                      setCreateSectionFlag(false);
+                                      setIndex(index);
                                     }}
                                   >
                                     <FontAwesomeIcon icon={faPlus} />
@@ -313,7 +319,7 @@ const AddFormField = (props) => {
                                     onChange={(e) => {
                                       setField(
                                         e.target.name,
-                                        e.target.value,
+                                        e.target.checked,
                                         index
                                       );
                                     }}
@@ -344,111 +350,125 @@ const AddFormField = (props) => {
                           <FontAwesomeIcon icon={faPlus} /> Add Question
                         </Button>
                       </div>
-                      <div className="button">
+                      <div className="button mb-5">
                         <Button className="preview">Preview</Button>
                         <Button className="saveForm">Save Form</Button>
                       </div>
                     </Col>
                   </Row>
                   <div className="applyCondition-modal">
-                    <Modal
-                      show={conditionFlag}
-                      onHide={() => setConditionFlag(false)}
-                      size="lg"
-                      aria-labelledby="contained-modal-title-vcenter"
-                      centered
-                    >
-                      <Modal.Header closeButton>
-                        <Modal.Title
-                          id="contained-modal-title-vcenter"
-                          className="modal-heading"
-                        >
-                          Condition
-                        </Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        <div className="modal-condtion">
-                          
-                          {form[Index]?.["option"].map((item,index)=>{
-                            return (<Row>
-                              <Col sm={12}>
-                                <Form.Label className="formlabel modal-m-lable">
-                                  If{" "}
-                                  <span className="modal-lable">{item ? item : "Option "+(index+1)} </span>is
-                                  selected,
-                                </Form.Label>
-                              </Col>
-                              <Col sm={12}>
-                              
-                                <Form.Label>Label</Form.Label>
-                                
-                              </Col>
-                              <Col sm={6}>
-                              <Form.Control
-                                  type="text"
-                                  name="form_label"
-                                  placeholder="Some text here for the label"
-                                />
-                              </Col>
-                              <Col sm={6}>
-                                <div className="text-answer-div">
-                                  <Form.Select name="field_type">
-                                    <option> Field Type</option>
-                                    <option value="text">Text Answer</option>
-                                    <option value="radio">Multiple Choice</option>
-                                    <option value="checkbox">Checkboxes</option>
-                                  </Form.Select>
-                                  <div className="input-text-img">
-                                    <img src="../../img/check_boxIcon.svg" />
-                                  </div>
-                                  {/* <div className="input-select-arrow">
+                    {form[Index]?.["option"] ? (
+                      <Modal
+                        show={conditionFlag}
+                        onHide={() => {
+                          setConditionFlag(false);
+                        }}
+                        size="lg"
+                        aria-labelledby="contained-modal-title-vcenter"
+                        centered
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title
+                            id="contained-modal-title-vcenter"
+                            className="modal-heading"
+                          >
+                            Condition
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <div className="modal-condtion">
+                            {form[Index]?.["option"].map((item, index) => {
+                              return (
+                                <Row>
+                                  <Col sm={12}>
+                                    <Form.Label className="formlabel modal-m-lable">
+                                      If{" "}
+                                      <span className="modal-lable">
+                                        {item ? item : "Option " + (index + 1)}{" "}
+                                      </span>
+                                      is selected,
+                                    </Form.Label>
+                                  </Col>
+                                  <Col sm={12}>
+                                    <Form.Label>Label</Form.Label>
+                                  </Col>
+                                  <Col lg={6}>
+                                    <Form.Control
+                                      type="text"
+                                      name="form_label"
+                                      placeholder="Some text here for the label"
+                                    />
+                                  </Col>
+                                  <Col lg={6} className="mt-3 mt-lg-0">
+                                    <div className="text-answer-div">
+                                      <Form.Select name="field_type">
+                                        <option> Field Type</option>
+                                        <option value="text">
+                                          Text Answer
+                                        </option>
+                                        <option value="radio">
+                                          Multiple Choice
+                                        </option>
+                                        <option value="checkbox">
+                                          Checkboxes
+                                        </option>
+                                      </Form.Select>
+                                      <div className="input-text-img">
+                                        <img src="../../img/check_boxIcon.svg" />
+                                      </div>
+                                      {/* <div className="input-select-arrow">
                         <img src="../../img/input-select-arrow.svg"/>
                       </div> */}
-                                </div>
-                              </Col>
-                              <Col sm={6}>
-                                <div className="my-form-input my-form-input-modal">
-                                  <Form.Control
-                                    type="text"
-                                    name="form_label"
-                                    id="inputPassword5"
-                                    aria-describedby="passwordHelpBlock"
-                                    placeholder="Option 1"
-                                  />
-                                  <div className="delete-icon modal-remove-icon">
-                                    <img src="../../img/removeIcon.svg" />
+                                    </div>
+                                  </Col>
+                                  <Col lg={6}>
+                                    <div className="my-form-input my-form-input-modal">
+                                      <Form.Control
+                                        type="text"
+                                        name="form_label"
+                                        id="inputPassword5"
+                                        aria-describedby="passwordHelpBlock"
+                                        placeholder="Option 1"
+                                      />
+                                      <div className="delete-icon modal-remove-icon">
+                                        <img src="../../img/removeIcon.svg" />
+                                      </div>
+                                    </div>
+                                  </Col>
+                                  <Col lg={6}>
+                                    <div className="my-form-input my-form-input-modal">
+                                      <Form.Control
+                                        type="text"
+                                        name="form_label"
+                                        id="inputPassword5"
+                                        aria-describedby="passwordHelpBlock"
+                                        placeholder="Option 2"
+                                      />
+                                      <div className="delete-icon modal-remove-icon">
+                                        <img src="../../img/removeIcon.svg" />
+                                      </div>
+                                    </div>
+                                  </Col>
+
+                                  <div className="apply-condition pb-2">
+                                    <Button>
+                                      <FontAwesomeIcon icon={faPlus} /> Add
+                                      Option
+                                    </Button>
                                   </div>
-                                </div>
-                              </Col>
-                              <Col sm={6}>
-                                <div className="my-form-input my-form-input-modal">
-                                  <Form.Control
-                                    type="text"
-                                    name="form_label"
-                                    id="inputPassword5"
-                                    aria-describedby="passwordHelpBlock"
-                                    placeholder="Option 2"
-                                  />
-                                  <div className="delete-icon modal-remove-icon">
-                                    <img src="../../img/removeIcon.svg" />
-                                  </div>
-                                </div>
-                              </Col>
-  
-                              <div className="apply-condition pb-2">
-                                <Button>
-                                  <FontAwesomeIcon icon={faPlus} /> Add Option
-                                </Button>
-                              </div>
-                            </Row>)
-                          })}
-                        </div>
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button className="back">Back</Button>
-                        <Button className="done">Done</Button>
-                      </Modal.Footer>
-                    </Modal>
+                                </Row>
+                              );
+                            })}
+                          </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button className="back" onClick={()=>{
+                            setConditionFlag(false);
+                          }}>Back</Button>
+                          <Button className="done">Done</Button>
+                        </Modal.Footer>
+                      </Modal>
+                    ) : null}
                   </div>
 
                   <div className="select-section-modal">
@@ -470,58 +490,87 @@ const AddFormField = (props) => {
                       <Modal.Body>
                         <div className="modalTwo-select">
                           <div className="modal-two-check">
-                            <label class="container">
-                              Section Name 1
-                              <input type="checkbox" />
-                              <span class="checkmark"></span>
-                            </label>
-                            <label class="container">
-                              Section Name 2
-                              <input type="checkbox" />
-                              <span class="checkmark"></span>
-                            </label>
-                            <label class="container">
-                              Section Name 3
-                              <input type="checkbox" />
-                              <span class="checkmark"></span>
-                            </label>
-                            <label class="container">
-                              Section Name 4
-                              <input type="checkbox" />
-                              <span class="checkmark"></span>
-                            </label>
-                            <label class="container">
-                              Section Name 5
-                              <input type="checkbox" />
-                              <span class="checkmark"></span>
-                            </label>
+                            {section?.map((item) => {
+                              return (
+                                <label class="container">
+                                  {item}
+                                  <input
+                                    type="checkbox"
+                                    name={item}
+                                    onChange={(e) => {
+                                        counter++;
+                                        setCount(counter);
+                                        e.target.name=e.target.name.toLocaleLowerCase().replace(" ","_");
+                                        const tempArr = form;
+                                        const tempObj = tempArr[Index];
+                                        tempObj[e.target.name] = e.target.checked;
+                                        tempArr[Index] = tempObj;
+                                        setForm(tempArr);
+                                      console.log("e---->", e.target.checked);
+                                    }}
+                                  />
+                                  <span class="checkmark"></span>
+                                </label>
+                              );
+                            })}
                           </div>
                         </div>
                       </Modal.Body>
                       <Modal.Footer>
-                        <div className="apply-condition modal-two-footer pb-2">
-                          <Button>
-                            <FontAwesomeIcon icon={faPlus} /> Create Section
-                          </Button>
-                        </div>
-                        <Button className="done">Done</Button>
-                        {/* <div className="three-modal-footer">
-                      <div className="modal-three">
-                      <div className="my-form-input my-form-input-modal">
-                          <Form.Control
-                            className="mb-0"
-                            type="text"
-                            name="form_label"
-                            id="inputPassword5"
-                            aria-describedby="passwordHelpBlock"
-                            placeholder=""
-                          />
-                          <Button className="right-button">
-                          <img src="../../img/right-sign-img.svg" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div> */}
+                        {!createSectionFlag ? (
+                          <>
+                            <div className="apply-condition modal-two-footer pb-2">
+                              <Button
+                                onClick={() => {
+                                  setCreateSectionFlag(true);
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faPlus} /> Create Section
+                              </Button>
+                            </div>
+                            <Button
+                              className="done"
+                              onClick={() => {
+                                setGroupFlag(!groupFlag);
+                              }}
+                            >
+                              Done
+                            </Button>
+                          </>
+                        ) : null}
+
+                        {createSectionFlag ? (
+                          <div className="three-modal-footer">
+                            <div className="modal-three">
+                              <div className="my-form-input my-form-input-modal">
+                                <Form.Control
+                                  className="mb-0"
+                                  type="text"
+                                  name="section_title"
+                                  value={sectionTitle}
+                                  onChange={(e) => {
+                                    setSectionTitle(e.target.value);
+                                  }}
+                                  placeholder="Section"
+                                />
+                                <Button
+                                  className="right-button"
+                                  onClick={() => {
+                                    counter++;
+                                    setCount(counter);
+                                    let sectionData = section;
+                                    sectionData.push(sectionTitle);
+                                    setSection(sectionData);
+                                    setSectionTitle("");
+                                    setCreateSectionFlag(false);
+                                  }}
+                                >
+                                  <img src="../../img/right-sign-img.svg" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
                       </Modal.Footer>
                     </Modal>
                   </div>
@@ -545,25 +594,25 @@ const AddFormField = (props) => {
                     <Modal.Body>
                       <div className="form-settings-content">
                         <Row>
-                          <Col lg={3}>
+                          <Col lg={3} sm={6}>
                             <Form.Group>
                               <Form.Label>Start Date</Form.Label>
                               <Form.Control type="date" name="form_name" />
                             </Form.Group>
                           </Col>
-                          <Col lg={3}>
+                          <Col lg={3} sm={6} className="mt-3 mt-sm-0">
                             <Form.Group>
                               <Form.Label>Start Time</Form.Label>
                               <Form.Control type="time" name="form_name" />
                             </Form.Group>
                           </Col>
-                          <Col lg={3}>
+                          <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                             <Form.Group>
                               <Form.Label>End Date</Form.Label>
                               <Form.Control type="date" name="form_name" />
                             </Form.Group>
                           </Col>
-                          <Col lg={3}>
+                          <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                             <Form.Group>
                               <Form.Label>End Time</Form.Label>
                               <Form.Control type="time" name="form_name" />
@@ -571,7 +620,7 @@ const AddFormField = (props) => {
                           </Col>
                         </Row>
                         <Row className="mt-4">
-                          <Col lg={3}>
+                          <Col lg={3} md={6}>
                             <Form.Group>
                               <Form.Label>
                                 Applicable to all franchisee
@@ -604,7 +653,7 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          <Col lg={9}>
+                          <Col lg={9} md={6} className="mt-3 mt-md-0">
                             <Form.Group>
                               <Form.Label>Select Franchisee</Form.Label>
                               <Multiselect
@@ -650,7 +699,7 @@ const AddFormField = (props) => {
                           </Col>
                         </Row>
                         <Row className="mt-4">
-                          <Col lg={3}>
+                          <Col lg={3} md={6}>
                             <Form.Group>
                               <Form.Label>Applicable to all users</Form.Label>
                               <div className="new-form-radio">
@@ -681,7 +730,7 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          <Col lg={9}>
+                          <Col lg={9} md={6}  className="mt-3 mt-md-0">
                             <Form.Group>
                               <Form.Label>Select User Roles</Form.Label>
                               <Multiselect

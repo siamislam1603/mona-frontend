@@ -72,7 +72,7 @@ function AddFormBuilder(props) {
                 </Row>
                 <Form>
                   <Row>
-                    <Col sm={6}>
+                    <Col md={6}>
                       <Form.Group>
                         <Form.Label>Form title</Form.Label>
                         <Form.Control
@@ -88,7 +88,7 @@ function AddFormBuilder(props) {
                           </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
-                    <Col sm={6}>
+                    <Col md={6} className="mt-3 mt-md-0">
                       <Form.Group>
                         <Form.Label>Form Type</Form.Label>
                         <Form.Select
@@ -132,7 +132,7 @@ function AddFormBuilder(props) {
                           </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
-                    <Col sm={6}>
+                    <Col md={6}>
                       <Form.Group>
                         <Form.Label>
                           Select Previous Form as a Template
@@ -174,7 +174,7 @@ function AddFormBuilder(props) {
                       </Form.Group>
                     </Col>
                     {form?.form_template_select === "Yes" ? (
-                      <Col sm={6}>
+                      <Col md={6}  className="mt-3 mt-md-0">
                         <Form.Group>
                           <Form.Label>Select Previous Form</Form.Label>
                           <Form.Select name="previous_form" isInvalid={!!errors.previous_form}>
@@ -193,7 +193,7 @@ function AddFormBuilder(props) {
                     ) : null}
 
                     <Col sm={12}>
-                      <div className="mt-5 d-flex justify-content-center">
+                      <div className="mt-5 mb-5 d-flex justify-content-center">
                         <Button
                           className="theme-light"
                           onClick={() => {
