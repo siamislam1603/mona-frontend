@@ -17,6 +17,7 @@ import OperatingManual from "../pages/OperatingManual/view";
 import AddFormBuilder from "../pages/FormBuilder/add";
 import ViewFormBuilder from "../pages/FormBuilder/view";
 import AddFormField from "../pages/FormBuilder/FormField/add";
+import FormResponse from "../pages/FormBuilder/FormResponse";
 
 
 const Main = () => {
@@ -51,7 +52,9 @@ const Main = () => {
         <Route path="/operatingmanual" component={OperatingManual}/>
         <Route path="/form/field/add" component={AddFormField} />
         <Route path="/form/add" component={AddFormBuilder} />
+        <Route path="/form/response" component={FormResponse} />
         <Route path="/form" component={ViewFormBuilder} />
+        
       </Switch>
     </main>
   );
