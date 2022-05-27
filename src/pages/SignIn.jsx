@@ -56,7 +56,7 @@ const SignIn = () => {
                 </div>
 
                 <Form className="login_form" onSubmit={handleSubmit}>
-                  <Form.Group className="mb-4" controlId="formBasicEmail">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicEmail">
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control
                       type="email"
@@ -68,7 +68,7 @@ const SignIn = () => {
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-4" controlId="formBasicPassword">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       className="form_input"
@@ -97,12 +97,12 @@ const SignIn = () => {
                     )}
                   </Form.Group>
 
-                  <Form.Group className="mb-4" controlId="formBasicCheckbox">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicCheckbox">
                     <Row>
-                      <Col md={8}>
+                      <Col>
                         <Form.Check type="checkbox" label="Remember me" />
                       </Col>
-                      <Col md={4} className="text-end">
+                      <Col className="text-end">
                         <Link to="/resetpassword" className="custom_rest">
                           Reset Password?
                         </Link>

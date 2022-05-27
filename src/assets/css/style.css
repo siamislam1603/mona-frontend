@@ -37,6 +37,7 @@ ul,ol{margin-bottom:2rem;}
 li{margin-bottom:0.5rem;}
 .figure{margin:0;}
 .figure-caption{color:var(--black);}
+label { margin-left: 0; }
 a:hover,a:focus,button,.btn{text-decoration:none;outline:0 !important;outline-offset:0px !important;}
 .row-gap{margin:0 -5px;}
 .row-gap [class*='col-'],.row-gap .col{padding:0 5px;}
