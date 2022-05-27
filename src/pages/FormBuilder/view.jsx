@@ -166,7 +166,7 @@ function ViewFormBuilder(props) {
                         </Row>
                       </div>
                     </Tab>
-                    <Tab eventKey="profile" title="Forms I filled">
+                    <Tab eventKey="profile" title="Completed Forms">
                       <div className="forms-content-section">
                         <Row>
                           {formData?.map((item) => {
@@ -214,7 +214,7 @@ function ViewFormBuilder(props) {
                         </Row>
                       </div>
                     </Tab>
-                    <Tab eventKey="contact" title="My Created Forms">
+                    <Tab eventKey="contact" title="Created Forms">
                       <div className="forms-content-section">
                         <Row>
                           {formData?.map((item) => {
