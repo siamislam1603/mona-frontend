@@ -1,8 +1,24 @@
+import axios from "axios";
 import React from "react";
 import { Navbar, Nav, Dropdown, DropdownButton } from "react-bootstrap";
 import Select from 'react-select';
 
 const TopHeader = () => {
+
+    const logout = async () => {
+      console.log('LOGGING USER OUT');
+      const response = await axios.get("http://3.26.39.12:4000/auth/logout");
+      console.log("LOGOUT RESPONSE:", response);
+      if(response.status === 200) {
+        localStorage.removeItem('token');
+        window.location.href = "/";
+      }
+    };
+
+    const handleLogout = event => {
+      logout();
+    };
+
     return (
       <>
         <div className="topheader">
@@ -41,7 +57,7 @@ const TopHeader = () => {
                       <Dropdown.Item href="#">File Repository</Dropdown.Item>
                       <Dropdown.Item href="#">My Profile</Dropdown.Item>
                       <Dropdown.Item href="#">Settings</Dropdown.Item>
-                      <Dropdown.Item href="#">Logout</Dropdown.Item>
+                      <Dropdown.Item href="#" onClick={handleLogout}>Logout</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 </li>

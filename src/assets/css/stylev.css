@@ -539,8 +539,8 @@ button:focus {
 }
 
 .my-new-formsection label,
-input[type=text],
-select {
+.my-new-formsection input[type=text],
+.my-new-formsection select {
     background-color: #fff !important;
     border: 1px solid #4242421A !important;
     border-radius: 5px !important;
