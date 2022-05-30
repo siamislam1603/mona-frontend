@@ -292,8 +292,6 @@ button:focus {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-
-
     background-clip: padding-box;
     border: 1px solid #ced4da;
     appearance: none;
@@ -1126,5 +1124,15 @@ select {
     padding-bottom: 60px;
 }
 
+.my-new-formsection .invalid-feedback {
+    margin-top: -17px;
+    margin-bottom: 9px;
+}
 
+.my-new-formsection input.form-control.is-invalid {
+    background-image: none;
+}
 
+.my-new-formsection button.right-button.btn.btn-primary {
+    background-color: #455c58;
+}

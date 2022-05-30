@@ -37,9 +37,7 @@ function AddFormBuilder(props) {
       })
         .then((res) => res.json())
         .then((res) => {
-          alert("Successfully added");
-
-          props.history.push("/form/field/add");
+          props.history.push(`/form/field/add`,{form_name: form?.form_name});
         });
     }
   };

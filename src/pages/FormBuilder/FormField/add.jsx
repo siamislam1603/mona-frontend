@@ -5,63 +5,157 @@ import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import LeftNavbar from "../../../components/LeftNavbar";
 import TopHeader from "../../../components/TopHeader";
 import Multiselect from "multiselect-react-dropdown";
+import { createFormFieldValidation } from "../../../helpers/validation";
+import { BASE_URL } from "../../../components/App";
 let counter = 0;
+
 const AddFormField = (props) => {
+  console.log("props----",props?.location?.state?.form_name);
   const [conditionFlag, setConditionFlag] = useState(false);
   const [groupFlag, setGroupFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
-  const [form, setForm] = useState([
+  
+  const [form, setForm] = useState([  
     { field_type: "text" },
-    { field_type: "radio", option: ["", ""] },
-    { field_type: "checkbox", option: ["", ""] },
+    { field_type: "radio", option: [{ "": "" }, { "": "" }] },
+    { field_type: "checkbox", option: [{ "": "" }, { "": "" }] },
   ]);
   const [sectionTitle, setSectionTitle] = useState("");
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState([{}]);
+  const [conditionErrors, setConditionErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
+  const setConditionField = (
+    field,
+    value,
+    index,
+    inner_index,
+    inner_inner_index,
+    key
+  ) => {
+    counter++;
+    setCount(counter);
+    const tempArr = form;
+    const tempObj = tempArr[index];
+    const tempOption = tempObj["option"];
+    if (field === "option") {
+      const keyOfOption = tempOption[inner_index];
+      keyOfOption[key]["option"][inner_inner_index] = { [value]: value };
+      tempOption[inner_index] = keyOfOption;
+      tempArr[index]["option"] = tempOption;
+      setForm(tempArr);
+    } else {
+      const keyOfOption = tempOption[inner_index];
+      keyOfOption[key][field] = value;
+      tempOption[inner_index] = keyOfOption;
+      tempArr[index]["option"] = tempOption;
+      setForm(tempArr);
+    }
+  };
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const newErrors = createFormFieldValidation(form);
+    let error_flag = false;
+    newErrors.map((item) => {
+      if (Object.values(item)[0]) {
+        if (Array.isArray(Object.values(item)[0])) {
+          Object.values(item)[0].map((inner_item) => {
+            if (inner_item || !inner_item === "") {
+              error_flag=true;
+            }
+          });
+        }
+        else{
+          if(!item==="" || item)
+          {
+            error_flag=true;
+          }
+        }
+      }
+    });
+    if(error_flag)
+    {
+      setErrors(newErrors);
+    }
+    else
+    {
+      
+      // var myHeaders = new Headers();
+      // myHeaders.append("Content-Type", "application/json");
+      // fetch(`${BASE_URL}/field/add?form_name=${props?.location?.state?.form_name}`, {
+      //   method: "post",
+      //   body: JSON.stringify(form),
+      //   headers: myHeaders,
+      // })
+      //   .then((res) => res.json())
+      //   .then((res) => {
+      //     alert("Submit Successfully---->");
+      //     props.history.push(`/form`);
+      //   });
+    }
+    
+  };
   const setField = (field, value, index, inner_index) => {
     counter++;
     setCount(counter);
     setIndex(index);
+    const tempArr = form;
+    const tempObj = tempArr[index];
     if (field === "option") {
-      const tempArr = form;
-      const tempObj = tempArr[index];
       const tempOption = tempObj["option"];
-      tempOption[inner_index] = value;
+      tempOption[inner_index] = { [value]: value };
       tempArr[index]["option"] = tempOption;
       setForm(tempArr);
     } else if (field === "field_type" && !(value === "text")) {
-      const tempArr = form;
-      const tempObj = tempArr[index];
-      tempObj["option"] = ["", ""];
+      tempObj["option"] = [{ "": "" }, { "": "" }];
       tempObj[field] = value;
       tempArr[index] = tempObj;
       setForm(tempArr);
     } else {
-      const tempArr = form;
-      const tempObj = tempArr[index];
       tempObj[field] = value;
       tempArr[index] = tempObj;
       setForm(tempArr);
     }
-    if (!!errors[field]) {
-      setErrors({
-        ...errors,
-        [field]: null,
-      });
+    console.log("errors[index][field]---->", errors[index][field]);
+    if (!!errors[index][field]) {
+      if (field === "option") {
+        let tempErrorArray = errors;
+        let tempErrorObj = tempErrorArray[index];
+        tempErrorObj["option"][inner_index] = undefined;
+        tempErrorArray[index] = tempErrorObj;
+
+        setErrors(tempErrorArray);
+        console.log(
+          "option.length--->",
+          tempErrorObj["option"].length,
+          "======",
+          inner_index,
+          "-------",
+          tempErrorObj["option"]
+        );
+        console.log("Hello--->", tempErrorArray);
+      } else {
+        let tempErrorArray = errors;
+        let tempErrorObj = tempErrorArray[index];
+        delete tempErrorObj[field];
+        tempErrorArray[index] = tempErrorObj;
+        setErrors(tempErrorArray);
+        console.log("Hello--->", tempErrorArray);
+      }
     }
   };
   return (
     <>
+      {console.log("newErrors- 12121---", errors)}
       {console.log("form--->", form)}
       <div id="main">
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
                 <TopHeader />
@@ -125,7 +219,7 @@ const AddFormField = (props) => {
                                       counter++;
                                       setCount(counter);
                                       let data = form;
-                                      data.pop(index);
+                                      data.splice(index, 1);
                                       setForm(data);
                                     }}
                                   >
@@ -143,7 +237,7 @@ const AddFormField = (props) => {
                               <div className="my-form-input">
                                 <Form.Control
                                   type="text"
-                                  name="form_label"
+                                  name="field_label"
                                   onChange={(e) => {
                                     setField(
                                       e.target.name,
@@ -152,7 +246,11 @@ const AddFormField = (props) => {
                                     );
                                   }}
                                   placeholder="Some text here for the label"
+                                  isInvalid={!!errors[index]?.field_label}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                  {errors[index]?.field_label}
+                                </Form.Control.Feedback>
                                 <div className="input-img">
                                   <img src="../../img/input-img.svg" />
                                 </div>
@@ -216,14 +314,19 @@ const AddFormField = (props) => {
                                   (item, inner_index) => {
                                     return (
                                       <Col sm={6}>
+                                        {console.log(
+                                          "item---->",
+                                          item[Object.keys(item)[0]]
+                                        )}
                                         <div className="my-form-input">
                                           <Form.Control
                                             type="text"
                                             name="option"
+                                            value={Object.keys(item)[0]}
                                             onChange={(e) => {
                                               setField(
                                                 e.target.name,
-                                                e.target.value.trim(),
+                                                e.target.value,
                                                 index,
                                                 inner_index
                                               );
@@ -231,7 +334,21 @@ const AddFormField = (props) => {
                                             placeholder={
                                               "Option " + (inner_index + 1)
                                             }
+                                            isInvalid={
+                                              errors[index]?.option
+                                                ? !!errors[index]?.option[
+                                                    inner_index
+                                                  ]
+                                                : null
+                                            }
                                           />
+                                          <Form.Control.Feedback type="invalid">
+                                            {errors[index]?.option
+                                              ? errors[index]?.option[
+                                                  inner_index
+                                                ]
+                                              : ""}
+                                          </Form.Control.Feedback>
                                           <div className="delete-icon">
                                             <img
                                               src="../../img/removeIcon.svg"
@@ -243,8 +360,9 @@ const AddFormField = (props) => {
                                                 ) {
                                                   counter++;
                                                   setCount(counter);
-                                                  tempObj["option"].pop(
-                                                    inner_index
+                                                  tempObj["option"].splice(
+                                                    inner_index,
+                                                    1
                                                   );
                                                   tempArr[index] = tempObj;
                                                   setForm(tempArr);
@@ -274,7 +392,7 @@ const AddFormField = (props) => {
                                         setCount(counter);
                                         const tempArr = form;
                                         const tempObj = tempArr[index];
-                                        tempObj["option"].push("");
+                                        tempObj["option"].push({ "": "" });
                                         tempArr[index] = tempObj;
                                         setForm(tempArr);
                                       }}
@@ -284,8 +402,33 @@ const AddFormField = (props) => {
                                     </Button>
                                     <Button
                                       onClick={() => {
-                                        setConditionFlag(!conditionFlag);
+                                        let fillOptionCounter = 0;
                                         setIndex(index);
+                                        const tempArr = form;
+                                        const tempObj = tempArr[index];
+                                        const tempOption = tempObj["option"];
+                                        tempOption.map((item) => {
+                                          if (!(Object.keys(item)[0] === "")) {
+                                            fillOptionCounter++;
+                                          }
+                                        });
+                                        if (
+                                          tempOption.length ===
+                                          fillOptionCounter
+                                        ) {
+                                          setConditionFlag(!conditionFlag);
+                                          tempOption.map((item) => {
+                                            item[Object.keys(item)[0]] = {
+                                              field_type: "text",
+                                              option: [{ "": "" }, { "": "" }],
+                                            };
+                                          });
+                                        } else {
+                                          alert("Please Fill Option First");
+                                        }
+
+                                        tempArr[index]["option"] = tempOption;
+                                        setForm(tempArr);
                                       }}
                                     >
                                       Apply Condition
@@ -352,12 +495,14 @@ const AddFormField = (props) => {
                       </div>
                       <div className="button mb-5">
                         <Button className="preview">Preview</Button>
-                        <Button className="saveForm">Save Form</Button>
+                        <Button className="saveForm" onClick={onSubmit}>
+                          Save Form
+                        </Button>
                       </div>
                     </Col>
                   </Row>
                   <div className="applyCondition-modal">
-                    {form[Index]?.["option"] ? (
+                    {conditionFlag ? (
                       <Modal
                         show={conditionFlag}
                         onHide={() => {
@@ -377,14 +522,17 @@ const AddFormField = (props) => {
                         </Modal.Header>
                         <Modal.Body>
                           <div className="modal-condtion">
-                            {form[Index]?.["option"].map((item, index) => {
+                            {form[Index]?.["option"]?.map((item, index) => {
                               return (
                                 <Row>
                                   <Col sm={12}>
                                     <Form.Label className="formlabel modal-m-lable">
                                       If{" "}
                                       <span className="modal-lable">
-                                        {item ? item : "Option " + (index + 1)}{" "}
+                                        {Object.keys(item) &&
+                                        !(Object.keys(item)[0] === "")
+                                          ? Object.keys(item)[0]
+                                          : "Option " + (index + 1)}{" "}
                                       </span>
                                       is selected,
                                     </Form.Label>
@@ -395,14 +543,35 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
-                                      name="form_label"
+                                      name="field_label"
                                       placeholder="Some text here for the label"
+                                      onChange={(e) => {
+                                        setConditionField(
+                                          e.target.name,
+                                          e.target.value,
+                                          Index,
+                                          index,
+                                          0,
+                                          Object.keys(item)[0]
+                                        );
+                                      }}
                                     />
                                   </Col>
                                   <Col lg={6} className="mt-3 mt-lg-0">
                                     <div className="text-answer-div">
-                                      <Form.Select name="field_type">
-                                        <option> Field Type</option>
+                                      <Form.Select
+                                        name="field_type"
+                                        onChange={(e) => {
+                                          setConditionField(
+                                            e.target.name,
+                                            e.target.value,
+                                            Index,
+                                            index,
+                                            0,
+                                            Object.keys(item)[0]
+                                          );
+                                        }}
+                                      >
                                         <option value="text">
                                           Text Answer
                                         </option>
@@ -421,40 +590,143 @@ const AddFormField = (props) => {
                       </div> */}
                                     </div>
                                   </Col>
-                                  <Col lg={6}>
-                                    <div className="my-form-input my-form-input-modal">
-                                      <Form.Control
-                                        type="text"
-                                        name="form_label"
-                                        id="inputPassword5"
-                                        aria-describedby="passwordHelpBlock"
-                                        placeholder="Option 1"
-                                      />
-                                      <div className="delete-icon modal-remove-icon">
-                                        <img src="../../img/removeIcon.svg" />
-                                      </div>
-                                    </div>
-                                  </Col>
-                                  <Col lg={6}>
-                                    <div className="my-form-input my-form-input-modal">
-                                      <Form.Control
-                                        type="text"
-                                        name="form_label"
-                                        id="inputPassword5"
-                                        aria-describedby="passwordHelpBlock"
-                                        placeholder="Option 2"
-                                      />
-                                      <div className="delete-icon modal-remove-icon">
-                                        <img src="../../img/removeIcon.svg" />
-                                      </div>
-                                    </div>
-                                  </Col>
+                                  {!(
+                                    item[Object.keys(item)[0]].field_type ===
+                                    "text"
+                                  ) ? (
+                                    <>
+                                      {item[Object.keys(item)[0]]["option"].map(
+                                        (inner_item, inner_index) => {
+                                          return (
+                                            <Col lg={6}>
+                                              {console.log(
+                                                "inner_item--->",
+                                                inner_item[
+                                                  Object.keys(inner_item)[0]
+                                                ]
+                                              )}
+                                              <div className="my-form-input my-form-input-modal">
+                                                <Form.Control
+                                                  type="text"
+                                                  name="option"
+                                                  value={
+                                                    inner_item[
+                                                      Object.keys(inner_item)[0]
+                                                    ]
+                                                  }
+                                                  placeholder={
+                                                    "Option " +
+                                                    (inner_index + 1)
+                                                  }
+                                                  onChange={(e) => {
+                                                    setConditionField(
+                                                      e.target.name,
+                                                      e.target.value,
+                                                      Index,
+                                                      index,
+                                                      inner_index,
+                                                      Object.keys(item)[0]
+                                                    );
+                                                  }}
+                                                />
+                                                <div
+                                                  className="delete-icon modal-remove-icon"
+                                                  onClick={() => {
+                                                    counter++;
+                                                    setCount(counter);
+                                                    console.log(
+                                                      "index---->",
+                                                      index
+                                                    );
+                                                    console.log(
+                                                      "Index----->",
+                                                      Index
+                                                    );
+                                                    console.log(
+                                                      "Inner Index----->",
+                                                      inner_index
+                                                    );
+                                                    const tempArr = form;
+                                                    console.log(
+                                                      "tempArr----->",
+                                                      tempArr
+                                                    );
+                                                    const tempObj =
+                                                      tempArr[Index];
+                                                    console.log(
+                                                      "tempObj----->",
+                                                      tempObj
+                                                    );
+                                                    const tempOption =
+                                                      tempObj["option"];
+                                                    console.log(
+                                                      "tempOption----->",
+                                                      tempOption
+                                                    );
+
+                                                    const keyOfOption =
+                                                      tempOption[index];
+                                                    console.log(
+                                                      "tempOption----->",
+                                                      tempOption
+                                                    );
+                                                    console.log(
+                                                      "keyOfOption[Object.keys(item)[0]]------>",
+                                                      keyOfOption[
+                                                        Object.keys(item)[0]
+                                                      ]["option"]
+                                                    );
+                                                    keyOfOption[
+                                                      Object.keys(item)[0]
+                                                    ]["option"].splice(
+                                                      inner_index,
+                                                      1
+                                                    );
+                                                    tempOption[index] =
+                                                      keyOfOption;
+                                                    tempArr[Index]["option"] =
+                                                      tempOption;
+                                                    setForm(tempArr);
+                                                    counter++;
+                                                    setCount(counter);
+                                                  }}
+                                                >
+                                                  <img src="../../img/removeIcon.svg" />
+                                                </div>
+                                              </div>
+                                            </Col>
+                                          );
+                                        }
+                                      )}
+                                    </>
+                                  ) : null}
 
                                   <div className="apply-condition pb-2">
-                                    <Button>
-                                      <FontAwesomeIcon icon={faPlus} /> Add
-                                      Option
-                                    </Button>
+                                    {!(
+                                      item[Object.keys(item)[0]].field_type ===
+                                      "text"
+                                    ) ? (
+                                      <Button
+                                        onClick={() => {
+                                          counter++;
+                                          setCount(counter);
+                                          const tempArr = form;
+                                          const tempObj = tempArr[Index];
+                                          const tempOption = tempObj["option"];
+
+                                          const keyOfOption = tempOption[index];
+                                          keyOfOption[Object.keys(item)[0]][
+                                            "option"
+                                          ].push({ "": "" });
+                                          tempOption[index] = keyOfOption;
+                                          tempArr[Index]["option"] = tempOption;
+                                          setForm(tempArr);
+                                        }}
+                                      >
+                                        <FontAwesomeIcon icon={faPlus} /> Add
+                                        Option
+                                      </Button>
+                                    ) : null}
                                   </div>
                                 </Row>
                               );
@@ -462,9 +734,14 @@ const AddFormField = (props) => {
                           </div>
                         </Modal.Body>
                         <Modal.Footer>
-                          <Button className="back" onClick={()=>{
-                            setConditionFlag(false);
-                          }}>Back</Button>
+                          <Button
+                            className="back"
+                            onClick={() => {
+                              setConditionFlag(false);
+                            }}
+                          >
+                            Back
+                          </Button>
                           <Button className="done">Done</Button>
                         </Modal.Footer>
                       </Modal>
@@ -498,15 +775,16 @@ const AddFormField = (props) => {
                                     type="checkbox"
                                     name={item}
                                     onChange={(e) => {
-                                        counter++;
-                                        setCount(counter);
-                                        e.target.name=e.target.name.toLocaleLowerCase().replace(" ","_");
-                                        const tempArr = form;
-                                        const tempObj = tempArr[Index];
-                                        tempObj[e.target.name] = e.target.checked;
-                                        tempArr[Index] = tempObj;
-                                        setForm(tempArr);
-                                      console.log("e---->", e.target.checked);
+                                      counter++;
+                                      setCount(counter);
+                                      e.target.name = e.target.name
+                                        .toLocaleLowerCase()
+                                        .replace(" ", "_");
+                                      const tempArr = form;
+                                      const tempObj = tempArr[Index];
+                                      tempObj[e.target.name] = e.target.checked;
+                                      tempArr[Index] = tempObj;
+                                      setForm(tempArr);
                                     }}
                                   />
                                   <span class="checkmark"></span>
@@ -555,6 +833,7 @@ const AddFormField = (props) => {
                                 />
                                 <Button
                                   className="right-button"
+                                  disabled={sectionTitle==="" ? true : false}
                                   onClick={() => {
                                     counter++;
                                     setCount(counter);
@@ -730,7 +1009,7 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          <Col lg={9} md={6}  className="mt-3 mt-md-0">
+                          <Col lg={9} md={6} className="mt-3 mt-md-0">
                             <Form.Group>
                               <Form.Label>Select User Roles</Form.Label>
                               <Multiselect
