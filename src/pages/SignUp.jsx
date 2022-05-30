@@ -23,7 +23,7 @@ const SignUp = () => {
 
   // function to post data in the database
   const addUser = async (data) => {
-    const res = await axios.post('http://localhost:3000/signup', data);
+    const res = await axios.post('http://3.26.39.12:3000/signup', data);
     if(res.status === 201 && res.data?.status === "success") {
       localStorage.setItem("token", res.data.accessToken);
       window.location.href="/dashboard";

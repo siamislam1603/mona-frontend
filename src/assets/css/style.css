@@ -794,8 +794,20 @@ margin-top: 20px;
 }
 
 
+/* error */
+.error {
+  color: tomato;
+  margin-top: 4px;
+  display: inline-block; 
+}
 
-
+.toast-error {
+  display: block;
+  border: 1px solid tomato;
+  background: rgba(244, 170, 157, 0.753);
+  color: #fff;
+  padding: 0.5rem 1rem;
+}
 
 
 
