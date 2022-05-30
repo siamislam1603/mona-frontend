@@ -21,6 +21,7 @@ import AddFormField from "../pages/FormBuilder/FormField/add";
 import FormResponse from "../pages/FormBuilder/FormResponse";
 import Training from "../pages/Training";
 import AddNewTraining from "../pages/AddNewTraining";
+import TrainingDetail from "../pages/TrainingDetail";
 
 
 const Main = () => {
@@ -60,6 +61,7 @@ const Main = () => {
         <Route path="/add-role" component={AddUserRole} />
         <Route path="/training" component={Training} />
         <Route path="/new-training" component={AddNewTraining} />
+        <Route path="/training-detail" component={TrainingDetail} />
       </Switch>
     </main>
   );

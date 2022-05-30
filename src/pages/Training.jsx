@@ -128,10 +128,10 @@ const Training = () => {
                     <Row>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="#"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic1.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="#">Getting and staying organized</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -147,10 +147,10 @@ const Training = () => {
                       </Col>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="#"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic2.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="#">Getting and staying organized</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -166,10 +166,10 @@ const Training = () => {
                       </Col>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="#"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic3.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="#">Getting and staying organized</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -185,10 +185,10 @@ const Training = () => {
                       </Col>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="#"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic4.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="#">Getting and staying organized</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -204,10 +204,10 @@ const Training = () => {
                       </Col>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="#"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic5.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="#">Getting and staying organized</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -223,10 +223,10 @@ const Training = () => {
                       </Col>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="#"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic6.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="#">Getting and staying organized</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -242,10 +242,10 @@ const Training = () => {
                       </Col>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="#"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic7.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="#">Getting and staying organized</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -261,10 +261,10 @@ const Training = () => {
                       </Col>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="#"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic8.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="#">Getting and staying organized</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
