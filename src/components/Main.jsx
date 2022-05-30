@@ -19,6 +19,8 @@ import AddFormBuilder from "../pages/FormBuilder/add";
 import ViewFormBuilder from "../pages/FormBuilder/view";
 import AddFormField from "../pages/FormBuilder/FormField/add";
 import FormResponse from "../pages/FormBuilder/FormResponse";
+import Training from "../pages/Training";
+import AddNewTraining from "../pages/AddNewTraining";
 
 
 const Main = () => {
@@ -56,6 +58,8 @@ const Main = () => {
         <Route path="/form/response" component={FormResponse} />
         <Route path="/form" component={ViewFormBuilder} />
         <Route path="/add-role" component={AddUserRole} />
+        <Route path="/training" component={Training} />
+        <Route path="/new-training" component={AddNewTraining} />
       </Switch>
     </main>
   );
