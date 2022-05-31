@@ -1,16 +1,19 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import LeftNavbar from "../../../components/LeftNavbar";
 import TopHeader from "../../../components/TopHeader";
 import Multiselect from "multiselect-react-dropdown";
 import { createFormFieldValidation } from "../../../helpers/validation";
 import { BASE_URL } from "../../../components/App";
+import {useLocation,useNavigate} from 'react-router-dom';
 let counter = 0;
 
+
 const AddFormField = (props) => {
-  console.log("props----",props?.location?.state?.form_name);
+  const location = useLocation();
+  const navigate = useNavigate();
   const [conditionFlag, setConditionFlag] = useState(false);
   const [groupFlag, setGroupFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
@@ -27,6 +30,12 @@ const AddFormField = (props) => {
   const [conditionErrors, setConditionErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
+  useEffect(() => {
+    if(location?.state?.form_name)
+    {
+      getFormField();
+    }
+  }, []);
   const setConditionField = (
     field,
     value,
@@ -53,6 +62,31 @@ const AddFormField = (props) => {
       tempArr[index]["option"] = tempOption;
       setForm(tempArr);
     }
+  };
+  const getFormField = () =>{
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`${BASE_URL}/field?form_name=${location?.state?.form_name}`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if(res?.result.length>0)
+        {setForm(res?.result)}
+      })
+      .catch((error) => console.log("error", error));
+  }
+  const deleteFormField = (id) => {
+    var requestOptions = {
+      method: "DELETE",
+      redirect: "follow",
+    };
+
+    fetch(`${BASE_URL}/field/${id}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => console.log("delete data successfully!"))
+      .catch((error) => console.log("error", error));
   };
   const onSubmit = (e) => {
     e.preventDefault();
@@ -81,19 +115,18 @@ const AddFormField = (props) => {
     }
     else
     {
-      
-      // var myHeaders = new Headers();
-      // myHeaders.append("Content-Type", "application/json");
-      // fetch(`${BASE_URL}/field/add?form_name=${props?.location?.state?.form_name}`, {
-      //   method: "post",
-      //   body: JSON.stringify(form),
-      //   headers: myHeaders,
-      // })
-      //   .then((res) => res.json())
-      //   .then((res) => {
-      //     alert("Submit Successfully---->");
-      //     props.history.push(`/form`);
-      //   });
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      fetch(`${BASE_URL}/field/add?form_name=${location?.state?.form_name}`, {
+        method: "post",
+        body: JSON.stringify(form),
+        headers: myHeaders,
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          alert("Submit Successfully---->");
+          setForm(res?.result);
+        });
     }
     
   };
@@ -164,7 +197,7 @@ const AddFormField = (props) => {
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
-                          props.history.push("/form/add");
+                          navigate("/form/add");
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
@@ -219,6 +252,7 @@ const AddFormField = (props) => {
                                       counter++;
                                       setCount(counter);
                                       let data = form;
+                                      if(data[index]?.id){deleteFormField(data[index]?.id)}
                                       data.splice(index, 1);
                                       setForm(data);
                                     }}
@@ -238,10 +272,11 @@ const AddFormField = (props) => {
                                 <Form.Control
                                   type="text"
                                   name="field_label"
+                                  value={form[index]?.field_label}
                                   onChange={(e) => {
                                     setField(
                                       e.target.name,
-                                      e.target.value.trim(),
+                                      e.target.value,
                                       index
                                     );
                                   }}
@@ -634,48 +669,20 @@ const AddFormField = (props) => {
                                                   onClick={() => {
                                                     counter++;
                                                     setCount(counter);
-                                                    console.log(
-                                                      "index---->",
-                                                      index
-                                                    );
-                                                    console.log(
-                                                      "Index----->",
-                                                      Index
-                                                    );
-                                                    console.log(
-                                                      "Inner Index----->",
-                                                      inner_index
-                                                    );
+                                                    
                                                     const tempArr = form;
-                                                    console.log(
-                                                      "tempArr----->",
-                                                      tempArr
-                                                    );
+                                                    
                                                     const tempObj =
                                                       tempArr[Index];
-                                                    console.log(
-                                                      "tempObj----->",
-                                                      tempObj
-                                                    );
+                                                    
                                                     const tempOption =
                                                       tempObj["option"];
-                                                    console.log(
-                                                      "tempOption----->",
-                                                      tempOption
-                                                    );
+                                                    
 
                                                     const keyOfOption =
                                                       tempOption[index];
-                                                    console.log(
-                                                      "tempOption----->",
-                                                      tempOption
-                                                    );
-                                                    console.log(
-                                                      "keyOfOption[Object.keys(item)[0]]------>",
-                                                      keyOfOption[
-                                                        Object.keys(item)[0]
-                                                      ]["option"]
-                                                    );
+                                                    
+                                                    
                                                     keyOfOption[
                                                       Object.keys(item)[0]
                                                     ]["option"].splice(

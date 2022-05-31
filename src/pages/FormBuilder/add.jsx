@@ -4,7 +4,7 @@ import LeftNavbar from "../../components/LeftNavbar";
 import TopHeader from "../../components/TopHeader";
 import { BASE_URL } from "../../components/App";
 import { createFormValidation } from "../../helpers/validation";
-import { useNavigate } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
 function AddFormBuilder(props) {
   
@@ -12,8 +12,13 @@ function AddFormBuilder(props) {
   const [form, setForm] = useState({ form_template_select: "Yes" });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    if(location?.state?.id)
+    {
+      getParticularFormData();
+    }
     getFormData();
   }, []);
   const setField = (field, value) => {
@@ -41,11 +46,20 @@ function AddFormBuilder(props) {
       })
         .then((res) => res.json())
         .then((res) => {
-          alert("Hello")
-          console.log("history----->",props.history);
           navigate('/form/field/add',{state:{form_name: form?.form_name}});
         });
     }
+  };
+  const getParticularFormData = () => {
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`${BASE_URL}/form/${location?.state?.id}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => setForm(result?.result))
+      .catch((error) => console.log("error", error));
   };
   const getFormData = () => {
     var requestOptions = {
@@ -82,8 +96,9 @@ function AddFormBuilder(props) {
                         <Form.Control
                           type="text"
                           name="form_name"
+                          value={form?.form_name}
                           onChange={(e) => {
-                            setField(e.target.name, e.target.value.trim());
+                            setField(e.target.name, e.target.value);
                           }}
                           isInvalid={!!errors.form_name}
                           />
@@ -103,13 +118,13 @@ function AddFormBuilder(props) {
                           isInvalid={!!errors.form_type} 
                         >
                           <option value="">Select Form Type</option>
-                          <option value="single_submission">
+                          <option value="single_submission" selected={form?.form_type==="single_submission"}>
                             One time fill and submit
                           </option>
-                          <option value="multi_submission">
+                          <option value="multi_submission" selected={form?.form_type==="multi_submission"}>
                             Multiple time fill and submit
                           </option>
-                          <option value="editable">
+                          <option value="editable" selected={form?.form_type==="editable"}>
                             One time fill and Edit
                           </option>
                         </Form.Select>
@@ -124,6 +139,7 @@ function AddFormBuilder(props) {
                         <Form.Control
                           as="textarea"
                           name="form_description"
+                          value={form?.form_description}
                           rows={3}
                           className="child_input"
                           onChange={(e) => {
@@ -149,7 +165,7 @@ function AddFormBuilder(props) {
                                 value="Yes"
                                 name="form_template_select"
                                 id="yes"
-                                checked={form?.form_template_select === "Yes"}
+                                checked={form?.form_template_select === "Yes" || form?.form_template_select === true}
                                 onClick={(e) => {
                                   setField(e.target.name, e.target.value);
                                 }}
@@ -168,7 +184,7 @@ function AddFormBuilder(props) {
                                 onClick={(e) => {
                                   setField(e.target.name, e.target.value);
                                 }}
-                                checked={form?.form_template_select === "No"}
+                                checked={form?.form_template_select === "No" || form?.form_template_select === false}
                               />
                               <span className="radio-round"></span>
                               <p>No, I want to create a new form</p>
@@ -185,7 +201,7 @@ function AddFormBuilder(props) {
                             <option value="1">Select Previous Form</option>
                             {formData?.map((item) => {
                               return (
-                                <option value="2">{item.form_name}</option>
+                                <option value={item.form_name} selected={form?.previous_form===item.form_name}>{item.form_name}</option>
                               );
                             })}
                           </Form.Select>
@@ -201,7 +217,7 @@ function AddFormBuilder(props) {
                         <Button
                           className="theme-light"
                           onClick={() => {
-                            props.history.push("/form");
+                            navigate("/form");
                           }}
                         >
                           Cancel

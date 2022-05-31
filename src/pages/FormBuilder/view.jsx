@@ -245,10 +245,12 @@ function ViewFormBuilder(props) {
                                       </Dropdown.Toggle>
 
                                       <Dropdown.Menu>
-                                        <Dropdown.Item href="#/action-1">
+                                        <Dropdown.Item onClick={()=>{
+                                          navigate('/form/add',{state:{id: item.id}})
+                                        }}>
                                           <FontAwesomeIcon icon={faPen} /> Edit
                                         </Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2">
+                                        <Dropdown.Item href="#/action-2" >
                                           <FontAwesomeIcon icon={faRemove} />{" "}
                                           Remove
                                         </Dropdown.Item>
