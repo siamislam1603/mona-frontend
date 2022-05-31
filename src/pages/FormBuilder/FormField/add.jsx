@@ -327,6 +327,62 @@ const AddFormField = (props) => {
                                   >
                                     Checkboxes
                                   </option>
+                                  <option
+                                    value="date"
+                                    selected={
+                                      form[index]?.field_type === "date"
+                                    }
+                                  >
+                                    Date
+                                  </option>
+                                  <option
+                                    value="image_upload"
+                                    selected={
+                                      form[index]?.field_type === "image_upload"
+                                    }
+                                  >
+                                    Image Upload
+                                  </option>
+                                  <option
+                                    value="document_attachment"
+                                    selected={
+                                      form[index]?.field_type === "document_attachment"
+                                    }
+                                  >
+                                    Document Attachment
+                                  </option>
+                                  <option
+                                    value="signature"
+                                    selected={
+                                      form[index]?.field_type === "signature"
+                                    }
+                                  >
+                                    Signature
+                                  </option>
+                                  <option
+                                    value="instruction_text"
+                                    selected={
+                                      form[index]?.field_type === "instruction_text"
+                                    }
+                                  >
+                                    Instruction Text
+                                  </option>
+                                  <option
+                                    value="headings"
+                                    selected={
+                                      form[index]?.field_type === "headings"
+                                    }
+                                  >
+                                    Headings
+                                  </option>
+                                  <option
+                                    value="dropdown_selection"
+                                    selected={
+                                      form[index]?.field_type === "dropdown_selection"
+                                    }
+                                  >
+                                    Drop down selection
+                                  </option>
                                 </Form.Select>
                                 <div className="input-text-img">
                                   <img
@@ -337,13 +393,13 @@ const AddFormField = (props) => {
                                         ? "../../img/multiple-choice-icon.svg"
                                         : form[index]?.field_type === "checkbox"
                                         ? "../../img/check_boxIcon.svg"
-                                        : null
+                                        : "../../img/input-text-icon.svg"
                                     }
                                   />
                                 </div>
                               </div>
                             </Col>
-                            {!(form[index]?.field_type === "text") ? (
+                            {(form[index]?.field_type === "dropdown_selection" || form[index]?.field_type === "radio" || form[index]?.field_type === "checkbox") ? (
                               <>
                                 {form[index]?.option?.map(
                                   (item, inner_index) => {
@@ -419,7 +475,7 @@ const AddFormField = (props) => {
                           <Row>
                             <Col md={6}>
                               <div className="apply-condition">
-                                {!(form[index]?.field_type === "text") ? (
+                                {(form[index]?.field_type === "dropdown_selection" || form[index]?.field_type === "radio" || form[index]?.field_type === "checkbox") ? (
                                   <>
                                     <Button
                                       onClick={() => {
