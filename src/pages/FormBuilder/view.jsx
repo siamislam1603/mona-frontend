@@ -20,8 +20,10 @@ import LeftNavbar from "../../components/LeftNavbar";
 import TopHeader from "../../components/TopHeader";
 import { BASE_URL } from "../../components/App";
 import moment from "moment";
+import { useNavigate  } from 'react-router-dom';
 
 function ViewFormBuilder(props) {
+  const navigate = useNavigate ();
   const [formData, setFormData] = useState([]);
   useEffect(() => {
     getFormData("");
@@ -80,10 +82,7 @@ function ViewFormBuilder(props) {
                       <Button
                         variant="primary"
                         onClick={() => {
-                          console.log(
-                            "props---->",
-                            props.history.push("/form/add")
-                          );
+                            navigate('/form/add')
                         }}
                       >
                         <FontAwesomeIcon icon={faPlus} />

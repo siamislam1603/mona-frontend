@@ -4,11 +4,15 @@ import LeftNavbar from "../../components/LeftNavbar";
 import TopHeader from "../../components/TopHeader";
 import { BASE_URL } from "../../components/App";
 import { createFormValidation } from "../../helpers/validation";
+import { useNavigate } from 'react-router-dom';
 
 function AddFormBuilder(props) {
+  
   const [formData, setFormData] = useState([]);
   const [form, setForm] = useState({ form_template_select: "Yes" });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+
   useEffect(() => {
     getFormData();
   }, []);
@@ -37,7 +41,9 @@ function AddFormBuilder(props) {
       })
         .then((res) => res.json())
         .then((res) => {
-          props.history.push(`/form/field/add`,{form_name: form?.form_name});
+          alert("Hello")
+          console.log("history----->",props.history);
+          navigate('/form/field/add',{state:{form_name: form?.form_name}});
         });
     }
   };
