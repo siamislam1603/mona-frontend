@@ -22,7 +22,19 @@ import FormResponse from "../pages/FormBuilder/FormResponse";
 import Training from "../pages/Training";
 import AddNewTraining from "../pages/AddNewTraining";
 import TrainingDetail from "../pages/TrainingDetail";
-import ChildEnrollment from "../pages/ChildEnrollment";
+import ChildEnrollment1 from "../pages/ChildEnrollment/ChildEnrollment1";
+import ChildEnrollment2 from "../pages/ChildEnrollment/ChildEnrollment2";
+import ChildEnrollment3 from "../pages/ChildEnrollment/ChildEnrollment3";
+import ChildEnrollment4 from "../pages/ChildEnrollment/ChildEnrollment4";
+import ChildEnrollment5 from "../pages/ChildEnrollment/ChildEnrollment5";
+import ChildEnrollment6 from "../pages/ChildEnrollment/ChildEnrollment6";
+import ChildEnrollment7 from "../pages/ChildEnrollment/ChildEnrollment7";
+import ChildEnrollment8 from "../pages/ChildEnrollment/ChildEnrollment8";
+import ChildEnrollment9 from "../pages/ChildEnrollment/ChildEnrollment9";
+import ChildEnrollment10 from "../pages/ChildEnrollment/ChildEnrollment10";
+import ChildEnrollment11 from "../pages/ChildEnrollment/ChildEnrollment11";
+import ChildEnrollment12 from "../pages/ChildEnrollment/ChildEnrollment12";
+import ChildEnrollment13 from "../pages/ChildEnrollment/ChildEnrollment13";
 
 const Main = () => {
 
@@ -131,10 +143,57 @@ const Main = () => {
           element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <TrainingDetail /> : <Navigate to="/" />} />
           
         <Route 
-          path="/child-enrollment" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <ChildEnrollment /> : <Navigate to="/" />} />
+          path="/child-enrollment1" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment1 /> : <Navigate to="/" />} />
         
-
+        <Route 
+          path="/child-enrollment2" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment2 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment3" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment3 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment4" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment4 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment5" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment5 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment6" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment6 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment7" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment7 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment8" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment8 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment9" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment9 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment10" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment10 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment11" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment11 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment12" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment12 /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/child-enrollment13" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment13 /> : <Navigate to="/" />} />
+        
       </Routes>
     </main>
   );

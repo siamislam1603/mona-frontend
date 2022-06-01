@@ -13,7 +13,7 @@ const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
 
-const BACKEND_BASE_URL='http://3.26.39.12:4000';
+const BACKEND_BASE_URL='http://localhost:4000';
 
 const styles = {
   option: (styles, state) => ({
@@ -169,7 +169,7 @@ const rowEvents = {
   onClick: (e, row, rowIndex) => {
     if(e.target.text === "Delete") {
       async function deleteUserFromDB() {
-        const response = await axios.patch(`http://3.26.39.12:4000/auth/user/${row.id}`, { is_deleted: 1 });
+        const response = await axios.patch(`http://localhost:4000/auth/user/${row.id}`, { is_deleted: 1 });
         console.log('DELETE RESPONSE:', response);
       }
 
@@ -183,7 +183,7 @@ const UserManagement = () => {
     const [userData, setUserData] = useState([]);
 
     const fetchUserDetails = async () => {
-      let response = await axios.get('http://3.26.39.12:4000/auth/users');
+      let response = await axios.get('http://localhost:4000/auth/users');
       if(response.status === 200) {
         const { data } = response.data;
         let tempData = data.map(dt => ({

@@ -7,7 +7,7 @@ const TopHeader = () => {
 
     const logout = async () => {
       console.log('LOGGING USER OUT');
-      const response = await axios.get("http://3.26.39.12:4000/auth/logout");
+      const response = await axios.get("http://localhost:4000/auth/logout");
       console.log("LOGOUT RESPONSE:", response);
       if(response.status === 200) {
         localStorage.removeItem('token');
