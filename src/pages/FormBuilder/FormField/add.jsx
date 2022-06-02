@@ -1,16 +1,16 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import LeftNavbar from "../../../components/LeftNavbar";
 import TopHeader from "../../../components/TopHeader";
 import Multiselect from "multiselect-react-dropdown";
 import { createFormFieldValidation } from "../../../helpers/validation";
 import { BASE_URL } from "../../../components/App";
-import {useLocation,useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
+
 let counter = 0;
-
-
+let conditionModelData = [];
 const AddFormField = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,20 +19,18 @@ const AddFormField = (props) => {
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
-  
-  const [form, setForm] = useState([  
+
+  const [form, setForm] = useState([
     { field_type: "text" },
     { field_type: "radio", option: [{ "": "" }, { "": "" }] },
     { field_type: "checkbox", option: [{ "": "" }, { "": "" }] },
   ]);
   const [sectionTitle, setSectionTitle] = useState("");
   const [errors, setErrors] = useState([{}]);
-  const [conditionErrors, setConditionErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
   useEffect(() => {
-    if(location?.state?.form_name)
-    {
+    if (location?.state?.form_name) {
       getFormField();
     }
   }, []);
@@ -54,29 +52,61 @@ const AddFormField = (props) => {
       keyOfOption[key]["option"][inner_inner_index] = { [value]: value };
       tempOption[inner_index] = keyOfOption;
       tempArr[index]["option"] = tempOption;
-      setForm(tempArr);
+      conditionModelData=tempArr;
+    } else if (
+      field === "field_type" &&
+      (value === "radio" ||
+        value === "checkbox" ||
+        value === "dropdown_selection")
+    ) {
+      const keyOfOption = tempOption[inner_index];
+
+      if (!keyOfOption[key]["option"]) {
+        console.log("Hello");
+        keyOfOption[key]["option"] = [{ "": "" }, { "": "" }];
+      }
+
+      keyOfOption[key][field] = value;
+      // keyOfOption[key]["option"][inner_inner_index] = { [key]: [{ "": "" }, { "": "" }] };
+      tempOption[inner_index] = keyOfOption;
+      console.log("tempOption[inner_index]", tempOption[inner_index]);
+      tempArr[index]["option"] = tempOption;
+      console.log(
+        "keyOfOption[key][option][inner_inner_index]",
+        tempArr[index]["option"]
+      );
+      conditionModelData=tempArr;
     } else {
       const keyOfOption = tempOption[inner_index];
       keyOfOption[key][field] = value;
       tempOption[inner_index] = keyOfOption;
       tempArr[index]["option"] = tempOption;
-      setForm(tempArr);
+      conditionModelData=tempArr;
     }
   };
-  const getFormField = () =>{
+  const getFormField = () => {
     var requestOptions = {
       method: "GET",
       redirect: "follow",
     };
 
-    fetch(`${BASE_URL}/field?form_name=${location?.state?.form_name}`, requestOptions)
+    fetch(
+      `${BASE_URL}/field?form_name=${location?.state?.form_name}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((res) => {
-        if(res?.result.length>0)
-        {setForm(res?.result)}
+        if (res?.result.length > 0) {
+          res?.result?.map((item) => {
+            if (item.option) {
+              item.option = JSON.parse(item.option);
+            }
+          });
+          setForm(res?.result);
+        }
       })
       .catch((error) => console.log("error", error));
-  }
+  };
   const deleteFormField = (id) => {
     var requestOptions = {
       method: "DELETE",
@@ -97,24 +127,19 @@ const AddFormField = (props) => {
         if (Array.isArray(Object.values(item)[0])) {
           Object.values(item)[0].map((inner_item) => {
             if (inner_item || !inner_item === "") {
-              error_flag=true;
+              error_flag = true;
             }
           });
-        }
-        else{
-          if(!item==="" || item)
-          {
-            error_flag=true;
+        } else {
+          if (!item === "" || item) {
+            error_flag = true;
           }
         }
       }
     });
-    if(error_flag)
-    {
+    if (error_flag) {
       setErrors(newErrors);
-    }
-    else
-    {
+    } else {
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
       fetch(`${BASE_URL}/field/add?form_name=${location?.state?.form_name}`, {
@@ -125,10 +150,14 @@ const AddFormField = (props) => {
         .then((res) => res.json())
         .then((res) => {
           alert("Submit Successfully---->");
+          res?.result?.map((item) => {
+            if (item.option) {
+              item.option = JSON.parse(item.option);
+            }
+          });
           setForm(res?.result);
         });
     }
-    
   };
   const setField = (field, value, index, inner_index) => {
     counter++;
@@ -141,7 +170,12 @@ const AddFormField = (props) => {
       tempOption[inner_index] = { [value]: value };
       tempArr[index]["option"] = tempOption;
       setForm(tempArr);
-    } else if (field === "field_type" && !(value === "text")) {
+    } else if (
+      field === "field_type" &&
+      (value === "radio" ||
+        value === "checkbox" ||
+        value === "dropdown_selection")
+    ) {
       tempObj["option"] = [{ "": "" }, { "": "" }];
       tempObj[field] = value;
       tempArr[index] = tempObj;
@@ -252,7 +286,9 @@ const AddFormField = (props) => {
                                       counter++;
                                       setCount(counter);
                                       let data = form;
-                                      if(data[index]?.id){deleteFormField(data[index]?.id)}
+                                      if (data[index]?.id) {
+                                        deleteFormField(data[index]?.id);
+                                      }
                                       data.splice(index, 1);
                                       setForm(data);
                                     }}
@@ -346,7 +382,8 @@ const AddFormField = (props) => {
                                   <option
                                     value="document_attachment"
                                     selected={
-                                      form[index]?.field_type === "document_attachment"
+                                      form[index]?.field_type ===
+                                      "document_attachment"
                                     }
                                   >
                                     Document Attachment
@@ -362,7 +399,8 @@ const AddFormField = (props) => {
                                   <option
                                     value="instruction_text"
                                     selected={
-                                      form[index]?.field_type === "instruction_text"
+                                      form[index]?.field_type ===
+                                      "instruction_text"
                                     }
                                   >
                                     Instruction Text
@@ -378,7 +416,8 @@ const AddFormField = (props) => {
                                   <option
                                     value="dropdown_selection"
                                     selected={
-                                      form[index]?.field_type === "dropdown_selection"
+                                      form[index]?.field_type ===
+                                      "dropdown_selection"
                                     }
                                   >
                                     Drop down selection
@@ -399,7 +438,9 @@ const AddFormField = (props) => {
                                 </div>
                               </div>
                             </Col>
-                            {(form[index]?.field_type === "dropdown_selection" || form[index]?.field_type === "radio" || form[index]?.field_type === "checkbox") ? (
+                            {form[index]?.field_type === "dropdown_selection" ||
+                            form[index]?.field_type === "radio" ||
+                            form[index]?.field_type === "checkbox" ? (
                               <>
                                 {form[index]?.option?.map(
                                   (item, inner_index) => {
@@ -475,7 +516,10 @@ const AddFormField = (props) => {
                           <Row>
                             <Col md={6}>
                               <div className="apply-condition">
-                                {(form[index]?.field_type === "dropdown_selection" || form[index]?.field_type === "radio" || form[index]?.field_type === "checkbox") ? (
+                                {form[index]?.field_type ===
+                                  "dropdown_selection" ||
+                                form[index]?.field_type === "radio" ||
+                                form[index]?.field_type === "checkbox" ? (
                                   <>
                                     <Button
                                       onClick={() => {
@@ -508,17 +552,29 @@ const AddFormField = (props) => {
                                           fillOptionCounter
                                         ) {
                                           setConditionFlag(!conditionFlag);
-                                          tempOption.map((item) => {
-                                            item[Object.keys(item)[0]] = {
-                                              field_type: "text",
-                                              option: [{ "": "" }, { "": "" }],
-                                            };
-                                          });
+                                          if (
+                                            Object.keys(
+                                              tempOption[index]
+                                            )[0] ===
+                                            Object.values(tempOption[index])[0]
+                                          ) {
+                                            tempOption.map((item) => {
+                                              item[Object.keys(item)[0]] = {
+                                                field_type: "text",
+                                                option: [
+                                                  { "": "" },
+                                                  { "": "" },
+                                                ],
+                                              };
+                                            });
+                                          }
                                         } else {
                                           alert("Please Fill Option First");
                                         }
 
                                         tempArr[index]["option"] = tempOption;
+                                        
+                                        
                                         setForm(tempArr);
                                       }}
                                     >
@@ -616,6 +672,10 @@ const AddFormField = (props) => {
                             {form[Index]?.["option"]?.map((item, index) => {
                               return (
                                 <Row>
+                                  {console.log(
+                                    "item------of---model=---->",
+                                    Object.values(item)[0]
+                                  )}
                                   <Col sm={12}>
                                     <Form.Label className="formlabel modal-m-lable">
                                       If{" "}
@@ -635,6 +695,9 @@ const AddFormField = (props) => {
                                     <Form.Control
                                       type="text"
                                       name="field_label"
+                                      value={
+                                        Object.values(item)[0]["field_label"]
+                                      }
                                       placeholder="Some text here for the label"
                                       onChange={(e) => {
                                         setConditionField(
@@ -663,22 +726,110 @@ const AddFormField = (props) => {
                                           );
                                         }}
                                       >
-                                        <option value="text">
+                                        <option
+                                          value="text"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "text"
+                                          }
+                                        >
                                           Text Answer
                                         </option>
-                                        <option value="radio">
+                                        <option
+                                          value="radio"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "radio"
+                                          }
+                                        >
                                           Multiple Choice
                                         </option>
-                                        <option value="checkbox">
+                                        <option
+                                          value="checkbox"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "checkbox"
+                                          }
+                                        >
                                           Checkboxes
+                                        </option>
+                                        <option
+                                          value="date"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "date"
+                                          }
+                                        >
+                                          Date
+                                        </option>
+                                        <option
+                                          value="image_upload"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "image_upload"
+                                          }
+                                        >
+                                          Image Upload
+                                        </option>
+                                        <option
+                                          value="document_attachment"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "document_attachment"
+                                          }
+                                        >
+                                          Document Attachment
+                                        </option>
+                                        <option
+                                          value="signature"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "signature"
+                                          }
+                                        >
+                                          Signature
+                                        </option>
+                                        <option
+                                          value="instruction_text"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "instruction_text"
+                                          }
+                                        >
+                                          Instruction Text
+                                        </option>
+                                        <option
+                                          value="headings"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "headings"
+                                          }
+                                        >
+                                          Headings
+                                        </option>
+                                        <option
+                                          value="dropdown_selection"
+                                          selected={
+                                            Object.values(item)[0][
+                                              "field_type"
+                                            ] === "dropdown_selection"
+                                          }
+                                        >
+                                          Drop down selection
                                         </option>
                                       </Form.Select>
                                       <div className="input-text-img">
-                                        <img src="../../img/check_boxIcon.svg" />
+                                        <img src="../../img/input-text-icon.svg" />
                                       </div>
-                                      {/* <div className="input-select-arrow">
-                        <img src="../../img/input-select-arrow.svg"/>
-                      </div> */}
                                     </div>
                                   </Col>
                                   {!(
@@ -725,33 +876,34 @@ const AddFormField = (props) => {
                                                   onClick={() => {
                                                     counter++;
                                                     setCount(counter);
-                                                    
+
                                                     const tempArr = form;
-                                                    
+
                                                     const tempObj =
                                                       tempArr[Index];
-                                                    
+
                                                     const tempOption =
                                                       tempObj["option"];
-                                                    
 
                                                     const keyOfOption =
                                                       tempOption[index];
+                                                    if(keyOfOption.length>2)
+                                                    {
+                                                      keyOfOption[
+                                                        Object.keys(item)[0]
+                                                      ]["option"].splice(
+                                                        inner_index,
+                                                        1
+                                                      );
+                                                      tempOption[index] =
+                                                        keyOfOption;
+                                                      tempArr[Index]["option"] =
+                                                        tempOption;
+                                                      setForm(tempArr);
+                                                      counter++;
+                                                      setCount(counter);
+                                                    }
                                                     
-                                                    
-                                                    keyOfOption[
-                                                      Object.keys(item)[0]
-                                                    ]["option"].splice(
-                                                      inner_index,
-                                                      1
-                                                    );
-                                                    tempOption[index] =
-                                                      keyOfOption;
-                                                    tempArr[Index]["option"] =
-                                                      tempOption;
-                                                    setForm(tempArr);
-                                                    counter++;
-                                                    setCount(counter);
                                                   }}
                                                 >
                                                   <img src="../../img/removeIcon.svg" />
@@ -801,11 +953,22 @@ const AddFormField = (props) => {
                             className="back"
                             onClick={() => {
                               setConditionFlag(false);
+                              
                             }}
                           >
                             Back
                           </Button>
-                          <Button className="done">Done</Button>
+                          <Button
+                            className="done"
+                            onClick={() => {
+                              setConditionFlag(false);
+                              setForm(conditionModelData);
+                              counter++;
+                              setCount(counter);
+                            }}
+                          >
+                            Done
+                          </Button>
                         </Modal.Footer>
                       </Modal>
                     ) : null}
@@ -896,7 +1059,7 @@ const AddFormField = (props) => {
                                 />
                                 <Button
                                   className="right-button"
-                                  disabled={sectionTitle==="" ? true : false}
+                                  disabled={sectionTitle === "" ? true : false}
                                   onClick={() => {
                                     counter++;
                                     setCount(counter);
