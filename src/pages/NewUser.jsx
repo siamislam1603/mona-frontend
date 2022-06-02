@@ -36,7 +36,7 @@ const NewUser = () => {
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
-    const response = await axios.post('http://3.26.39.12:4000/auth/signup', data);
+    const response = await axios.post('http://localhost:4000/auth/signup', data);
     if(response.status === 201) {
       localStorage.setItem("token", response.data.accessToken);
       window.location.href = "/user-management";
