@@ -23,7 +23,6 @@ const SignIn = () => {
   const verifyUser = async (data) => {
     console.log('Verifying user details');
     const res = await axios.post('http://localhost:4000/auth/login', data);
-    console.log('Login Response:', res);
     if(res.status === 200 && res.data.status === 'success') {
       localStorage.setItem("token", res.data.accessToken);
       window.location.href="/user-management";
