@@ -183,7 +183,11 @@ const UserManagement = () => {
     const [userData, setUserData] = useState([]);
 
     const fetchUserDetails = async () => {
-      let response = await axios.get('http://localhost:4000/auth/users');
+      let response = await axios.get('http://localhost:4000/auth/users', {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       if(response.status === 200) {
         const { data } = response.data;
         let tempData = data.map(dt => ({
@@ -201,7 +205,7 @@ const UserManagement = () => {
 
     useEffect(() => {
       fetchUserDetails();
-    }, [userData]);
+    }, []);
 
     console.log('USER DATA:', userData);
 
