@@ -12,6 +12,9 @@ import axios from "axios";
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
+
+const BACKEND_BASE_URL='http://localhost:4000';
+
 const styles = {
   option: (styles, state) => ({
     ...styles,
@@ -162,6 +165,19 @@ const columns = [
   }
 ];
 
+const rowEvents = {
+  onClick: (e, row, rowIndex) => {
+    if(e.target.text === "Delete") {
+      async function deleteUserFromDB() {
+        const response = await axios.patch(`http://localhost:4000/auth/user/${row.id}`, { is_deleted: 1 });
+        console.log('DELETE RESPONSE:', response);
+      }
+
+      deleteUserFromDB();
+    }
+  }
+};
+
 const UserManagement = () => {
 
     const [userData, setUserData] = useState([]);
@@ -170,20 +186,24 @@ const UserManagement = () => {
       let response = await axios.get('http://localhost:4000/auth/users');
       if(response.status === 200) {
         const { data } = response.data;
-        setUserData(data.map(dt => ({
-            id: dt.id,
-            name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role}`,
-            email: dt.email,
-            number: dt.phone,
-            location: dt.city
-        }
-        )));
+        let tempData = data.map(dt => ({
+          id: dt.id,
+          name: `${BACKEND_BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role}`,
+          email: dt.email,
+          number: dt.phone,
+          location: dt.city,
+          is_deleted: dt.is_deleted 
+        }));
+        tempData = tempData.filter(data => data.is_deleted === 0);
+        setUserData(tempData);
       }
     };
 
     useEffect(() => {
       fetchUserDetails();
-    }, []);
+    }, [userData]);
+
+    console.log('USER DATA:', userData);
 
     return (
       <>
@@ -200,7 +220,7 @@ const UserManagement = () => {
                   <div className="user-management-sec">
                     <ToolkitProvider
                       keyField="name"
-                      data={products}
+                      data={userData}
                       columns={ columns }
                       search
                     >
@@ -289,6 +309,7 @@ const UserManagement = () => {
                     </header>
                     <BootstrapTable
                       { ...props.baseProps }
+                      rowEvents={ rowEvents }
                       selectRow={ selectRow }
                       pagination={ paginationFactory() }
                     />

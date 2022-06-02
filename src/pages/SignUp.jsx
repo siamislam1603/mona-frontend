@@ -57,7 +57,7 @@ const SignUp = () => {
                   <p>Sign Up</p>
                 </div>
                 <Form className="login_form" onSubmit={ handleSubmit }>
-                  <Form.Group className="mb-4" controlId="formBasicFullName">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicFullName">
                     <Form.Label>Full Name</Form.Label>
                     <Form.Control
                       type="text"
@@ -68,7 +68,7 @@ const SignUp = () => {
                       value={fullname}
                     />
                   </Form.Group>
-                  <Form.Group className="mb-4" controlId="formBasicEmail">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control
                       type="email"
@@ -80,7 +80,7 @@ const SignUp = () => {
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-4" controlId="formBasicPassword">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       className="form_input"
@@ -109,7 +109,7 @@ const SignUp = () => {
                     )}
                   </Form.Group>
 
-                  <Form.Group className="mb-4" controlId="formBasicCheckbox">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicCheckbox">
                     <Row>
                       <Col md={12} className="d-flex">
                         <Form.Check type="checkbox" label="" />

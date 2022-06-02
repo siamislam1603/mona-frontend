@@ -20,8 +20,10 @@ import LeftNavbar from "../../components/LeftNavbar";
 import TopHeader from "../../components/TopHeader";
 import { BASE_URL } from "../../components/App";
 import moment from "moment";
+import { useNavigate  } from 'react-router-dom';
 
 function ViewFormBuilder(props) {
+  const navigate = useNavigate ();
   const [formData, setFormData] = useState([]);
   useEffect(() => {
     getFormData("");
@@ -80,10 +82,7 @@ function ViewFormBuilder(props) {
                       <Button
                         variant="primary"
                         onClick={() => {
-                          console.log(
-                            "props---->",
-                            props.history.push("/form/add")
-                          );
+                            navigate('/form/add')
                         }}
                       >
                         <FontAwesomeIcon icon={faPlus} />
@@ -166,7 +165,7 @@ function ViewFormBuilder(props) {
                         </Row>
                       </div>
                     </Tab>
-                    <Tab eventKey="profile" title="Forms I filled">
+                    <Tab eventKey="profile" title="Completed Forms">
                       <div className="forms-content-section">
                         <Row>
                           {formData?.map((item) => {
@@ -214,7 +213,7 @@ function ViewFormBuilder(props) {
                         </Row>
                       </div>
                     </Tab>
-                    <Tab eventKey="contact" title="My Created Forms">
+                    <Tab eventKey="contact" title="Created Forms">
                       <div className="forms-content-section">
                         <Row>
                           {formData?.map((item) => {
@@ -246,10 +245,12 @@ function ViewFormBuilder(props) {
                                       </Dropdown.Toggle>
 
                                       <Dropdown.Menu>
-                                        <Dropdown.Item href="#/action-1">
+                                        <Dropdown.Item onClick={()=>{
+                                          navigate('/form/add',{state:{id: item.id}})
+                                        }}>
                                           <FontAwesomeIcon icon={faPen} /> Edit
                                         </Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2">
+                                        <Dropdown.Item href="#/action-2" >
                                           <FontAwesomeIcon icon={faRemove} />{" "}
                                           Remove
                                         </Dropdown.Item>
