@@ -2,6 +2,30 @@ import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
 
 const LeftNavbar = () => {
+
+  const [menuList, setMenuList] = useState([]);
+
+
+  
+  // FETCH User Role Permissions  LIST
+  const fetchUserRolePermissions = async () => {
+    const response = await axios.get(`${API_BASE_URL}/auth/get_menu_list`);
+
+    if(response.status === 200) {
+      const { menuList } = response.permissionsObject;
+      setCityData(cityList.map(city => ({
+        value: city.name,
+        label: city.name
+      })));
+    }
+  }
+
+  useEffect(() => {
+    fetchUserRolePermissions();
+  }, []);
+
+
+
     return (
       <>
         <div className="logo-column text-center"><Navbar.Brand href="#home"><img src="img/logo-ico.png" alt=""/></Navbar.Brand></div>
