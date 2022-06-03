@@ -96,7 +96,7 @@ const NewUser = () => {
       const { userRoleList } = response.data;
       setUserRoleData(userRoleList.map(list => ({
         value: list.role_name,
-        label: list.role_name
+        label: list.role_label
       })));
     }
   }
@@ -119,6 +119,8 @@ const NewUser = () => {
     fetchUserRoleData();
     fetchCities();
   }, []);
+
+  console.log('USER ROLE: ', userRoleData);
 
   useEffect(() => {
     if(Object.keys(formErrors).length === 0 && isSubmit === true) {
