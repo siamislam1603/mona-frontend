@@ -10,20 +10,24 @@ import { BASE_URL } from "../../../components/App";
 import { useLocation, useNavigate } from "react-router-dom";
 
 let counter = 0;
+
 const AddFormField = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [conditionFlag, setConditionFlag] = useState(false);
   const [groupFlag, setGroupFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
+  const [formSettingError, setFormSettingError] = useState({});
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
   const [conditionModelData, setConditionModelData] = useState([]);
+  const [groupModelData, setGroupModelData] = useState([]);
   const [form, setForm] = useState([
     { field_type: "text" },
     { field_type: "radio", option: [{ "": "" }, { "": "" }] },
     { field_type: "checkbox", option: [{ "": "" }, { "": "" }] },
   ]);
+  const [formSettingData, setFormSettingData] = useState({});
   const [sectionTitle, setSectionTitle] = useState("");
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
@@ -31,8 +35,22 @@ const AddFormField = (props) => {
   useEffect(() => {
     if (location?.state?.form_name) {
       getFormField();
+      getFormData();
     }
   }, []);
+  function onSelect(optionsList, selectedItem) {
+    console.log("selected_item---->", selectedItem);
+  }
+  const setFormSettingFields = (field, value) => {
+    setFormSettingData({ ...formSettingData, [field]: value });
+
+    if (!!formSettingError[field]) {
+      setFormSettingError({
+        ...formSettingError,
+        [field]: null,
+      });
+    }
+  };
   const setConditionField = (
     field,
     value,
@@ -83,6 +101,22 @@ const AddFormField = (props) => {
       setConditionModelData(tempArr);
     }
   };
+  const getFormData = () => {
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(
+      `${BASE_URL}/form?form_name=${location?.state?.form_name}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((res) => {
+        setFormSettingData(res?.result);
+      })
+      .catch((error) => console.log("error", error));
+  };
   const getFormField = () => {
     var requestOptions = {
       method: "GET",
@@ -96,14 +130,26 @@ const AddFormField = (props) => {
       .then((response) => response.json())
       .then((res) => {
         if (res?.result.length > 0) {
+          let sectionData = [];
           res?.result?.map((item) => {
             if (item.option) {
               item.option = JSON.parse(item.option);
             }
+            if (item?.section_name) {
+              if (
+                !sectionData.includes(item?.section_name.split("_").join(" "))
+              ) {
+                sectionData.push(item?.section_name.split("_").join(" "));
+              }
+            }
           });
-          if (!conditionFlag) {
+          setSection(sectionData);
+          if (!conditionFlag && !groupFlag) {
             setForm(res?.result);
             setConditionModelData(res?.result);
+            setGroupModelData(res?.result);
+          } else if (groupFlag) {
+            setGroupModelData(res?.result);
           } else {
             setConditionModelData(res?.result);
           }
@@ -122,6 +168,21 @@ const AddFormField = (props) => {
       .then((result) => console.log("delete data successfully!"))
       .catch((error) => console.log("error", error));
   };
+  const onSubmitSetting=(e)=>{
+    e.preventDefault();
+    var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      fetch(`${BASE_URL}/form?form_name=${location?.state?.form_name}`, {
+        method: "post",
+        body: JSON.stringify(formSettingData),
+        headers: myHeaders,
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          alert("Submit Successfully---->");
+          setFormSettingData(res?.result);
+        });
+  }
   const onSubmit = (e) => {
     e.preventDefault();
     const newErrors = createFormFieldValidation(form);
@@ -221,6 +282,7 @@ const AddFormField = (props) => {
   return (
     <>
       {console.log("form--->", form)}
+      {console.log("formSettingData---->", formSettingData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -609,6 +671,7 @@ const AddFormField = (props) => {
                                     class="switch"
                                     name="required"
                                     type="checkbox"
+                                    checked={form[index]?.required}
                                     onChange={(e) => {
                                       setField(
                                         e.target.name,
@@ -986,7 +1049,10 @@ const AddFormField = (props) => {
                   <div className="select-section-modal">
                     <Modal
                       show={groupFlag}
-                      onHide={() => setGroupFlag(false)}
+                      onHide={() => {
+                        setGroupFlag(false);
+                        getFormField();
+                      }}
                       size="md"
                       aria-labelledby="contained-modal-title-vcenter"
                       centered
@@ -1007,19 +1073,26 @@ const AddFormField = (props) => {
                                 <label class="container">
                                   {item}
                                   <input
-                                    type="checkbox"
-                                    name={item}
+                                    type="radio"
+                                    id={item}
+                                    value={item}
+                                    name="section_name"
+                                    checked={
+                                      groupModelData[Index]?.section_name ===
+                                      item.toLowerCase().split(" ").join("_")
+                                    }
                                     onChange={(e) => {
                                       counter++;
                                       setCount(counter);
-                                      e.target.name = e.target.name
+                                      e.target.value = e.target.value
                                         .toLocaleLowerCase()
-                                        .replace(" ", "_");
-                                      const tempArr = form;
+                                        .split(" ")
+                                        .join("_");
+                                      const tempArr = groupModelData;
                                       const tempObj = tempArr[Index];
-                                      tempObj[e.target.name] = e.target.checked;
+                                      tempObj[e.target.name] = e.target.value;
                                       tempArr[Index] = tempObj;
-                                      setForm(tempArr);
+                                      setGroupModelData(tempArr);
                                     }}
                                   />
                                   <span class="checkmark"></span>
@@ -1111,25 +1184,65 @@ const AddFormField = (props) => {
                           <Col lg={3} sm={6}>
                             <Form.Group>
                               <Form.Label>Start Date</Form.Label>
-                              <Form.Control type="date" name="form_name" />
+                              <Form.Control
+                                type="date"
+                                name="start_date"
+                                value={formSettingData?.start_date}
+                                onChange={(e) => {
+                                  setFormSettingFields(
+                                    e.target.name,
+                                    e.target.value
+                                  );
+                                }}
+                              />
                             </Form.Group>
                           </Col>
                           <Col lg={3} sm={6} className="mt-3 mt-sm-0">
                             <Form.Group>
                               <Form.Label>Start Time</Form.Label>
-                              <Form.Control type="time" name="form_name" />
+                              <Form.Control
+                                type="time"
+                                name="start_time"
+                                value={formSettingData?.start_time}
+                                onChange={(e) => {
+                                  setFormSettingFields(
+                                    e.target.name,
+                                    e.target.value
+                                  );
+                                }}
+                              />
                             </Form.Group>
                           </Col>
                           <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                             <Form.Group>
                               <Form.Label>End Date</Form.Label>
-                              <Form.Control type="date" name="form_name" />
+                              <Form.Control
+                                type="date"
+                                name="end_date"
+                                value={formSettingData?.end_date}
+                                onChange={(e) => {
+                                  setFormSettingFields(
+                                    e.target.name,
+                                    e.target.value
+                                  );
+                                }}
+                              />
                             </Form.Group>
                           </Col>
                           <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                             <Form.Group>
                               <Form.Label>End Time</Form.Label>
-                              <Form.Control type="time" name="form_name" />
+                              <Form.Control
+                                type="time"
+                                name="end_time"
+                                value={formSettingData?.end_time}
+                                onChange={(e) => {
+                                  setFormSettingFields(
+                                    e.target.name,
+                                    e.target.value
+                                  );
+                                }}
+                              />
                             </Form.Group>
                           </Col>
                         </Row>
@@ -1145,8 +1258,15 @@ const AddFormField = (props) => {
                                     <input
                                       type="radio"
                                       value="Yes"
-                                      name="form_template_select"
+                                      name="applicable_to_franchisee"
                                       id="yes"
+                                      onChange={(e) => {
+                                        setFormSettingFields(
+                                          e.target.name,
+                                          e.target.value
+                                        );
+                                      }}
+                                      checked={formSettingData?.applicable_to_franchisee===true || formSettingData?.applicable_to_franchisee==="Yes"}
                                     />
                                     <span className="radio-round"></span>
                                     <p>Yes</p>
@@ -1157,8 +1277,15 @@ const AddFormField = (props) => {
                                     <input
                                       type="radio"
                                       value="No"
-                                      name="form_template_select"
+                                      name="applicable_to_franchisee"
                                       id="no"
+                                      onChange={(e) => {
+                                        setFormSettingFields(
+                                          e.target.name,
+                                          e.target.value
+                                        );
+                                      }}
+                                      checked={formSettingData?.applicable_to_franchisee===false || formSettingData?.applicable_to_franchisee==="No"}
                                     />
                                     <span className="radio-round"></span>
                                     <p>No</p>
@@ -1167,7 +1294,7 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          <Col lg={9} md={6} className="mt-3 mt-md-0">
+                          {formSettingData?.applicable_to_franchisee==="No" ? (<Col lg={9} md={6} className="mt-3 mt-md-0">
                             <Form.Group>
                               <Form.Label>Select Franchisee</Form.Label>
                               <Multiselect
@@ -1177,7 +1304,7 @@ const AddFormField = (props) => {
                                 onKeyPressFn={function noRefCheck() {}}
                                 onRemove={function noRefCheck() {}}
                                 onSearch={function noRefCheck() {}}
-                                onSelect={function noRefCheck() {}}
+                                onSelect={onSelect}
                                 options={[
                                   {
                                     cat: "Group 1",
@@ -1210,9 +1337,7 @@ const AddFormField = (props) => {
                                 ]}
                               />
                             </Form.Group>
-                          </Col>
-                        </Row>
-                        <Row className="mt-4">
+                          </Col>):null}
                           <Col lg={3} md={6}>
                             <Form.Group>
                               <Form.Label>Applicable to all users</Form.Label>
@@ -1222,8 +1347,15 @@ const AddFormField = (props) => {
                                     <input
                                       type="radio"
                                       value="Yes"
-                                      name="form_template_select1"
+                                      name="applicable_to_user"
                                       id="yes1"
+                                      onChange={(e) => {
+                                        setFormSettingFields(
+                                          e.target.name,
+                                          e.target.value
+                                        );
+                                      }}
+                                      checked={formSettingData?.applicable_to_user==true || formSettingData?.applicable_to_user==="Yes"}
                                     />
                                     <span className="radio-round"></span>
                                     <p>Yes</p>
@@ -1234,8 +1366,15 @@ const AddFormField = (props) => {
                                     <input
                                       type="radio"
                                       value="No"
-                                      name="form_template_select1"
+                                      name="applicable_to_user"
                                       id="no1"
+                                      onChange={(e) => {
+                                        setFormSettingFields(
+                                          e.target.name,
+                                          e.target.value
+                                        );
+                                      }}
+                                      checked={formSettingData?.applicable_to_user==false || formSettingData?.applicable_to_user==="No"}
                                     />
                                     <span className="radio-round"></span>
                                     <p>No</p>
@@ -1244,7 +1383,7 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          <Col lg={9} md={6} className="mt-3 mt-md-0">
+                          {formSettingData?.applicable_to_user==="No" ? (<Col lg={9} md={6} className="mt-3 mt-md-0">
                             <Form.Group>
                               <Form.Label>Select User Roles</Form.Label>
                               <Multiselect
@@ -1254,7 +1393,7 @@ const AddFormField = (props) => {
                                 onKeyPressFn={function noRefCheck() {}}
                                 onRemove={function noRefCheck() {}}
                                 onSearch={function noRefCheck() {}}
-                                onSelect={function noRefCheck() {}}
+                                onSelect={onSelect}
                                 options={[
                                   {
                                     cat: "Group 1",
@@ -1287,13 +1426,13 @@ const AddFormField = (props) => {
                                 ]}
                               />
                             </Form.Group>
-                          </Col>
+                          </Col>) : null}
                         </Row>
                       </div>
                     </Modal.Body>
                     <Modal.Footer className="justify-content-center">
                       <Button className="back">Cancel</Button>
-                      <Button className="done">Save Settings</Button>
+                      <Button className="done" onClick={onSubmitSetting}>Save Settings</Button>
                     </Modal.Footer>
                   </Modal>
                 </Form>
