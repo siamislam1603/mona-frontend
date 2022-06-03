@@ -132,7 +132,7 @@ const Main = () => {
           
         <Route 
           path="/child-enrollment" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <ChildEnrollment /> : <Navigate to="/" />} />
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment /> : <Navigate to="/" />} />
         
 
       </Routes>
