@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import axios from 'axios';
-import { API_BASE_URL } from './App';
+import { BASE_URL } from './App';
 
 const LeftNavbar = () => {
 
@@ -9,7 +9,7 @@ const LeftNavbar = () => {
 
   // FETCH User Role Permissions  LIST
   const fetchUserRolePermissions = async () => {
-    const response = await axios.get(`${API_BASE_URL}/auth/get_menu_list`);
+    const response = await axios.get(`${ BASE_URL }/auth/get_menu_list`);
 
     if(response.status === 200) {
       const { permissionsObject } = response.data;

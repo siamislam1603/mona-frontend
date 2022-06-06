@@ -35,9 +35,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [formOneData, setFormOneData] = useState({});
 
   const saveFormOneData = async (data) => {
-    console.log('DATA:', data);
     const response = await axios.post(`${API_BASE_URL}/child/signup`, data);
-    console.log('RESPONSE:', response);
+    console.log('Response:', response);
+    if(response.status === 201)
+      nextStep();
   };
   
   const handleFormOneChange = event => {

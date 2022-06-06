@@ -8,12 +8,11 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import ToolkitProvider, {Search, CSVExport } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import axios from "axios";
+import { BASE_URL } from '../components/App';
 
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
-
-const BACKEND_BASE_URL='http://localhost:4000';
 
 const styles = {
   option: (styles, state) => ({
@@ -169,7 +168,7 @@ const rowEvents = {
   onClick: (e, row, rowIndex) => {
     if(e.target.text === "Delete") {
       async function deleteUserFromDB() {
-        const response = await axios.patch(`http://localhost:4000/auth/user/${row.id}`, { is_deleted: 1 });
+        const response = await axios.patch(`${BASE_URL}/auth/user/${row.id}`, { is_deleted: 1 });
         console.log('DELETE RESPONSE:', response);
       }
 
@@ -183,7 +182,7 @@ const UserManagement = () => {
     const [userData, setUserData] = useState([]);
 
     const fetchUserDetails = async () => {
-      let response = await axios.get('http://localhost:4000/auth/users', {
+      let response = await axios.get(`${BASE_URL}/auth/users`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -192,7 +191,7 @@ const UserManagement = () => {
         const { data } = response.data;
         let tempData = data.map(dt => ({
           id: dt.id,
-          name: `${BACKEND_BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role}`,
+          name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role}`,
           email: dt.email,
           number: dt.phone,
           location: dt.city,

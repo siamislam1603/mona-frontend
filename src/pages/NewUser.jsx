@@ -9,6 +9,7 @@ import makeAnimated from 'react-select/animated';
 import validateForm from '../helpers/validateForm';
 import ImageCropper from '../components/ImageCropper';
 import Popup from '../components/Popup';
+import { BASE_URL } from '../components/App';
 
 const animatedComponents = makeAnimated();
 
@@ -36,7 +37,7 @@ const NewUser = () => {
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
-    const response = await axios.post('http://localhost:4000/auth/signup', data);
+    const response = await axios.post(`${BASE_URL}/auth/signup`, data);
     if(response.status === 201) {
       localStorage.setItem("token", response.data.accessToken);
       window.location.href = "/user-management";
@@ -78,7 +79,7 @@ const NewUser = () => {
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST 
   const fetchCountryData = async () => {
-    const response = await axios.get('http://localhost:4000/api/country-data');
+    const response = await axios.get(`${BASE_URL}/api/country-data`);
     if(response.status === 200) {
       const { countryDataList } = response.data;
       setCountryData(countryDataList.map(countryData => ({
@@ -91,7 +92,7 @@ const NewUser = () => {
   
   // FETCHES USER ROLES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchUserRoleData = async () => {
-    const response = await axios.get('http://localhost:4000/api/user-role');
+    const response = await axios.get(`${BASE_URL}/api/user-role`);
     if(response.status === 200) {
       const { userRoleList } = response.data;
       setUserRoleData(userRoleList.map(list => ({
@@ -104,7 +105,7 @@ const NewUser = () => {
   
   // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCities = async () => {
-    const response = await axios.get('http://localhost:4000/api/cities');
+    const response = await axios.get(`${BASE_URL}/api/cities`);
     if(response.status === 200) {
       const { cityList } = response.data;
       setCityData(cityList.map(city => ({
