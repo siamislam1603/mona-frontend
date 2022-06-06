@@ -512,6 +512,8 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .whiteback { border-radius:16px; border: 1px solid var(--black); padding: 25px; }
 
+.repositorydrag .uploadfile { border: 2px dashed var(--gray); border-radius: 16px; height: 150px; display: flex; align-items: center; justify-content: center; }
+
 
 
 
