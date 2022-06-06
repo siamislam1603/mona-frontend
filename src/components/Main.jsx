@@ -23,6 +23,7 @@ import Training from "../pages/Training";
 import AddNewTraining from "../pages/AddNewTraining";
 import TrainingDetail from "../pages/TrainingDetail";
 import ChildEnrollment from "../pages/ChildEnrollment";
+import FileRepository from "../pages/FileRepository";
 
 const Main = () => {
 
@@ -133,6 +134,10 @@ const Main = () => {
         <Route 
           path="/child-enrollment" 
           element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildEnrollment /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/file-repository" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <FileRepository /> : <Navigate to="/" />} />
         
 
       </Routes>
