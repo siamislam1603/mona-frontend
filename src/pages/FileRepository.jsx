@@ -193,7 +193,7 @@ const handleShow = () => setShow(true);
               <div className="sec-column">
                 <TopHeader/>
                 <div className="entry-container">
-                  <div className="user-management-sec">
+                  <div className="user-management-sec repository-sec">
                     <ToolkitProvider
                       keyField="name"
                       data={products}
