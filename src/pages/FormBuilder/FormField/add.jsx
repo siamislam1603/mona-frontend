@@ -5,12 +5,17 @@ import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import LeftNavbar from "../../../components/LeftNavbar";
 import TopHeader from "../../../components/TopHeader";
 import Multiselect from "multiselect-react-dropdown";
-import { createFormFieldValidation } from "../../../helpers/validation";
+import {
+  createFormFieldValidation,
+  createFormSettingModelValidation,
+} from "../../../helpers/validation";
 import { BASE_URL } from "../../../components/App";
 import { useLocation, useNavigate } from "react-router-dom";
+import { invalid } from "moment";
 
 let counter = 0;
-
+let selectedFranchisee = [];
+let selectedUserRole = [];
 const AddFormField = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,6 +26,8 @@ const AddFormField = (props) => {
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
   const [conditionModelData, setConditionModelData] = useState([]);
+  const [franchisee, setFranchisee] = useState([]);
+  const [userRole, setUserRole] = useState([]);
   const [groupModelData, setGroupModelData] = useState([]);
   const [form, setForm] = useState([
     { field_type: "text" },
@@ -36,11 +43,52 @@ const AddFormField = (props) => {
     if (location?.state?.form_name) {
       getFormField();
       getFormData();
+      getUserRoleAndFranchiseeData();
     }
   }, []);
-  function onSelect(optionsList, selectedItem) {
-    console.log("selected_item---->", selectedItem);
+  function onSelectFranchisee(optionsList, selectedItem) {
+    console.log("selected_item---->2", selectedItem);
+    selectedFranchisee.push(selectedItem);
+    console.log("selected_item---->1selectedFranchisee", selectedFranchisee);
   }
+  function onRemoveFranchisee(selectedList, removedItem) {
+    const index = selectedFranchisee.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedFranchisee.splice(index, 1);
+  }
+
+  function onSelectUserRole(optionsList, selectedItem) {
+    console.log("selected_item---->2", selectedItem);
+    selectedUserRole.push(selectedItem);
+    console.log("selected_item---->1selectedFranchisee", selectedFranchisee);
+  }
+  function onRemoveUserRole(selectedList, removedItem) {
+    const index = selectedUserRole.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedUserRole.splice(index, 1);
+  }
+  const getUserRoleAndFranchiseeData = () => {
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`${BASE_URL}/api/user-role`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        setUserRole(res?.userRoleList);
+        console.log("response0-------->1", res?.userRoleList);
+      })
+      .catch((error) => console.log("error", error));
+    fetch(`${BASE_URL}/api/franchisee-data`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        setFranchisee(res?.franchiseeList);
+      })
+      .catch((error) => console.log("error", error));
+  };
   const setFormSettingFields = (field, value) => {
     setFormSettingData({ ...formSettingData, [field]: value });
 
@@ -84,7 +132,6 @@ const AddFormField = (props) => {
       }
 
       keyOfOption[key][field] = value;
-      // keyOfOption[key]["option"][inner_inner_index] = { [key]: [{ "": "" }, { "": "" }] };
       tempOption[inner_index] = keyOfOption;
       console.log("tempOption[inner_index]", tempOption[inner_index]);
       tempArr[index]["option"] = tempOption;
@@ -114,6 +161,12 @@ const AddFormField = (props) => {
       .then((response) => response.json())
       .then((res) => {
         setFormSettingData(res?.result);
+        if (res.result.franchisee) {
+          selectedFranchisee = JSON.parse(res?.result?.franchisee);
+        }
+        if (res.result.user) {
+          selectedUserRole = JSON.parse(res?.result?.user);
+        }
       })
       .catch((error) => console.log("error", error));
   };
@@ -168,21 +221,52 @@ const AddFormField = (props) => {
       .then((result) => console.log("delete data successfully!"))
       .catch((error) => console.log("error", error));
   };
-  const onSubmitSetting=(e)=>{
+  const onSubmitSetting = (e) => {
     e.preventDefault();
-    var myHeaders = new Headers();
+
+    const newErrors = createFormSettingModelValidation(
+      formSettingData,
+      selectedFranchisee,
+      selectedUserRole
+    );
+    if (Object.keys(newErrors).length > 0) {
+      setFormSettingError(newErrors);
+    } else {
+      var myHeaders = new Headers();
+      console.log("Select Franchisee", selectedFranchisee);
+      console.log("Select User Role", selectedUserRole);
       myHeaders.append("Content-Type", "application/json");
+      let data = formSettingData;
+      if (
+        data["applicable_to_franchisee"] === "No" ||
+        data["applicable_to_franchisee"] === false
+      )
+        data["franchisee"] = JSON.stringify(selectedFranchisee);
+      if (
+        data["applicable_to_user"] === "No" ||
+        data["applicable_to_user"] === false
+      )
+        data["user"] = JSON.stringify(selectedUserRole);
       fetch(`${BASE_URL}/form?form_name=${location?.state?.form_name}`, {
         method: "post",
-        body: JSON.stringify(formSettingData),
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
         .then((res) => {
           alert("Submit Successfully---->");
           setFormSettingData(res?.result);
+          if (res.result.franchisee) {
+            selectedFranchisee = JSON.parse(res?.result?.franchisee);
+          }
+          if (res.result.user) {
+            selectedUserRole = JSON.parse(res?.result?.user);
+          }
+          console.log("selected Franchisee--->", selectedFranchisee);
+          console.log("selected UserRole------>", selectedUserRole);
         });
-  }
+    }
+  };
   const onSubmit = (e) => {
     e.preventDefault();
     const newErrors = createFormFieldValidation(form);
@@ -1194,7 +1278,11 @@ const AddFormField = (props) => {
                                     e.target.value
                                   );
                                 }}
+                                isInvalid={!!formSettingError.start_date}
                               />
+                              <Form.Control.Feedback type="invalid">
+                                {formSettingError.start_date}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                           <Col lg={3} sm={6} className="mt-3 mt-sm-0">
@@ -1210,7 +1298,11 @@ const AddFormField = (props) => {
                                     e.target.value
                                   );
                                 }}
+                                isInvalid={!!formSettingError.start_time}
                               />
+                              <Form.Control.Feedback type="invalid">
+                                {formSettingError.start_time}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                           <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -1226,7 +1318,11 @@ const AddFormField = (props) => {
                                     e.target.value
                                   );
                                 }}
+                                isInvalid={!!formSettingError.end_date}
                               />
+                              <Form.Control.Feedback type="invalid">
+                                {formSettingError.end_date}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                           <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -1242,7 +1338,11 @@ const AddFormField = (props) => {
                                     e.target.value
                                   );
                                 }}
+                                isInvalid={!!formSettingError.end_time}
                               />
+                              <Form.Control.Feedback type="invalid">
+                                {formSettingError.end_time}
+                              </Form.Control.Feedback>
                             </Form.Group>
                           </Col>
                         </Row>
@@ -1266,7 +1366,12 @@ const AddFormField = (props) => {
                                           e.target.value
                                         );
                                       }}
-                                      checked={formSettingData?.applicable_to_franchisee===true || formSettingData?.applicable_to_franchisee==="Yes"}
+                                      checked={
+                                        formSettingData?.applicable_to_franchisee ===
+                                          true ||
+                                        formSettingData?.applicable_to_franchisee ===
+                                          "Yes"
+                                      }
                                     />
                                     <span className="radio-round"></span>
                                     <p>Yes</p>
@@ -1285,7 +1390,12 @@ const AddFormField = (props) => {
                                           e.target.value
                                         );
                                       }}
-                                      checked={formSettingData?.applicable_to_franchisee===false || formSettingData?.applicable_to_franchisee==="No"}
+                                      checked={
+                                        formSettingData?.applicable_to_franchisee ===
+                                          false ||
+                                        formSettingData?.applicable_to_franchisee ===
+                                          "No"
+                                      }
                                     />
                                     <span className="radio-round"></span>
                                     <p>No</p>
@@ -1294,50 +1404,27 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          {formSettingData?.applicable_to_franchisee==="No" ? (<Col lg={9} md={6} className="mt-3 mt-md-0">
-                            <Form.Group>
-                              <Form.Label>Select Franchisee</Form.Label>
-                              <Multiselect
-                                displayValue="key"
-                                className="multiselect-box default-arrow-select"
-                                placeholder="Select Franchisee"
-                                onKeyPressFn={function noRefCheck() {}}
-                                onRemove={function noRefCheck() {}}
-                                onSearch={function noRefCheck() {}}
-                                onSelect={onSelect}
-                                options={[
-                                  {
-                                    cat: "Group 1",
-                                    key: "Option 1",
-                                  },
-                                  {
-                                    cat: "Group 1",
-                                    key: "Option 2",
-                                  },
-                                  {
-                                    cat: "Group 1",
-                                    key: "Option 3",
-                                  },
-                                  {
-                                    cat: "Group 2",
-                                    key: "Option 4",
-                                  },
-                                  {
-                                    cat: "Group 2",
-                                    key: "Option 5",
-                                  },
-                                  {
-                                    cat: "Group 2",
-                                    key: "Option 6",
-                                  },
-                                  {
-                                    cat: "Group 2",
-                                    key: "Option 7",
-                                  },
-                                ]}
-                              />
-                            </Form.Group>
-                          </Col>):null}
+                          {formSettingData?.applicable_to_franchisee === "No" ||
+                          formSettingData?.applicable_to_franchisee ===
+                            false ? (
+                            <Col lg={9} md={6} className="mt-3 mt-md-0">
+                              <Form.Group>
+                                <Form.Label>Select Franchisee</Form.Label>
+                                <Multiselect
+                                  displayValue="registered_name"
+                                  className="multiselect-box default-arrow-select"
+                                  placeholder="Select Franchisee"
+                                  selectedValues={selectedFranchisee}
+                                  onKeyPressFn={function noRefCheck() {}}
+                                  onRemove={onRemoveFranchisee}
+                                  onSearch={function noRefCheck() {}}
+                                  onSelect={onSelectFranchisee}
+                                  options={franchisee}
+                                />
+                                <p className="error">{formSettingError.franchisee}</p>
+                              </Form.Group>
+                            </Col>
+                          ) : null}
                           <Col lg={3} md={6}>
                             <Form.Group>
                               <Form.Label>Applicable to all users</Form.Label>
@@ -1355,7 +1442,12 @@ const AddFormField = (props) => {
                                           e.target.value
                                         );
                                       }}
-                                      checked={formSettingData?.applicable_to_user==true || formSettingData?.applicable_to_user==="Yes"}
+                                      checked={
+                                        formSettingData?.applicable_to_user ==
+                                          true ||
+                                        formSettingData?.applicable_to_user ===
+                                          "Yes"
+                                      }
                                     />
                                     <span className="radio-round"></span>
                                     <p>Yes</p>
@@ -1374,7 +1466,12 @@ const AddFormField = (props) => {
                                           e.target.value
                                         );
                                       }}
-                                      checked={formSettingData?.applicable_to_user==false || formSettingData?.applicable_to_user==="No"}
+                                      checked={
+                                        formSettingData?.applicable_to_user ==
+                                          false ||
+                                        formSettingData?.applicable_to_user ===
+                                          "No"
+                                      }
                                     />
                                     <span className="radio-round"></span>
                                     <p>No</p>
@@ -1383,56 +1480,34 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          {formSettingData?.applicable_to_user==="No" ? (<Col lg={9} md={6} className="mt-3 mt-md-0">
-                            <Form.Group>
-                              <Form.Label>Select User Roles</Form.Label>
-                              <Multiselect
-                                placeholder="Select User Roles"
-                                displayValue="key"
-                                className="multiselect-box default-arrow-select"
-                                onKeyPressFn={function noRefCheck() {}}
-                                onRemove={function noRefCheck() {}}
-                                onSearch={function noRefCheck() {}}
-                                onSelect={onSelect}
-                                options={[
-                                  {
-                                    cat: "Group 1",
-                                    key: "Option 1",
-                                  },
-                                  {
-                                    cat: "Group 1",
-                                    key: "Option 2",
-                                  },
-                                  {
-                                    cat: "Group 1",
-                                    key: "Option 3",
-                                  },
-                                  {
-                                    cat: "Group 2",
-                                    key: "Option 4",
-                                  },
-                                  {
-                                    cat: "Group 2",
-                                    key: "Option 5",
-                                  },
-                                  {
-                                    cat: "Group 2",
-                                    key: "Option 6",
-                                  },
-                                  {
-                                    cat: "Group 2",
-                                    key: "Option 7",
-                                  },
-                                ]}
-                              />
-                            </Form.Group>
-                          </Col>) : null}
+                          {formSettingData?.applicable_to_user === "No" ||
+                          formSettingData?.applicable_to_user === false ? (
+                            <Col lg={9} md={6} className="mt-3 mt-md-0">
+                              <Form.Group>
+                                <Form.Label>Select User Roles</Form.Label>
+                                <Multiselect
+                                  placeholder="Select User Roles"
+                                  displayValue="role_label"
+                                  selectedValues={selectedUserRole}
+                                  className="multiselect-box default-arrow-select"
+                                  onKeyPressFn={function noRefCheck() {}}
+                                  onRemove={onRemoveUserRole}
+                                  onSearch={function noRefCheck() {}}
+                                  onSelect={onSelectUserRole}
+                                  options={userRole}
+                                />
+                                <p className="error">{formSettingError.user}</p>
+                              </Form.Group>
+                            </Col>
+                          ) : null}
                         </Row>
                       </div>
                     </Modal.Body>
                     <Modal.Footer className="justify-content-center">
                       <Button className="back">Cancel</Button>
-                      <Button className="done" onClick={onSubmitSetting}>Save Settings</Button>
+                      <Button className="done" onClick={onSubmitSetting}>
+                        Save Settings
+                      </Button>
                     </Modal.Footer>
                   </Modal>
                 </Form>
