@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import { API_BASE_URL } from "../../components/App";
+import { BASE_URL } from "../../components/App";
 
 const animatedComponents = makeAnimated();
 
@@ -35,9 +35,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [formOneData, setFormOneData] = useState({});
 
   const saveFormOneData = async (data) => {
-    console.log('DATA:', data);
-    const response = await axios.post(`${API_BASE_URL}/child/signup`, data);
-    console.log('RESPONSE:', response);
+    const response = await axios.post(`${BASE_URL}/child/signup`, data);
+    console.log('Response:', response);
+    if(response.status === 201)
+      nextStep();
   };
   
   const handleFormOneChange = event => {

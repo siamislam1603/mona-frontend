@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import WelcomeMsg from "../components/WelcomeMsg";
+import { BASE_URL } from '../components/App';
 
 const initialFields = {
   fullname: "",
@@ -23,7 +24,7 @@ const SignUp = () => {
 
   // function to post data in the database
   const addUser = async (data) => {
-    const res = await axios.post('http://localhost:4000/signup', data);
+    const res = await axios.post(`${BASE_URL}/signup`, data);
     if(res.status === 201 && res.data?.status === "success") {
       localStorage.setItem("token", res.data.accessToken);
       window.location.href="/dashboard";
