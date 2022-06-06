@@ -1,13 +1,13 @@
 import axios from "axios";
 import React from "react";
-import { Navbar, Nav, Dropdown, DropdownButton } from "react-bootstrap";
-import Select from 'react-select';
+import { Dropdown } from "react-bootstrap";
+import { BASE_URL } from "./App";
 
 const TopHeader = () => {
 
     const logout = async () => {
       console.log('LOGGING USER OUT');
-      const response = await axios.get("http://localhost:4000/auth/logout");
+      const response = await axios.get(`${BASE_URL}/auth/logout`);
       console.log("LOGOUT RESPONSE:", response);
       if(response.status === 200) {
         localStorage.removeItem('token');
