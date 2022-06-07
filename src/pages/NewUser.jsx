@@ -27,7 +27,7 @@ const training = [
 const NewUser = () => {
   const [formErrors, setFormErrors] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
-  const [formData, setFormData] = useState({ city: "", phone: "", role: "", trainingCategories: [] })
+  const [formData, setFormData] = useState({ city: "Sydney", phone: "", role: "", telcode: "+61" })
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
   const [cityData, setCityData] = useState([]);
@@ -249,7 +249,7 @@ const NewUser = () => {
                             <div className="tel-col">
                             <Select
                                 closeMenuOnSelect={true}
-                                placeholder="+91"
+                                placeholder="+61"
                                 className="telcode"
                                 options={countryData}
                                 onChange={(e) =>
