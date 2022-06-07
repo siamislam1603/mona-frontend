@@ -22,6 +22,7 @@ import FormResponse from "../pages/FormBuilder/FormResponse";
 import Training from "../pages/Training";
 import AddNewTraining from "../pages/AddNewTraining";
 import TrainingDetail from "../pages/TrainingDetail";
+import FileRepository from "../pages/FileRepository";
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -256,6 +257,17 @@ const Main = () => {
           element={
             typeof isLoggedIn === "undefined" || isLoggedIn === true ? (
               <TrainingDetail />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        
+        <Route
+          path="/file-repository"
+          element={
+            typeof isLoggedIn === "undefined" || isLoggedIn === false ? (
+              <FileRepository />
             ) : (
               <Navigate to="/" />
             )
