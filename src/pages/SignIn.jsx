@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import WelcomeMsg from "../components/WelcomeMsg";
+import { BASE_URL } from "../components/App";
+import validateSignInForm from '../helpers/validateSignInForm';
 import axios from "axios";
 
 const initialFields = {
@@ -12,18 +14,20 @@ const initialFields = {
 }
 
 const SignIn = () => {
+  const [topErrorMessage, setTopErrorMessage] = useState("");
   const [hide, setHide] = useState(true);
   const [fields, setFields] = useState(initialFields);
   const { email, password } = fields;
+  const [formErrors, setFormErrors] = useState([]);
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const verifyUser = async (data) => {
-    console.log('Verifying user details');
-    const res = await axios.post('http://3.26.39.12:4000/auth/login', data);
-    console.log('Login Response:', res);
-    if(res.status === 200) {
-      console.log('Moving to dashboard');
+    const res = await axios.post(`${BASE_URL}/auth/login`, data);
+    if(res.status === 200 && res.data.status === 'success') {
       localStorage.setItem("token", res.data.accessToken);
-      window.location.href="/dashboard";
+      window.location.href="/user-management";
+    } else if(res.status === 200 && res.data.status === 'fail') {
+      setTopErrorMessage(res.data.msg);
     }
   }
 
@@ -37,9 +41,19 @@ const SignIn = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log('Signing In');
-    verifyUser(fields);
+    setFormErrors(validateSignInForm(fields));
+    setIsSubmit(true);
   }
+
+  useEffect(() => {
+    if(Object.keys(formErrors).length === 0 && isSubmit === true) {
+      let data = new FormData();
+      for(let [key, value] of Object.entries(fields)) {
+        data.append(`${key}`, `${value}`);
+      }
+      verifyUser(fields);
+    }
+  }, [formErrors]);
 
   return (
     <>
@@ -55,8 +69,10 @@ const SignIn = () => {
                   <p>Log In</p>
                 </div>
 
+                {topErrorMessage && <span className="toast-error">{topErrorMessage}</span>}
+                
                 <Form className="login_form" onSubmit={handleSubmit}>
-                  <Form.Group className="mb-4" controlId="formBasicEmail">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicEmail">
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control
                       type="email"
@@ -66,9 +82,10 @@ const SignIn = () => {
                       name="email"
                       value={email}
                     />
+                    <span className="error">{!fields.email && formErrors.email}</span>
                   </Form.Group>
 
-                  <Form.Group className="mb-4" controlId="formBasicPassword">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       className="form_input"
@@ -95,14 +112,15 @@ const SignIn = () => {
                         icon={faEyeSlash}
                       />
                     )}
+                    <span className="error">{!fields.password && formErrors.password}</span>
                   </Form.Group>
 
-                  <Form.Group className="mb-4" controlId="formBasicCheckbox">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicCheckbox">
                     <Row>
-                      <Col md={8}>
+                      <Col>
                         <Form.Check type="checkbox" label="Remember me" />
                       </Col>
-                      <Col md={4} className="text-end">
+                      <Col className="text-end">
                         <Link to="/resetpassword" className="custom_rest">
                           Reset Password?
                         </Link>

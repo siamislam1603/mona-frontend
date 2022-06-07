@@ -21,7 +21,7 @@ const ResetPassword = () => {
                 </div>
                 
                 <Form className="login_form">
-                  <Form.Group className="mb-4" controlId="formBasicEmail">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicEmail">
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control
                       type="email"

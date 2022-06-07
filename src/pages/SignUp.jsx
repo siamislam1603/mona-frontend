@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import WelcomeMsg from "../components/WelcomeMsg";
+import { BASE_URL } from '../components/App';
 
 const initialFields = {
   fullname: "",
@@ -23,7 +24,7 @@ const SignUp = () => {
 
   // function to post data in the database
   const addUser = async (data) => {
-    const res = await axios.post('http://localhost:3000/signup', data);
+    const res = await axios.post(`${BASE_URL}/signup`, data);
     if(res.status === 201 && res.data?.status === "success") {
       localStorage.setItem("token", res.data.accessToken);
       window.location.href="/dashboard";
@@ -57,7 +58,7 @@ const SignUp = () => {
                   <p>Sign Up</p>
                 </div>
                 <Form className="login_form" onSubmit={ handleSubmit }>
-                  <Form.Group className="mb-4" controlId="formBasicFullName">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicFullName">
                     <Form.Label>Full Name</Form.Label>
                     <Form.Control
                       type="text"
@@ -68,7 +69,7 @@ const SignUp = () => {
                       value={fullname}
                     />
                   </Form.Group>
-                  <Form.Group className="mb-4" controlId="formBasicEmail">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control
                       type="email"
@@ -80,7 +81,7 @@ const SignUp = () => {
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-4" controlId="formBasicPassword">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       className="form_input"
@@ -109,7 +110,7 @@ const SignUp = () => {
                     )}
                   </Form.Group>
 
-                  <Form.Group className="mb-4" controlId="formBasicCheckbox">
+                  <Form.Group className="mb-4 form-group" controlId="formBasicCheckbox">
                     <Row>
                       <Col md={12} className="d-flex">
                         <Form.Check type="checkbox" label="" />

@@ -1,0 +1,98 @@
+.control-box {
+  width: 90vw;
+  height: auto;
+  margin: 5rem auto;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+}
+
+.control-box-header {
+  background: white;
+  padding: 2.3rem 2.3rem 0rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-box-header .right-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-section {
+  padding: 0 2.3rem 2.3rem 2.3rem;
+  background: white;
+}
+
+input[name="create_role"] {
+    padding: 1.2rem 1.8rem;   
+    width: 40rem;
+    outline: none;
+    font-size: 1.6rem;
+    border: thin solid #c1c1c1;
+}
+
+.right-section .btn {
+  margin-left: 2rem;
+}
+
+.control-box-title {
+  font-size: 1.6rem; 
+}
+
+.controller-section {
+  padding: 1.8rem 2.3rem;
+  background-color: #f8f8f8;
+}
+
+.action-section {
+  background-color: white;
+  padding: 4rem 8rem;
+  
+  display: flex;
+  align-items: center;
+}
+
+.action-section li:not(:last-child) {
+  margin-right: 12rem;
+}
+
+/* SUBMIT SECTION */
+.submit-section {
+  padding: 2.3rem;
+  background-color: #f8f8f8;
+}
+
+input[type="submit"] {
+  padding: 1.5rem 6rem;
+  border-radius: 20rem;
+  background-color: #272727;
+  color: #efefef;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+}
+
+/* CHECKBOX STYLES */
+label {
+  margin-left: 0.9rem;
+}
+
+/* BUTTON STYLE */
+.btn-secondary {
+  color: #402884;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.btn-long {
+  padding: 1.2rem 3rem;
+  border-radius: 20rem;
+  background: transparent;
+  border: 2px solid #402884;
+}
