@@ -6,7 +6,7 @@ import { BASE_URL } from "./App";
 const LeftNavbar = () => {
 
   const [menuList, setMenuList] = useState([]);
-  const [cityData,setCityData]=useState([]);
+  const [cityData, setCityData]=useState([]);
 
   
   // FETCH User Role Permissions  LIST
@@ -14,6 +14,7 @@ const LeftNavbar = () => {
     const response = await axios.get(`${BASE_URL}/auth/get_menu_list`);
 
     if(response.status === 200) {
+      console.log(response);
       const { cityList } = response.permissionsObject;
       setCityData(cityList.map(city => ({
         value: city.name,

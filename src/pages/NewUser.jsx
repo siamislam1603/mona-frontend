@@ -74,6 +74,10 @@ const NewUser = () => {
   const setCroppedImageInPopup = () => {
     if(croppedImage) {
       setImageToCrop(croppedImage.croppedImageURL);
+      setFormData((prevData) => ({
+        ...prevData,
+        file: croppedImage.croppedImageURL
+      }))
     }
   }
 
@@ -121,8 +125,6 @@ const NewUser = () => {
     fetchCities();
   }, []);
 
-  console.log('USER ROLE: ', userRoleData);
-
   useEffect(() => {
     if(Object.keys(formErrors).length === 0 && isSubmit === true) {
       let data = new FormData();
@@ -139,6 +141,7 @@ const NewUser = () => {
     }
   }, [formErrors]);
 
+  console.log('FORM DATA:', formData);
   return (
     <>
       <div id="main">
@@ -161,6 +164,7 @@ const NewUser = () => {
                           imageToCrop={imageToCrop}
                           onChange={onUploadFile}
                           setPopupVisible={setPopupVisible} />
+                        <span className="error">{!formData.file && formErrors.file}</span>
 
                         <Popup show={popupVisible}>
                           <ImageCropper
@@ -264,7 +268,7 @@ const NewUser = () => {
                             <span className="error">{!formData.telcode || !formData.phone && formErrors.phone}</span>
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          {/* <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Training Categories</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -278,7 +282,7 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                          </Form.Group>
+                          </Form.Group> */}
                           
                           <Col md={12}>
                             <div className="cta text-center mt-5">
