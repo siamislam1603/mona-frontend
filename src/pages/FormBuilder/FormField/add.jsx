@@ -16,7 +16,7 @@ import { invalid } from "moment";
 let counter = 0;
 let selectedFranchisee = [];
 let selectedUserRole = [];
-const AddFormField = (props) => {
+const AddFormField = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [conditionFlag, setConditionFlag] = useState(false);
@@ -34,7 +34,10 @@ const AddFormField = (props) => {
     { field_type: "radio", option: [{ "": "" }, { "": "" }] },
     { field_type: "checkbox", option: [{ "": "" }, { "": "" }] },
   ]);
-  const [formSettingData, setFormSettingData] = useState({});
+  const [formSettingData, setFormSettingData] = useState({
+    applicable_to_franchisee: "Yes",
+    applicable_to_user: "Yes",
+  });
   const [sectionTitle, setSectionTitle] = useState("");
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
@@ -48,7 +51,7 @@ const AddFormField = (props) => {
   }, []);
   function onSelectFranchisee(optionsList, selectedItem) {
     console.log("selected_item---->2", selectedItem);
-    selectedFranchisee.push(selectedItem);
+    selectedFranchisee.push({id:selectedItem.id,registered_name:selectedItem.registered_name});
     console.log("selected_item---->1selectedFranchisee", selectedFranchisee);
   }
   function onRemoveFranchisee(selectedList, removedItem) {
@@ -60,7 +63,7 @@ const AddFormField = (props) => {
 
   function onSelectUserRole(optionsList, selectedItem) {
     console.log("selected_item---->2", selectedItem);
-    selectedUserRole.push(selectedItem);
+    selectedUserRole.push({id:selectedItem.id,role_label:selectedItem.role_label});
     console.log("selected_item---->1selectedFranchisee", selectedFranchisee);
   }
   function onRemoveUserRole(selectedList, removedItem) {
