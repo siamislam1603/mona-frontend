@@ -8,6 +8,7 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
       maxFiles: 1,
       multiple: false,
       onDrop: (acceptedFiles) => {
+        console.log("accept files----?",acceptedFiles);
         onChange(acceptedFiles);
         setPopupVisible(true);
       },
@@ -22,7 +23,7 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
   return (
     <div className="repositorydrag">
       <div {...getRootProps({ className: "dropzone" })}>
-        <input {...getInputProps()} type="file" name="" />
+        <input {...getInputProps()} type="file" name="setting_file" />
         <div className="text-center uploadfile">
           <span>Please Select a file to share : <span className="btn btn-primary">Choose File</span> <br/> <small>Accepted file types : doc, pdf, mp3, png, jpg</small></span>
         </div>

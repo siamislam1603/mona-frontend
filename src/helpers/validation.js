@@ -69,6 +69,24 @@ export const createFormFieldValidation = (form) => {
 
   return newErrors;
 };
+export const createFileRepoValidation=(form,franchisee,user)=>{
+  let newErrors = {};
+  let {
+    applicable_to_user,
+    applicable_to_franchisee,
+    setting_files
+  } = form;
+  if (applicable_to_user === "No" || applicable_to_user === false) {
+    if (user.length===0) newErrors.user = "Applicable to User is Required";
+  }
+  if (applicable_to_franchisee === "No" || applicable_to_franchisee === false) {
+    if (franchisee.length===0)
+      newErrors.franchisee = "Applicable to Franchisee is Required";
+  }
+  if (!setting_files || setting_files === "") newErrors.setting_files = "File is Required";
+
+  return newErrors;
+}
 export const createFormValidation = (form) => {
   let newErrors = {};
   let {
