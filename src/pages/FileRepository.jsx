@@ -1,9 +1,8 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
   Dropdown,
-  DropdownButton,
   Form,
   Modal,
   Row,
@@ -25,6 +24,7 @@ import Multiselect from "multiselect-react-dropdown";
 import DragDropRepository from "../components/DragDropRepository";
 import { BASE_URL } from "../components/App";
 import { createFileRepoValidation } from "../helpers/validation";
+import moment from "moment";
 
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
@@ -45,6 +45,103 @@ const training = [
   {
     value: "melbourne",
     label: "Melbourne",
+  },
+];
+const columns1 = [
+  {
+    dataField: "filesPath",
+    text: "Name",
+    sort: true,
+    formatter: (cell) => {
+      cell = cell.split("/");
+      return (
+        <>
+          <div className="user-list">
+            <span className="user-name">{cell[cell.length - 1]}</span>
+          </div>
+        </>
+      );
+    },
+    // formatter: (cell) => {
+    //   cell = cell.split(",");
+    //   return (
+    //     <>
+    //       <div className="user-list">
+    //         <span className="user-pic">
+    //           <img src={cell[0]} alt="" />
+    //         </span>
+    //         <span className="user-name">
+    //           {cell[1]} <small>{cell[2]}</small>
+    //         </span>
+    //       </div>
+    //     </>
+    //   );
+    // },
+  },
+  {
+    dataField: "createdAt",
+    text: "Created on",
+    sort: true,
+    formatter: (cell) => {
+      cell = moment(cell).format("DD/MM/YYYY");
+      return (
+        <>
+          <div className="user-list">
+            <span className="user-name">{cell}</span>
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    dataField: "createdBy",
+    text: "Created by",
+    sort: true,
+    formatter: (cell) => {
+      cell = cell.split(",");
+      return (
+        <>
+          <div className="user-list">
+            <span className="user-name">
+              {cell[0]} <small>{cell[1]}</small>
+            </span>
+          </div>
+        </>
+      );
+    },
+  },
+  // {
+  //   dataField: "sharing",
+  //   text: "Sharing",
+  //   sort: true,
+  //   formatter: (cell) => {
+  //     cell = cell.split(",");
+  //     return (
+  //       <>
+  //         <img src={cell[0]} alt="" /> {cell[1]}
+  //       </>
+  //     );
+  //   },
+  // },
+  {
+    dataField: "action",
+    text: "",
+    formatter: (cell) => {
+      return (
+        <>
+          <div className="cta-col">
+            <Dropdown>
+              <Dropdown.Toggle variant="transparent" id="ctacol">
+                <img src="../img/dot-ico.svg" alt="" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item href="#">Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        </>
+      );
+    },
   },
 ];
 const products = [
@@ -137,7 +234,6 @@ const selectRow = {
   mode: "checkbox",
   clickToSelect: true,
 };
-
 const columns = [
   {
     dataField: "name",
@@ -152,7 +248,8 @@ const columns = [
               <img src={cell[0]} alt="" />
             </span>
             <span className="user-name">
-              {cell[1]} <small>{cell[2]}</small>
+              {cell[1]}
+               {/* <small>{cell[2]}</small> */}
             </span>
           </div>
         </>
@@ -182,19 +279,6 @@ const columns = [
     },
   },
   {
-    dataField: "sharing",
-    text: "Sharing",
-    sort: true,
-    formatter: (cell) => {
-      cell = cell.split(",");
-      return (
-        <>
-          <img src={cell[0]} alt="" /> {cell[1]}
-        </>
-      );
-    },
-  },
-  {
     dataField: "action",
     text: "",
     formatter: (cell) => {
@@ -215,6 +299,83 @@ const columns = [
     },
   },
 ];
+// const columns = [
+//   {
+//     dataField: "name",
+//     text: "Name",
+//     sort: true,
+//     formatter: (cell) => {
+//       cell = cell.split(",");
+//       return (
+//         <>
+//           <div className="user-list">
+//             <span className="user-pic">
+//               <img src={cell[0]} alt="" />
+//             </span>
+//             <span className="user-name">
+//               {cell[1]} <small>{cell[2]}</small>
+//             </span>
+//           </div>
+//         </>
+//       );
+//     },
+//   },
+//   {
+//     dataField: "createdon",
+//     text: "Created on",
+//     sort: true,
+//   },
+//   {
+//     dataField: "createdby",
+//     text: "Created by",
+//     sort: true,
+//     formatter: (cell) => {
+//       cell = cell.split(",");
+//       return (
+//         <>
+//           <div className="user-list">
+//             <span className="user-name">
+//               {cell[0]} <small>{cell[1]}</small>
+//             </span>
+//           </div>
+//         </>
+//       );
+//     },
+//   },
+//   {
+//     dataField: "sharing",
+//     text: "Sharing",
+//     sort: true,
+//     formatter: (cell) => {
+//       cell = cell.split(",");
+//       return (
+//         <>
+//           <img src={cell[0]} alt="" /> {cell[1]}
+//         </>
+//       );
+//     },
+//   },
+//   {
+//     dataField: "action",
+//     text: "",
+//     formatter: (cell) => {
+//       return (
+//         <>
+//           <div className="cta-col">
+//             <Dropdown>
+//               <Dropdown.Toggle variant="transparent" id="ctacol">
+//                 <img src="../img/dot-ico.svg" alt="" />
+//               </Dropdown.Toggle>
+//               <Dropdown.Menu>
+//                 <Dropdown.Item href="#">Delete</Dropdown.Item>
+//               </Dropdown.Menu>
+//             </Dropdown>
+//           </div>
+//         </>
+//       );
+//     },
+//   },
+// ];
 
 const FileRepository = () => {
   const [show, setShow] = useState(false);
@@ -226,14 +387,16 @@ const FileRepository = () => {
     applicable_to_franchisee: "Yes",
     applicable_to_user: "Yes",
   });
+  const [fileRepoData, setFileRepoData] = useState([]);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     getUserRoleAndFranchiseeData();
+    getFileRepoData();
   }, []);
   const setField = (field, value) => {
     if (!value) {
-      setSettingData({ ...settingData, 'setting_files': field });
+      setSettingData({ ...settingData, setting_files: field });
     } else {
       setSettingData({ ...settingData, [field]: value });
     }
@@ -257,6 +420,32 @@ const FileRepository = () => {
     } else {
       alert("success");
     }
+  };
+  const getFileRepoData = () => {
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`${BASE_URL}/uploads/dashboardFiles/${localStorage.getItem('user_id')}`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        let repoData = [];
+        
+        res?.map((item) => {
+          item.filesPath = item.filesPath.split("/");
+          repoData.push({
+            id: item.id,
+            name: "../img/abstract-ico.png,"+item.filesPath[item.filesPath.length - 1],
+            createdon: moment(item.createdAt).format("DD/MM/YYYY"),
+            createdby: item.creatorName + "," + item.creatorRole,
+            sharing: "../img/sharing-ico.png, Shared"
+          });
+        });
+        console.log("repoData---->",repoData);
+        setFileRepoData(repoData);
+      })
+      .catch((error) => console.log("error", error));
   };
   const getUserRoleAndFranchiseeData = () => {
     var requestOptions = {
@@ -322,7 +511,7 @@ const FileRepository = () => {
                   <div className="user-management-sec repository-sec">
                     <ToolkitProvider
                       keyField="name"
-                      data={products}
+                      data={fileRepoData}
                       columns={columns}
                       search
                     >
@@ -438,12 +627,12 @@ const FileRepository = () => {
                           <div className="training-cat mb-3">
                             <ul>
                               <li>
-                                <a href="/" className="active">
+                                <a href="" className="active">
                                   Files shared with me{" "}
                                 </a>
                               </li>
                               <li>
-                                <a href="/">My added files</a>
+                                <a href="">My added files</a>
                               </li>
                             </ul>
                           </div>
