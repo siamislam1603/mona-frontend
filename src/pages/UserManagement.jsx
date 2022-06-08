@@ -180,6 +180,11 @@ const rowEvents = {
 const UserManagement = () => {
 
     const [userData, setUserData] = useState([]);
+    const [filteredData, setFilteredData] = useState();
+    const [filter, setFilter] = useState({
+      user: "",
+      location: []
+    });
 
     const fetchUserDetails = async () => {
       let response = await axios.get(`${BASE_URL}/auth/users`, {
@@ -202,10 +207,28 @@ const UserManagement = () => {
       }
     };
 
+    const handleCancelFilter = () => {
+      setFilteredData(null);
+      setFilter({});
+    };
+
+    const handleApplyFilter = () => {
+      let data = userData;
+
+      if(filter.location.length > 0) {
+        data = data.filter(data => data.name.split(',')[2].trim() === filter.user && filter.location.includes(data.location));
+      } else {
+        data = data.filter(data => data.name.split(',')[2].trim() === filter.user);
+      }
+
+      setFilteredData(data);
+    }
+
     useEffect(() => {
       fetchUserDetails();
     }, []);
 
+    console.log('FILTER:', filter);
     console.log('USER DATA:', userData);
 
     return (
@@ -223,7 +246,7 @@ const UserManagement = () => {
                   <div className="user-management-sec">
                     <ToolkitProvider
                       keyField="name"
-                      data={userData}
+                      data={filteredData || userData}
                       columns={ columns }
                       search
                     >
@@ -253,14 +276,22 @@ const UserManagement = () => {
                                     name="users"
                                     type="radio"
                                     id='one'
+                                    onChange={(event) => setFilter(prevState => ({
+                                      ...prevState,
+                                      user: event.target.value
+                                    }))}
                                   />
                                   <Form.Check
                                     inline
                                     label='Co-ordinator'
-                                    value='Co-ordinator'
+                                    value='Coordinator'
                                     name="users"
                                     type="radio"
                                     id='two'
+                                    onChange={(event) => setFilter(prevState => ({
+                                      ...prevState,
+                                      user: event.target.value
+                                    }))}
                                   />
                                   <Form.Check
                                     inline
@@ -269,14 +300,22 @@ const UserManagement = () => {
                                     name="users"
                                     type="radio"
                                     id='three'
+                                    onChange={(event) => setFilter(prevState => ({
+                                      ...prevState,
+                                      user: event.target.value
+                                    }))}
                                   />
                                   <Form.Check
                                     inline
                                     label='Parent/Guardian'
-                                    value='Parent-Guardian'
+                                    value='Guardian'
                                     name="users"
                                     type="radio"
                                     id='four'
+                                    onChange={(event) => setFilter(prevState => ({
+                                      ...prevState,
+                                      user: event.target.value
+                                    }))}
                                   />
                                 </Form.Group>
                               </div>
@@ -288,12 +327,22 @@ const UserManagement = () => {
                                     components={animatedComponents}
                                     isMulti
                                     options={training}
+                                    onChange={(event) => setFilter(prevState => ({
+                                      ...prevState,
+                                      location: [...event.map(data => data.label)]
+                                    }))}
                                   />
                                 </Form.Group>
                               </div>
                               <footer>
-                                <Button variant="transparent" type="submit">Cancel</Button>
-                                <Button variant="primary" type="submit">Apply</Button>
+                                <Button 
+                                  variant="transparent" 
+                                  type="submit"
+                                  onClick={handleCancelFilter}>Reset</Button>
+                                <Button 
+                                  variant="primary" 
+                                  type="submit"
+                                  onClick={handleApplyFilter}>Apply</Button>
                               </footer>
                             </Dropdown.Menu>
                           </Dropdown>
