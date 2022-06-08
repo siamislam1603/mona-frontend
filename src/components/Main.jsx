@@ -271,7 +271,6 @@ const Main = () => {
             </Protected>
           }
         />
-      </Routes>
       
       <Route
           path="/announcements"
