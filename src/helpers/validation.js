@@ -76,10 +76,10 @@ export const createFileRepoValidation=(form,franchisee,user)=>{
     applicable_to_franchisee,
     setting_files
   } = form;
-  if (applicable_to_user === "No" || applicable_to_user === false) {
+  if (applicable_to_user === "0") {
     if (user.length===0) newErrors.user = "Applicable to User is Required";
   }
-  if (applicable_to_franchisee === "No" || applicable_to_franchisee === false) {
+  if (applicable_to_franchisee === "0") {
     if (franchisee.length===0)
       newErrors.franchisee = "Applicable to Franchisee is Required";
   }
