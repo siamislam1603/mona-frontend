@@ -34,6 +34,7 @@ const NewUser = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [imageToCrop, setImageToCrop] = useState(undefined);
   const [croppedImage, setCroppedImage] = useState(undefined);
+  const [topErrorMessage, setTopErrorMessage] = useState("");
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
@@ -41,6 +42,9 @@ const NewUser = () => {
     if(response.status === 201) {
       localStorage.setItem("token", response.data.accessToken);
       window.location.href = "/user-management";
+    } else if(response.status === 201 && response.data.status === 'fail') {
+      console.log('MESSAGE:', response,data.msg);
+      setTopErrorMessage(response.data.msg)
     }
   };
 
@@ -242,6 +246,7 @@ const NewUser = () => {
                               value={formData.email ?? ""}
                               onChange={handleChange} />
                             <span className="error">{!formData.email && formErrors.email}</span>
+                            {topErrorMessage && <span className="toast-error">{topErrorMessage}</span>}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">

@@ -18,6 +18,7 @@ const SignUp = () => {
   const [hide, setHide] = useState(true);
   const [fields, setFields] = useState(initialFields);
   const { fullname, email, password } = fields;
+  const [topErrorMessage, setTopErrorMessage] = useState("");
 
   const location = useLocation();
   console.log('Location:', location);
@@ -28,7 +29,10 @@ const SignUp = () => {
     if(res.status === 201 && res.data?.status === "success") {
       localStorage.setItem("token", res.data.accessToken);
       localStorage.setItem("user_id", res.data.user.id);
+      localStorage.setItem("user_role", res.data.user.role);
       window.location.href="/dashboard";
+    } else if(res.status === 201 && res.data.status === 'fail') {
+      setTopErrorMessage(res.data.message)
     }
   }
 
@@ -80,6 +84,7 @@ const SignUp = () => {
                       onChange={handleChange}
                       value={email}
                     />
+                    {topErrorMessage && <span className="toast-error">{topErrorMessage}</span>}
                   </Form.Group>
 
                   <Form.Group className="mb-4 form-group" controlId="formBasicPassword">
