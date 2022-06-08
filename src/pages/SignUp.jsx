@@ -27,6 +27,7 @@ const SignUp = () => {
     const res = await axios.post(`${BASE_URL}/signup`, data);
     if(res.status === 201 && res.data?.status === "success") {
       localStorage.setItem("token", res.data.accessToken);
+      localStorage.setItem("user_id", res.data.user.id);
       window.location.href="/dashboard";
     }
   }

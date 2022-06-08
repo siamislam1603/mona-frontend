@@ -25,6 +25,7 @@ const SignIn = () => {
     const res = await axios.post(`${BASE_URL}/auth/login`, data);
     if(res.status === 200 && res.data.status === 'success') {
       localStorage.setItem("token", res.data.accessToken);
+      localStorage.setItem("user_id", res.data.user.id);
       window.location.href="/user-management";
     } else if(res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);
