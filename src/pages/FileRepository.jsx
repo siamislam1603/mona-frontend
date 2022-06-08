@@ -7,8 +7,6 @@ import {
   Modal,
   Row,
   Col,
-  Tabs,
-  Tab,
 } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
@@ -49,7 +47,6 @@ const training = [
     label: "Melbourne",
   },
 ];
-
 const selectRow = {
   mode: "checkbox",
   clickToSelect: true,
