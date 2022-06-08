@@ -24,6 +24,8 @@ import Training from "../pages/Training";
 import AddNewTraining from "../pages/AddNewTraining";
 import TrainingDetail from "../pages/TrainingDetail";
 import FileRepository from "../pages/FileRepository";
+import Announcements from "../pages/Announcements";
+import AddNewAnnouncements from "../pages/AddNewAnnouncements";
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -267,6 +269,29 @@ const Main = () => {
               <SignIn />
               <FileRepository />
             </Protected>
+          }
+        />
+      </Routes>
+      
+      <Route
+          path="/announcements"
+          element={
+            typeof isLoggedIn === "undefined" || isLoggedIn === true ? (
+              <Announcements />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        
+        <Route
+          path="/new-announcements"
+          element={
+            typeof isLoggedIn === "undefined" || isLoggedIn === true ? (
+              <AddNewAnnouncements />
+            ) : (
+              <Navigate to="/" />
+            )
           }
         />
       </Routes>
