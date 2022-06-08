@@ -206,7 +206,7 @@ const UserManagement = () => {
       fetchUserDetails();
     }, []);
 
-    console.log(localStorage.getItem('user'));
+    console.log('USER DATA:', userData);
 
     return (
       <>
