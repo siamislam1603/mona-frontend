@@ -164,22 +164,6 @@ const Main = () => {
           }
         />
 
-        {/* <Route 
-          path="/form/field/add" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <AddFormField /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/form/add" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <AddFormBuilder /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/form/response" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <FormResponse /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/form" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ViewFormBuilder /> : <Navigate to="/" />} /> */}
-
         <Route 
           path="/form/field/add" 
           element={

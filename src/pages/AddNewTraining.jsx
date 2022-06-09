@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Form, Modal } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import Multiselect from "multiselect-react-dropdown";
 import DropAllFile from "../components/DragDrop";
+import axios from "axios";
+import { BASE_URL } from "../components/App";
 
 
 const animatedComponents = makeAnimated();
@@ -32,11 +33,45 @@ const timereq = [
     label: "5",
   },
 ];
+
 const AddNewTraining = () => {
 
-const [show, setShow] = useState(false);
-const handleClose = () => setShow(false);
-const handleShow = () => setShow(true);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const handleSaveAndClose = () => setShow(false);
+
+  // CUSTOM STATES
+  const [hideSelect, setHideSelect] = useState(false);
+  const [userRoles, setUserRoles] = useState([]);
+  const [trainingSettings, setTrainingSettings] = useState({});
+
+  // FETCHING USER ROLES
+  const fetchUserRoles = async () => {
+    const response = await axios.get(`${BASE_URL}/api/user-role`);
+    if(response.status === 200) {
+      const { userRoleList } = response.data;
+      setUserRoles([...userRoleList.map(data => ({
+        cat: data.role_name,
+        key: data.role_label
+      }))]);
+    }
+  }; 
+
+  const handleSaveSettings = event => {
+    const { name, value } = event.target;
+    setTrainingSettings(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  }
+
+  useEffect(() => {
+    fetchUserRoles();
+  }, []);
+
+  if(show === false)
+    console.log('TRAINING SETTINGS:', trainingSettings);
 
   return (
     <>
@@ -138,25 +173,37 @@ const handleShow = () => setShow(true);
               <Col lg={3} sm={6}>
                 <Form.Group>
                   <Form.Label>Start Date</Form.Label>
-                  <Form.Control type="date" name="form_name" />
+                  <Form.Control 
+                    type="date" 
+                    name="start_date"
+                    onChange={handleSaveSettings} />
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-sm-0">
                 <Form.Group>
                   <Form.Label>Start Time</Form.Label>
-                  <Form.Control type="time" name="form_name" />
+                  <Form.Control 
+                    type="time" 
+                    name="start_time"
+                    onChange={handleSaveSettings} />
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
                   <Form.Label>End Date</Form.Label>
-                  <Form.Control type="date" name="form_name" />
+                  <Form.Control 
+                    type="date" 
+                    name="end_date"
+                    onChange={handleSaveSettings} />
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
                   <Form.Label>End Time</Form.Label>
-                  <Form.Control type="time" name="form_name" />
+                  <Form.Control 
+                    type="time" 
+                    name="end_time"
+                    onChange={handleSaveSettings} />
                 </Form.Group>
               </Col>
             </Row>
@@ -166,25 +213,37 @@ const handleShow = () => setShow(true);
                   <Form.Label>Applicable to all users</Form.Label>
                   <div className="new-form-radio">
                     <div className="new-form-radio-box">
-                      <label for="yes1">
+                      <label htmlFor="yes1">
                         <input
                           type="radio"
                           value="Yes"
                           name="form_template_select1"
                           id="yes1"
-                        />
+                          onChange={(event) => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              is_applicable_to_all: true
+                            }));
+                            setHideSelect(true);
+                          }}/>
                         <span className="radio-round"></span>
                         <p>Yes</p>
                       </label>
                     </div>
                     <div className="new-form-radio-box">
-                      <label for="no1">
+                      <label htmlFor="no1">
                         <input
                           type="radio"
                           value="No"
                           name="form_template_select1"
                           id="no1"
-                        />
+                          onChange={(event) => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              is_applicable_to_all: false
+                            }));
+                            setHideSelect(false);
+                          }}/>
                         <span className="radio-round"></span>
                         <p>No</p>
                       </label>
@@ -193,7 +252,7 @@ const handleShow = () => setShow(true);
                 </Form.Group>
               </Col>
               <Col lg={9} md={6}  className="mt-3 mt-md-0">
-                <Form.Group>
+                <Form.Group className={hideSelect ? "d-none": ""}>
                   <Form.Label>Select User Roles</Form.Label>
                   <Multiselect
                     placeholder="Select User Roles"
@@ -202,37 +261,13 @@ const handleShow = () => setShow(true);
                     onKeyPressFn={function noRefCheck() {}}
                     onRemove={function noRefCheck() {}}
                     onSearch={function noRefCheck() {}}
-                    onSelect={function noRefCheck() {}}
-                    options={[
-                      {
-                        cat: "Group 1",
-                        key: "Option 1",
-                      },
-                      {
-                        cat: "Group 1",
-                        key: "Option 2",
-                      },
-                      {
-                        cat: "Group 1",
-                        key: "Option 3",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 4",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 5",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 6",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 7",
-                      },
-                    ]}
+                    onSelect={function noRefCheck(data) {
+                      setTrainingSettings(prevState => ({
+                        ...prevState,
+                        roles: [...data.map(data => data.cat)]
+                      }));
+                    }}
+                    options={userRoles}
                   />
                 </Form.Group>
               </Col>
@@ -243,7 +278,7 @@ const handleShow = () => setShow(true);
           <Button variant="transparent" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary">
+          <Button variant="primary" onClick={handleSaveAndClose}>
             Save Settings
           </Button>
         </Modal.Footer>

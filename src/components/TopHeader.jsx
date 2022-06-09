@@ -46,7 +46,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
             <div className="selectdropdown">
               <Dropdown onSelect={e => setSelectedFranchisee(e)}>
                 <Dropdown.Toggle id="dropdown-basic">
-                  {franchiseeList[0]?.franchisee_name}
+                  {franchiseeList[0]?.franchisee_name || "No Data Available"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {
