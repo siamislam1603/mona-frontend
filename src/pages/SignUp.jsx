@@ -30,6 +30,7 @@ const SignUp = () => {
       localStorage.setItem("token", res.data.accessToken);
       localStorage.setItem("user_id", res.data.user.id);
       localStorage.setItem("user_role", res.data.user.role);
+      localStorage.setItem("user_name", res.data.user.name);
       window.location.href="/dashboard";
     } else if(res.status === 201 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.message)

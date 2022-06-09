@@ -27,6 +27,7 @@ const SignIn = () => {
       localStorage.setItem("token", res.data.accessToken);
       localStorage.setItem("user_id", res.data.user.id);
       localStorage.setItem("user_role", res.data.user.role);
+      localStorage.setItem("user_name", res.data.user.name);
       window.location.href="/user-management";
     } else if(res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);
