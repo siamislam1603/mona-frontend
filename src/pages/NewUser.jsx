@@ -36,6 +36,7 @@ const NewUser = () => {
   const [imageToCrop, setImageToCrop] = useState(undefined);
   const [croppedImage, setCroppedImage] = useState(undefined);
   const [topErrorMessage, setTopErrorMessage] = useState("");
+  const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
@@ -137,6 +138,8 @@ const NewUser = () => {
         data.append(`${key}`, `${value}`);
       }
 
+      data.append('franchisee', selectedFranchisee);
+
       if(imageToCrop) {
         data.append("file", croppedImage.croppedImageFILE);
         createUser(data);
@@ -146,7 +149,6 @@ const NewUser = () => {
     }
   }, [formErrors]);
 
-  console.log('FORM DATA:', formData);
   return (
     <>
       <div id="main">
@@ -157,7 +159,7 @@ const NewUser = () => {
                 <LeftNavbar/>
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">New User</h1>
