@@ -26,6 +26,7 @@ import TrainingDetail from "../pages/TrainingDetail";
 import FileRepository from "../pages/FileRepository";
 import Announcements from "../pages/Announcements";
 import AddNewAnnouncements from "../pages/AddNewAnnouncements";
+import DynamicForm from "../pages/DynamicForm";
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -179,7 +180,13 @@ const Main = () => {
         <Route 
           path="/form" 
           element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ViewFormBuilder /> : <Navigate to="/" />} /> */}
-
+        <Route 
+          path="/form/dynamic/:name" 
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <DynamicForm />
+            </Protected>} />
         <Route 
           path="/form/field/add" 
           element={
@@ -284,6 +291,8 @@ const Main = () => {
           }
         />
       </Routes>
+
+      
     </main>
   );
 };
