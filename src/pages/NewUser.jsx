@@ -10,6 +10,7 @@ import validateForm from '../helpers/validateForm';
 import ImageCropper from '../components/ImageCropper';
 import Popup from '../components/Popup';
 import { BASE_URL } from '../components/App';
+import { Link } from 'react-router-dom';
 
 const animatedComponents = makeAnimated();
 
@@ -35,6 +36,7 @@ const NewUser = () => {
   const [imageToCrop, setImageToCrop] = useState(undefined);
   const [croppedImage, setCroppedImage] = useState(undefined);
   const [topErrorMessage, setTopErrorMessage] = useState("");
+  const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
@@ -136,6 +138,8 @@ const NewUser = () => {
         data.append(`${key}`, `${value}`);
       }
 
+      data.append('franchisee', selectedFranchisee);
+
       if(imageToCrop) {
         data.append("file", croppedImage.croppedImageFILE);
         createUser(data);
@@ -145,7 +149,6 @@ const NewUser = () => {
     }
   }, [formErrors]);
 
-  console.log('FORM DATA:', formData);
   return (
     <>
       <div id="main">
@@ -156,7 +159,7 @@ const NewUser = () => {
                 <LeftNavbar/>
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">New User</h1>
@@ -291,7 +294,7 @@ const NewUser = () => {
                           
                           <Col md={12}>
                             <div className="cta text-center mt-5">
-                              <Button variant="transparent" type="submit">Back to All Users</Button>
+                              <Button variant="transparent"><Link to="/user-management">Back to All Users</Link></Button>
                               <Button variant="primary" type="submit">Save Details</Button>
                             </div>
                           </Col>
