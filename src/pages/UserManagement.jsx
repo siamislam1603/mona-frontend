@@ -180,7 +180,6 @@ const rowEvents = {
 const UserManagement = () => {
 
     const [userData, setUserData] = useState([]);
-    const [filteredData, setFilteredData] = useState();
     const [filter, setFilter] = useState({
       user: "",
       location: []
@@ -208,28 +207,16 @@ const UserManagement = () => {
     };
 
     const handleCancelFilter = () => {
-      setFilteredData(null);
       setFilter({});
     };
 
-    const handleApplyFilter = () => {
-      let data = userData;
-
-      if(filter.location.length > 0) {
-        data = data.filter(data => data.name.split(',')[2].trim() === filter.user && filter.location.includes(data.location));
-      } else {
-        data = data.filter(data => data.name.split(',')[2].trim() === filter.user);
-      }
-
-      setFilteredData(data);
+    const handleApplyFilter = async () => {
+      // const res = await axios.post(`${BASE_URL}/`)
     }
 
     useEffect(() => {
       fetchUserDetails();
     }, []);
-
-    console.log('FILTER:', filter);
-    console.log('USER DATA:', userData);
 
     return (
       <>
@@ -246,7 +233,7 @@ const UserManagement = () => {
                   <div className="user-management-sec">
                     <ToolkitProvider
                       keyField="name"
-                      data={filteredData || userData}
+                      data={userData}
                       columns={ columns }
                       search
                     >

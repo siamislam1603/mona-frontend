@@ -21,7 +21,7 @@ const LeftNavbar = () => {
     fetchUserRolePermissions();
   }, []);
 
-
+  console.log('PERMISSIONS OBJECT:', menuList);
   return (
     <>
       <div className="logo-column text-center"><Navbar.Brand href="#home"><img src="img/logo-ico.png" alt=""/></Navbar.Brand></div>

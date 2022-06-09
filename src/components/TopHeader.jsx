@@ -12,6 +12,8 @@ const TopHeader = () => {
       if(response.status === 200) {
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
+        localStorage.removeItem('user_name');
+        localStorage.removeItem('user_role');
         window.location.href = "/";
       }
     };

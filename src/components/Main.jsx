@@ -65,16 +65,6 @@ const Main = () => {
         />
 
         <Route
-          path="/dashboard"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <Dashboard />
-            </Protected>
-          }
-        />
-
-        <Route
           path="/resetpassword"
           element={
             <Protected isLoggedIn={isLoggedIn}>
