@@ -222,10 +222,14 @@ const FileRepository = () => {
         let repoData = [];
 
         res?.map((item) => {
-          // if(item.filesPath.includes("/"))
-          //   {item.filesPath = item.filesPath.split("/");}
-          // if(item.filesPath.includes("\"))
-          //   {item.filesPath = item.filesPath.split("\");}
+          if (item.filesPath.includes("/")) {
+            item.filesPath = item.filesPath.split("/");
+          }
+
+          if (item.filesPath.includes("\\")) {
+            console.log("Hello9009546546789875674");
+            item.filesPath = item.filesPath.split("\\");
+          }
           repoData.push({
             id: item.id,
             name:
@@ -256,7 +260,14 @@ const FileRepository = () => {
         let repoData = [];
 
         res?.map((item) => {
-          item.filesPath = item.filesPath.split("/");
+          if (item.filesPath.includes("/")) {
+            item.filesPath = item.filesPath.split("/");
+          }
+
+          if (item.filesPath.includes("\\")) {
+            console.log("Hello9009546546789875674");
+            item.filesPath = item.filesPath.split("\\");
+          }
           repoData.push({
             id: item.id,
             name:
