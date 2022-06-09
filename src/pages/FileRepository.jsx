@@ -29,8 +29,8 @@ import moment from "moment";
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
-let selectedFranchisee = [];
-let selectedUserRole = [];
+let selectedFranchisee = "";
+let selectedUserRole = "";
 const styles = {
   option: (styles, state) => ({
     ...styles,
@@ -62,7 +62,7 @@ const FileRepository = () => {
     applicable_to_franchisee: "1",
     applicable_to_user: "1",
   });
-  const [columns,setColumns]=useState([
+  const [columns, setColumns] = useState([
     {
       dataField: "name",
       text: "Name",
@@ -77,7 +77,7 @@ const FileRepository = () => {
               </span>
               <span className="user-name">
                 {cell[1]}
-                 {/* <small>{cell[2]}</small> */}
+                {/* <small>{cell[2]}</small> */}
               </span>
             </div>
           </>
@@ -126,10 +126,10 @@ const FileRepository = () => {
         );
       },
     },
-  ])
-  const [tabFlag,setTabFlag]=useState(true);
+  ]);
+  const [tabFlag, setTabFlag] = useState(true);
   const [fileRepoData, setFileRepoData] = useState([]);
-  const [sharedWithMeFileRepoData,setSharedWithMeFileRepoData]=useState([]);
+  const [sharedWithMeFileRepoData, setSharedWithMeFileRepoData] = useState([]);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -143,7 +143,7 @@ const FileRepository = () => {
     } else {
       setSettingData({ ...settingData, [field]: value });
     }
-    console.log("form---->", settingData);
+
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -151,67 +151,123 @@ const FileRepository = () => {
       });
     }
   };
-  const onSubmit = (e) => {
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  const onSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = createFileRepoValidation(
-      settingData,
-      selectedFranchisee,
-      selectedUserRole
-    );
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      alert("success");
+    // const newErrors = createFileRepoValidation(
+    //   settingData,
+    //   selectedFranchisee,
+    //   selectedUserRole
+    // );
+    // if (Object.keys(newErrors).length > 0) {
+    //   setErrors(newErrors);
+    // } else {
+    if (settingData.applicable_to_user === "1") {
+      selectedUserRole = "";
     }
+    if (settingData.applicable_to_franchisee === "1") {
+      selectedFranchisee = "";
+    }
+    var myHeaders = new Headers();
+    myHeaders.append("role", localStorage.getItem("user_role"));
+    const file = settingData.setting_files[0];
+    console.log("file------->", file);
+    const blob = await fetch(await toBase64(file)).then((res) => res.blob());
+    console.log("reader---->");
+    var formdata = new FormData();
+    formdata.append("image", blob, file.name);
+    formdata.append("description", "abc");
+    formdata.append("title", "abc");
+    formdata.append("createdBy", localStorage.getItem("user_name"));
+    formdata.append("userId", localStorage.getItem("user_id"));
+    formdata.append("AccessToAllUser", settingData.applicable_to_user);
+    formdata.append(
+      "AccessToAllFranchisee",
+      settingData.applicable_to_franchisee
+    );
+    formdata.append("sharedWith", selectedFranchisee);
+    formdata.append("SharedRole", selectedUserRole);
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch(`${BASE_URL}/uploads/`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+    // }
   };
-  const getFilesSharedWithMeData=()=>{
+  const getFilesSharedWithMeData = () => {
     var requestOptions = {
       method: "GET",
       redirect: "follow",
     };
 
-    fetch(`${BASE_URL}/uploads/sharedWithMe/${localStorage.getItem('user_id')}`, requestOptions)
+    fetch(
+      `${BASE_URL}/uploads/sharedWithMe/${localStorage.getItem("user_id")}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((res) => {
         let repoData = [];
-        
+
         res?.map((item) => {
-          item.filesPath = item.filesPath.split("/");
+          // if(item.filesPath.includes("/"))
+          //   {item.filesPath = item.filesPath.split("/");}
+          // if(item.filesPath.includes("\"))
+          //   {item.filesPath = item.filesPath.split("\");}
           repoData.push({
             id: item.id,
-            name: "../img/abstract-ico.png,"+item.filesPath[item.filesPath.length - 1],
+            name:
+              "../img/abstract-ico.png," +
+              item.filesPath[item.filesPath.length - 1],
             createdon: moment(item.createdAt).format("DD/MM/YYYY"),
             createdby: item.creatorName + "," + item.creatorRole,
-            sharing: "../img/sharing-ico.png, Shared"
+            sharing: "../img/sharing-ico.png, Shared",
           });
         });
-        console.log("repoData---->",repoData);
+        console.log("repoData---->", repoData);
         setSharedWithMeFileRepoData(repoData);
       })
       .catch((error) => console.log("error", error));
-  }
+  };
   const getMyAddedFileRepoData = () => {
     var requestOptions = {
       method: "GET",
       redirect: "follow",
     };
 
-    fetch(`${BASE_URL}/uploads/dashboardFiles/${localStorage.getItem('user_id')}`, requestOptions)
+    fetch(
+      `${BASE_URL}/uploads/dashboardFiles/${localStorage.getItem("user_id")}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((res) => {
         let repoData = [];
-        
+
         res?.map((item) => {
           item.filesPath = item.filesPath.split("/");
           repoData.push({
             id: item.id,
-            name: "../img/abstract-ico.png,"+item.filesPath[item.filesPath.length - 1],
+            name:
+              "../img/abstract-ico.png," +
+              item.filesPath[item.filesPath.length - 1],
             createdon: moment(item.createdAt).format("DD/MM/YYYY"),
             createdby: item.creatorName + "," + item.creatorRole,
-            sharing: "../img/sharing-ico.png, Shared"
+            sharing: "../img/sharing-ico.png, Shared",
           });
         });
-        console.log("repoData---->",repoData);
+        console.log("repoData---->", repoData);
         setFileRepoData(repoData);
       })
       .catch((error) => console.log("error", error));
@@ -238,30 +294,31 @@ const FileRepository = () => {
   };
   function onSelectFranchisee(optionsList, selectedItem) {
     console.log("selected_item---->2", selectedItem);
-    selectedFranchisee.push(selectedItem.id);
-    console.log("selected_item---->1selectedFranchisee", selectedFranchisee);
+    selectedFranchisee += selectedItem.id + ",";
+    console.log("form---->1selectedFranchisee", selectedFranchisee);
   }
   function onRemoveFranchisee(selectedList, removedItem) {
-    const index = selectedFranchisee.findIndex((object) => {
-      return object.id === removedItem.id;
-    });
-    selectedFranchisee.splice(index, 1);
+    selectedFranchisee = selectedFranchisee.replace(removedItem.id + ",", "");
+    console.log("form---->1selectedFranchisee", selectedFranchisee);
   }
 
   function onSelectUserRole(optionsList, selectedItem) {
     console.log("selected_item---->2", selectedItem);
-    selectedUserRole.push(selectedItem.role_label);
-    console.log("selected_item---->1selectedFranchisee", selectedFranchisee);
+    selectedUserRole += selectedItem.role_label + ",";
+    console.log("form---->2selectedUserRole", selectedUserRole);
   }
   function onRemoveUserRole(selectedList, removedItem) {
-    const index = selectedUserRole.findIndex((object) => {
-      return object.id === removedItem.id;
-    });
-    selectedUserRole.splice(index, 1);
+    selectedUserRole = selectedUserRole.replace(
+      removedItem.role_label + ",",
+      ""
+    );
+    console.log("form---->2selectedUserRole", selectedUserRole);
   }
   return (
     <>
-    
+      {console.log("form---->", settingData)}
+      {console.log("form----franchisee>", selectedFranchisee)}
+      {console.log("form----user-role>", selectedUserRole)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -271,12 +328,16 @@ const FileRepository = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader />
-                
+
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
                     <ToolkitProvider
                       keyField="name"
-                      data={tabFlag===false ? fileRepoData : sharedWithMeFileRepoData}
+                      data={
+                        tabFlag === false
+                          ? fileRepoData
+                          : sharedWithMeFileRepoData
+                      }
                       columns={columns}
                       search
                     >
@@ -389,16 +450,29 @@ const FileRepository = () => {
                               </div>
                             </div>
                           </header>
-                          
+
                           <div className="training-cat mb-3">
                             <ul>
                               <li>
-                                <a onClick={()=>{setTabFlag(true)}} className={tabFlag===true ? "active" : ""}>
+                                <a
+                                  onClick={() => {
+                                    setTabFlag(true);
+                                  }}
+                                  className={tabFlag === true ? "active" : ""}
+                                >
                                   Files shared with me{" "}
                                 </a>
                               </li>
                               <li>
-                                <a onClick={()=>{setTabFlag(false)}} className={tabFlag===false ? "active" : ""}> My added files</a>
+                                <a
+                                  onClick={() => {
+                                    setTabFlag(false);
+                                  }}
+                                  className={tabFlag === false ? "active" : ""}
+                                >
+                                  {" "}
+                                  My added files
+                                </a>
                               </li>
                             </ul>
                           </div>
@@ -452,9 +526,7 @@ const FileRepository = () => {
                           onChange={(e) => {
                             setField(e.target.name, e.target.value);
                           }}
-                          checked={
-                            settingData.applicable_to_franchisee === "1"
-                          }
+                          checked={settingData.applicable_to_franchisee === "1"}
                         />
                         <span className="radio-round"></span>
                         <p>Yes</p>
@@ -470,9 +542,7 @@ const FileRepository = () => {
                           onChange={(e) => {
                             setField(e.target.name, e.target.value);
                           }}
-                          checked={
-                            settingData.applicable_to_franchisee === "0"
-                          }
+                          checked={settingData.applicable_to_franchisee === "0"}
                         />
                         <span className="radio-round"></span>
                         <p>No</p>
