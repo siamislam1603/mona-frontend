@@ -10,6 +10,7 @@ import validateForm from '../helpers/validateForm';
 import ImageCropper from '../components/ImageCropper';
 import Popup from '../components/Popup';
 import { BASE_URL } from '../components/App';
+import { Link } from 'react-router-dom';
 
 const animatedComponents = makeAnimated();
 
@@ -291,7 +292,7 @@ const NewUser = () => {
                           
                           <Col md={12}>
                             <div className="cta text-center mt-5">
-                              <Button variant="transparent" type="submit">Back to All Users</Button>
+                              <Button variant="transparent"><Link to="/user-management">Back to All Users</Link></Button>
                               <Button variant="primary" type="submit">Save Details</Button>
                             </div>
                           </Col>
