@@ -1,37 +1,35 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
-import ChildRegister from "../pages/ChildRegister";
-import SignIn from "../pages/SignIn";
-import SignUp from "../pages/SignUp";
-import Dashboard from "../pages/Dashboard";
-import ResetPassword from "../pages/ResetPassword";
-import UserManagement from "../pages/UserManagement";
-import NewUser from "../pages/NewUser";
-import AddUserRole from "../pages/AddUserRole";
-import FranchisorDashboard from "../pages/FranchisorDashboard";
-import FranchiseeDashboard from "../pages/FranchiseeDashboard";
-import EducatorDashboard from "../pages/EducatorDashboard";
-import CoordinatorDashboard from "../pages/CoordinatorDashboard";
-import ParentsDashboard from "../pages/ParentsDashboard";
-import AddOperatingManual from "../pages/OperatingManual/add";
-import OperatingManual from "../pages/OperatingManual/view";
-import AddFormBuilder from "../pages/FormBuilder/add";
-import ViewFormBuilder from "../pages/FormBuilder/view";
-import AddFormField from "../pages/FormBuilder/FormField/add";
-import FormResponse from "../pages/FormBuilder/FormResponse";
-import Training from "../pages/Training";
-import AddNewTraining from "../pages/AddNewTraining";
-import TrainingDetail from "../pages/TrainingDetail";
-import FileRepository from "../pages/FileRepository";
-import Announcements from "../pages/Announcements";
-import AddNewAnnouncements from "../pages/AddNewAnnouncements";
+import ChildRegister from '../pages/ChildRegister';
+import SignIn from '../pages/SignIn';
+import ResetPassword from '../pages/ResetPassword';
+import UserManagement from '../pages/UserManagement';
+import NewUser from '../pages/NewUser';
+import AddUserRole from '../pages/AddUserRole';
+import FranchisorDashboard from '../pages/FranchisorDashboard';
+import FranchiseeDashboard from '../pages/FranchiseeDashboard';
+import EducatorDashboard from '../pages/EducatorDashboard';
+import CoordinatorDashboard from '../pages/CoordinatorDashboard';
+import ParentsDashboard from '../pages/ParentsDashboard';
+import AddOperatingManual from '../pages/OperatingManual/add';
+import OperatingManual from '../pages/OperatingManual/view';
+import AddFormBuilder from '../pages/FormBuilder/add';
+import ViewFormBuilder from '../pages/FormBuilder/view';
+import AddFormField from '../pages/FormBuilder/FormField/add';
+import FormResponse from '../pages/FormBuilder/FormResponse';
+import Training from '../pages/Training';
+import AddNewTraining from '../pages/AddNewTraining';
+import TrainingDetail from '../pages/TrainingDetail';
+import FileRepository from '../pages/FileRepository';
+import Announcements from '../pages/Announcements';
+import AddNewAnnouncements from '../pages/AddNewAnnouncements';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
   useEffect(() => {
-    const item = localStorage.getItem("token");
+    const item = localStorage.getItem('token');
     if (item) {
       setIsLoggedIn(true);
     } else {
@@ -164,37 +162,45 @@ const Main = () => {
           }
         />
 
-        <Route 
-          path="/form/field/add" 
+        <Route
+          path="/form/field/add"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AddFormField />
-            </Protected>} />
+            </Protected>
+          }
+        />
 
-        <Route 
-          path="/form/add" 
+        <Route
+          path="/form/add"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AddFormBuilder />
-            </Protected>} />
+            </Protected>
+          }
+        />
 
-        <Route 
-          path="/form/response" 
+        <Route
+          path="/form/response"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <FormResponse />
-            </Protected>} />
+            </Protected>
+          }
+        />
 
-        <Route 
-          path="/form" 
+        <Route
+          path="/form"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <ViewFormBuilder />
-            </Protected>} />
+            </Protected>
+          }
+        />
 
         <Route
           path="/add-role"
@@ -235,7 +241,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/file-repository"
           element={
@@ -245,22 +251,22 @@ const Main = () => {
             </Protected>
           }
         />
-      
-      <Route
+
+        <Route
           path="/announcements"
           element={
-            typeof isLoggedIn === "undefined" || isLoggedIn === true ? (
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
               <Announcements />
             ) : (
               <Navigate to="/" />
             )
           }
         />
-        
+
         <Route
           path="/new-announcements"
           element={
-            typeof isLoggedIn === "undefined" || isLoggedIn === true ? (
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
               <AddNewAnnouncements />
             ) : (
               <Navigate to="/" />

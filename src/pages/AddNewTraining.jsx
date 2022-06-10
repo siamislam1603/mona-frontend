@@ -33,7 +33,6 @@ const AddNewTraining = () => {
   const [hideSelect, setHideSelect] = useState(false);
   const [userRoles, setUserRoles] = useState([]);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [trainingSettings, setTrainingSettings] = useState({});
   const [trainingData, setTrainingData] = useState({});
   const [trainingMedia, setTrainingMedia] = useState({});
 
@@ -70,7 +69,7 @@ const AddNewTraining = () => {
   // FUNCTION TO SAVE TRAINING SETTINGS
   const handleTrainingSettings = (event) => {
     const { name, value } = event.target;
-    setTrainingSettings((prevState) => ({
+    setTrainingData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -90,8 +89,7 @@ const AddNewTraining = () => {
     fetchTrainingCategories();
   }, []);
 
-  if (show === false) console.log('TRAINING SETTINGS:', trainingSettings);
-  console.log('TRAINING DATA:', trainingData);
+  console.log('TRAINING SETTINGS:', trainingData);
   console.log('TRAINING MEDIA:', trainingMedia);
 
   return (
@@ -121,7 +119,7 @@ const AddNewTraining = () => {
                           <Form.Label>Training Name</Form.Label>
                           <Form.Control
                             type="text"
-                            name="training_name"
+                            name="title"
                             onChange={handleTrainingData}
                           />
                         </Form.Group>
@@ -308,7 +306,7 @@ const AddNewTraining = () => {
                           name="form_template_select1"
                           id="yes1"
                           onChange={(event) => {
-                            setTrainingSettings((prevState) => ({
+                            setTrainingData((prevState) => ({
                               ...prevState,
                               is_applicable_to_all: true,
                             }));
@@ -327,7 +325,7 @@ const AddNewTraining = () => {
                           name="form_template_select1"
                           id="no1"
                           onChange={(event) => {
-                            setTrainingSettings((prevState) => ({
+                            setTrainingData((prevState) => ({
                               ...prevState,
                               is_applicable_to_all: false,
                             }));
@@ -352,7 +350,7 @@ const AddNewTraining = () => {
                     onRemove={function noRefCheck() {}}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
-                      setTrainingSettings((prevState) => ({
+                      setTrainingData((prevState) => ({
                         ...prevState,
                         roles: [...data.map((data) => data.cat)],
                       }));
