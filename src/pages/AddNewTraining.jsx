@@ -54,7 +54,7 @@ const AddNewTraining = () => {
   // FETCHING TRAINING CATEGORIES
   const fetchTrainingCategories = async () => {
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-category`
+      `${BASE_URL}/training/get-training-categories`
     );
     if (response.status === 200) {
       const { categoryList } = response.data.data;
@@ -90,9 +90,8 @@ const AddNewTraining = () => {
     fetchTrainingCategories();
   }, []);
 
-  // if(show === false)
-  //   console.log('TRAINING SETTINGS:', trainingSettings);
-  // console.log('TRAINING DATA:', trainingData);
+  if (show === false) console.log('TRAINING SETTINGS:', trainingSettings);
+  console.log('TRAINING DATA:', trainingData);
   console.log('TRAINING MEDIA:', trainingMedia);
 
   return (
