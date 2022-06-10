@@ -49,7 +49,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <Dashboard />
+              <UserManagement />
             </Protected>
           }
         />
