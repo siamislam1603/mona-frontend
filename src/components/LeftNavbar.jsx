@@ -8,8 +8,12 @@ const LeftNavbar = () => {
   const [menuList, setMenuList] = useState([]);
 
   // FETCH User Role Permissions  LIST
+  let token= localStorage.getItem("token");
   const fetchUserRolePermissions = async () => {
-    const response = await axios.get(`${ BASE_URL }/auth/get_menu_list`);
+    const response = await axios.get(`${ BASE_URL }/auth/get_menu_list`,
+    { headers: { "Authorization": "Bearer "+token, } }
+    
+    );
 
     if(response.status === 200) {
       const { permissionsObject } = response.data;
