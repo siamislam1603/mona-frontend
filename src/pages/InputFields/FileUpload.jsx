@@ -1,6 +1,6 @@
 import { Form,Col } from "react-bootstrap";
 
-const Input = (props) => {
+const FileUpload = (props) => {
   const { ...controls } = props;
   return (
     <Col sm={6}>
@@ -8,10 +8,10 @@ const Input = (props) => {
       <Form.Label>{controls.field_label}</Form.Label>
 
       <Form.Control
-        type={controls.field_type}
+        type="file"
         name={controls.field_name}
         onChange={(e) => {
-          props.onChange(e.target.name, e.target.value);
+          props.onChange(e.target.name, e.target.files);
         }}
         isInvalid={!!controls.error[controls.field_name]}
       />
@@ -22,4 +22,4 @@ const Input = (props) => {
     </Col>
   );
 };
-export default Input;
+export default FileUpload;

@@ -1,7 +1,8 @@
-import { Form } from "react-bootstrap";
+import { Col, Form } from "react-bootstrap";
 const Select = (props) => {
   const { ...controls } = props;
   return (
+    <Col sm={6}>
     <div className="child_info_field sex">
       <span>{controls.field_label}:</span>
       <div className="d-flex mt-2"></div>
@@ -24,6 +25,7 @@ const Select = (props) => {
       </div>
       <p>{controls.error[controls.field_name]}</p>
     </div>
+    </Col>
   );
 };
 export default Select;
