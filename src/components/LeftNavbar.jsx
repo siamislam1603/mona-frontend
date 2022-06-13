@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from './App';
+import { Link,NavLink } from 'react-router-dom'
 
 const LeftNavbar = () => {
 
@@ -17,7 +18,15 @@ const LeftNavbar = () => {
 
     if(response.status === 200) {
       const { permissionsObject } = response.data;
+
+      localStorage.setItem("menu_list",JSON.stringify(permissionsObject));
+
+      const get_menu_list = localStorage.getItem("menu_list");
+
       setMenuList(permissionsObject);
+      // console.log("menues localstorgageeee", JSON.parse(get_menu_list))
+
+
     }
   }
 
@@ -25,6 +34,13 @@ const LeftNavbar = () => {
     fetchUserRolePermissions();
   }, []);
 
+  // useEffect(() => {
+  //   console.log('PRINTING MENU LIST');
+  //   console.log('Menu List:', menuList);
+  // }, [menuList]);
+
+
+  console.log('Menu List EXCLUSION:', menuList); 
   return (
     <>
       <div className="logo-column text-center"><Navbar.Brand href="#home"><img src="img/logo-ico.png" alt=""/></Navbar.Brand></div>
@@ -35,11 +51,12 @@ const LeftNavbar = () => {
             <Nav className="mr-auto w-100">
               {
                 menuList.map(({controller}) => {
+                 
                   return (
                     <React.Fragment key={controller.id}>
-                      <Nav.Link href="#"><span><i className={`ico ${controller.controller_icon}`}>&nbsp;</i>
+                      <Link to={`/${controller.menu_link}`} className="nav-link"><span><i className={`ico ${controller.controller_icon}`}>&nbsp;</i>
                         {controller.controller_label}
-                      </span></Nav.Link>
+                      </span></Link>
                     </React.Fragment>
                   );
                 })

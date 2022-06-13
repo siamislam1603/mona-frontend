@@ -39,6 +39,14 @@ const TopHeader = ({ setSelectedFranchisee }) => {
       fetchFranchiseeList();
     }, []);
 
+    let menulist = JSON.parse(localStorage.getItem('menu_list'));
+    menulist.map((user) => (
+      console.log(user.controller.id)
+    ))
+
+
+    console.log("top nav menu herereeeeeeeeeeeeeeee", menulist)
+
     return (
       <>
         <div className="topheader">
@@ -81,14 +89,28 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                   <Dropdown>
                     <Dropdown.Toggle id="dropdown-basic">
                       <span className="user-pic"><img alt="" id="user-pic" src="/img/user.png"/></span>
-                      <span className="user-name">John Doe <small>Franchisor</small></span>
+                      <span className="user-name">{localStorage.getItem('user_name')?localStorage.getItem('user_name').split(' ').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}
+                      
+                      <small>{localStorage.getItem('user_role')?localStorage.getItem('user_role').split('_').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}</small></span>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                      <Dropdown.Item href="#">All Franchisee</Dropdown.Item>
+
+                    {
+                      localStorage.getItem('menu_list')
+                        ? JSON.parse(localStorage.getItem('menu_list')).map((top_menu) => {
+                          return (
+                               <Dropdown.Item href={top_menu.controller.menu_link}>{top_menu.controller.controller_label}</Dropdown.Item>
+                           )}) : null
+                    }
+
+                      
+                      {/* <Dropdown.Item href="#">All Franchisee</Dropdown.Item>
                       <Dropdown.Item href="#">All Users</Dropdown.Item>
                       <Dropdown.Item href="#">Forms</Dropdown.Item>
                       <Dropdown.Item href="#">Trainings</Dropdown.Item>
-                      <Dropdown.Item href="#">File Repository</Dropdown.Item>
+                      <Dropdown.Item href="#">File Repository</Dropdown.Item> */}
+
+
                       <Dropdown.Item href="#">My Profile</Dropdown.Item>
                       <Dropdown.Item href="#">Settings</Dropdown.Item>
                       <Dropdown.Item href="#" onClick={handleLogout}>Logout</Dropdown.Item>
