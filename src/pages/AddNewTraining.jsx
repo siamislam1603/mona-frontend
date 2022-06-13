@@ -36,6 +36,10 @@ const AddNewTraining = () => {
   const [trainingData, setTrainingData] = useState({});
   const [trainingMedia, setTrainingMedia] = useState({});
 
+  // LOG MESSAGES
+  const [topErrorMessage, setTopErrorMessage] = useState(null);
+  const [topSuccessMessage, setTopSuccessMessage] = useState(null);
+
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
     const response = await axios.get(`${BASE_URL}/api/user-role`);
@@ -52,7 +56,6 @@ const AddNewTraining = () => {
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
-    console.log('TRAINING DATA:', data);
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
@@ -61,7 +64,22 @@ const AddNewTraining = () => {
         }
       }
     );
-    console.log(response);
+
+    console.log('REPSONSE:', response.data.status);
+    if(response.status === 201 && response.data.status === "success") {
+      setTopSuccessMessage("Training created successfully.");
+      setTimeout(() => {
+        setTopSuccessMessage(null);
+        window.location.href="/training";
+      }, 3000);
+
+    } else if(response.status === 200 && response.data.status === "fail") {
+      const { msg } = response.data;
+      setTopErrorMessage(msg);
+      setTimeout(() => {
+        setTopErrorMessage(null);
+      }, 3000);
+    }
   };
 
   // FETCHING TRAINING CATEGORIES
@@ -109,8 +127,6 @@ const AddNewTraining = () => {
     fetchTrainingCategories();
   }, []);
 
-  console.log('TRAINING DATA:', trainingData);
-
   return (
     <>
       <div id="main">
@@ -131,6 +147,8 @@ const AddNewTraining = () => {
                       </span>
                     </h1>
                   </header>
+                    {topErrorMessage && <p className="alert alert-danger">{topErrorMessage}</p>} 
+                    {topSuccessMessage && <p className="alert alert-success">{topSuccessMessage}</p>}
                   <div className="training-form">
                     <Row>
                       <Col md={6} className="mb-3">
