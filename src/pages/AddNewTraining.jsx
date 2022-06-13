@@ -35,6 +35,8 @@ const AddNewTraining = () => {
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({});
   const [trainingMedia, setTrainingMedia] = useState({});
+  const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
+  const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
 
   // LOG MESSAGES
   const [topErrorMessage, setTopErrorMessage] = useState(null);
@@ -79,6 +81,20 @@ const AddNewTraining = () => {
       setTimeout(() => {
         setTopErrorMessage(null);
       }, 3000);
+    }
+  };  
+
+  // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
+  const fetchFranchiseeUsers = async (franchisee_name) => {
+    const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0]}`);
+    if(response.status === 200 && Object.keys(response.data).length > 1) {
+      const { users } = response.data;
+      setFetchedFranchiseeUsers([
+        ...users?.map((data) => ({
+          cat: data.fullname,
+          key: data.fullname.toLowerCase().split(" ").join("_"),
+        })),
+      ]);
     }
   };
 
@@ -127,6 +143,10 @@ const AddNewTraining = () => {
     fetchTrainingCategories();
   }, []);
 
+  useEffect(() => {
+    fetchFranchiseeUsers(selectedFranchisee);
+  }, [selectedFranchisee]);
+
   return (
     <>
       <div id="main">
@@ -137,7 +157,9 @@ const AddNewTraining = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader
+                  selectedFranchisee={selectedFranchisee} 
+                  setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">
@@ -397,6 +419,31 @@ const AddNewTraining = () => {
                       }));
                     }}
                     options={userRoles}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row className="mt-4">
+              <Col lg={3} md={6}>
+              </Col>
+              <Col lg={9} md={6} className="mt-3 mt-md-0">
+                <Form.Group className={hideSelect ? 'd-none' : ''}>
+                  <Form.Label>Select User Names</Form.Label>
+                  <Multiselect
+                    placeholder={fetchedFranchiseeUsers ? "Select User Roles" : "No User Available"}
+                    displayValue="key"
+                    className="multiselect-box default-arrow-select"
+                    onKeyPressFn={function noRefCheck() {}}
+                    onRemove={function noRefCheck() {}}
+                    onSearch={function noRefCheck() {}}
+                    onSelect={function noRefCheck(data) {
+                      setTrainingData((prevState) => ({
+                        ...prevState,
+                        users: [...data.map((data) => data.cat)],
+                      }));
+                    }}
+                    options={fetchedFranchiseeUsers}
                   />
                 </Form.Group>
               </Col>
