@@ -10,7 +10,7 @@ export const DynamicFormValidation = (form, data) => {
   });
   return newErrors;
 };
-export const createFormSettingModelValidation = (form,franchisee,user) => {
+export const createFormSettingModelValidation = (form, franchisee, user) => {
   let newErrors = {};
   let {
     start_date,
@@ -27,10 +27,10 @@ export const createFormSettingModelValidation = (form,franchisee,user) => {
   if (!end_date || end_date === "") newErrors.end_date = "End Date is Required";
   if (!end_time || end_time === "") newErrors.end_time = "End Time is Required";
   if (applicable_to_user === "No" || applicable_to_user === false) {
-    if (user.length===0) newErrors.user = "Applicable to User is Required";
+    if (user.length === 0) newErrors.user = "Applicable to User is Required";
   }
   if (applicable_to_franchisee === "No" || applicable_to_franchisee === false) {
-    if (franchisee.length===0)
+    if (franchisee.length === 0)
       newErrors.franchisee = "Applicable to Franchisee is Required";
   }
   console.log("newerrors----->", newErrors);
@@ -48,7 +48,11 @@ export const createFormFieldValidation = (form) => {
     if (!field_label || field_label === "") {
       newErrors[i].field_label = "Field Label is Required";
     }
-    if (!(field_type === "text")) {
+    if (
+      field_type === "radio" ||
+      field_type === "checkbox" ||
+      field_type === "dropdown_selection"
+    ) {
       for (let j = 0; j < option.length; j++) {
         console.log("Object.keys(option[j])---->", Object.keys(option[j])[0]);
         if (Object.keys(option[j])[0] === "") {
@@ -69,24 +73,21 @@ export const createFormFieldValidation = (form) => {
 
   return newErrors;
 };
-export const createFileRepoValidation=(form,franchisee,user)=>{
+export const createFileRepoValidation = (form, franchisee, user) => {
   let newErrors = {};
-  let {
-    applicable_to_user,
-    applicable_to_franchisee,
-    setting_files
-  } = form;
+  let { applicable_to_user, applicable_to_franchisee, setting_files } = form;
   if (applicable_to_user === "0") {
-    if (user==="") newErrors.user = "Applicable to User is Required";
+    if (user === "") newErrors.user = "Applicable to User is Required";
   }
   if (applicable_to_franchisee === "0") {
-    if (franchisee==="")
+    if (franchisee === "")
       newErrors.franchisee = "Applicable to Franchisee is Required";
   }
-  if (!setting_files || setting_files === "") newErrors.setting_files = "File is Required";
+  if (!setting_files || setting_files === "")
+    newErrors.setting_files = "File is Required";
 
   return newErrors;
-}
+};
 export const createFormValidation = (form) => {
   let newErrors = {};
   let {

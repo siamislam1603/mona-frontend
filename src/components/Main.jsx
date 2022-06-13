@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
-import ChildRegister from "../pages/ChildRegister";
-import SignIn from "../pages/SignIn";
-import SignUp from "../pages/SignUp";
-import Dashboard from "../pages/Dashboard";
-import ResetPassword from "../pages/ResetPassword";
-import UserManagement from "../pages/UserManagement";
-import NewUser from "../pages/NewUser";
-import AddUserRole from "../pages/AddUserRole";
-import FranchisorDashboard from "../pages/FranchisorDashboard";
-import FranchiseeDashboard from "../pages/FranchiseeDashboard";
-import EducatorDashboard from "../pages/EducatorDashboard";
-import CoordinatorDashboard from "../pages/CoordinatorDashboard";
-import ParentsDashboard from "../pages/ParentsDashboard";
-import AddOperatingManual from "../pages/OperatingManual/add";
-import OperatingManual from "../pages/OperatingManual/view";
-import AddFormBuilder from "../pages/FormBuilder/add";
-import ViewFormBuilder from "../pages/FormBuilder/view";
-import AddFormField from "../pages/FormBuilder/FormField/add";
-import FormResponse from "../pages/FormBuilder/FormResponse";
-import Training from "../pages/Training";
-import AddNewTraining from "../pages/AddNewTraining";
-import TrainingDetail from "../pages/TrainingDetail";
-import FileRepository from "../pages/FileRepository";
-import Announcements from "../pages/Announcements";
-import AddNewAnnouncements from "../pages/AddNewAnnouncements";
+import ChildRegister from '../pages/ChildRegister';
+import SignIn from '../pages/SignIn';
+import ResetPassword from '../pages/ResetPassword';
+import UserManagement from '../pages/UserManagement';
+import NewUser from '../pages/NewUser';
+import AddUserRole from '../pages/AddUserRole';
+import FranchisorDashboard from '../pages/FranchisorDashboard';
+import FranchiseeDashboard from '../pages/FranchiseeDashboard';
+import EducatorDashboard from '../pages/EducatorDashboard';
+import CoordinatorDashboard from '../pages/CoordinatorDashboard';
+import ParentsDashboard from '../pages/ParentsDashboard';
+import AddOperatingManual from '../pages/OperatingManual/add';
+import OperatingManual from '../pages/OperatingManual/view';
+import AddFormBuilder from '../pages/FormBuilder/add';
+import ViewFormBuilder from '../pages/FormBuilder/view';
+import AddFormField from '../pages/FormBuilder/FormField/add';
+import FormResponse from '../pages/FormBuilder/FormResponse';
+import Training from '../pages/Training';
+import AddNewTraining from '../pages/AddNewTraining';
+import TrainingDetail from '../pages/TrainingDetail';
+import FileRepository from '../pages/FileRepository';
+import Announcements from '../pages/Announcements';
+import AddNewAnnouncements from '../pages/AddNewAnnouncements';
+import DynamicForm from "../pages/DynamicForm";
+
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
   useEffect(() => {
-    const item = localStorage.getItem("token");
+    const item = localStorage.getItem('token');
     if (item) {
       setIsLoggedIn(true);
     } else {
@@ -164,13 +164,37 @@ const Main = () => {
           }
         />
 
+        {/* <Route 
+          path="/form/field/add" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <AddFormField /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/form/add" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <AddFormBuilder /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/form/response" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <FormResponse /> : <Navigate to="/" />} />
+        
+        <Route 
+          path="/form" 
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ViewFormBuilder /> : <Navigate to="/" />} /> */}
+        <Route 
+          path="/form/dynamic/:name" 
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <DynamicForm />
+            </Protected>} />
         <Route 
           path="/form/field/add" 
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AddFormField />
-            </Protected>} />
+            </Protected>
+          }
+        />
 
         <Route 
           path="/form/add" 
@@ -178,7 +202,9 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AddFormBuilder />
-            </Protected>} />
+            </Protected>
+          }
+        />
 
         <Route 
           path="/form/response" 
@@ -186,7 +212,9 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <FormResponse />
-            </Protected>} />
+            </Protected>
+          }
+        />
 
         <Route 
           path="/form" 
@@ -194,7 +222,9 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <ViewFormBuilder />
-            </Protected>} />
+            </Protected>
+          }
+        />
 
         <Route
           path="/add-role"
@@ -246,10 +276,10 @@ const Main = () => {
           }
         />
       
-      <Route
+        <Route
           path="/announcements"
           element={
-            typeof isLoggedIn === "undefined" || isLoggedIn === true ? (
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
               <Announcements />
             ) : (
               <Navigate to="/" />
@@ -260,7 +290,7 @@ const Main = () => {
         <Route
           path="/new-announcements"
           element={
-            typeof isLoggedIn === "undefined" || isLoggedIn === true ? (
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
               <AddNewAnnouncements />
             ) : (
               <Navigate to="/" />
@@ -268,6 +298,8 @@ const Main = () => {
           }
         />
       </Routes>
+
+      
     </main>
   );
 };

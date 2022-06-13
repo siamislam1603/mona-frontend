@@ -3,12 +3,12 @@ import React, { useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 import { BASE_URL } from "./App";
 
-const TopHeader = ({ setSelectedFranchisee }) => {
+const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
 
     const [franchiseeList, setFranchiseeList] = useState([]);
 
     const fetchFranchiseeList = async () => {
-      const response = await axios.get(`${BASE_URL}/api/franchisee-data`);
+      const response = await axios.get(`${BASE_URL}/role/franchisee`);
       if(response.status === 200) {
         const { franchiseeList: franchiseeData } = response.data;
         setFranchiseeList([...franchiseeData.map((data) => ({
@@ -19,9 +19,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     }
 
     const logout = async () => {
-      console.log('LOGGING USER OUT');
       const response = await axios.get(`${BASE_URL}/auth/logout`);
-      console.log("LOGOUT RESPONSE:", response);
       if(response.status === 200) {
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
@@ -54,7 +52,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
             <div className="selectdropdown">
               <Dropdown onSelect={e => setSelectedFranchisee(e)}>
                 <Dropdown.Toggle id="dropdown-basic">
-                  {franchiseeList[0]?.franchisee_name || "No Data Available"}
+                  {selectedFranchisee || franchiseeList[0]?.franchisee_name || "No Data Available"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {
