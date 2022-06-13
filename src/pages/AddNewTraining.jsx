@@ -66,6 +66,19 @@ const AddNewTraining = () => {
     }
   };
 
+  // FUNCTION TO SEND TRAINING DATA TO THE DB
+  const createTraining = async (trainingData) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${BASE_URL}/training/addTraining`, trainingData, {
+        headers: {
+          "Authorization": "Bearer "+ token
+        }
+      }
+    );
+    console.log(response);
+  };
+
   // FUNCTION TO SAVE TRAINING SETTINGS
   const handleTrainingSettings = (event) => {
     const { name, value } = event.target;
@@ -84,13 +97,17 @@ const AddNewTraining = () => {
     }));
   };
 
+  const handleDataSubmit = () => {
+
+    createTraining();
+  };
+
   useEffect(() => {
     fetchUserRoles();
     fetchTrainingCategories();
   }, []);
 
-  console.log('TRAINING SETTINGS:', trainingData);
-  console.log('TRAINING MEDIA:', trainingMedia);
+  console.log('TRAINING DATA:', trainingData);
 
   return (
     <>
@@ -224,7 +241,11 @@ const AddNewTraining = () => {
                           >
                             Preview
                           </Button>
-                          <Button variant="primary" type="submit">
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            onClick={handleDataSubmit}
+                          >
                             Save
                           </Button>
                         </div>
