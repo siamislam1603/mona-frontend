@@ -50,6 +50,20 @@ const AddNewTraining = () => {
     }
   };
 
+  // FUNCTION TO SEND TRAINING DATA TO THE DB
+  const createTraining = async (data) => {
+    console.log('TRAINING DATA:', data);
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${BASE_URL}/training/addTraining`, data, {
+        headers: {
+          "Authorization": "Bearer "+ token
+        }
+      }
+    );
+    console.log(response);
+  };
+
   // FETCHING TRAINING CATEGORIES
   const fetchTrainingCategories = async () => {
     const response = await axios.get(
@@ -64,19 +78,6 @@ const AddNewTraining = () => {
         })),
       ]);
     }
-  };
-
-  // FUNCTION TO SEND TRAINING DATA TO THE DB
-  const createTraining = async (trainingData) => {
-    const token = localStorage.getItem('token');
-    const response = await axios.post(
-      `${BASE_URL}/training/addTraining`, trainingData, {
-        headers: {
-          "Authorization": "Bearer "+ token
-        }
-      }
-    );
-    console.log(response);
   };
 
   // FUNCTION TO SAVE TRAINING SETTINGS
@@ -98,8 +99,9 @@ const AddNewTraining = () => {
   };
 
   const handleDataSubmit = () => {
-
-    createTraining();
+    if(trainingData) {
+      createTraining(trainingData);
+    }
   };
 
   useEffect(() => {
@@ -180,7 +182,7 @@ const AddNewTraining = () => {
                             onChange={(event) =>
                               setTrainingData((prevState) => ({
                                 ...prevState,
-                                training_required_to_complete:
+                                time_required_to_complete:
                                   event.value + ' hr',
                               }))
                             }
