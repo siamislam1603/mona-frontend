@@ -8,7 +8,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState([]);
 
     const fetchFranchiseeList = async () => {
-      const response = await axios.get(`${BASE_URL}/api/franchisee-data`);
+      const response = await axios.get(`${BASE_URL}/role/franchisee`);
       if(response.status === 200) {
         const { franchiseeList: franchiseeData } = response.data;
         setFranchiseeList([...franchiseeData.map((data) => ({
