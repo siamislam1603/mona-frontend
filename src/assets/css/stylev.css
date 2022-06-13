@@ -1136,3 +1136,196 @@ button:focus {
 .my-new-formsection button.right-button.btn.btn-primary {
     background-color: #455c58;
 }
+
+
+/* Operating manual */
+
+
+.tree {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+  .tree ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    margin-left: 2.5em;
+    position: relative;
+  }
+  .tree ul ul {
+    margin-left: 0.5em;
+  }
+  .tree ul:before {
+    content: "";
+    display: block;
+    width: 0;
+    position: absolute;
+    top: -15px;
+    bottom: 4px;
+    left: 0;
+    border-left: 1px solid rgba(51, 51, 51, 0.2);;
+  }
+  .tree ul li:before {
+    content: "";
+    display: block;
+    width: 14px;
+    height: 0;
+    border-top: 1px solid rgba(51, 51, 51, 0.2);
+    margin-top: -1px;
+    position: absolute;
+    top: 0.8em;
+    left: 0;
+  }
+  .tree ul li:last-child:before {
+    background: #fff;
+    height: auto;
+    top: 1em;
+    bottom: 0;
+  }
+  .tree li {
+    margin: 0;
+    padding: 0 1em;
+    line-height: 2em;
+    color: #369;
+    font-weight: 700;
+    position: relative;
+  }
+  .tree li .expand {
+    display: block;
+  }
+  .tree li .collapse {
+    display: none;
+  }
+  .tree li.branch > a {
+    text-decoration: none;
+    color: #333333;
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+    /* identical to box height */
+    text-transform: uppercase;
+  }
+  .tree li.branch > a img{
+      margin-right: 10px;
+  }
+  .tree li.branch > .title_active a{
+    color: #AA0061;
+}
+.tree li.branch > a.tree-title{
+    color: #AA0061;
+}
+.branch > ul li{
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(51, 51, 51, 0.5);
+    cursor: pointer;
+}
+.branch > ul li a.tree_active{
+    color: #9EB356;
+}
+ 
+.branch > ul li *{
+    color: rgba(51, 51, 51, 0.5);
+}
+.tree-title{
+    color: #AA0061;
+    text-transform: uppercase;
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+}
+  .tree li button {
+    text-decoration: none;
+    color: #369;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+  }
+  .tree li button:active {
+    text-decoration: none;
+    color: #369;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+  }
+  .tree li button:focus {
+    text-decoration: none;
+    color: #369;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+  }
+  
+  .indicator {
+    margin-right: 5px;
+  }
+
+  li.branch > img {
+    margin-right: 16px;
+}
+
+li.branch:before {
+    content: "";
+    position: absolute;
+    height: 1px;
+    width: 20px;
+    background-color: rgba(51, 51, 51, 0.2);
+    top: 17px;
+    left: 29px;
+}
+
+li.branch {
+    position: relative;
+    margin: 15px 0;
+}
+.branch > ul li {
+    margin: 9px 0;
+}
+.tree_view_search{
+    border: none;
+    background-color: #F7F7F7;
+    padding-left: 40px;
+}
+.tree_view_search:focus{
+    background-color: #F7F7F7;
+}
+ 
+.tree_search_box{
+    position: relative;
+}
+.tree_search_box img{
+    position: absolute;
+    top: 11px;
+    left: 11px;
+}
+.tree_wrp{
+    background-color: #f7f7f7;
+    padding: 40px 34px;
+    height: 100vh;
+    margin-left: -48px;
+}
+.bottom_button {
+    display: flex;
+    gap: 20px;
+    justify-content: end;
+}
+.create_model_bar{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+}
