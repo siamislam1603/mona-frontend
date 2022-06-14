@@ -4,6 +4,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import WelcomeMsg from "../components/WelcomeMsg";
+import { BASE_URL } from "../components/App";
 import validateSignInForm from '../helpers/validateSignInForm';
 import axios from "axios";
 
@@ -21,11 +22,12 @@ const SignIn = () => {
   const [isSubmit, setIsSubmit] = useState(false);
 
   const verifyUser = async (data) => {
-    console.log('Verifying user details');
-    const res = await axios.post('http://3.26.39.12:4000/auth/login', data);
-    console.log('Login Response:', res);
+    const res = await axios.post(`${BASE_URL}/auth/login`, data);
     if(res.status === 200 && res.data.status === 'success') {
       localStorage.setItem("token", res.data.accessToken);
+      localStorage.setItem("user_id", res.data.user.id);
+      localStorage.setItem("user_role", res.data.user.role);
+      localStorage.setItem("user_name", res.data.user.name);
       window.location.href="/user-management";
     } else if(res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);

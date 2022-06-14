@@ -1,6 +1,9 @@
 // FORM VALIDATION + RAISING ERRORS 
 const validateForm = (formData) => {
   const errors = {};
+  if(!formData.file) 
+    errors.file = "User image is required!";
+
   if(!formData.fullname)
     errors.fullname = "Name is required!";
 

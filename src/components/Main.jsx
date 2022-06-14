@@ -1,103 +1,170 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import ChildRegister from "../pages/ChildRegister";
-import SignIn from "../pages/SignIn";
-import SignUp from "../pages/SignUp";
-import Dashboard from "../pages/Dashboard";
-import ResetPassword from "../pages/ResetPassword";
-import UserManagement from "../pages/UserManagement";
-import NewUser from "../pages/NewUser";
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Protected from '../components/Protected';
+import ChildRegister from '../pages/ChildRegister';
+import SignIn from '../pages/SignIn';
+import ResetPassword from '../pages/ResetPassword';
+import UserManagement from '../pages/UserManagement';
+import NewUser from '../pages/NewUser';
 import AddUserRole from '../pages/AddUserRole';
-import FranchisorDashboard from "../pages/FranchisorDashboard";
-import FranchiseeDashboard from "../pages/FranchiseeDashboard";
-import EducatorDashboard from "../pages/EducatorDashboard";
-import CoordinatorDashboard from "../pages/CoordinatorDashboard";
-import ParentsDashboard from "../pages/ParentsDashboard";
-import AddOperatingManual from "../pages/OperatingManual/add";
-import OperatingManual from "../pages/OperatingManual/view";
-import AddFormBuilder from "../pages/FormBuilder/add";
-import ViewFormBuilder from "../pages/FormBuilder/view";
-import AddFormField from "../pages/FormBuilder/FormField/add";
-import FormResponse from "../pages/FormBuilder/FormResponse";
-import Training from "../pages/Training";
-import AddNewTraining from "../pages/AddNewTraining";
-import TrainingDetail from "../pages/TrainingDetail";
+import FranchisorDashboard from '../pages/FranchisorDashboard';
+import FranchiseeDashboard from '../pages/FranchiseeDashboard';
+import EducatorDashboard from '../pages/EducatorDashboard';
+import CoordinatorDashboard from '../pages/CoordinatorDashboard';
+import ParentsDashboard from '../pages/ParentsDashboard';
+import AddOperatingManual from '../pages/OperatingManual/add';
+import OperatingManual from '../pages/OperatingManual/view';
+import AddFormBuilder from '../pages/FormBuilder/add';
+import ViewFormBuilder from '../pages/FormBuilder/view';
+import AddFormField from '../pages/FormBuilder/FormField/add';
+import FormResponse from '../pages/FormBuilder/FormResponse';
+import Training from '../pages/Training';
+import AddNewTraining from '../pages/AddNewTraining';
+import TrainingDetail from '../pages/TrainingDetail';
+import FileRepository from '../pages/FileRepository';
+import Announcements from '../pages/Announcements';
+import AddNewAnnouncements from '../pages/AddNewAnnouncements';
+import DynamicForm from "../pages/DynamicForm";
+
 
 const Main = () => {
-
   const [isLoggedIn, setIsLoggedIn] = useState();
 
   useEffect(() => {
     const item = localStorage.getItem('token');
-    if(item) { 
+    if (item) {
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
-    } 
+    }
   }, []);
 
   return (
     <main>
       <Routes>
-        <Route 
-          exact 
-          activeClassName="active" 
-          path="/" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <SignIn /> : <Navigate to="/user-management" />} />
+        <Route
+          exact
+          activeClassName="active"
+          path="/"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <UserManagement />
+            </Protected>
+          }
+        />
 
-        <Route 
-          path="/signup" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <SignUp /> : <Navigate to="/user-management" />} />
-        
-        <Route 
-          path="/child/signup" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <ChildRegister /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/dashboard" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <Dashboard /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/resetpassword" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <ResetPassword /> : <Navigate to="/user-management" />} />
-        
-        <Route 
-          path="/user-management" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <UserManagement /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/new-user" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <NewUser /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/franchisor-dashboard" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <FranchisorDashboard /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/franchisee-dashboard" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <FranchiseeDashboard /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/educator-dashboard" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <EducatorDashboard /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/coordinator-dashboard" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <CoordinatorDashboard /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/parents-dashboard" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ParentsDashboard /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/operatingmanual/add" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <AddOperatingManual /> : <Navigate to="/" />} />
-        
-        <Route 
-          path="/operatingmanual" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <OperatingManual /> : <Navigate to="/" />} />
-        
-        <Route 
+        <Route
+          path="/child/signup"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildRegister />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/resetpassword"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <ResetPassword />
+              <UserManagement />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/user-management"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <UserManagement />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/new-user"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <NewUser />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/franchisor-dashboard"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FranchisorDashboard />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/franchisee-dashboard"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FranchiseeDashboard />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/educator-dashboard"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <EducatorDashboard />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/coordinator-dashboard"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <CoordinatorDashboard />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/parents-dashboard"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ParentsDashboard />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/operatingmanual/add"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AddOperatingManual />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/operatingmanual"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <OperatingManual />
+            </Protected>
+          }
+        />
+
+        {/* <Route 
           path="/form/field/add" 
           element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <AddFormField /> : <Navigate to="/" />} />
         
@@ -111,24 +178,128 @@ const Main = () => {
         
         <Route 
           path="/form" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ViewFormBuilder /> : <Navigate to="/" />} />
-        
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ViewFormBuilder /> : <Navigate to="/" />} /> */}
         <Route 
-          path="/add-role" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <AddUserRole /> : <Navigate to="/" />} />
+          path="/form/dynamic/:name" 
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <DynamicForm />
+            </Protected>} />
+        <Route 
+          path="/form/field/add" 
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AddFormField />
+            </Protected>
+          }
+        />
 
         <Route 
-          path="/training" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <Training />  : <Navigate to="/" />} />
-        
+          path="/form/add" 
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AddFormBuilder />
+            </Protected>
+          }
+        />
+
         <Route 
-          path="/new-training" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <AddNewTraining /> : <Navigate to="/" />} />
-        
+          path="/form/response" 
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FormResponse />
+            </Protected>
+          }
+        />
+
         <Route 
-          path="/training-detail" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <TrainingDetail /> : <Navigate to="/" />} />
+          path="/form" 
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ViewFormBuilder />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/add-role"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AddUserRole />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Training />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/new-training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AddNewTraining />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/training-detail"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <TrainingDetail />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/file-repository"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FileRepository />
+            </Protected>
+          }
+        />
+      
+        <Route
+          path="/announcements"
+          element={
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
+              <Announcements />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        
+        <Route
+          path="/new-announcements"
+          element={
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
+              <AddNewAnnouncements />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
       </Routes>
+
+      
     </main>
   );
 };

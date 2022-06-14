@@ -1,16 +1,30 @@
 import axios from "axios";
-import React from "react";
-import { Navbar, Nav, Dropdown, DropdownButton } from "react-bootstrap";
-import Select from 'react-select';
+import React, { useState, useEffect } from "react";
+import { Dropdown } from "react-bootstrap";
+import { BASE_URL } from "./App";
 
-const TopHeader = () => {
+const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
+
+    const [franchiseeList, setFranchiseeList] = useState([]);
+
+    const fetchFranchiseeList = async () => {
+      const response = await axios.get(`${BASE_URL}/role/franchisee`);
+      if(response.status === 200) {
+        const { franchiseeList: franchiseeData } = response.data;
+        setFranchiseeList([...franchiseeData.map((data) => ({
+          id: data.id,
+          franchisee_name: `${data.registered_name}, ${data.city}`
+        }))]);
+      }
+    }
 
     const logout = async () => {
-      console.log('LOGGING USER OUT');
-      const response = await axios.get("http://3.26.39.12:4000/auth/logout");
-      console.log("LOGOUT RESPONSE:", response);
+      const response = await axios.get(`${BASE_URL}/auth/logout`);
       if(response.status === 200) {
         localStorage.removeItem('token');
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('user_name');
+        localStorage.removeItem('user_role');
         window.location.href = "/";
       }
     };
@@ -19,20 +33,34 @@ const TopHeader = () => {
       logout();
     };
 
+    useEffect(() => {
+      fetchFranchiseeList();
+    }, []);
+
     return (
       <>
         <div className="topheader">
           <div className="lpanel">
             <div className="selectdropdown">
-              <Dropdown>
+              <Dropdown onSelect={e => setSelectedFranchisee(e)}>
                 <Dropdown.Toggle id="dropdown-basic">
-                  Special DayCare, Sydney
+                  {selectedFranchisee || franchiseeList[0]?.franchisee_name || "No Data Available"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item href="#"><span className="loction-pic"><img alt="" id="user-pic" src="/img/user.png"/></span> Special DayCare, Sydney</Dropdown.Item>
-                  <Dropdown.Item href="#"><span className="loction-pic"><img alt="" id="user-pic" src="/img/user.png"/></span> Angel Care, Melbourne</Dropdown.Item>
-                  <Dropdown.Item href="#"><span className="loction-pic"><img alt="" id="user-pic" src="/img/user.png"/></span> Care4Kids, Perth</Dropdown.Item>
-                  <Dropdown.Item href="#"><span className="loction-pic"><img alt="" id="user-pic" src="/img/user.png"/></span> Helping Children, Sydney</Dropdown.Item>
+                  {
+                    franchiseeList.map(data => {
+                      return (
+                        <React.Fragment key={data.id}>
+                          <Dropdown.Item
+                            eventKey={`${data.franchisee_name}`}>
+                            <span className="loction-pic">
+                              <img alt="" id="user-pic" src="/img/user.png"/>
+                            </span>{data.franchisee_name}
+                          </Dropdown.Item>
+                        </React.Fragment>
+                      );
+                    })
+                  }
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -47,14 +75,30 @@ const TopHeader = () => {
                   <Dropdown>
                     <Dropdown.Toggle id="dropdown-basic">
                       <span className="user-pic"><img alt="" id="user-pic" src="/img/user.png"/></span>
-                      <span className="user-name">John Doe <small>Franchisor</small></span>
+                      <span className="user-name">{localStorage.getItem('user_name') ? localStorage.getItem('user_name').split(' ').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}
+                      
+                      <small>{localStorage.getItem('user_role')?localStorage.getItem('user_role').split('_').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}</small></span>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                      <Dropdown.Item href="#">All Franchisee</Dropdown.Item>
+
+                    {
+                      localStorage.getItem('menu_list')
+                        ? JSON.parse(localStorage.getItem('menu_list')).map((top_menu) => {
+                          return (
+                                <Dropdown.Item key={top_menu.controller.id} href={top_menu.controller.menu_link}>
+                                  {top_menu.controller.controller_label}
+                                </Dropdown.Item>
+                           )}) : null
+                    }
+
+                      
+                      {/* <Dropdown.Item href="#">All Franchisee</Dropdown.Item>
                       <Dropdown.Item href="#">All Users</Dropdown.Item>
                       <Dropdown.Item href="#">Forms</Dropdown.Item>
                       <Dropdown.Item href="#">Trainings</Dropdown.Item>
-                      <Dropdown.Item href="#">File Repository</Dropdown.Item>
+                      <Dropdown.Item href="#">File Repository</Dropdown.Item> */}
+
+
                       <Dropdown.Item href="#">My Profile</Dropdown.Item>
                       <Dropdown.Item href="#">Settings</Dropdown.Item>
                       <Dropdown.Item href="#" onClick={handleLogout}>Logout</Dropdown.Item>

@@ -4,7 +4,6 @@ import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
 import { BASE_URL_LOCAL } from "../components/App";
-
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 
@@ -12,21 +11,22 @@ import makeAnimated from 'react-select/animated';
 import videos from "../assets/video/Cute Panda.mp4"
 import pdf from "../assets/pdf/1652501632697.pdf"
 const animatedComponents = makeAnimated();
+
 const styles = {
   option: (styles, state) => ({
     ...styles,
-    backgroundColor: state.isSelected ? "#E27235" : "",
+    backgroundColor: state.isSelected ? '#E27235' : '',
   }),
 };
 
 const training = [
   {
-    value: "sydney",
-    label: "Sydney",
+    value: 'sydney',
+    label: 'Sydney',
   },
   {
-    value: "melbourne",
-    label: "Melbourne",
+    value: 'melbourne',
+    label: 'Melbourne',
   },
 ];
 
@@ -73,10 +73,10 @@ const Extension = () =>{
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-sm">{Trainingdata.title}</h1>
@@ -84,7 +84,7 @@ const Extension = () =>{
                       <div className="extra-btn">
                         <Dropdown>
                           <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt=""/>
+                            <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             <Dropdown.Item href="#">Delete All</Dropdown.Item>
@@ -105,7 +105,7 @@ const Extension = () =>{
                       {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis a sagittis varius vel, est quam quam. Orci blandit ac eleifend mi cursus velit pellentesque. Sodales iaculis netus ipsum facilisis suspendisse dolor. Sed sed neque enim tellus in tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis a sagittis varius vel, est quam quam.</p> */}
                       <p>{Trainingdata.description}</p>
                     </div>
-                    
+
                     <h2 className="title-sm">Related Files</h2>
                     <div className="column-list files-list three-col mb-5">
                     
@@ -121,22 +121,37 @@ const Extension = () =>{
                       </a>
 
                         <div className="cta-col">
-                          <a href=""><img src="../img/removeIcon.svg" alt=""/></a>
+                          <a href="">
+                            <img src="../img/removeIcon.svg" alt="" />
+                          </a>
                         </div>
 
                       </div>
                       <div className="item">
-                        <div className="pic"><img src="../img/ppt-ico.png" alt=""/></div>
-                        <div className="name">presentation1.pptx <span className="time">3 Hours</span></div>
+                        <div className="pic">
+                          <img src="../img/ppt-ico.png" alt="" />
+                        </div>
+                        <div className="name">
+                          presentation1.pptx{' '}
+                          <span className="time">3 Hours</span>
+                        </div>
                         <div className="cta-col">
-                          <a href=""><img src="../img/removeIcon.svg" alt=""/></a>
+                          <a href="">
+                            <img src="../img/removeIcon.svg" alt="" />
+                          </a>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="complete-training text-center">
-                      <p>Please acknowledge by clicking below that you have completed this training completely and can proceed further.</p>
-                      <a href="" className="btn btn-primary">Yes, I have completed the training</a>
+                      <p>
+                        Please acknowledge by clicking below that you have
+                        completed this training completely and can proceed
+                        further.
+                      </p>
+                      <a href="" className="btn btn-primary">
+                        Yes, I have completed the training
+                      </a>
                     </div>
                   </div>
                 </div>

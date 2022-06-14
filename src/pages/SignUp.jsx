@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import WelcomeMsg from "../components/WelcomeMsg";
+import { BASE_URL } from '../components/App';
 
 const initialFields = {
   fullname: "",
@@ -17,16 +18,22 @@ const SignUp = () => {
   const [hide, setHide] = useState(true);
   const [fields, setFields] = useState(initialFields);
   const { fullname, email, password } = fields;
+  const [topErrorMessage, setTopErrorMessage] = useState("");
 
   const location = useLocation();
   console.log('Location:', location);
 
   // function to post data in the database
   const addUser = async (data) => {
-    const res = await axios.post('http://3.26.39.12:3000/signup', data);
+    const res = await axios.post(`${BASE_URL}/signup`, data);
     if(res.status === 201 && res.data?.status === "success") {
       localStorage.setItem("token", res.data.accessToken);
+      localStorage.setItem("user_id", res.data.user.id);
+      localStorage.setItem("user_role", res.data.user.role);
+      localStorage.setItem("user_name", res.data.user.name);
       window.location.href="/dashboard";
+    } else if(res.status === 201 && res.data.status === 'fail') {
+      setTopErrorMessage(res.data.message)
     }
   }
 
@@ -78,6 +85,7 @@ const SignUp = () => {
                       onChange={handleChange}
                       value={email}
                     />
+                    {topErrorMessage && <span className="toast-error">{topErrorMessage}</span>}
                   </Form.Group>
 
                   <Form.Group className="mb-4 form-group" controlId="formBasicPassword">
