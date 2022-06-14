@@ -51,7 +51,7 @@ const Main = () => {
         
         <Route 
           path="/child/signup" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ChildRegister /> : <Navigate to="/" />} />
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <ChildRegister /> : <Navigate to="/" />} />
         
         <Route 
           path="/dashboard" 
@@ -119,15 +119,15 @@ const Main = () => {
 
         <Route 
           path="/training" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <Training /> : <Navigate to="/" />} />
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <Training />  : <Navigate to="/" />} />
         
         <Route 
           path="/new-training" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <AddNewTraining /> : <Navigate to="/" />} />
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <AddNewTraining /> : <Navigate to="/" />} />
         
         <Route 
           path="/training-detail" 
-          element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <TrainingDetail /> : <Navigate to="/" />} />
+          element={typeof isLoggedIn === 'undefined' || isLoggedIn === false ? <TrainingDetail /> : <Navigate to="/" />} />
       </Routes>
     </main>
   );
