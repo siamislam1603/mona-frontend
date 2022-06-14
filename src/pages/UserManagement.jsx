@@ -23,12 +23,6 @@ const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
 
-const styles = {
-  option: (styles, state) => ({
-    ...styles,
-    backgroundColor: state.isSelected ? '#E27235' : '',
-  }),
-};
 const training = [
   {
     value: 'sydney',
@@ -127,14 +121,14 @@ const UserManagement = () => {
   });
 
   const fetchUserDetails = async () => {
-    let response = await axios.get(`${BASE_URL}/auth/users`, {
+    let response = await axios.get(`${BASE_URL}/role/user/${selectedFranchisee.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_").toLowerCase()}`, {
       headers: {
-        authorization: `Bearer ${localStorage.getItem('token')}`,
+        'authorization': `Bearer ${localStorage.getItem('token')}`,
       },
     });
     if (response.status === 200) {
-      const { data } = response.data;
-      let tempData = data.map((dt) => ({
+      const { users } = response.data;
+      let tempData = users.map((dt) => ({
         id: dt.id,
         name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
@@ -159,8 +153,10 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
-    fetchUserDetails();
-  }, []);
+    if(selectedFranchisee) {
+      fetchUserDetails();
+    }
+  }, [selectedFranchisee]);
 
   return (
     <>

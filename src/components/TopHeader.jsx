@@ -6,12 +6,12 @@ import { BASE_URL } from "./App";
 const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
 
     const [franchiseeList, setFranchiseeList] = useState([]);
-    const [ singleFranchisee, setSingleFranchisee ] = useState(null);
 
     const fetchFranchiseeList = async () => {
       const response = await axios.get(`${BASE_URL}/role/franchisee`);
       if(response.status === 200) {
         const { franchiseeList: franchiseeData } = response.data;
+        console.log('FRANCHISEE DATA:', franchiseeData);
         setFranchiseeList([...franchiseeData.map((data) => ({
           id: data.id,
           franchisee_name: `${data.registered_name}, ${data.city}`
@@ -23,8 +23,11 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       const response = await axios.get(`${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`);
       if(response.status === 200) {
         const { franchisee } = response.data;
-        let formedName = franchisee.registered_name + ', ' + franchisee.city;
-        setSingleFranchisee(formedName);
+        setSelectedFranchisee(franchisee.registered_name);
+        setFranchiseeList([franchisee].map((data) => ({
+          id: data.id,
+          franchisee_name: `${data.registered_name}, ${data.city}`
+        })));
       }
     };
 
@@ -58,7 +61,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
             <div className="selectdropdown">
               <Dropdown onSelect={e => setSelectedFranchisee(e)}>
                 <Dropdown.Toggle id="dropdown-basic">
-                  {singleFranchisee || selectedFranchisee || franchiseeList[0]?.franchisee_name || "No Data Available"}
+                  {selectedFranchisee || franchiseeList[0]?.franchisee_name || "No Data Available"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {
