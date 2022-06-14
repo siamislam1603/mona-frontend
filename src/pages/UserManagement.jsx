@@ -39,92 +39,7 @@ const training = [
     label: 'Melbourne',
   },
 ];
-const products = [
-  {
-    id: 1,
-    name: '../img/user.png, James Smith, Educator',
-    email: 'smithjms2211@gmail.com',
-    number: '+33757005467',
-    location: 'Australia',
-  },
-  {
-    id: 2,
-    name: '../img/user.png, Shelby Goode, Parent',
-    email: 'shelbygoode41@gmail.com',
-    number: '+33757005455',
-    location: 'Australia',
-  },
-  {
-    id: 3,
-    name: '../img/user.png, Robert Bacins, Co-ordinator',
-    email: 'robertbacins4182@.com',
-    number: '+33757005467',
-    location: 'Australia',
-  },
-  {
-    id: 4,
-    name: '../img/user.png, John Carilo, Co-ordinator',
-    email: 'john carilo182@.com',
-    number: '+33757005455',
-    location: 'Australia',
-  },
-  {
-    id: 5,
-    name: '../img/user.png, Mark Ruffalo, Parent',
-    email: 'markruffalo3735@.com',
-    number: '+33757005467',
-    location: 'Australia',
-  },
-  {
-    id: 6,
-    name: '../img/user.png, Jhon Deo, Parent',
-    email: 'jhondeo24823@.com',
-    number: '+33757005455',
-    location: 'Sydney',
-  },
-  {
-    id: 7,
-    name: '../img/user.png, Bethanyjackson, Educator',
-    email: 'bethanyjackson5@.com',
-    number: '+33757005467',
-    location: 'Australia',
-  },
-  {
-    id: 8,
-    name: '../img/user.png, Jack Ruffalo, Parent',
-    email: 'markrufalo3735@.com',
-    number: '+33757005455',
-    location: 'Sydney',
-  },
-  {
-    id: 9,
-    name: '../img/user.png, James Smith, Doctor',
-    email: 'smithjms2211@gmail.com',
-    number: '+33757005467',
-    location: 'Australia',
-  },
-  {
-    id: 10,
-    name: '../img/user.png, Shelby Goode, Doctor',
-    email: 'shelbygoode1@gmail.com',
-    number: '+33757005455',
-    location: 'Sydney',
-  },
-  {
-    id: 11,
-    name: '../img/user.png, James Smith, Doctor',
-    email: 'smithjms221@gmail.com',
-    number: '+33757005467',
-    location: 'Australia',
-  },
-  {
-    id: 12,
-    name: '../img/user.png, Shelby Goode, Doctor',
-    email: 'shelbygode41@gmail.com',
-    number: '+33757005455',
-    location: 'Sydney',
-  },
-];
+
 const selectRow = {
   mode: 'checkbox',
   clickToSelect: true,
@@ -205,6 +120,7 @@ const rowEvents = {
 
 const UserManagement = () => {
   const [userData, setUserData] = useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [filter, setFilter] = useState({
     user: '',
     location: [],
@@ -256,7 +172,10 @@ const UserManagement = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader 
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={setSelectedFranchisee}
+                   />
                 <div className="entry-container">
                   <div className="user-management-sec">
                     <ToolkitProvider

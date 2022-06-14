@@ -39,8 +39,6 @@ const LeftNavbar = () => {
   //   console.log('Menu List:', menuList);
   // }, [menuList]);
 
-
-  console.log('Menu List EXCLUSION:', menuList); 
   return (
     <>
       <div className="logo-column text-center"><Navbar.Brand href="#home"><img src="img/logo-ico.png" alt=""/></Navbar.Brand></div>
