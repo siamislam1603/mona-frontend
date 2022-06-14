@@ -37,14 +37,6 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       fetchFranchiseeList();
     }, []);
 
-    let menulist = JSON.parse(localStorage.getItem('menu_list'));
-    menulist.map((user) => (
-      console.log(user.controller.id)
-    ))
-
-
-    console.log("top nav menu herereeeeeeeeeeeeeeee", menulist)
-
     return (
       <>
         <div className="topheader">
@@ -69,10 +61,6 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
                       );
                     })
                   }
-                  {/* <Dropdown.Item href="#"><span className="loction-pic"><img alt="" id="user-pic" src="/img/user.png"/></span> Special DayCare, Sydney</Dropdown.Item>
-                  <Dropdown.Item href="#"><span className="loction-pic"><img alt="" id="user-pic" src="/img/user.png"/></span> Angel Care, Melbourne</Dropdown.Item>
-                  <Dropdown.Item href="#"><span className="loction-pic"><img alt="" id="user-pic" src="/img/user.png"/></span> Care4Kids, Perth</Dropdown.Item>
-                  <Dropdown.Item href="#"><span className="loction-pic"><img alt="" id="user-pic" src="/img/user.png"/></span> Helping Children, Sydney</Dropdown.Item> */}
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -87,7 +75,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
                   <Dropdown>
                     <Dropdown.Toggle id="dropdown-basic">
                       <span className="user-pic"><img alt="" id="user-pic" src="/img/user.png"/></span>
-                      <span className="user-name">{localStorage.getItem('user_name')?localStorage.getItem('user_name').split(' ').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}
+                      <span className="user-name">{localStorage.getItem('user_name') ? localStorage.getItem('user_name').split(' ').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}
                       
                       <small>{localStorage.getItem('user_role')?localStorage.getItem('user_role').split('_').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}</small></span>
                     </Dropdown.Toggle>
@@ -97,7 +85,9 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
                       localStorage.getItem('menu_list')
                         ? JSON.parse(localStorage.getItem('menu_list')).map((top_menu) => {
                           return (
-                               <Dropdown.Item href={top_menu.controller.menu_link}>{top_menu.controller.controller_label}</Dropdown.Item>
+                                <Dropdown.Item key={top_menu.controller.id} href={top_menu.controller.menu_link}>
+                                  {top_menu.controller.controller_label}
+                                </Dropdown.Item>
                            )}) : null
                     }
 
