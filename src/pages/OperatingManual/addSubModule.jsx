@@ -10,7 +10,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 let selectedFranchisee = [];
 let selectedUserRole = [];
-const AddOperatingManual = () => {
+const AddSubOperatingManual = () => {
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const [formSettingFlag, setFormSettingFlag] = useState(false);
@@ -90,19 +90,19 @@ const AddOperatingManual = () => {
   return (
     <>
       <div id="main">
-        <section className="mainsection ">
+        <section className="mainsection new_sub_module">
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <div className="new_module">
+                <div className="new_module new_sub_module">
                   <TopHeader />
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
-                        <h4 className="mynewForm">New Module</h4>
+                        <h4 className="mynewForm">New Sub Module</h4>
                         <Button
                           onClick={() => {
                             setFormSettingFlag(true);
@@ -114,6 +114,20 @@ const AddOperatingManual = () => {
                     </Col>
                     <Col sm={6}>
                       <div className="select_module">
+                        <Form.Group>
+                          <Form.Label className="formlabel">
+                          Sub Module Name
+                          </Form.Label>
+                          <Form.Control
+                          type="text"
+                          name="field_label"
+                          placeholder="Lorem ipsum dolor sit ame"
+                        />
+                        </Form.Group>
+                      </div>
+                    </Col>
+                    <Col sm={6}>
+                    <div className="select_module">
                         <Form.Group>
                           <Form.Label className="formlabel">
                             Select Module
@@ -128,171 +142,142 @@ const AddOperatingManual = () => {
                         </Form.Group>
                       </div>
                     </Col>
-                    <Col sm={6} className="add_fields">
-                      <Button>
-                        <FontAwesomeIcon icon={faPlus} /> Add New Module
-                      </Button>
+                  </Row>
+               
+                  <Row>
+                    <Col sm={12}>
+                      <Form.Group>
+                        <Form.Label className="formlabel">
+                          Description
+                        </Form.Label>
+                        <MyEditor handleChange={setField} />
+                      </Form.Group>
                     </Col>
                   </Row>
-                  <div className="my-new-formsection">
-                    <Row>
-                      <Col sm={6}>
-                        <Form.Group>
-                          <Form.Label className="formlabel">
-                            Sub-Module Name
-                          </Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="field_label"
-                            placeholder="Lorem ipsum dolor sit ame"
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col sm={12}>
-                        <Form.Group>
-                          <Form.Label className="formlabel">
-                            Description
-                          </Form.Label>
-                          <MyEditor handleChange={setField} />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col sm={6}>
-                        <Form.Group>
-                          <Form.Label className="formlabel">
-                            Upload Cover Image :
-                          </Form.Label>
-                          <div className="upload_cover_box">
-                            <div className="cover_image">
-                              <img src="../img/create_module_img.png"></img>
-                            </div>
-                            <div className="add_image">
-                              <div className="add_image_box">
-                                <span>
-                                  {' '}
-                                  <img
-                                    src="../img/bi_cloud-upload.svg"
-                                    alt=""
-                                  />{' '}
-                                  Add Image{' '}
-                                </span>
-                                <Form.Control
-                                  className="add_image_input"
-                                  type="file"
-                                />
-                              </div>
-                            </div>
-                            <Button variant="link">
-                              <img src="../../img/removeIcon.svg" />
-                            </Button>
-                          </div>
-                        </Form.Group>
-                      </Col>
-                      <Col sm={6}>
-                        <Form.Group>
-                          <Form.Label className="formlabel">
-                            Upload Reference Video Here :
-                          </Form.Label>
-
-                          <div className="upload_cover_box video_reference">
-                            <div className="cover_image">
-                              <img src="../img/create_module_img.png"></img>
-                            </div>
-                            <div className="add_image">
-                              <div className="add_image_box">
-                                <span>
-                                  {' '}
-                                  <img
-                                    src="../img/bi_cloud-upload.svg"
-                                    alt=""
-                                  />{' '}
-                                  Add File{' '}
-                                </span>
-                                <Form.Control
-                                  className="add_image_input"
-                                  type="file"
-                                />
-                              </div>
-                            </div>
-                            <Button variant="link" className="remove_bin">
-                              <img src="../../img/removeIcon.svg" />{' '}
-                              <span>Remove</span>
-                            </Button>
-                          </div>
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col sm={12}>
-                        <div className="upload_related_files">
-                          <Form.Group>
-                            <Form.Label className="formlabel">
-                              Upload Related Files :
-                            </Form.Label>
-                            <Row>
-                              <Col sm={4}>
-                                <div className="upload_related_box">
-                                  <div className="forms-content">
-                                    <div className="content-icon-section">
-                                      <img src="../img/doc_blue.svg" />
-                                    </div>
-                                    <div className="content-title-section">
-                                      <h6>document1.docx</h6>
-                                      <h4>3 Hours</h4>
-                                    </div>
-                                  </div>
-                                  <Button variant="link">
-                                    <img src="../../img/removeIcon.svg" />
-                                  </Button>
-                                </div>
-                              </Col>
-                              <Col sm={4}>
-                                <div className="upload_related_box">
-                                  <div className="forms-content">
-                                    <div className="content-icon-section">
-                                      <img src="../img/doc_pptx.svg" />
-                                    </div>
-                                    <div className="content-title-section">
-                                      <h6>presentation1.pptx</h6>
-                                      <h4>3 Hours</h4>
-                                    </div>
-                                  </div>
-                                  <Button variant="link">
-                                    <img src="../../img/removeIcon.svg" />
-                                  </Button>
-                                </div>
-                              </Col>
-                            </Row>
-                            <div className="add_image">
-                              <div className="add_image_box">
-                                <span>
-                                  {' '}
-                                  <img
-                                    src="../img/bi_cloud-upload.svg"
-                                    alt=""
-                                  />{' '}
-                                  Add File{' '}
-                                </span>
-                                <Form.Control
-                                  className="add_image_input"
-                                  type="file"
-                                />
-                              </div>
-                            </div>
-                          </Form.Group>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
                   <Row>
                     <Col sm={6}>
-                      <div className="add_fields">
-                        <Button>
-                          <FontAwesomeIcon icon={faPlus} /> Add New Sub-module
-                        </Button>
+                      <Form.Group>
+                        <Form.Label className="formlabel">
+                          Upload Cover Image :
+                        </Form.Label>
+                        <div className="upload_cover_box">
+                          <div className="cover_image">
+                            <img src="../../img/create_module_img.png"></img>
+                          </div>
+                          <div className="add_image">
+                            <div className="add_image_box">
+                              <span>
+                                {' '}
+                                <img
+                                  src="../../img/bi_cloud-upload.svg"
+                                  alt=""
+                                />{' '}
+                                Add Image{' '}
+                              </span>
+                              <Form.Control
+                                className="add_image_input"
+                                type="file"
+                              />
+                            </div>
+                          </div>
+                          <Button variant="link">
+                            <img src="../../img/removeIcon.svg" />
+                          </Button>
+                        </div>
+                      </Form.Group>
+                    </Col>
+                    <Col sm={6}>
+                      <Form.Group>
+                        <Form.Label className="formlabel">
+                          Upload Reference Video Here :
+                        </Form.Label>
+
+                        <div className="upload_cover_box video_reference">
+                          <div className="cover_image">
+                            <img src="../../img/create_module_img.png"></img>
+                          </div>
+                          <div className="add_image">
+                            <div className="add_image_box">
+                              <span>
+                                {' '}
+                                <img
+                                  src="../../img/bi_cloud-upload.svg"
+                                  alt=""
+                                />{' '}
+                                Add File{' '}
+                              </span>
+                              <Form.Control
+                                className="add_image_input"
+                                type="file"
+                              />
+                            </div>
+                          </div>
+                          <Button variant="link" className="remove_bin">
+                            <img src="../../img/removeIcon.svg" />{' '}
+                            <span>Remove</span>
+                          </Button>
+                        </div>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col sm={12}>
+                      <div className="upload_related_files">
+                        <Form.Group>
+                          <Form.Label className="formlabel">
+                            Upload Related Files :
+                          </Form.Label>
+                          <Row>
+                            <Col sm={4}>
+                              <div className="upload_related_box">
+                                <div className="forms-content">
+                                  <div className="content-icon-section">
+                                    <img src="../../img/doc_blue.svg" />
+                                  </div>
+                                  <div className="content-title-section">
+                                    <h6>document1.docx</h6>
+                                    <h4>3 Hours</h4>
+                                  </div>
+                                </div>
+                                <Button variant="link">
+                                  <img src="../../img/removeIcon.svg" />
+                                </Button>
+                              </div>
+                            </Col>
+                            <Col sm={4}>
+                              <div className="upload_related_box">
+                                <div className="forms-content">
+                                  <div className="content-icon-section">
+                                    <img src="../../img/doc_pptx.svg" />
+                                  </div>
+                                  <div className="content-title-section">
+                                    <h6>presentation1.pptx</h6>
+                                    <h4>3 Hours</h4>
+                                  </div>
+                                </div>
+                                <Button variant="link">
+                                  <img src="../../img/removeIcon.svg" />
+                                </Button>
+                              </div>
+                            </Col>
+                          </Row>
+                          <div className="add_image">
+                            <div className="add_image_box">
+                              <span>
+                                {' '}
+                                <img
+                                  src="../../img/bi_cloud-upload.svg"
+                                  alt=""
+                                />{' '}
+                                Add File{' '}
+                              </span>
+                              <Form.Control
+                                className="add_image_input"
+                                type="file"
+                              />
+                            </div>
+                          </div>
+                        </Form.Group>
                       </div>
                     </Col>
                   </Row>
@@ -544,4 +529,4 @@ const AddOperatingManual = () => {
   );
 };
 
-export default AddOperatingManual;
+export default AddSubOperatingManual;
