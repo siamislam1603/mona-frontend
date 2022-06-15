@@ -84,15 +84,19 @@ const AddNewTraining = () => {
     }
   };  
 
+  const saveTrainingMedia = async (data) => {
+
+  };
+
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_name) => {
-    const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0]}`);
+    const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
     if(response.status === 200 && Object.keys(response.data).length > 1) {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
         ...users?.map((data) => ({
-          cat: data.fullname,
-          key: data.fullname.toLowerCase().split(" ").join("_"),
+          cat: data.fullname.toLowerCase().split(" ").join("_"),
+          key: data.fullname
         })),
       ]);
     }
@@ -136,6 +140,12 @@ const AddNewTraining = () => {
     if(trainingData) {
       createTraining(trainingData);
     }
+
+    if(trainingMedia) {
+      let data = new FormData();
+      
+      saveTrainingMedia(trainingMedia);
+    }
   };
 
   useEffect(() => {
@@ -146,6 +156,8 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
+
+  console.log('TRAINING MEDIA:', trainingMedia);
 
   return (
     <>

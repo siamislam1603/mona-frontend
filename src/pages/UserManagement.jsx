@@ -121,7 +121,8 @@ const UserManagement = () => {
   });
 
   const fetchUserDetails = async () => {
-    let response = await axios.get(`${BASE_URL}/role/user/${selectedFranchisee.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_").toLowerCase()}`, {
+    let franchiseeFormat = selectedFranchisee.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_").toLowerCase();
+    let response = await axios.get(`${BASE_URL}/role/user/${franchiseeFormat}`, {
       headers: {
         'authorization': `Bearer ${localStorage.getItem('token')}`,
       },
