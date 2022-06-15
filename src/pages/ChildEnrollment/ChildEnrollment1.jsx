@@ -51,7 +51,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    saveFormOneData(formOneData);
+    // saveFormOneData(formOneData);
+    nextStep();
   };
 
 

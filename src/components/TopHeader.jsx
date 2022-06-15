@@ -11,7 +11,6 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       const response = await axios.get(`${BASE_URL}/role/franchisee`);
       if(response.status === 200) {
         const { franchiseeList: franchiseeData } = response.data;
-        console.log('FRANCHISEE DATA:', franchiseeData);
         setFranchiseeList([...franchiseeData.map((data) => ({
           id: data.id,
           franchisee_name: `${data.registered_name}, ${data.city}`
