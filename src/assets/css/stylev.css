@@ -1693,3 +1693,7 @@ input.add_image_input.form-control {
 .new_sub_module{
     color: #F7F7F8;
 }
+
+.ck.ck-editor__editable_inline p {
+    color: var(--black);
+}
