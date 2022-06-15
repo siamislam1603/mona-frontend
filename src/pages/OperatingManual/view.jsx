@@ -232,24 +232,9 @@ const OperatingManual = () => {
                         <>
                           <div className="module_detail">
                             <div className="image_banner">
-                              <img src="../img/demo_image.png" alt="" />
+                              <img src={item.cover_image ? item.cover_image : "../img/demo_image.png"} alt="" />
                             </div>
                             <p className="module_title">
-                              {console.log(
-                                'category.indexOf(operatingManualdata[innerIndex]?.category_id)---->',
-                                category
-                                  .map((object) => object.id)
-                                  .indexOf(item.category_id)
-                              )}
-                              {console.log(
-                                'operatingManualdata[innerIndex]?.category_id---->',
-                                item.category_id
-                              )}
-                              {console.log('innerIndex---->', innerIndex)}
-                              {console.log(
-                                'operatingManualdata---->',
-                                operatingManualdata
-                              )}
                               <h3>
                                 {
                                   category[
@@ -276,7 +261,7 @@ const OperatingManual = () => {
                                     variant="transparent"
                                     onClick={() => {
                                       setVideoUrl(
-                                        'https://player.vimeo.com/video/718118183?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1'
+                                        item.reference_video ? item.reference_video : 'https://player.vimeo.com/video/718118183?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1' 
                                       );
                                       handleShow();
                                     }}
@@ -344,16 +329,16 @@ const OperatingManual = () => {
       
       <Modal size="lg" className="video-modal module_video_model" show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          {/* <h2>
+          <h2>
             Computer Literacy - The growing reliance on technology and computers
             also in experiment.
-          </h2> */}
+          </h2>
         </Modal.Header>
         <Modal.Body>
           <div className="embed-responsive embed-responsive-16by9">
             <iframe
               width="1366"
-              height="568"
+              height="445"
               src={videoUrl}
               title="YouTube video player"
               frameborder="0"

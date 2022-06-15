@@ -1482,6 +1482,19 @@ button.vidico img {
     z-index: 1;
     opacity: 1;
     border-radius: 100px;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+}
+.module_video_model .modal-header h2 {
+    color: #3E5D58;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: normal;
 }
 
 .module_video_model .btn-close {
@@ -1593,6 +1606,9 @@ button.vidico img {
 .new_module .cover_image {
     width: 80px;
     height: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
 }
 .upload_cover_box .btn {
     min-width: auto;
@@ -1697,3 +1713,6 @@ input.add_image_input.form-control {
 .ck.ck-editor__editable_inline p {
     color: var(--black);
 }
+
+
+/* loader */
