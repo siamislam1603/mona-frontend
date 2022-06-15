@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
-import ChildRegister from '../pages/ChildRegister';
+import ChildEnrollment from '../pages/ChildEnrollment';
 import SignIn from '../pages/SignIn';
 import ResetPassword from '../pages/ResetPassword';
 import UserManagement from '../pages/UserManagement';
@@ -55,11 +55,11 @@ const Main = () => {
         />
 
         <Route
-          path="/child/signup"
+          path="/child-enrollment"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <ChildRegister />
+              <ChildEnrollment />
             </Protected>
           }
         />

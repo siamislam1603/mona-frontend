@@ -17,6 +17,8 @@ import StepTwelve from "./ChildEnrollment/ChildEnrollment12";
 import StepThirteen from "./ChildEnrollment/ChildEnrollment13";
 
 function ChildEnrollment() {
+  const [selectedFranchisee, setSelectedFranchisee] = useState();
+
   //state for steps
   const [step, setstep] = useState(1);
 
@@ -35,8 +37,9 @@ function ChildEnrollment() {
     // input value from the form
     const {value } = e.target;
 
-
   }
+
+  console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   // eslint-disable-next-line default-case
   switch (step) {
     case 1:
@@ -49,7 +52,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -75,7 +80,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -101,7 +108,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -127,7 +136,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -153,7 +164,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -179,7 +192,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -205,7 +220,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -231,7 +248,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader 
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -257,7 +276,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader 
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -283,7 +304,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -309,7 +332,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -335,7 +360,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
@@ -361,7 +388,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader/>
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>

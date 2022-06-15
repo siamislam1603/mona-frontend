@@ -11,7 +11,6 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       const response = await axios.get(`${BASE_URL}/role/franchisee`);
       if(response.status === 200) {
         const { franchiseeList: franchiseeData } = response.data;
-        console.log('FRANCHISEE DATA:', franchiseeData);
         setFranchiseeList([...franchiseeData.map((data) => ({
           id: data.id,
           franchisee_name: `${data.registered_name}, ${data.city}`
@@ -38,6 +37,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         localStorage.removeItem('user_id');
         localStorage.removeItem('user_name');
         localStorage.removeItem('user_role');
+        localStorage.removeItem('selectedFranchisee');
         window.location.href = "/";
       }
     };
@@ -45,6 +45,11 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
     const handleLogout = event => {
       logout();
     };
+
+    const selectFranchisee = (e) => {
+        setSelectedFranchisee(e);
+        localStorage.setItem('selectedFranchisee', e);
+    }
 
     useEffect(() => {
       if(localStorage.getItem('user_role') === 'franchisor_admin') {
@@ -59,9 +64,9 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         <div className="topheader">
           <div className="lpanel">
             <div className="selectdropdown">
-              <Dropdown onSelect={e => setSelectedFranchisee(e)}>
+              <Dropdown onSelect={selectFranchisee}>
                 <Dropdown.Toggle id="dropdown-basic">
-                  {selectedFranchisee || franchiseeList[0]?.franchisee_name || "No Data Available"}
+                  {localStorage.getItem('selectedFranchisee') || franchiseeList[0]?.franchisee_name || "No Data Available"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {
