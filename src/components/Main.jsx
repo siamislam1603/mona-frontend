@@ -25,6 +25,7 @@ import FileRepository from '../pages/FileRepository';
 import Announcements from '../pages/Announcements';
 import AddNewAnnouncements from '../pages/AddNewAnnouncements';
 import DynamicForm from '../pages/DynamicForm';
+import UploadFile from '../pages/UploadFile';
 import AddSubOperatingManual from '../pages/OperatingManual/addSubModule';
 
 const Main = () => {
@@ -63,13 +64,22 @@ const Main = () => {
             </Protected>
           }
         />
+          <Route
+          path="/child-enrollment"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment />
+            </Protected>
+          }
+        />
 
         <Route
-          path="/resetpassword"
+          path="/upload_file"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <ResetPassword />
-              <UserManagement />
+              <UploadFile />
             </Protected>
           }
         />
