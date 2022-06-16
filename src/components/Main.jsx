@@ -9,6 +9,8 @@ import NewUser from '../pages/NewUser';
 import AddUserRole from '../pages/AddUserRole';
 import FranchisorDashboard from '../pages/FranchisorDashboard';
 import FranchiseeDashboard from '../pages/FranchiseeDashboard';
+import AllFranchises from '../pages/AllFranchises';
+import NewFranchises from '../pages/NewFranchises';
 import EducatorDashboard from '../pages/EducatorDashboard';
 import CoordinatorDashboard from '../pages/CoordinatorDashboard';
 import ParentsDashboard from '../pages/ParentsDashboard';
@@ -25,6 +27,7 @@ import FileRepository from '../pages/FileRepository';
 import Announcements from '../pages/Announcements';
 import AddNewAnnouncements from '../pages/AddNewAnnouncements';
 import DynamicForm from '../pages/DynamicForm';
+import UploadFile from '../pages/UploadFile';
 import AddSubOperatingManual from '../pages/OperatingManual/addSubModule';
 
 const Main = () => {
@@ -63,16 +66,46 @@ const Main = () => {
             </Protected>
           }
         />
-
-        <Route
-          path="/resetpassword"
+          <Route
+          path="/child-enrollment"
           element={
             <Protected isLoggedIn={isLoggedIn}>
-              <ResetPassword />
-              <UserManagement />
+              <SignIn />
+              <ChildEnrollment />
             </Protected>
           }
         />
+
+        <Route
+          path="/upload_file"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <ResetPassword />
+              <UploadFile />
+            </Protected>
+          }
+        />
+
+      <Route
+          path="/New-Franchises"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <NewFranchises />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/All-Franchises"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AllFranchises />
+            </Protected>
+          }
+        />
+
 
         <Route
           path="/user-management"
