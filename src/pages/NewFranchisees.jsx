@@ -3,7 +3,7 @@ import { Row, Col, Button, Container } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
-const NewFranchises = () => {
+const NewFranchisees = () => {
     return (
         <div>
             <div id="main">
@@ -114,4 +114,4 @@ const NewFranchises = () => {
     )
 }
 
-export default NewFranchises;
+export default NewFranchisees;
