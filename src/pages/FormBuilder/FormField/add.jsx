@@ -87,7 +87,7 @@ const AddFormField = (props) => {
         console.log("response0-------->1", res?.userRoleList);
       })
       .catch((error) => console.log("error", error));
-    fetch(`${BASE_URL}/api/franchisee-data`, requestOptions)
+    fetch(`${BASE_URL}/role/franchisee`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         setFranchisee(res?.franchiseeList);
