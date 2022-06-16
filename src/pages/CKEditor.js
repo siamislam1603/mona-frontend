@@ -55,6 +55,7 @@ export default function MyEditor(props) {
         }}
         {...props}
       />
+      <p className='form-errors'>{props.answer}</p>
     </div>
   );
 }
