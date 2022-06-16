@@ -84,6 +84,27 @@ const Main = () => {
           }
         />
 
+      <Route
+          path="/New-Franchises"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <NewFranchises />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/All-Franchises"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AllFranchises />
+            </Protected>
+          }
+        />
+
+
         <Route
           path="/user-management"
           element={
