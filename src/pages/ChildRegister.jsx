@@ -4,12 +4,12 @@ import { Col, Container, Form, Row, Button } from "react-bootstrap";
 
 
 const ChildRegister = () => {
-  const [form, setForm] = useState({school:"Y",sex:"M",physical:"Y",service:"Y"});
+  const [form, setForm] = useState({ school: "Y", sex: "M", physical: "Y", service: "Y" });
   const [errors, setErrors] = useState({});
-  
+
   const addChild = async (data) => {
     const res = await axios.post('http://localhost:4000/child/signup', data);
-    if(res.status === 201 && res.data?.status === 'success') {
+    if (res.status === 201 && res.data?.status === 'success') {
       window.location.ref = "/dashboard";
     }
   };
@@ -26,50 +26,43 @@ const ChildRegister = () => {
     }
   };
 
-  const checkValidation=()=>{
-    let newErrors={};
-    let {child_name, family_name, given_name, usually_called, dob, country_of_birth, home_address} = form;
-    if(!child_name)
-    {
-        newErrors.child_name="Child name is required";
+  const checkValidation = () => {
+    let newErrors = {};
+    let { child_name, family_name, given_name, usually_called, dob, country_of_birth, home_address } = form;
+    if (!child_name) {
+      newErrors.child_name = "Child name is required";
     }
-    if(!family_name)
-    {
-        newErrors.family_name="Family name is required";
+    if (!family_name) {
+      newErrors.family_name = "Family name is required";
     }
-    if(!given_name)
-    {
-        newErrors.given_name="Given name is required";
+    if (!given_name) {
+      newErrors.given_name = "Given name is required";
     }
-    if(!usually_called)
-    {
-        newErrors.usually_called="Usually called is required";
+    if (!usually_called) {
+      newErrors.usually_called = "Usually called is required";
     }
-    if(!dob)
-    {
-        newErrors.dob="Date of Birth is required";  
+    if (!dob) {
+      newErrors.dob = "Date of Birth is required";
     }
-    if(!country_of_birth)
-    {
-        newErrors.country_of_birth="Country of Birth is required";  
+    if (!country_of_birth) {
+      newErrors.country_of_birth = "Country of Birth is required";
     }
-    if(!home_address)
-    {
-        newErrors.home_address="Home Address is required";  
+    if (!home_address) {
+      newErrors.home_address = "Home Address is required";
     }
 
-    console.log("newErrors---->",newErrors);
+    console.log("newErrors---->", newErrors);
     return newErrors;
   }
 
-  const onSubmit=(e)=>{
+  const onSubmit = (e) => {
     e.preventDefault();
     const newErrors = checkValidation();
     if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-      } else {
-          addChild(form)
-      }
+      setErrors(newErrors);
+    } else {
+      addChild(form)
+    }
   }
 
   return (
@@ -148,10 +141,10 @@ const ChildRegister = () => {
                             name="usually_called"
                             onChange={setField}
                             isInvalid={!!errors.usually_called}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.usually_called}
-                            </Form.Control.Feedback>
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.usually_called}
+                          </Form.Control.Feedback>
                         </div>
                       </Col>
                       <Col md={3}>
@@ -164,10 +157,10 @@ const ChildRegister = () => {
                             name="dob"
                             onChange={setField}
                             isInvalid={!!errors.dob}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.dob}
-                            </Form.Control.Feedback>
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.dob}
+                          </Form.Control.Feedback>
                         </div>
                       </Col>
                       <Col md={3}>
@@ -208,10 +201,10 @@ const ChildRegister = () => {
                             name="home_address"
                             onChange={setField}
                             isInvalid={!!errors.home_address}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.home_address}
-                            </Form.Control.Feedback>
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.home_address}
+                          </Form.Control.Feedback>
                         </div>
                       </Col>
                       <Col md={6}>
@@ -224,10 +217,10 @@ const ChildRegister = () => {
                             name="languages_spoken_in_home"
                             onChange={setField}
                             isInvalid={!!errors.languages_spoken_in_home}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.languages_spoken_in_home}
-                            </Form.Control.Feedback>
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.languages_spoken_in_home}
+                          </Form.Control.Feedback>
                         </div>
                       </Col>
                       <Col md={6}>
@@ -240,10 +233,10 @@ const ChildRegister = () => {
                             name="country_of_birth"
                             onChange={setField}
                             isInvalid={!!errors.country_of_birth}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.country_of_birth}
-                            </Form.Control.Feedback>
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.country_of_birth}
+                          </Form.Control.Feedback>
                         </div>
                       </Col>
                       <Col md={12}>
@@ -526,7 +519,7 @@ const ChildRegister = () => {
                           </div>
                         </div>
                       </Col>
-                      {form.school === "Y"? (
+                      {form.school === "Y" ? (
                         <Col md={12}>
                           <div className="child_info_field">
                             <span>
@@ -540,7 +533,7 @@ const ChildRegister = () => {
                           </div>
                         </Col>
                       ) : null}
-                      {form.school === "N"? (
+                      {form.school === "N" ? (
                         <Col md={12}>
                           <div className="child_info_field">
                             <span>
@@ -570,7 +563,7 @@ const ChildRegister = () => {
         </Container>
       </section>
     </>
-  );                      
+  );
 };
 
 export default ChildRegister;
