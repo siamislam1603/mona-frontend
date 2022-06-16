@@ -1482,6 +1482,19 @@ button.vidico img {
     z-index: 1;
     opacity: 1;
     border-radius: 100px;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+}
+.module_video_model .modal-header h2 {
+    color: #3E5D58;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: normal;
 }
 
 .module_video_model .btn-close {
@@ -1579,7 +1592,8 @@ button.vidico img {
 .new_module .App {
     margin-bottom: 40px;
 }
-.new_module .app .product-preview{
+
+.new_module .app .product-preview {
     height: 150px;
 }
 
@@ -1593,7 +1607,11 @@ button.vidico img {
 .new_module .cover_image {
     width: 80px;
     height: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
 }
+
 .upload_cover_box .btn {
     min-width: auto;
     padding: 0;
@@ -1627,26 +1645,32 @@ button.vidico img {
     line-height: 19px;
     color: rgba(51, 51, 51, 0.6);
 }
+
 input.add_image_input.form-control {
     opacity: 0;
     position: absolute;
     top: 0;
     bottom: 0;
 }
-.new_module .remove_bin{
+
+.new_module .remove_bin {
     color: #d11a2a;
     padding: 0;
 }
+
 .new_module .new_module .add_image_box span img {
     margin-right: 10px;
 }
-.new_module .cover_video_icon{
+
+.new_module .cover_video_icon {
     position: absolute;
 }
-.new_module .cover_image{
+
+.new_module .cover_image {
     position: relative;
 }
-.new_module .video_reference .cover_image::before{
+
+.new_module .video_reference .cover_image::before {
     content: "";
     background-image: url(../../../public/img/video_icon.png);
     position: absolute;
@@ -1662,13 +1686,16 @@ input.add_image_input.form-control {
     background-size: contain;
     cursor: pointer;
 }
-.upload_related_files{
+
+.upload_related_files {
     margin-top: 40px;
 }
+
 .new_module .upload_related_box .btn {
     padding: 0;
     min-width: auto;
 }
+
 .new_module .upload_related_box {
     display: flex;
     align-items: center;
@@ -1678,22 +1705,34 @@ input.add_image_input.form-control {
     padding-right: 15px;
     border-radius: 20px;
 }
-.new_module .upload_related_box .forms-content{
+
+.new_module .upload_related_box .forms-content {
     margin-bottom: 0;
     padding: 15px;
 }
+
 .upload_related_box .content-icon-section {
     width: 50px;
     height: 50px;
 }
-.new_module .bottom_button{
+
+.new_module .bottom_button {
     margin-top: 66px;
     justify-content: center;
 }
-.new_sub_module{
+
+.new_sub_module {
     color: #F7F7F8;
 }
 
 .ck.ck-editor__editable_inline p {
     color: var(--black);
+}
+
+.form_info {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+
 }

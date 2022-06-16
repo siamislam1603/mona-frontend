@@ -10,6 +10,12 @@ export const DynamicFormValidation = (form, data) => {
   });
   return newErrors;
 };
+export const createCategoryValidation=(form)=>{
+  let newErrors={};
+  let {category_name}=form;
+  if(!category_name || category_name==="") newErrors.category_name="Category Name is Required";
+  return newErrors;
+}
 export const createFormSettingModelValidation = (form, franchisee, user) => {
   let newErrors = {};
   let {
