@@ -7,13 +7,18 @@ import Multiselect from 'multiselect-react-dropdown';
 import MyEditor from '../CKEditor';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { createCategoryValidation } from '../../helpers/validation';
+import {
+  createCategoryValidation,
+  createOperatingManualValidation,
+} from '../../helpers/validation';
 import { useNavigate } from 'react-router-dom';
 let selectedFranchisee = [];
 let selectedUserRole = [];
+let selectedFranchiseeId = '';
+let selectedUserRoleName = '';
 let counter = 0;
 const AddOperatingManual = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [operatingManualData, setOperatingManualData] = useState({});
 
   const [count, setCount] = useState();
@@ -22,7 +27,10 @@ const AddOperatingManual = () => {
   const [loaderFlag, setLoaderFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
-  const [formSettingData, setFormSettingData] = useState({});
+  const [formSettingData, setFormSettingData] = useState({
+    applicable_to_franchisee: '1',
+    applicable_to_user: '1',
+  });
   const [franchisee, setFranchisee] = useState([]);
   const [userRole, setUserRole] = useState([]);
   const [category, setCategory] = useState([]);
@@ -53,9 +61,13 @@ const AddOperatingManual = () => {
       });
     }
   };
-  const onSubmit = (e) => {
+  const onModelSubmit = (e) => {
     e.preventDefault();
-    console.log("operating manual--->",operatingManualData);
+    let data = operatingManualData;
+    data['access_to_all_user'] = formSettingData.applicable_to_user;
+    data['access_to_all_franchise'] = formSettingData.applicable_to_franchisee;
+    data['shared_with'] = selectedFranchiseeId;
+    data['shared_role'] = selectedUserRoleName;
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     fetch(`${BASE_URL}/operating_manual/add`, {
@@ -65,8 +77,30 @@ const AddOperatingManual = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        navigate("/operatingmanual");
+        setOperatingManualData(res?.result);
+        // navigate('/operatingmanual');
       });
+  };
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const newErrors = createOperatingManualValidation(operatingManualData);
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      console.log('operating manual--->', operatingManualData);
+      var myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+      fetch(`${BASE_URL}/operating_manual/add`, {
+        method: 'post',
+        body: JSON.stringify(operatingManualData),
+        headers: myHeaders,
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setOperatingManualData(res?.result);
+          // navigate('/operatingmanual');
+        });
+    }
   };
   const OnCategorySubmit = (e) => {
     e.preventDefault();
@@ -88,7 +122,6 @@ const AddOperatingManual = () => {
           let data = operatingManualData;
           data['category_name'] = categoryData?.category_name;
           setOperatingManualData(data);
-          
         });
     }
   };
@@ -112,17 +145,25 @@ const AddOperatingManual = () => {
         result = JSON.parse(result);
         console.log('result---->', result?.result);
         setCategory(result.result);
-        let data=operatingManualData;
-        data["category_name"]=result?.result[0]?.category_name;
+        let data = operatingManualData;
+        data['category_name'] = result?.result[0]?.category_name;
         setOperatingManualData(data);
       })
       .catch((error) => console.log('error', error));
   };
   const uploadFiles = async (name, file) => {
+    let flag = false;
     file = file[0];
-    if (file.size > 2048 * 1024) {
-      alert('file is too large');
-    } else {
+    if (!(name === 'reference_video')) {
+      setLoaderFlag(true);
+      setLoaderText('video');
+      if (file.size > 2048 * 1024) {
+        alert('file is too large');
+        flag = true;
+      }
+    }
+
+    if (flag === false) {
       let data = operatingManualData;
       const body = new FormData();
       const blob = await fetch(await toBase64(file)).then((res) => res.blob());
@@ -162,6 +203,16 @@ const AddOperatingManual = () => {
             counter++;
             setCount(counter);
             setLoaderFlag(false);
+          } else if (name === 'reference_video') {
+            data['video_thumbnail'] = res.thumbnail;
+            data[name] = res.url;
+            setOperatingManualData(data);
+            counter++;
+            setCount(counter);
+
+            setTimeout(() => {
+              setLoaderFlag(false);
+            }, 5000);
           } else {
             data[name] = res.url;
             setOperatingManualData(data);
@@ -171,6 +222,12 @@ const AddOperatingManual = () => {
             setTimeout(() => {
               setLoaderFlag(false);
             }, 5000);
+          }
+          if (!!errors[name]) {
+            setErrors({
+              ...errors,
+              [name]: null,
+            });
           }
         })
         .catch((err) => {
@@ -193,32 +250,48 @@ const AddOperatingManual = () => {
   };
   function onSelectFranchisee(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
+    selectedFranchiseeId += selectedItem.id + ',';
     selectedFranchisee.push({
       id: selectedItem.id,
-      role_label: selectedItem.registered_name,
+      registered_name: selectedItem.registered_name,
     });
-    console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
+    {
+      console.log('selectedFranchisee---->', selectedFranchisee);
+    }
   }
   function onRemoveFranchisee(selectedList, removedItem) {
+    selectedFranchiseeId = selectedFranchiseeId.replace(
+      removedItem.id + ',',
+      ''
+    );
     const index = selectedFranchisee.findIndex((object) => {
       return object.id === removedItem.id;
     });
     selectedFranchisee.splice(index, 1);
+    {
+      console.log('selectedFranchisee---->', selectedFranchisee);
+    }
   }
 
   function onSelectUserRole(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
+    selectedUserRoleName += selectedItem.role_label + ',';
     selectedUserRole.push({
       id: selectedItem.id,
       role_label: selectedItem.role_label,
     });
-    console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
+    console.log('form---->2selectedUserRole', selectedUserRole);
   }
   function onRemoveUserRole(selectedList, removedItem) {
+    selectedUserRoleName = selectedUserRoleName.replace(
+      removedItem.role_label + ',',
+      ''
+    );
     const index = selectedUserRole.findIndex((object) => {
       return object.id === removedItem.id;
     });
     selectedUserRole.splice(index, 1);
+    console.log('form---->2selectedUserRole', selectedUserRole);
   }
   const getUserRoleAndFranchiseeData = () => {
     var requestOptions = {
@@ -233,7 +306,7 @@ const AddOperatingManual = () => {
         console.log('response0-------->1', res?.userRoleList);
       })
       .catch((error) => console.log('error', error));
-    fetch(`${BASE_URL}/api/franchisee-data`, requestOptions)
+    fetch(`${BASE_URL}/role/franchisee`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         setFranchisee(res?.franchiseeList);
@@ -242,6 +315,7 @@ const AddOperatingManual = () => {
   };
   return (
     <>
+      {console.log('errors--->', errors)}
       {console.log('operating manual--->', operatingManualData)}
       <div id="main">
         <section className="mainsection ">
@@ -258,8 +332,17 @@ const AddOperatingManual = () => {
                       <div className="mynewForm-heading">
                         <h4 className="mynewForm">New Category</h4>
                         <Button
-                          onClick={() => {
-                            setFormSettingFlag(true);
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const newErrors =
+                              createOperatingManualValidation(
+                                operatingManualData
+                              );
+                            if (Object.keys(newErrors).length > 0) {
+                              setErrors(newErrors);
+                            } else {
+                              setFormSettingFlag(true);
+                            }
                           }}
                         >
                           <img src="../../img/carbon_settings.svg" />
@@ -320,7 +403,11 @@ const AddOperatingManual = () => {
                                 e.target.value
                               );
                             }}
+                            isInvalid={!!errors.question}
                           />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.question}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -330,7 +417,10 @@ const AddOperatingManual = () => {
                           <Form.Label className="formlabel">
                             Description
                           </Form.Label>
-                          <MyEditor handleChange={setOperatingManualField} />
+                          <MyEditor
+                            {...errors}
+                            handleChange={setOperatingManualField}
+                          />
                         </Form.Group>
                       </Col>
                     </Row>
@@ -390,6 +480,7 @@ const AddOperatingManual = () => {
                               <img src="../../img/removeIcon.svg" />
                             </Button>
                           </div>
+                          <p className="form-errors">{errors.cover_image}</p>
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
@@ -403,7 +494,13 @@ const AddOperatingManual = () => {
                               {loaderFlag && loaderText === 'video' ? (
                                 <img src="../img/loader.gif" />
                               ) : null}
-                              <img src="../img/video_icon_demo.png"></img>
+                              <img
+                                src={
+                                  operatingManualData?.video_thumbnail
+                                    ? operatingManualData?.video_thumbnail
+                                    : '../img/video_icon_demo.png'
+                                }
+                              ></img>
                             </div>
                             <div className="add_image">
                               <div className="add_image_box">
@@ -441,9 +538,12 @@ const AddOperatingManual = () => {
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
-                              <span>Remove</span>
+                              {/* <span>Remove</span> */}
                             </Button>
                           </div>
+                          <p className="form-errors">
+                            {errors.reference_video}
+                          </p>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -458,7 +558,7 @@ const AddOperatingManual = () => {
                               {operatingManualData?.related_files?.map(
                                 (item, index) => {
                                   return (
-                                    <Col sm={4}>
+                                    <Col sm={6}>
                                       <div className="upload_related_box">
                                         <div className="forms-content">
                                           <div className="content-icon-section">
@@ -539,6 +639,9 @@ const AddOperatingManual = () => {
                                 />
                               </div>
                             </div>
+                            <p className="form-errors">
+                              {errors.reference_video}
+                            </p>
                           </Form.Group>
                         </div>
                       </Col>
@@ -582,22 +685,20 @@ const AddOperatingManual = () => {
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Applicable to all franchisee</Form.Label>
+                  <Form.Label>Accessible to all franchisee</Form.Label>
                   <div className="new-form-radio">
                     <div className="new-form-radio-box">
-                      <label for="yes">
+                      <label for="yes1">
                         <input
                           type="radio"
-                          value="Yes"
+                          value="1"
                           name="applicable_to_franchisee"
-                          id="yes"
+                          id="yes1"
                           onChange={(e) => {
                             setFormSettingFields(e.target.name, e.target.value);
                           }}
                           checked={
-                            formSettingData?.applicable_to_franchisee ===
-                              true ||
-                            formSettingData?.applicable_to_franchisee === 'Yes'
+                            formSettingData.applicable_to_franchisee === '1'
                           }
                         />
                         <span className="radio-round"></span>
@@ -605,19 +706,17 @@ const AddOperatingManual = () => {
                       </label>
                     </div>
                     <div className="new-form-radio-box">
-                      <label for="no">
+                      <label for="no1">
                         <input
                           type="radio"
-                          value="No"
+                          value="0"
                           name="applicable_to_franchisee"
-                          id="no"
+                          id="no1"
                           onChange={(e) => {
                             setFormSettingFields(e.target.name, e.target.value);
                           }}
                           checked={
-                            formSettingData?.applicable_to_franchisee ===
-                              false ||
-                            formSettingData?.applicable_to_franchisee === 'No'
+                            formSettingData.applicable_to_franchisee === '0'
                           }
                         />
                         <span className="radio-round"></span>
@@ -627,8 +726,7 @@ const AddOperatingManual = () => {
                   </div>
                 </Form.Group>
               </Col>
-              {formSettingData?.applicable_to_franchisee === 'No' ||
-              formSettingData?.applicable_to_franchisee === false ? (
+              {formSettingData.applicable_to_franchisee === '0' ? (
                 <Col lg={9} md={6} className="mt-3 mt-md-0">
                   <Form.Group>
                     <Form.Label>Select Franchisee</Form.Label>
@@ -643,47 +741,41 @@ const AddOperatingManual = () => {
                       onSelect={onSelectFranchisee}
                       options={franchisee}
                     />
-                    <p className="error">{formSettingError.franchisee}</p>
+                    <p className="error">{errors.franchisee}</p>
                   </Form.Group>
                 </Col>
               ) : null}
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Applicable to all users</Form.Label>
+                  <Form.Label>Applicable to all user roles</Form.Label>
                   <div className="new-form-radio">
                     <div className="new-form-radio-box">
-                      <label for="yes1">
+                      <label for="yes2">
                         <input
                           type="radio"
-                          value="Yes"
+                          value="1"
                           name="applicable_to_user"
-                          id="yes1"
+                          id="yes2"
                           onChange={(e) => {
                             setFormSettingFields(e.target.name, e.target.value);
                           }}
-                          checked={
-                            formSettingData?.applicable_to_user == true ||
-                            formSettingData?.applicable_to_user === 'Yes'
-                          }
+                          checked={formSettingData.applicable_to_user === '1'}
                         />
                         <span className="radio-round"></span>
                         <p>Yes</p>
                       </label>
                     </div>
                     <div className="new-form-radio-box">
-                      <label for="no1">
+                      <label for="no2">
                         <input
                           type="radio"
-                          value="No"
+                          value="0"
                           name="applicable_to_user"
-                          id="no1"
+                          id="no2"
                           onChange={(e) => {
                             setFormSettingFields(e.target.name, e.target.value);
                           }}
-                          checked={
-                            formSettingData?.applicable_to_user == false ||
-                            formSettingData?.applicable_to_user === 'No'
-                          }
+                          checked={formSettingData.applicable_to_user === '0'}
                         />
                         <span className="radio-round"></span>
                         <p>No</p>
@@ -692,8 +784,7 @@ const AddOperatingManual = () => {
                   </div>
                 </Form.Group>
               </Col>
-              {formSettingData?.applicable_to_user === 'No' ||
-              formSettingData?.applicable_to_user === false ? (
+              {formSettingData.applicable_to_user === '0' ? (
                 <Col lg={9} md={6} className="mt-3 mt-md-0">
                   <Form.Group>
                     <Form.Label>Select User Roles</Form.Label>
@@ -708,7 +799,7 @@ const AddOperatingManual = () => {
                       onSelect={onSelectUserRole}
                       options={userRole}
                     />
-                    <p className="error">{formSettingError.user}</p>
+                    <p className="error">{errors.user}</p>
                   </Form.Group>
                 </Col>
               ) : null}
@@ -717,7 +808,9 @@ const AddOperatingManual = () => {
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
           <Button className="back">Cancel</Button>
-          <Button className="done">Save Settings</Button>
+          <Button className="done" onClick={onModelSubmit}>
+            Save Settings
+          </Button>
         </Modal.Footer>
       </Modal>
       <Modal
