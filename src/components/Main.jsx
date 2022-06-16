@@ -9,6 +9,8 @@ import NewUser from '../pages/NewUser';
 import AddUserRole from '../pages/AddUserRole';
 import FranchisorDashboard from '../pages/FranchisorDashboard';
 import FranchiseeDashboard from '../pages/FranchiseeDashboard';
+import AllFranchises from '../pages/AllFranchises';
+import NewFranchises from '../pages/NewFranchises';
 import EducatorDashboard from '../pages/EducatorDashboard';
 import CoordinatorDashboard from '../pages/CoordinatorDashboard';
 import ParentsDashboard from '../pages/ParentsDashboard';
