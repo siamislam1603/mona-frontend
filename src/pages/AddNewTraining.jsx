@@ -85,7 +85,14 @@ const AddNewTraining = () => {
   };  
 
   const saveTrainingMedia = async (data) => {
-
+    // let token = localStorage.getItem('token');
+    // const response = await axios.post(`${BASE_URL}/training/add-training-media`, data, {
+    //   headers: {
+    //     "Authorization": "Bearer "+ token
+    //   }
+    // });
+    const response = await axios.post('htt', trainingMedia);
+    console.log('RESPONSE:', response);
   };
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
@@ -143,7 +150,9 @@ const AddNewTraining = () => {
 
     if(trainingMedia) {
       let data = new FormData();
-      
+      for(let { key, values } of Object.entries(trainingMedia)) {
+        data.append(`${key}`, values)
+      }
       saveTrainingMedia(trainingMedia);
     }
   };
