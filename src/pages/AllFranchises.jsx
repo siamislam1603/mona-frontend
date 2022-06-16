@@ -9,11 +9,11 @@ import {
     Form,
     Card
 } from 'react-bootstrap';
-import CardImg from '../../assets/img/card.png'
+// import CardImg from '../assets/img/card.png'
 // import CardImgg from ''
-import { AiOutlineArrowRight } from "react-icons/ai";
-import LeftNavbar from '../../components/LeftNavbar';
-import TopHeader from '../../components/TopHeader';
+// import { AiOutlineArrowRight } from "react-icons/ai";
+import LeftNavbar from '../components/LeftNavbar';
+import TopHeader from '../components/TopHeader';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import ToolkitProvider, {
@@ -21,7 +21,7 @@ import ToolkitProvider, {
     CSVExport,
 } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import axios from 'axios';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL } from '../components/App';
 import NewFranchises from './NewFranchises';
 
 const { SearchBar } = Search;
@@ -250,7 +250,7 @@ const AllFranchises = () => {
                                                 <Col sm={6} md={4} className="my-2">
                                                     <Card className="text-center Card_design">
                                                         <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
+                                                            {/* <img src={CardImg} alt="" width="65px" /> */}
                                                             <div className="p-1">
                                                                 <Card.Title className="mb-0 Text_design"
                                                                 >Homecare Stay</Card.Title>
@@ -259,7 +259,7 @@ const AllFranchises = () => {
                                                                 </Card.Text>
                                                             </div>
                                                             <div style={{ paddingLeft: "2rem" }}>
-                                                                <b><AiOutlineArrowRight className="Arrow_icon" /></b>
+                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
                                                             </div>
                                                         </Card.Body>
                                                         <Card.Footer className="Card_Footer">
@@ -279,7 +279,7 @@ const AllFranchises = () => {
                                                 <Col sm={6} md={4} className="my-2">
                                                     <Card className="text-center Card_design">
                                                         <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
+                                                            {/* <img src={CardImg} alt="" width="65px" /> */}
                                                             <div className="p-1">
                                                                 <Card.Title className="mb-0 Text_design"
                                                                 >Homecare Stay</Card.Title>
@@ -288,7 +288,7 @@ const AllFranchises = () => {
                                                                 </Card.Text>
                                                             </div>
                                                             <div style={{ paddingLeft: "2rem" }}>
-                                                                <b><AiOutlineArrowRight className="Arrow_icon" /></b>
+                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
                                                             </div>
                                                         </Card.Body>
                                                         <Card.Footer className="Card_Footer">
@@ -308,7 +308,7 @@ const AllFranchises = () => {
                                                 <Col sm={6} md={4} className="my-2">
                                                     <Card className="text-center Card_design">
                                                         <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
+                                                            {/* <img src={CardImg} alt="" width="65px" /> */}
                                                             <div className="p-1">
                                                                 <Card.Title className="mb-0 Text_design"
                                                                 >Homecare Stay</Card.Title>
@@ -317,7 +317,7 @@ const AllFranchises = () => {
                                                                 </Card.Text>
                                                             </div>
                                                             <div style={{ paddingLeft: "2rem" }}>
-                                                                <b><AiOutlineArrowRight className="Arrow_icon" /></b>
+                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
                                                             </div>
                                                         </Card.Body>
                                                         <Card.Footer className="Card_Footer">
@@ -337,7 +337,7 @@ const AllFranchises = () => {
                                                 <Col sm={6} md={4} className="my-2">
                                                     <Card className="text-center Card_design">
                                                         <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
+                                                            {/* <img src={CardImg} alt="" width="65px" /> */}
                                                             <div className="p-1">
                                                                 <Card.Title className="mb-0 Text_design"
                                                                 >Homecare Stay</Card.Title>
@@ -346,7 +346,7 @@ const AllFranchises = () => {
                                                                 </Card.Text>
                                                             </div>
                                                             <div style={{ paddingLeft: "2rem" }}>
-                                                                <b><AiOutlineArrowRight className="Arrow_icon" /></b>
+                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
                                                             </div>
                                                         </Card.Body>
                                                         <Card.Footer className="Card_Footer">
@@ -366,7 +366,7 @@ const AllFranchises = () => {
                                                 <Col sm={6} md={4} className="my-2">
                                                     <Card className="text-center Card_design">
                                                         <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
+                                                            {/* <img src={CardImg} alt="" width="65px" /> */}
                                                             <div className="p-1">
                                                                 <Card.Title className="mb-0 Text_design"
                                                                 >Homecare Stay</Card.Title>
@@ -375,7 +375,7 @@ const AllFranchises = () => {
                                                                 </Card.Text>
                                                             </div>
                                                             <div style={{ paddingLeft: "2rem" }}>
-                                                                <b><AiOutlineArrowRight className="Arrow_icon" /></b>
+                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
                                                             </div>
                                                         </Card.Body>
                                                         <Card.Footer className="Card_Footer">
@@ -395,7 +395,7 @@ const AllFranchises = () => {
                                                 <Col sm={6} md={4} className="my-2">
                                                     <Card className="text-center Card_design">
                                                         <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
+                                                            {/* <img src={CardImg} alt="" width="65px" /> */}
                                                             <div className="p-1">
                                                                 <Card.Title className="mb-0 Text_design"
                                                                 >Homecare Stay</Card.Title>
@@ -404,7 +404,7 @@ const AllFranchises = () => {
                                                                 </Card.Text>
                                                             </div>
                                                             <div style={{ paddingLeft: "2rem" }}>
-                                                                <b><AiOutlineArrowRight className="Arrow_icon" /></b>
+                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
                                                             </div>
                                                         </Card.Body>
                                                         <Card.Footer className="Card_Footer">

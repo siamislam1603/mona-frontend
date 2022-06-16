@@ -1,8 +1,8 @@
 import React from 'react'
 import { Row, Col, Button, Container } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import TopHeader from '../../components/TopHeader';
-import LeftNavbar from '../../components/LeftNavbar';
+import TopHeader from '../components/TopHeader';
+import LeftNavbar from '../components/LeftNavbar';
 const NewFranchises = () => {
     return (
         <div>
