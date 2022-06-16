@@ -4,6 +4,7 @@ import { Button, Col, Container, Row, Form } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import DragDropSingle from '../components/DragDropSingle';
+import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import validateForm from '../helpers/validateForm';
@@ -42,6 +43,7 @@ const NewUser = () => {
   const [croppedImage, setCroppedImage] = useState(undefined);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [trainingDocuments, setTrainingDocuments] = useState();
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
@@ -65,8 +67,10 @@ const NewUser = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setFormErrors(validateForm(formData));
-    setIsSubmit(true);
+    // setFormErrors(validateForm(formData));
+    // setIsSubmit(true);
+    console.log('FORM DATA:', formData);
+    console.log('TRAINING DOCUMENTS:', trainingDocuments);
   };
 
   const onUploadFile = (files) => {
@@ -237,9 +241,9 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>City</Form.Label>
+                            <Form.Label>Suburb</Form.Label>
                             <Select
-                              placeholder="Which City?"
+                              placeholder="Which Suburb?"
                               closeMenuOnSelect={true}
                               options={cityData}
                               onChange={(e) =>
@@ -268,6 +272,17 @@ const NewUser = () => {
                             </span>
                           </Form.Group>
 
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Postal Code</Form.Label>
+                            <Form.Control
+                              type="number"
+                              name="postalCode"
+                              placeholder="Your Postal Code"
+                              value={formData.postalCode ?? ''}
+                              onChange={handleChange}
+                            />
+                          </Form.Group>
+                          
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Email Address</Form.Label>
                             <Form.Control
@@ -315,8 +330,8 @@ const NewUser = () => {
                                 (!formData.phone && formErrors.phone)}
                             </span>
                           </Form.Group>
-
-                          {/* <Form.Group className="col-md-6 mb-3">
+                          
+                          <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Training Categories</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -330,7 +345,74 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                          </Form.Group> */}
+                          </Form.Group>
+
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Professional Development Categories</Form.Label>
+                            <Select
+                              closeMenuOnSelect={false}
+                              components={animatedComponents}
+                              isMulti
+                              // options={professionDevCategories}
+                              onChange={(selectedOptions) => {
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  professionalDevCategories: selectedOptions
+                                }));
+                              }}
+                            />
+                          </Form.Group>
+                          
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Select Co-ordinator</Form.Label>
+                            <Select
+                              placeholder="Which Co-ordinator?"
+                              closeMenuOnSelect={true}
+                              // options={coordinatorData}
+                              onChange={(e) =>
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  coordinator: e.value,
+                                }))
+                              }
+                            />
+                          </Form.Group>
+
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Business Assets</Form.Label>
+                            <Select
+                              closeMenuOnSelect={false}
+                              components={animatedComponents}
+                              isMulti
+                              // options={businessAssets}
+                              onChange={(selectedOptions) => {
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  businessAssets: selectedOptions
+                                }));
+                              }}
+                            />
+                          </Form.Group>
+                          
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Termination Date</Form.Label>
+                            <Form.Control
+                              type="date"
+                              name="terminationDate"
+                              onChange={handleChange}
+                            />
+                          </Form.Group>
+                          
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Upload Training Documents</Form.Label>
+                            <DragDropMultiple 
+                              onChange={(data) =>
+                                setTrainingDocuments((prevState) => ({
+                                  ...prevState,
+                                  related_files: [...data],
+                                }))
+                              } />
+                          </Form.Group>
 
                           <Col md={12}>
                             <div className="cta text-center mt-5">
