@@ -1,12 +1,80 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Row, Col, Button, Container } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Select from 'react-select';
+import axios from 'axios';
+import { BASE_URL } from '../components/App';
+
 const NewFranchisees = () => {
 
     const [franchiseeData, setFranchiseeData] = useState();
+    const [australianStatesData, setAustralianStatesData] = useState();
+    const [cityData, setCityData] = useState([]);
+    const [franchiseeAdminData, setFranchiseeAdminData] = useState();
+
+    // CREATES A NEW FRANCHISEE
+    const createFranchisee = async () => {
+        const response = await axios.post(`${BASE_URL}/role/franchisee`, franchiseeData, {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            }
+        });
+
+        console.log('RESPONSE:', response);
+    }
+
+
+    // FETCHES AUSTRALIAN STATES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
+    const fetchAustralianStates = async () => {
+        const response = await axios.get(`${BASE_URL}/api/australian-states`);
+        if(response.status === 200 && response.data.status === "success") {
+            setAustralianStatesData(response.data.stateList.map(dt => ({
+                value: dt.name,
+                label: dt.name
+            })));
+        } 
+    };
+
+    // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
+    const fetchCities = async () => {
+        const response = await axios.get(`${BASE_URL}/api/cities`);
+        if (response.status === 200) {
+        const { cityList } = response.data;
+        setCityData(
+            cityList.map((city) => ({
+                value: city.name,
+                label: city.name
+            }))
+        );
+        }
+    };
+
+    // FETCHES FRANCHISEE ADMINS FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
+    const fetchFranchiseeAdmins = async () => {
+        const response = await axios.get(`${BASE_URL}/role/franchisee-admin-list`);
+        if (response.status === 200 && response.data.status === "success") {
+        const { franchiseeAdminList } = response.data;
+        setFranchiseeAdminData(
+            franchiseeAdminList.map((dt) => ({
+                id: dt.id,
+                value: dt.fullname,
+                label: dt.fullname,
+            }))
+        );
+        }
+    };
+
+    const handleFranchiseeDataSubmission = event => {
+        event.preventDefault();
+
+        if(Object.keys(franchiseeData).length === 12) {
+            createFranchisee();
+        } else {
+            console.log('All fields are necessary.');
+        }
+    }
 
     const handleChange = event => {
         const { name, value } = event.target;
@@ -17,7 +85,13 @@ const NewFranchisees = () => {
         }));
     } 
 
-    console.log('FRANCHISEE DATA:', franchiseeData);
+    useEffect(() => {
+        fetchAustralianStates();
+        fetchCities();
+        fetchFranchiseeAdmins();
+    }, []);
+
+    console.log('DATA')
 
     return (
         <div>
@@ -38,7 +112,7 @@ const NewFranchisees = () => {
                                     </div>
                                 </div>
 
-                                <Form>
+                                <Form onSubmit={handleFranchiseeDataSubmission}>
                                     <Row>
                                         <Col sm={6} md={6} lg={6}>
                                             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -64,7 +138,7 @@ const NewFranchisees = () => {
                                                 <Select
                                                 placeholder="Which Suburb?"
                                                 closeMenuOnSelect={true}
-                                                // options={cityData}
+                                                options={cityData}
                                                 onChange={(e) =>
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,
@@ -79,7 +153,7 @@ const NewFranchisees = () => {
                                                 <Select
                                                 placeholder="Which State?"
                                                 closeMenuOnSelect={true}
-                                                // options={cityData}
+                                                options={australianStatesData}
                                                 onChange={(e) =>
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,
@@ -103,11 +177,11 @@ const NewFranchisees = () => {
                                                 <Select
                                                 placeholder="Select Franchisee Admin"
                                                 closeMenuOnSelect={true}
-                                                // options={cityData}
+                                                options={franchiseeAdminData}
                                                 onChange={(e) =>
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,
-                                                        franchisee_admin: e.value,
+                                                        franchisee_admin: e.id,
                                                     }))
                                                 }
                                                 />
@@ -155,8 +229,8 @@ const NewFranchisees = () => {
                                                 <Form.Label> Contact Number</Form.Label>
                                                 <Form.Control 
                                                     name="contact"
-                                                    type="email" 
-                                                    placeholder="admin@454 342 34.com"
+                                                    type="text" 
+                                                    placeholder="454 342 56"
                                                     onChange={handleChange} />
                                             </Form.Group>
 
@@ -165,7 +239,8 @@ const NewFranchisees = () => {
                                                 <Form.Control 
                                                     name="franchisee_admin_email"
                                                     type="text" 
-                                                    placeholder="andy.smith@specialdaycare.com" />
+                                                    placeholder="andy.smith@specialdaycare.com"
+                                                    onChange={handleChange} />
                                             </Form.Group>
                                         </Col>
 
