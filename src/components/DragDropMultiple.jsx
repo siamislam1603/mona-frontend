@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export default function DropAllFile({ onChange }) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    maxFiles: 10,
+    maxFiles: 5,
     multiple: true,
     onDrop: (acceptedFiles) => {
       onChange(acceptedFiles);

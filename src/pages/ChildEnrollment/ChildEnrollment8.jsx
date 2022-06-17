@@ -2,16 +2,52 @@ import React, { useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 
 const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
-    const submitFormData = (e) => {
-      e.preventDefault();
-        nextStep();
-    };
-  
+  const submitFormData = (e) => {
+    e.preventDefault();
+    nextStep();
+  };
+
   return (
     <>
       <div className="enrollment-form-sec">
         <Form onSubmit={submitFormData}>
-          <div className="enrollment-form-column">
+          <div className="whiteback mt-4">
+            <h4 className="title-xs mb-3 text-center">For Office Use Only</h4>
+            <Row>
+              <Col md={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Documents sighted by</Form.Label>
+                  <Form.Control type="text" />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Signature</Form.Label>
+                  <Form.Control type="text" />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Date</Form.Label>
+                  <Form.Control type="date" placeholder="" name="dob" />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Percentage</Form.Label>
+                  <Form.Control type="text" />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Eligible Hours</Form.Label>
+                  <Form.Control type="text" />
+                </Form.Group>
+              </Col>
+            </Row>
+          </div>
+
+          {/* <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">I understand and have read the following:</h2>
             
             <div className="grayback">
@@ -35,13 +71,13 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
                 </div>
               </Form.Group>
             </div>
-          </div>
+          </div> */}
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
-            <Button variant="primary" type="submit">Next</Button>
+            <Button variant="primary">Next</Button>
           </div>
         </Form>
-      </div>
+      </div >
     </>
   );
 };
