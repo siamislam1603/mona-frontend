@@ -1,4 +1,3 @@
-
 import React, { Component, useEffect, useState } from 'react';
 import {
     Button,
@@ -22,7 +21,7 @@ import ToolkitProvider, {
 } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
-import NewFranchises from './NewFranchises';
+import NewFranchises from './NewFranchisees';
 
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
@@ -46,7 +45,7 @@ const training = [
 ];
 
 
-const AllFranchises = () => {
+const AllFranchisees = () => {
     const [userData, setUserData] = useState([]);
     const [filter, setFilter] = useState({
         user: '',
@@ -435,4 +434,4 @@ const AllFranchises = () => {
     )
 }
 
-export default AllFranchises
+export default AllFranchisees
