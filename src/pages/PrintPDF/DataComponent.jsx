@@ -6,8 +6,8 @@ class DataComponent extends React.Component {
       console.log('this.props---->', this.props);
     }
     return (
-      <div 
-        className='print'
+      <div
+        className="print"
         dangerouslySetInnerHTML={{
           __html: `<div class="module_detail">
                 <div class="image_banner">
@@ -23,10 +23,10 @@ class DataComponent extends React.Component {
                   </h3>
                   <span>
                     <span class="module_dot"> • </span>
-                    ${this.props.question}
+                    ${this.props.title}
                   </span>
                 </div>
-              </div>${this.props.answer}`,
+              </div>${this.props.description}`,
         }}
       ></div>
     );
