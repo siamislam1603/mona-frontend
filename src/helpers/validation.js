@@ -117,8 +117,7 @@ export const createFormValidation = (form) => {
 };
 export const createOperatingManualValidation = (form) => {
   let newErrors = {};
-  let { title, description, cover_image, reference_video, related_files } =
-    form;
+  let { title, description, cover_image, reference_video } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
@@ -126,8 +125,6 @@ export const createOperatingManualValidation = (form) => {
     newErrors.cover_image = 'Cover image is Required';
   if (!reference_video || reference_video === '')
     newErrors.reference_video = 'Reference video is Required';
-  if (!related_files || related_files === '')
-    newErrors.related_files = 'Related files is Required';
 
   return newErrors;
 };
