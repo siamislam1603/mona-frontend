@@ -3,7 +3,7 @@ import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
-import { BASE_URL_LOCAL } from "../components/App";
+import { BASE_URL } from "../components/App";
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 
@@ -31,41 +31,45 @@ const training = [
 ];
 
 const TrainingDetail = () => {
+  let videoURL = ""
+
   const [thepdf,setPdfSet] = useState("https://s3.us-west-1.amazonaws.com/mona-cip-dev/public/assets/.docs/Rohan%27sResume_2022-06-13_1655102409338.pdf")
   const [Trainingdata,setTrainingData] = useState("");
-  const [TrainingFile,setTrainingFile] = useState("");
+  const [TrainingFile,setTrainingFile] = useState([]);
+  const [Videofile , setVideoFile] = useState("");
+  
   const getTrainingDetail = async() =>{
     console.log("The comments")
+    console.log("The token", localStorage.getItem("token"))
     // let response = await axios.get("http://localhost:4000/training/getTrainingById/3");
-    let response = await axios.get(`${BASE_URL_LOCAL}/training/getTrainingById/4`, {
+    let response = await axios.get("http://localhost:4000/training/getTrainingById/4", {
       headers: {
-        "Authorization": "Bearer " + localStorage.getItem('auth-token')
+        "Authorization": "Bearer " + localStorage.getItem('token')
       }
+        //  const response = await axios.get(`${ BASE_URL }/auth/get_menu_list`,
+
+    // { headers: { "Authorization": "Bearer "+token, } }
+
+
     });
-    console.log("The response",response)
+    console.log("The response",response.data)
     if(response.status === 200){
       
       const {data} = response;
-      const Thetrainingdata= data.data
+      const Thetrainingdata= data
       console.log("Traing data",Thetrainingdata)
-      setTrainingData(Thetrainingdata.all_trainings)
-      setTrainingFile(Thetrainingdata.all_trainings.training_files)
+      setTrainingData(Thetrainingdata)
+      setTrainingFile(Thetrainingdata.training_files)
     }
 }
-const Extension = () =>{
-  let extensionforimage = TrainingFile[1].file.split(".").pop()
-  console.log("The xtension imag", extensionforimage)
-}
+
   useEffect(() =>{
     getTrainingDetail();
+  
+  
   },[])
 
-
-  // useEffect(() =>{
-  //   Extension();
-
-  // },[])
-  // console.log("The training file",TrainingFile)
+  console.log("The training file",TrainingFile)
   return (
     <>
       <div id="main">
@@ -95,10 +99,9 @@ const Extension = () =>{
                   </header>
                   <div className="traning-detail-sec">
                     <div className="thumb-vid">
-               
-                      {/* <iframe src={require('../assets/video/Cute Panda.mp4')} width={500} height={500} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture full"></iframe> */}
-                      {/* https://embed.api.video/vod/vi3ekOlY5K0AwN9GaM9LVsFF */}
-                      <iframe src={"https://embed.api.video/vod/vi1aq7fUZf8jiBoi2WhwrhEM"} width={500} height={500} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture full"></iframe>
+                      {TrainingFile.map((user) => (
+                        user.fileType === ".mp4" && <iframe src={user.file} width={500} height={500} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture full"></iframe>                  
+                      ))}
 
                     </div>
                     <div className="training-cont mt-3 mb-5">
@@ -107,16 +110,38 @@ const Extension = () =>{
                     </div>
 
                     <h2 className="title-sm">Related Files</h2>
-                    <div className="column-list files-list three-col mb-5">
+                      
+                      {/* Exprement  */}
+                      
+                      <div className="column-list files-list three-col mb-5">
+                     
+                      {TrainingFile.map((user) => (
+                        user.fileType === ".pdf" && 
+                        <div className="item">
+                        <a href={user.file} download={user.file}> 
+                          <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
+                         <div className="name">{user.file} <span className="time">3 Hours</span></div>
+                       </a>
+ 
+                         {/* <div className="cta-col">
+                           <a href="">
+                             <img src="../img/removeIcon.svg" alt="" />
+                           </a>
+                         </div> */}
+                       </div>              
+                      ))}
+                    
+                    </div>
+
+                    {/* Exprenment end */}
+
+
+                    {/* <div className="column-list files-list three-col mb-5">
                     
 
                       <div className="item">
-
-                      {/* <iframe src={require("../assets/pdf/1652501632697.pdf")} /> */}
-                    <a href={thepdf} download="My_File.pdf"> 
-
-                        <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-
+                       <a href={thepdf} download="My_File.pdf"> 
+                         <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
                         <div className="name">document1.docx <span className="time">3 Hours</span></div>
                       </a>
 
@@ -125,7 +150,6 @@ const Extension = () =>{
                             <img src="../img/removeIcon.svg" alt="" />
                           </a>
                         </div>
-
                       </div>
                       <div className="item">
                         <div className="pic">
@@ -141,7 +165,7 @@ const Extension = () =>{
                           </a>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="complete-training text-center">
                       <p>

@@ -206,7 +206,6 @@ const addTraining = async (data) => {
   .catch((errors) =>{
     console.log(errors)
   })
-};
 // const add = () =>{
 
 //       console.log(form);
@@ -272,23 +271,11 @@ console.log("The Roles",roles)
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Training Name</Form.Label>
-<<<<<<< HEAD
-                          <Form.Control 
-                            type="text" 
-                            name="training_name" 
-                            onChange={setField}
-                            isInvalid={!!errors.training_name}
-                            />
-                          <Form.Control.Feedback type="invalid">
-                            {errors.training_name}
-                          </Form.Control.Feedback>
-=======
                           <Form.Control
                             type="text"
                             name="title"
                             onChange={handleTrainingData}
                           />
->>>>>>> origin/master
                         </Form.Group>
                       </Col>
 
@@ -316,33 +303,14 @@ console.log("The Roles",roles)
                             as="textarea"
                             name="training_description"
                             rows={3}
-<<<<<<< HEAD
-                            onChange={setField}
-                            isInvalid={!!errors.training_description}
-                            />
-                          <Form.Control.Feedback type="invalid">
-                            {errors.training_description}
-                          </Form.Control.Feedback>
-=======
                             onChange={handleTrainingData}
                           />
->>>>>>> origin/master
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
                         <Form.Group className="relative">
                           <Form.Label>Time required to complete</Form.Label>
                           <Select
-<<<<<<< HEAD
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              options={timereq}
-                              onChange={handleTime}
-                              name="select_hour"
-                              isInvalid={!!errors.select_hour}
-                            />
-                            <span className="rtag">hours</span>
-=======
                             closeMenuOnSelect={false}
                             components={animatedComponents}
                             options={timereq}
@@ -355,7 +323,6 @@ console.log("The Roles",roles)
                             }
                           />
                           <span className="rtag">hours</span>
->>>>>>> origin/master
                         </Form.Group>
                         <Form.Control.Feedback type="invalid">
                             {errors.select_hour}
@@ -367,37 +334,6 @@ console.log("The Roles",roles)
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image :</Form.Label>
-<<<<<<< HEAD
-                          <DropAllFile 
-                            count={count}
-                            num="1"
-                            setCount={(acceptedFiles) => setCount(prevState => ({
-                              ...prevState,
-                              file1: acceptedFiles
-                            }))}
-                            multiFiles={multiFiles}
-                            setMultiFiles={setMultiFiles} />
-                            {/* <img url={count.file1.path}/> */}
-                            {console.log("The count file",count.file1)}
-                            {count.file1 ?  null:<p>{file1error}</p> }
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col md={6} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <DropAllFile
-                            count={count}
-                            num="1"
-                            setCount={(acceptedFiles) => setCount(prevState => ({
-                              ...prevState,
-                              file2: acceptedFiles
-                            }))} 
-                            name="drop"
-                            />
-                            {count.file2 ? null : <p>{file2error}</p>}
-                          
-=======
                           <DropOneFile
                             imageUploaded={trainingMedia.cover_image}
                             onChange={(data) =>
@@ -421,7 +357,6 @@ console.log("The Roles",roles)
                               }))
                             }
                           />
->>>>>>> origin/master
                         </Form.Group>
                       </Col>
 
@@ -429,16 +364,6 @@ console.log("The Roles",roles)
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
                           <DropAllFile
-<<<<<<< HEAD
-                            count={count}
-                            num="2"
-                            setCount={(acceptedFiles) => setCount(prevState => ({
-                              ...prevState,
-                              file3: acceptedFiles
-                            }))} />
-                            {count.file3 ? null : <p>{file3error}</p>}
-
-=======
                             onChange={(data) =>
                               setTrainingMedia((prevState) => ({
                                 ...prevState,
@@ -446,15 +371,10 @@ console.log("The Roles",roles)
                               }))
                             }
                           />
->>>>>>> origin/master
                         </Form.Group>
                       </Col>
                       <Col md={12}>
                         <div className="cta text-center mt-5 mb-5">
-<<<<<<< HEAD
-                          <Button variant="outline" className="me-3" type="submit">Preview</Button>
-                          <Button variant="primary" type="submit" onClick={onSubmit}>Save</Button>
-=======
                           <Button
                             variant="outline"
                             className="me-3"
@@ -469,7 +389,6 @@ console.log("The Roles",roles)
                           >
                             Save
                           </Button>
->>>>>>> origin/master
                         </div>
                       </Col>
                     </Row>
@@ -498,80 +417,41 @@ console.log("The Roles",roles)
               <Col lg={3} sm={6}>
                 <Form.Group>
                   <Form.Label>Start Date</Form.Label>
-<<<<<<< HEAD
-                  <Form.Control  
-                    type="date" 
-                    name="start_date"
-                    onChange={setField}  
-                    isInvalid={!!errors.start_date}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                          {errors.start_date}
-                     </Form.Control.Feedback>
-=======
                   <Form.Control
                     type="date"
                     name="start_date"
                     onChange={handleTrainingSettings}
                   />
->>>>>>> origin/master
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-sm-0">
                 <Form.Group>
                   <Form.Label>Start Time</Form.Label>
-<<<<<<< HEAD
-                  <Form.Control 
-                     type="time" 
-                     name="start_time" 
-                     onChange={setField}  
-                     isInvalid={!!errors.start_time} 
-                     />
-                      <Form.Control.Feedback type="invalid">
-                          {errors.start_time}
-                     </Form.Control.Feedback>
-=======
                   <Form.Control
                     type="time"
                     name="start_time"
                     onChange={handleTrainingSettings}
                   />
->>>>>>> origin/master
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
                   <Form.Label>End Date</Form.Label>
                   <Form.Control
-<<<<<<< HEAD
-                    type="date" 
-                    name="end_date" 
-                    onChange={setField}  
-                    />
-=======
                     type="date"
                     name="end_date"
                     onChange={handleTrainingSettings}
                   />
->>>>>>> origin/master
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
                   <Form.Label>End Time</Form.Label>
-<<<<<<< HEAD
-                  <Form.Control 
-                    type="time"
-                    name="end_time"
-                    onChange={setField}   
-                    />
-=======
                   <Form.Control
                     type="time"
                     name="end_time"
                     onChange={handleTrainingSettings}
                   />
->>>>>>> origin/master
                 </Form.Group>
               </Col>
             </Row>
@@ -587,10 +467,6 @@ console.log("The Roles",roles)
                           value="Y"
                           name="roles"
                           id="yes1"
-<<<<<<< HEAD
-                          defaultChecked
-                          onChange={setField}
-=======
                           onChange={(event) => {
                             setTrainingData((prevState) => ({
                               ...prevState,
@@ -598,7 +474,6 @@ console.log("The Roles",roles)
                             }));
                             setHideSelect(true);
                           }}
->>>>>>> origin/master
                         />
                         <span className="radio-round"></span>
                         <p>Yes</p>
@@ -611,9 +486,6 @@ console.log("The Roles",roles)
                           value="N"
                           name="roles"
                           id="no1"
-<<<<<<< HEAD
-                          onChange={setField}
-=======
                           onChange={(event) => {
                             setTrainingData((prevState) => ({
                               ...prevState,
@@ -621,7 +493,6 @@ console.log("The Roles",roles)
                             }));
                             setHideSelect(false);
                           }}
->>>>>>> origin/master
                         />
                         <span className="radio-round"></span>
                         <p>No</p>
@@ -631,14 +502,8 @@ console.log("The Roles",roles)
               
                 </Form.Group>
               </Col>
-<<<<<<< HEAD
-             {form.roles === "Y" ? null : (
-                <Col lg={9} md={6}  className="mt-3 mt-md-0">
-                <Form.Group>
-=======
               <Col lg={9} md={6} className="mt-3 mt-md-0">
                 <Form.Group className={hideSelect ? 'd-none' : ''}>
->>>>>>> origin/master
                   <Form.Label>Select User Roles</Form.Label>
                   <Multiselect
                     placeholder="Select User Roles"
@@ -651,44 +516,6 @@ console.log("The Roles",roles)
                     }}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
-<<<<<<< HEAD
-                      setRoles(data)
-                      console.log(roles)
-                    }}
-                    
-                    options={[
-                      {
-                        value:"1",
-                        name:"group1",
-                        cat: "Group 1",
-                        key: "Option 1",
-                      },
-                      {
-                        cat: "Group 1",
-                        key: "Option 2",
-                      },
-                      {
-                        cat: "Group 1",
-                        key: "Option 3",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 4",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 5",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 6",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 7",
-                      },
-                    ]}
-=======
                       setTrainingData((prevState) => ({
                         ...prevState,
                         roles: [...data.map((data) => data.cat)],
@@ -720,13 +547,11 @@ console.log("The Roles",roles)
                       }));
                     }}
                     options={fetchedFranchiseeUsers}
->>>>>>> origin/master
                   />
                  {roles ? null: <p>please choose roles</p>}
                   
                 </Form.Group>
               </Col>
-             )}
             </Row>
           </div>
         </Modal.Body>
@@ -734,11 +559,7 @@ console.log("The Roles",roles)
           <Button variant="transparent" onClick={handleClose}>
             Cancel
           </Button>
-<<<<<<< HEAD
-          <Button variant="primary" onClick={handleClose}>
-=======
           <Button variant="primary" onClick={handleSaveAndClose}>
->>>>>>> origin/master
             Save Settings
           </Button>
         </Modal.Footer>
