@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 let selectedFranchisee = [];
 let selectedUserRole = [];
-let selectedFranchiseeId = '';
+let selectedFranchiseeName = '';
 let selectedUserRoleName = '';
 let counter = 0;
 const AddOperatingManual = () => {
@@ -70,7 +70,7 @@ const AddOperatingManual = () => {
       data['access_to_all_user'] = formSettingData.applicable_to_user;
       data['access_to_all_franchise'] =
         formSettingData.applicable_to_franchisee;
-      data['shared_with'] = selectedFranchiseeId;
+      data['shared_with'] = selectedFranchiseeName;
       data['shared_role'] = selectedUserRoleName;
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -256,7 +256,7 @@ const AddOperatingManual = () => {
   };
   function onSelectFranchisee(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedFranchiseeId += selectedItem.id + ',';
+    selectedFranchiseeName += selectedItem.franchisee_name + ',';
     selectedFranchisee.push({
       id: selectedItem.id,
       franchisee_name: selectedItem.franchisee_name,
@@ -266,8 +266,8 @@ const AddOperatingManual = () => {
     }
   }
   function onRemoveFranchisee(selectedList, removedItem) {
-    selectedFranchiseeId = selectedFranchiseeId.replace(
-      removedItem.id + ',',
+    selectedFranchiseeName = selectedFranchiseeName.replace(
+      removedItem.franchisee_name + ',',
       ''
     );
     const index = selectedFranchisee.findIndex((object) => {
@@ -396,23 +396,21 @@ const AddOperatingManual = () => {
                     <Row>
                       <Col sm={6}>
                         <Form.Group>
-                          <Form.Label className="formlabel">
-                            Sub-category Name
-                          </Form.Label>
+                          <Form.Label className="formlabel">title</Form.Label>
                           <Form.Control
                             type="text"
-                            name="question"
-                            placeholder="Lorem ipsum dolor sit ame"
+                            name="title"
+                            placeholder="Enter Title"
                             onChange={(e) => {
                               setOperatingManualField(
                                 e.target.name,
                                 e.target.value
                               );
                             }}
-                            isInvalid={!!errors.question}
+                            isInvalid={!!errors.title}
                           />
                           <Form.Control.Feedback type="invalid">
-                            {errors.question}
+                            {errors.title}
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
@@ -646,7 +644,7 @@ const AddOperatingManual = () => {
                               </div>
                             </div>
                             <p className="form-errors">
-                              {errors.reference_video}
+                              {errors.related_files}
                             </p>
                           </Form.Group>
                         </div>
