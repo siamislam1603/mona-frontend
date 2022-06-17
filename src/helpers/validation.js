@@ -119,7 +119,7 @@ export const createOperatingManualValidation = (form) => {
   let newErrors = {};
   let { title, description, cover_image, reference_video, related_files } =
     form;
-  if (!title || title === '') newErrors.title = 'Sub Category name is Required';
+  if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
   if (!cover_image || cover_image === '')
