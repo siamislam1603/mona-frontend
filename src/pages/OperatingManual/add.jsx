@@ -11,7 +11,7 @@ import {
   createCategoryValidation,
   createOperatingManualValidation,
 } from '../../helpers/validation';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 let selectedFranchisee = [];
 let selectedUserRole = [];
 let selectedFranchiseeName = '';
@@ -19,6 +19,7 @@ let selectedUserRoleName = '';
 let counter = 0;
 const AddOperatingManual = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [operatingManualData, setOperatingManualData] = useState({});
 
   const [count, setCount] = useState();
@@ -40,9 +41,30 @@ const AddOperatingManual = () => {
 
   useEffect(() => {
     getCategory();
+    console.log('location---->', location);
+    if (location?.state?.id && location?.state?.category_name) {
+      getOneOperatingManual();
+    }
     getUserRoleAndFranchiseeData();
   }, []);
+  const getOneOperatingManual = async () => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
 
+    fetch(
+      `${BASE_URL}/operating_manual/one?id=${location?.state?.id}&category_name=${location?.state?.category_name}`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        result = JSON.parse(result);
+        console.log('result---->', result?.result);
+        setOperatingManualData(result?.result);
+      })
+      .catch((error) => console.log('error', error));
+  };
   const setCategoryField = (field, value) => {
     setCategoryData({ ...categoryData, [field]: value });
     if (!!categoryError[field]) {
@@ -400,6 +422,7 @@ const AddOperatingManual = () => {
                           <Form.Control
                             type="text"
                             name="title"
+                            value={operatingManualData?.title}
                             placeholder="Enter Title"
                             onChange={(e) => {
                               setOperatingManualField(
@@ -422,7 +445,8 @@ const AddOperatingManual = () => {
                             Description
                           </Form.Label>
                           <MyEditor
-                            {...errors}
+                            operatingManual={operatingManualData}
+                            errors={errors}
                             handleChange={setOperatingManualField}
                           />
                         </Form.Group>

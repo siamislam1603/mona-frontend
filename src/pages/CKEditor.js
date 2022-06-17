@@ -2,7 +2,6 @@ import React from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { BASE_URL } from '../components/App';
-
 export default function MyEditor(props) {
   function uploadAdapter(loader) {
     return {
@@ -40,20 +39,23 @@ export default function MyEditor(props) {
       return uploadAdapter(loader);
     };
   }
+
   return (
     <div className="App">
+      {console.log('props.description---->', props.operatingManual.description)}
       <CKEditor
         config={{
           extraPlugins: [uploadPlugin],
           rows: 5,
         }}
+        data={props.operatingManual.description}
         editor={ClassicEditor}
         onChange={(event, editor) => {
           props.handleChange('description', editor.getData());
         }}
         {...props}
       />
-      <p className="form-errors">{props.description}</p>
+      <p className="form-errors">{props.errors.description}</p>
     </div>
   );
 }
