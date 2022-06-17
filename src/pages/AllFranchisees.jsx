@@ -46,35 +46,12 @@ const training = [
 
 
 const AllFranchisees = () => {
-    const [userData, setUserData] = useState([]);
+
     const [filter, setFilter] = useState({
         user: '',
         location: [],
     });
-
-    const fetchUserDetails = async () => {
-        let response = await axios.get(`${BASE_URL}/auth/users`, {
-            headers: {
-                authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
-        if (response.status === 200) {
-            const { data } = response.data;
-            let tempData = data.map((dt) => ({
-                id: dt.id,
-                name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role
-                    .split('_')
-                    .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
-                    .join(' ')}`,
-                email: dt.email,
-                number: dt.phone,
-                location: dt.city,
-                is_deleted: dt.is_deleted,
-            }));
-            tempData = tempData.filter((data) => data.is_deleted === 0);
-            setUserData(tempData);
-        }
-    };
+    const [franchiseeData, setFranchiseeData] = useState();
 
     const handleCancelFilter = () => {
         setFilter({});
@@ -84,8 +61,27 @@ const AllFranchisees = () => {
         // const res = await axios.post(`${BASE_URL}/`)
     };
 
+    const fetchFranchisees = async () => {
+        const response = await axios.get(`${BASE_URL}/role/franchisee/users`);
+
+        if(response.status === 200 && response.data.status === "success") {
+            const { franchisees } = response.data;
+            setFranchiseeData(franchisees.map(franchisee => ({
+                franchisee: {
+                    id: franchisee.id,
+                    name: franchisee.franchisee_name,
+                    location: franchisee.city + ", " + franchisee.state,
+                    educators: 
+                        franchisee.users.filter(user => user.role === 'educator').length,
+                    children: 
+                        franchisee.users.filter(user => user.role === 'child').length
+                },
+            })));
+        }
+    };
+
     useEffect(() => {
-        fetchUserDetails();
+        fetchFranchisees();
     }, []);
 
     return (
@@ -246,180 +242,41 @@ const AllFranchisees = () => {
                                                 </div>
                                             </header>
                                             <Row>
-                                                <Col sm={6} md={4} className="my-2">
-                                                    <Card className="text-center Card_design">
-                                                        <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
-                                                            <div className="p-1">
-                                                                <Card.Title className="mb-0 Text_design"
-                                                                >Homecare Stay</Card.Title>
-                                                                <Card.Text id="Down_Text">
-                                                                    Brisbane, South Australia
-                                                                </Card.Text>
-                                                            </div>
-                                                            <div style={{ paddingLeft: "2rem" }}>
-                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
-                                                            </div>
-                                                        </Card.Body>
-                                                        <Card.Footer className="Card_Footer">
-                                                            <div className="d-flex justify-content-around">
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2 Footer_text">Educators</p>
-                                                                    <p className="mb-0 px-2 Footer_textTow">04</p>
-                                                                </div>
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                    <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>04</p>
-                                                                </div>
-                                                            </div>
-                                                        </Card.Footer>
-                                                    </Card>
-                                                </Col>
-                                                <Col sm={6} md={4} className="my-2">
-                                                    <Card className="text-center Card_design">
-                                                        <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
-                                                            <div className="p-1">
-                                                                <Card.Title className="mb-0 Text_design"
-                                                                >Homecare Stay</Card.Title>
-                                                                <Card.Text id="Down_Text">
-                                                                    Brisbane, South Australia
-                                                                </Card.Text>
-                                                            </div>
-                                                            <div style={{ paddingLeft: "2rem" }}>
-                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
-                                                            </div>
-                                                        </Card.Body>
-                                                        <Card.Footer className="Card_Footer">
-                                                            <div className="d-flex justify-content-around">
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2 Footer_text">Educators</p>
-                                                                    <p className="mb-0 px-2 Footer_textTow">04</p>
-                                                                </div>
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                    <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>04</p>
-                                                                </div>
-                                                            </div>
-                                                        </Card.Footer>
-                                                    </Card>
-                                                </Col>
-                                                <Col sm={6} md={4} className="my-2">
-                                                    <Card className="text-center Card_design">
-                                                        <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
-                                                            <div className="p-1">
-                                                                <Card.Title className="mb-0 Text_design"
-                                                                >Homecare Stay</Card.Title>
-                                                                <Card.Text id="Down_Text">
-                                                                    Brisbane, South Australia
-                                                                </Card.Text>
-                                                            </div>
-                                                            <div style={{ paddingLeft: "2rem" }}>
-                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
-                                                            </div>
-                                                        </Card.Body>
-                                                        <Card.Footer className="Card_Footer">
-                                                            <div className="d-flex justify-content-around">
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2 Footer_text">Educators</p>
-                                                                    <p className="mb-0 px-2 Footer_textTow">04</p>
-                                                                </div>
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                    <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>04</p>
-                                                                </div>
-                                                            </div>
-                                                        </Card.Footer>
-                                                    </Card>
-                                                </Col>
-                                                <Col sm={6} md={4} className="my-2">
-                                                    <Card className="text-center Card_design">
-                                                        <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
-                                                            <div className="p-1">
-                                                                <Card.Title className="mb-0 Text_design"
-                                                                >Homecare Stay</Card.Title>
-                                                                <Card.Text id="Down_Text">
-                                                                    Brisbane, South Australia
-                                                                </Card.Text>
-                                                            </div>
-                                                            <div style={{ paddingLeft: "2rem" }}>
-                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
-                                                            </div>
-                                                        </Card.Body>
-                                                        <Card.Footer className="Card_Footer">
-                                                            <div className="d-flex justify-content-around">
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2 Footer_text">Educators</p>
-                                                                    <p className="mb-0 px-2 Footer_textTow">04</p>
-                                                                </div>
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                    <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>04</p>
-                                                                </div>
-                                                            </div>
-                                                        </Card.Footer>
-                                                    </Card>
-                                                </Col>
-                                                <Col sm={6} md={4} className="my-2">
-                                                    <Card className="text-center Card_design">
-                                                        <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
-                                                            <div className="p-1">
-                                                                <Card.Title className="mb-0 Text_design"
-                                                                >Homecare Stay</Card.Title>
-                                                                <Card.Text id="Down_Text">
-                                                                    Brisbane, South Australia
-                                                                </Card.Text>
-                                                            </div>
-                                                            <div style={{ paddingLeft: "2rem" }}>
-                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
-                                                            </div>
-                                                        </Card.Body>
-                                                        <Card.Footer className="Card_Footer">
-                                                            <div className="d-flex justify-content-around">
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2 Footer_text">Educators</p>
-                                                                    <p className="mb-0 px-2 Footer_textTow">04</p>
-                                                                </div>
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                    <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>04</p>
-                                                                </div>
-                                                            </div>
-                                                        </Card.Footer>
-                                                    </Card>
-                                                </Col>
-                                                <Col sm={6} md={4} className="my-2">
-                                                    <Card className="text-center Card_design">
-                                                        <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                            <img src={CardImg} alt="" width="65px" />
-                                                            <div className="p-1">
-                                                                <Card.Title className="mb-0 Text_design"
-                                                                >Homecare Stay</Card.Title>
-                                                                <Card.Text id="Down_Text">
-                                                                    Brisbane, South Australia
-                                                                </Card.Text>
-                                                            </div>
-                                                            <div style={{ paddingLeft: "2rem" }}>
-                                                                {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
-                                                            </div>
-                                                        </Card.Body>
-                                                        <Card.Footer className="Card_Footer">
-                                                            <div className="d-flex justify-content-around">
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2 Footer_text">Educators</p>
-                                                                    <p className="mb-0 px-2 Footer_textTow">04</p>
-                                                                </div>
-                                                                <div className="d-flex justify-content-between align-items-center">
-                                                                    <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                    <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>04</p>
-                                                                </div>
-                                                            </div>
-                                                        </Card.Footer>
-                                                    </Card>
-                                                </Col>
+                                                {
+                                                    franchiseeData && franchiseeData.map(data => {
+                                                        return (
+                                                            <Col key={data.franchisee.id} sm={6} md={4} className="my-2">
+                                                                <Card className="text-center Card_design">
+                                                                    <Card.Body className="d-flex flex-row bd-highlight align-items-center">
+                                                                        <img src={CardImg} alt="" width="65px" />
+                                                                        <div className="p-1">
+                                                                            <Card.Title className="mb-0 Text_design"
+                                                                            >{data.franchisee.name}</Card.Title>
+                                                                            <Card.Text id="Down_Text">
+                                                                                {data.franchisee.location}
+                                                                            </Card.Text>
+                                                                        </div>
+                                                                        <div style={{ paddingLeft: "2rem" }}>
+                                                                            {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
+                                                                        </div>
+                                                                    </Card.Body>
+                                                                    <Card.Footer className="Card_Footer">
+                                                                        <div className="d-flex justify-content-around">
+                                                                            <div className="d-flex justify-content-between align-items-center">
+                                                                                <p className="mb-0 px-2 Footer_text">Educators</p>
+                                                                                <p className="mb-0 px-2 Footer_textTow">{data.franchisee.educators < 10 ? `0${data.franchisee.educators}` : data.franchisee.educators}</p>
+                                                                            </div>
+                                                                            <div className="d-flex justify-content-between align-items-center">
+                                                                                <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
+                                                                                <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>{data.franchisee.children < 10 ? `0${data.franchisee.children}` : data.franchisee.children}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </Card.Footer>
+                                                                </Card>
+                                                            </Col>
+                                                        );
+                                                    })
+                                                }
                                             </Row>
                                         </>
 

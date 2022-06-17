@@ -13,7 +13,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         const { franchiseeList: franchiseeData } = response.data;
         setFranchiseeList([...franchiseeData.map((data) => ({
           id: data.id,
-          franchisee_name: `${data.registered_name}, ${data.city}`
+          franchisee_name: `${data.franchisee_name}, ${data.city}`
         }))]);
       }
     }
