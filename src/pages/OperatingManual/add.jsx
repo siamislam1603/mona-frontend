@@ -64,22 +64,28 @@ const AddOperatingManual = () => {
   const onModelSubmit = (e) => {
     e.preventDefault();
     let data = operatingManualData;
-    data['access_to_all_user'] = formSettingData.applicable_to_user;
-    data['access_to_all_franchise'] = formSettingData.applicable_to_franchisee;
-    data['shared_with'] = selectedFranchiseeId;
-    data['shared_role'] = selectedUserRoleName;
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    fetch(`${BASE_URL}/operating_manual/add`, {
-      method: 'post',
-      body: JSON.stringify(operatingManualData),
-      headers: myHeaders,
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setOperatingManualData(res?.result);
-        // navigate('/operatingmanual');
-      });
+    if (!data?.id) {
+      alert('Please save first operating manual information');
+    } else {
+      data['access_to_all_user'] = formSettingData.applicable_to_user;
+      data['access_to_all_franchise'] =
+        formSettingData.applicable_to_franchisee;
+      data['shared_with'] = selectedFranchiseeId;
+      data['shared_role'] = selectedUserRoleName;
+      var myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+      fetch(`${BASE_URL}/operating_manual/add`, {
+        method: 'post',
+        body: JSON.stringify(operatingManualData),
+        headers: myHeaders,
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setOperatingManualData(res?.result);
+          setFormSettingFlag(false);
+          // navigate('/operatingmanual');
+        });
+    }
   };
   const onSubmit = (e) => {
     e.preventDefault();
@@ -212,7 +218,7 @@ const AddOperatingManual = () => {
 
             setTimeout(() => {
               setLoaderFlag(false);
-            }, 5000);
+            }, 8000);
           } else {
             data[name] = res.url;
             setOperatingManualData(data);
@@ -253,7 +259,7 @@ const AddOperatingManual = () => {
     selectedFranchiseeId += selectedItem.id + ',';
     selectedFranchisee.push({
       id: selectedItem.id,
-      registered_name: selectedItem.registered_name,
+      franchisee_name: selectedItem.franchisee_name,
     });
     {
       console.log('selectedFranchisee---->', selectedFranchisee);
@@ -731,7 +737,7 @@ const AddOperatingManual = () => {
                   <Form.Group>
                     <Form.Label>Select Franchisee</Form.Label>
                     <Multiselect
-                      displayValue="registered_name"
+                      displayValue="franchisee_name"
                       className="multiselect-box default-arrow-select"
                       placeholder="Select Franchisee"
                       selectedValues={selectedFranchisee}
