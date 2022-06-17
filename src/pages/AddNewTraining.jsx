@@ -84,15 +84,26 @@ const AddNewTraining = () => {
     }
   };  
 
+  const saveTrainingMedia = async (data) => {
+    // let token = localStorage.getItem('token');
+    // const response = await axios.post(`${BASE_URL}/training/add-training-media`, data, {
+    //   headers: {
+    //     "Authorization": "Bearer "+ token
+    //   }
+    // });
+    const response = await axios.post('htt', trainingMedia);
+    console.log('RESPONSE:', response);
+  };
+
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_name) => {
-    const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0]}`);
+    const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
     if(response.status === 200 && Object.keys(response.data).length > 1) {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
         ...users?.map((data) => ({
-          cat: data.fullname,
-          key: data.fullname.toLowerCase().split(" ").join("_"),
+          cat: data.fullname.toLowerCase().split(" ").join("_"),
+          key: data.fullname
         })),
       ]);
     }
@@ -136,6 +147,14 @@ const AddNewTraining = () => {
     if(trainingData) {
       createTraining(trainingData);
     }
+
+    if(trainingMedia) {
+      let data = new FormData();
+      for(let { key, values } of Object.entries(trainingMedia)) {
+        data.append(`${key}`, values)
+      }
+      saveTrainingMedia(trainingMedia);
+    }
   };
 
   useEffect(() => {
@@ -147,101 +166,8 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
-  return newErrors;
-}
-console.log()
-const onSubmit=(e)=>{
-  e.preventDefault();
-  settheerror(" ");
-  const newErrors = checkValidation();
-    const err = Object.keys(newErrors);
+  console.log('TRAINING MEDIA:', trainingMedia);
 
-    // Object.keys(newErrors).length > 0 || 
-    if (Object.keys(newErrors).length > 0 || !count.file1) {
-      // console.log("The file 1 error",file1error)
-        setErrors(newErrors);
-        console.log("The erros",errors);
-
-    }
-    else{
-     
-      addTraining(form)
-    }
-  
-}
-const addTraining = async (data) => {
-  const body = {
-    "images" : count.file1,
-    "images" : count.file1,
-    "images" : count.file1,
-    "description" : data.training_description,
-    "title": data.training_name,
-    "uploadedBy": "pankaj",
-    "images" : count.file1,
-    "alias" : "update",
-    "category":"1",
-    "meta_description" :"meta",
-    "completion_in":"hour",
-    "completion_time" : data.time_required,
-    "addedBy":"1",
-    "is_apllicable_to_all":"1",
-    "assigned_role" : " " ,
-    "assigned_users":"test",
-    "display_order" : "12345",
-    "start_date":data.start_date
-
-
-  }
-  const res = await axios.post('http://3.26.39.12:4000/trainning/addTraining', body,{
-    headers:{
-      role: "admin"
-    }
-  })
-  .then((response) => {
-    console.log(response.data)
-    if(res.status === 204) {
-      console.log("Success traing added")
-     }
-  })
-  .catch((errors) =>{
-    console.log(errors)
-  })
-// const add = () =>{
-
-//       console.log(form);
-//       const body = {
-//           "vehicleCategoryName": data.vehicleCategory,
-//           "status":0,
-//           "vehicleCategoryCode":data.vehicleCategoryCode,
-//           "vehicleCategoryalfa":data.vehicleCategoryAlpha.toLocaleUpperCase()
-
-//       }
-
-//       axios.post("http://3.26.39.12:4000/trainning/addTraining", body)
-//           .then((response) => {
-//               console.log(response.data);
-//               if (response.data.status === "success") {
-//                   showAlert("Vehicle Category added successfully.", "success")
-//                   setIsSubmit(false)
-//                   setData({
-//                       vehicleCategory: "",
-//                       status: "",
-//                       vehicleCategoryCode: "",
-//                       vehicleCategoryAlpha: ""
-//                   })
-//                   setTimeout(() => {
-//                       history.push('/vehicleCategory')
-
-//                   }, 2000);
-
-//               } 
-//           }).catch((error)=>{
-//               console.log("The Error",error)
-//           })
-  
-// }
-
-console.log("The Roles",roles)
   return (
     <>
       <div id="main">

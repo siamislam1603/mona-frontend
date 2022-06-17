@@ -29,8 +29,10 @@ import moment from "moment";
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
-let selectedFranchisee = "";
-let selectedUserRole = "";
+let selectedFranchisee = [];
+let selectedUserRole = [];
+let selectedFranchiseeId = "";
+let selectedUserRoleName = "";
 const styles = {
   option: (styles, state) => ({
     ...styles,
@@ -168,6 +170,8 @@ const FileRepository = () => {
     // if (Object.keys(newErrors).length > 0) {
     //   setErrors(newErrors);
     // } else {
+      console.log("selectedFranchisee---->",selectedFranchiseeId);
+      console.log("selectedUserRole---->",selectedUserRoleName);
     if (settingData.applicable_to_user === "1") {
       selectedUserRole = "";
     }
@@ -191,8 +195,8 @@ const FileRepository = () => {
       "AccessToAllFranchisee",
       settingData.applicable_to_franchisee
     );
-    formdata.append("sharedWith", selectedFranchisee);
-    formdata.append("SharedRole", selectedUserRole);
+    formdata.append("sharedWith", selectedFranchiseeId);
+    formdata.append("SharedRole", selectedUserRoleName);
 
     var requestOptions = {
       method: "POST",
@@ -296,7 +300,7 @@ const FileRepository = () => {
         console.log("response0-------->1", res?.userRoleList);
       })
       .catch((error) => console.log("error", error));
-    fetch(`${BASE_URL}/api/franchisee-data`, requestOptions)
+    fetch(`${BASE_URL}/role/franchisee`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         setFranchisee(res?.franchiseeList);
@@ -305,24 +309,41 @@ const FileRepository = () => {
   };
   function onSelectFranchisee(optionsList, selectedItem) {
     console.log("selected_item---->2", selectedItem);
-    selectedFranchisee += selectedItem.id + ",";
-    console.log("form---->1selectedFranchisee", selectedFranchisee);
+    selectedFranchiseeId += selectedItem.id + ",";
+    selectedFranchisee.push({
+      id: selectedItem.id,
+      registered_name: selectedItem.registered_name,
+    });
+    {console.log("selectedFranchisee---->",selectedFranchisee)}
   }
   function onRemoveFranchisee(selectedList, removedItem) {
-    selectedFranchisee = selectedFranchisee.replace(removedItem.id + ",", "");
-    console.log("form---->1selectedFranchisee", selectedFranchisee);
+    
+    selectedFranchiseeId = selectedFranchiseeId.replace(removedItem.id + ",", "");
+    const index = selectedFranchisee.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedFranchisee.splice(index, 1);
+    {console.log("selectedFranchisee---->",selectedFranchisee)}
   }
 
   function onSelectUserRole(optionsList, selectedItem) {
     console.log("selected_item---->2", selectedItem);
-    selectedUserRole += selectedItem.role_label + ",";
+    selectedUserRoleName += selectedItem.role_label + ",";
+    selectedUserRole.push({
+      id: selectedItem.id,
+      role_label: selectedItem.role_label,
+    });
     console.log("form---->2selectedUserRole", selectedUserRole);
   }
   function onRemoveUserRole(selectedList, removedItem) {
-    selectedUserRole = selectedUserRole.replace(
+    selectedUserRoleName = selectedUserRoleName.replace(
       removedItem.role_label + ",",
       ""
     );
+    const index = selectedUserRole.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedUserRole.splice(index, 1);
     console.log("form---->2selectedUserRole", selectedUserRole);
   }
   return (
@@ -565,7 +586,7 @@ const FileRepository = () => {
               {settingData.applicable_to_franchisee === "0" ? (
                 <Col lg={9} md={6} className="mt-3 mt-md-0">
                   <Form.Group>
-                    <Form.Label>Select Franchisee</Form.Label>
+                    <Form.Label>Select Franchisee</Form.Label> 
                     <Multiselect
                       displayValue="registered_name"
                       className="multiselect-box default-arrow-select"
@@ -594,6 +615,7 @@ const FileRepository = () => {
                           id="yes2"
                           onChange={(e) => {
                             setField(e.target.name, e.target.value);
+                            
                           }}
                           checked={settingData.applicable_to_user === "1"}
                         />

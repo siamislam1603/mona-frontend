@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
-import ChildRegister from '../pages/ChildRegister';
+import ChildEnrollment from '../pages/ChildEnrollment';
 import SignIn from '../pages/SignIn';
 import ResetPassword from '../pages/ResetPassword';
 import UserManagement from '../pages/UserManagement';
@@ -9,6 +9,8 @@ import NewUser from '../pages/NewUser';
 import AddUserRole from '../pages/AddUserRole';
 import FranchisorDashboard from '../pages/FranchisorDashboard';
 import FranchiseeDashboard from '../pages/FranchiseeDashboard';
+import AllFranchisees from '../pages/AllFranchisees';
+import NewFranchisees from '../pages/NewFranchisees';
 import EducatorDashboard from '../pages/EducatorDashboard';
 import CoordinatorDashboard from '../pages/CoordinatorDashboard';
 import ParentsDashboard from '../pages/ParentsDashboard';
@@ -24,8 +26,9 @@ import TrainingDetail from '../pages/TrainingDetail';
 import FileRepository from '../pages/FileRepository';
 import Announcements from '../pages/Announcements';
 import AddNewAnnouncements from '../pages/AddNewAnnouncements';
-import DynamicForm from "../pages/DynamicForm";
-
+import DynamicForm from '../pages/DynamicForm';
+import UploadFile from '../pages/UploadFile';
+import AddSubOperatingManual from '../pages/OperatingManual/addSubModule';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -55,24 +58,54 @@ const Main = () => {
         />
 
         <Route
-          path="/child/signup"
+          path="/child-enrollment"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <ChildRegister />
+              <ChildEnrollment />
+            </Protected>
+          }
+        />
+          <Route
+          path="/child-enrollment"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment />
             </Protected>
           }
         />
 
         <Route
-          path="/resetpassword"
+          path="/upload_file"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <ResetPassword />
-              <UserManagement />
+              <UploadFile />
             </Protected>
           }
         />
+
+      <Route
+          path="/new-franchisees"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <NewFranchisees />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/all-franchisees"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AllFranchisees />
+            </Protected>
+          }
+        />
+
 
         <Route
           path="/user-management"
@@ -143,7 +176,15 @@ const Main = () => {
             </Protected>
           }
         />
-
+        <Route
+          path="/operatingmanual/add/sub"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AddSubOperatingManual />
+            </Protected>
+          }
+        />
         <Route
           path="/operatingmanual/add"
           element={
@@ -179,15 +220,17 @@ const Main = () => {
         <Route 
           path="/form" 
           element={typeof isLoggedIn === 'undefined' || isLoggedIn === true ? <ViewFormBuilder /> : <Navigate to="/" />} /> */}
-        <Route 
-          path="/form/dynamic/:name" 
+        <Route
+          path="/form/dynamic/:name"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <DynamicForm />
-            </Protected>} />
-        <Route 
-          path="/form/field/add" 
+            </Protected>
+          }
+        />
+        <Route
+          path="/form/field/add"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -196,8 +239,8 @@ const Main = () => {
           }
         />
 
-        <Route 
-          path="/form/add" 
+        <Route
+          path="/form/add"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -206,8 +249,8 @@ const Main = () => {
           }
         />
 
-        <Route 
-          path="/form/response" 
+        <Route
+          path="/form/response"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -216,8 +259,8 @@ const Main = () => {
           }
         />
 
-        <Route 
-          path="/form" 
+        <Route
+          path="/form"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -265,7 +308,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/file-repository"
           element={
@@ -275,7 +318,7 @@ const Main = () => {
             </Protected>
           }
         />
-      
+
         <Route
           path="/announcements"
           element={
@@ -286,7 +329,7 @@ const Main = () => {
             )
           }
         />
-        
+
         <Route
           path="/new-announcements"
           element={
@@ -298,8 +341,6 @@ const Main = () => {
           }
         />
       </Routes>
-
-      
     </main>
   );
 };

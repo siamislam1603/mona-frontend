@@ -9,7 +9,13 @@ export const DynamicFormValidation = (form, data) => {
     }
   });
   return newErrors;
-};
+}
+export const createCategoryValidation=(form)=>{
+  let newErrors={};
+  let {category_name}=form;
+  if(!category_name || category_name==="") newErrors.category_name="Category Name is Required";
+  return newErrors;
+}
 export const createFormSettingModelValidation = (form, franchisee, user) => {
   let newErrors = {};
   let {
@@ -110,10 +116,13 @@ export const createFormValidation = (form) => {
 };
 export const createOperatingManualValidation = (form) => {
   let newErrors = {};
-  let { question, answer, category } = form;
-  if (!question || question === "") newErrors.question = "Question is Required";
-  if (!answer || answer === "") newErrors.answer = "Answer is Required";
-  if (!category || category === "") newErrors.category = "Category is Required";
+  let { question, answer, cover_image,reference_video,related_files } = form;
+  if (!question || question === "") newErrors.question = "Sub Category name is Required";
+  if (!answer || answer === "") newErrors.answer = "Description is Required";
+  if (!cover_image || cover_image === "") newErrors.cover_image = "Cover image is Required";
+  if (!reference_video || reference_video === "") newErrors.reference_video = "Reference video is Required";
+  if (!related_files || related_files === "") newErrors.answer = "Related files is Required";
+  
   return newErrors;
 };
 export const ChildRegisterFormValidation = (form) => {

@@ -1,6 +1,7 @@
 import React from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { BASE_URL } from "../components/App";
 
 export default function MyEditor(props) {
   function uploadAdapter(loader) {
@@ -16,7 +17,7 @@ export default function MyEditor(props) {
             var myHeaders = new Headers();
             myHeaders.append("role", "admin");
             fetch(
-              `https://766a-2409-4053-2e07-4723-f958-1c8c-a080-1a86.in.ngrok.io/uploads/uiFiles`,
+              `${BASE_URL}/uploads/uiFiles`,
               {
                 method: "post",
                 body: body,
@@ -54,6 +55,7 @@ export default function MyEditor(props) {
         }}
         {...props}
       />
+      <p className='form-errors'>{props.answer}</p>
     </div>
   );
 }

@@ -13,10 +13,22 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         const { franchiseeList: franchiseeData } = response.data;
         setFranchiseeList([...franchiseeData.map((data) => ({
           id: data.id,
-          franchisee_name: `${data.registered_name}, ${data.city}`
+          franchisee_name: `${data.franchisee_name}, ${data.city}`
         }))]);
       }
     }
+
+    const fetchAndPopulateFranchiseeDetails = async () => {
+      const response = await axios.get(`${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`);
+      if(response.status === 200) {
+        const { franchisee } = response.data;
+        setSelectedFranchisee(franchisee.registered_name);
+        setFranchiseeList([franchisee].map((data) => ({
+          id: data.id,
+          franchisee_name: `${data.registered_name}, ${data.city}`
+        })));
+      }
+    };
 
     const logout = async () => {
       const response = await axios.get(`${BASE_URL}/auth/logout`);
@@ -25,6 +37,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         localStorage.removeItem('user_id');
         localStorage.removeItem('user_name');
         localStorage.removeItem('user_role');
+        localStorage.removeItem('selectedFranchisee');
         window.location.href = "/";
       }
     };
@@ -33,8 +46,17 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       logout();
     };
 
+    const selectFranchisee = (e) => {
+        setSelectedFranchisee(e);
+        localStorage.setItem('selectedFranchisee', e);
+    }
+
     useEffect(() => {
-      fetchFranchiseeList();
+      if(localStorage.getItem('user_role') === 'franchisor_admin') {
+        fetchFranchiseeList();
+      } else {
+        fetchAndPopulateFranchiseeDetails();
+      }
     }, []);
 
     return (
@@ -42,9 +64,9 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         <div className="topheader">
           <div className="lpanel">
             <div className="selectdropdown">
-              <Dropdown onSelect={e => setSelectedFranchisee(e)}>
+              <Dropdown onSelect={selectFranchisee}>
                 <Dropdown.Toggle id="dropdown-basic">
-                  {selectedFranchisee || franchiseeList[0]?.franchisee_name || "No Data Available"}
+                  {localStorage.getItem('selectedFranchisee') || franchiseeList[0]?.franchisee_name || "No Data Available"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {

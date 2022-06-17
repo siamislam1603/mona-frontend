@@ -309,8 +309,13 @@ button:focus {
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 1px;
+    color: #000;
+    word-break: break-all;
 }
-
+.content-icon-section img{
+    width: 50px;
+    height: 50px;
+}
 .theme-light {
     background: transparent !important;
     border: none;
@@ -1146,17 +1151,21 @@ button:focus {
     padding: 0;
     list-style: none;
 }
-  .tree ul {
+
+
+.tree ul {
     margin: 0;
     padding: 0;
     list-style: none;
     margin-left: 2.5em;
     position: relative;
-  }
-  .tree ul ul {
+}
+
+.tree ul ul {
     margin-left: 0.5em;
-  }
-  .tree ul:before {
+}
+
+.tree ul:before {
     content: "";
     display: block;
     width: 0;
@@ -1164,9 +1173,11 @@ button:focus {
     top: -15px;
     bottom: 4px;
     left: 0;
-    border-left: 1px solid rgba(51, 51, 51, 0.2);;
-  }
-  .tree ul li:before {
+    border-left: 1px solid rgba(51, 51, 51, 0.2);
+    ;
+}
+
+.tree ul li:before {
     content: "";
     display: block;
     width: 14px;
@@ -1176,28 +1187,33 @@ button:focus {
     position: absolute;
     top: 0.8em;
     left: 0;
-  }
-  .tree ul li:last-child:before {
+}
+
+.tree ul li:last-child:before {
     background: #fff;
     height: auto;
     top: 1em;
     bottom: 0;
-  }
-  .tree li {
+}
+
+.tree li {
     margin: 0;
     padding: 0 1em;
     line-height: 2em;
     color: #369;
     font-weight: 700;
     position: relative;
-  }
-  .tree li .expand {
+}
+
+.tree li .expand {
     display: block;
-  }
-  .tree li .collapse {
+}
+
+.tree li .collapse {
     display: none;
-  }
-  .tree li.branch > a {
+}
+
+.tree li.branch>a {
     text-decoration: none;
     color: #333333;
     font-family: 'Noto Sans';
@@ -1207,17 +1223,21 @@ button:focus {
     line-height: 19px;
     /* identical to box height */
     text-transform: uppercase;
-  }
-  .tree li.branch > a img{
-      margin-right: 10px;
-  }
-  .tree li.branch > .title_active a{
+}
+
+.tree li.branch>a img {
+    margin-right: 10px;
+}
+
+.tree li.branch>.title_active a {
     color: #AA0061;
 }
-.tree li.branch > a.tree-title{
+
+.tree li.branch>a.tree-title {
     color: #AA0061;
 }
-.branch > ul li{
+
+.branch>ul li {
     font-family: 'Noto Sans';
     font-style: normal;
     font-weight: 500;
@@ -1226,14 +1246,16 @@ button:focus {
     color: rgba(51, 51, 51, 0.5);
     cursor: pointer;
 }
-.branch > ul li a.tree_active{
+
+.branch>ul li a.tree_active {
     color: #9EB356;
 }
- 
-.branch > ul li *{
+
+.branch>ul li * {
     color: rgba(51, 51, 51, 0.5);
 }
-.tree-title{
+
+.tree-title {
     color: #AA0061;
     text-transform: uppercase;
     font-family: 'Noto Sans';
@@ -1242,39 +1264,42 @@ button:focus {
     font-size: 14px;
     line-height: 19px;
 }
-  .tree li button {
-    text-decoration: none;
-    color: #369;
-    border: none;
-    background: transparent;
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
-    outline: 0;
-  }
-  .tree li button:active {
-    text-decoration: none;
-    color: #369;
-    border: none;
-    background: transparent;
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
-    outline: 0;
-  }
-  .tree li button:focus {
-    text-decoration: none;
-    color: #369;
-    border: none;
-    background: transparent;
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
-    outline: 0;
-  }
-  
-  .indicator {
-    margin-right: 5px;
-  }
 
-  li.branch > img {
+.tree li button {
+    text-decoration: none;
+    color: #369;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+}
+
+.tree li button:active {
+    text-decoration: none;
+    color: #369;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+}
+
+.tree li button:focus {
+    text-decoration: none;
+    color: #369;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+}
+
+.indicator {
+    margin-right: 5px;
+}
+
+li.branch>img {
     margin-right: 16px;
 }
 
@@ -1292,40 +1317,429 @@ li.branch {
     position: relative;
     margin: 15px 0;
 }
-.branch > ul li {
+
+.branch>ul li {
     margin: 9px 0;
 }
-.tree_view_search{
+
+.tree_view_search {
     border: none;
     background-color: #F7F7F7;
     padding-left: 40px;
 }
-.tree_view_search:focus{
+
+.tree_view_search:focus {
     background-color: #F7F7F7;
 }
- 
-.tree_search_box{
+
+.tree_search_box {
     position: relative;
 }
-.tree_search_box img{
+
+.tree_search_box img {
     position: absolute;
     top: 11px;
     left: 11px;
 }
-.tree_wrp{
+
+.tree_wrp {
     background-color: #f7f7f7;
     padding: 40px 34px;
-    height: 100vh;
+    height: 100%;
     margin-left: -48px;
 }
+
 .bottom_button {
     display: flex;
     gap: 20px;
     justify-content: end;
+    margin: 40px 0;
 }
-.create_model_bar{
+
+.create_model_bar {
     display: flex;
     align-items: center;
-    gap: 10px;
     justify-content: flex-end;
+    padding: 40px 0;
+}
+
+.create_model_bar button {
+    border-radius: 5px;
+    padding: 1px 13px;
+    font-size: 16px;
+    margin: 0 15px 0 0;
+}
+
+.image_banner {
+    width: 100%;
+    height: 100%;
+    border-radius: 11.42px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.image_banner img {
+    object-fit: cover;
+    width: 100%;
+}
+
+.module_title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    margin-top: 21px;
+}
+
+.module_title h3 {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 28px;
+    color: #AA0061;
+    margin-bottom: 0;
+}
+
+.module_title span {
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 21px;
+    text-transform: capitalize;
+    color: #333333;
+}
+
+span.module_dot {
+    margin: 0 15px;
+}
+
+.reference_videos {
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+}
+
+.reference_videos .vidico {
+    position: relative;
+    height: 329px;
+}
+
+.reference_videos .vidico:before {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    background: url('../../../public/img/video_icon.png') no-repeat center center, linear-gradient(179.99deg, rgba(0, 0, 0, 0) -19.77%, #333333 99.99%);
+    background-size: initial;
+}
+
+button.vidico {
+    padding: 0;
+}
+
+button.vidico img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-modal .modal-content {
+    background: #ffffff;
+    border: none;
+    border-radius: 10px;
+}
+
+.video-modal .modal-header {
+    border: none;
+    padding: 0;
+}
+
+.video-modal .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    z-index: 999;
+    font-size: 40px;
+    font-weight: 400;
+    color: #fff;
+    opacity: 1;
+    text-shadow: none;
+    background: #a2b062;
+    padding: 0;
+}
+
+.video-modal .modal-body {
+    position: relative;
+    padding: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 1 1 auto;
+}
+
+.module_video_model button.btn-close {
+    background-color: #3E5D58;
+    z-index: 1;
+    opacity: 1;
+    border-radius: 100px;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+}
+.module_video_model .modal-header h2 {
+    color: #3E5D58;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.module_video_model .btn-close {
+    background-image: url('../../../public/img/close_icons.png') !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+}
+
+.video_title h6 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 21px;
+    color: #FFFFFF;
+    margin-bottom: 0;
+}
+
+.video_title {
+    position: absolute;
+    bottom: 29px;
+    padding: 0 15px;
+}
+
+.related_files .forms-content {
+    margin-top: 20px;
+}
+
+.related_files .content-title-section h4 {
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 14px;
+    color: rgba(51, 51, 51, 0.7);
+}
+
+.related_files h1,
+.reference_wrp h1 {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 33px;
+    color: #333333;
+}
+
+.new_module .formlabel.form-label {
+    margin-bottom: 8px !important;
+    line-height: normal !important;
+    background-color: transparent !important;
+    border: none !important;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    display: flex;
+    align-items: center;
+    color: #455D58;
+}
+
+.new_module .form-control {
+    margin-bottom: 15px;
+}
+
+.new_module .add_fields {
+    display: flex;
+    align-items: flex-end;
+}
+
+.new_module .add_fields button {
+    background-color: transparent;
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+
+    color: #151F6D;
+    border: none;
+}
+
+.new_module .add_fields button:active,
+.new_module .add_fields button:focus {
+    background-color: transparent !important;
+    color: #151F6D !important;
+}
+
+.new_module .App {
+    margin-bottom: 40px;
+}
+
+.new_module .app .product-preview {
+    height: 150px;
+}
+
+.new_module .upload_cover_box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.new_module .cover_image {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.upload_cover_box .btn {
+    min-width: auto;
+    padding: 0;
+}
+
+.new_module .cover_image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.new_module .add_image_box {
+    width: 145px;
+    height: 42px;
+    background: #FFFFFF;
+    border: 1px solid rgba(66, 66, 66, 0.1);
+    border-radius: 5px;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.new_module .add_image_box span {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+    color: rgba(51, 51, 51, 0.6);
+}
+
+input.add_image_input.form-control {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.new_module .remove_bin {
+    color: #d11a2a;
+    padding: 0;
+}
+
+.new_module .new_module .add_image_box span img {
+    margin-right: 10px;
+}
+
+.new_module .cover_video_icon {
+    position: absolute;
+}
+
+.new_module .cover_image {
+    position: relative;
+}
+
+.new_module .video_reference .cover_image::before {
+    content: "";
+    background-image: url(../../../public/img/video_icon.png);
+    position: absolute;
+    left: 50%;
+    right: 0;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 99;
+    height: 20px;
+    width: 20px;
+    background-size: contain;
+    cursor: pointer;
+}
+
+.upload_related_files {
+    margin-top: 40px;
+}
+
+.new_module .upload_related_box .btn {
+    padding: 0;
+    min-width: auto;
+}
+
+.new_module .upload_related_box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    background-color: #F7F7F7;
+    padding-right: 15px;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.new_module .upload_related_box .forms-content {
+    margin-bottom: 0;
+    padding: 15px;
+}
+
+.upload_related_box .content-icon-section {
+    width: 50px;
+    height: 50px;
+}
+
+.new_module .bottom_button {
+    margin-top: 66px;
+    justify-content: center;
+}
+
+.new_sub_module {
+    color: #F7F7F8;
+}
+
+.ck.ck-editor__editable_inline p {
+    color: var(--black);
+}
+
+.form_info {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+}
+.print {
+    padding: 20px !important;
 }
