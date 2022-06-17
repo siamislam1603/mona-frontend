@@ -235,6 +235,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .app-sidebar .navbar-expand-lg .navbar-nav .nav-link .announcement-ico { background: url("../img/announcement-ico.svg") no-repeat; background-size: cover; }
 .app-sidebar .navbar-expand-lg .navbar-nav .nav-link .notification-ico { background: url("../img/notification-ico.svg") no-repeat; background-size: cover; }
 .app-sidebar .navbar-expand-lg .navbar-nav .nav-link .training-ico { background: url("../img/training-ico.svg") no-repeat; background-size: cover; }
+.app-sidebar .navbar-expand-lg .navbar-nav .nav-link .manual-ico { background: url("../img/manual-ico.svg") no-repeat; background-size: cover; }
 .app-sidebar .navbar-expand-lg .navbar-nav .nav-link .usermana-ico { background: url("../img/user-management-ico.svg") no-repeat; background-size: cover; }
 
 .sec-column { width: 100%; padding: 30px 48px 0 48px; }
@@ -554,12 +555,14 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .vid-col .caption { position: absolute; left:0; bottom: 15px; z-index: 2; color: var(--white); padding: 20px; }
 
 
-
-
-
-
-
-
+/* Pradeep CODE */
+.Card_design {background: #F7F7F7; border: none; border-radius: 20px }
+.Text_design { font-size: 1rem; color: #AA0061; text-align: left; }
+#Down_Text { font-size: 0.75rem;color: #333333;}
+.Arrow_icon {font-weight: 500;font-size: 1.5rem;float: right}
+.Card_Footer {background: #ffffff00; padding-left: 0rem;}
+.Footer_text {border-right: 2px solid #AA0061; font-weight: 500; font-size: 14px;}
+.Footer_textTow {color: #151F6D; font-weight: 600;font-size: 20px;}
 
 
 
