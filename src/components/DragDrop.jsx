@@ -1,21 +1,28 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
+import { Link } from 'react-router-dom';
 
 export default function DropAllFile({ onChange }) {
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+  const { acceptedFiles, getRootProps, getInputProps} = useDropzone({
     maxFiles: 1,
     multiple: false,
     onDrop: (acceptedFiles) => {
       onChange(acceptedFiles);
-    },
+    }
   });
+
+  // const removeFile = (file) => {
+  //   acceptedFiles.splice(acceptedFiles.indexOf(file), 1);
+  //   onChange(acceptedFiles);
+  // }
+
   const files = acceptedFiles.map((file) => (
     <li className="mt-3" key={file.path}>
       {file.path} - {file.size} bytes
       <span className="ms-2">
-        <a href="">
+        <Link to="#">
           <img src="../img/removeIcon.svg" alt="" />
-        </a>
+        </Link>
       </span>
     </li>
   ));

@@ -67,7 +67,8 @@ const AddNewTraining = () => {
       }
     );
 
-    console.log('REPSONSE:', response.data.status);
+    console.log('RESPONSE:', response);
+
     if(response.status === 201 && response.data.status === "success") {
       setTopSuccessMessage("Training created successfully.");
       setTimeout(() => {
@@ -83,17 +84,6 @@ const AddNewTraining = () => {
       }, 3000);
     }
   };  
-
-  const saveTrainingMedia = async (data) => {
-    // let token = localStorage.getItem('token');
-    // const response = await axios.post(`${BASE_URL}/training/add-training-media`, data, {
-    //   headers: {
-    //     "Authorization": "Bearer "+ token
-    //   }
-    // });
-    const response = await axios.post('htt', trainingMedia);
-    console.log('RESPONSE:', response);
-  };
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_name) => {
@@ -143,17 +133,25 @@ const AddNewTraining = () => {
     }));
   };
 
-  const handleDataSubmit = () => {
-    if(trainingData) {
-      createTraining(trainingData);
-    }
+  const handleDataSubmit = event => {
+    event.preventDefault();
 
-    if(trainingMedia) {
+    if(trainingData) {
       let data = new FormData();
-      for(let { key, values } of Object.entries(trainingMedia)) {
+
+      for(let [ key, values ] of Object.entries(trainingData)) {
         data.append(`${key}`, values)
       }
-      saveTrainingMedia(trainingMedia);
+
+      // data.append('cover_image', trainingMedia.cover_image[0]);
+      // trainingMedia.video_tutorial.forEach((file, index) => {
+      //   data.append(`video_tutorial_${index}`, file);
+      // });
+      // trainingMedia.related_files.forEach((file, index) => {
+      //   data.append(`related_${index}`, file);
+      // });
+
+      createTraining(data);
     }
   };
 
@@ -165,9 +163,9 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
+  
 
-  console.log('TRAINING MEDIA:', trainingMedia);
-
+  console.log('TRAINING DATA:', trainingData);
   return (
     <>
       <div id="main">
@@ -271,11 +269,12 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <DropOneFile
+                          <DropAllFile
+                            trainingMedia={trainingMedia}
                             onChange={(data) =>
                               setTrainingMedia((prevState) => ({
                                 ...prevState,
-                                video_tutorial: data,
+                                video_tutorial: [...data],
                               }))
                             }
                           />
@@ -286,6 +285,7 @@ const AddNewTraining = () => {
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
                           <DropAllFile
+                            trainingMedia={trainingMedia}
                             onChange={(data) =>
                               setTrainingMedia((prevState) => ({
                                 ...prevState,
