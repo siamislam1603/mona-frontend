@@ -1748,3 +1748,20 @@ input.add_image_input.form-control {
 .ck-editor__editable {
     min-height: 200px;
 }
+
+.tree_header {
+    display: flex;
+    align-items: center;
+}
+button.add_operating_button.btn.btn-primary {
+    line-height: 35px;
+    min-width: inherit;
+    padding: 4px 15px;
+    border-radius: 5px;
+    margin: 0 10px;
+}
+
+.tree_search_box .tree_view_search {
+    background-color: #f0f0f0;
+    margin-right: 10px;
+}
