@@ -34,7 +34,9 @@ const AddNewTraining = () => {
   const [userRoles, setUserRoles] = useState([]);
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({});
-  const [trainingMedia, setTrainingMedia] = useState({});
+  const [coverImage, setCoverImage] = useState({});
+  const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+  const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
 
@@ -58,6 +60,8 @@ const AddNewTraining = () => {
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
+    // const response = await axios.post('https://httpbin.org/anything', data);
+    // console.log('RESPONSE:', response);
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
@@ -136,20 +140,20 @@ const AddNewTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
 
-    if(trainingData) {
+    if(trainingData && coverImage && videoTutorialFiles && relatedFiles) {
       let data = new FormData();
 
       for(let [ key, values ] of Object.entries(trainingData)) {
         data.append(`${key}`, values)
       }
 
-      // data.append('cover_image', trainingMedia.cover_image[0]);
-      // trainingMedia.video_tutorial.forEach((file, index) => {
-      //   data.append(`video_tutorial_${index}`, file);
-      // });
-      // trainingMedia.related_files.forEach((file, index) => {
-      //   data.append(`related_${index}`, file);
-      // });
+      data.append('images', coverImage[0]);
+      videoTutorialFiles.forEach((file, index) => {
+        data.append(`images`, file);
+      });
+      relatedFiles.forEach((file, index) => {
+        data.append(`images`, file);
+      });
 
       createTraining(data);
     }
@@ -164,6 +168,10 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
   
+
+  coverImage && console.log('Cover Image:', coverImage);
+  // videoTutorialFiles && console.log('Video Tutorial Files', videoTutorialFiles.map(file => console.log('File:', file)));
+  relatedFiles && console.log('Related Files:', relatedFiles);
 
   console.log('TRAINING DATA:', trainingData);
   return (
@@ -225,12 +233,25 @@ const AddNewTraining = () => {
                           <Form.Label>Training Description</Form.Label>
                           <Form.Control
                             as="textarea"
-                            name="training_description"
+                            name="description"
                             rows={3}
                             onChange={handleTrainingData}
                           />
                         </Form.Group>
                       </Col>
+
+                      <Col md={12} className="mb-3">
+                        <Form.Group>
+                          <Form.Label>Meta Description</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            name="meta_description"
+                            rows={3}
+                            onChange={handleTrainingData}
+                          />
+                        </Form.Group>
+                      </Col>
+
                       <Col md={6} className="mb-3">
                         <Form.Group className="relative">
                           <Form.Label>Time required to complete</Form.Label>
@@ -255,13 +276,7 @@ const AddNewTraining = () => {
                         <Form.Group>
                           <Form.Label>Upload Cover Image :</Form.Label>
                           <DropOneFile
-                            imageUploaded={trainingMedia.cover_image}
-                            onChange={(data) =>
-                              setTrainingMedia((prevState) => ({
-                                ...prevState,
-                                cover_image: data,
-                              }))
-                            }
+                            onSave={setCoverImage}
                           />
                         </Form.Group>
                       </Col>
@@ -270,13 +285,7 @@ const AddNewTraining = () => {
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
                           <DropAllFile
-                            trainingMedia={trainingMedia}
-                            onChange={(data) =>
-                              setTrainingMedia((prevState) => ({
-                                ...prevState,
-                                video_tutorial: [...data],
-                              }))
-                            }
+                            onSave={setVideoTutorialFiles}
                           />
                         </Form.Group>
                       </Col>
@@ -285,13 +294,7 @@ const AddNewTraining = () => {
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
                           <DropAllFile
-                            trainingMedia={trainingMedia}
-                            onChange={(data) =>
-                              setTrainingMedia((prevState) => ({
-                                ...prevState,
-                                related_files: [...data],
-                              }))
-                            }
+                            onSave={setRelatedFiles}
                           />
                         </Form.Group>
                       </Col>
