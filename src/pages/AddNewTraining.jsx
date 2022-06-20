@@ -31,9 +31,12 @@ const AddNewTraining = () => {
 
   // CUSTOM STATES
   const [hideSelect, setHideSelect] = useState(false);
+  const [hideRoleDialog, setHideRoleDialog] = useState(false);
+  const [hideUserDialog, setHideUserDialog] = useState(false);
+
   const [userRoles, setUserRoles] = useState([]);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [trainingData, setTrainingData] = useState({});
+  const [trainingData, setTrainingData] = useState();
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -169,11 +172,8 @@ const AddNewTraining = () => {
   }, [selectedFranchisee]);
   
 
-  coverImage && console.log('Cover Image:', coverImage);
-  // videoTutorialFiles && console.log('Video Tutorial Files', videoTutorialFiles.map(file => console.log('File:', file)));
-  relatedFiles && console.log('Related Files:', relatedFiles);
-
-  console.log('TRAINING DATA:', trainingData);
+  trainingData && console.log('TRAINING DATA:', trainingData);
+  hideUserDialog && console.log('USER DIALOG:', hideUserDialog);
   return (
     <>
       <div id="main">
@@ -263,7 +263,7 @@ const AddNewTraining = () => {
                               setTrainingData((prevState) => ({
                                 ...prevState,
                                 time_required_to_complete:
-                                  event.value + ' hr',
+                                  event.value + ' Hours',
                               }))
                             }
                           />
@@ -427,16 +427,29 @@ const AddNewTraining = () => {
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
-                <Form.Group className={hideSelect ? 'd-none' : ''}>
+                <Form.Group className={hideSelect || hideRoleDialog ? 'd-none' : ''}>
                   <Form.Label>Select User Roles</Form.Label>
                   <Multiselect
                     placeholder="Select User Roles"
                     displayValue="key"
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck() {}}
+                    onRemove={function noRefCheck(data) {
+                      if(data.length === 0) {
+                        setHideUserDialog(false);
+                      }
+                    }}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
+                      setHideUserDialog(true);
+
+                      if(hideUserDialog === true) {
+                        setTrainingData((prevState) => ({
+                          ...prevState,
+                          assigned_users: [],
+                        }));
+                      }
+
                       setTrainingData((prevState) => ({
                         ...prevState,
                         roles: [...data.map((data) => data.cat)],
@@ -448,23 +461,36 @@ const AddNewTraining = () => {
               </Col>
             </Row>
 
-            <Row className="mt-4">
+            <Row className={`mt-4 ${hideUserDialog ? "d-none" : ""}`}>
               <Col lg={3} md={6}>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
                 <Form.Group className={hideSelect ? 'd-none' : ''}>
                   <Form.Label>Select User Names</Form.Label>
                   <Multiselect
-                    placeholder={fetchedFranchiseeUsers ? "Select User Roles" : "No User Available"}
+                    placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
                     displayValue="key"
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck() {}}
+                    onRemove={function noRefCheck(data) {
+                      if(data.length === 0) {
+                        setHideRoleDialog(false);
+                      }
+                    }}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
+                      setHideRoleDialog(true);
+
+                      if(hideRoleDialog === true) {
+                        setTrainingData((prevState) => ({
+                          ...prevState,
+                          roles: [],
+                        }));
+                      }
+
                       setTrainingData((prevState) => ({
                         ...prevState,
-                        users: [...data.map((data) => data.cat)],
+                        assigned_users: [...data.map((data) => data.cat)],
                       }));
                     }}
                     options={fetchedFranchiseeUsers}
