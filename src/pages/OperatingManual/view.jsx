@@ -32,7 +32,8 @@ const OperatingManual = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   useEffect(() => {
-    getOperatingManual('', '', false);
+    getOperatingManual();
+    console.log('role---->', localStorage.getItem('user_role'));
   }, []);
 
   useEffect(() => {
@@ -82,7 +83,22 @@ const OperatingManual = () => {
       });
     }
   }, [operatingManualdata]);
+  const deleteOperatingManual = () => {
+    var requestOptions = {
+      method: 'DELETE',
+      redirect: 'follow',
+    };
 
+    fetch(
+      `${BASE_URL}/operating_manual/${operatingManualdata[Index]?.operating_manuals[innerIndex]?.id}`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        getOperatingManual();
+      })
+      .catch((error) => console.log('error', error));
+  };
   const getOperatingManual = (key, search) => {
     var requestOptions = {
       method: 'GET',
@@ -91,9 +107,13 @@ const OperatingManual = () => {
     let api_url = '';
 
     if (key === 'search') {
-      api_url = `${BASE_URL}/operating_manual?search=${search}`;
+      api_url = `${BASE_URL}/operating_manual?search=${search}&role=${localStorage.getItem(
+        'user_role'
+      )}`;
     } else {
-      api_url = `${BASE_URL}/operating_manual`;
+      api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
+        'user_role'
+      )}`;
     }
 
     fetch(api_url, requestOptions)
@@ -161,7 +181,7 @@ const OperatingManual = () => {
                                             src="../img/child_file.svg"
                                             alt=""
                                           />
-                                          {inner_item.question}
+                                          {inner_item.title}
                                         </a>
                                       </li>
                                     );
@@ -181,7 +201,8 @@ const OperatingManual = () => {
                           navigate('/operatingmanual/add');
                         }}
                       >
-                        <FontAwesomeIcon icon={faPlus} /> Create an Operating Manual
+                        <FontAwesomeIcon icon={faPlus} /> Create an Operating
+                        Manual
                       </Button>
                       <div className="forms-toogle">
                         <div class="custom-menu-dots">
@@ -191,10 +212,28 @@ const OperatingManual = () => {
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
-                              <Dropdown.Item href="#/action-1">
+                              <Dropdown.Item
+                                href=""
+                                onClick={() => {
+                                  navigate('/operatingmanual/add', {
+                                    state: {
+                                      id: operatingManualdata[Index]
+                                        ?.operating_manuals[innerIndex]?.id,
+                                      category_name:
+                                        operatingManualdata[Index]
+                                          ?.category_name,
+                                    },
+                                  });
+                                }}
+                              >
                                 <FontAwesomeIcon icon={faPen} /> Edit
                               </Dropdown.Item>
-                              <Dropdown.Item href="#/action-2">
+                              <Dropdown.Item
+                                href=""
+                                onClick={() => {
+                                  deleteOperatingManual();
+                                }}
+                              >
                                 <FontAwesomeIcon icon={faRemove} /> Remove
                               </Dropdown.Item>
                             </Dropdown.Menu>
@@ -241,7 +280,9 @@ const OperatingManual = () => {
                                           >
                                             <img
                                               src={
-                                                inner_item.video_thumbnail ? inner_item.video_thumbnail : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
+                                                inner_item.video_thumbnail
+                                                  ? inner_item.video_thumbnail
+                                                  : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
                                               }
                                               alt=""
                                             />
