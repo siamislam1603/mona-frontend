@@ -29,6 +29,7 @@ import AddNewAnnouncements from '../pages/AddNewAnnouncements';
 import DynamicForm from '../pages/DynamicForm';
 import UploadFile from '../pages/UploadFile';
 import AddSubOperatingManual from '../pages/OperatingManual/addSubModule';
+import AvailableTraining from '../pages/AvailableTraining';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -305,6 +306,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <TrainingDetail />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/available-training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AvailableTraining />
             </Protected>
           }
         />

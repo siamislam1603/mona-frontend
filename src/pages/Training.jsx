@@ -120,7 +120,7 @@ const Training = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                      <li><a href="/">Trainings Available</a></li>
+                      <li><a href="/available-training">Trainings Available</a></li>
                       <li><a href="/" className="active">Trainings Created</a></li>
                     </ul>
                   </div>
