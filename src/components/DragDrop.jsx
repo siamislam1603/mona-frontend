@@ -45,9 +45,6 @@ export default function DropAllFile({ onSave }) {
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
           Files
         </span>
-<<<<<<< HEAD
-       
-=======
         <div className="showfiles">
           <ul>
             {
@@ -64,14 +61,7 @@ export default function DropAllFile({ onSave }) {
             }
           </ul>
         </div>
->>>>>>> master
       </div>
-      <div className="showfiles">
-          <ul>{files.name}</ul>  
-          <aside style={thumbsContainer}>{thumbs}</aside> 
-          
-        </div>
-
 
     </div>
   );
