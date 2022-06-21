@@ -9,12 +9,6 @@ export default function DropAllFile({ onSave }) {
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach(file => {
       setData(prevState => [...prevState, file]);
-      // const reader = new FileReader();
-      // reader.onload = () => {
-      //   setData(prevState => [...prevState, reader.result]);
-      // };
-
-      // reader.readAsDataURL(file);
     });
   }, []);
 
@@ -42,22 +36,23 @@ export default function DropAllFile({ onSave }) {
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
           Files
         </span>
-        <div className="showfiles">
-          <ul>
-            {
-              data.map((file, index) => (
-                <li className="mt-3" key={index}>
-                  {file.path} - {file.size} bytes
-                  <span className="ms-2">
-                    <Link to="#" onClick={() => handleFileDelete(file)}>
-                        <img src="../img/removeIcon.svg" alt="" />
-                    </Link>
-                  </span>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
+      </div>
+
+      <div className="showfiles">
+        <ul>
+          {
+            data.map((file, index) => (
+              <li className="mt-3" key={index}>
+                {file.path} - {file.size} bytes
+                <span className="ms-2">
+                  <Link to="#" onClick={() => handleFileDelete(file)}>
+                      <img src="../img/removeIcon.svg" alt="" />
+                  </Link>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </div>
   );

@@ -50,27 +50,28 @@ export default function DropAllFile({ onSave }) {
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
           Files
         </span>
-       
-        <div className="showfiles">
-          <ul>
-            {
-              data.map((file, index) => (
-                <li className="mt-3" key={index}>
-                  <img src={getBase64(file) || currentURI} alt="cover_file" />
-                  <span className="ms-2">
-                    <Link to="#" onClick={() => handleFileDelete(file)}>
-                        <img src="../img/removeIcon.svg" alt="" />
-                    </Link>
-                  </span>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
+      </div>
+      
+      <div className="showfiles">
+        <ul>
+          {
+            data.map((file, index) => (
+              <li className="mt-3" key={index}>
+                <img src={getBase64(file) || currentURI} alt="cover_file" />
+                <span className="ms-2">
+                  <Link to="#" onClick={() => handleFileDelete(file)}>
+                      <img src="../img/removeIcon.svg" alt="" />
+                  </Link>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </div>
   );
 }
+
 const thumb = {
   display: "flex",
 
