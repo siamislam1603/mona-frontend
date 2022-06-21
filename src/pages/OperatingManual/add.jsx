@@ -471,13 +471,23 @@ const AddOperatingManual = () => {
                             'operatingManualData---->fxsfdsf',
                             operatingManualData
                           )}
-                          <MyEditor
-                            operatingManual={{ ...operatingManualData }}
-                            errors={errors}
-                            handleChange={(e, data) => {
-                              setOperatingManualField(e, data);
-                            }}
-                          />
+                          {location?.state?.id &&
+                          location?.state?.category_name ? (
+                            <MyEditor
+                              operatingManual={{ ...operatingManualData }}
+                              errors={errors}
+                              handleChange={(e, data) => {
+                                setOperatingManualField(e, data);
+                              }}
+                            />
+                          ) : (
+                            <MyEditor
+                              errors={errors}
+                              handleChange={(e, data) => {
+                                setOperatingManualField(e, data);
+                              }}
+                            />
+                          )}
                         </Form.Group>
                       </Col>
                     </Row>
