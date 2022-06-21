@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import WelcomeMsg from "../components/WelcomeMsg";
-import { BASE_URL } from "../components/App";
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import WelcomeMsg from '../components/WelcomeMsg';
+import { BASE_URL } from '../components/App';
 import validateSignInForm from '../helpers/validateSignInForm';
-import axios from "axios";
+import axios from 'axios';
 
 const initialFields = {
-  email: "",
-  password: ""
-}
+  email: '',
+  password: '',
+};
 
 const SignIn = () => {
-  const [topErrorMessage, setTopErrorMessage] = useState("");
+  const [topErrorMessage, setTopErrorMessage] = useState('');
   const [hide, setHide] = useState(true);
   const [fields, setFields] = useState(initialFields);
   const { email, password } = fields;
@@ -23,35 +23,44 @@ const SignIn = () => {
 
   const verifyUser = async (data) => {
     const res = await axios.post(`${BASE_URL}/auth/login`, data);
-    if(res.status === 200 && res.data.status === 'success') {
-      localStorage.setItem("token", res.data.accessToken);
-      localStorage.setItem("user_id", res.data.user.id);
-      localStorage.setItem("user_role", res.data.user.role);
-      localStorage.setItem("user_name", res.data.user.name);
-      window.location.href="/user-management";
-    } else if(res.status === 200 && res.data.status === 'fail') {
+    if (res.status === 200 && res.data.status === 'success') {
+      localStorage.setItem('token', res.data.accessToken);
+      localStorage.setItem('user_id', res.data.user.id);
+      localStorage.setItem('user_role', res.data.user.role);
+      localStorage.setItem('user_name', res.data.user.name);
+      if (res.data.user.role === 'Franchisor Admin')
+        window.location.href = '/franchisor-dashboard';
+      else if (res.data.user.role === 'Coordinator')
+        window.location.href = '/coordinator-dashboard';
+      else if (res.data.user.role === 'Franchisee Admin')
+        window.location.href = '/franchisee-dashboard';
+      else if (res.data.user.role === 'Educator')
+        window.location.href = '/educator-dashboard';
+      else if (res.data.user.role === 'Guardian')
+        window.location.href = '/parents-dashboard';
+    } else if (res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);
     }
-  }
+  };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFields({
-      ...fields,      
-      [name]: value 
+      ...fields,
+      [name]: value,
     });
-  }
+  };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setFormErrors(validateSignInForm(fields));
     setIsSubmit(true);
-  }
+  };
 
   useEffect(() => {
-    if(Object.keys(formErrors).length === 0 && isSubmit === true) {
+    if (Object.keys(formErrors).length === 0 && isSubmit === true) {
       let data = new FormData();
-      for(let [key, value] of Object.entries(fields)) {
+      for (let [key, value] of Object.entries(fields)) {
         data.append(`${key}`, `${value}`);
       }
       verifyUser(fields);
@@ -72,10 +81,15 @@ const SignIn = () => {
                   <p>Log In</p>
                 </div>
 
-                {topErrorMessage && <span className="toast-error">{topErrorMessage}</span>}
-                
+                {topErrorMessage && (
+                  <span className="toast-error">{topErrorMessage}</span>
+                )}
+
                 <Form className="login_form" onSubmit={handleSubmit}>
-                  <Form.Group className="mb-4 form-group" controlId="formBasicEmail">
+                  <Form.Group
+                    className="mb-4 form-group"
+                    controlId="formBasicEmail"
+                  >
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control
                       type="email"
@@ -85,14 +99,19 @@ const SignIn = () => {
                       name="email"
                       value={email}
                     />
-                    <span className="error">{!fields.email && formErrors.email}</span>
+                    <span className="error">
+                      {!fields.email && formErrors.email}
+                    </span>
                   </Form.Group>
 
-                  <Form.Group className="mb-4 form-group" controlId="formBasicPassword">
+                  <Form.Group
+                    className="mb-4 form-group"
+                    controlId="formBasicPassword"
+                  >
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       className="form_input"
-                      type={!hide ? "text" : "password"}
+                      type={!hide ? 'text' : 'password'}
                       placeholder="Password"
                       name="password"
                       onChange={handleChange}
@@ -115,10 +134,15 @@ const SignIn = () => {
                         icon={faEyeSlash}
                       />
                     )}
-                    <span className="error">{!fields.password && formErrors.password}</span>
+                    <span className="error">
+                      {!fields.password && formErrors.password}
+                    </span>
                   </Form.Group>
 
-                  <Form.Group className="mb-4 form-group" controlId="formBasicCheckbox">
+                  <Form.Group
+                    className="mb-4 form-group"
+                    controlId="formBasicCheckbox"
+                  >
                     <Row>
                       <Col>
                         <Form.Check type="checkbox" label="Remember me" />
@@ -134,7 +158,9 @@ const SignIn = () => {
                     <Button variant="primary" className="w-100" type="submit">
                       Log in
                     </Button>
-                    <div className="kids-art"><img src="../img/kid-art.svg" alt=""/></div>
+                    <div className="kids-art">
+                      <img src="../img/kid-art.svg" alt="" />
+                    </div>
                   </div>
 
                   {/*<div className="custom_bottom">
