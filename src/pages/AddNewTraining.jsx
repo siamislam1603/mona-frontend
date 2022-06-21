@@ -269,9 +269,13 @@ const AddNewTraining = () => {
                           />
                           <span className="rtag">hours</span>
                         </Form.Group>
+                        {/* <Form.Control.Feedback type="invalid">
+                            {errors.select_hour}
+                          </Form.Control.Feedback> */}
                       </Col>
                     </Row>
                     <Row>
+       
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image :</Form.Label>
@@ -389,8 +393,8 @@ const AddNewTraining = () => {
                       <label htmlFor="yes1">
                         <input
                           type="radio"
-                          value="Yes"
-                          name="form_template_select1"
+                          value="Y"
+                          name="roles"
                           id="yes1"
                           onChange={(event) => {
                             setTrainingData((prevState) => ({
@@ -408,8 +412,8 @@ const AddNewTraining = () => {
                       <label htmlFor="no1">
                         <input
                           type="radio"
-                          value="No"
-                          name="form_template_select1"
+                          value="N"
+                          name="roles"
                           id="no1"
                           onChange={(event) => {
                             setTrainingData((prevState) => ({
@@ -424,6 +428,7 @@ const AddNewTraining = () => {
                       </label>
                     </div>
                   </div>
+              
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
@@ -432,6 +437,7 @@ const AddNewTraining = () => {
                   <Multiselect
                     placeholder="Select User Roles"
                     displayValue="key"
+                    onChange={() => {console.log("Change")}}
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
                     onRemove={function noRefCheck(data) {
@@ -495,6 +501,8 @@ const AddNewTraining = () => {
                     }}
                     options={fetchedFranchiseeUsers}
                   />
+                 {/* {roles ? null: <p>please choose roles</p>} */}
+                  
                 </Form.Group>
               </Col>
             </Row>

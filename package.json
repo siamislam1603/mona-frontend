@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@api.video/player-sdk": "^1.2.21",
     "@ckeditor/ckeditor5-build-classic": "^34.0.0",
     "@ckeditor/ckeditor5-react": "^5.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
