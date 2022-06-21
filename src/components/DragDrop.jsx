@@ -28,7 +28,8 @@ export default function DropAllFile({ onSave }) {
     setData(temp);
   }
 
-  // Converting the current image to BASE-64 URI string
+  // Converting the current image to BASE-64 URI string,
+  // so that it could be used with <Img>:src tag.
   const getBase64 = (file) => {
     let reader = new FileReader(); 
     reader.readAsDataURL(file);
