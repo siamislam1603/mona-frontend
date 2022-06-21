@@ -66,7 +66,7 @@ const Main = () => {
             </Protected>
           }
         />
-          <Route
+        <Route
           path="/child-enrollment"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -86,7 +86,7 @@ const Main = () => {
           }
         />
 
-      <Route
+        <Route
           path="/new-franchisees"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -105,7 +105,6 @@ const Main = () => {
             </Protected>
           }
         />
-
 
         <Route
           path="/user-management"
@@ -132,7 +131,11 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <FranchisorDashboard />
+              {localStorage.getItem('user_role') === 'Franchisor Admin' ? (
+                <FranchisorDashboard />
+              ) : (
+                <SignIn />
+              )}
             </Protected>
           }
         />
@@ -142,7 +145,11 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <FranchiseeDashboard />
+              {localStorage.getItem('user_role') === 'Franchisee Admin' ? (
+                <FranchiseeDashboard />
+              ) : (
+                <SignIn />
+              )}
             </Protected>
           }
         />
@@ -152,7 +159,11 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <EducatorDashboard />
+              {localStorage.getItem('user_role') === 'Educator' ? (
+                <EducatorDashboard />
+              ) : (
+                <SignIn />
+              )}
             </Protected>
           }
         />
@@ -162,7 +173,11 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <CoordinatorDashboard />
+              {localStorage.getItem('user_role') === 'Coordinator' ? (
+                <CoordinatorDashboard />
+              ) : (
+                <SignIn />
+              )}
             </Protected>
           }
         />
@@ -172,7 +187,12 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <ParentsDashboard />
+
+              {localStorage.getItem('user_role') === 'Guardian' ? (
+                <ParentsDashboard />
+              ) : (
+                <SignIn />
+              )}
             </Protected>
           }
         />
