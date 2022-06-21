@@ -1,16 +1,16 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState, useEffect } from "react";
-import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
-import LeftNavbar from "../../../components/LeftNavbar";
-import TopHeader from "../../../components/TopHeader";
-import Multiselect from "multiselect-react-dropdown";
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState, useEffect } from 'react';
+import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import LeftNavbar from '../../../components/LeftNavbar';
+import TopHeader from '../../../components/TopHeader';
+import Multiselect from 'multiselect-react-dropdown';
 import {
   createFormFieldValidation,
   createFormSettingModelValidation,
-} from "../../../helpers/validation";
-import { BASE_URL } from "../../../components/App";
-import { useLocation, useNavigate } from "react-router-dom";
+} from '../../../helpers/validation';
+import { BASE_URL } from '../../../components/App';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 let counter = 0;
 let selectedFranchisee = [];
@@ -29,12 +29,12 @@ const AddFormField = (props) => {
   const [userRole, setUserRole] = useState([]);
   const [groupModelData, setGroupModelData] = useState([]);
   const [form, setForm] = useState([
-    { field_type: "text" },
-    { field_type: "radio", option: [{ "": "" }, { "": "" }] },
-    { field_type: "checkbox", option: [{ "": "" }, { "": "" }] },
+    { field_type: 'text' },
+    { field_type: 'radio', option: [{ '': '' }, { '': '' }] },
+    { field_type: 'checkbox', option: [{ '': '' }, { '': '' }] },
   ]);
   const [formSettingData, setFormSettingData] = useState({});
-  const [sectionTitle, setSectionTitle] = useState("");
+  const [sectionTitle, setSectionTitle] = useState('');
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
@@ -46,12 +46,12 @@ const AddFormField = (props) => {
     }
   }, []);
   function onSelectFranchisee(optionsList, selectedItem) {
-    console.log("selected_item---->2", selectedItem);
+    console.log('selected_item---->2', selectedItem);
     selectedFranchisee.push({
       id: selectedItem.id,
       role_label: selectedItem.registered_name,
     });
-    console.log("selected_item---->1selectedFranchisee", selectedFranchisee);
+    console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
   }
   function onRemoveFranchisee(selectedList, removedItem) {
     const index = selectedFranchisee.findIndex((object) => {
@@ -61,12 +61,12 @@ const AddFormField = (props) => {
   }
 
   function onSelectUserRole(optionsList, selectedItem) {
-    console.log("selected_item---->2", selectedItem);
+    console.log('selected_item---->2', selectedItem);
     selectedUserRole.push({
       id: selectedItem.id,
       role_label: selectedItem.role_label,
     });
-    console.log("selected_item---->1selectedFranchisee", selectedFranchisee);
+    console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
   }
   function onRemoveUserRole(selectedList, removedItem) {
     const index = selectedUserRole.findIndex((object) => {
@@ -76,23 +76,23 @@ const AddFormField = (props) => {
   }
   const getUserRoleAndFranchiseeData = () => {
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
     };
 
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         setUserRole(res?.userRoleList);
-        console.log("response0-------->1", res?.userRoleList);
+        console.log('response0-------->1', res?.userRoleList);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
     fetch(`${BASE_URL}/role/franchisee`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         setFranchisee(res?.franchiseeList);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   const setFormSettingFields = (field, value) => {
     setFormSettingData({ ...formSettingData, [field]: value });
@@ -116,47 +116,47 @@ const AddFormField = (props) => {
     setCount(counter);
     const tempArr = form;
     const tempObj = tempArr[index];
-    const tempOption = tempObj["option"];
-    if (field === "option") {
+    const tempOption = tempObj['option'];
+    if (field === 'option') {
       const keyOfOption = tempOption[inner_index];
-      keyOfOption[key]["option"][inner_inner_index] = { [value]: value };
+      keyOfOption[key]['option'][inner_inner_index] = { [value]: value };
       tempOption[inner_index] = keyOfOption;
-      tempArr[index]["option"] = tempOption;
+      tempArr[index]['option'] = tempOption;
       setForm(tempArr);
     } else if (
-      field === "field_type" &&
-      (value === "radio" ||
-        value === "checkbox" ||
-        value === "dropdown_selection")
+      field === 'field_type' &&
+      (value === 'radio' ||
+        value === 'checkbox' ||
+        value === 'dropdown_selection')
     ) {
       const keyOfOption = tempOption[inner_index];
 
-      if (!keyOfOption[key]["option"]) {
-        console.log("Hello");
-        keyOfOption[key]["option"] = [{ "": "" }, { "": "" }];
+      if (!keyOfOption[key]['option']) {
+        console.log('Hello');
+        keyOfOption[key]['option'] = [{ '': '' }, { '': '' }];
       }
 
       keyOfOption[key][field] = value;
       tempOption[inner_index] = keyOfOption;
-      console.log("tempOption[inner_index]", tempOption[inner_index]);
-      tempArr[index]["option"] = tempOption;
+      console.log('tempOption[inner_index]', tempOption[inner_index]);
+      tempArr[index]['option'] = tempOption;
       console.log(
-        "keyOfOption[key][option][inner_inner_index]",
-        tempArr[index]["option"]
+        'keyOfOption[key][option][inner_inner_index]',
+        tempArr[index]['option']
       );
       setForm(tempArr);
     } else {
       const keyOfOption = tempOption[inner_index];
       keyOfOption[key][field] = value;
       tempOption[inner_index] = keyOfOption;
-      tempArr[index]["option"] = tempOption;
+      tempArr[index]['option'] = tempOption;
       setForm(tempArr);
     }
   };
   const getFormData = () => {
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
     };
 
     fetch(
@@ -173,12 +173,12 @@ const AddFormField = (props) => {
           selectedUserRole = JSON.parse(res?.result?.user);
         }
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   const getFormField = () => {
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
     };
 
     fetch(
@@ -195,9 +195,9 @@ const AddFormField = (props) => {
             }
             if (item?.section_name) {
               if (
-                !sectionData.includes(item?.section_name.split("_").join(" "))
+                !sectionData.includes(item?.section_name.split('_').join(' '))
               ) {
-                sectionData.push(item?.section_name.split("_").join(" "));
+                sectionData.push(item?.section_name.split('_').join(' '));
               }
             }
           });
@@ -213,18 +213,18 @@ const AddFormField = (props) => {
           }
         }
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   const deleteFormField = (id) => {
     var requestOptions = {
-      method: "DELETE",
-      redirect: "follow",
+      method: 'DELETE',
+      redirect: 'follow',
     };
 
     fetch(`${BASE_URL}/field/${id}`, requestOptions)
       .then((response) => response.json())
-      .then((result) => console.log("delete data successfully!"))
-      .catch((error) => console.log("error", error));
+      .then((result) => console.log('delete data successfully!'))
+      .catch((error) => console.log('error', error));
   };
   const onSubmitSetting = (e) => {
     e.preventDefault();
@@ -234,33 +234,33 @@ const AddFormField = (props) => {
       selectedFranchisee,
       selectedUserRole
     );
-    
+
     if (Object.keys(newErrors).length > 0) {
       setFormSettingError(newErrors);
     } else {
       var myHeaders = new Headers();
-      console.log("Select Franchisee", selectedFranchisee);
-      console.log("Select User Role", selectedUserRole);
-      myHeaders.append("Content-Type", "application/json");
+      console.log('Select Franchisee', selectedFranchisee);
+      console.log('Select User Role', selectedUserRole);
+      myHeaders.append('Content-Type', 'application/json');
       let data = formSettingData;
       if (
-        data["applicable_to_franchisee"] === "No" ||
-        data["applicable_to_franchisee"] === false
+        data['applicable_to_franchisee'] === 'No' ||
+        data['applicable_to_franchisee'] === false
       )
-        data["franchisee"] = JSON.stringify(selectedFranchisee);
+        data['franchisee'] = JSON.stringify(selectedFranchisee);
       if (
-        data["applicable_to_user"] === "No" ||
-        data["applicable_to_user"] === false
+        data['applicable_to_user'] === 'No' ||
+        data['applicable_to_user'] === false
       )
-        data["user"] = JSON.stringify(selectedUserRole);
+        data['user'] = JSON.stringify(selectedUserRole);
       fetch(`${BASE_URL}/form?form_name=${location?.state?.form_name}`, {
-        method: "post",
+        method: 'post',
         body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
         .then((res) => {
-          alert("Submit Successfully---->");
+          alert('Submit Successfully---->');
           setFormSettingData(res?.result);
           if (res.result.franchisee) {
             selectedFranchisee = JSON.parse(res?.result?.franchisee);
@@ -268,27 +268,27 @@ const AddFormField = (props) => {
           if (res.result.user) {
             selectedUserRole = JSON.parse(res?.result?.user);
           }
-          console.log("selected Franchisee--->", selectedFranchisee);
-          console.log("selected UserRole------>", selectedUserRole);
+          console.log('selected Franchisee--->', selectedFranchisee);
+          console.log('selected UserRole------>', selectedUserRole);
         });
     }
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    alert("Hello");
+    alert('Hello');
     const newErrors = createFormFieldValidation(form);
-    console.log("newErrors--onSubmit--->",newErrors);
+    console.log('newErrors--onSubmit--->', newErrors);
     let error_flag = false;
     newErrors.map((item) => {
       if (Object.values(item)[0]) {
         if (Array.isArray(Object.values(item)[0])) {
           Object.values(item)[0].map((inner_item) => {
-            if (inner_item || !inner_item === "") {
+            if (inner_item || !inner_item === '') {
               error_flag = true;
             }
           });
         } else {
-          if (!item === "" || item) {
+          if (!item === '' || item) {
             error_flag = true;
           }
         }
@@ -298,15 +298,15 @@ const AddFormField = (props) => {
       setErrors(newErrors);
     } else {
       var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/field/add?form_name=${location?.state?.form_name}`, {
-        method: "post",
+        method: 'post',
         body: JSON.stringify(form),
         headers: myHeaders,
       })
         .then((res) => res.json())
         .then((res) => {
-          alert("Submit Successfully---->");
+          alert('Submit Successfully---->');
           res?.result?.map((item) => {
             if (item.option) {
               item.option = JSON.parse(item.option);
@@ -322,22 +322,22 @@ const AddFormField = (props) => {
     setIndex(index);
     const tempArr = form;
     const tempObj = tempArr[index];
-    if (field === "option") {
-      console.log("tempObj----->", tempObj);
-      const tempOption = tempObj["option"];
-      console.log("tempoption---->", tempOption);
+    if (field === 'option') {
+      console.log('tempObj----->', tempObj);
+      const tempOption = tempObj['option'];
+      console.log('tempoption---->', tempOption);
       tempOption[inner_index] = { [value]: value };
-      tempArr[index]["option"] = tempOption;
+      tempArr[index]['option'] = tempOption;
       setForm(tempArr);
     } else if (
-      field === "field_type" &&
-      (value === "radio" ||
-        value === "checkbox" ||
-        value === "dropdown_selection")
+      field === 'field_type' &&
+      (value === 'radio' ||
+        value === 'checkbox' ||
+        value === 'dropdown_selection')
     ) {
-      console.log("Hello field---->", field);
-      console.log("Hello value---->", value);
-      tempObj["option"] = [{ "": "" }, { "": "" }];
+      console.log('Hello field---->', field);
+      console.log('Hello value---->', value);
+      tempObj['option'] = [{ '': '' }, { '': '' }];
       tempObj[field] = value;
       tempArr[index] = tempObj;
       setForm(tempArr);
@@ -348,37 +348,37 @@ const AddFormField = (props) => {
     }
 
     if (!!errors[index][field]) {
-      if (field === "option") {
+      if (field === 'option') {
         let tempErrorArray = errors;
         let tempErrorObj = tempErrorArray[index];
-        tempErrorObj["option"][inner_index] = undefined;
+        tempErrorObj['option'][inner_index] = undefined;
         tempErrorArray[index] = tempErrorObj;
 
         setErrors(tempErrorArray);
         console.log(
-          "option.length--->",
-          tempErrorObj["option"].length,
-          "======",
+          'option.length--->',
+          tempErrorObj['option'].length,
+          '======',
           inner_index,
-          "-------",
-          tempErrorObj["option"]
+          '-------',
+          tempErrorObj['option']
         );
-        console.log("Hello--->", tempErrorArray);
+        console.log('Hello--->', tempErrorArray);
       } else {
         let tempErrorArray = errors;
         let tempErrorObj = tempErrorArray[index];
         delete tempErrorObj[field];
         tempErrorArray[index] = tempErrorObj;
         setErrors(tempErrorArray);
-        console.log("Hello--->", tempErrorArray);
+        console.log('Hello--->', tempErrorArray);
       }
     }
   };
   // console.log("conditionModelData==>", conditionModelData);
   return (
     <>
-      {console.log("form--->", form)}
-      {console.log("formSettingData---->", formSettingData)}
+      {console.log('form--->', form)}
+      {console.log('formSettingData---->', formSettingData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -393,7 +393,7 @@ const AddFormField = (props) => {
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
-                          navigate("/form/add");
+                          navigate('/form/add');
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
@@ -455,7 +455,7 @@ const AddFormField = (props) => {
                                       setForm(data);
                                     }}
                                   >
-                                    <img src="../../img/removeIcon.svg" />{" "}
+                                    <img src="../../img/removeIcon.svg" />{' '}
                                     Remove
                                   </Button>
                                 </div>
@@ -504,7 +504,7 @@ const AddFormField = (props) => {
                                   <option
                                     value="text"
                                     selected={
-                                      form[index]?.field_type === "text"
+                                      form[index]?.field_type === 'text'
                                     }
                                   >
                                     Text Answer
@@ -512,7 +512,7 @@ const AddFormField = (props) => {
                                   <option
                                     value="radio"
                                     selected={
-                                      form[index]?.field_type === "radio"
+                                      form[index]?.field_type === 'radio'
                                     }
                                   >
                                     Multiple Choice
@@ -520,7 +520,7 @@ const AddFormField = (props) => {
                                   <option
                                     value="checkbox"
                                     selected={
-                                      form[index]?.field_type === "checkbox"
+                                      form[index]?.field_type === 'checkbox'
                                     }
                                   >
                                     Checkboxes
@@ -528,7 +528,7 @@ const AddFormField = (props) => {
                                   <option
                                     value="date"
                                     selected={
-                                      form[index]?.field_type === "date"
+                                      form[index]?.field_type === 'date'
                                     }
                                   >
                                     Date
@@ -536,7 +536,7 @@ const AddFormField = (props) => {
                                   <option
                                     value="image_upload"
                                     selected={
-                                      form[index]?.field_type === "image_upload"
+                                      form[index]?.field_type === 'image_upload'
                                     }
                                   >
                                     Image Upload
@@ -545,7 +545,7 @@ const AddFormField = (props) => {
                                     value="document_attachment"
                                     selected={
                                       form[index]?.field_type ===
-                                      "document_attachment"
+                                      'document_attachment'
                                     }
                                   >
                                     Document Attachment
@@ -553,7 +553,7 @@ const AddFormField = (props) => {
                                   <option
                                     value="signature"
                                     selected={
-                                      form[index]?.field_type === "signature"
+                                      form[index]?.field_type === 'signature'
                                     }
                                   >
                                     Signature
@@ -562,7 +562,7 @@ const AddFormField = (props) => {
                                     value="instruction_text"
                                     selected={
                                       form[index]?.field_type ===
-                                      "instruction_text"
+                                      'instruction_text'
                                     }
                                   >
                                     Instruction Text
@@ -570,7 +570,7 @@ const AddFormField = (props) => {
                                   <option
                                     value="headings"
                                     selected={
-                                      form[index]?.field_type === "headings"
+                                      form[index]?.field_type === 'headings'
                                     }
                                   >
                                     Headings
@@ -579,7 +579,7 @@ const AddFormField = (props) => {
                                     value="dropdown_selection"
                                     selected={
                                       form[index]?.field_type ===
-                                      "dropdown_selection"
+                                      'dropdown_selection'
                                     }
                                   >
                                     Drop down selection
@@ -588,28 +588,28 @@ const AddFormField = (props) => {
                                 <div className="input-text-img">
                                   <img
                                     src={
-                                      form[index]?.field_type === "text"
-                                        ? "../../img/input-text-icon.svg"
-                                        : form[index]?.field_type === "radio"
-                                        ? "../../img/multiple-choice-icon.svg"
-                                        : form[index]?.field_type === "checkbox"
-                                        ? "../../img/check_boxIcon.svg"
-                                        : "../../img/input-text-icon.svg"
+                                      form[index]?.field_type === 'text'
+                                        ? '../../img/input-text-icon.svg'
+                                        : form[index]?.field_type === 'radio'
+                                        ? '../../img/multiple-choice-icon.svg'
+                                        : form[index]?.field_type === 'checkbox'
+                                        ? '../../img/check_boxIcon.svg'
+                                        : '../../img/input-text-icon.svg'
                                     }
                                   />
                                 </div>
                               </div>
                             </Col>
-                            {form[index]?.field_type === "dropdown_selection" ||
-                            form[index]?.field_type === "radio" ||
-                            form[index]?.field_type === "checkbox" ? (
+                            {form[index]?.field_type === 'dropdown_selection' ||
+                            form[index]?.field_type === 'radio' ||
+                            form[index]?.field_type === 'checkbox' ? (
                               <>
                                 {form[index]?.option?.map(
                                   (item, inner_index) => {
                                     return (
                                       <Col sm={6}>
                                         {console.log(
-                                          "item---->",
+                                          'item---->',
                                           item[Object.keys(item)[0]]
                                         )}
                                         <div className="my-form-input">
@@ -626,7 +626,7 @@ const AddFormField = (props) => {
                                               );
                                             }}
                                             placeholder={
-                                              "Option " + (inner_index + 1)
+                                              'Option ' + (inner_index + 1)
                                             }
                                             isInvalid={
                                               errors[index]?.option
@@ -641,7 +641,7 @@ const AddFormField = (props) => {
                                               ? errors[index]?.option[
                                                   inner_index
                                                 ]
-                                              : ""}
+                                              : ''}
                                           </Form.Control.Feedback>
                                           <div className="delete-icon">
                                             <img
@@ -650,11 +650,11 @@ const AddFormField = (props) => {
                                                 const tempArr = form;
                                                 const tempObj = tempArr[index];
                                                 if (
-                                                  tempObj["option"].length > 2
+                                                  tempObj['option'].length > 2
                                                 ) {
                                                   counter++;
                                                   setCount(counter);
-                                                  tempObj["option"].splice(
+                                                  tempObj['option'].splice(
                                                     inner_index,
                                                     1
                                                   );
@@ -679,9 +679,9 @@ const AddFormField = (props) => {
                             <Col md={6}>
                               <div className="apply-condition">
                                 {form[index]?.field_type ===
-                                  "dropdown_selection" ||
-                                form[index]?.field_type === "radio" ||
-                                form[index]?.field_type === "checkbox" ? (
+                                  'dropdown_selection' ||
+                                form[index]?.field_type === 'radio' ||
+                                form[index]?.field_type === 'checkbox' ? (
                                   <>
                                     <Button
                                       onClick={() => {
@@ -689,7 +689,7 @@ const AddFormField = (props) => {
                                         setCount(counter);
                                         const tempArr = form;
                                         const tempObj = tempArr[index];
-                                        tempObj["option"].push({ "": "" });
+                                        tempObj['option'].push({ '': '' });
                                         tempArr[index] = tempObj;
                                         setForm(tempArr);
                                       }}
@@ -703,10 +703,10 @@ const AddFormField = (props) => {
                                         setIndex(index);
                                         const tempArr = form;
                                         const tempObj = tempArr[index];
-                                        const tempOption = tempObj["option"];
+                                        const tempOption = tempObj['option'];
 
                                         tempOption.map((item) => {
-                                          if (!(Object.keys(item)[0] === "")) {
+                                          if (!(Object.keys(item)[0] === '')) {
                                             fillOptionCounter++;
                                           }
                                         });
@@ -722,19 +722,19 @@ const AddFormField = (props) => {
                                               Object.values(item)[0]
                                             ) {
                                               item[Object.keys(item)[0]] = {
-                                                field_type: "text",
+                                                field_type: 'text',
                                                 option: [
-                                                  { "": "" },
-                                                  { "": "" },
+                                                  { '': '' },
+                                                  { '': '' },
                                                 ],
                                               };
                                             }
                                           });
                                         } else {
-                                          alert("Please Fill Option First");
+                                          alert('Please Fill Option First');
                                         }
 
-                                        tempArr[index]["option"] = tempOption;
+                                        tempArr[index]['option'] = tempOption;
 
                                         setForm(tempArr);
                                       }}
@@ -792,10 +792,10 @@ const AddFormField = (props) => {
                           variant="link"
                           onClick={() => {
                             let data = form;
-                            console.log("data----?", data);
+                            console.log('data----?', data);
                             counter++;
                             setCount(counter);
-                            data.push({ field_type: "text" });
+                            data.push({ field_type: 'text' });
                             setForm(data);
                           }}
                         >
@@ -832,21 +832,21 @@ const AddFormField = (props) => {
                         </Modal.Header>
                         <Modal.Body>
                           <div className="modal-condtion">
-                            {form[Index]?.["option"]?.map((item, index) => {
+                            {form[Index]?.['option']?.map((item, index) => {
                               return (
                                 <Row>
                                   {console.log(
-                                    "item------of---model=---->",
+                                    'item------of---model=---->',
                                     Object.values(item)[0]
                                   )}
                                   <Col sm={12}>
                                     <Form.Label className="formlabel modal-m-lable">
-                                      If{" "}
+                                      If{' '}
                                       <span className="modal-lable">
                                         {Object.keys(item) &&
-                                        !(Object.keys(item)[0] === "")
+                                        !(Object.keys(item)[0] === '')
                                           ? Object.keys(item)[0]
-                                          : "Option " + (index + 1)}{" "}
+                                          : 'Option ' + (index + 1)}{' '}
                                       </span>
                                       is selected,
                                     </Form.Label>
@@ -859,7 +859,7 @@ const AddFormField = (props) => {
                                       type="text"
                                       name="field_label"
                                       value={
-                                        Object.values(item)[0]["field_label"]
+                                        Object.values(item)[0]['field_label']
                                       }
                                       placeholder="Some text here for the label"
                                       onChange={(e) => {
@@ -893,8 +893,8 @@ const AddFormField = (props) => {
                                           value="text"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "text"
+                                              'field_type'
+                                            ] === 'text'
                                           }
                                         >
                                           Text Answer
@@ -903,8 +903,8 @@ const AddFormField = (props) => {
                                           value="radio"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "radio"
+                                              'field_type'
+                                            ] === 'radio'
                                           }
                                         >
                                           Multiple Choice
@@ -913,8 +913,8 @@ const AddFormField = (props) => {
                                           value="checkbox"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "checkbox"
+                                              'field_type'
+                                            ] === 'checkbox'
                                           }
                                         >
                                           Checkboxes
@@ -923,8 +923,8 @@ const AddFormField = (props) => {
                                           value="date"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "date"
+                                              'field_type'
+                                            ] === 'date'
                                           }
                                         >
                                           Date
@@ -933,8 +933,8 @@ const AddFormField = (props) => {
                                           value="image_upload"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "image_upload"
+                                              'field_type'
+                                            ] === 'image_upload'
                                           }
                                         >
                                           Image Upload
@@ -943,8 +943,8 @@ const AddFormField = (props) => {
                                           value="document_attachment"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "document_attachment"
+                                              'field_type'
+                                            ] === 'document_attachment'
                                           }
                                         >
                                           Document Attachment
@@ -953,8 +953,8 @@ const AddFormField = (props) => {
                                           value="signature"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "signature"
+                                              'field_type'
+                                            ] === 'signature'
                                           }
                                         >
                                           Signature
@@ -963,8 +963,8 @@ const AddFormField = (props) => {
                                           value="instruction_text"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "instruction_text"
+                                              'field_type'
+                                            ] === 'instruction_text'
                                           }
                                         >
                                           Instruction Text
@@ -973,8 +973,8 @@ const AddFormField = (props) => {
                                           value="headings"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "headings"
+                                              'field_type'
+                                            ] === 'headings'
                                           }
                                         >
                                           Headings
@@ -983,8 +983,8 @@ const AddFormField = (props) => {
                                           value="dropdown_selection"
                                           selected={
                                             Object.values(item)[0][
-                                              "field_type"
-                                            ] === "dropdown_selection"
+                                              'field_type'
+                                            ] === 'dropdown_selection'
                                           }
                                         >
                                           Drop down selection
@@ -996,18 +996,18 @@ const AddFormField = (props) => {
                                     </div>
                                   </Col>
                                   {item[Object.keys(item)[0]].field_type ===
-                                    "radio" ||
+                                    'radio' ||
                                   item[Object.keys(item)[0]].field_type ===
-                                    "checkbox" ||
+                                    'checkbox' ||
                                   item[Object.keys(item)[0]].field_type ===
-                                    "dropdown_selection" ? (
+                                    'dropdown_selection' ? (
                                     <>
-                                      {item[Object.keys(item)[0]]["option"].map(
+                                      {item[Object.keys(item)[0]]['option'].map(
                                         (inner_item, inner_index) => {
                                           return (
                                             <Col lg={6}>
                                               {console.log(
-                                                "inner_item--->",
+                                                'inner_item--->',
                                                 inner_item
                                               )}
                                               <div className="my-form-input my-form-input-modal">
@@ -1020,7 +1020,7 @@ const AddFormField = (props) => {
                                                     ]
                                                   }
                                                   placeholder={
-                                                    "Option " +
+                                                    'Option ' +
                                                     (inner_index + 1)
                                                   }
                                                   onChange={(e) => {
@@ -1046,7 +1046,7 @@ const AddFormField = (props) => {
                                                       tempArr[Index];
 
                                                     const tempOption =
-                                                      tempObj["option"];
+                                                      tempObj['option'];
 
                                                     const keyOfOption =
                                                       tempOption[index];
@@ -1055,13 +1055,13 @@ const AddFormField = (props) => {
                                                     ) {
                                                       keyOfOption[
                                                         Object.keys(item)[0]
-                                                      ]["option"].splice(
+                                                      ]['option'].splice(
                                                         inner_index,
                                                         1
                                                       );
                                                       tempOption[index] =
                                                         keyOfOption;
-                                                      tempArr[Index]["option"] =
+                                                      tempArr[Index]['option'] =
                                                         tempOption;
                                                       setForm(tempArr);
                                                       counter++;
@@ -1082,7 +1082,7 @@ const AddFormField = (props) => {
                                   <div className="apply-condition pb-2">
                                     {!(
                                       item[Object.keys(item)[0]].field_type ===
-                                      "text"
+                                      'text'
                                     ) ? (
                                       <Button
                                         onClick={() => {
@@ -1090,14 +1090,14 @@ const AddFormField = (props) => {
                                           setCount(counter);
                                           const tempArr = form;
                                           const tempObj = tempArr[Index];
-                                          const tempOption = tempObj["option"];
+                                          const tempOption = tempObj['option'];
 
                                           const keyOfOption = tempOption[index];
                                           keyOfOption[Object.keys(item)[0]][
-                                            "option"
-                                          ].push({ "": "" });
+                                            'option'
+                                          ].push({ '': '' });
                                           tempOption[index] = keyOfOption;
-                                          tempArr[Index]["option"] = tempOption;
+                                          tempArr[Index]['option'] = tempOption;
                                           setForm(tempArr);
                                         }}
                                       >
@@ -1170,15 +1170,15 @@ const AddFormField = (props) => {
                                     name="section_name"
                                     checked={
                                       groupModelData[Index]?.section_name ===
-                                      item.toLowerCase().split(" ").join("_")
+                                      item.toLowerCase().split(' ').join('_')
                                     }
                                     onChange={(e) => {
                                       counter++;
                                       setCount(counter);
                                       e.target.value = e.target.value
                                         .toLocaleLowerCase()
-                                        .split(" ")
-                                        .join("_");
+                                        .split(' ')
+                                        .join('_');
                                       const tempArr = groupModelData;
                                       const tempObj = tempArr[Index];
                                       tempObj[e.target.name] = e.target.value;
@@ -1232,14 +1232,14 @@ const AddFormField = (props) => {
                                 />
                                 <Button
                                   className="right-button"
-                                  disabled={sectionTitle === "" ? true : false}
+                                  disabled={sectionTitle === '' ? true : false}
                                   onClick={() => {
                                     counter++;
                                     setCount(counter);
                                     let sectionData = section;
                                     sectionData.push(sectionTitle);
                                     setSection(sectionData);
-                                    setSectionTitle("");
+                                    setSectionTitle('');
                                     setCreateSectionFlag(false);
                                   }}
                                 >
@@ -1377,7 +1377,7 @@ const AddFormField = (props) => {
                                         formSettingData?.applicable_to_franchisee ===
                                           true ||
                                         formSettingData?.applicable_to_franchisee ===
-                                          "Yes"
+                                          'Yes'
                                       }
                                     />
                                     <span className="radio-round"></span>
@@ -1401,7 +1401,7 @@ const AddFormField = (props) => {
                                         formSettingData?.applicable_to_franchisee ===
                                           false ||
                                         formSettingData?.applicable_to_franchisee ===
-                                          "No"
+                                          'No'
                                       }
                                     />
                                     <span className="radio-round"></span>
@@ -1411,7 +1411,7 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          {formSettingData?.applicable_to_franchisee === "No" ||
+                          {formSettingData?.applicable_to_franchisee === 'No' ||
                           formSettingData?.applicable_to_franchisee ===
                             false ? (
                             <Col lg={9} md={6} className="mt-3 mt-md-0">
@@ -1455,7 +1455,7 @@ const AddFormField = (props) => {
                                         formSettingData?.applicable_to_user ==
                                           true ||
                                         formSettingData?.applicable_to_user ===
-                                          "Yes"
+                                          'Yes'
                                       }
                                     />
                                     <span className="radio-round"></span>
@@ -1479,7 +1479,7 @@ const AddFormField = (props) => {
                                         formSettingData?.applicable_to_user ==
                                           false ||
                                         formSettingData?.applicable_to_user ===
-                                          "No"
+                                          'No'
                                       }
                                     />
                                     <span className="radio-round"></span>
@@ -1489,7 +1489,7 @@ const AddFormField = (props) => {
                               </div>
                             </Form.Group>
                           </Col>
-                          {formSettingData?.applicable_to_user === "No" ||
+                          {formSettingData?.applicable_to_user === 'No' ||
                           formSettingData?.applicable_to_user === false ? (
                             <Col lg={9} md={6} className="mt-3 mt-md-0">
                               <Form.Group>
