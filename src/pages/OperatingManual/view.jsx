@@ -29,10 +29,13 @@ const OperatingManual = () => {
   const [operatingManualdata, setOperatingManualdata] = useState([]);
   const [show, setShow] = useState(false);
   let [videoUrl, setVideoUrl] = useState('');
+  let [category, setCategory] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   useEffect(() => {
-    getOperatingManual('', '', false);
+    getOperatingManual();
+    getCategory();
+    console.log('role---->', localStorage.getItem('user_role'));
   }, []);
 
   useEffect(() => {
@@ -82,18 +85,54 @@ const OperatingManual = () => {
       });
     }
   }, [operatingManualdata]);
+  const getCategory = async () => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
 
-  const getOperatingManual = (key, search) => {
+    fetch(`${BASE_URL}/operating_manual/category`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        result = JSON.parse(result);
+        setCategory(result.result);
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const deleteOperatingManual = () => {
+    var requestOptions = {
+      method: 'DELETE',
+      redirect: 'follow',
+    };
+
+    fetch(
+      `${BASE_URL}/operating_manual/${operatingManualdata[Index]?.operating_manuals[innerIndex]?.id}`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        getOperatingManual();
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const getOperatingManual = (key, value) => {
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
     };
     let api_url = '';
-
-    if (key === 'search') {
-      api_url = `${BASE_URL}/operating_manual?search=${search}`;
+    if (key === 'category') {
+      api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
+        'user_role'
+      )}`;
+    } else if (key === 'search') {
+      api_url = `${BASE_URL}/operating_manual?search=${value}&role=${localStorage.getItem(
+        'user_role'
+      )}`;
     } else {
-      api_url = `${BASE_URL}/operating_manual`;
+      api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
+        'user_role'
+      )}`;
     }
 
     fetch(api_url, requestOptions)
@@ -119,17 +158,53 @@ const OperatingManual = () => {
                 <Row>
                   <Col sm={4}>
                     <div className="tree_wrp">
-                      <div className="tree_search_box">
-                        <img src="../img/search-icon.svg" alt="" />
-                        <Form.Control
-                          type="text"
-                          name="search"
-                          className="tree_view_search"
-                          placeholder="Search..."
-                          onChange={(e) => {
-                            getOperatingManual('search', e.target.value, true);
+                      <div className="tree_header">
+                        <div className="tree_search_box">
+                          <img src="../img/search-icon.svg" alt="" />
+                          <Form.Control
+                            type="text"
+                            name="search"
+                            className="tree_view_search"
+                            placeholder="Search..."
+                            onChange={(e) => {
+                              getOperatingManual('search', e.target.value);
+                            }}
+                          />
+                        </div>
+                        <Button
+                          className="add_operating_button"
+                          onClick={() => {
+                            navigate('/operatingmanual/add');
                           }}
-                        />
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </Button>
+                        <div className="forms-toogle">
+                          <div class="custom-menu-dots">
+                            <Dropdown>
+                              <Dropdown.Toggle id="dropdown-basic">
+                                <FontAwesomeIcon icon={faEllipsisVertical} />
+                              </Dropdown.Toggle>
+
+                              <Dropdown.Menu>
+                                {category?.map((item) => {
+                                  return (
+                                    <Dropdown.Item
+                                      onClick={() => {
+                                        getOperatingManual(
+                                          'category',
+                                          item.category_name
+                                        );
+                                      }}
+                                    >
+                                      {item.category_name}
+                                    </Dropdown.Item>
+                                  );
+                                })}
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </div>
+                        </div>
                       </div>
                       <ul id="tree1" className="tree">
                         {operatingManualdata.map((item, index) => {
@@ -161,7 +236,7 @@ const OperatingManual = () => {
                                             src="../img/child_file.svg"
                                             alt=""
                                           />
-                                          {inner_item.question}
+                                          {inner_item.title}
                                         </a>
                                       </li>
                                     );
@@ -176,13 +251,14 @@ const OperatingManual = () => {
                   </Col>
                   <Col sm={8}>
                     <div className="create_model_bar">
-                      <Button
+                      {/* <Button
                         onClick={() => {
                           navigate('/operatingmanual/add');
                         }}
                       >
-                        <FontAwesomeIcon icon={faPlus} /> Create an Operating Manual
-                      </Button>
+                        <FontAwesomeIcon icon={faPlus} /> Create an Operating
+                        Manual
+                      </Button> */}
                       <div className="forms-toogle">
                         <div class="custom-menu-dots">
                           <Dropdown>
@@ -191,10 +267,28 @@ const OperatingManual = () => {
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
-                              <Dropdown.Item href="#/action-1">
+                              <Dropdown.Item
+                                href=""
+                                onClick={() => {
+                                  navigate('/operatingmanual/add', {
+                                    state: {
+                                      id: operatingManualdata[Index]
+                                        ?.operating_manuals[innerIndex]?.id,
+                                      category_name:
+                                        operatingManualdata[Index]
+                                          ?.category_name,
+                                    },
+                                  });
+                                }}
+                              >
                                 <FontAwesomeIcon icon={faPen} /> Edit
                               </Dropdown.Item>
-                              <Dropdown.Item href="#/action-2">
+                              <Dropdown.Item
+                                href=""
+                                onClick={() => {
+                                  deleteOperatingManual();
+                                }}
+                              >
                                 <FontAwesomeIcon icon={faRemove} /> Remove
                               </Dropdown.Item>
                             </Dropdown.Menu>
@@ -241,7 +335,9 @@ const OperatingManual = () => {
                                           >
                                             <img
                                               src={
-                                                inner_item.video_thumbnail ? inner_item.video_thumbnail : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
+                                                inner_item.video_thumbnail
+                                                  ? inner_item.video_thumbnail
+                                                  : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
                                               }
                                               alt=""
                                             />

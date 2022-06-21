@@ -11,16 +11,16 @@ import {
   createCategoryValidation,
   createOperatingManualValidation,
 } from '../../helpers/validation';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 let selectedFranchisee = [];
 let selectedUserRole = [];
-let selectedFranchiseeId = '';
+let selectedFranchiseeName = '';
 let selectedUserRoleName = '';
 let counter = 0;
 const AddOperatingManual = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [operatingManualData, setOperatingManualData] = useState({});
-
   const [count, setCount] = useState();
   const [errors, setErrors] = useState({});
   const [loaderText, setLoaderText] = useState('');
@@ -39,10 +39,53 @@ const AddOperatingManual = () => {
   const [categoryError, setCategoryError] = useState({});
 
   useEffect(() => {
-    getCategory();
     getUserRoleAndFranchiseeData();
   }, []);
+  useEffect(() => {
+    getCategory();
+  }, [franchisee]);
+  const getOneOperatingManual = async () => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
 
+    await fetch(
+      `${BASE_URL}/operating_manual/one?id=${location?.state?.id}&category_name=${location?.state?.category_name}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        console.log('operating manual--->response?.result', response?.result);
+        setOperatingManualData(response?.result);
+        let data = formSettingData;
+        data.applicable_to_user =
+          response?.result?.applicable_to_user.toString();
+        data.applicable_to_franchisee =
+          response?.result?.applicable_to_user.toString();
+        franchisee.map((item) => {
+          if (response?.result?.shared_with.includes(item.franchisee_name)) {
+            selectedFranchisee.push({
+              id: item.id,
+              franchisee_name: item.franchisee_name,
+            });
+            selectedFranchiseeName += item.franchisee_name + ',';
+          }
+        });
+        userRole.map((item) => {
+          if (response?.result?.shared_role.includes(item.role_label)) {
+            selectedUserRole.push({
+              id: item.id,
+              role_label: item.role_label,
+            });
+            selectedUserRoleName += item.role_label + ',';
+          }
+        });
+
+        setFormSettingData(data);
+      })
+      .catch((error) => console.log('error', error));
+  };
   const setCategoryField = (field, value) => {
     setCategoryData({ ...categoryData, [field]: value });
     if (!!categoryError[field]) {
@@ -70,7 +113,7 @@ const AddOperatingManual = () => {
       data['access_to_all_user'] = formSettingData.applicable_to_user;
       data['access_to_all_franchise'] =
         formSettingData.applicable_to_franchisee;
-      data['shared_with'] = selectedFranchiseeId;
+      data['shared_with'] = selectedFranchiseeName;
       data['shared_role'] = selectedUserRoleName;
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -93,7 +136,6 @@ const AddOperatingManual = () => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      console.log('operating manual--->', operatingManualData);
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/operating_manual/add`, {
@@ -151,15 +193,18 @@ const AddOperatingManual = () => {
         result = JSON.parse(result);
         console.log('result---->', result?.result);
         setCategory(result.result);
-        let data = operatingManualData;
-        data['category_name'] = result?.result[0]?.category_name;
-        setOperatingManualData(data);
+        if (location?.state?.id && location?.state?.category_name) {
+          getOneOperatingManual();
+        } else {
+          let data = operatingManualData;
+          data['category_name'] = result?.result[0]?.category_name;
+          setOperatingManualData(data);
+        }
       })
       .catch((error) => console.log('error', error));
   };
   const uploadFiles = async (name, file) => {
     let flag = false;
-    file = file[0];
     if (!(name === 'reference_video')) {
       setLoaderFlag(true);
       setLoaderText('video');
@@ -170,13 +215,6 @@ const AddOperatingManual = () => {
     }
 
     if (flag === false) {
-      let data = operatingManualData;
-      const body = new FormData();
-      const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-      body.append('image', blob, file.name);
-      body.append('description', 'operating manual');
-      body.append('title', name);
-      body.append('uploadedBy', 'vaibhavi');
       if (name === 'cover_image') {
         setLoaderFlag(true);
         setLoaderText('image');
@@ -189,6 +227,13 @@ const AddOperatingManual = () => {
         setLoaderFlag(true);
         setLoaderText('files');
       }
+      let data = operatingManualData;
+      const body = new FormData();
+      const blob = await fetch(await toBase64(file)).then((res) => res.blob());
+      body.append('image', blob, file.name);
+      body.append('description', 'operating manual');
+      body.append('title', name);
+      body.append('uploadedBy', 'vaibhavi');
 
       var myHeaders = new Headers();
       myHeaders.append('role', 'admin');
@@ -256,7 +301,7 @@ const AddOperatingManual = () => {
   };
   function onSelectFranchisee(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedFranchiseeId += selectedItem.id + ',';
+    selectedFranchiseeName += selectedItem.franchisee_name + ',';
     selectedFranchisee.push({
       id: selectedItem.id,
       franchisee_name: selectedItem.franchisee_name,
@@ -266,8 +311,8 @@ const AddOperatingManual = () => {
     }
   }
   function onRemoveFranchisee(selectedList, removedItem) {
-    selectedFranchiseeId = selectedFranchiseeId.replace(
-      removedItem.id + ',',
+    selectedFranchiseeName = selectedFranchiseeName.replace(
+      removedItem.franchisee_name + ',',
       ''
     );
     const index = selectedFranchisee.findIndex((object) => {
@@ -396,23 +441,22 @@ const AddOperatingManual = () => {
                     <Row>
                       <Col sm={6}>
                         <Form.Group>
-                          <Form.Label className="formlabel">
-                            Sub-category Name
-                          </Form.Label>
+                          <Form.Label className="formlabel">title</Form.Label>
                           <Form.Control
                             type="text"
-                            name="question"
-                            placeholder="Lorem ipsum dolor sit ame"
+                            name="title"
+                            value={operatingManualData?.title}
+                            placeholder="Enter Title"
                             onChange={(e) => {
                               setOperatingManualField(
                                 e.target.name,
                                 e.target.value
                               );
                             }}
-                            isInvalid={!!errors.question}
+                            isInvalid={!!errors.title}
                           />
                           <Form.Control.Feedback type="invalid">
-                            {errors.question}
+                            {errors.title}
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
@@ -423,9 +467,16 @@ const AddOperatingManual = () => {
                           <Form.Label className="formlabel">
                             Description
                           </Form.Label>
+                          {console.log(
+                            'operatingManualData---->fxsfdsf',
+                            operatingManualData
+                          )}
                           <MyEditor
-                            {...errors}
-                            handleChange={setOperatingManualField}
+                            operatingManual={{ ...operatingManualData }}
+                            errors={errors}
+                            handleChange={(e, data) => {
+                              setOperatingManualField(e, data);
+                            }}
                           />
                         </Form.Group>
                       </Col>
@@ -443,8 +494,8 @@ const AddOperatingManual = () => {
                               ) : null}
                               <img
                                 src={
-                                  operatingManualData?.cover_image
-                                    ? operatingManualData?.cover_image
+                                  operatingManualData.cover_image
+                                    ? operatingManualData.cover_image
                                     : '../img/image_icon.png'
                                 }
                               ></img>
@@ -466,7 +517,7 @@ const AddOperatingManual = () => {
                                     if (e.target.files) {
                                       uploadFiles(
                                         e.target.name,
-                                        e.target.files
+                                        e.target.files[0]
                                       );
                                     }
                                   }}
@@ -502,8 +553,8 @@ const AddOperatingManual = () => {
                               ) : null}
                               <img
                                 src={
-                                  operatingManualData?.video_thumbnail
-                                    ? operatingManualData?.video_thumbnail
+                                  operatingManualData.video_thumbnail
+                                    ? operatingManualData.video_thumbnail
                                     : '../img/video_icon_demo.png'
                                 }
                               ></img>
@@ -522,10 +573,14 @@ const AddOperatingManual = () => {
                                   type="file"
                                   name="reference_video"
                                   onChange={(e) => {
+                                    console.log(
+                                      'e.target.files---->',
+                                      e.target.files
+                                    );
                                     if (e.target.files) {
                                       uploadFiles(
                                         e.target.name,
-                                        e.target.files
+                                        e.target.files[0]
                                       );
                                     }
                                   }}
@@ -538,6 +593,7 @@ const AddOperatingManual = () => {
                               onClick={() => {
                                 let data = operatingManualData;
                                 delete data['reference_video'];
+                                delete data['video_thumbnail'];
                                 setOperatingManualData(data);
                                 counter++;
                                 setCount(counter);
@@ -561,7 +617,7 @@ const AddOperatingManual = () => {
                               Upload Related Files :
                             </Form.Label>
                             <Row>
-                              {operatingManualData?.related_files?.map(
+                              {operatingManualData.related_files?.map(
                                 (item, index) => {
                                   return (
                                     <Col sm={6}>
@@ -638,7 +694,7 @@ const AddOperatingManual = () => {
                                     if (e.target.files) {
                                       uploadFiles(
                                         e.target.name,
-                                        e.target.files
+                                        e.target.files[0]
                                       );
                                     }
                                   }}
@@ -646,7 +702,7 @@ const AddOperatingManual = () => {
                               </div>
                             </div>
                             <p className="form-errors">
-                              {errors.reference_video}
+                              {errors.related_files}
                             </p>
                           </Form.Group>
                         </div>

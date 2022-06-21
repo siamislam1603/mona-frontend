@@ -1257,7 +1257,6 @@ button:focus {
 
 .tree-title {
     color: #AA0061;
-    text-transform: uppercase;
     font-family: 'Noto Sans';
     font-style: normal;
     font-weight: 600;
@@ -1316,6 +1315,8 @@ li.branch:before {
 li.branch {
     position: relative;
     margin: 15px 0;
+    
+    text-transform: uppercase;
 }
 
 .branch>ul li {
@@ -1742,4 +1743,25 @@ input.add_image_input.form-control {
 }
 .print {
     padding: 20px !important;
+}
+
+.ck-editor__editable {
+    min-height: 200px;
+}
+
+.tree_header {
+    display: flex;
+    align-items: center;
+}
+button.add_operating_button.btn.btn-primary {
+    line-height: 35px;
+    min-width: inherit;
+    padding: 4px 15px;
+    border-radius: 5px;
+    margin: 0 10px;
+}
+
+.tree_search_box .tree_view_search {
+    background-color: #f0f0f0;
+    margin-right: 10px;
 }

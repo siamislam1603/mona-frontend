@@ -31,10 +31,15 @@ const AddNewTraining = () => {
 
   // CUSTOM STATES
   const [hideSelect, setHideSelect] = useState(false);
+  const [hideRoleDialog, setHideRoleDialog] = useState(false);
+  const [hideUserDialog, setHideUserDialog] = useState(false);
+
   const [userRoles, setUserRoles] = useState([]);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [trainingData, setTrainingData] = useState({});
-  const [trainingMedia, setTrainingMedia] = useState({});
+  const [trainingData, setTrainingData] = useState();
+  const [coverImage, setCoverImage] = useState({});
+  const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+  const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
 
@@ -58,6 +63,8 @@ const AddNewTraining = () => {
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
+    // const response = await axios.post('https://httpbin.org/anything', data);
+    // console.log('RESPONSE:', response);
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
@@ -67,7 +74,8 @@ const AddNewTraining = () => {
       }
     );
 
-    console.log('REPSONSE:', response.data.status);
+    console.log('RESPONSE:', response);
+
     if(response.status === 201 && response.data.status === "success") {
       setTopSuccessMessage("Training created successfully.");
       setTimeout(() => {
@@ -83,17 +91,6 @@ const AddNewTraining = () => {
       }, 3000);
     }
   };  
-
-  const saveTrainingMedia = async (data) => {
-    // let token = localStorage.getItem('token');
-    // const response = await axios.post(`${BASE_URL}/training/add-training-media`, data, {
-    //   headers: {
-    //     "Authorization": "Bearer "+ token
-    //   }
-    // });
-    const response = await axios.post('htt', trainingMedia);
-    console.log('RESPONSE:', response);
-  };
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_name) => {
@@ -143,17 +140,25 @@ const AddNewTraining = () => {
     }));
   };
 
-  const handleDataSubmit = () => {
-    if(trainingData) {
-      createTraining(trainingData);
-    }
+  const handleDataSubmit = event => {
+    event.preventDefault();
 
-    if(trainingMedia) {
+    if(trainingData && coverImage && videoTutorialFiles && relatedFiles) {
       let data = new FormData();
-      for(let { key, values } of Object.entries(trainingMedia)) {
+
+      for(let [ key, values ] of Object.entries(trainingData)) {
         data.append(`${key}`, values)
       }
-      saveTrainingMedia(trainingMedia);
+
+      data.append('images', coverImage[0]);
+      videoTutorialFiles.forEach((file, index) => {
+        data.append(`images`, file);
+      });
+      relatedFiles.forEach((file, index) => {
+        data.append(`images`, file);
+      });
+
+      createTraining(data);
     }
   };
 
@@ -165,9 +170,10 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
+  
 
-  console.log('TRAINING MEDIA:', trainingMedia);
-
+  trainingData && console.log('TRAINING DATA:', trainingData);
+  hideUserDialog && console.log('USER DIALOG:', hideUserDialog);
   return (
     <>
       <div id="main">
@@ -227,12 +233,25 @@ const AddNewTraining = () => {
                           <Form.Label>Training Description</Form.Label>
                           <Form.Control
                             as="textarea"
-                            name="training_description"
+                            name="description"
                             rows={3}
                             onChange={handleTrainingData}
                           />
                         </Form.Group>
                       </Col>
+
+                      <Col md={12} className="mb-3">
+                        <Form.Group>
+                          <Form.Label>Meta Description</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            name="meta_description"
+                            rows={3}
+                            onChange={handleTrainingData}
+                          />
+                        </Form.Group>
+                      </Col>
+
                       <Col md={6} className="mb-3">
                         <Form.Group className="relative">
                           <Form.Label>Time required to complete</Form.Label>
@@ -244,7 +263,7 @@ const AddNewTraining = () => {
                               setTrainingData((prevState) => ({
                                 ...prevState,
                                 time_required_to_complete:
-                                  event.value + ' hr',
+                                  event.value + ' Hours',
                               }))
                             }
                           />
@@ -261,13 +280,7 @@ const AddNewTraining = () => {
                         <Form.Group>
                           <Form.Label>Upload Cover Image :</Form.Label>
                           <DropOneFile
-                            imageUploaded={trainingMedia.cover_image}
-                            onChange={(data) =>
-                              setTrainingMedia((prevState) => ({
-                                ...prevState,
-                                cover_image: data,
-                              }))
-                            }
+                            onSave={setCoverImage}
                           />
                         </Form.Group>
                       </Col>
@@ -275,13 +288,8 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <DropOneFile
-                            onChange={(data) =>
-                              setTrainingMedia((prevState) => ({
-                                ...prevState,
-                                video_tutorial: data,
-                              }))
-                            }
+                          <DropAllFile
+                            onSave={setVideoTutorialFiles}
                           />
                         </Form.Group>
                       </Col>
@@ -290,12 +298,7 @@ const AddNewTraining = () => {
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
                           <DropAllFile
-                            onChange={(data) =>
-                              setTrainingMedia((prevState) => ({
-                                ...prevState,
-                                related_files: [...data],
-                              }))
-                            }
+                            onSave={setRelatedFiles}
                           />
                         </Form.Group>
                       </Col>
@@ -429,7 +432,7 @@ const AddNewTraining = () => {
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
-                <Form.Group className={hideSelect ? 'd-none' : ''}>
+                <Form.Group className={hideSelect || hideRoleDialog ? 'd-none' : ''}>
                   <Form.Label>Select User Roles</Form.Label>
                   <Multiselect
                     placeholder="Select User Roles"
@@ -437,15 +440,26 @@ const AddNewTraining = () => {
                     onChange={() => {console.log("Change")}}
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
-                    // onRemove={function noRefCheck(data) {
-                    //   setRoles(data)
-                    // }}
+                    onRemove={function noRefCheck(data) {
+                      if(data.length === 0) {
+                        setHideUserDialog(false);
+                      }
+                    }}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
-                      // setTrainingData((prevState) => ({
-                      //   ...prevState,
-                      //   roles: [...data.map((data) => data.cat)],
-                      // }));
+                      setHideUserDialog(true);
+
+                      if(hideUserDialog === true) {
+                        setTrainingData((prevState) => ({
+                          ...prevState,
+                          assigned_users: [],
+                        }));
+                      }
+
+                      setTrainingData((prevState) => ({
+                        ...prevState,
+                        roles: [...data.map((data) => data.cat)],
+                      }));
                     }}
                     options={userRoles}
                   />
@@ -453,23 +467,36 @@ const AddNewTraining = () => {
               </Col>
             </Row>
 
-            <Row className="mt-4">
+            <Row className={`mt-4 ${hideUserDialog ? "d-none" : ""}`}>
               <Col lg={3} md={6}>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
                 <Form.Group className={hideSelect ? 'd-none' : ''}>
                   <Form.Label>Select User Names</Form.Label>
                   <Multiselect
-                    placeholder={fetchedFranchiseeUsers ? "Select User Roles" : "No User Available"}
+                    placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
                     displayValue="key"
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck() {}}
+                    onRemove={function noRefCheck(data) {
+                      if(data.length === 0) {
+                        setHideRoleDialog(false);
+                      }
+                    }}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
+                      setHideRoleDialog(true);
+
+                      if(hideRoleDialog === true) {
+                        setTrainingData((prevState) => ({
+                          ...prevState,
+                          roles: [],
+                        }));
+                      }
+
                       setTrainingData((prevState) => ({
                         ...prevState,
-                        users: [...data.map((data) => data.cat)],
+                        assigned_users: [...data.map((data) => data.cat)],
                       }));
                     }}
                     options={fetchedFranchiseeUsers}
