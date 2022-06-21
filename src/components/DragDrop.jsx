@@ -22,8 +22,7 @@ export default function DropAllFile({ onSave }) {
     },
   });
 
-  const handleFileDelete = (e, file) => {
-    console.log(e);
+  const handleFileDelete = (file) => {
     let temp = [...data];
     temp.splice(temp.indexOf(file), 1);
     setData(temp);
@@ -60,7 +59,7 @@ export default function DropAllFile({ onSave }) {
               <li className="mt-3" key={index}>
                 <img src={getBase64(file) || currentURI} alt="cover_file" />
                 <span className="ms-2">
-                  <Link to="#" onClick={(e) => handleFileDelete(e, file)}>
+                  <Link to="#" onClick={() => handleFileDelete(file)}>
                       <img src="../img/removeIcon.svg" alt="" />
                   </Link>
                 </span>
