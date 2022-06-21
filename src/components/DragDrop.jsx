@@ -5,13 +5,15 @@ import { Link } from 'react-router-dom';
 export default function DropAllFile({ onSave }) {
   
   const [data, setData] = useState([]);
+  const [currentURI, setCurrentURI] = useState();
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach(file => {
       setData(prevState => [...prevState, file]);
+
       // const reader = new FileReader();
       // reader.onload = () => {
-      //   setData(prevState => [...prevState, reader.result]);
+      //   setUriData(prevState => [...prevState, reader.result]);
       // };
 
       // reader.readAsDataURL(file);
@@ -33,6 +35,15 @@ export default function DropAllFile({ onSave }) {
     setData(temp);
   }
 
+  // Converting the current image to BASE-64 URI string
+  const getBase64 = (file) => {
+    let reader = new FileReader(); 
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      setCurrentURI(reader.result);
+    };
+  }
+
   useEffect(() => {
     onSave(data);
   }, [data]);
@@ -45,15 +56,13 @@ export default function DropAllFile({ onSave }) {
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
           Files
         </span>
-<<<<<<< HEAD
        
-=======
         <div className="showfiles">
           <ul>
             {
               data.map((file, index) => (
                 <li className="mt-3" key={index}>
-                  {file.path} - {file.size} bytes
+                  <img src={getBase64(file) || currentURI} alt="cover_file" />
                   <span className="ms-2">
                     <Link to="#" onClick={() => handleFileDelete(file)}>
                         <img src="../img/removeIcon.svg" alt="" />
@@ -64,15 +73,7 @@ export default function DropAllFile({ onSave }) {
             }
           </ul>
         </div>
->>>>>>> master
       </div>
-      <div className="showfiles">
-          <ul>{files.name}</ul>  
-          <aside style={thumbsContainer}>{thumbs}</aside> 
-          
-        </div>
-
-
     </div>
   );
 }
@@ -105,3 +106,4 @@ const button = {
   marginLeft: "20px"
 
 }
+
