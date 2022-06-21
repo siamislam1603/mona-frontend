@@ -94,14 +94,10 @@ const playVideo = () =>{
 
 }
 
-
   useEffect(() =>{
     getTrainingDetail()
     // playVideo()
     },[])
-
-
-
   console.log("The training file",TrainingFile[1])
   return (
     <>
@@ -153,9 +149,7 @@ const playVideo = () =>{
                    <div style={{display:"flex"}}>
 
                     <div>
-                    <h2 className="title-sm">Video Tutorial</h2>
-                    {/* <div id="target"></div> */}
-                   
+                    <h2 className="title-sm">Video Tutorial</h2>            
                     {
                          training.map((data,index) => (    
                             // data.fileType === ".mp4" &&
@@ -167,11 +161,9 @@ const playVideo = () =>{
                       }
                     
                     </div>
-                 
                   <div>
                   <h2 className="title-sm">Related Files</h2>
-                  <div className="column-list files-list three-col mb-5">
-                     
+                  <div className="column-list files-list three-col mb-5">  
                       {TrainingFile.map((user) => (
                         user.fileType === ".pdf" && 
                         <div className="item">
