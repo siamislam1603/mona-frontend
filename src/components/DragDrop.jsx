@@ -10,13 +10,6 @@ export default function DropAllFile({ onSave }) {
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach(file => {
       setData(prevState => [...prevState, file]);
-
-      // const reader = new FileReader();
-      // reader.onload = () => {
-      //   setUriData(prevState => [...prevState, reader.result]);
-      // };
-
-      // reader.readAsDataURL(file);
     });
   }, []);
 
