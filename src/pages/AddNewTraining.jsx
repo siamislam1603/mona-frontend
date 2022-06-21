@@ -250,9 +250,9 @@ const AddNewTraining = () => {
                           />
                           <span className="rtag">hours</span>
                         </Form.Group>
-                        <Form.Control.Feedback type="invalid">
+                        {/* <Form.Control.Feedback type="invalid">
                             {errors.select_hour}
-                          </Form.Control.Feedback>
+                          </Form.Control.Feedback> */}
                       </Col>
                     </Row>
                     <Row>
@@ -437,15 +437,15 @@ const AddNewTraining = () => {
                     onChange={() => {console.log("Change")}}
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck(data) {
-                      setRoles(data)
-                    }}
+                    // onRemove={function noRefCheck(data) {
+                    //   setRoles(data)
+                    // }}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
-                      setTrainingData((prevState) => ({
-                        ...prevState,
-                        roles: [...data.map((data) => data.cat)],
-                      }));
+                      // setTrainingData((prevState) => ({
+                      //   ...prevState,
+                      //   roles: [...data.map((data) => data.cat)],
+                      // }));
                     }}
                     options={userRoles}
                   />
@@ -474,7 +474,7 @@ const AddNewTraining = () => {
                     }}
                     options={fetchedFranchiseeUsers}
                   />
-                 {roles ? null: <p>please choose roles</p>}
+                 {/* {roles ? null: <p>please choose roles</p>} */}
                   
                 </Form.Group>
               </Col>
