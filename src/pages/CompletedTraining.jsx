@@ -26,17 +26,19 @@ const training = [
   },
 ];
 
-const AvailableTraining = () => {
-  const [assignedData, setAssignedData] = useState([]);
-  console.log(assignedData);
+const CompleteTraining = () => {
+  const [completeData, setCompleteData] = useState([]);
+  
 
   useEffect(() => {
     // console.log("user_id user_id user_id", localStorage.getItem("user_id"));
-    const userId = localStorage.getItem("user_id");
-    axios.get(`${BASE_URL}/training/assigeedTraining/87`)
+    
+    const id = localStorage.getItem("user_id");
+    console.log(id);
+    axios.get(`${BASE_URL}/training/${id}`)
     .then(res => {
       console.log(res)
-      setAssignedData(res.data)
+      setCompleteData(res.data)
   })
   .catch(err =>{
       console.log(err)
@@ -170,13 +172,14 @@ const AvailableTraining = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                      <li><a href="/available-training">Trainings Available</a></li>
-                      <li><a href="/" className="active">Trainings Created</a></li>
+                    <li><a href="/available-training">Trainings Available</a></li>
+                    <li><a href="/complete-training">Complete Training</a></li>
+                    {/* <li><a href="/" className="active">Trainings Created</a></li> */}
                     </ul>
                   </div>
                   <div className="training-column">
                     <Row>
-                    {assignedData?.map((item) => {
+                    {completeData?.map((item) => {
                       return(
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
@@ -211,4 +214,4 @@ const AvailableTraining = () => {
   );
 };
 
-export default AvailableTraining;
+export default CompleteTraining;

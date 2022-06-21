@@ -121,7 +121,8 @@ const Training = () => {
                   <div className="training-cat mb-3">
                     <ul>
                       <li><a href="/available-training">Trainings Available</a></li>
-                      <li><a href="/" className="active">Trainings Created</a></li>
+                      <li><a href="/complete-training" >Complete Training</a></li>
+                      <li><a href="/created-training" className="active">Trainings Created</a></li>
                     </ul>
                   </div>
                   <div className="training-column">

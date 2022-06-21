@@ -30,6 +30,8 @@ import DynamicForm from '../pages/DynamicForm';
 import UploadFile from '../pages/UploadFile';
 import AddSubOperatingManual from '../pages/OperatingManual/addSubModule';
 import AvailableTraining from '../pages/AvailableTraining';
+import CompleteTraining from '../pages/CompletedTraining';
+import CreatedTraining from '../pages/CreatedTraining';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -316,6 +318,26 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AvailableTraining />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/complete-training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <CompleteTraining />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/created-training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <CreatedTraining />
             </Protected>
           }
         />
