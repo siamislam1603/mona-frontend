@@ -43,7 +43,7 @@ const AddOperatingManual = () => {
   }, []);
   useEffect(() => {
     getCategory();
-  }, [franchisee]);
+  }, [franchisee, userRole]);
   const getOneOperatingManual = async () => {
     var requestOptions = {
       method: 'GET',
@@ -62,23 +62,28 @@ const AddOperatingManual = () => {
         data.applicable_to_user =
           response?.result?.applicable_to_user.toString();
         data.applicable_to_franchisee =
-          response?.result?.applicable_to_user.toString();
+          response?.result?.applicable_to_franchisee.toString();
+        console.log('Franchisee--->', franchisee);
+        selectedFranchisee = [];
         franchisee.map((item) => {
-          if (response?.result?.shared_with.includes(item.franchisee_name)) {
+          if (response?.result?.shared_with.includes(item.franchisee_alias)) {
             selectedFranchisee.push({
               id: item.id,
               franchisee_name: item.franchisee_name,
+              franchisee_alias: item.franchisee_alias,
             });
-            selectedFranchiseeName += item.franchisee_name + ',';
+            selectedFranchiseeName += item.franchisee_alias + ',';
           }
         });
+        selectedUserRole = [];
         userRole.map((item) => {
-          if (response?.result?.shared_role.includes(item.role_label)) {
+          if (response?.result?.shared_role.includes(item.role_name)) {
             selectedUserRole.push({
               id: item.id,
               role_label: item.role_label,
+              role_name: item.role_name,
             });
-            selectedUserRoleName += item.role_label + ',';
+            selectedUserRoleName += item.role_name + ',';
           }
         });
 
@@ -355,8 +360,8 @@ const AddOperatingManual = () => {
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
-        setUserRole(res?.userRoleList);
         console.log('response0-------->1', res?.userRoleList);
+        setUserRole(res?.userRoleList);
       })
       .catch((error) => console.log('error', error));
     fetch(`${BASE_URL}/role/franchisee`, requestOptions)
