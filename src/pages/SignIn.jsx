@@ -28,15 +28,16 @@ const SignIn = () => {
       localStorage.setItem('user_id', res.data.user.id);
       localStorage.setItem('user_role', res.data.user.role);
       localStorage.setItem('user_name', res.data.user.name);
-      if (res.data.user.role === 'Franchisor Admin')
+
+      if (res.data.user.role === 'franchisor_admin')
         window.location.href = '/franchisor-dashboard';
-      else if (res.data.user.role === 'Coordinator')
+      else if (res.data.user.role === 'coordinator')
         window.location.href = '/coordinator-dashboard';
-      else if (res.data.user.role === 'Franchisee Admin')
+      else if (res.data.user.role === 'franchisee_admin')
         window.location.href = '/franchisee-dashboard';
-      else if (res.data.user.role === 'Educator')
+      else if (res.data.user.role === 'educator')
         window.location.href = '/educator-dashboard';
-      else if (res.data.user.role === 'Guardian')
+      else if (res.data.user.role === 'guardian')
         window.location.href = '/parents-dashboard';
     } else if (res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);

@@ -131,11 +131,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              {localStorage.getItem('user_role') === 'Franchisor Admin' ? (
-                <FranchisorDashboard />
-              ) : (
-                <SignIn />
-              )}
+              <FranchisorDashboard />
             </Protected>
           }
         />
@@ -145,11 +141,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              {localStorage.getItem('user_role') === 'Franchisee Admin' ? (
-                <FranchiseeDashboard />
-              ) : (
-                <SignIn />
-              )}
+              <FranchiseeDashboard />
             </Protected>
           }
         />
@@ -159,11 +151,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              {localStorage.getItem('user_role') === 'Educator' ? (
-                <EducatorDashboard />
-              ) : (
-                <SignIn />
-              )}
+              <EducatorDashboard />
             </Protected>
           }
         />
@@ -173,11 +161,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              {localStorage.getItem('user_role') === 'Coordinator' ? (
-                <CoordinatorDashboard />
-              ) : (
-                <SignIn />
-              )}
+              <CoordinatorDashboard />
             </Protected>
           }
         />
@@ -187,12 +171,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-
-              {localStorage.getItem('user_role') === 'Guardian' ? (
-                <ParentsDashboard />
-              ) : (
-                <SignIn />
-              )}
+              <ParentsDashboard />
             </Protected>
           }
         />
