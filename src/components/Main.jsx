@@ -29,6 +29,9 @@ import AddNewAnnouncements from '../pages/AddNewAnnouncements';
 import DynamicForm from '../pages/DynamicForm';
 import UploadFile from '../pages/UploadFile';
 import AddSubOperatingManual from '../pages/OperatingManual/addSubModule';
+import AvailableTraining from '../pages/AvailableTraining';
+import CompleteTraining from '../pages/CompletedTraining';
+import CreatedTraining from '../pages/CreatedTraining';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -66,7 +69,7 @@ const Main = () => {
             </Protected>
           }
         />
-          <Route
+        <Route
           path="/child-enrollment"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -86,7 +89,7 @@ const Main = () => {
           }
         />
 
-      <Route
+        <Route
           path="/new-franchisees"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -105,7 +108,6 @@ const Main = () => {
             </Protected>
           }
         />
-
 
         <Route
           path="/user-management"
@@ -305,6 +307,36 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <TrainingDetail />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/available-training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AvailableTraining />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/complete-training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <CompleteTraining />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/created-training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <CreatedTraining />
             </Protected>
           }
         />

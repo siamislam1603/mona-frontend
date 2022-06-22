@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Col, Container, Form, Row, Button } from "react-bootstrap";
-import { BASE_URL } from "../components/App";
-import { DynamicFormValidation } from "../helpers/validation";
-import InputFields from "./InputFields";
-import { useLocation } from "react-router-dom";
-import LeftNavbar from "../components/LeftNavbar";
-import TopHeader from "../components/TopHeader";
+import React, { useEffect, useState } from 'react';
+import { Col, Container, Form, Row, Button } from 'react-bootstrap';
+import { BASE_URL } from '../components/App';
+import { DynamicFormValidation } from '../helpers/validation';
+import InputFields from './InputFields';
+import { useLocation } from 'react-router-dom';
+import LeftNavbar from '../components/LeftNavbar';
+import TopHeader from '../components/TopHeader';
 let values = [];
 const DynamicForm = (props) => {
   const location = useLocation();
-  console.log("location----->", location);
+  console.log('location----->', location);
   const [formData, setFormData] = useState([]);
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
@@ -21,26 +21,26 @@ const DynamicForm = (props) => {
         [field]: null,
       });
     }
-    if (field === "hobby") {
+    if (field === 'hobby') {
       values.includes(value) ? values.pop(value) : values.push(value);
       setForm({ ...form, [field]: values });
 
-      console.log("Values", values);
+      console.log('Values', values);
     }
   };
   useEffect(() => {
-    console.log("history---->");
+    console.log('history---->');
     getFormFields();
   }, []);
   const getFormFields = async () => {
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
     };
 
     fetch(
       `${BASE_URL}/field?form_name=${
-        location.pathname.split("/")[location.pathname.split("/").length - 1]
+        location.pathname.split('/')[location.pathname.split('/').length - 1]
       }`,
       requestOptions
     )
@@ -50,36 +50,36 @@ const DynamicForm = (props) => {
         setFormData(res.result);
         console.log(res.result);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   const onSubmit = (e) => {
     e.preventDefault();
     const newErrors = DynamicFormValidation(form, formData);
-    console.log("newErrors---->", newErrors);
+    console.log('newErrors---->', newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
       var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-
+      myHeaders.append('Content-Type', 'application/json');
+      console.log('formData[0]?.form?.id---->', formData[0]?.form_id);
       var requestOptions = {
-        method: "POST",
+        method: 'POST',
         headers: myHeaders,
         body: JSON.stringify({
-          form_id: formData[0]?.form?.id,
-          user_id: 1,
+          form_id: formData[0]?.form_id,
+          user_id: localStorage.getItem('user_id'),
           data: form,
         }),
-        redirect: "follow",
+        redirect: 'follow',
       };
 
-      fetch("http://localhost:5000/form/add", requestOptions)
+      fetch(`${BASE_URL}/form/form_data`, requestOptions)
         .then((response) => response.text())
         .then((result) => {
           result = JSON.parse(result);
           alert(result?.message);
         })
-        .catch((error) => console.log("error", error));
+        .catch((error) => console.log('error', error));
     }
   };
   return (

@@ -147,7 +147,7 @@ img.custom_logo_image { width: 10%; }
 .form-group {position: relative;}img.custom_facebook {padding-left: 22px;}
 .login-bg {/*background-image:url("../img/login-bg.png");background-size: cover;background-position: center;*/min-height: 100vh;}
 .login-bg .container {display: flex; min-height: 100vh;}
-.custom_submit { position: relative; }
+.custom_submit { position: relative;padding-top: 15px; }
 .custom_submit .kids-art { position: absolute; left:-100px; }
 .separator {text-align: center;margin: 37px 0;color: var(--black);font-size: 16px;font-weight: 500;line-height: 19px;opacity: 0.5;}
 .separator span{position: relative;}

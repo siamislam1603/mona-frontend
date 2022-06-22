@@ -43,7 +43,7 @@ const AddOperatingManual = () => {
   }, []);
   useEffect(() => {
     getCategory();
-  }, [franchisee]);
+  }, [franchisee, userRole]);
   const getOneOperatingManual = async () => {
     var requestOptions = {
       method: 'GET',
@@ -62,23 +62,28 @@ const AddOperatingManual = () => {
         data.applicable_to_user =
           response?.result?.applicable_to_user.toString();
         data.applicable_to_franchisee =
-          response?.result?.applicable_to_user.toString();
+          response?.result?.applicable_to_franchisee.toString();
+        console.log('Franchisee--->', franchisee);
+        selectedFranchisee = [];
         franchisee.map((item) => {
-          if (response?.result?.shared_with.includes(item.franchisee_name)) {
+          if (response?.result?.shared_with.includes(item.franchisee_alias)) {
             selectedFranchisee.push({
               id: item.id,
               franchisee_name: item.franchisee_name,
+              franchisee_alias: item.franchisee_alias,
             });
-            selectedFranchiseeName += item.franchisee_name + ',';
+            selectedFranchiseeName += item.franchisee_alias + ',';
           }
         });
+        selectedUserRole = [];
         userRole.map((item) => {
-          if (response?.result?.shared_role.includes(item.role_label)) {
+          if (response?.result?.shared_role.includes(item.role_name)) {
             selectedUserRole.push({
               id: item.id,
               role_label: item.role_label,
+              role_name: item.role_name,
             });
-            selectedUserRoleName += item.role_label + ',';
+            selectedUserRoleName += item.role_name + ',';
           }
         });
 
@@ -301,10 +306,11 @@ const AddOperatingManual = () => {
   };
   function onSelectFranchisee(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedFranchiseeName += selectedItem.franchisee_name + ',';
+    selectedFranchiseeName += selectedItem.franchisee_alias + ',';
     selectedFranchisee.push({
       id: selectedItem.id,
       franchisee_name: selectedItem.franchisee_name,
+      franchisee_alias: selectedItem.franchisee_alias,
     });
     {
       console.log('selectedFranchisee---->', selectedFranchisee);
@@ -312,7 +318,7 @@ const AddOperatingManual = () => {
   }
   function onRemoveFranchisee(selectedList, removedItem) {
     selectedFranchiseeName = selectedFranchiseeName.replace(
-      removedItem.franchisee_name + ',',
+      removedItem.franchisee_alias + ',',
       ''
     );
     const index = selectedFranchisee.findIndex((object) => {
@@ -326,16 +332,17 @@ const AddOperatingManual = () => {
 
   function onSelectUserRole(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedUserRoleName += selectedItem.role_label + ',';
+    selectedUserRoleName += selectedItem.role_name + ',';
     selectedUserRole.push({
       id: selectedItem.id,
       role_label: selectedItem.role_label,
+      role_name: selectedItem.role_name,
     });
     console.log('form---->2selectedUserRole', selectedUserRole);
   }
   function onRemoveUserRole(selectedList, removedItem) {
     selectedUserRoleName = selectedUserRoleName.replace(
-      removedItem.role_label + ',',
+      removedItem.role_name + ',',
       ''
     );
     const index = selectedUserRole.findIndex((object) => {
@@ -353,8 +360,8 @@ const AddOperatingManual = () => {
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
-        setUserRole(res?.userRoleList);
         console.log('response0-------->1', res?.userRoleList);
+        setUserRole(res?.userRoleList);
       })
       .catch((error) => console.log('error', error));
     fetch(`${BASE_URL}/role/franchisee`, requestOptions)
@@ -471,13 +478,23 @@ const AddOperatingManual = () => {
                             'operatingManualData---->fxsfdsf',
                             operatingManualData
                           )}
-                          <MyEditor
-                            operatingManual={{ ...operatingManualData }}
-                            errors={errors}
-                            handleChange={(e, data) => {
-                              setOperatingManualField(e, data);
-                            }}
-                          />
+                          {location?.state?.id &&
+                          location?.state?.category_name ? (
+                            <MyEditor
+                              operatingManual={{ ...operatingManualData }}
+                              errors={errors}
+                              handleChange={(e, data) => {
+                                setOperatingManualField(e, data);
+                              }}
+                            />
+                          ) : (
+                            <MyEditor
+                              errors={errors}
+                              handleChange={(e, data) => {
+                                setOperatingManualField(e, data);
+                              }}
+                            />
+                          )}
                         </Form.Group>
                       </Col>
                     </Row>
