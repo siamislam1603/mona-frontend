@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Container, Row, Form, Dropdown,Modal } from "react-bootstrap";
-const VideoPop = (props) => {
+const VideoPop = (props,{time}) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+  
   return (
     <div style={{width:"180px"}}>
-        
     <img   src={props.img} alt="" onClick={handleShow}   />
+    <p>{props.time}</p>
     <Modal
         className="training-modal"
         size="lg"

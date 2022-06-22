@@ -53,23 +53,21 @@ const TrainingDetail = () => {
   const handleShow = () => setShow(true);
   const handleSaveAndClose = () => setShow(false);
 
+
   const [thepdf,setPdfSet] = useState("https://s3.us-west-1.amazonaws.com/mona-cip-dev/public/assets/.docs/Rohan%27sResume_2022-06-13_1655102409338.pdf")
   const [Trainingdata,setTrainingData] = useState("");
   const [TrainingFile,setTrainingFile] = useState([]);
+  const [TrainingComplete,setTrainingComplete] = useState(" ")
   
   const getTrainingDetail = async() =>{
     console.log("The comments")
     console.log("The token", localStorage.getItem("token"))
+    const userID =   localStorage.getItem('user_id');
     // let response = await axios.get("http://localhost:4000/training/getTrainingById/3");
-    let response = await axios.get("http://localhost:4000/training/getTrainingById/4/2", {
+    let response = await axios.get(`http://localhost:4000/training/getTrainingById/4/${userID}`, {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem('token')
       }
-        //  const response = await axios.get(`${ BASE_URL }/auth/get_menu_list`,
-
-    // { headers: { "Authorization": "Bearer "+token, } }
-
-
     });
     console.log("The response",response.data)
     // const filename = response.headers['content-disposition'].split('filename=')[1];
@@ -84,14 +82,45 @@ const TrainingDetail = () => {
       setTrainingFile(Thetrainingdata.training_files)
     }
 }
+  const TrainingMarkCompleted = async() =>{
+    let response = await axios.post("http://localhost:4000/training/completeTraining/4/2?training_status=in_progress")
+    console.log("Training mark completed", response)
+    if(response.status === 200){
+      setTrainingComplete(response.data)
+      console.log(response.data)
+    }
+  }
 // console.log("THe traing file name", TrainingFile)
-const playVideo = () =>{
-    window.player = new PlayerSdk("#target", { 
-      id:"vi2n1PhsuBxx3o9jSvEyLWi0", 
-      hideTitle: true,
-      // ... other optional options 
-  });
 
+const getUploadTime = (thedate) =>{
+  console.log("getUploadTime funtion")
+  var strSplitDate = String(thedate).split(' ')
+  var date = new Date(strSplitDate[0]) 
+  // console.log("The date",(new Date()-date/1000/31536000))
+  var seconds = Math.floor((new Date() - date) / 1000);
+  var interval = seconds / 31536000;                          
+  if (interval > 1) {
+      return Math.floor(interval) + " years";
+   }
+  interval = seconds / 2592000;
+   if (interval > 1) {
+    console.log(Math.floor(interval) + " months");
+   }
+   interval = seconds / 86400;
+   if (interval > 1) {
+     let day = Math.floor(interval) + " days";
+      return day 
+  }
+  interval = seconds / 3600;
+  if (interval > 1) {
+     console.log(Math.floor(interval) + " hours");
+  }
+  interval = seconds / 60;
+  if (interval > 1) {
+     console.log(Math.floor(interval) + " minutes");
+  }
+  // return Math.floor(seconds) + " seconds";
+                          
 }
 
   useEffect(() =>{
@@ -151,12 +180,18 @@ const playVideo = () =>{
                     <div>
                     <h2 className="title-sm">Video Tutorial</h2>            
                     {
-                         training.map((data,index) => (    
-                            // data.fileType === ".mp4" &&
-                            // <iframe src={videos}  width={500} height={500} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture  object-fit: contain;" allowFullScreen ></iframe>
-                            // <img  key={index} src={student} alt="" onClick={handleShow}  />
-                            <VideoPop img ={student} data ={data} video ={videos} fun = {handleClose}/>
-                         )
+                      
+                         TrainingFile.map((data,index) => 
+                          {
+                            const thedate =  getUploadTime(data.createdAt)
+                            return(  
+                              data.fileType === ".mp4" &&
+                              // <iframe src={videos}  width={500} height={500} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture  object-fit: contain;" allowFullScreen ></iframe>
+                              // <img  key={index} src={student} alt="" onClick={handleShow}  />
+                              <VideoPop img ={student} data ={data} video ={videos} time = {thedate}/>
+                           )
+                          }
+                         
                         )
                       }
                     
@@ -223,9 +258,13 @@ const playVideo = () =>{
                         completed this training completely and can proceed
                         further.
                       </p>
-                      <a href="" className="btn btn-primary">
+                      {/* <a href="" className="btn btn-primary" onClick={TrainingMarkCompleted}>
                         Yes, I have completed the training
-                      </a>
+                      </a> */}
+                      <Link to="#" onClick={TrainingMarkCompleted}>
+
+                      {TrainingComplete =="training marked as completed!"? "Success,You have completed this training": "Yes, I have completed the training"  } 
+                       </Link>
                     </div>
                   </div>
                 </div>
