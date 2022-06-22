@@ -301,10 +301,11 @@ const AddOperatingManual = () => {
   };
   function onSelectFranchisee(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedFranchiseeName += selectedItem.franchisee_name + ',';
+    selectedFranchiseeName += selectedItem.franchisee_alias + ',';
     selectedFranchisee.push({
       id: selectedItem.id,
       franchisee_name: selectedItem.franchisee_name,
+      franchisee_alias: selectedItem.franchisee_alias,
     });
     {
       console.log('selectedFranchisee---->', selectedFranchisee);
@@ -312,7 +313,7 @@ const AddOperatingManual = () => {
   }
   function onRemoveFranchisee(selectedList, removedItem) {
     selectedFranchiseeName = selectedFranchiseeName.replace(
-      removedItem.franchisee_name + ',',
+      removedItem.franchisee_alias + ',',
       ''
     );
     const index = selectedFranchisee.findIndex((object) => {
@@ -326,16 +327,17 @@ const AddOperatingManual = () => {
 
   function onSelectUserRole(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedUserRoleName += selectedItem.role_label + ',';
+    selectedUserRoleName += selectedItem.role_name + ',';
     selectedUserRole.push({
       id: selectedItem.id,
       role_label: selectedItem.role_label,
+      role_name: selectedItem.role_name,
     });
     console.log('form---->2selectedUserRole', selectedUserRole);
   }
   function onRemoveUserRole(selectedList, removedItem) {
     selectedUserRoleName = selectedUserRoleName.replace(
-      removedItem.role_label + ',',
+      removedItem.role_name + ',',
       ''
     );
     const index = selectedUserRole.findIndex((object) => {
