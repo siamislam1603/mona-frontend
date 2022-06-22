@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
+import { Button, Col, Container, Row, Form, Dropdown, NavLink } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import Select from 'react-select';
@@ -172,9 +172,9 @@ const CreatedTraining = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                    <li><a href="/available-training">Trainings Available</a></li>
-                    <li><a href="/complete-training">Complete Training</a></li>
-                    <li><a href="/created-training" className="active">Trainings Created</a></li>
+                    <li><NavLink to="/available-training" activeClassName="active">Trainings Available</NavLink></li>
+                    <li><NavLink to="/complete-training" activeClassName="active">Complete Training</NavLink></li>
+                    <li><NavLink to="/created-training" activeClassName="active">Trainings Created</NavLink></li>
                     </ul>
                   </div>
                   <div className="training-column">
