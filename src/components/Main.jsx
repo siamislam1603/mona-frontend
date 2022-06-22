@@ -69,7 +69,7 @@ const Main = () => {
             </Protected>
           }
         />
-          <Route
+        <Route
           path="/child-enrollment"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -89,7 +89,7 @@ const Main = () => {
           }
         />
 
-      <Route
+        <Route
           path="/new-franchisees"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -108,7 +108,6 @@ const Main = () => {
             </Protected>
           }
         />
-
 
         <Route
           path="/user-management"

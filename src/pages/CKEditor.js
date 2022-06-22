@@ -44,13 +44,25 @@ export default function MyEditor(props) {
 
   return (
     <div className="App">
-      {props.operatingManual.description && (
+      {props.operatingManual ? (
         <CKEditor
           config={{
             extraPlugins: [uploadPlugin],
             rows: 5,
           }}
           data={props.operatingManual.description}
+          editor={ClassicEditor}
+          onChange={(event, editor) => {
+            props.handleChange('description', editor.getData());
+          }}
+          {...props}
+        />
+      ) : (
+        <CKEditor
+          config={{
+            extraPlugins: [uploadPlugin],
+            rows: 5,
+          }}
           editor={ClassicEditor}
           onChange={(event, editor) => {
             props.handleChange('description', editor.getData());

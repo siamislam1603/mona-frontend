@@ -1348,6 +1348,7 @@ li.branch {
     padding: 40px 34px;
     height: 100%;
     margin-left: -48px;
+    min-height: 600px;
 }
 
 .bottom_button {
