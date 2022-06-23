@@ -1,15 +1,14 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Container, Row, Form } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import DragDropSingle from '../components/DragDropSingle';
+import DragDropCrop from '../components/DragDropCrop';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import validateForm from '../helpers/validateForm';
-import ImageCropper from '../components/ImageCropper';
-import Popup from '../components/Popup';
 import { BASE_URL } from '../components/App';
 import { Link } from 'react-router-dom';
 
@@ -38,12 +37,18 @@ const NewUser = () => {
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
   const [cityData, setCityData] = useState([]);
-  const [popupVisible, setPopupVisible] = useState(false);
-  const [imageToCrop, setImageToCrop] = useState(undefined);
-  const [croppedImage, setCroppedImage] = useState(undefined);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [trainingDocuments, setTrainingDocuments] = useState();
+
+  // IMAGE CROPPING STATES
+  const [image, setImage] = useState(null);
+  // const [croppedArea, setCroppedArea] = useState(null);
+  // const [crop, setCrop] = useState({ x: 0, y: 0 });
+  // const [zoom, setZoom] = useState(1);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [popupVisible, setPopupVisible] = useState(false);
+  // const inputRef = useRef();
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
@@ -71,27 +76,6 @@ const NewUser = () => {
     // setIsSubmit(true);
     console.log('FORM DATA:', formData);
     console.log('TRAINING DOCUMENTS:', trainingDocuments);
-  };
-
-  const onUploadFile = (files) => {
-    if (files && files.length > 0) {
-      const reader = new FileReader();
-      reader.addEventListener('load', () => {
-        return setImageToCrop(reader.result);
-      });
-
-      reader.readAsDataURL(files[0]);
-    }
-  };
-
-  const setCroppedImageInPopup = () => {
-    if (croppedImage) {
-      setImageToCrop(croppedImage.croppedImageURL);
-      setFormData((prevData) => ({
-        ...prevData,
-        file: croppedImage.croppedImageURL,
-      }));
-    }
   };
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
@@ -151,8 +135,8 @@ const NewUser = () => {
 
       data.append('franchisee', selectedFranchisee);
 
-      if (imageToCrop) {
-        data.append('file', croppedImage.croppedImageFILE);
+      if (croppedImage) {
+        data.append('file', croppedImage);
         createUser(data);
       } else {
         console.log('Choose & Crop an image first!');
@@ -178,12 +162,24 @@ const NewUser = () => {
                   <div className="maincolumn">
                     <div className="new-user-sec">
                       <div className="user-pic-sec">
-                        <DragDropSingle
-                          onSave={onUploadFile}
+                        <DragDropCrop
+                          croppedImage={croppedImage}
+                          setCroppedImage={setCroppedImage}
+                          onSave={setImage}
+                          setPopupVisible={setPopupVisible}
                         />
                         <span className="error">
                           {!formData.file && formErrors.file}
                         </span>
+
+                        {
+                          popupVisible && 
+                          <ImageCropPopup 
+                            image={image} 
+                            setCroppedImage={setCroppedImage} 
+                            setPopupVisible={setPopupVisible} />
+                        }
+                        
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
@@ -343,7 +339,7 @@ const NewUser = () => {
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Co-ordinator</Form.Label>
+                            <Form.Label>Select Primary Co-ordinator</Form.Label>
                             <Select
                               placeholder="Which Co-ordinator?"
                               closeMenuOnSelect={true}
@@ -385,12 +381,7 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Upload Training Documents</Form.Label>
                             <DragDropMultiple 
-                              onChange={(data) =>
-                                setTrainingDocuments((prevState) => ({
-                                  ...prevState,
-                                  related_files: [...data],
-                                }))
-                              } />
+                              onSave={setTrainingDocuments} />
                           </Form.Group>
 
                           <Col md={12}>
