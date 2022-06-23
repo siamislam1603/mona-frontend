@@ -3,9 +3,9 @@ import {
   faPen,
   faPlus,
   faRemove,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState, useEffect } from "react";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Col,
@@ -15,29 +15,29 @@ import {
   Row,
   Tab,
   Tabs,
-} from "react-bootstrap";
-import LeftNavbar from "../../components/LeftNavbar";
-import TopHeader from "../../components/TopHeader";
-import { BASE_URL } from "../../components/App";
-import moment from "moment";
-import { useNavigate  } from 'react-router-dom';
+} from 'react-bootstrap';
+import LeftNavbar from '../../components/LeftNavbar';
+import TopHeader from '../../components/TopHeader';
+import { BASE_URL } from '../../components/App';
+import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 function ViewFormBuilder(props) {
-  const navigate = useNavigate ();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState([]);
   useEffect(() => {
-    getFormData("");
+    getFormData('');
   }, []);
   const getFormData = (search) => {
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
     };
 
     fetch(`${BASE_URL}/form?search=${search}`, requestOptions)
       .then((response) => response.json())
       .then((result) => setFormData(result?.result))
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
 
   return (
@@ -82,7 +82,7 @@ function ViewFormBuilder(props) {
                       <Button
                         variant="primary"
                         onClick={() => {
-                            navigate('/form/add')
+                          navigate('/form/add');
                         }}
                       >
                         <FontAwesomeIcon icon={faPlus} />
@@ -120,7 +120,12 @@ function ViewFormBuilder(props) {
                         <Row>
                           {formData?.map((item) => {
                             return (
-                              <Col lg={4}>
+                              <Col
+                                lg={4}
+                                onClick={() => {
+                                  navigate(`/form/dynamic/${item.form_name}`);
+                                }}
+                              >
                                 <div className="forms-content">
                                   <div className="content-icon-section">
                                     <img src="../img/forms-icon.svg" />
@@ -128,9 +133,9 @@ function ViewFormBuilder(props) {
                                   <div className="content-title-section">
                                     <h6>{item.form_name}</h6>
                                     <h4 className="red-date">
-                                      Created on:{" "}
+                                      Created on:{' '}
                                       {moment(item.createdAt).format(
-                                        "MM/DD/YYYY"
+                                        'MM/DD/YYYY'
                                       )}
                                     </h4>
                                   </div>
@@ -152,7 +157,7 @@ function ViewFormBuilder(props) {
                                           <FontAwesomeIcon icon={faPen} /> Edit
                                         </Dropdown.Item>
                                         <Dropdown.Item href="#/action-2">
-                                          <FontAwesomeIcon icon={faRemove} />{" "}
+                                          <FontAwesomeIcon icon={faRemove} />{' '}
                                           Remove
                                         </Dropdown.Item>
                                       </Dropdown.Menu>
@@ -178,9 +183,9 @@ function ViewFormBuilder(props) {
                                   <div className="content-title-section">
                                     <h6>{item.form_name}</h6>
                                     <h4>
-                                      Created on:{" "}
+                                      Created on:{' '}
                                       {moment(item.createdAt).format(
-                                        "MM/DD/YYYY"
+                                        'MM/DD/YYYY'
                                       )}
                                     </h4>
                                   </div>
@@ -200,7 +205,7 @@ function ViewFormBuilder(props) {
                                           <FontAwesomeIcon icon={faPen} /> Edit
                                         </Dropdown.Item>
                                         <Dropdown.Item href="#/action-2">
-                                          <FontAwesomeIcon icon={faRemove} />{" "}
+                                          <FontAwesomeIcon icon={faRemove} />{' '}
                                           Remove
                                         </Dropdown.Item>
                                       </Dropdown.Menu>
@@ -226,16 +231,23 @@ function ViewFormBuilder(props) {
                                   <div className="content-title-section">
                                     <h6>{item.form_name}</h6>
                                     <h4>
-                                      Created on:{" "}
+                                      Created on:{' '}
                                       {moment(item.createdAt).format(
-                                        "MM/DD/YYYY"
+                                        'MM/DD/YYYY'
                                       )}
                                     </h4>
                                   </div>
                                   <div className="content-toogle">
-                                    <div className="user-img">
+                                    <div
+                                      className="user-img"
+                                      onClick={() => {
+                                        navigate('/form/response', {
+                                          state: { form_id: item.id },
+                                        });
+                                      }}
+                                    >
                                       <img src="../img/form-user-round.svg" />
-                                      <span>3</span>
+                                      <span>{item?.form_data?.length}</span>
                                     </div>
                                     <Dropdown>
                                       <Dropdown.Toggle id="dropdown-basic1">
@@ -245,13 +257,17 @@ function ViewFormBuilder(props) {
                                       </Dropdown.Toggle>
 
                                       <Dropdown.Menu>
-                                        <Dropdown.Item onClick={()=>{
-                                          navigate('/form/add',{state:{id: item.id}})
-                                        }}>
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            navigate('/form/add', {
+                                              state: { id: item.id },
+                                            });
+                                          }}
+                                        >
                                           <FontAwesomeIcon icon={faPen} /> Edit
                                         </Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2" >
-                                          <FontAwesomeIcon icon={faRemove} />{" "}
+                                        <Dropdown.Item href="#/action-2">
+                                          <FontAwesomeIcon icon={faRemove} />{' '}
                                           Remove
                                         </Dropdown.Item>
                                       </Dropdown.Menu>
