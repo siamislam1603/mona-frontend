@@ -10,7 +10,7 @@ import Select from 'react-select';
 import { PlayerSdk } from '@api.video/player-sdk'
 
 import makeAnimated from 'react-select/animated';
-import videos from "../assets/video/Cute Panda.mp4"
+// import videos from "https://embed.api.video/vod/vi4RgvXlXiTRZsy2AEyY524Z"
 import svideos from "../assets/video/d.mp4"
 import pdf from "../assets/pdf/1652501632697.pdf"
 import student from "../assets/img/student.jpg"
@@ -35,15 +35,6 @@ var file = '/home/user/dir/file.txt';
 // var filename = path.parse(file).base;
 }
 
-const training = [
-  {
-    newvideo :videos
-  },
-  {
-    newvideo :svideos
-
-  },
-];
 
 // console.log(training)
 const TrainingDetail = () => {
@@ -58,13 +49,14 @@ const TrainingDetail = () => {
   const [Trainingdata,setTrainingData] = useState("");
   const [TrainingFile,setTrainingFile] = useState([]);
   const [TrainingComplete,setTrainingComplete] = useState(" ")
-  
+  const [video,setVideo] = useState("https://embed.api.video/vod/vi4RgvXlXiTRZsy2AEyY524Z")
+
   const getTrainingDetail = async() =>{
     console.log("The comments")
     console.log("The token", localStorage.getItem("token"))
     const userID =   localStorage.getItem('user_id');
     // let response = await axios.get("http://localhost:4000/training/getTrainingById/3");
-    let response = await axios.get(`http://localhost:4000/training/getTrainingById/4/${userID}`, {
+    let response = await axios.get(`${BASE_URL}/training/getTrainingById/7/${userID}`, {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem('token')
       }
@@ -93,8 +85,19 @@ const TrainingDetail = () => {
 // console.log("THe traing file name", TrainingFile)
 
 const getUploadTime = (thedate) =>{
-  console.log("getUploadTime funtion")
+               var strSplitDate2 = String(thedate).split(' ')
+           
+              // var messages = item.message;
+              var date = new Date(strSplitDate2[0]);
+    
+              var last = date.toLocaleString();
+              const myArray = last.split(" ");
+              console.log("MYarray", myArray)
+
+
+
   var strSplitDate = String(thedate).split(' ')
+  console.log("The split date",strSplitDate[0])
   var date = new Date(strSplitDate[0]) 
   // console.log("The date",(new Date()-date/1000/31536000))
   var seconds = Math.floor((new Date() - date) / 1000);
@@ -104,7 +107,7 @@ const getUploadTime = (thedate) =>{
    }
   interval = seconds / 2592000;
    if (interval > 1) {
-    console.log(Math.floor(interval) + " months");
+    return Math.floor(interval) + " months";
    }
    interval = seconds / 86400;
    if (interval > 1) {
@@ -113,19 +116,20 @@ const getUploadTime = (thedate) =>{
   }
   interval = seconds / 3600;
   if (interval > 1) {
-     console.log(Math.floor(interval) + " hours");
+      return Math.floor(interval) + " hours";
   }
   interval = seconds / 60;
   if (interval > 1) {
-     console.log(Math.floor(interval) + " minutes");
+     return Math.floor(interval) + " minutes";
   }
-  // return Math.floor(seconds) + " seconds";
+  return Math.floor(seconds) + " seconds";
                           
 }
 
+
   useEffect(() =>{
     getTrainingDetail()
-    // playVideo()
+    
     },[])
   console.log("The training file",TrainingFile[1])
   return (
@@ -184,11 +188,12 @@ const getUploadTime = (thedate) =>{
                          TrainingFile.map((data,index) => 
                           {
                             const thedate =  getUploadTime(data.createdAt)
+                            console.log("Created at",data.createdAt)
                             return(  
                               data.fileType === ".mp4" &&
                               // <iframe src={videos}  width={500} height={500} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture  object-fit: contain;" allowFullScreen ></iframe>
                               // <img  key={index} src={student} alt="" onClick={handleShow}  />
-                              <VideoPop img ={student} data ={data} video ={videos} time = {thedate}/>
+                              <VideoPop img ={student} data ={data} video ={video} time = {thedate} theshow={show} handleClose={handleClose} showset={setShow} />
                            )
                           }
                          
