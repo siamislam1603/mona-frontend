@@ -57,7 +57,7 @@ export default function DropAllFile({ onSave }) {
           {
             data.map((file, index) => (
               <li className="mt-3" key={index}>
-                <img src={getBase64(file) || currentURI} alt="cover_file" />
+                <img src={getBase64(file) || currentURI} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
                 <span className="ms-2">
                   <Link to="#" onClick={() => handleFileDelete(file)}>
                       <img src="../img/removeIcon.svg" alt="" />

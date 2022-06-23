@@ -179,32 +179,11 @@ const NewUser = () => {
                     <div className="new-user-sec">
                       <div className="user-pic-sec">
                         <DragDropSingle
-                          imageToCrop={imageToCrop}
-                          onChange={onUploadFile}
-                          setPopupVisible={setPopupVisible}
+                          onSave={onUploadFile}
                         />
                         <span className="error">
                           {!formData.file && formErrors.file}
                         </span>
-
-                        <Popup show={popupVisible}>
-                          <ImageCropper
-                            imageToCrop={imageToCrop}
-                            onImageCropped={(croppedImage) =>
-                              setCroppedImage(croppedImage)
-                            }
-                          />
-                          <input
-                            type="submit"
-                            className="popup-button"
-                            value="CROP"
-                            onClick={() => {
-                              return (
-                                setCroppedImageInPopup(), setPopupVisible(false)
-                              );
-                            }}
-                          />
-                        </Popup>
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>

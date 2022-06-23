@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import { Link } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { useEffect } from "react";
 
 const animatedComponents = makeAnimated();
 const styles = {
@@ -24,6 +25,30 @@ const training = [
   },
 ];
 const Training = () => {
+  let location = useLocation();
+  const [topSuccessMessage, setTopSuccessMessage] = useState(null);
+
+  // STYLE ACTIVE LINKS
+  const navLinkStyles = ({ isActive }) => {
+    return isActive ? { 
+        color: "#AA0061", 
+        fontWeight: "700", 
+        opacity: 1
+      } : {}
+  };
+
+  useEffect(() => {
+    if(localStorage.getItem('success_msg')) {
+      setTopSuccessMessage(localStorage.getItem('success_msg'));
+      localStorage.removeItem('success_msg');
+
+      setTimeout(() => {
+        setTopSuccessMessage(null);
+      }, 3000);
+    }
+  }, [])
+
+  console.log('LOCATION:', location); 
   return (
     <>
       <div id="main">
@@ -120,11 +145,14 @@ const Training = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                      <li><a href="/available-training">Trainings Available</a></li>
-                      <li><a href="/complete-training" >Complete Training</a></li>
-                      <li><a href="/created-training" className="active">Trainings Created</a></li>
+                      <li><NavLink to="/available-training" style={navLinkStyles}>Trainings Available</NavLink></li>
+                      <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
+                      <li><NavLink to="/created-training" style={navLinkStyles}>Trainings Created</NavLink></li>
                     </ul>
                   </div>
+                  {
+                    topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                  } 
                   <div className="training-column">
                     <Row>
                       <Col lg={4} md={6}>
