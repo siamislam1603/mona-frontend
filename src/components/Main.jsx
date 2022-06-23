@@ -6,6 +6,7 @@ import SignIn from '../pages/SignIn';
 import ResetPassword from '../pages/ResetPassword';
 import UserManagement from '../pages/UserManagement';
 import NewUser from '../pages/NewUser';
+import AddPermissions from '../pages/AddPermissions';
 import AddUserRole from '../pages/AddUserRole';
 import FranchisorDashboard from '../pages/FranchisorDashboard';
 import FranchiseeDashboard from '../pages/FranchiseeDashboard';
@@ -85,6 +86,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <ResetPassword />
               <UploadFile />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/add-permissions"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <ResetPassword />
+              <AddPermissions />
             </Protected>
           }
         />

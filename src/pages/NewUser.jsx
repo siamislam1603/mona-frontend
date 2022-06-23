@@ -43,12 +43,8 @@ const NewUser = () => {
 
   // IMAGE CROPPING STATES
   const [image, setImage] = useState(null);
-  // const [croppedArea, setCroppedArea] = useState(null);
-  // const [crop, setCrop] = useState({ x: 0, y: 0 });
-  // const [zoom, setZoom] = useState(1);
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
-  // const inputRef = useRef();
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
@@ -73,9 +69,31 @@ const NewUser = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // setFormErrors(validateForm(formData));
-    // setIsSubmit(true);
+    setIsSubmit(true);
     console.log('FORM DATA:', formData);
     console.log('TRAINING DOCUMENTS:', trainingDocuments);
+
+    if (isSubmit === true) {
+      console.log('FORM SUBMISSION STARTED!');
+      let data = new FormData();
+      for (let [key, value] of Object.entries(formData)) {
+        data.append(`${key}`, `${value}`);
+      }
+
+      trainingDocuments.forEach(doc => {
+        data.append('images', doc);
+      });
+
+      data.append('franchisee', selectedFranchisee);
+
+      if (croppedImage) {
+        data.append('file', croppedImage);
+        console.log('SUBMITTING FORM DATA');
+        createUser(data);
+      } else {
+        console.log('Choose & Crop an image first!');
+      }
+    }
   };
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
@@ -126,23 +144,9 @@ const NewUser = () => {
     fetchCities();
   }, []);
 
-  useEffect(() => {
-    if (Object.keys(formErrors).length === 0 && isSubmit === true) {
-      let data = new FormData();
-      for (let [key, value] of Object.entries(formData)) {
-        data.append(`${key}`, `${value}`);
-      }
-
-      data.append('franchisee', selectedFranchisee);
-
-      if (croppedImage) {
-        data.append('file', croppedImage);
-        createUser(data);
-      } else {
-        console.log('Choose & Crop an image first!');
-      }
-    }
-  }, [formErrors]);
+  // useEffect(() => {
+    
+  // }, [formErrors]);
 
   return (
     <>
