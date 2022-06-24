@@ -3,9 +3,9 @@ import {
   faPen,
   faPlus,
   faRemove,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState, useEffect } from "react";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState, useEffect } from 'react';
 import {
   Accordion,
   Button,
@@ -14,11 +14,31 @@ import {
   Dropdown,
   Form,
   Row,
-} from "react-bootstrap";
-import LeftNavbar from "../../components/LeftNavbar";
-import TopHeader from "../../components/TopHeader";
+} from 'react-bootstrap';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../components/App';
+import LeftNavbar from '../../components/LeftNavbar';
+import TopHeader from '../../components/TopHeader';
 
 function FormResponse(props) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [responseData, setResponseData] = useState([]);
+  useEffect(() => {
+    console.log('location---->', location.state.form_id);
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    fetch(
+      `${BASE_URL}/form/response?form_id=${location.state.form_id}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => setResponseData(result?.result))
+      .catch((error) => console.log('error', error));
+  }, []);
   return (
     <>
       <div id="main">
@@ -26,7 +46,7 @@ function FormResponse(props) {
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
                 <TopHeader />
@@ -35,7 +55,7 @@ function FormResponse(props) {
                     <div className="mynewForm-heading  mb-0">
                       <Button
                         onClick={() => {
-                          props.history.push("/form");
+                          navigate('/form');
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
@@ -47,7 +67,7 @@ function FormResponse(props) {
                 <div className="responses-forms-header-section forms-header-section">
                   <div className="forms-managment-section">
                     <div className="forms-managment-left">
-                      <p>2 Responses</p>
+                      <p>{responseData.length} Responses</p>
                     </div>
                     <div className="forms-managment-right">
                       <div className="forms-search">
@@ -91,190 +111,74 @@ function FormResponse(props) {
                 </div>
                 <div className="responses-collapse">
                   <Accordion defaultActiveKey="0">
-                    <Accordion.Item eventKey="0">
-                      <Accordion.Header>
-                        <div className="responses-header-row">
-                          <div className="responses-header-left">
-                            <div className="responses-header-image">
-                              <img src="../img/small-user.png" alt="" />
-                            </div>
-                            <div className="responses-header-detail">
-                              <h5>James Parker</h5>
-                              <h6>
-                                <span>Educator,</span> Smile Daycare
-                              </h6>
-                            </div>
-                          </div>
-                          <div className="responses-header-right">
-                            <p>
-                              Completed on: <br />
-                              05/15/2022, 14:00:00 hrs
-                            </p>
-                          </div>
-                        </div>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <div className="responses-content-wrap">
-                          <h4 className="content-wrap-title">Section Name</h4>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>1</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>2</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>3</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>4</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <div className="answer-files">
-                                <img src="../img/audio-ico.png" alt="" />
-                                <h4>audiofilename.mp3</h4>
+                    {responseData.map((item, index) => {
+                      return (
+                        <Accordion.Item eventKey={index}>
+                          <Accordion.Header>
+                            <div className="responses-header-row">
+                              <div className="responses-header-left">
+                                <div className="responses-header-image">
+                                  <img src="../img/small-user.png" alt="" />
+                                </div>
+                                <div className="responses-header-detail">
+                                  <h5>{item.user.fullname}</h5>
+                                  <h6>
+                                    <span className="text-capitalize">
+                                      {item.user.role.split('_').join(' ')},
+                                    </span>{' '}
+                                    {item.user.franchisee.franchisee_name}
+                                  </h6>
+                                </div>
+                              </div>
+                              <div className="responses-header-right">
+                                <p>
+                                  Completed on: <br />
+                                  {/* 05/15/2022, 14:00:00 hrs */}
+                                  {item.createdAt.split('T')[0] +
+                                    ', ' +
+                                    item.createdAt.split('T')[1].split('.')[0] +
+                                    ' hrs'}
+                                </p>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                      </Accordion.Body>
-                    </Accordion.Item>
-                    <Accordion.Item eventKey="1">
-                      <Accordion.Header>
-                        <div className="responses-header-row">
-                          <div className="responses-header-left">
-                            <div className="responses-header-image">
-                              <img src="../img/small-user.png" alt="" />
+                          </Accordion.Header>
+                          <Accordion.Body>
+                            <div className="responses-content-wrap">
+                              <h4 className="content-wrap-title">
+                                Section Name
+                              </h4>
+                              {Object.keys(JSON.parse(item.fields)).map(
+                                (inner_item, inner_index) => {
+                                  return (
+                                    <div className="responses-content-box">
+                                      <div className="responses-content-question">
+                                        <span>{inner_index + 1}</span>
+                                        <h6 className="text-capitalize">
+                                          {inner_item.split('_').join(' ')}
+                                        </h6>
+                                      </div>
+                                      <div className="responses-content-answer">
+                                        <img
+                                          src="../img/bx_right-arrow-alt.svg"
+                                          alt=""
+                                        />
+                                        <p>
+                                          {
+                                            Object.values(
+                                              JSON.parse(item.fields)
+                                            )[inner_index]
+                                          }
+                                        </p>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              )}
                             </div>
-                            <div className="responses-header-detail">
-                              <h5>James Parker</h5>
-                              <h6>
-                                <span>Educator,</span> Smile Daycare
-                              </h6>
-                            </div>
-                          </div>
-                          <div className="responses-header-right">
-                            <p>
-                              Completed on: <br />
-                              05/15/2022, 14:00:00 hrs
-                            </p>
-                          </div>
-                        </div>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <div className="responses-content-wrap">
-                          <h4 className="content-wrap-title">Section Name</h4>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>1</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>2</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>3</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>4</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <div className="answer-files">
-                                <img src="../img/audio-ico.png" alt="" />
-                                <h4>audiofilename.mp3</h4>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Accordion.Body>
-                    </Accordion.Item>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      );
+                    })}
                   </Accordion>
                 </div>
               </div>
@@ -287,3 +191,98 @@ function FormResponse(props) {
 }
 
 export default FormResponse;
+
+{
+  /* <Accordion.Item eventKey="1">
+                      <Accordion.Header>
+                        <div className="responses-header-row">
+                          <div className="responses-header-left">
+                            <div className="responses-header-image">
+                              <img src="../img/small-user.png" alt="" />
+                            </div>
+                            <div className="responses-header-detail">
+                              <h5>James Parker</h5>
+                              <h6>
+                                <span>Educator,</span> Smile Daycare
+                              </h6>
+                            </div>
+                          </div>
+                          <div className="responses-header-right">
+                            <p>
+                              Completed on: <br />
+                              05/15/2022, 14:00:00 hrs
+                            </p>
+                          </div>
+                        </div>
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <div className="responses-content-wrap">
+                          <h4 className="content-wrap-title">Section Name</h4>
+                          <div className="responses-content-box">
+                            <div className="responses-content-question">
+                              <span>1</span>
+                              <h6>Some text here for the label</h6>
+                            </div>
+                            <div className="responses-content-answer">
+                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
+                              <p>
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="responses-content-box">
+                            <div className="responses-content-question">
+                              <span>2</span>
+                              <h6>Some text here for the label</h6>
+                            </div>
+                            <div className="responses-content-answer">
+                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
+                              <p>
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="responses-content-box">
+                            <div className="responses-content-question">
+                              <span>3</span>
+                              <h6>Some text here for the label</h6>
+                            </div>
+                            <div className="responses-content-answer">
+                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
+                              <p>
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="responses-content-box">
+                            <div className="responses-content-question">
+                              <span>4</span>
+                              <h6>Some text here for the label</h6>
+                            </div>
+                            <div className="responses-content-answer">
+                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
+                              <div className="answer-files">
+                                <img src="../img/audio-ico.png" alt="" />
+                                <h4>audiofilename.mp3</h4>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Accordion.Body>
+                    </Accordion.Item> */
+}

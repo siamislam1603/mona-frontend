@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import { Link } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { useEffect } from "react";
 
 const animatedComponents = makeAnimated();
 const styles = {
@@ -24,6 +25,30 @@ const training = [
   },
 ];
 const Training = () => {
+  let location = useLocation();
+  const [topSuccessMessage, setTopSuccessMessage] = useState(null);
+
+  // STYLE ACTIVE LINKS
+  const navLinkStyles = ({ isActive }) => {
+    return isActive ? { 
+        color: "#AA0061", 
+        fontWeight: "700", 
+        opacity: 1
+      } : {}
+  };
+
+  useEffect(() => {
+    if(localStorage.getItem('success_msg')) {
+      setTopSuccessMessage(localStorage.getItem('success_msg'));
+      localStorage.removeItem('success_msg');
+
+      setTimeout(() => {
+        setTopSuccessMessage(null);
+      }, 3000);
+    }
+  }, [])
+
+  console.log('LOCATION:', location); 
   return (
     <>
       <div id="main">
@@ -118,13 +143,25 @@ const Training = () => {
                       </div>
                     </div>
                   </header>
-                  <div className="training-cat mb-3">
+                  <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
-                      <li><a href="/available-training">Trainings Available</a></li>
-                      <li><a href="/complete-training" >Complete Training</a></li>
-                      <li><a href="/created-training" className="active">Trainings Created</a></li>
+                      <li><NavLink to="/" className="active" style={navLinkStyles}>Trainings Available</NavLink></li>
+                      <li><NavLink to="/" style={navLinkStyles}>Complete Training</NavLink></li>
+                      <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
                     </ul>
+                    <div className="selectdropdown ms-auto d-flex align-items-center">
+                      <Form.Group className="d-flex align-items-center">
+                        <Form.Label className="d-block me-2">Choose Category</Form.Label>
+                        <Select
+                          closeMenuOnSelect={true}
+                          components={animatedComponents}
+                        />
+                      </Form.Group>
+                    </div>
                   </div>
+                  {
+                    topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                  } 
                   <div className="training-column">
                     <Row>
                       <Col lg={4} md={6}>

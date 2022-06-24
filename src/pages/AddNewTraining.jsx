@@ -45,7 +45,6 @@ const AddNewTraining = () => {
 
   // LOG MESSAGES
   const [topErrorMessage, setTopErrorMessage] = useState(null);
-  const [topSuccessMessage, setTopSuccessMessage] = useState(null);
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
@@ -63,8 +62,6 @@ const AddNewTraining = () => {
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
-    // const response = await axios.post('https://httpbin.org/anything', data);
-    // console.log('RESPONSE:', response);
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
@@ -77,18 +74,16 @@ const AddNewTraining = () => {
     console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
-      setTopSuccessMessage("Training created successfully.");
-      setTimeout(() => {
-        setTopSuccessMessage(null);
-        window.location.href="/training";
-      }, 3000);
+      localStorage.setItem('success_msg', 'Training Created Successfully!');
+      window.location.href="/training";
+
 
     } else if(response.status === 200 && response.data.status === "fail") {
       const { msg } = response.data;
       setTopErrorMessage(msg);
       setTimeout(() => {
         setTopErrorMessage(null);
-      }, 3000);
+      }, 3000)
     }
   };  
 
@@ -171,9 +166,6 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
   
-
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  hideUserDialog && console.log('USER DIALOG:', hideUserDialog);
   return (
     <>
       <div id="main">
@@ -196,8 +188,7 @@ const AddNewTraining = () => {
                       </span>
                     </h1>
                   </header>
-                    {topErrorMessage && <p className="alert alert-danger">{topErrorMessage}</p>} 
-                    {topSuccessMessage && <p className="alert alert-success">{topSuccessMessage}</p>}
+                    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
                   <div className="training-form">
                     <Row>
                       <Col md={6} className="mb-3">
@@ -432,6 +423,23 @@ const AddNewTraining = () => {
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
+                <div className="custom-checkbox">
+                  <Form.Label className="d-block">Select User Roles</Form.Label>
+                  <div className="btn-checkbox d-block">
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                      <Form.Check type="checkbox" label="Co-ordinators" />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                      <Form.Check type="checkbox" label="Educator" />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
+                      <Form.Check type="checkbox" label="Parents" />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                      <Form.Check type="checkbox" label="All Roles" />
+                    </Form.Group>
+                  </div>
+                </div>
                 <Form.Group className={hideSelect || hideRoleDialog ? 'd-none' : ''}>
                   <Form.Label>Select User Roles</Form.Label>
                   <Multiselect

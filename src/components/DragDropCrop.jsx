@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave }) {
+export default function DragDropCrop({ onSave, setPopupVisible, croppedImage, setCroppedImage }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -10,6 +10,7 @@ export default function DropAllFile({ onSave }) {
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach(file => {
       setData(prevState => [...prevState, file]);
+      setPopupVisible(true);
     });
   }, []);
 
@@ -42,6 +43,13 @@ export default function DropAllFile({ onSave }) {
     onSave(data);
   }, [data]);
 
+  useEffect(() => {
+    if(croppedImage) {
+      setCurrentURI(croppedImage.src);
+      setData([]);
+    }
+  }, [croppedImage]);
+
   return (
     <div className="file-upload-form mt-3">
       <div {...getRootProps({ className: 'dropzone' })}>
@@ -55,7 +63,16 @@ export default function DropAllFile({ onSave }) {
       <div className="showfiles">
         <ul>
           {
-            data.map((file, index) => (
+            croppedImage ?
+              <li className="mt-3">
+                <img src={currentURI} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
+                <span className="ms-2">
+                  <Link to="#" onClick={() => setCroppedImage(null)}>
+                      <img src="../img/removeIcon.svg" alt="" />
+                  </Link>
+                </span>
+              </li>
+               : data.map((file, index) => (
               <li className="mt-3" key={index}>
                 <img src={getBase64(file) || currentURI} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
                 <span className="ms-2">
@@ -71,34 +88,3 @@ export default function DropAllFile({ onSave }) {
     </div>
   );
 }
-
-const thumb = {
-  display: "flex",
-
-};
-const thumbInner = {
-  display: "flex",
-  alignItems: "baseline"
- 
-};
-
-const img = {
-  display: "block",
-  width: "150px",
-  height: "100px",
-  objectFit: "contain"
-};
-const thumbsContainer = {
-  display: "flex",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  marginTop: 16
-};
-
-const button = {
-  width: "20px",
-  height: "20px",
-  marginLeft: "20px"
-
-}
-
