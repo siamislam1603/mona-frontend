@@ -44,6 +44,15 @@ const CreatedTraining = () => {
       console.log(err)
   })
   },[]);
+
+  const NavLinkStyle = ({ isActive }) => {
+      return{
+          fontWeight: isActive ? 'underline' : 'normal'
+
+      }
+
+
+  }
   // const getAssignedData = () => {
   //   var requestOptions = {
   //     method: "GET",
