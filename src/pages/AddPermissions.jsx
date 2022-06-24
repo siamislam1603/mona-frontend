@@ -65,11 +65,14 @@ const AddPermissions = () => {
                                             <option value="educator">Educator</option>
                                         </select>
                                         </th>
-                                        <th className="h3 text-center py-4 px-4">Add</th>
-                                        <th className="h3 text-center py-4 px-4">Edit</th>
-                                        <th className="h3 text-center py-4 px-4">Delete</th>
-                                        <th className="h3 text-center py-4 px-4">Read</th>
-                                        <th className="h3 text-center py-4 px-4">Change Status</th>
+                                        <th className="h5 text-center py-4 px-4">Listing</th>
+                                        <th className="h5 text-center py-4 px-4">Add</th>
+                                        <th className="h5 text-center py-4 px-4">Edit</th>
+                                        <th className="h5 text-center py-4 px-4">View Detail</th>
+                                        <th className="h5 text-center py-4 px-4">Delete</th>
+                                        <th className="h5 text-center py-4 px-4">Change Status</th>
+                                        <th className="h5 text-center py-4 px-4">Share</th>
+                                        <th className="h5 text-center py-4 px-4">Download</th>
                                     </tr>
                                 </thead>
                                 
@@ -113,6 +116,30 @@ const AddPermissions = () => {
                                             <input 
                                                 type="checkbox"
                                                 value="5"
+                                                className="w-8 h-8"
+                                                {...register("1", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("1", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("1", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
                                                 className="w-8 h-8"
                                                 {...register("1", { required: false })} />
                                         </td>
@@ -160,6 +187,30 @@ const AddPermissions = () => {
                                                 className="w-8 h-8"
                                                 {...register("2", { required: false })} />
                                         </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("2", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("2", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
+                                                className="w-8 h-8"
+                                                {...register("2", { required: false })} />
+                                        </td>
                                     </tr>
 
                                     <tr>
@@ -201,6 +252,30 @@ const AddPermissions = () => {
                                             <input 
                                                 type="checkbox"
                                                 value="5"
+                                                className="w-8 h-8"
+                                                {...register("3", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("3", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("3", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
                                                 className="w-8 h-8"
                                                 {...register("3", { required: false })} />
                                         </td>
@@ -248,6 +323,30 @@ const AddPermissions = () => {
                                                 className="w-8 h-8"
                                                 {...register("4", { required: false })} />
                                         </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("4", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("4", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
+                                                className="w-8 h-8"
+                                                {...register("4", { required: false })} />
+                                        </td>
                                     </tr>
 
                                     <tr>
@@ -289,6 +388,30 @@ const AddPermissions = () => {
                                             <input 
                                                 type="checkbox"
                                                 value="5"
+                                                className="w-8 h-8"
+                                                {...register("5", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("5", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("5", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
                                                 className="w-8 h-8"
                                                 {...register("5", { required: false })} />
                                         </td>
@@ -336,6 +459,30 @@ const AddPermissions = () => {
                                                 className="w-8 h-8"
                                                 {...register("6", { required: false })} />
                                         </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("6", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("6", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
+                                                className="w-8 h-8"
+                                                {...register("6", { required: false })} />
+                                        </td>
                                     </tr>
 
                                     <tr>
@@ -377,6 +524,30 @@ const AddPermissions = () => {
                                             <input 
                                                 type="checkbox"
                                                 value="5"
+                                                className="w-8 h-8"
+                                                {...register("7", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("7", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("7", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
                                                 className="w-8 h-8"
                                                 {...register("7", { required: false })} />
                                         </td>
@@ -424,6 +595,30 @@ const AddPermissions = () => {
                                                 className="w-8 h-8"
                                                 {...register("8", { required: false })} />
                                         </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("8", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("8", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
+                                                className="w-8 h-8"
+                                                {...register("8", { required: false })} />
+                                        </td>
                                     </tr>
                                     
                                     <tr>
@@ -465,6 +660,30 @@ const AddPermissions = () => {
                                             <input 
                                                 type="checkbox"
                                                 value="5"
+                                                className="w-8 h-8"
+                                                {...register("9", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="6"
+                                                className="w-8 h-8"
+                                                {...register("9", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="7"
+                                                className="w-8 h-8"
+                                                {...register("9", { required: false })} />
+                                        </td>
+
+                                        <td className="text-center">
+                                            <input 
+                                                type="checkbox"
+                                                value="8"
                                                 className="w-8 h-8"
                                                 {...register("9", { required: false })} />
                                         </td>
