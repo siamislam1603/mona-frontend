@@ -554,6 +554,8 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .vid-col:after { position: absolute; content: ''; transform: translateX(-50%) translateY(-50%); left:50%; top:50%; width: 50px; height: 50px; z-index: 2; background: url("../img/video-ico.svg") no-repeat; background-size: cover; }
 .vid-col .caption { position: absolute; left:0; bottom: 15px; z-index: 2; color: var(--white); padding: 20px; }
 
+.custom-checkbox .btn-checkbox .form-group { display:inline-block; }
+
 
 /* Pradeep CODE */
 .Card_design {background: #F7F7F7; border: none; border-radius: 20px }
