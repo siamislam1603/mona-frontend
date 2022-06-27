@@ -27,55 +27,28 @@ const training = [
 ];
 
 const CreatedTraining = () => {
-  const [createData, setCreatedData] = useState([]);
-  
+  const [createdTrainingData, setCreatedTrainingData] = useState();
+
+  const fetchCreatedTrainings = async () => {
+    let user_id = localStorage.getItem('user_id');
+    console.log('USER ID:', user_id)
+    const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}`);
+    if(response.status === 200 && response.data.status === "success") {
+      const { training } = response.data;
+      setCreatedTrainingData(training);
+    }
+  };
+
+  const handleTrainingSelect = () => {
+
+  }
 
   useEffect(() => {
-    // console.log("user_id user_id user_id", localStorage.getItem("user_id"));
-    
-    const id = localStorage.getItem("user_id");
-    console.log(id);
-    axios.get(`${BASE_URL}/training/createdTrainingList/${id}`)
-    .then(res => {
-      console.log(res)
-      setCreatedData(res.data)
-  })
-  .catch(err =>{
-      console.log(err)
-  })
-  },[]);
-  // const getAssignedData = () => {
-  //   var requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow",
-  //   };
-    // const AvailableTraining = async () => {
-    //   const [assignedData, setAssignedData] = useState([]);
-    //   const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${localStorage.getItem("user_id")}`);
-  
-    //   if (response.status === 200) {
-  
-    //     const { data_list } = response.data;
-  
-    //     setAssignedData(
-  
-    //       data_list.map((datas) => ({
-  
-    //         value: datas.id,
-  
-    //         label: datas.title,
-  
-    //       }))
-  
-    //     );
-  
-    //   }
-    // };
-  // fetch(`${BASE_URL}/training/assigeedTraining/${localStorage.getItem("user_id")}`, requestOptions)
-  //   .then((response) => response.json())
-  //   .then((result) => setAssignedData(result?.result))
-  //   .catch((error) => console.log("error", error));
-  // };
+    fetchCreatedTrainings();
+  }, []);
+
+  createdTrainingData && console.log('DATA:', createdTrainingData);
+
   return (
     <>
       <div id="main">
@@ -179,14 +152,21 @@ const CreatedTraining = () => {
                   </div>
                   <div className="training-column">
                     <Row>
-                    {createData?.map((item) => {
+                    {createdTrainingData?.map((training) => {
                       return(
-                      <Col lg={4} md={6}>
+                      <Col lg={4} md={6} key={training.id}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="{item.file}" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
+                          <div className="pic">
+                            <a href={`/training-detail/${training.id}`} onClick={handleTrainingSelect}>
+                              <img src={training.training_files[0].thumbnail} alt=""/>
+                              <span className="lthumb">
+                                <img src="../img/logo-thumb.png" alt=""/>
+                              </span>
+                            </a>
+                          </div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">{item.title}</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time}</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
