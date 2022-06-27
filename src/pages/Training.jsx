@@ -145,8 +145,8 @@ const Training = () => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
-                      <li><NavLink to="/" className="active" style={navLinkStyles}>Trainings Available</NavLink></li>
-                      <li><NavLink to="/" style={navLinkStyles}>Complete Training</NavLink></li>
+                      <li><NavLink to="/available-training" className="active" style={navLinkStyles}>Trainings Available</NavLink></li>
+                      <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
                       <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
                     </ul>
                     <div className="selectdropdown ms-auto d-flex align-items-center">

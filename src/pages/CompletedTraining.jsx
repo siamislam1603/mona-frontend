@@ -5,7 +5,7 @@ import TopHeader from "../components/TopHeader";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
-import { useNavigate, useParams  } from 'react-router-dom';
+import { useNavigate, useParams, NavLink, useLocation  } from 'react-router-dom';
 import axios from "axios";
 
 const animatedComponents = makeAnimated();
@@ -27,7 +27,16 @@ const training = [
 ];
 
 const CompleteTraining = () => {
+  let location = useLocation();
   const [completeData, setCompleteData] = useState([]);
+
+  const navLinkStyles = ({ isActive }) => {
+    return isActive ? { 
+        color: "#AA0061", 
+        fontWeight: "700", 
+        opacity: 1
+      } : {}
+  };
   
 
   useEffect(() => {
@@ -172,15 +181,17 @@ const CompleteTraining = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                    <li><a className="active">Complete Training</a></li>
-                    {/* <li><a href="/" className="active">Trainings Created</a></li> */}
+                    <li><NavLink to="/available-training" style={navLinkStyles}>Trainings Available</NavLink></li>
+                    <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
+                    <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
                     </ul>
                   </div>
                   <div className="training-column">
                     <Row>
                     {completeData?.map((item) => {
                       return(
-                      <Col lg={4} md={6}>
+                      <Col lg={4} md={6}
+                      >
                         <div className="item mt-3 mb-3">
                           <div className="pic"><a href="/training-detail"><img src="{item.file}" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
