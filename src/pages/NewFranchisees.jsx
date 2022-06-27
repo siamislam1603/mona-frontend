@@ -13,6 +13,7 @@ const NewFranchisees = () => {
     const [australianStatesData, setAustralianStatesData] = useState();
     const [cityData, setCityData] = useState([]);
     const [franchiseeAdminData, setFranchiseeAdminData] = useState();
+    const [selectedFranchisee, setSelectedFranchisee] = useState();
 
     // CREATES A NEW FRANCHISEE
     const createFranchisee = async () => {
@@ -70,6 +71,7 @@ const NewFranchisees = () => {
         event.preventDefault();
 
         if(Object.keys(franchiseeData).length === 12) {
+            console.log('FRANCHISEE DATA:', franchiseeData);
             createFranchisee();
         } else {
             console.log('All fields are necessary.');
@@ -103,7 +105,9 @@ const NewFranchisees = () => {
                                 <LeftNavbar />
                             </aside>
                             <div className="sec-column">
-                                <TopHeader />
+                                <TopHeader 
+                                    selectedFranchisee={selectedFranchisee}
+                                    setSelectedFranchisee={setSelectedFranchisee} />
                                 <div className="entry-container">
                                     <div className="user-management-sec">
                                         <header className="title-head">

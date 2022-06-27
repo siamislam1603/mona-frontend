@@ -22,10 +22,10 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       const response = await axios.get(`${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`);
       if(response.status === 200) {
         const { franchisee } = response.data;
-        setSelectedFranchisee(franchisee.registered_name);
+        setSelectedFranchisee(franchisee.franchisee_name);
         setFranchiseeList([franchisee].map((data) => ({
           id: data.id,
-          franchisee_name: `${data.registered_name}, ${data.city}`
+          franchisee_name: `${data.franchisee_name}, ${data.city}`
         })));
       }
     };
