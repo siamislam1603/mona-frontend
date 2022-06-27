@@ -5,7 +5,7 @@ import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
 import { BASE_URL } from "../components/App";
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { PlayerSdk } from '@api.video/player-sdk'
 
@@ -47,6 +47,9 @@ const training = [
 
 // console.log(training)
 const TrainingDetail = () => {
+  const { trainingId } = useParams();
+  const [trainingDetails, setTrainingDetails] = useState(null);
+
   let videoURL = ""
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -57,52 +60,32 @@ const TrainingDetail = () => {
   const [Trainingdata,setTrainingData] = useState("");
   const [TrainingFile,setTrainingFile] = useState([]);
   
-  const getTrainingDetail = async() =>{
-    console.log("The comments")
-    console.log("The token", localStorage.getItem("token"))
-    // let response = await axios.get("http://localhost:4000/training/getTrainingById/3");
-    let response = await axios.get("http://localhost:4000/training/getTrainingById/4/2", {
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem('token')
-      }
-        //  const response = await axios.get(`${ BASE_URL }/auth/get_menu_list`,
-
-    // { headers: { "Authorization": "Bearer "+token, } }
-
-
-    });
-    console.log("The response",response.data)
-    // const filename = response.headers['content-disposition'].split('filename=')[1];
-    // console.log("Fike name", filename)
-
-    if(response.status === 200){
-      
-      const {data} = response;
-      const Thetrainingdata= data
-      console.log("Traing data",Thetrainingdata)
-      setTrainingData(Thetrainingdata)
-      setTrainingFile(Thetrainingdata.training_files)
+  const getTrainingDetails = async () => {
+   
+    const user_id = localStorage.getItem('user_id');
+    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${user_id}`);
+    
+    if(response.status === 200 && response.data.status === "success") {
+      const { all_trainings } = response.data;
+      setTrainingDetails(all_trainings);
     }
-}
+  }
 // console.log("THe traing file name", TrainingFile)
-const playVideo = () =>{
-    window.player = new PlayerSdk("#target", { 
-      id:"vi2n1PhsuBxx3o9jSvEyLWi0", 
-      hideTitle: true,
-      // ... other optional options 
-  });
+  const playVideo = () =>{
+      window.player = new PlayerSdk("#target", { 
+        id:"vi2n1PhsuBxx3o9jSvEyLWi0", 
+        hideTitle: true,
+        // ... other optional options 
+    });
 
-}
+  }
 
 
   useEffect(() =>{
-    getTrainingDetail()
-    // playVideo()
-    },[])
+    getTrainingDetails()
+  }, [])
 
-
-
-  console.log("The training file",TrainingFile[1])
+  trainingDetails && console.log('TRAINING ID:', trainingDetails);
   return (
     <>
       <div id="main">
@@ -114,9 +97,10 @@ const playVideo = () =>{
               </aside>
               <div className="sec-column">
                 <TopHeader />
+                {trainingDetails &&
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-sm">{Trainingdata.title}</h1>
+                    <h1 className="title-sm">{trainingDetails.title}</h1>
                     <div className="othpanel">
                       <div className="extra-btn">
                         <Dropdown>
@@ -145,11 +129,11 @@ const playVideo = () =>{
                     </div>
                     <div className="training-cont mt-3 mb-5">
                       {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis a sagittis varius vel, est quam quam. Orci blandit ac eleifend mi cursus velit pellentesque. Sodales iaculis netus ipsum facilisis suspendisse dolor. Sed sed neque enim tellus in tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis a sagittis varius vel, est quam quam.</p> */}
-                      <p>{Trainingdata.description}</p>
+                      <p>{trainingDetails.description}</p>
                     </div>
                     {/* <iframe src="mypage.html" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"></iframe> */}
                   
-                    {/* <iframe src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp"  title="dsk " allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="1280" height="720" frameborder="0"></iframe> */}
+                    {/* <iframe src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp"  title="dsk " allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="1280" height="720" frameBorder="0"></iframe> */}
                    <div style={{display:"flex"}}>
 
                     <div>
@@ -157,11 +141,15 @@ const playVideo = () =>{
                     {/* <div id="target"></div> */}
                    
                     {
-                         training.map((data,index) => (    
+                         trainingDetails.training_files.map((data,index) => (    
                             // data.fileType === ".mp4" &&
-                            // <iframe src={videos}  width={500} height={500} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture  object-fit: contain;" allowFullScreen ></iframe>
+                            // <iframe src={videos}  width={500} height={500} frameBorder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture  object-fit: contain;" allowFullScreen ></iframe>
                             // <img  key={index} src={student} alt="" onClick={handleShow}  />
-                            <VideoPop img ={student} data ={data} video ={videos} fun = {handleClose}/>
+                            <VideoPop 
+                              img ={data.thumbnail} 
+                              data ={data.file} 
+                              video ={videos} 
+                              fun={handleClose}/>
                          )
                         )
                       }
@@ -237,6 +225,7 @@ const playVideo = () =>{
                     </div>
                   </div>
                 </div>
+              }
               </div>
             </div>
           </Container>
@@ -256,7 +245,7 @@ const playVideo = () =>{
         <Modal.Body>
           <div className="form-settings-content">
             <Row>
-            <iframe width={200} height={200} src={videos} title="YouTube video player" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+            <iframe width={200} height={200} src={videos} title="YouTube video player" frameBorder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
               
             </Row>   
           </div>

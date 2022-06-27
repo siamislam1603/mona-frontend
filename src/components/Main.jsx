@@ -313,7 +313,7 @@ const Main = () => {
         />
 
         <Route
-          path="/training-detail"
+          path="/training-detail/:trainingId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

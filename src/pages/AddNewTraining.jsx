@@ -423,6 +423,23 @@ const AddNewTraining = () => {
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
+                <div className="custom-checkbox">
+                  <Form.Label className="d-block">Select User Roles</Form.Label>
+                  <div className="btn-checkbox d-block">
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                      <Form.Check type="checkbox" label="Co-ordinators" />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                      <Form.Check type="checkbox" label="Educator" />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
+                      <Form.Check type="checkbox" label="Parents" />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                      <Form.Check type="checkbox" label="All Roles" />
+                    </Form.Group>
+                  </div>
+                </div>
                 <Form.Group className={hideSelect || hideRoleDialog ? 'd-none' : ''}>
                   <Form.Label>Select User Roles</Form.Label>
                   <Multiselect

@@ -143,12 +143,21 @@ const Training = () => {
                       </div>
                     </div>
                   </header>
-                  <div className="training-cat mb-3">
+                  <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
-                      <li><NavLink to="/available-training" style={navLinkStyles}>Trainings Available</NavLink></li>
-                      <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
-                      <li><NavLink to="/created-training" style={navLinkStyles}>Trainings Created</NavLink></li>
+                      <li><NavLink to="/" className="active" style={navLinkStyles}>Trainings Available</NavLink></li>
+                      <li><NavLink to="/" style={navLinkStyles}>Complete Training</NavLink></li>
+                      <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
                     </ul>
+                    <div className="selectdropdown ms-auto d-flex align-items-center">
+                      <Form.Group className="d-flex align-items-center">
+                        <Form.Label className="d-block me-2">Choose Category</Form.Label>
+                        <Select
+                          closeMenuOnSelect={true}
+                          components={animatedComponents}
+                        />
+                      </Form.Group>
+                    </div>
                   </div>
                   {
                     topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
