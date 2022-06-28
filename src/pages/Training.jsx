@@ -145,9 +145,9 @@ const Training = () => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
-                      <li><NavLink to="/" className="active" style={navLinkStyles}>Trainings Available</NavLink></li>
-                      <li><NavLink to="/" style={navLinkStyles}>Complete Training</NavLink></li>
-                      <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
+                      <li><a href="/available-training" className="active">Trainings Available</a></li>
+                      <li><a href="/complete-training">Complete Training</a></li>
+                      <li><a href="/created-training">Trainings Created</a></li>
                     </ul>
                     <div className="selectdropdown ms-auto d-flex align-items-center">
                       <Form.Group className="d-flex align-items-center">
@@ -261,7 +261,9 @@ const Training = () => {
                       </Col>
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic6.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
+                          <div className="pic">
+                            <a href="/training-detail"><img src="../img/trainingpic6.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a>
+                          </div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
                             <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
