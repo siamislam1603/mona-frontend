@@ -8,7 +8,12 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState([]);
 
     const fetchFranchiseeList = async () => {
-      const response = await axios.get(`${BASE_URL}/role/franchisee`);
+      let token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
       if(response.status === 200) {
         const { franchiseeList: franchiseeData } = response.data;
         setFranchiseeList([...franchiseeData.map((data) => ({

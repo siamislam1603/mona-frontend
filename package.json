@@ -36,6 +36,7 @@
     "react-select": "^5.3.2",
     "react-signature-canvas": "^1.0.5",
     "react-sweet-progress": "^1.1.2",
+    "react-tabs": "^5.1.0",
     "react-to-print": "^2.14.7",
     "web-vitals": "^2.1.4"
   },

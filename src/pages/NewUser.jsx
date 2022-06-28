@@ -39,6 +39,10 @@ const NewUser = () => {
   const [cityData, setCityData] = useState([]);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [coordinatorData, setCoordinatorData] = useState([]);
+  const [trainingCategoryData, setTrainingCategoryData] = useState([]);
+  const [pdcData, setPdcData] = useState([]);
+  const [businessAssetData, setBuinessAssetData] = useState([]);
   const [trainingDocuments, setTrainingDocuments] = useState();
 
   // IMAGE CROPPING STATES
@@ -96,9 +100,31 @@ const NewUser = () => {
     }
   };
 
+  const fetchCoordinatorData = async () => {
+    if (selectedFranchisee) {
+      let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(data => data.charAt(0).toLowerCase() + data.slice(1)).join("_");
+      
+      console.log('SELECTED FRANCHISEE:', franchisee_alias);
+      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}`);
+
+      if(response.status === 200 && response.data.status === "success") {
+        let { coordinatorList } = response.data;
+        setCoordinatorData(coordinatorList.map(coordinator => ({
+          value: coordinator.fullname,
+          label: coordinator.fullname
+        })));
+      }
+    }
+  }
+
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCountryData = async () => {
-    const response = await axios.get(`${BASE_URL}/api/country-data`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/country-data`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     if (response.status === 200) {
       const { countryDataList } = response.data;
       setCountryData(
@@ -112,7 +138,12 @@ const NewUser = () => {
 
   // FETCHES USER ROLES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchUserRoleData = async () => {
-    const response = await axios.get(`${BASE_URL}/api/user-role`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/user-role`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     if (response.status === 200) {
       const { userRoleList } = response.data;
       setUserRoleData(
@@ -126,7 +157,12 @@ const NewUser = () => {
 
   // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCities = async () => {
-    const response = await axios.get(`${BASE_URL}/api/cities`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/cities`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     if (response.status === 200) {
       const { cityList } = response.data;
       setCityData(
@@ -138,15 +174,60 @@ const NewUser = () => {
     }
   };
 
+  const fetchTrainingCategories = async () => {
+    const response = await axios.get(
+      `${BASE_URL}/training/get-training-categories`
+    );
+    if (response.status === 200 && response.data.status === "success") {
+      const { categoryList } = response.data;
+      setTrainingCategoryData([
+        ...categoryList.map((data) => ({
+          id: data.id,
+          value: data.category_alias,
+          label: data.category_name,
+        })),
+      ]);
+    }
+  };
+
+  const fetchProfessionalDevelopementCategories = async () => {
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
+    
+    if(response.status === 200 && response.data.status === "success") {
+      const { pdcList } = response.data;
+      setPdcData(pdcList.map(data => ({
+        id: data.id,
+        value: data.category_alias,
+        label: data.category_name
+      })));
+    }
+  }; 
+
+  const fetchBuinessAssets = async () => {
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
+    
+    if(response.status === 200 && response.data.status === "success") {
+      const { businessAssetList } = response.data;
+      setBuinessAssetData(businessAssetList.map(data => ({
+        id: data.id,
+        value: data.asset_alias,
+        label: data.asset_name
+      })));
+    }
+  };
+
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
     fetchCities();
+    fetchTrainingCategories();
+    fetchProfessionalDevelopementCategories();
+    fetchBuinessAssets();
   }, []);
 
-  // useEffect(() => {
-    
-  // }, [formErrors]);
+  useEffect(() => {
+    fetchCoordinatorData();
+  }, [selectedFranchisee])
 
   return (
     <>
@@ -316,7 +397,7 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              options={training}
+                              options={trainingCategoryData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -332,7 +413,7 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              // options={professionDevCategories}
+                              options={pdcData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -347,7 +428,7 @@ const NewUser = () => {
                             <Select
                               placeholder="Which Co-ordinator?"
                               closeMenuOnSelect={true}
-                              // options={coordinatorData}
+                              options={coordinatorData}
                               onChange={(e) =>
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -363,7 +444,7 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              // options={businessAssets}
+                              options={businessAssetData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
