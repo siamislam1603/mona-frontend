@@ -44,68 +44,11 @@ const CreatedTraining = () => {
   }
 
   useEffect(() => {
-<<<<<<< HEAD
-    // console.log("user_id user_id user_id", localStorage.getItem("user_id"));
-    
-    const id = localStorage.getItem("user_id");
-    console.log(id);
-    axios.get(`${BASE_URL}/training/createdTrainingList/${id}`)
-    .then(res => {
-      console.log(res)
-      setCreatedData(res.data)
-  })
-  .catch(err =>{
-      console.log(err)
-  })
-  },[]);
-
-  const NavLinkStyle = ({ isActive }) => {
-      return{
-          fontWeight: isActive ? 'underline' : 'normal'
-
-      }
-
-
-  }
-  // const getAssignedData = () => {
-  //   var requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow",
-  //   };
-    // const AvailableTraining = async () => {
-    //   const [assignedData, setAssignedData] = useState([]);
-    //   const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${localStorage.getItem("user_id")}`);
-  
-    //   if (response.status === 200) {
-  
-    //     const { data_list } = response.data;
-  
-    //     setAssignedData(
-  
-    //       data_list.map((datas) => ({
-  
-    //         value: datas.id,
-  
-    //         label: datas.title,
-  
-    //       }))
-  
-    //     );
-  
-    //   }
-    // };
-  // fetch(`${BASE_URL}/training/assigeedTraining/${localStorage.getItem("user_id")}`, requestOptions)
-  //   .then((response) => response.json())
-  //   .then((result) => setAssignedData(result?.result))
-  //   .catch((error) => console.log("error", error));
-  // };
-=======
     fetchCreatedTrainings();
   }, []);
 
   createdTrainingData && console.log('DATA:', createdTrainingData);
-
->>>>>>> e4b4c8257af472ba180fd1fb9416ba1871f38beb
+  
   return (
     <>
       <div id="main">
