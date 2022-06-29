@@ -48,7 +48,7 @@ const CreatedTraining = () => {
   }, []);
 
   createdTrainingData && console.log('DATA:', createdTrainingData);
-
+  
   return (
     <>
       <div id="main">

@@ -157,9 +157,15 @@ const Training = () => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
+<<<<<<< HEAD
+                      <li><NavLink to="/available-training" className="active" style={navLinkStyles}>Trainings Available</NavLink></li>
+                      <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
+                      <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
+=======
                       <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
                       <li><a onClick={handleLinkClick} path="/complete-training"  className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
                       <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
+>>>>>>> 8f03623ba2bb49adc2df7399170d6f7a812a782c
                     </ul>
                     <div className="selectdropdown ms-auto d-flex align-items-center">
                       <Form.Group className="d-flex align-items-center">
