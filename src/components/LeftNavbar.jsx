@@ -7,7 +7,7 @@ import { Link, NavLink } from 'react-router-dom';
 const LeftNavbar = () => {
   const [menuList, setMenuList] = useState([]);
 
-  // FETCH User Role Permissions  LIST
+  // FETCH User Role Permissions LIST
   let token = localStorage.getItem('token');
   const fetchUserRolePermissions = async () => {
     const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {

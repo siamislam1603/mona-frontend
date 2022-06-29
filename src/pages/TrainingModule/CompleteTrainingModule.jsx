@@ -36,7 +36,7 @@ const CompleteTraining = () => {
             return(
             <Col lg={4} md={6} key={item.id}>
               <div className="item mt-3 mb-3">
-                <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={`${item.training.training_files[0].thumbnail}`} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
+                <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={`${item.training.training_files[0]?.thumbnail}`} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                 <div className="fixcol">
                   <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
                   <div className="iconame"><a href="/training-detail">{item.training.title}</a> <span className="time">{ item.training.completion_time }</span></div>

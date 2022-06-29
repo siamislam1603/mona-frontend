@@ -57,10 +57,17 @@ const TrainingDetail = () => {
   const [trainingFinishedDate, setTrainingFinishedDate] = useState();
   
   const getTrainingDetails = async () => {
-   
     const user_id = localStorage.getItem('user_id');
-    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${user_id}`);
+    const token = localStorage.getItem('token');
+    console.log(trainingId, user_id);
+    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${user_id}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     
+    console.log('RESPONSE:', response);
+
     if(response.status === 200 && response.data.status === "success") {
       const { all_trainings } = response.data;
       setTrainingDetails(all_trainings);
@@ -73,9 +80,13 @@ const TrainingDetail = () => {
   };
 
   const updateFinishTraining = async () => {
-    console.log('INSIDE FINISH TRAINING COMPONENT!');
     const user_id = localStorage.getItem('user_id');
-    const response = await axios.post(`${BASE_URL}/training/completeTraining/${trainingId}/${user_id}?training_status=finished`);
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${BASE_URL}/training/completeTraining/${trainingId}/${user_id}?training_status=finished`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
 
     console.log('TRAINING FINISH STATUS:', response);
     if(response.status === 200 && response.data.status === "success") {
