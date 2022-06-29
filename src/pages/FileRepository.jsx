@@ -56,6 +56,7 @@ const selectRow = {
 
 const FileRepository = () => {
   const [show, setShow] = useState(false);
+  const [category, setCategory] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [franchisee, setFranchisee] = useState([]);
@@ -139,7 +140,26 @@ const FileRepository = () => {
     getUserRoleAndFranchiseeData();
     getMyAddedFileRepoData();
     getFilesSharedWithMeData();
+    getFileCategory();
   }, []);
+  const getFileCategory = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+
+    fetch(`${BASE_URL}/api/file-category`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => setCategory(result?.result))
+      .catch((error) => console.log('error', error));
+  };
   const setField = (field, value) => {
     if (!value) {
       setSettingData({ ...settingData, setting_files: field });
@@ -179,8 +199,10 @@ const FileRepository = () => {
     }
     setLoaderFlag(true);
     var myHeaders = new Headers();
-    myHeaders.append('authorization', localStorage.getItem('token'));
-    myHeaders.append('role', localStorage.getItem('user_role'));
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
     const file = settingData.setting_files[0];
     console.log('file------->', file);
     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
@@ -192,6 +214,7 @@ const FileRepository = () => {
     formdata.append('createdBy', localStorage.getItem('user_name'));
     formdata.append('userId', localStorage.getItem('user_id'));
     formdata.append('AccessToAllUser', settingData.applicable_to_user);
+    formdata.append('category_id', settingData.file_category);
     formdata.append(
       'AccessToAllFranchisee',
       settingData.applicable_to_franchisee
@@ -218,11 +241,16 @@ const FileRepository = () => {
     // }
   };
   const getFilesSharedWithMeData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
-
     fetch(
       `${BASE_URL}/uploads/sharedWithMe/${localStorage.getItem('user_id')}`,
       requestOptions
@@ -256,9 +284,15 @@ const FileRepository = () => {
       .catch((error) => console.log('error', error));
   };
   const getMyAddedFileRepoData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(
@@ -653,6 +687,7 @@ const FileRepository = () => {
                   </div>
                 </Form.Group>
               </Col>
+
               {settingData.applicable_to_user === '0' ? (
                 <Col lg={9} md={6} className="mt-3 mt-md-0">
                   <Form.Group>
@@ -672,6 +707,24 @@ const FileRepository = () => {
                   </Form.Group>
                 </Col>
               ) : null}
+              <Col lg={6} md={12}>
+                <Form.Group>
+                  <Form.Label>File Category</Form.Label>
+                  <Form.Select
+                    name="file_category"
+                    onChange={(e) => {
+                      setField(e.target.name, e.target.value);
+                    }}
+                  >
+                    <option value="">Select File Category</option>
+                    {category?.map((item) => {
+                      return (
+                        <option value={item.id}>{item.category_name}</option>
+                      );
+                    })}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
             </Row>
           </div>
         </Modal.Body>

@@ -1,10 +1,15 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
-import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
+import { Button, Container, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import AvailableTrainingModule from '../pages/TrainingModule/AvailableTrainingModule';
+import CompleteTrainingModule from '../pages/TrainingModule/CompleteTrainingModule';
+import CreatedTrainingModule from '../pages/TrainingModule/CreatedTrainingModule';
 import { useEffect } from "react";
 
 const animatedComponents = makeAnimated();
@@ -24,9 +29,11 @@ const training = [
     label: "Melbourne",
   },
 ];
+
 const Training = () => {
   let location = useLocation();
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
+  const [tabLinkPath, setTabLinkPath] = useState("/available-training");
 
   // STYLE ACTIVE LINKS
   const navLinkStyles = ({ isActive }) => {
@@ -36,6 +43,11 @@ const Training = () => {
         opacity: 1
       } : {}
   };
+
+  const handleLinkClick = event => {
+    let path = event.target.getAttribute('path');
+    setTabLinkPath(path);
+  }
 
   useEffect(() => {
     if(localStorage.getItem('success_msg')) {
@@ -145,9 +157,15 @@ const Training = () => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
+<<<<<<< HEAD
                       <li><NavLink to="/available-training" className="active" style={navLinkStyles}>Trainings Available</NavLink></li>
                       <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
                       <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
+=======
+                      <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
+                      <li><a onClick={handleLinkClick} path="/complete-training"  className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
+                      <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
+>>>>>>> 8f03623ba2bb49adc2df7399170d6f7a812a782c
                     </ul>
                     <div className="selectdropdown ms-auto d-flex align-items-center">
                       <Form.Group className="d-flex align-items-center">
@@ -163,160 +181,9 @@ const Training = () => {
                     topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
                   } 
                   <div className="training-column">
-                    <Row>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic1.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic2.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic3.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic4.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic5.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic6.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic7.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic8.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
+                    {tabLinkPath === "/available-training" && <AvailableTrainingModule />}
+                    {tabLinkPath === "/complete-training" && <CompleteTrainingModule />}
+                    {tabLinkPath === "/created-training" && <CreatedTrainingModule />}
                   </div>
                 </div>
               </div>

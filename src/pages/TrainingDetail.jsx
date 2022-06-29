@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 // import path  from 'path';
-import { Button, Col, Container, Row, Form, Dropdown,Modal } from "react-bootstrap";
+import { Container, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
 import { BASE_URL } from "../components/App";
-import { Link, useParams } from 'react-router-dom';
-import Select from 'react-select';
-import { PlayerSdk } from '@api.video/player-sdk'
+import { useParams } from 'react-router-dom';
 
-import makeAnimated from 'react-select/animated';
 import videos from "../assets/video/Cute Panda.mp4"
 import svideos from "../assets/video/d.mp4"
 import pdf from "../assets/pdf/1652501632697.pdf"
@@ -17,10 +14,7 @@ import student from "../assets/img/student.jpg"
 import VideoPop from "../components/VideoPop";
 
 
-const animatedComponents = makeAnimated();
-
-
-
+// const animatedComponents = makeAnimated();
 
 const styles = {
   option: (styles, state) => ({
@@ -59,6 +53,8 @@ const TrainingDetail = () => {
   const [thepdf,setPdfSet] = useState("https://s3.us-west-1.amazonaws.com/mona-cip-dev/public/assets/.docs/Rohan%27sResume_2022-06-13_1655102409338.pdf")
   const [Trainingdata,setTrainingData] = useState("");
   const [TrainingFile,setTrainingFile] = useState([]);
+  const [hideTrainingFinishButton, setHideTrainingFinishButton] = useState(false);
+  const [trainingFinishedDate, setTrainingFinishedDate] = useState();
   
   const getTrainingDetails = async () => {
    
@@ -68,18 +64,25 @@ const TrainingDetail = () => {
     if(response.status === 200 && response.data.status === "success") {
       const { all_trainings } = response.data;
       setTrainingDetails(all_trainings);
+      setHideTrainingFinishButton(all_trainings.is_Training_completed);
     }
   }
-// console.log("THe traing file name", TrainingFile)
-  const playVideo = () =>{
-      window.player = new PlayerSdk("#target", { 
-        id:"vi2n1PhsuBxx3o9jSvEyLWi0", 
-        hideTitle: true,
-        // ... other optional options 
-    });
 
-  }
+  const handleFinishTraining = (event) => {
+    updateFinishTraining();
+  };
 
+  const updateFinishTraining = async () => {
+    console.log('INSIDE FINISH TRAINING COMPONENT!');
+    const user_id = localStorage.getItem('user_id');
+    const response = await axios.post(`${BASE_URL}/training/completeTraining/${trainingId}/${user_id}?training_status=finished`);
+
+    console.log('TRAINING FINISH STATUS:', response);
+    if(response.status === 200 && response.data.status === "success") {
+      setTrainingFinishedDate(response.data.finished_date);
+      setHideTrainingFinishButton(true);
+    }
+  };
 
   useEffect(() =>{
     getTrainingDetails()
@@ -116,68 +119,52 @@ const TrainingDetail = () => {
                   </header>
                   <div className="traning-detail-sec">
                     <div className="thumb-vid">
-                      {/* {TrainingFile.map((user) => (
-                        user.fileType === ".mp4" && 
-                        <iframe src={user.file} width={500} height={500} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture full"></iframe>                  
-                      ))} */}
-                      {/* {showVideo()} */}
-                        {/* <div id="target"></div> */}
-                     
-     
-                   <div>
-             </div>
+                      <img 
+                        src={trainingDetails.training_files[0].thumbnail}
+                        alt="video thumbnail" />
                     </div>
                     <div className="training-cont mt-3 mb-5">
-                      {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis a sagittis varius vel, est quam quam. Orci blandit ac eleifend mi cursus velit pellentesque. Sodales iaculis netus ipsum facilisis suspendisse dolor. Sed sed neque enim tellus in tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis a sagittis varius vel, est quam quam.</p> */}
                       <p>{trainingDetails.description}</p>
                     </div>
-                    {/* <iframe src="mypage.html" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"></iframe> */}
-                  
-                    {/* <iframe src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp"  title="dsk " allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="1280" height="720" frameBorder="0"></iframe> */}
-                   <div style={{display:"flex"}}>
-
-                    <div>
-                    <h2 className="title-sm">Video Tutorial</h2>
-                    {/* <div id="target"></div> */}
-                   
-                    {
-                         trainingDetails.training_files.map((data,index) => (    
-                            // data.fileType === ".mp4" &&
-                            // <iframe src={videos}  width={500} height={500} frameBorder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture  object-fit: contain;" allowFullScreen ></iframe>
-                            // <img  key={index} src={student} alt="" onClick={handleShow}  />
-                            <VideoPop 
-                              img ={data.thumbnail} 
-                              data ={data.file} 
-                              video ={videos} 
-                              fun={handleClose}/>
-                         )
-                        )
-                      }
                     
-                    </div>
-                 
-                  <div>
-                  <h2 className="title-sm">Related Files</h2>
-                  <div className="column-list files-list three-col mb-5">
-                     
-                      {TrainingFile.map((user) => (
-                        user.fileType === ".pdf" && 
-                        <div className="item">
-                        <a href={user.file} download={user.file}> 
-                          <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-                         <div className="name">{user.file.split("/").pop()} <span className="time">3 Hours</span></div>
-                       </a>
-                       </div>              
-                      ))}
-                    
-                    </div>
-                  </div>
-                 
+                  <div style={{ marginBottom: "40px" }}>
+                    <div style={{ display: "flex", marginBottom: "30px" }}>
+                      <div className="col-sm-6">
+                        <h2 className="title-sm">Video Tutorial</h2>
+                        {
+                            trainingDetails.training_files.map((data,index) => (    
+                                <VideoPop 
+                                  img ={data.thumbnail} 
+                                  data ={data.file} 
+                                  video ={videos} 
+                                  fun={handleClose}/>
+                            ))
+                        }
+                      </div>
                       
-                      {/* Exprement  */}
-                     
-                  
-                    </div>  
+                      <div className="col-sm-6">  
+                        <h2 className="title-sm">Related Files</h2>
+                        <div className="column-list files-list three-col mb-5">
+                            {TrainingFile.map((user) => (
+                              user.fileType === ".pdf" && 
+                              <div className="item">
+                              <a href={user.file} download={user.file}> 
+                                <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
+                              <div className="name">{user.file.split("/").pop()} <span className="time">3 Hours</span></div>
+                            </a>
+                            </div>              
+                            ))}    
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="col-sm-12">
+                      <h2 className="title-sm">Related Forms</h2>
+                      <div>
+
+                      </div>
+                    </div>
+                  </div>  
                   
                     {/* Exprenment end */}
 
@@ -213,15 +200,19 @@ const TrainingDetail = () => {
                       </div>
                     </div> */}
 
-                    <div className="complete-training text-center">
-                      <p>
-                        Please acknowledge by clicking below that you have
-                        completed this training completely and can proceed
-                        further.
-                      </p>
-                      <a href="" className="btn btn-primary">
+                    <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
+                      { hideTrainingFinishButton
+                        ? <p> You've finished this training on {trainingFinishedDate}</p>
+                        : <p>
+                            Please acknowledge by clicking below that you have
+                            completed this training completely and can proceed
+                            further.
+                          </p>
+                        
+                      }
+                      <button className={`btn btn-primary ${hideTrainingFinishButton ? "d-none" : ""}`} onClick={handleFinishTraining}>
                         Yes, I have completed the training
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -230,27 +221,6 @@ const TrainingDetail = () => {
             </div>
           </Container>
         </section>
-        {/* <VideoPop
-          
-        /> */}
-
-         {/* <Modal
-        className="training-modal"
-        size="lg"
-        show={show}
-        onHide={handleClose}
-      >
-        <Modal.Header closeButton>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="form-settings-content">
-            <Row>
-            <iframe width={200} height={200} src={videos} title="YouTube video player" frameBorder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-              
-            </Row>   
-          </div>
-        </Modal.Body>
-      </Modal>  */}
       </div>
     </>
   );
