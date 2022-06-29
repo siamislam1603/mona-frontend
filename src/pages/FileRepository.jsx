@@ -61,6 +61,7 @@ const selectRow = {
 const FileRepository = () => {
   const [show, setShow] = useState(false);
   const [category, setCategory] = useState([]);
+  const [groupFlag, setGroupFlag] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [franchisee, setFranchisee] = useState([
@@ -632,123 +633,104 @@ const FileRepository = () => {
                   </div>
                 </Col>
               </Row>
-              <Row className="mt-4">
-                <Col lg={3} md={6}>
+            </div>
+            <Row className="mt-4">
+              <Col lg={3} md={6}>
+                <Form.Group>
+                  <Form.Label>Accessible to:</Form.Label>
+                  <div className="new-form-radio d-block">
+                    <div className="new-form-radio-box">
+                      <label for="yes1">
+                        <input
+                          type="radio"
+                          value="1"
+                          name="applicable_to_franchisee"
+                          id="yes1"
+                          onChange={(e) => {
+                            setField(e.target.name, e.target.value);
+                          }}
+                          checked={settingData.applicable_to_franchisee === '1'}
+                        />
+                        <span className="radio-round"></span>
+                        <p>User Roles</p>
+                      </label>
+                    </div>
+                    <div className="new-form-radio-box m-0 mt-3">
+                      <label for="no1">
+                        <input
+                          type="radio"
+                          value="0"
+                          name="applicable_to_franchisee"
+                          id="no1"
+                          onChange={(e) => {
+                            setField(e.target.name, e.target.value);
+                          }}
+                          checked={settingData.applicable_to_franchisee === '0'}
+                        />
+                        <span className="radio-round"></span>
+                        <p>Specific Users</p>
+                      </label>
+                    </div>
+                  </div>
+                </Form.Group>
+              </Col>
+              <Col lg={9} md={12}>
+                {settingData.applicable_to_franchisee === '1' ? (
                   <Form.Group>
-                    <Form.Label>Accessible to:</Form.Label>
-                    <div className="new-form-radio d-block">
-                      <div className="new-form-radio-box">
-                        <label for="yes1">
-                          <input
-                            type="radio"
-                            value="1"
-                            name="applicable_to_franchisee"
-                            id="yes1"
-                            onChange={(e) => {
-                              setField(e.target.name, e.target.value);
-                            }}
-                            checked={
-                              settingData.applicable_to_franchisee === '1'
-                            }
-                          />
-                          <span className="radio-round"></span>
-                          <p>User Roles</p>
-                        </label>
-                      </div>
-                      <div className="new-form-radio-box m-0 mt-3">
-                        <label for="no1">
-                          <input
-                            type="radio"
-                            value="0"
-                            name="applicable_to_franchisee"
-                            id="no1"
-                            onChange={(e) => {
-                              setField(e.target.name, e.target.value);
-                            }}
-                            checked={
-                              settingData.applicable_to_franchisee === '0'
-                            }
-                          />
-                          <span className="radio-round"></span>
-                          <p>Specific Users</p>
-                        </label>
-                      </div>
+                    <Form.Label>Select User Roles</Form.Label>
+                    <div className="modal-two-check user-roles-box">
+                      <label className="container">
+                        Co-ordinators
+                        <input type="checkbox" name="role" id="co-ordinators" />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Educators
+                        <input type="checkbox" name="role" id="co-ordinators" />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Parents
+                        <input type="checkbox" name="role" id="co-ordinators" />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        All Roles
+                        <input type="checkbox" name="role" id="co-ordinators" />
+                        <span className="checkmark"></span>
+                      </label>
                     </div>
                   </Form.Group>
-                </Col>
-                <Col lg={9} md={12}>
-                  {settingData.applicable_to_franchisee === '1' ? (
-                    <Form.Group>
-                      <Form.Label>Select User Roles</Form.Label>
-                      <div className="modal-two-check user-roles-box">
-                        <label className="container">
-                          Co-ordinators
-                          <input
-                            type="checkbox"
-                            name="role"
-                            id="co-ordinators"
-                          />
-                          <span className="checkmark"></span>
-                        </label>
-                        <label className="container">
-                          Educators
-                          <input
-                            type="checkbox"
-                            name="role"
-                            id="co-ordinators"
-                          />
-                          <span className="checkmark"></span>
-                        </label>
-                        <label className="container">
-                          Parents
-                          <input
-                            type="checkbox"
-                            name="role"
-                            id="co-ordinators"
-                          />
-                          <span className="checkmark"></span>
-                        </label>
-                        <label className="container">
-                          All Roles
-                          <input
-                            type="checkbox"
-                            name="role"
-                            id="co-ordinators"
-                          />
-                          <span className="checkmark"></span>
-                        </label>
-                      </div>
-                    </Form.Group>
-                  ) : null}
-                  {settingData.applicable_to_franchisee === '0' ? (
-                    <Form.Group>
-                      <Form.Label>Select Franchisee</Form.Label>
-                      <div className="select-with-plus">
-                        <Multiselect
-                          displayValue="registered_name"
-                          className="multiselect-box default-arrow-select"
-                          // placeholder="Select Franchisee"
-                          selectedValues={selectedFranchisee}
-                          // onKeyPressFn={function noRefCheck() {}}
-                          onRemove={onRemoveFranchisee}
-                          // onSearch={function noRefCheck() {}}
-                          onSelect={onSelectFranchisee}
-                          // options={franchisee}
-                        />
+                ) : null}
+                {settingData.applicable_to_franchisee === '0' ? (
+                  <Form.Group>
+                    <Form.Label>Select Franchisee</Form.Label>
+                    <div className="select-with-plus">
+                      <Multiselect
+                        displayValue="registered_name"
+                        className="multiselect-box default-arrow-select"
+                        // placeholder="Select Franchisee"
+                        selectedValues={selectedFranchisee}
+                        // onKeyPressFn={function noRefCheck() {}}
+                        onRemove={onRemoveFranchisee}
+                        // onSearch={function noRefCheck() {}}
+                        onSelect={onSelectFranchisee}
+                        // options={franchisee}
+                      />
 
-                        <Button className="add_operating_button">
-                          <FontAwesomeIcon
-                            icon={faPlus}
-                            onClick={() => {
-                              setGroupFlag(true);
-                            }}
-                          />
-                        </Button>
-                      </div>
-                      <p className="error">{errors.franchisee}</p>
-                    </Form.Group>
-                  ) : null}
-                  {/* <Form.Group>
+                      <Button className="add_operating_button">
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          onClick={() => {
+                            setGroupFlag(true);
+                          }}
+                        />
+                      </Button>
+                    </div>
+                    <p className="error">{errors.franchisee}</p>
+                  </Form.Group>
+                ) : null}
+                {/* <Form.Group>
                   <Form.Label>File Category</Form.Label>
                   <Form.Select
                     name="file_category"
@@ -764,7 +746,8 @@ const FileRepository = () => {
                     })}
                   </Form.Select>
                 </Form.Group> */}
-                </Col>
+              </Col>
+            </Row>
           </div>
         </Modal.Body>
         <Modal.Footer>
