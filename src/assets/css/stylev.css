@@ -587,9 +587,12 @@ button:focus {
 
 .multiselect-box .optionListContainer {
     z-index: 10;
+    display: none;
 }
 
-
+.default-arrow-select:before{
+    display: none;
+}
 
 /* .input-select-arrow{
     position: absolute;
@@ -910,6 +913,7 @@ button:focus {
     color: #AA0061;
     position: relative;
     padding: 8px 40px 8px 20px;
+    margin: 0 4px;
 }
 
 .multiselect-box .chip:before {
@@ -1766,3 +1770,183 @@ button.add_operating_button.btn.btn-primary {
     background-color: #f0f0f0;
     margin-right: 10px;
 }
+.user-roles-box {
+    display: flex;
+}
+
+.modal-two-check.user-roles-box .container {
+    padding-right: 5px;
+}
+.select-with-plus {
+    display: flex;
+    align-items: center;
+}
+
+.select-with-plus > div {
+    width: 100%;
+}
+.select-users-header .btn-primary {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    min-width: 4px !important;
+    margin-right: 10px;
+}
+.select-user-modal .modal-dialog {
+    max-width: 700px;
+}
+img#user-pic {}
+
+.select-user-image-name img {
+    width: 55px;
+    border-radius: 100px;
+}
+
+.select-user-image-name {
+    display: flex;
+    align-items: center;
+}
+
+.select-user-image-name h6 {
+    margin: 0;
+    padding-left: 30px;
+}
+
+.select-user-role {
+    margin-left: auto;
+}
+
+.select-user-role h6 {
+    margin: 0;
+}
+
+.select-user-list-row {
+    display: flex;
+    align-items: center;
+    padding: 16px 10px;
+    border-radius: 10px;
+    /* border: 1px solid gray; */
+    box-shadow: 4px 4px 17px -1px #dbdbdb;
+    margin-top: 15px;
+}
+.main-lable {
+    box-shadow: none;
+}
+.main-lable-img h6{
+    padding-left: 0 !important;
+}
+.select-user .modal-content{
+    border: none;
+    border-radius: 7px;
+}
+.select-user {
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.507);
+}
+
+.search-wrapper #search_input {
+    display: none;
+}
+.btn-btn-outline{
+    border-color: #455c58 !important;
+    margin-left: auto;
+}
+.btn-close{
+    margin: 0 !important;
+}
+
+
+/* Toggle Switch */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  .switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+  .t-switch p{
+    margin: 0;
+    padding:0;
+    margin-right: 20px;
+    color: lightgray;
+    font-size: 12px;
+  }
+  .t-switch{
+    display: flex;
+    align-items: center;
+  }
+  .modal-top-containt{
+    padding: 15px 33px !important;
+    padding-bottom: 0 !important;
+  }
+  .modal-bottom{
+    padding: 15px 33px !important;
+    padding-top:0 !important;
+  }
+  .setting-heading h2{
+    margin: 0;
+    padding-top: 15px;
+  }
+  hr{
+    margin: 0 !important;
+    margin:15px 0 !important;
+    border: none;
+    background:lightgray;
+  }
+  .f-c-modal button{
+    margin-left: auto !important;
+  }
