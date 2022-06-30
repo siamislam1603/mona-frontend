@@ -43,7 +43,7 @@ const AddOperatingManual = () => {
   }, []);
   useEffect(() => {
     getCategory();
-  }, [franchisee, userRole]);
+  }, [userRole]);
   const getOneOperatingManual = async () => {
     var requestOptions = {
       method: 'GET',
@@ -56,7 +56,7 @@ const AddOperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log('operating manual--->response?.result', response?.result);
+        console.log('operating manual--->', response?.result);
         setOperatingManualData(response?.result);
         let data = formSettingData;
         data.applicable_to_user =
@@ -65,18 +65,20 @@ const AddOperatingManual = () => {
           response?.result?.applicable_to_franchisee.toString();
         console.log('Franchisee--->', franchisee);
         selectedFranchisee = [];
-        franchisee.map((item) => {
-          if (response?.result?.shared_with.includes(item.franchisee_alias)) {
-            selectedFranchisee.push({
-              id: item.id,
-              franchisee_name: item.franchisee_name,
-              franchisee_alias: item.franchisee_alias,
-            });
-            selectedFranchiseeName += item.franchisee_alias + ',';
-          }
-        });
+        // franchisee.map((item) => {
+        //   if (response?.result?.shared_with.includes(item.franchisee_alias)) {
+        //     selectedFranchisee.push({
+        //       id: item.id,
+        //       franchisee_name: item.franchisee_name,
+        //       franchisee_alias: item.franchisee_alias,
+        //     });
+        //     selectedFranchiseeName += item.franchisee_alias + ',';
+        //   }
+        // });
         selectedUserRole = [];
+        console.log('userRole---->', userRole);
         userRole.map((item) => {
+          console.log('selectedUserRole---->', response?.result?.shared_role);
           if (response?.result?.shared_role.includes(item.role_name)) {
             selectedUserRole.push({
               id: item.id,
@@ -86,6 +88,7 @@ const AddOperatingManual = () => {
             selectedUserRoleName += item.role_name + ',';
           }
         });
+        console.log('selectedUserRole---->', selectedUserRole);
 
         setFormSettingData(data);
       })
@@ -762,7 +765,7 @@ const AddOperatingManual = () => {
         <Modal.Body>
           <div className="form-settings-content">
             <Row className="mt-4">
-              <Col lg={3} md={6}>
+              {/* <Col lg={3} md={6}>
                 <Form.Group>
                   <Form.Label>Accessible to all franchisee</Form.Label>
                   <div className="new-form-radio">
@@ -804,8 +807,8 @@ const AddOperatingManual = () => {
                     </div>
                   </div>
                 </Form.Group>
-              </Col>
-              {formSettingData.applicable_to_franchisee === '0' ? (
+              </Col> */}
+              {/* {formSettingData.applicable_to_franchisee === '0' ? (
                 <Col lg={9} md={6} className="mt-3 mt-md-0">
                   <Form.Group>
                     <Form.Label>Select Franchisee</Form.Label>
@@ -823,7 +826,7 @@ const AddOperatingManual = () => {
                     <p className="error">{errors.franchisee}</p>
                   </Form.Group>
                 </Col>
-              ) : null}
+              ) : null} */}
               <Col lg={3} md={6}>
                 <Form.Group>
                   <Form.Label>Applicable to all user roles</Form.Label>
