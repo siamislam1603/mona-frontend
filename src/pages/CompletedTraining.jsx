@@ -27,16 +27,6 @@ const training = [
 ];
 
 const CompleteTraining = () => {
-//   let location = useLocation();
-//   const [completeData, setCompleteData] = useState([]);
-
-//   const navLinkStyles = ({ isActive }) => {
-//     return isActive ? { 
-//         color: "#AA0061", 
-//         fontWeight: "700", 
-//         opacity: 1
-//       } : {}
-//   };
   const [completedTrainingData, setCompletedTrainingData] = useState([]);
 
   const fetchCompletedTrainingData = async () => {
@@ -150,6 +140,9 @@ const CompleteTraining = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
+                    <li><NavLink to="/available-training">Trainings Available</NavLink></li>
+                    <li><NavLink to="/complete-training">Complete Training</NavLink></li>
+                    <li><NavLink to="/">Trainings Created</NavLink></li>
                     </ul>
                   </div>
                   <div className="training-column">

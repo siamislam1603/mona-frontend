@@ -2,38 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import axios from 'axios';
 import { BASE_URL } from './App';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const LeftNavbar = () => {
-  const [menuList, setMenuList] = useState([]);
+  const [permissionList, setPermissionList] = useState();
 
-  // FETCH User Role Permissions LIST
-  let token = localStorage.getItem('token');
-  const fetchUserRolePermissions = async () => {
+  const fetchPermissionList = async () => {
+    let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
-      headers: { Authorization: 'Bearer ' + token },
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { menuList } = response.data;
+      setPermissionList(menuList);
+      localStorage.setItem('menu_list', JSON.stringify(menuList));
+    }
+  };
+
+  const fetchUserPermissions = async () => {
+    let user_role = localStorage.getItem('user_role');
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/rbac/get_role_permissions/${user_role}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
     });
 
-    if (response.status === 200) {
-      const { permissionsObject } = response.data;
-
-      localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
-
-      const get_menu_list = localStorage.getItem('menu_list');
-
-      setMenuList(permissionsObject);
-      // console.log("menues localstorgageeee", JSON.parse(get_menu_list))
+    if(response.status === 200 && response.data.status === "success") {
+      const { permissions } = response.data;
+      localStorage.setItem('user_permission', JSON.stringify(permissions));
     }
   };
 
   useEffect(() => {
-    fetchUserRolePermissions();
+    fetchPermissionList();
+    fetchUserPermissions();
   }, []);
-
-  // useEffect(() => {
-  //   console.log('PRINTING MENU LIST');
-  //   console.log('Menu List:', menuList);
-  // }, [menuList]);
 
   return (
     <>
@@ -47,15 +54,15 @@ const LeftNavbar = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Nav className="mr-auto w-100">
-            {menuList.map(({ controller }) => {
+            {permissionList && permissionList.map(permission => {
               return (
-                <React.Fragment key={controller.id}>
-                  <Link to={`/${controller.menu_link}`} className="nav-link">
+                <React.Fragment key={permission.id}>
+                  <Link to={`/${permission.menu_link}`} className="nav-link">
                     <span>
-                      <i className={`ico ${controller.controller_icon}`}>
+                      <i className={`ico ${permission.controller_icon}`}>
                         &nbsp;
                       </i>
-                      {controller.controller_label}
+                      {permission.controller_label}
                     </span>
                   </Link>
                 </React.Fragment>
