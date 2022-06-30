@@ -27,19 +27,6 @@ const training = [
 ];
 
 const CompleteTraining = () => {
-<<<<<<< HEAD
-  let location = useLocation();
-  const [completeData, setCompleteData] = useState([]);
-
-  const navLinkStyles = ({ isActive }) => {
-    return isActive ? { 
-        color: "#AA0061", 
-        fontWeight: "700", 
-        opacity: 1
-      } : {}
-  };
-  
-=======
   const [completedTrainingData, setCompletedTrainingData] = useState([]);
 
   const fetchCompletedTrainingData = async () => {
@@ -52,7 +39,6 @@ const CompleteTraining = () => {
       setCompletedTrainingData(trainingList);
     }
   };  
->>>>>>> 8f03623ba2bb49adc2df7399170d6f7a812a782c
 
   useEffect(() => {
     fetchCompletedTrainingData();
@@ -154,21 +140,16 @@ const CompleteTraining = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                    <li><NavLink to="/available-training" style={navLinkStyles}>Trainings Available</NavLink></li>
-                    <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
-                    <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
+                    <li><NavLink to="/available-training">Trainings Available</NavLink></li>
+                    <li><NavLink to="/complete-training">Complete Training</NavLink></li>
+                    <li><NavLink to="/">Trainings Created</NavLink></li>
                     </ul>
                   </div>
                   <div className="training-column">
                     <Row>
                     {completedTrainingData?.map((item) => {
                       return(
-<<<<<<< HEAD
-                      <Col lg={4} md={6}
-                      >
-=======
                       <Col lg={4} md={6} key={item.id}>
->>>>>>> 8f03623ba2bb49adc2df7399170d6f7a812a782c
                         <div className="item mt-3 mb-3">
                           <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={`${item.training.training_files[0].thumbnail}`} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">

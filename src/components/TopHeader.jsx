@@ -6,6 +6,12 @@ import { BASE_URL } from "./App";
 const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
 
     const [franchiseeList, setFranchiseeList] = useState([]);
+    const [permissionList, setPermissionList] = useState();
+
+    const savePermissionInState = async () => {
+      let menu_list = JSON.parse(localStorage.getItem('menu_list'));
+      setPermissionList(menu_list);
+    };
 
     const fetchFranchiseeList = async () => {
       let token = localStorage.getItem('token');
@@ -64,6 +70,12 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       }
     }, []);
 
+    useEffect(() => {
+      savePermissionInState();
+    }, []);
+
+    permissionList && console.log('PERMISSION:', permissionList);
+
     return (
       <>
         <div className="topheader">
@@ -109,11 +121,11 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
                     <Dropdown.Menu>
 
                     {
-                      localStorage.getItem('menu_list')
-                        ? JSON.parse(localStorage.getItem('menu_list')).map((top_menu) => {
+                      permissionList
+                        ? permissionList.map((top_menu) => {
                           return (
-                                <Dropdown.Item key={top_menu.controller.id} href={top_menu.controller.menu_link}>
-                                  {top_menu.controller.controller_label}
+                                <Dropdown.Item key={top_menu.id} href={top_menu.menu_link}>
+                                  {top_menu.controller_label}
                                 </Dropdown.Item>
                            )}) : null
                     }
