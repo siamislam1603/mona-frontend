@@ -7,6 +7,7 @@ import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
 import { useNavigate, useParams  } from 'react-router-dom';
 import axios from "axios";
+import moment from 'moment';
 
 const animatedComponents = makeAnimated();
 const styles = {
@@ -153,8 +154,11 @@ const AvailableTraining = () => {
                           <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.training_files[0].thumbnail} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">{item.title}</a> <span className="time">{item.completion_time}</span></div>
+                            <div className="iconame"><a href="/training-detail">{item.id}</a> <span className="time">{moment(item.createdAt).format(
+                                        'MM/DD/YYYY'
+                                      )}</span></div>
                             <div className="cta-col">
+                              
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
                                   <img src="../img/dot-ico.svg" alt=""/>
