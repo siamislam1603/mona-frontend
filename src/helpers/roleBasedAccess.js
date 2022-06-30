@@ -10,8 +10,8 @@ exports.verifyPermission = (controller, action) => {
       console.log(`ID: ${menuList[key]?.id}\tCONTROLLER: ${menuList[key]?.controller_name}`);
       // eslint-disable-next-line no-loop-func
       value.forEach(v => {
-        if(menuList[key]?.controller_actions[v]?.action_name === action) {
-          console.log(`ID: ${menuList[key]?.controller_actions[v]?.id}\tACTION: ${menuList[key]?.controller_actions[v]?.action_name}`);
+        if(menuList[key]?.controller_actions[v-1]?.action_name === action) {
+          console.log(`ID: ${menuList[key]?.controller_actions[v-1]?.id}\tACTION: ${menuList[key]?.controller_actions[v-1]?.action_name}`);
           console.log('THIS ACTION IS PRESENT');
           allow = true;
         }
