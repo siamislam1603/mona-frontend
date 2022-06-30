@@ -10,6 +10,7 @@ import makeAnimated from 'react-select/animated';
 import AvailableTrainingModule from '../pages/TrainingModule/AvailableTrainingModule';
 import CompleteTrainingModule from '../pages/TrainingModule/CompleteTrainingModule';
 import CreatedTrainingModule from '../pages/TrainingModule/CreatedTrainingModule';
+import { varifyPermission, verifyPermission } from '../helpers/roleBasedAccess';
 import { useEffect } from "react";
 
 const animatedComponents = makeAnimated();
@@ -33,7 +34,8 @@ const training = [
 const Training = () => {
   let location = useLocation();
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
-  const [tabLinkPath, setTabLinkPath] = useState("/available-training");
+  const [tabLinkPath, setTabLinkPath] = useState();
+
 
   // STYLE ACTIVE LINKS
   const navLinkStyles = ({ isActive }) => {
@@ -60,7 +62,6 @@ const Training = () => {
     }
   }, [])
 
-  console.log('LOCATION:', location); 
   return (
     <>
       <div id="main">
@@ -157,15 +158,12 @@ const Training = () => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
-<<<<<<< HEAD
-                      <li><NavLink to="/available-training" className="active" style={navLinkStyles}>Trainings Available</NavLink></li>
-                      <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
-                      <li><NavLink to="/" style={navLinkStyles}>Trainings Created</NavLink></li>
-=======
                       <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
                       <li><a onClick={handleLinkClick} path="/complete-training"  className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
-                      <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
->>>>>>> 8f03623ba2bb49adc2df7399170d6f7a812a782c
+                      {
+                        verifyPermission("training_files", "change_status") && 
+                        <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
+                      }
                     </ul>
                     <div className="selectdropdown ms-auto d-flex align-items-center">
                       <Form.Group className="d-flex align-items-center">
