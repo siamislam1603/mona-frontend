@@ -34,7 +34,8 @@ const training = [
 const Training = () => {
   let location = useLocation();
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
-  const [tabLinkPath, setTabLinkPath] = useState("/available-training");
+  const [tabLinkPath, setTabLinkPath] = useState();
+
 
   // STYLE ACTIVE LINKS
   const navLinkStyles = ({ isActive }) => {
@@ -159,10 +160,7 @@ const Training = () => {
                     <ul>
                       <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
                       <li><a onClick={handleLinkClick} path="/complete-training"  className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
-                      { 
-                        console.log(verifyPermission("training_files", "change_status")) &&
-                        <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
-                      }
+                      <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
                     </ul>
                     <div className="selectdropdown ms-auto d-flex align-items-center">
                       <Form.Group className="d-flex align-items-center">

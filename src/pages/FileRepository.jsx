@@ -8,6 +8,7 @@ import {
   Row,
   Col,
 } from 'react-bootstrap';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -29,7 +30,10 @@ import moment from 'moment';
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
-let selectedFranchisee = [];
+let selectedFranchisee = [
+  { id: 1, registered_name: 'ABC' },
+  { id: 2, registered_name: 'PQR' },
+];
 let selectedUserRole = [];
 let selectedFranchiseeId = '';
 let selectedUserRoleName = '';
@@ -57,9 +61,16 @@ const selectRow = {
 const FileRepository = () => {
   const [show, setShow] = useState(false);
   const [category, setCategory] = useState([]);
+  const [groupFlag, setGroupFlag] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [franchisee, setFranchisee] = useState([]);
+  const [franchisee, setFranchisee] = useState([
+    { id: 1, registered_name: 'ABC' },
+    { id: 2, registered_name: 'PQR' },
+    { id: 3, registered_name: 'RST' },
+    { id: 4, registered_name: 'VWX' },
+    { id: 5, registered_name: 'XYZ' },
+  ]);
   const [userRole, setUserRole] = useState([]);
   const [settingData, setSettingData] = useState({
     applicable_to_franchisee: '1',
@@ -137,7 +148,7 @@ const FileRepository = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    getUserRoleAndFranchiseeData();
+    // getUserRoleAndFranchiseeData();
     getMyAddedFileRepoData();
     getFilesSharedWithMeData();
     getFileCategory();
@@ -576,24 +587,58 @@ const FileRepository = () => {
         show={show}
         onHide={handleClose}
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+        <Modal.Header closeButton className="f-c-modal"></Modal.Header>
+        <Modal.Body className="p-0">
           <div className="form-settings-content">
-            <Row>
-              <Col md={12}>
-                <Form.Group>
-                  <DragDropRepository onChange={setField} />
-                  <p className="error">{errors.setting_files}</p>
-                </Form.Group>
-              </Col>
-            </Row>
+            <div className="modal-top">
+              <div className="modal-top-containt">
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <DragDropRepository onChange={setField} />
+                      <p className="error">{errors.setting_files}</p>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <div className="toggle-switch">
+                  <Row>
+                    <Col md={12}>
+                      <div className="t-switch">
+                        <p>Enable Sharing</p>
+                        <div className="toogle-swich">
+                          <input
+                            className="switch"
+                            name="required"
+                            type="checkbox"
+                          />
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+                <div className="setting-heading">
+                  <h2>Settings</h2>
+                </div>
+              </div>
+              <hr></hr>
+            </div>
+            <div className="modal-bottom">
+              <Row>
+                <Col lg={12}>
+                  <div className="metadescription">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Meta Description</Form.Label>
+                      <Form.Control as="textarea" rows={2} />
+                    </Form.Group>
+                  </div>
+                </Col>
+              </Row>
+            </div>
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Accessible to all franchisee</Form.Label>
-                  <div className="new-form-radio">
+                  <Form.Label>Accessible to:</Form.Label>
+                  <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
                       <label for="yes1">
                         <input
@@ -607,10 +652,10 @@ const FileRepository = () => {
                           checked={settingData.applicable_to_franchisee === '1'}
                         />
                         <span className="radio-round"></span>
-                        <p>Yes</p>
+                        <p>User Roles</p>
                       </label>
                     </div>
-                    <div className="new-form-radio-box">
+                    <div className="new-form-radio-box m-0 mt-3">
                       <label for="no1">
                         <input
                           type="radio"
@@ -623,92 +668,69 @@ const FileRepository = () => {
                           checked={settingData.applicable_to_franchisee === '0'}
                         />
                         <span className="radio-round"></span>
-                        <p>No</p>
+                        <p>Specific Users</p>
                       </label>
                     </div>
                   </div>
                 </Form.Group>
               </Col>
-              {settingData.applicable_to_franchisee === '0' ? (
-                <Col lg={9} md={6} className="mt-3 mt-md-0">
-                  <Form.Group>
-                    <Form.Label>Select Franchisee</Form.Label>
-                    <Multiselect
-                      displayValue="registered_name"
-                      className="multiselect-box default-arrow-select"
-                      placeholder="Select Franchisee"
-                      selectedValues={selectedFranchisee}
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={onRemoveFranchisee}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={onSelectFranchisee}
-                      options={franchisee}
-                    />
-                    <p className="error">{errors.franchisee}</p>
-                  </Form.Group>
-                </Col>
-              ) : null}
-              <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Applicable to all user roles</Form.Label>
-                  <div className="new-form-radio">
-                    <div className="new-form-radio-box">
-                      <label for="yes2">
-                        <input
-                          type="radio"
-                          value="1"
-                          name="applicable_to_user"
-                          id="yes2"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                          checked={settingData.applicable_to_user === '1'}
-                        />
-                        <span className="radio-round"></span>
-                        <p>Yes</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box">
-                      <label for="no2">
-                        <input
-                          type="radio"
-                          value="0"
-                          name="applicable_to_user"
-                          id="no2"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                          checked={settingData.applicable_to_user === '0'}
-                        />
-                        <span className="radio-round"></span>
-                        <p>No</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col>
-
-              {settingData.applicable_to_user === '0' ? (
-                <Col lg={9} md={6} className="mt-3 mt-md-0">
+              <Col lg={9} md={12}>
+                {settingData.applicable_to_franchisee === '1' ? (
                   <Form.Group>
                     <Form.Label>Select User Roles</Form.Label>
-                    <Multiselect
-                      placeholder="Select User Roles"
-                      displayValue="role_label"
-                      selectedValues={selectedUserRole}
-                      className="multiselect-box default-arrow-select"
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={onRemoveUserRole}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={onSelectUserRole}
-                      options={userRole}
-                    />
-                    <p className="error">{errors.user}</p>
+                    <div className="modal-two-check user-roles-box">
+                      <label className="container">
+                        Co-ordinators
+                        <input type="checkbox" name="role" id="co-ordinators" />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Educators
+                        <input type="checkbox" name="role" id="co-ordinators" />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Parents
+                        <input type="checkbox" name="role" id="co-ordinators" />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        All Roles
+                        <input type="checkbox" name="role" id="co-ordinators" />
+                        <span className="checkmark"></span>
+                      </label>
+                    </div>
                   </Form.Group>
-                </Col>
-              ) : null}
-              <Col lg={6} md={12}>
-                <Form.Group>
+                ) : null}
+                {settingData.applicable_to_franchisee === '0' ? (
+                  <Form.Group>
+                    <Form.Label>Select Franchisee</Form.Label>
+                    <div className="select-with-plus">
+                      <Multiselect
+                        displayValue="registered_name"
+                        className="multiselect-box default-arrow-select"
+                        // placeholder="Select Franchisee"
+                        selectedValues={selectedFranchisee}
+                        // onKeyPressFn={function noRefCheck() {}}
+                        onRemove={onRemoveFranchisee}
+                        // onSearch={function noRefCheck() {}}
+                        onSelect={onSelectFranchisee}
+                        // options={franchisee}
+                      />
+
+                      <Button className="add_operating_button">
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          onClick={() => {
+                            setGroupFlag(true);
+                          }}
+                        />
+                      </Button>
+                    </div>
+                    <p className="error">{errors.franchisee}</p>
+                  </Form.Group>
+                ) : null}
+                {/* <Form.Group>
                   <Form.Label>File Category</Form.Label>
                   <Form.Select
                     name="file_category"
@@ -723,7 +745,7 @@ const FileRepository = () => {
                       );
                     })}
                   </Form.Select>
-                </Form.Group>
+                </Form.Group> */}
               </Col>
             </Row>
           </div>
@@ -748,6 +770,138 @@ const FileRepository = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <div className="select-user-modal">
+        <Modal
+          className="select-user-modal select-user"
+          show={groupFlag}
+          onHide={() => {
+            setGroupFlag(false);
+          }}
+          size="md"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Header closeButton className="select-users-header">
+            <Button className="ml-auto">
+              <img src="../../img/carbon_settings.svg" />
+            </Button>
+            <Modal.Title
+              id="contained-modal-title-vcenter"
+              className="modal-heading"
+            >
+              Select Users
+            </Modal.Title>
+            <button
+              type="button"
+              id="extrabtn"
+              aria-expanded="false"
+              class="dropdown-toggle btn btn-btn-outline"
+            >
+              <i class="filter-ico"></i> Add Filters
+            </button>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="select-user-modal-body ">
+              <div className="select-user-list-head"></div>
+              <div className="select-user-list-row main-lable">
+                <div className="select-user-checkbox  modal-two-check">
+                  <label className="container">
+                    <input type="checkbox" name="role" id="co-ordinators" />
+                    <span className="checkmark"></span>
+                  </label>
+                </div>
+                <div className="select-user-image-name main-lable-img">
+                  {/* <img alt="" id="user-pic" src="/img/user.png" /> */}
+                  <h6>James Smith</h6>
+                </div>
+                <div className="select-user-role main-lable-heading">
+                  <h6>Educator</h6>
+                </div>
+              </div>
+            </div>
+            <div className="select-user-modal-body">
+              <div className="select-user-list-head"></div>
+              <div className="select-user-list-row">
+                <div className="select-user-checkbox  modal-two-check">
+                  <label className="container">
+                    <input type="checkbox" name="role" id="co-ordinators" />
+                    <span className="checkmark"></span>
+                  </label>
+                </div>
+                <div className="select-user-image-name">
+                  <img alt="" id="user-pic" src="/img/user.png" />
+                  <h6>James Smith</h6>
+                </div>
+                <div className="select-user-role">
+                  <h6>Educator</h6>
+                </div>
+              </div>
+            </div>
+            <div className="select-user-modal-body">
+              <div className="select-user-list-head"></div>
+              <div className="select-user-list-row">
+                <div className="select-user-checkbox  modal-two-check">
+                  <label className="container">
+                    <input type="checkbox" name="role" id="co-ordinators" />
+                    <span className="checkmark"></span>
+                  </label>
+                </div>
+                <div className="select-user-image-name">
+                  <img alt="" id="user-pic" src="/img/user.png" />
+                  <h6>James Smith</h6>
+                </div>
+                <div className="select-user-role">
+                  <h6>Educator</h6>
+                </div>
+              </div>
+            </div>
+            <div className="select-user-modal-body">
+              <div className="select-user-list-head"></div>
+              <div className="select-user-list-row">
+                <div className="select-user-checkbox  modal-two-check">
+                  <label className="container">
+                    <input type="checkbox" name="role" id="co-ordinators" />
+                    <span className="checkmark"></span>
+                  </label>
+                </div>
+                <div className="select-user-image-name">
+                  <img alt="" id="user-pic" src="/img/user.png" />
+                  <h6>James Smith</h6>
+                </div>
+                <div className="select-user-role">
+                  <h6>Educator</h6>
+                </div>
+              </div>
+            </div>
+            <div className="select-user-modal-body">
+              <div className="select-user-list-head"></div>
+              <div className="select-user-list-row">
+                <div className="select-user-checkbox  modal-two-check">
+                  <label className="container">
+                    <input type="checkbox" name="role" id="co-ordinators" />
+                    <span className="checkmark"></span>
+                  </label>
+                </div>
+                <div className="select-user-image-name">
+                  <img alt="" id="user-pic" src="/img/user.png" />
+                  <h6>James Smith</h6>
+                </div>
+                <div className="select-user-role">
+                  <h6>Educator</h6>
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer className="justify-content-center">
+            <Button variant="transparent" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={onSubmit}>
+              Done
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     </>
   );
 };
