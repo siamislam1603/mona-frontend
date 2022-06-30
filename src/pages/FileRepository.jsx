@@ -664,6 +664,24 @@ const FileRepository = () => {
                     </Form.Group>
                   </div>
                 </Col>
+                <Col lg={12}>
+                  <Form.Group>
+                    <Form.Label>File Category</Form.Label>
+                    <Form.Select
+                      name="file_category"
+                      onChange={(e) => {
+                        setField(e.target.name, e.target.value);
+                      }}
+                    >
+                      <option value="">Select File Category</option>
+                      {category?.map((item) => {
+                        return (
+                          <option value={item.id}>{item.category_name}</option>
+                        );
+                      })}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
               </Row>
               <Row className="mt-4">
                 <Col lg={3} md={6}>
@@ -781,22 +799,6 @@ const FileRepository = () => {
                       <p className="error">{errors.franchisee}</p>
                     </Form.Group>
                   ) : null}
-                  {/* <Form.Group>
-                  <Form.Label>File Category</Form.Label>
-                  <Form.Select
-                    name="file_category"
-                    onChange={(e) => {
-                      setField(e.target.name, e.target.value);
-                    }}
-                  >
-                    <option value="">Select File Category</option>
-                    {category?.map((item) => {
-                      return (
-                        <option value={item.id}>{item.category_name}</option>
-                      );
-                    })}
-                  </Form.Select>
-                </Form.Group> */}
                 </Col>
               </Row>
             </div>
