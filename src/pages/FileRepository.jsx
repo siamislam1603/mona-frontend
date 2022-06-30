@@ -59,9 +59,14 @@ const selectRow = {
 };
 
 const FileRepository = () => {
+  let counter = 0;
+  const [count, setCount] = useState(0);
   const [show, setShow] = useState(false);
-  const [category, setCategory] = useState([]);
   const [groupFlag, setGroupFlag] = useState(false);
+  const [user, setUser] = useState([]);
+  const [selectedUser, setSelectedUser] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [selectedAll, setSelectedAll] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [franchisee, setFranchisee] = useState([
@@ -152,6 +157,7 @@ const FileRepository = () => {
     getMyAddedFileRepoData();
     getFilesSharedWithMeData();
     getFileCategory();
+    getUser();
   }, []);
   const getFileCategory = () => {
     var myHeaders = new Headers();
@@ -169,6 +175,28 @@ const FileRepository = () => {
     fetch(`${BASE_URL}/api/file-category`, requestOptions)
       .then((response) => response.json())
       .then((result) => setCategory(result?.result))
+      .catch((error) => console.log('error', error));
+  };
+  const getUser = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    fetch(`${BASE_URL}/auth/users`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.data?.map((item) => {
+          item['status'] = false;
+        });
+        setUser(result?.data);
+      })
       .catch((error) => console.log('error', error));
   };
   const setField = (field, value) => {
@@ -202,6 +230,10 @@ const FileRepository = () => {
     // if (Object.keys(newErrors).length > 0) {
     //   setErrors(newErrors);
     // } else {
+
+    selectedUser?.map((item) => {
+      selectedFranchiseeId += item.id + ',';
+    });
     if (settingData.applicable_to_user === '1') {
       selectedUserRole = '';
     }
@@ -220,7 +252,7 @@ const FileRepository = () => {
     console.log('reader---->');
     var formdata = new FormData();
     formdata.append('image', blob, file.name);
-    formdata.append('description', 'abc');
+    formdata.append('description', settingData.meta_description);
     formdata.append('title', 'abc');
     formdata.append('createdBy', localStorage.getItem('user_name'));
     formdata.append('userId', localStorage.getItem('user_id'));
@@ -311,30 +343,30 @@ const FileRepository = () => {
       requestOptions
     )
       .then((response) => response.json())
-      .then((res) => {
+      .then((result) => {
         let repoData = [];
+        console.log('data--->', result);
+        // res?.map((item) => {
+        //   if (item.filesPath.includes('/')) {
+        //     item.filesPath = item.filesPath.split('/');
+        //   }
 
-        res?.map((item) => {
-          if (item.filesPath.includes('/')) {
-            item.filesPath = item.filesPath.split('/');
-          }
-
-          if (item.filesPath.includes('\\')) {
-            console.log('Hello9009546546789875674');
-            item.filesPath = item.filesPath.split('\\');
-          }
-          repoData.push({
-            id: item.id,
-            name:
-              '../img/abstract-ico.png,' +
-              item.filesPath[item.filesPath.length - 1],
-            createdon: moment(item.createdAt).format('DD/MM/YYYY'),
-            createdby: item.creatorName + ',' + item.creatorRole,
-            sharing: '../img/sharing-ico.png, Shared',
-          });
-        });
+        //   if (item.filesPath.includes('\\')) {
+        //     console.log('Hello9009546546789875674');
+        //     item.filesPath = item.filesPath.split('\\');
+        //   }
+        //   repoData.push({
+        //     id: item.id,
+        //     name:
+        //       '../img/abstract-ico.png,' +
+        //       item.filesPath[item.filesPath.length - 1],
+        //     createdon: moment(item.createdAt).format('DD/MM/YYYY'),
+        //     createdby: item.creatorName + ',' + item.creatorRole,
+        //     sharing: '../img/sharing-ico.png, Shared',
+        //   });
+        // });
         console.log('repoData---->', repoData);
-        setFileRepoData(repoData);
+        setFileRepoData(result);
       })
       .catch((error) => console.log('error', error));
   };
@@ -382,32 +414,25 @@ const FileRepository = () => {
       console.log('selectedFranchisee---->', selectedFranchisee);
     }
   }
-
-  function onSelectUserRole(optionsList, selectedItem) {
-    console.log('selected_item---->2', selectedItem);
-    selectedUserRoleName += selectedItem.role_label + ',';
-    selectedUserRole.push({
-      id: selectedItem.id,
-      role_label: selectedItem.role_label,
+  function onSelect(index) {
+    let data = [...user];
+    if (data[index]['status'] === true) {
+      data[index]['status'] = false;
+      setSelectedAll(false);
+    } else {
+      data[index]['status'] = true;
+    }
+    let count = 0;
+    data.map((item) => {
+      if (item.status === true) count++;
     });
-    console.log('form---->2selectedUserRole', selectedUserRole);
-  }
-  function onRemoveUserRole(selectedList, removedItem) {
-    selectedUserRoleName = selectedUserRoleName.replace(
-      removedItem.role_label + ',',
-      ''
-    );
-    const index = selectedUserRole.findIndex((object) => {
-      return object.id === removedItem.id;
-    });
-    selectedUserRole.splice(index, 1);
-    console.log('form---->2selectedUserRole', selectedUserRole);
+    if (count === data.length) {
+      setSelectedAll(true);
+    }
+    setUser(data);
   }
   return (
     <>
-      {console.log('form---->', settingData)}
-      {console.log('form----franchisee>', selectedFranchisee)}
-      {console.log('form----user-role>', selectedUserRole)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -628,109 +653,135 @@ const FileRepository = () => {
                   <div className="metadescription">
                     <Form.Group className="mb-3">
                       <Form.Label>Meta Description</Form.Label>
-                      <Form.Control as="textarea" rows={2} />
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        name="meta_description"
+                        onChange={(e) => {
+                          setField(e.target.name, e.target.value);
+                        }}
+                      />
                     </Form.Group>
                   </div>
                 </Col>
               </Row>
-            </div>
-            <Row className="mt-4">
-              <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Accessible to:</Form.Label>
-                  <div className="new-form-radio d-block">
-                    <div className="new-form-radio-box">
-                      <label for="yes1">
-                        <input
-                          type="radio"
-                          value="1"
-                          name="applicable_to_franchisee"
-                          id="yes1"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                          checked={settingData.applicable_to_franchisee === '1'}
-                        />
-                        <span className="radio-round"></span>
-                        <p>User Roles</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box m-0 mt-3">
-                      <label for="no1">
-                        <input
-                          type="radio"
-                          value="0"
-                          name="applicable_to_franchisee"
-                          id="no1"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                          checked={settingData.applicable_to_franchisee === '0'}
-                        />
-                        <span className="radio-round"></span>
-                        <p>Specific Users</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col>
-              <Col lg={9} md={12}>
-                {settingData.applicable_to_franchisee === '1' ? (
+              <Row className="mt-4">
+                <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Select User Roles</Form.Label>
-                    <div className="modal-two-check user-roles-box">
-                      <label className="container">
-                        Co-ordinators
-                        <input type="checkbox" name="role" id="co-ordinators" />
-                        <span className="checkmark"></span>
-                      </label>
-                      <label className="container">
-                        Educators
-                        <input type="checkbox" name="role" id="co-ordinators" />
-                        <span className="checkmark"></span>
-                      </label>
-                      <label className="container">
-                        Parents
-                        <input type="checkbox" name="role" id="co-ordinators" />
-                        <span className="checkmark"></span>
-                      </label>
-                      <label className="container">
-                        All Roles
-                        <input type="checkbox" name="role" id="co-ordinators" />
-                        <span className="checkmark"></span>
-                      </label>
+                    <Form.Label>Accessible to:</Form.Label>
+                    <div className="new-form-radio d-block">
+                      <div className="new-form-radio-box">
+                        <label for="yes1">
+                          <input
+                            type="radio"
+                            value="1"
+                            name="applicable_to_franchisee"
+                            id="yes1"
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.value);
+                            }}
+                            checked={
+                              settingData.applicable_to_franchisee === '1'
+                            }
+                          />
+                          <span className="radio-round"></span>
+                          <p>User Roles</p>
+                        </label>
+                      </div>
+                      <div className="new-form-radio-box m-0 mt-3">
+                        <label for="no1">
+                          <input
+                            type="radio"
+                            value="0"
+                            name="applicable_to_franchisee"
+                            id="no1"
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.value);
+                            }}
+                            checked={
+                              settingData.applicable_to_franchisee === '0'
+                            }
+                          />
+                          <span className="radio-round"></span>
+                          <p>Specific Users</p>
+                        </label>
+                      </div>
                     </div>
                   </Form.Group>
-                ) : null}
-                {settingData.applicable_to_franchisee === '0' ? (
-                  <Form.Group>
-                    <Form.Label>Select Franchisee</Form.Label>
-                    <div className="select-with-plus">
-                      <Multiselect
-                        displayValue="registered_name"
-                        className="multiselect-box default-arrow-select"
-                        // placeholder="Select Franchisee"
-                        selectedValues={selectedFranchisee}
-                        // onKeyPressFn={function noRefCheck() {}}
-                        onRemove={onRemoveFranchisee}
-                        // onSearch={function noRefCheck() {}}
-                        onSelect={onSelectFranchisee}
-                        // options={franchisee}
-                      />
-
-                      <Button className="add_operating_button">
-                        <FontAwesomeIcon
-                          icon={faPlus}
+                </Col>
+                <Col lg={9} md={12}>
+                  {settingData.applicable_to_franchisee === '1' ? (
+                    <Form.Group>
+                      <Form.Label>Select User Roles</Form.Label>
+                      <div className="modal-two-check user-roles-box">
+                        <label className="container">
+                          Co-ordinators
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                        <label className="container">
+                          Educators
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                        <label className="container">
+                          Parents
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                        <label className="container">
+                          All Roles
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                      </div>
+                    </Form.Group>
+                  ) : null}
+                  {settingData.applicable_to_franchisee === '0' ? (
+                    <Form.Group>
+                      <Form.Label>Select Franchisee</Form.Label>
+                      <div className="select-with-plus">
+                        {console.log('data----->', selectedUser)}
+                        <Multiselect
+                          displayValue="fullname"
+                          className="multiselect-box default-arrow-select"
+                          // placeholder="Select Franchisee"
+                          selectedValues={selectedUser}
+                          // onKeyPressFn={function noRefCheck() {}}
+                          onRemove={onRemoveFranchisee}
+                          // onSearch={function noRefCheck() {}}
+                          onSelect={onSelectFranchisee}
+                          // options={franchisee}
+                        />
+                        <Button
+                          className="add_operating_button"
                           onClick={() => {
                             setGroupFlag(true);
                           }}
-                        />
-                      </Button>
-                    </div>
-                    <p className="error">{errors.franchisee}</p>
-                  </Form.Group>
-                ) : null}
-                {/* <Form.Group>
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </Button>
+                      </div>
+                      <p className="error">{errors.franchisee}</p>
+                    </Form.Group>
+                  ) : null}
+                  {/* <Form.Group>
                   <Form.Label>File Category</Form.Label>
                   <Form.Select
                     name="file_category"
@@ -746,8 +797,9 @@ const FileRepository = () => {
                     })}
                   </Form.Select>
                 </Form.Group> */}
-              </Col>
-            </Row>
+                </Col>
+              </Row>
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -775,6 +827,7 @@ const FileRepository = () => {
           className="select-user-modal select-user"
           show={groupFlag}
           onHide={() => {
+            setSelectedUser([]);
             setGroupFlag(false);
           }}
           size="md"
@@ -795,7 +848,7 @@ const FileRepository = () => {
               type="button"
               id="extrabtn"
               aria-expanded="false"
-              class="dropdown-toggle btn btn-btn-outline"
+              class="filter-button btn btn-btn-outline "
             >
               <i class="filter-ico"></i> Add Filters
             </button>
@@ -804,99 +857,94 @@ const FileRepository = () => {
             <div className="select-user-modal-body ">
               <div className="select-user-list-head"></div>
               <div className="select-user-list-row main-lable">
-                <div className="select-user-checkbox  modal-two-check">
-                  <label className="container">
-                    <input type="checkbox" name="role" id="co-ordinators" />
-                    <span className="checkmark"></span>
-                  </label>
-                </div>
-                <div className="select-user-image-name main-lable-img">
-                  {/* <img alt="" id="user-pic" src="/img/user.png" /> */}
-                  <h6>James Smith</h6>
+                <div className="s-modal-left s-modal-heading">
+                  <div className="select-user-checkbox  modal-two-check">
+                    <label className="container">
+                      <input
+                        type="checkbox"
+                        name="role"
+                        id="co-ordinators"
+                        checked={selectedAll === true}
+                        onClick={(e) => {
+                          setSelectedAll(e.target.checked);
+                          let data = [...user];
+                          data?.map((item) => {
+                            item.status = e.target.checked;
+                          });
+                          setUser(data);
+                        }}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
+                  </div>
+                  <div className="select-user-image-name main-lable-img">
+                    {/* <img alt="" id="user-pic" src="/img/user.png" /> */}
+                    <h6>Name</h6>
+                  </div>
                 </div>
                 <div className="select-user-role main-lable-heading">
-                  <h6>Educator</h6>
+                  <h6>User Role</h6>
                 </div>
               </div>
             </div>
-            <div className="select-user-modal-body">
-              <div className="select-user-list-head"></div>
-              <div className="select-user-list-row">
-                <div className="select-user-checkbox  modal-two-check">
-                  <label className="container">
-                    <input type="checkbox" name="role" id="co-ordinators" />
-                    <span className="checkmark"></span>
-                  </label>
+            {console.log('user----->', user)}
+            {user?.map((item, index) => {
+              return (
+                <div className="select-user-modal-body">
+                  <div className="select-user-list-head"></div>
+                  <div className="select-user-list-row">
+                    <div className="s-modal-left">
+                      <div className="select-user-checkbox  modal-two-check">
+                        <label className="container">
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                            onClick={() => {
+                              onSelect(index);
+                            }}
+                            checked={item.status === true}
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                      </div>
+                      <div className="select-user-image-name">
+                        <img alt="" id="user-pic" src="/img/user.png" />
+                        <h6>{item.fullname}</h6>
+                      </div>
+                    </div>
+                    <div className="select-user-role text-capitalize">
+                      <h6>{item.role.split('_').join(' ')}</h6>
+                    </div>
+                  </div>
                 </div>
-                <div className="select-user-image-name">
-                  <img alt="" id="user-pic" src="/img/user.png" />
-                  <h6>James Smith</h6>
-                </div>
-                <div className="select-user-role">
-                  <h6>Educator</h6>
-                </div>
-              </div>
-            </div>
-            <div className="select-user-modal-body">
-              <div className="select-user-list-head"></div>
-              <div className="select-user-list-row">
-                <div className="select-user-checkbox  modal-two-check">
-                  <label className="container">
-                    <input type="checkbox" name="role" id="co-ordinators" />
-                    <span className="checkmark"></span>
-                  </label>
-                </div>
-                <div className="select-user-image-name">
-                  <img alt="" id="user-pic" src="/img/user.png" />
-                  <h6>James Smith</h6>
-                </div>
-                <div className="select-user-role">
-                  <h6>Educator</h6>
-                </div>
-              </div>
-            </div>
-            <div className="select-user-modal-body">
-              <div className="select-user-list-head"></div>
-              <div className="select-user-list-row">
-                <div className="select-user-checkbox  modal-two-check">
-                  <label className="container">
-                    <input type="checkbox" name="role" id="co-ordinators" />
-                    <span className="checkmark"></span>
-                  </label>
-                </div>
-                <div className="select-user-image-name">
-                  <img alt="" id="user-pic" src="/img/user.png" />
-                  <h6>James Smith</h6>
-                </div>
-                <div className="select-user-role">
-                  <h6>Educator</h6>
-                </div>
-              </div>
-            </div>
-            <div className="select-user-modal-body">
-              <div className="select-user-list-head"></div>
-              <div className="select-user-list-row">
-                <div className="select-user-checkbox  modal-two-check">
-                  <label className="container">
-                    <input type="checkbox" name="role" id="co-ordinators" />
-                    <span className="checkmark"></span>
-                  </label>
-                </div>
-                <div className="select-user-image-name">
-                  <img alt="" id="user-pic" src="/img/user.png" />
-                  <h6>James Smith</h6>
-                </div>
-                <div className="select-user-role">
-                  <h6>Educator</h6>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </Modal.Body>
           <Modal.Footer className="justify-content-center">
-            <Button variant="transparent" onClick={handleClose}>
+            <Button
+              variant="transparent"
+              onClick={() => {
+                setSelectedUser([]);
+                setGroupFlag(false);
+              }}
+            >
               Cancel
             </Button>
-            <Button variant="primary" onClick={onSubmit}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setGroupFlag(false);
+                let data = [...user];
+                let selectedData = [];
+                data.map((item) => {
+                  if (item.status === true) {
+                    selectedData.push(item);
+                  }
+                });
+                setSelectedUser(selectedData);
+              }}
+            >
               Done
             </Button>
           </Modal.Footer>
