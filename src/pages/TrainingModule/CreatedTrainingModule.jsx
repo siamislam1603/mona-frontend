@@ -53,7 +53,7 @@ const CreatedTraining = () => {
                 </div>
                 <div className="fixcol">
                   <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                  <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                  <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
                   <div className="cta-col">
                     <Dropdown>
                       <Dropdown.Toggle variant="transparent" id="ctacol">
