@@ -38,7 +38,7 @@ const CreatedTraining = () => {
       <div id="main">
         <div className="training-column">
           <Row style={{ marginBottom: '40px' }}>
-            <h1>Created by me</h1>
+            {myTrainingData?.length > 0 && <h1>Created by me</h1>}
             {myTrainingData?.map((training) => {
             return(
             <Col lg={4} md={6} key={training.id}>
@@ -72,7 +72,9 @@ const CreatedTraining = () => {
           </Row>
 
           <Row>
-            <h1 style={{ marginBottom: '25px' }}>Created by others</h1>
+            {
+              otherTrainingData?.length > 0 && <h1 style={{ marginBottom: '25px' }}>Created by others</h1>
+            }
             {otherTrainingData?.map((training) => {
             return(
             <Col lg={4} md={6} key={training.id}>

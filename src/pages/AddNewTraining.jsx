@@ -176,8 +176,6 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
-  
-  console.log('TRANING DATA:', trainingData);
 
   return (
     <div>
