@@ -3,6 +3,7 @@ import {
   faPen,
   faPlus,
   faRemove,
+  faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
@@ -21,20 +22,34 @@ import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
 import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
+import Multiselect from 'multiselect-react-dropdown';
 
+let selectedUserRole = [];
+let selectedUserRoleName = '';
 const OperatingManual = () => {
   const navigate = useNavigate();
   const [Index, setIndex] = useState(0);
+  const [operatingManualData, setOperatingManualData] = useState({});
   const [innerIndex, setInnerIndex] = useState(0);
   const [operatingManualdata, setOperatingManualdata] = useState([]);
+  const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [show, setShow] = useState(false);
   let [videoUrl, setVideoUrl] = useState('');
   let [category, setCategory] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [formSettingError, setFormSettingError] = useState({});
+  const [formSettingData, setFormSettingData] = useState({
+    applicable_to_franchisee: '1',
+    applicable_to_user: '1',
+  });
+  const [userRole, setUserRole] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [categoryFilter, setCategoryFilter] = useState('');
   useEffect(() => {
     getOperatingManual();
     getCategory();
+    getUserRoleAndFranchiseeData();
     console.log('role---->', localStorage.getItem('user_role'));
   }, []);
 
@@ -85,6 +100,80 @@ const OperatingManual = () => {
       });
     }
   }, [operatingManualdata]);
+  const getOneOperatingManual = async (id, category_name) => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    await fetch(
+      `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        console.log('operating manual--->', response?.result);
+        setOperatingManualData(response?.result);
+        let data = formSettingData;
+        data.applicable_to_user =
+          response?.result?.applicable_to_user.toString();
+        // data.applicable_to_franchisee =
+        //   response?.result?.applicable_to_franchisee.toString();
+        // console.log('Franchisee--->', franchisee);
+        // selectedFranchisee = [];
+        // franchisee.map((item) => {
+        //   if (response?.result?.shared_with.includes(item.franchisee_alias)) {
+        //     selectedFranchisee.push({
+        //       id: item.id,
+        //       franchisee_name: item.franchisee_name,
+        //       franchisee_alias: item.franchisee_alias,
+        //     });
+        //     selectedFranchiseeName += item.franchisee_alias + ',';
+        //   }
+        // });
+        selectedUserRole = [];
+        console.log('userRole---->', userRole);
+        userRole.map((item) => {
+          console.log('selectedUserRole---->', response?.result?.shared_role);
+          if (response?.result?.shared_role.includes(item.role_name)) {
+            selectedUserRole.push({
+              id: item.id,
+              role_label: item.role_label,
+              role_name: item.role_name,
+            });
+            selectedUserRoleName += item.role_name + ',';
+          }
+        });
+        console.log('selectedUserRole---->', selectedUserRole);
+
+        setFormSettingData(data);
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const getUserRoleAndFranchiseeData = () => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/api/user-role`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        console.log('response0-------->1', res?.userRoleList);
+        setUserRole(res?.userRoleList);
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const setFormSettingFields = (field, value) => {
+    setFormSettingData({ ...formSettingData, [field]: value });
+
+    if (!!formSettingError[field]) {
+      setFormSettingError({
+        ...formSettingError,
+        [field]: null,
+      });
+    }
+  };
   const getCategory = async () => {
     var requestOptions = {
       method: 'GET',
@@ -125,6 +214,7 @@ const OperatingManual = () => {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
         'user_role'
       )}`;
+      setCategoryFilter(value);
     } else if (key === 'search') {
       api_url = `${BASE_URL}/operating_manual?search=${value}&role=${localStorage.getItem(
         'user_role'
@@ -133,6 +223,7 @@ const OperatingManual = () => {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
       )}`;
+      setCategoryFilter('reset');
     }
 
     fetch(api_url, requestOptions)
@@ -142,6 +233,53 @@ const OperatingManual = () => {
         setOperatingManualdata(result.result);
       })
       .catch((error) => console.log('error', error));
+  };
+  function onSelectUserRole(optionsList, selectedItem) {
+    console.log('selected_item---->2', selectedItem);
+    selectedUserRoleName += selectedItem.role_name + ',';
+    selectedUserRole.push({
+      id: selectedItem.id,
+      role_label: selectedItem.role_label,
+      role_name: selectedItem.role_name,
+    });
+    console.log('form---->2selectedUserRole', selectedUserRole);
+  }
+  function onRemoveUserRole(selectedList, removedItem) {
+    selectedUserRoleName = selectedUserRoleName.replace(
+      removedItem.role_name + ',',
+      ''
+    );
+    const index = selectedUserRole.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedUserRole.splice(index, 1);
+    console.log('form---->2selectedUserRole', selectedUserRole);
+  }
+  const onModelSubmit = (e) => {
+    e.preventDefault();
+    let data = operatingManualData;
+    if (!data?.id) {
+      alert('Please save first operating manual information');
+    } else {
+      data['access_to_all_user'] = formSettingData.applicable_to_user;
+      data['access_to_all_franchise'] =
+        formSettingData.applicable_to_franchisee;
+      // data['shared_with'] = selectedFranchiseeName;
+      data['shared_role'] = selectedUserRoleName;
+      var myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+      fetch(`${BASE_URL}/operating_manual/add`, {
+        method: 'post',
+        body: JSON.stringify(operatingManualData),
+        headers: myHeaders,
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setOperatingManualData(res?.result);
+          setFormSettingFlag(false);
+          // navigate('/operatingmanual');
+        });
+    }
   };
 
   return (
@@ -187,8 +325,21 @@ const OperatingManual = () => {
                               </Dropdown.Toggle>
 
                               <Dropdown.Menu>
-                                {category?.map((item) => {
-                                  return (
+                                {category?.map((item, index) => {
+                                  return categoryFilter ===
+                                    item.category_name ? (
+                                    <Dropdown.Item
+                                      onClick={() => {
+                                        getOperatingManual(
+                                          'category',
+                                          item.category_name
+                                        );
+                                      }}
+                                      active
+                                    >
+                                      {item.category_name}
+                                    </Dropdown.Item>
+                                  ) : (
                                     <Dropdown.Item
                                       onClick={() => {
                                         getOperatingManual(
@@ -201,6 +352,24 @@ const OperatingManual = () => {
                                     </Dropdown.Item>
                                   );
                                 })}
+                                {categoryFilter === 'reset' ? (
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      getOperatingManual('', '');
+                                    }}
+                                    active
+                                  >
+                                    Reset
+                                  </Dropdown.Item>
+                                ) : (
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      getOperatingManual('', '');
+                                    }}
+                                  >
+                                    Reset
+                                  </Dropdown.Item>
+                                )}
                               </Dropdown.Menu>
                             </Dropdown>
                           </div>
@@ -290,6 +459,19 @@ const OperatingManual = () => {
                                 }}
                               >
                                 <FontAwesomeIcon icon={faRemove} /> Remove
+                              </Dropdown.Item>
+                              <Dropdown.Item
+                                href=""
+                                onClick={() => {
+                                  setFormSettingFlag(true);
+                                  getOneOperatingManual(
+                                    operatingManualdata[Index]
+                                      ?.operating_manuals[innerIndex]?.id,
+                                    operatingManualdata[Index]?.category_name
+                                  );
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faUsers} /> Sharing
                               </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown>
@@ -434,6 +616,157 @@ const OperatingManual = () => {
             ></iframe>
           </div>
         </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={formSettingFlag}
+        onHide={() => setFormSettingFlag(false)}
+        size="lg"
+        className="form-settings-modal"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title
+            id="contained-modal-title-vcenter"
+            className="modal-heading"
+          >
+            <img src="../../img/carbon_settings.svg" />
+            Form Settings
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-settings-content">
+            <Row className="mt-4">
+              {/* <Col lg={3} md={6}>
+                <Form.Group>
+                  <Form.Label>Accessible to all franchisee</Form.Label>
+                  <div className="new-form-radio">
+                    <div className="new-form-radio-box">
+                      <label for="yes1">
+                        <input
+                          type="radio"
+                          value="1"
+                          name="applicable_to_franchisee"
+                          id="yes1"
+                          onChange={(e) => {
+                            setFormSettingFields(e.target.name, e.target.value);
+                          }}
+                          checked={
+                            formSettingData.applicable_to_franchisee === '1'
+                          }
+                        />
+                        <span className="radio-round"></span>
+                        <p>Yes</p>
+                      </label>
+                    </div>
+                    <div className="new-form-radio-box">
+                      <label for="no1">
+                        <input
+                          type="radio"
+                          value="0"
+                          name="applicable_to_franchisee"
+                          id="no1"
+                          onChange={(e) => {
+                            setFormSettingFields(e.target.name, e.target.value);
+                          }}
+                          checked={
+                            formSettingData.applicable_to_franchisee === '0'
+                          }
+                        />
+                        <span className="radio-round"></span>
+                        <p>No</p>
+                      </label>
+                    </div>
+                  </div>
+                </Form.Group>
+              </Col> */}
+              {/* {formSettingData.applicable_to_franchisee === '0' ? (
+                <Col lg={9} md={6} className="mt-3 mt-md-0">
+                  <Form.Group>
+                    <Form.Label>Select Franchisee</Form.Label>
+                    <Multiselect
+                      displayValue="franchisee_name"
+                      className="multiselect-box default-arrow-select"
+                      placeholder="Select Franchisee"
+                      selectedValues={selectedFranchisee}
+                      onKeyPressFn={function noRefCheck() {}}
+                      onRemove={onRemoveFranchisee}
+                      onSearch={function noRefCheck() {}}
+                      onSelect={onSelectFranchisee}
+                      options={franchisee}
+                    />
+                    <p className="error">{errors.franchisee}</p>
+                  </Form.Group>
+                </Col>
+              ) : null} */}
+              <Col lg={3} md={6}>
+                <Form.Group>
+                  <Form.Label>Applicable to all user roles</Form.Label>
+                  <div className="new-form-radio">
+                    <div className="new-form-radio-box">
+                      <label for="yes2">
+                        <input
+                          type="radio"
+                          value="1"
+                          name="applicable_to_user"
+                          id="yes2"
+                          onChange={(e) => {
+                            setFormSettingFields(e.target.name, e.target.value);
+                          }}
+                          checked={formSettingData.applicable_to_user === '1'}
+                        />
+                        <span className="radio-round"></span>
+                        <p>Yes</p>
+                      </label>
+                    </div>
+                    <div className="new-form-radio-box">
+                      <label for="no2">
+                        <input
+                          type="radio"
+                          value="0"
+                          name="applicable_to_user"
+                          id="no2"
+                          onChange={(e) => {
+                            setFormSettingFields(e.target.name, e.target.value);
+                          }}
+                          checked={formSettingData.applicable_to_user === '0'}
+                        />
+                        <span className="radio-round"></span>
+                        <p>No</p>
+                      </label>
+                    </div>
+                  </div>
+                </Form.Group>
+              </Col>
+              {formSettingData.applicable_to_user === '0' ? (
+                <Col lg={9} md={6} className="mt-3 mt-md-0">
+                  <Form.Group>
+                    <Form.Label>Select User Roles</Form.Label>
+                    <Multiselect
+                      placeholder="Select User Roles"
+                      displayValue="role_label"
+                      selectedValues={selectedUserRole}
+                      className="multiselect-box default-arrow-select"
+                      onKeyPressFn={function noRefCheck() {}}
+                      onRemove={onRemoveUserRole}
+                      onSearch={function noRefCheck() {}}
+                      onSelect={onSelectUserRole}
+                      options={userRole}
+                    />
+                    <p className="error">{errors.user}</p>
+                  </Form.Group>
+                </Col>
+              ) : null}
+            </Row>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="justify-content-center">
+          <Button className="back">Cancel</Button>
+          <Button className="done" onClick={onModelSubmit}>
+            Save Settings
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

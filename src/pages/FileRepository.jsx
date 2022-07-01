@@ -66,6 +66,7 @@ const FileRepository = () => {
   const [user, setUser] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [category, setCategory] = useState([]);
+  const [filterFlag, setFilterFlag] = useState(false);
   const [selectedAll, setSelectedAll] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -153,7 +154,7 @@ const FileRepository = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // getUserRoleAndFranchiseeData();
+    getUserRoleAndFranchiseeData();
     getMyAddedFileRepoData();
     getFilesSharedWithMeData();
     getFileCategory();
@@ -851,6 +852,9 @@ const FileRepository = () => {
               id="extrabtn"
               aria-expanded="false"
               class="filter-button btn btn-btn-outline "
+              onClick={() => {
+                setFilterFlag(true);
+              }}
             >
               <i class="filter-ico"></i> Add Filters
             </button>
@@ -948,6 +952,118 @@ const FileRepository = () => {
               }}
             >
               Done
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+
+      <div className="filter-user-modal-wrp">
+        <Modal
+          className="select-user-modal select-user filter-user-modal"
+          show={filterFlag}
+          onHide={() => {
+            setSelectedUser([]);
+            setFilterFlag(false);
+          }}
+          size="sm"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Header closeButton className="select-users-header">
+            <Modal.Title
+              id="contained-modal-title-vcenter"
+              className="modal-heading"
+            >
+              Filter by:
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group className="filter-wpr">
+              <Form.Label>Select Filter Criteria:</Form.Label>
+              <Form.Select
+                name="file_category"
+                onChange={(e) => {
+                  setField(e.target.name, e.target.value);
+                }}
+              >
+                <option value="">User based on their roles</option>
+                <option value="">Parents specific to a educator</option>
+                <option value="">Children specific to a educator</option>
+                <option value="">
+                  All users connected to a specific franchise
+                </option>
+                <option value="">
+                  All internal users connected to a specific franchise (excludes
+                  parents)
+                </option>
+                <option value="">All users</option>
+                <option value="">
+                  All internal users(all users excepts parents/children)
+                </option>
+                <option value="">
+                  User based on their roles for a specific franchise
+                </option>
+                <option value="">Parents specific to children</option>
+                <option value="">Co-ordinator specific to educator</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="select-role-wrp">
+              <Form.Label>Select a role</Form.Label>
+              <div className="select-check-wrp">
+                {userRole.map((item) => {
+                  return (
+                    <div class="form-group">
+                      <input type="radio" id={item.role_name} name="role" />
+                      <label for={item.role_name}>{item.role_label}</label>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* <div className="select-check-wrp">
+                <div class="form-group">
+                  <input type="checkbox" id="html" />
+                  <label for="html">Admin</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="css" />
+                  <label for="css">Co-ordinator</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="javascript" />
+                  <label for="javascript">Educator</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="javascript1" />
+                  <label for="javascript1">Parent/Guardian</label>
+                </div>
+              </div> */}
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer className="justify-content-center">
+            <Button
+              variant="transparent"
+              onClick={() => {
+                setSelectedUser([]);
+                setGroupFlag(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setFilterFlag(false);
+                let data = [...user];
+                let selectedData = [];
+                data.map((item) => {
+                  if (item.status === true) {
+                    selectedData.push(item);
+                  }
+                });
+                setSelectedUser(selectedData);
+              }}
+            >
+              Apply
             </Button>
           </Modal.Footer>
         </Modal>
