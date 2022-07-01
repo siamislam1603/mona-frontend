@@ -22,24 +22,8 @@ const LeftNavbar = () => {
     }
   };
 
-  const fetchUserPermissions = async () => {
-    let user_role = localStorage.getItem('user_role');
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/rbac/get_role_permissions/${user_role}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-
-    if(response.status === 200 && response.data.status === "success") {
-      const { permissions } = response.data;
-      localStorage.setItem('user_permission', JSON.stringify(permissions));
-    }
-  };
-
   useEffect(() => {
     fetchPermissionList();
-    fetchUserPermissions();
   }, []);
 
   return (
