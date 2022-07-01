@@ -1997,3 +1997,58 @@ img#user-pic {}
 .filter-button{
     right:17px;
 }
+.select-role-wrp{margin-top: 20px;}
+.select-role-wrp label,
+.filter-wpr label{
+    font-size: 18px;
+    color: #3E5D58;
+    margin-bottom: 10px;
+    display: block;
+}
+.select-check-wrp {
+    display: flex;
+    align-items: center;
+    margin: 0 0 10px 0;
+    position: relative;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.select-check-wrp .form-group input {
+    padding: 0;
+    height: initial;
+    width: initial;
+    margin-bottom: 0;
+    display: none;
+    cursor: pointer;
+  }
+  
+  .select-check-wrp .form-group label {
+    position: relative;
+    cursor: pointer;
+    padding: 10px 10px;
+    border-radius: 100px;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+.select-check-wrp .form-group input:checked + label {
+    background: #ECF0DD;
+    border: 1px solid #9EB356;
+    color: #9EB356;
+}
+.filter-user-modal .modal-title{
+    color: #949494;
+    font-weight: 400 !important;
+    font-size: 18px;
+}
+.filter-user-modal .modal-dialog {
+    max-width: 550px;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    text-decoration: none;
+    color: #b10061;
+    background-color: white;
+}
