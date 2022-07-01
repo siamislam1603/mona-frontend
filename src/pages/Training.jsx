@@ -62,7 +62,7 @@ const Training = () => {
         setTopSuccessMessage(null);
       }, 3000);
     }
-  }, [])
+  }, []);
 
   return (
     <>
