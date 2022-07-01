@@ -48,6 +48,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         localStorage.removeItem('user_id');
         localStorage.removeItem('user_name');
         localStorage.removeItem('user_role');
+        localStorage.removeItem('menu_list');
         localStorage.removeItem('selectedFranchisee');
         window.location.href = "/";
       }
@@ -124,8 +125,8 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
                       permissionList
                         ? permissionList.map((top_menu) => {
                           return (
-                                <Dropdown.Item key={top_menu.id} href={top_menu.menu_link}>
-                                  {top_menu.controller_label}
+                                <Dropdown.Item key={top_menu.id} href={top_menu.controller.menu_link}>
+                                  {top_menu.controller.controller_label}
                                 </Dropdown.Item>
                            )}) : null
                     }

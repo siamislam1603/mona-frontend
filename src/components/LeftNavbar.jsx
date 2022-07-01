@@ -8,6 +8,7 @@ const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
 
   const fetchPermissionList = async () => {
+    console.log('FETCHING PERMISSION LIST');
     let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
       headers: {
@@ -16,9 +17,9 @@ const LeftNavbar = () => {
     })
 
     if(response.status === 200 && response.data.status === "success") {
-      let { menuList } = response.data;
-      setPermissionList(menuList);
-      localStorage.setItem('menu_list', JSON.stringify(menuList));
+      let { permissionsObject } = response.data;
+      setPermissionList(permissionsObject);
+      localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
     }
   };
 
@@ -26,6 +27,7 @@ const LeftNavbar = () => {
     fetchPermissionList();
   }, []);
 
+  
   return (
     <>
       <div className="logo-column text-center">
@@ -40,13 +42,13 @@ const LeftNavbar = () => {
           <Nav className="mr-auto w-100">
             {permissionList && permissionList.map(permission => {
               return (
-                <React.Fragment key={permission.id}>
-                  <Link to={`/${permission.menu_link}`} className="nav-link">
+                <React.Fragment key={permission.controller.id}>
+                  <Link to={`/${permission.controller.menu_link}`} className="nav-link">
                     <span>
-                      <i className={`ico ${permission.controller_icon}`}>
+                      <i className={`ico ${permission.controller.controller_icon}`}>
                         &nbsp;
                       </i>
-                      {permission.controller_label}
+                      {permission.controller.controller_label}
                     </span>
                   </Link>
                 </React.Fragment>
