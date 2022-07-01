@@ -34,7 +34,7 @@ const training = [
 const Training = () => {
   let location = useLocation();
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
-  const [tabLinkPath, setTabLinkPath] = useState();
+  const [tabLinkPath, setTabLinkPath] = useState("/available-training");
 
 
   // STYLE ACTIVE LINKS
@@ -161,7 +161,7 @@ const Training = () => {
                       <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
                       <li><a onClick={handleLinkClick} path="/complete-training"  className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
                       {
-                        verifyPermission("training_files", "change_status") && 
+                      
                         <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
                       }
                     </ul>
