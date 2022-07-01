@@ -143,13 +143,6 @@ const CreatedTraining = () => {
                       </div>
                     </div>
                   </header>
-                  <div className="training-cat mb-3">
-                    <ul>
-                    <li><NavLink to="/available-training" activeClassName="active">Trainings Available</NavLink></li>
-                    <li><NavLink to="/complete-training" activeClassName="active">Complete Training</NavLink></li>
-                    <li><NavLink to="/created-training" activeClassName="active">Trainings Created</NavLink></li>
-                    </ul>
-                  </div>
                   <div className="training-column">
                     <Row>
                     {createdTrainingData?.map((training) => {

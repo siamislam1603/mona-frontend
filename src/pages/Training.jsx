@@ -34,7 +34,9 @@ const training = [
 const Training = () => {
   let location = useLocation();
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
-  const [tabLinkPath, setTabLinkPath] = useState();
+  const [tabLinkPath, setTabLinkPath] = useState("/available-training");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney")
 
 
   // STYLE ACTIVE LINKS
@@ -72,7 +74,9 @@ const Training = () => {
                 <LeftNavbar/>
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader 
+                 selectedFranchisee={selectedFranchisee}
+                 setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Trainings</h1>
@@ -80,7 +84,13 @@ const Training = () => {
                       <div className="extra-btn">
                         <div className="data-search me-3">
                           <label for="search-bar" className="search-label">
-                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value=""/>
+                            <input 
+                              id="search-bar" 
+                              type="text" 
+                              className="form-control" 
+                              placeholder="Search" 
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)} />
                           </label>
                         </div>
                         <Dropdown className="filtercol me-3">
@@ -143,7 +153,10 @@ const Training = () => {
                             </footer>
                           </Dropdown.Menu>
                         </Dropdown>
-                        <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
+                        {
+                          verifyPermission("training_files", "add") && 
+                          <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
+                        }
                         <Dropdown>
                           <Dropdown.Toggle id="extrabtn" className="ctaact">
                             <img src="../img/dot-ico.svg" alt=""/>
@@ -161,7 +174,7 @@ const Training = () => {
                       <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
                       <li><a onClick={handleLinkClick} path="/complete-training"  className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
                       {
-                        verifyPermission("training_files", "change_status") && 
+                        verifyPermission("training_files", "add") &&
                         <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
                       }
                     </ul>
@@ -179,9 +192,12 @@ const Training = () => {
                     topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
                   } 
                   <div className="training-column">
-                    {tabLinkPath === "/available-training" && <AvailableTrainingModule />}
-                    {tabLinkPath === "/complete-training" && <CompleteTrainingModule />}
-                    {tabLinkPath === "/created-training" && <CreatedTrainingModule />}
+                    {tabLinkPath === "/available-training" 
+                      && <AvailableTrainingModule searchTerm={searchTerm} />}
+                    {tabLinkPath === "/complete-training" 
+                      && <CompleteTrainingModule searchTerm={searchTerm} />}
+                    {tabLinkPath === "/created-training" 
+                      && <CreatedTrainingModule searchTerm={searchTerm} />}
                   </div>
                 </div>
               </div>

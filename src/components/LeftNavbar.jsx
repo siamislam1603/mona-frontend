@@ -8,6 +8,7 @@ const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
 
   const fetchPermissionList = async () => {
+    console.log('FETCHING PERMISSION LIST');
     let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
       headers: {
@@ -16,32 +17,17 @@ const LeftNavbar = () => {
     })
 
     if(response.status === 200 && response.data.status === "success") {
-      let { menuList } = response.data;
-      setPermissionList(menuList);
-      localStorage.setItem('menu_list', JSON.stringify(menuList));
-    }
-  };
-
-  const fetchUserPermissions = async () => {
-    let user_role = localStorage.getItem('user_role');
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/rbac/get_role_permissions/${user_role}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-
-    if(response.status === 200 && response.data.status === "success") {
-      const { permissions } = response.data;
-      localStorage.setItem('user_permission', JSON.stringify(permissions));
+      let { permissionsObject } = response.data;
+      setPermissionList(permissionsObject);
+      localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
     }
   };
 
   useEffect(() => {
     fetchPermissionList();
-    fetchUserPermissions();
   }, []);
 
+  
   return (
     <>
       <div className="logo-column text-center">
@@ -56,13 +42,13 @@ const LeftNavbar = () => {
           <Nav className="mr-auto w-100">
             {permissionList && permissionList.map(permission => {
               return (
-                <React.Fragment key={permission.id}>
-                  <Link to={`/${permission.menu_link}`} className="nav-link">
+                <React.Fragment key={permission.controller.id}>
+                  <Link to={`/${permission.controller.menu_link}`} className="nav-link">
                     <span>
-                      <i className={`ico ${permission.controller_icon}`}>
+                      <i className={`ico ${permission.controller.controller_icon}`}>
                         &nbsp;
                       </i>
-                      {permission.controller_label}
+                      {permission.controller.controller_label}
                     </span>
                   </Link>
                 </React.Fragment>

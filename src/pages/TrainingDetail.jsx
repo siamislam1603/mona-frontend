@@ -5,6 +5,7 @@ import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
 import { BASE_URL } from "../components/App";
+import moment from 'moment';
 import { useParams } from 'react-router-dom';
 
 import videos from "../assets/video/Cute Panda.mp4"
@@ -59,14 +60,13 @@ const TrainingDetail = () => {
   const getTrainingDetails = async () => {
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    console.log(trainingId, user_id);
+
     const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${user_id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
     
-    console.log('RESPONSE:', response);
 
     if(response.status === 200 && response.data.status === "success") {
       const { all_trainings } = response.data;
@@ -82,7 +82,7 @@ const TrainingDetail = () => {
   const updateFinishTraining = async () => {
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/training/completeTraining/${trainingId}/${user_id}?training_status=finished`, {
+    const response = await axios.post(`${BASE_URL}/training/completeTraining/${trainingId}/${user_id}?training_status=finished`, {}, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -95,8 +95,25 @@ const TrainingDetail = () => {
     }
   };
 
+  const fetchTrainingFinishDate = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/get-finish-training-date/${trainingId}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success" && response.data.is_training_finished === false) {
+    } else {
+      let { finished_date } = response.data;
+      setTrainingFinishedDate(finished_date);
+      setHideTrainingFinishButton(true);
+    }
+  };
+
   useEffect(() =>{
     getTrainingDetails()
+    fetchTrainingFinishDate();
   }, [])
 
   trainingDetails && console.log('TRAINING ID:', trainingDetails);
@@ -213,7 +230,9 @@ const TrainingDetail = () => {
 
                     <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
                       { hideTrainingFinishButton
-                        ? <p> You've finished this training on {trainingFinishedDate}</p>
+                        ? <p> You've finished this training on {moment(trainingFinishedDate).format(
+                          'MMMM Do, YYYY'
+                        )}</p>
                         : <p>
                             Please acknowledge by clicking below that you have
                             completed this training completely and can proceed
