@@ -10,8 +10,10 @@ import makeAnimated from 'react-select/animated';
 import AvailableTrainingModule from '../pages/TrainingModule/AvailableTrainingModule';
 import CompleteTrainingModule from '../pages/TrainingModule/CompleteTrainingModule';
 import CreatedTrainingModule from '../pages/TrainingModule/CreatedTrainingModule';
-import { varifyPermission, verifyPermission } from '../helpers/roleBasedAccess';
+import { verifyPermission } from '../helpers/roleBasedAccess';
 import { useEffect } from "react";
+import { BASE_URL } from "../components/App";
+import axios from 'axios';
 
 const animatedComponents = makeAnimated();
 const styles = {
@@ -35,8 +37,13 @@ const Training = () => {
   let location = useLocation();
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
   const [tabLinkPath, setTabLinkPath] = useState("/available-training");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney")
+  const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
+  const [trainingCategory, setTrainingCategory] = useState([]);
+  const [filterData, setFilterData] = useState({
+    user: "",
+    category: "",
+    search: ""
+  });
 
 
   // STYLE ACTIVE LINKS
@@ -53,6 +60,28 @@ const Training = () => {
     setTabLinkPath(path);
   }
 
+  const fetchTrainingCategories = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(
+      `${BASE_URL}/training/get-training-categories`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      }
+    );
+
+    if (response.status === 200 && response.data.status === "success") {
+      const { categoryList } = response.data;
+      setTrainingCategory([
+        ...categoryList.map((data) => ({
+          id: data.id,
+          value: data.category_alias,
+          label: data.category_name,
+        })),
+      ]);
+    }
+  };
+
   useEffect(() => {
     if(localStorage.getItem('success_msg')) {
       setTopSuccessMessage(localStorage.getItem('success_msg'));
@@ -63,6 +92,12 @@ const Training = () => {
       }, 3000);
     }
   }, []);
+
+  useEffect(() => {
+    fetchTrainingCategories();
+  }, []);
+
+  filterData && console.log('FILTER DATA:', filterData);
 
   return (
     <>
@@ -89,8 +124,11 @@ const Training = () => {
                               type="text" 
                               className="form-control" 
                               placeholder="Search" 
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)} />
+                              value={filterData.search}
+                              onChange={e => setFilterData(prevState => ({
+                                ...prevState,
+                                search: e.target.value
+                              }))} />
                           </label>
                         </div>
                         <Dropdown className="filtercol me-3">
@@ -105,45 +143,60 @@ const Training = () => {
                                 <Form.Check
                                   inline
                                   label='Admin'
-                                  value='Admin'
+                                  value='admin'
                                   name="users"
                                   type="radio"
                                   id='one'
+                                  onChange={e => setFilterData(prevState => ({
+                                    ...prevState,
+                                    user: e.target.value
+                                  }))}
                                 />
                                 <Form.Check
                                   inline
                                   label='Co-ordinator'
-                                  value='Co-ordinator'
+                                  value='coordinator'
                                   name="users"
                                   type="radio"
                                   id='two'
+                                  onChange={e => setFilterData(prevState => ({
+                                    ...prevState,
+                                    user: e.target.value
+                                  }))}
                                 />
                                 <Form.Check
                                   inline
                                   label='Educator'
-                                  value='Educator'
+                                  value='educator'
                                   name="users"
                                   type="radio"
                                   id='three'
+                                  onChange={e => setFilterData(prevState => ({
+                                    ...prevState,
+                                    user: e.target.value
+                                  }))}
                                 />
                                 <Form.Check
                                   inline
                                   label='Parent/Guardian'
-                                  value='Parent-Guardian'
+                                  value='guardian'
                                   name="users"
                                   type="radio"
                                   id='four'
+                                  onChange={e => setFilterData(prevState => ({
+                                    ...prevState,
+                                    user: e.target.value
+                                  }))}
                                 />
                               </Form.Group>
                             </div>
                             <div className="custom-radio">
-                              <label className="mb-2">Location:</label>
+                              <label className="mb-2">Choose Category</label>
                               <Form.Group>
                                 <Select
                                   closeMenuOnSelect={false}
                                   components={animatedComponents}
-                                  isMulti
-                                  options={training}
+                                  options={trainingCategory}
                                 />
                               </Form.Group>
                             </div>
@@ -179,11 +232,16 @@ const Training = () => {
                       }
                     </ul>
                     <div className="selectdropdown ms-auto d-flex align-items-center">
-                      <Form.Group className="d-flex align-items-center">
+                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "1000" }}>
                         <Form.Label className="d-block me-2">Choose Category</Form.Label>
                         <Select
                           closeMenuOnSelect={true}
                           components={animatedComponents}
+                          options={trainingCategory}
+                          onChange={(e) => setFilterData(prevState => ({
+                            ...prevState,
+                            category: e.id
+                          }))}
                         />
                       </Form.Group>
                     </div>
@@ -193,11 +251,14 @@ const Training = () => {
                   } 
                   <div className="training-column">
                     {tabLinkPath === "/available-training" 
-                      && <AvailableTrainingModule searchTerm={searchTerm} />}
+                      && <AvailableTrainingModule
+                            filter={filterData} />}
                     {tabLinkPath === "/complete-training" 
-                      && <CompleteTrainingModule searchTerm={searchTerm} />}
+                      && <CompleteTrainingModule
+                            filter={filterData} />}
                     {tabLinkPath === "/created-training" 
-                      && <CreatedTrainingModule searchTerm={searchTerm} />}
+                      && <CreatedTrainingModule 
+                            filter={filterData} />}
                   </div>
                 </div>
               </div>

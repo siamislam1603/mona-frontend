@@ -75,8 +75,6 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       savePermissionInState();
     }, []);
 
-    permissionList && console.log('PERMISSION:', permissionList);
-
     return (
       <>
         <div className="topheader">

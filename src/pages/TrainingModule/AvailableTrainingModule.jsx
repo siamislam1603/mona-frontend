@@ -5,9 +5,8 @@ import axios from "axios";
 import moment from 'moment';
 
 
-const AvailableTraining = ({ searchTerm }) => {
+const AvailableTraining = ({ filter }) => {
   const [availableTrainingData, setAvailableTrainingData] = useState();
-  const [filteredData, setFilteredData] = useState();
 
   const fetchAvailableTrainings = async () => {
     console.log('INSIDE AVAILABLE TRAINING MODULE')
@@ -19,29 +18,22 @@ const AvailableTraining = ({ searchTerm }) => {
       }
     });
 
-    console.log('Response:', response);
     if(response.status === 200 && response.data.status === "success") {
       const { all_trainings } = response.data.data;
-      console.log('NEW DATA:', all_trainings);
       setAvailableTrainingData(all_trainings);
     }
   };
 
-  const filterData = (req, res, next) => {
-    setFilteredData(availableTrainingData);
+  // const filterData = (req, res, next) => {
+  //   setFilteredData(availableTrainingData);
 
-    let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
-    setFilteredData(newData);
-  };
+  //   let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
+  //   setFilteredData(newData);
+  // };
 
   useEffect(() => {
     fetchAvailableTrainings();
-    availableTrainingData && filterData()
   }, []);
-
-  useEffect(() => {
-    availableTrainingData && filterData();
-  }, [searchTerm]);
 
   return (
     <>
