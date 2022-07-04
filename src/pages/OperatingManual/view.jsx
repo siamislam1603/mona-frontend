@@ -25,7 +25,7 @@ import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 
 let selectedUserRole = [];
-let selectedUserRoleName = '';
+let selectedUserEmail = '';
 const OperatingManual = () => {
   const navigate = useNavigate();
   const [Index, setIndex] = useState(0);
@@ -39,19 +39,39 @@ const OperatingManual = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [formSettingError, setFormSettingError] = useState({});
-  const [formSettingData, setFormSettingData] = useState({
-    applicable_to_franchisee: '1',
-    applicable_to_user: '1',
-  });
-  const [userRole, setUserRole] = useState([]);
+  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+  const [selectedUser, setSelectedUser] = useState([]);
   const [errors, setErrors] = useState({});
+  const [user, setUser] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('');
   useEffect(() => {
     getOperatingManual();
     getCategory();
-    getUserRoleAndFranchiseeData();
-    console.log('role---->', localStorage.getItem('user_role'));
+    getUser();
+    console.log('email---->', localStorage.getItem('email'));
   }, []);
+  const getUser = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    fetch(`${BASE_URL}/auth/users`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.data?.map((item) => {
+          item['status'] = false;
+        });
+        setUser(result?.data);
+      })
+      .catch((error) => console.log('error', error));
+  };
 
   useEffect(() => {
     var tree = document.getElementById('tree1');
@@ -115,8 +135,21 @@ const OperatingManual = () => {
         console.log('operating manual--->', response?.result);
         setOperatingManualData(response?.result);
         let data = formSettingData;
-        data.applicable_to_user =
-          response?.result?.applicable_to_user.toString();
+        data['applicable_to_all'] = response?.result?.accessible_to_all;
+        data['shared_role'] = response?.result?.shared_role;
+        data['accessible_to_role'] = response?.result?.accessible_to_role;
+
+        if (response?.result?.accessible_to_role === 0) {
+          let users = [];
+          user.map((item) => {
+            if (response?.result?.shared_with.includes(item.email)) {
+              users.push(item);
+            }
+          });
+          setSelectedUser(users);
+        }
+        setFormSettingData(data);
+        // response?.result?.applicable_to_user.toString();
         // data.applicable_to_franchisee =
         //   response?.result?.applicable_to_franchisee.toString();
         // console.log('Franchisee--->', franchisee);
@@ -131,39 +164,24 @@ const OperatingManual = () => {
         //     selectedFranchiseeName += item.franchisee_alias + ',';
         //   }
         // });
-        selectedUserRole = [];
-        console.log('userRole---->', userRole);
-        userRole.map((item) => {
-          console.log('selectedUserRole---->', response?.result?.shared_role);
-          if (response?.result?.shared_role.includes(item.role_name)) {
-            selectedUserRole.push({
-              id: item.id,
-              role_label: item.role_label,
-              role_name: item.role_name,
-            });
-            selectedUserRoleName += item.role_name + ',';
-          }
-        });
-        console.log('selectedUserRole---->', selectedUserRole);
-
-        setFormSettingData(data);
+        // selectedUserRole = [];
+        // console.log('userRole---->', userRole);
+        // userRole.map((item) => {
+        //   console.log('selectedUserRole---->', response?.result?.shared_role);
+        //   if (response?.result?.shared_role.includes(item.role_name)) {
+        //     selectedUserRole.push({
+        //       id: item.id,
+        //       role_label: item.role_label,
+        //       role_name: item.role_name,
+        //     });
+        //     selectedUserRoleName += item.role_name + ',';
+        //   }
+        // });
+        // console.log('selectedUserRole---->', selectedUserRole);
       })
       .catch((error) => console.log('error', error));
   };
-  const getUserRoleAndFranchiseeData = () => {
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-    };
 
-    fetch(`${BASE_URL}/api/user-role`, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        console.log('response0-------->1', res?.userRoleList);
-        setUserRole(res?.userRoleList);
-      })
-      .catch((error) => console.log('error', error));
-  };
   const setFormSettingFields = (field, value) => {
     setFormSettingData({ ...formSettingData, [field]: value });
 
@@ -222,7 +240,7 @@ const OperatingManual = () => {
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
-      )}`;
+      )}&email=${localStorage.getItem('email')}`;
       setCategoryFilter('reset');
     }
 
@@ -234,26 +252,24 @@ const OperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
-  function onSelectUserRole(optionsList, selectedItem) {
+  function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedUserRoleName += selectedItem.role_name + ',';
-    selectedUserRole.push({
+    selectedUserEmail += selectedItem.email + ',';
+    selectedUser.push({
       id: selectedItem.id,
-      role_label: selectedItem.role_label,
-      role_name: selectedItem.role_name,
+      email: selectedItem.email,
     });
-    console.log('form---->2selectedUserRole', selectedUserRole);
+    console.log('selectedUser---->', selectedUser);
   }
-  function onRemoveUserRole(selectedList, removedItem) {
-    selectedUserRoleName = selectedUserRoleName.replace(
-      removedItem.role_name + ',',
-      ''
-    );
-    const index = selectedUserRole.findIndex((object) => {
+  function onRemoveUser(selectedList, removedItem) {
+    selectedUserEmail = selectedUserEmail.replace(removedItem.email + ',', '');
+    const index = selectedUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
-    selectedUserRole.splice(index, 1);
-    console.log('form---->2selectedUserRole', selectedUserRole);
+    selectedUser.splice(index, 1);
+    {
+      console.log('selectedUser---->', selectedUser);
+    }
   }
   const onModelSubmit = (e) => {
     e.preventDefault();
@@ -261,11 +277,22 @@ const OperatingManual = () => {
     if (!data?.id) {
       alert('Please save first operating manual information');
     } else {
-      data['access_to_all_user'] = formSettingData.applicable_to_user;
-      data['access_to_all_franchise'] =
-        formSettingData.applicable_to_franchisee;
-      // data['shared_with'] = selectedFranchiseeName;
-      data['shared_role'] = selectedUserRoleName;
+      if (!formSettingData.accessible_to_role) {
+        data['accessible_to_role'] = null;
+        data['accessible_to_all'] = true;
+      } else {
+        if (formSettingData.accessible_to_role === '1') {
+          data['shared_role'] = formSettingData.shared_role;
+          data['accessible_to_role'] = formSettingData.accessible_to_role;
+          data['accessible_to_all'] = false;
+        } else {
+          data['shared_with'] = selectedUserEmail;
+          data['accessible_to_role'] = formSettingData.accessible_to_role;
+          data['accessible_to_all'] = false;
+        }
+      }
+      console.log('Hello---->', data);
+
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/operating_manual/add`, {
@@ -638,126 +665,220 @@ const OperatingManual = () => {
         <Modal.Body>
           <div className="form-settings-content">
             <Row className="mt-4">
-              {/* <Col lg={3} md={6}>
+              <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Accessible to all franchisee</Form.Label>
-                  <div className="new-form-radio">
+                  <Form.Label>Accessible to:</Form.Label>
+                  <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
                       <label for="yes1">
                         <input
                           type="radio"
-                          value="1"
-                          name="applicable_to_franchisee"
+                          value={1}
+                          name="accessible_to_role"
                           id="yes1"
                           onChange={(e) => {
                             setFormSettingFields(e.target.name, e.target.value);
                           }}
-                          checked={
-                            formSettingData.applicable_to_franchisee === '1'
-                          }
+                          checked={formSettingData.accessible_to_role === 1}
                         />
                         <span className="radio-round"></span>
-                        <p>Yes</p>
+                        <p>User Roles</p>
                       </label>
                     </div>
-                    <div className="new-form-radio-box">
+                    <div className="new-form-radio-box m-0 mt-3">
                       <label for="no1">
                         <input
                           type="radio"
-                          value="0"
-                          name="applicable_to_franchisee"
+                          value={0}
+                          name="accessible_to_role"
                           id="no1"
                           onChange={(e) => {
                             setFormSettingFields(e.target.name, e.target.value);
                           }}
-                          checked={
-                            formSettingData.applicable_to_franchisee === '0'
-                          }
+                          checked={formSettingData.accessible_to_role === 0}
                         />
                         <span className="radio-round"></span>
-                        <p>No</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col> */}
-              {/* {formSettingData.applicable_to_franchisee === '0' ? (
-                <Col lg={9} md={6} className="mt-3 mt-md-0">
-                  <Form.Group>
-                    <Form.Label>Select Franchisee</Form.Label>
-                    <Multiselect
-                      displayValue="franchisee_name"
-                      className="multiselect-box default-arrow-select"
-                      placeholder="Select Franchisee"
-                      selectedValues={selectedFranchisee}
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={onRemoveFranchisee}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={onSelectFranchisee}
-                      options={franchisee}
-                    />
-                    <p className="error">{errors.franchisee}</p>
-                  </Form.Group>
-                </Col>
-              ) : null} */}
-              <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Applicable to all user roles</Form.Label>
-                  <div className="new-form-radio">
-                    <div className="new-form-radio-box">
-                      <label for="yes2">
-                        <input
-                          type="radio"
-                          value="1"
-                          name="applicable_to_user"
-                          id="yes2"
-                          onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
-                          }}
-                          checked={formSettingData.applicable_to_user === '1'}
-                        />
-                        <span className="radio-round"></span>
-                        <p>Yes</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box">
-                      <label for="no2">
-                        <input
-                          type="radio"
-                          value="0"
-                          name="applicable_to_user"
-                          id="no2"
-                          onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
-                          }}
-                          checked={formSettingData.applicable_to_user === '0'}
-                        />
-                        <span className="radio-round"></span>
-                        <p>No</p>
+                        <p>Specific Users</p>
                       </label>
                     </div>
                   </div>
                 </Form.Group>
               </Col>
-              {formSettingData.applicable_to_user === '0' ? (
-                <Col lg={9} md={6} className="mt-3 mt-md-0">
+              <Col lg={9} md={12}>
+                {formSettingData.accessible_to_role === 1 ? (
                   <Form.Group>
                     <Form.Label>Select User Roles</Form.Label>
-                    <Multiselect
-                      placeholder="Select User Roles"
-                      displayValue="role_label"
-                      selectedValues={selectedUserRole}
-                      className="multiselect-box default-arrow-select"
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={onRemoveUserRole}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={onSelectUserRole}
-                      options={userRole}
-                    />
-                    <p className="error">{errors.user}</p>
+                    <div className="modal-two-check user-roles-box">
+                      <label className="container">
+                        Co-ordinators
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="coordinator"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('coordinator')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Educators
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="educator"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('educator')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Parents
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="parent"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role?.includes(
+                            'parent'
+                          )}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        All Roles
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="all_roles"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            console.log('e.target.checked', e.target.checked);
+                            if (e.target.checked === true) {
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('parent')
+                              ) {
+                                data['shared_role'] += 'parent,';
+                              }
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('educator')
+                              ) {
+                                data['shared_role'] += 'educator,';
+                              }
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('coordinator')
+                              ) {
+                                data['shared_role'] += 'coordinator,';
+                              }
+                              if (
+                                !data['shared_role'].toString().includes('all')
+                              ) {
+                                data['shared_role'] += 'all,';
+                              }
+                              setFormSettingData(data);
+                            } else {
+                              data['shared_role'] = '';
+                              setFormSettingData(data);
+                            }
+                          }}
+                          checked={formSettingData?.shared_role?.includes(
+                            'all'
+                          )}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    </div>
                   </Form.Group>
-                </Col>
-              ) : null}
+                ) : null}
+                {formSettingData.accessible_to_role === 0 ? (
+                  <Form.Group>
+                    <Form.Label>Select User</Form.Label>
+                    <div className="select-with-plus">
+                      <Multiselect
+                        displayValue="email"
+                        className="multiselect-box default-arrow-select"
+                        // placeholder="Select Franchisee"
+                        selectedValues={selectedUser}
+                        // onKeyPressFn={function noRefCheck() {}}
+                        onRemove={onRemoveUser}
+                        // onSearch={function noRefCheck() {}}
+                        onSelect={onSelectUser}
+                        options={user}
+                      />
+                    </div>
+                    <p className="error">{errors.franchisee}</p>
+                  </Form.Group>
+                ) : null}
+              </Col>
             </Row>
           </div>
         </Modal.Body>
