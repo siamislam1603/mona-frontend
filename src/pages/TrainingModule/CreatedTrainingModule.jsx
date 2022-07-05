@@ -79,8 +79,7 @@ const CreatedTraining = ({ filter }) => {
             return(
             <Col lg={4} md={6} key={training.id}>
               <div 
-                className="item mt-3 mb-3" 
-                style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
+                className="item mt-3 mb-3">
                 <div className="pic">
                   <a href={`/training-detail/${training.id}`}>
                     <img src={training.training_files[0]?.thumbnail} alt=""/>
@@ -103,41 +102,12 @@ const CreatedTraining = ({ filter }) => {
                     </Dropdown>
                   </div>
                 </div>
-              </div>
-
-              <div 
-                className="created-by" 
-                style={{ 
-                    backgroundColor: "#f7f7f7",
-                    borderTop: "3px solid #e5e5e5",
-                    marginTop: "-15px",
-                    padding: "20px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}>
-                <div style={{ 
-                    display: "flex", 
-                    justifyContent: "center", 
-                    alignItems: "center" 
-                }}>
-                  <h4 style={{ 
-                      fontWeight: 'bold', 
-                      fontSize: "14px", 
-                      color: "#b6b6b6",
-                      marginRight: "5px"  
-                  }}>Created by:</h4>
-                  <div 
-                    className="img"
-                    style={{ width: "50px", height: "50px", borderRadius: "50%", overflow: "hidden" }}>
-                    <img
-                      style={{ overflow: "hidden", width: "50px", height: "50px" }}
-                      src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" 
-                      alt="person smiling" />
+                <div className="created-by">
+                  <h4 className="title">Created by:</h4>
+                  <div className="createrimg">
+                    <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
                   </div>
-                  
-                  <p style={{ marginRight: "5px" }}>James Smith,</p>
-                  <p style={{ color: "#c7c7c7", fontSize: "12px" }}>Co-ordinator</p>
+                  <p>James Smith, <span>Co-ordinator</span></p>
                 </div>
               </div>
             </Col>
