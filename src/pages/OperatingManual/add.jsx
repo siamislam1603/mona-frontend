@@ -183,6 +183,7 @@ const AddOperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
+          alert('Operating manual Successfully Submited');
           setOperatingManualData(res?.result);
           // navigate('/operatingmanual');
         });
@@ -389,15 +390,15 @@ const AddOperatingManual = () => {
                         <Button
                           onClick={(e) => {
                             e.preventDefault();
-                            // const newErrors =
-                            //   createOperatingManualValidation(
-                            //     operatingManualData
-                            //   );
-                            // if (Object.keys(newErrors).length > 0) {
-                            //   setErrors(newErrors);
-                            // } else {
-                            setFormSettingFlag(true);
-                            // }
+                            const newErrors =
+                              createOperatingManualValidation(
+                                operatingManualData
+                              );
+                            if (Object.keys(newErrors).length > 0) {
+                              setErrors(newErrors);
+                            } else {
+                              setFormSettingFlag(true);
+                            }
                           }}
                         >
                           <img src="../../img/carbon_settings.svg" />
