@@ -24,7 +24,7 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 
-let selectedUserEmail = '';
+let selectedUserId = '';
 const OperatingManual = () => {
   const navigate = useNavigate();
   const [Index, setIndex] = useState(0);
@@ -131,7 +131,10 @@ const OperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log('operating manual--->', response?.result);
+        console.log(
+          'shared_with--->',
+          response?.result?.shared_with.includes('2')
+        );
         setOperatingManualData(response?.result);
         let data = formSettingData;
         data['applicable_to_all'] = response?.result?.accessible_to_all;
@@ -140,11 +143,12 @@ const OperatingManual = () => {
           : '';
         data['accessible_to_role'] = response?.result?.accessible_to_role;
         if (response?.result?.accessible_to_role === 0) {
-          selectedUserEmail = response?.result?.shared_with;
           let users = [];
+          selectedUserId = '';
           user.map((item) => {
-            if (response?.result?.shared_with.includes(item.email)) {
+            if (response?.result?.shared_with.includes(item.id.toString())) {
               users.push(item);
+              selectedUserId += item.id + ',';
             }
           });
           setSelectedUser(users);
@@ -232,16 +236,16 @@ const OperatingManual = () => {
     if (key === 'category') {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
         'user_role'
-      )}&email=${localStorage.getItem('email')}`;
+      )}&id=${localStorage.getItem('user_id')}`;
       setCategoryFilter(value);
     } else if (key === 'search') {
       api_url = `${BASE_URL}/operating_manual?search=${value}&role=${localStorage.getItem(
         'user_role'
-      )}&email=${localStorage.getItem('email')}`;
+      )}&id=${localStorage.getItem('user_id')}`;
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
-      )}&email=${localStorage.getItem('email')}`;
+      )}&id=${localStorage.getItem('user_id')}`;
       setCategoryFilter('reset');
     }
 
@@ -255,7 +259,7 @@ const OperatingManual = () => {
   };
   function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedUserEmail += selectedItem.email + ',';
+    selectedUserId += selectedItem.id + ',';
     selectedUser.push({
       id: selectedItem.id,
       email: selectedItem.email,
@@ -263,7 +267,7 @@ const OperatingManual = () => {
     console.log('selectedUser---->', selectedUser);
   }
   function onRemoveUser(selectedList, removedItem) {
-    selectedUserEmail = selectedUserEmail.replace(removedItem.email + ',', '');
+    selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
     const index = selectedUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
@@ -287,17 +291,16 @@ const OperatingManual = () => {
         formSettingData.accessible_to_role === null ||
         formSettingData.accessible_to_role === undefined
       ) {
-        console.log('Hello');
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
         if (formSettingData.accessible_to_role === 1) {
-          data['shared_role'] = formSettingData.shared_role;
+          data['shared_role'] = formSettingData.shared_role.slice(0, -1);
           data['shared_with'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
         } else {
-          data['shared_with'] = selectedUserEmail;
+          data['shared_with'] = selectedUserId.slice(0, -1);
           data['shared_role'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
@@ -415,7 +418,7 @@ const OperatingManual = () => {
                         </div>
                       </div>
                       <ul id="tree1" className="tree">
-                        {operatingManualdata.map((item, index) => {
+                        {operatingManualdata?.map((item, index) => {
                           return (
                             <li className="title_active">
                               <a href="#">

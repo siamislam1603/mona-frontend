@@ -13,8 +13,7 @@ import {
 } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
-let selectedUserRole = [];
-let selectedUserEmail = '';
+let selectedUserId = '';
 const AddOperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -89,11 +88,13 @@ const AddOperatingManual = () => {
         data['accessible_to_role'] = response?.result?.accessible_to_role;
 
         if (response?.result?.accessible_to_role === 0) {
-          selectedUserEmail = response?.result?.shared_with;
+          selectedUserId = response?.result?.shared_with;
           let users = [];
+          selectedUserId = '';
           user.map((item) => {
-            if (response?.result?.shared_with.includes(item.email)) {
+            if (response?.result?.shared_with.includes(item.id.toString())) {
               users.push(item);
+              selectedUserId += item.id + ',';
             }
           });
           setSelectedUser(users);
@@ -140,12 +141,12 @@ const AddOperatingManual = () => {
         data['accessible_to_all'] = true;
       } else {
         if (formSettingData.accessible_to_role === 1) {
-          data['shared_role'] = formSettingData.shared_role;
+          data['shared_role'] = formSettingData.shared_role.slice(0, -1);
           data['shared_with'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
         } else {
-          data['shared_with'] = selectedUserEmail;
+          data['shared_with'] = selectedUserId.slice(0, -1);
           data['shared_role'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
@@ -332,7 +333,7 @@ const AddOperatingManual = () => {
   };
   function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedUserEmail += selectedItem.email + ',';
+    selectedUserId += selectedItem.id + ',';
     selectedUser.push({
       id: selectedItem.id,
       email: selectedItem.email,
@@ -340,7 +341,7 @@ const AddOperatingManual = () => {
     console.log('selectedUser---->', selectedUser);
   }
   function onRemoveUser(selectedList, removedItem) {
-    selectedUserEmail = selectedUserEmail.replace(removedItem.email + ',', '');
+    selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
     const index = selectedUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
