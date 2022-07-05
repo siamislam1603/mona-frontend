@@ -49,6 +49,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         localStorage.removeItem('user_name');
         localStorage.removeItem('user_role');
         localStorage.removeItem('menu_list');
+        localStorage.removeItem('active_tab');
         localStorage.removeItem('selectedFranchisee');
         window.location.href = "/";
       }
@@ -74,8 +75,6 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
     useEffect(() => {
       savePermissionInState();
     }, []);
-
-    permissionList && console.log('PERMISSION:', permissionList);
 
     return (
       <>
@@ -119,7 +118,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
                       
                       <small>{localStorage.getItem('user_role')?localStorage.getItem('user_role').split('_').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}</small></span>
                     </Dropdown.Toggle>
-                    <Dropdown.Menu>
+                    <Dropdown.Menu style={{ zIndex: "2000" }}>
 
                     {
                       permissionList

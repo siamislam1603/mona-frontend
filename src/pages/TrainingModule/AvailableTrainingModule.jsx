@@ -5,9 +5,9 @@ import axios from "axios";
 import moment from 'moment';
 
 
-const AvailableTraining = ({ searchTerm }) => {
+const AvailableTraining = ({ filter }) => {
+  console.log('FILTER:', filter);
   const [availableTrainingData, setAvailableTrainingData] = useState();
-  const [filteredData, setFilteredData] = useState();
 
   const fetchAvailableTrainings = async () => {
     console.log('INSIDE AVAILABLE TRAINING MODULE')
@@ -19,29 +19,22 @@ const AvailableTraining = ({ searchTerm }) => {
       }
     });
 
-    console.log('Response:', response);
     if(response.status === 200 && response.data.status === "success") {
       const { all_trainings } = response.data.data;
-      console.log('NEW DATA:', all_trainings);
       setAvailableTrainingData(all_trainings);
     }
   };
 
-  const filterData = (req, res, next) => {
-    setFilteredData(availableTrainingData);
+  // const filterData = (req, res, next) => {
+  //   setFilteredData(availableTrainingData);
 
-    let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
-    setFilteredData(newData);
-  };
+  //   let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
+  //   setFilteredData(newData);
+  // };
 
   useEffect(() => {
     fetchAvailableTrainings();
-    availableTrainingData && filterData()
-  }, []);
-
-  useEffect(() => {
-    availableTrainingData && filterData();
-  }, [searchTerm]);
+  }, [filter]);
 
   return (
     <>
@@ -55,7 +48,7 @@ const AvailableTraining = ({ searchTerm }) => {
                 <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.training_files[0]?.thumbnail} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                 <div className="fixcol">
                   <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                  <div className="iconame"><a href="/training-detail">{item.title}</a> <span className="red-date">Due Date:{' '}{moment(item.createdAt).format(
+                  <div className="iconame"><a href="/training-detail">{item.title}</a><span className="red-date" style={{ display: "block" }}>Due Date:{' '}{moment(item.createdAt).format(
                                         'MM/DD/YYYY'
                                       )}</span><span className="time">{ item.completion_time } { item.completion_in}</span></div>
                   <div className="cta-col">
