@@ -246,6 +246,7 @@ const Training = () => {
                           closeMenuOnSelect={true}
                           components={animatedComponents}
                           options={trainingCategory}
+                          className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,
                             category_id: e.id

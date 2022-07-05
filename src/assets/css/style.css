@@ -573,6 +573,8 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .datecol .red-date:before { position: absolute; content: ''; top:50%; transform: translateY(-50%); right:0; width: 10px; height: 4px; border-radius: 2px; background-color: var(--purple); }
 .datecol .time { position: relative; }
 
+.selectdropdown-col { min-width: 150px; max-width: 150px; font-size: var(--fontsm); }
+.selectdropdown .form-label { margin-bottom: 0; }
 
 
 
