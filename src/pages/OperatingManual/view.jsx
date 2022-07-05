@@ -232,12 +232,12 @@ const OperatingManual = () => {
     if (key === 'category') {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
         'user_role'
-      )}`;
+      )}&email=${localStorage.getItem('email')}`;
       setCategoryFilter(value);
     } else if (key === 'search') {
       api_url = `${BASE_URL}/operating_manual?search=${value}&role=${localStorage.getItem(
         'user_role'
-      )}`;
+      )}&email=${localStorage.getItem('email')}`;
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
