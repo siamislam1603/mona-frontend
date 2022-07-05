@@ -40,8 +40,7 @@ const Training = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
-    user: "",
-    category: "",
+    category_id: 2,
     search: ""
   });
 
@@ -95,6 +94,15 @@ const Training = () => {
 
   useEffect(() => {
     fetchTrainingCategories();
+    if(localStorage.getItem('user_role') !== 'franchisor_admin') {
+      setTabLinkPath('/available-training');
+    }
+
+    if(localStorage.getItem('active_tab')) {
+      let path = localStorage.getItem('active_tab');
+      console.log('PATH IS:', path);
+      setTabLinkPath(path);
+    }
   }, []);
 
   filterData && console.log('FILTER DATA:', filterData);
@@ -183,10 +191,10 @@ const Training = () => {
                                   name="users"
                                   type="radio"
                                   id='four'
-                                  onChange={e => setFilterData(prevState => ({
-                                    ...prevState,
-                                    user: e.target.value
-                                  }))}
+                                  // onChange={e => setFilterData(prevState => ({
+                                  //   ...prevState,
+                                  //   user: e.target.value
+                                  // }))}
                                 />
                               </Form.Group>
                             </div>
@@ -240,7 +248,7 @@ const Training = () => {
                           options={trainingCategory}
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,
-                            category: e.id
+                            category_id: e.id
                           }))}
                         />
                       </Form.Group>

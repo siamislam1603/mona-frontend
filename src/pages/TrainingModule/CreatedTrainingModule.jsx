@@ -3,14 +3,14 @@ import { Col, Row, Dropdown } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from "axios";
 
-const CreatedTraining = () => {
+const CreatedTraining = ({ filter }) => {
   const [myTrainingData, setMyTrainingData] = useState();
   const [otherTrainingData, setOtherTrainingData] = useState();
 
   const fetchCreatedTrainings = async () => {
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/`, {
+    const response = await axios.get(`${BASE_URL}/training`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -53,7 +53,7 @@ const CreatedTraining = () => {
                 </div>
                 <div className="fixcol">
                   <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                  <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
+                  <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time}</span></div>
                   <div className="cta-col">
                     <Dropdown>
                       <Dropdown.Toggle variant="transparent" id="ctacol">
