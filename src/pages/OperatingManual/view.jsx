@@ -24,7 +24,6 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 
-let selectedUserRole = [];
 let selectedUserEmail = '';
 const OperatingManual = () => {
   const navigate = useNavigate();
@@ -136,10 +135,12 @@ const OperatingManual = () => {
         setOperatingManualData(response?.result);
         let data = formSettingData;
         data['applicable_to_all'] = response?.result?.accessible_to_all;
-        data['shared_role'] = response?.result?.shared_role;
+        data['shared_role'] = response?.result?.shared_role
+          ? response?.result?.shared_role
+          : '';
         data['accessible_to_role'] = response?.result?.accessible_to_role;
-
         if (response?.result?.accessible_to_role === 0) {
+          selectedUserEmail = response?.result?.shared_with;
           let users = [];
           user.map((item) => {
             if (response?.result?.shared_with.includes(item.email)) {
@@ -277,16 +278,27 @@ const OperatingManual = () => {
     if (!data?.id) {
       alert('Please save first operating manual information');
     } else {
-      if (!formSettingData.accessible_to_role) {
+      console.log(
+        'formSettingData.accessible_to_role---->',
+        formSettingData.shared_role
+      );
+
+      if (
+        formSettingData.accessible_to_role === null ||
+        formSettingData.accessible_to_role === undefined
+      ) {
+        console.log('Hello');
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
-        if (formSettingData.accessible_to_role === '1') {
+        if (formSettingData.accessible_to_role === 1) {
           data['shared_role'] = formSettingData.shared_role;
+          data['shared_with'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
         } else {
           data['shared_with'] = selectedUserEmail;
+          data['shared_role'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
         }
@@ -297,7 +309,7 @@ const OperatingManual = () => {
       myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
-        body: JSON.stringify(operatingManualData),
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
@@ -670,14 +682,17 @@ const OperatingManual = () => {
                   <Form.Label>Accessible to:</Form.Label>
                   <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
-                      <label for="yes1">
+                      <label for="yes">
                         <input
                           type="radio"
                           value={1}
                           name="accessible_to_role"
-                          id="yes1"
-                          onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
+                          id="yes"
+                          onClick={(e) => {
+                            setFormSettingFields(
+                              e.target.name,
+                              parseInt(e.target.value)
+                            );
                           }}
                           checked={formSettingData.accessible_to_role === 1}
                         />
@@ -686,14 +701,17 @@ const OperatingManual = () => {
                       </label>
                     </div>
                     <div className="new-form-radio-box m-0 mt-3">
-                      <label for="no1">
+                      <label for="no">
                         <input
                           type="radio"
                           value={0}
                           name="accessible_to_role"
-                          id="no1"
-                          onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
+                          id="no"
+                          onClick={(e) => {
+                            setFormSettingFields(
+                              e.target.name,
+                              parseInt(e.target.value)
+                            );
                           }}
                           checked={formSettingData.accessible_to_role === 0}
                         />
