@@ -30,7 +30,7 @@ const styles = {
 };
 const file = () =>{
   // var path = require('path');
-var file = '/home/user/dir/file.txt';
+var file = '/home/data/dir/file.txt';
 
 // var filename = path.parse(file).base;
 }
@@ -56,7 +56,7 @@ const TrainingDetail = () => {
     console.log("The token", localStorage.getItem("token"))
     const userID =   localStorage.getItem('user_id');
     // let response = await axios.get("http://localhost:4000/training/getTrainingById/3");
-    let response = await axios.get(`${BASE_URL}/training/getTrainingById/7/${userID}`, {
+    let response = await axios.get(`${BASE_URL}/training/getTrainingById/8/${userID}`, {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem('token')
       }
@@ -75,14 +75,15 @@ const TrainingDetail = () => {
     }
 }
   const TrainingMarkCompleted = async() =>{
-    let response = await axios.post("http://localhost:4000/training/completeTraining/4/2?training_status=in_progress")
+    const userID =   localStorage.getItem('user_id');
+    let response = await axios.post(`${BASE_URL}/training/completeTraining/4/${userID}?training_status=in_progress`)
     console.log("Training mark completed", response)
     if(response.status === 200){
       setTrainingComplete(response.data)
       console.log(response.data)
     }
   }
-// console.log("THe traing file name", TrainingFile)
+
 
 const getUploadTime = (thedate) =>{
                var strSplitDate2 = String(thedate).split(' ')
@@ -131,7 +132,7 @@ const getUploadTime = (thedate) =>{
     getTrainingDetail()
     
     },[])
-  console.log("The training file",TrainingFile[1])
+  // console.log("The training file",TrainingFile[1])
   return (
     <>
       <div id="main">
@@ -187,8 +188,12 @@ const getUploadTime = (thedate) =>{
                       
                          TrainingFile.map((data,index) => 
                           {
-                            const thedate =  getUploadTime(data.createdAt)
-                            console.log("Created at",data.createdAt)
+                            let thedate = ""
+                            if(data.fileType === ".mp4"){
+                              thedate =  getUploadTime(data.createdAt)
+                               console.log("Created at",data.createdAt)
+                            }
+                            
                             return(  
                               data.fileType === ".mp4" &&
                               // <iframe src={videos}  width={500} height={500} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture  object-fit: contain;" allowFullScreen ></iframe>
@@ -204,15 +209,24 @@ const getUploadTime = (thedate) =>{
                   <div>
                   <h2 className="title-sm">Related Files</h2>
                   <div className="column-list files-list three-col mb-5">  
-                      {TrainingFile.map((user) => (
-                        user.fileType === ".pdf" && 
-                        <div className="item">
-                        <a href={user.file} download={user.file}> 
-                          <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-                         <div className="name">{user.file.split("/").pop()} <span className="time">3 Hours</span></div>
-                       </a>
-                       </div>              
-                      ))}
+                      {TrainingFile.map((data) =>
+                       {
+                        let thedate = "" 
+                        if(data.fileType === ".pdf"){
+                          thedate =  getUploadTime(data.createdAt)
+                          console.log("Created at",data.createdAt)
+                        }
+                        return  (
+                          data.fileType === ".pdf" && 
+                          <div className="item">
+                          <a href={data.file} download={data.file}> 
+                            <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
+                           <div className="name">{data.file.split("/").pop()} <span className="time">{thedate}</span></div>
+                         </a>
+                         </div>              
+                        )
+                       }
+                      )}
                     
                     </div>
                   </div>
