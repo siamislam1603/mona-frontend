@@ -14,7 +14,7 @@ class PdfComponent extends React.Component {
           ref={(response) => (this.componentRef = response)}
         />
         <div className='bottom_button'>
-          <Button variant="outline">View Here</Button>
+          {/* <Button variant="outline">View Here</Button> */}
           <ReactToPrint
             content={() => this.componentRef}
             trigger={() => <Button>Save PDF</Button>}
