@@ -149,7 +149,7 @@ const TrainingDetail = () => {
                   <div className="traning-detail-sec">
                     <div className="thumb-vid">
                       <img 
-                        src={trainingDetails.training_files[0].thumbnail}
+                        src={trainingDetails.training_files[1].file}
                         alt="video thumbnail" />
                     </div>
                     <div className="training-cont mt-3 mb-5">

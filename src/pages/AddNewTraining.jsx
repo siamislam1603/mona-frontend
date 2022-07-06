@@ -161,6 +161,9 @@ const AddNewTraining = () => {
         data.append(`${key}`, values)
       }
 
+      // let cover_img = { ...coverImage };
+      // cover_img.type = "cover_image";
+      // console.log('COVER IMAGE:', cover_img);
       data.append('images', coverImage[0]);
 
       videoTutorialFiles.forEach((file, index) => {
@@ -185,7 +188,7 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
-  // trainingData && console.log('TRAINING DATA:', trainingData);
+  trainingData && console.log('TRAINING DATA:', trainingData);
   // coverImage && console.log('COVER IMAGE:', coverImage);
   // videoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', videoTutorialFiles);
   // relatedFiles && console.log('RELATED FILES:', relatedFiles);
@@ -296,6 +299,7 @@ const AddNewTraining = () => {
                           <Form.Label>Upload Cover Image :</Form.Label>
                           <DropOneFile
                             onSave={setCoverImage}
+                            // setTrainingData={setTraining}
                           />
                         </Form.Group>
                       </Col>

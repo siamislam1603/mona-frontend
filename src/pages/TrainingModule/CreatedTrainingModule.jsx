@@ -30,8 +30,8 @@ const CreatedTraining = ({ filter }) => {
     fetchCreatedTrainings();
   }, []);
 
-  myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
-  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
+  // myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
+  // otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
 
   return (
     <>
@@ -45,7 +45,7 @@ const CreatedTraining = ({ filter }) => {
               <div className="item mt-3 mb-3">
                 <div className="pic">
                   <a href={`/training-detail/${training.id}`}>
-                    <img src={training.training_files[0]?.thumbnail} alt=""/>
+                    <img src={training.training_files[1]?.file} alt=""/>
                     <span className="lthumb">
                       <img src="../img/logo-thumb.png" alt=""/>
                     </span>
