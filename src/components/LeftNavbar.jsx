@@ -18,7 +18,8 @@ const LeftNavbar = () => {
 
     if(response.status === 200 && response.data.status === "success") {
       let { permissionsObject } = response.data;
-      setPermissionList(permissionsObject);
+      console.log('PERMISSIONS OBJECT:', permissionsObject)
+      setPermissionList(permissionsObject.filter(permission => permission.controller.show_in_menu === true));
       localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
     }
   };

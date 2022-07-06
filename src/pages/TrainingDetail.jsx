@@ -97,6 +97,7 @@ const TrainingDetail = () => {
 
   const fetchTrainingFinishDate = async () => {
     const token = localStorage.getItem('token');
+    console.log('TRAINING ID:', training)
     const response = await axios.get(`${BASE_URL}/training/get-finish-training-date/${trainingId}`, {
       headers: {
         "Authorization": "Bearer " + token
