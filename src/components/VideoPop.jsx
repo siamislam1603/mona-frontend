@@ -8,27 +8,92 @@ const VideoPop = (props) => {
     const handleShow = () => setShow(true);
   
     return (
-    <div style={{width:"180px"}}>
-        
-    <img src={props.img} alt="" onClick={handleShow}   />
-    <Modal
-        className="training-modal"
-        size="lg"
-        show={show}
-        onHide={handleClose}
-      >
-        <Modal.Header closeButton>
-        </Modal.Header>
-        <Modal.Body style={{ width: "1200px", height: "500px" }}>
-          <div className="form-settings-content" style={{ width: "inherit", height: "inherit" }}>
-            <Row style={{ width: "80%", height: "90%" }}>
-              <iframe title="video file" style={{ width: "100%", height: "100%" }} src={props.data} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen  ></iframe>           
-            </Row>   
+    <>
+    <div className="item mb-3">
+      <div className="vidcol">
+        <div className="d-flex align-items-center" onClick={handleShow}>
+          <div className="pic"><img src={props.img} alt="" /></div>
+          <div className="vid-title">
+            Video title 1 <span className="time">3 Hours</span>
           </div>
-        </Modal.Body>
-      </Modal> 
-    </div>
+        </div>
 
+        <Modal
+          size="lg"
+          show={show} className="training-modal"
+          onHide={handleClose}
+          aria-labelledby="example-modal-sizes-title-lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title id="example-modal-sizes-title-lg">
+              Video Title
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="embed-responsive embed-responsive-16by9">
+              <iframe title="video file" className="embed-responsive-item" src={props.data} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+            </div>
+          </Modal.Body>
+        </Modal> 
+      </div>
+    </div>
+    <div className="item mb-3">
+      <div className="vidcol">
+        <div className="d-flex align-items-center" onClick={handleShow}>
+          <div className="pic"><img src={props.img} alt="" /></div>
+          <div className="vid-title">
+            Video title 2 <span className="time">3 Hours</span>
+          </div>
+        </div>
+
+        <Modal
+          size="lg"
+          show={show} className="training-modal"
+          onHide={handleClose}
+          aria-labelledby="example-modal-sizes-title-lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title id="example-modal-sizes-title-lg">
+              Video Title
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="embed-responsive embed-responsive-16by9">
+              <iframe title="video file" className="embed-responsive-item" src={props.data} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+            </div>
+          </Modal.Body>
+        </Modal> 
+      </div>
+    </div>
+    <div className="item mb-3">
+      <div className="vidcol">
+        <div className="d-flex align-items-center" onClick={handleShow}>
+          <div className="pic"><img src={props.img} alt="" /></div>
+          <div className="vid-title">
+            Video title 3 <span className="time">3 Hours</span>
+          </div>
+        </div>
+
+        <Modal
+          size="lg"
+          show={show} className="training-modal"
+          onHide={handleClose}
+          aria-labelledby="example-modal-sizes-title-lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title id="example-modal-sizes-title-lg">
+              Video Title
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="embed-responsive embed-responsive-16by9">
+              <iframe title="video file" className="embed-responsive-item" src={props.data} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+            </div>
+          </Modal.Body>
+        </Modal> 
+      </div>
+    </div>
+    </>
   )
 }
 export default VideoPop
