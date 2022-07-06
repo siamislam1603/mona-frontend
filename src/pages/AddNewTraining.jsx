@@ -63,18 +63,21 @@ const AddNewTraining = () => {
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
+    console.log('CREATING THE TRAINING');
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
         headers: {
-          "Authorization": "Bearer "+ token
+          "Authorization": "Bearer " + token
         }
       }
     );
 
+    // const response = await axios.post(`https://httpbin.org/anything`, data);
     console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
+      console.log('SUCCESS RESPONSE!');
       setLoader(false)
       localStorage.setItem('success_msg', 'Training Created Successfully!');
       localStorage.setItem('active_tab', '/created-training');
@@ -82,6 +85,7 @@ const AddNewTraining = () => {
 
 
     } else if(response.status === 200 && response.data.status === "fail") {
+      console.log('ERROR RESPONSE!');
       const { msg } = response.data;
       setTopErrorMessage(msg);
       setTimeout(() => {
@@ -97,6 +101,7 @@ const AddNewTraining = () => {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
         ...users?.map((data) => ({
+          id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
           key: data.fullname
         })),
@@ -156,10 +161,15 @@ const AddNewTraining = () => {
         data.append(`${key}`, values)
       }
 
+      // let cover_img = { ...coverImage };
+      // cover_img.type = "cover_image";
+      // console.log('COVER IMAGE:', cover_img);
       data.append('images', coverImage[0]);
+
       videoTutorialFiles.forEach((file, index) => {
         data.append(`images`, file);
       });
+
       relatedFiles.forEach((file, index) => {
         data.append(`images`, file);
       });
@@ -177,6 +187,11 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
+
+  trainingData && console.log('TRAINING DATA:', trainingData);
+  // coverImage && console.log('COVER IMAGE:', coverImage);
+  // videoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', videoTutorialFiles);
+  // relatedFiles && console.log('RELATED FILES:', relatedFiles);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -224,7 +239,7 @@ const AddNewTraining = () => {
                             onChange={(event) =>
                               setTrainingData((prevState) => ({
                                 ...prevState,
-                                training_category: event.value,
+                                category_id: event.id,
                               }))
                             }
                           />
@@ -284,6 +299,7 @@ const AddNewTraining = () => {
                           <Form.Label>Upload Cover Image :</Form.Label>
                           <DropOneFile
                             onSave={setCoverImage}
+                            // setTrainingData={setTraining}
                           />
                         </Form.Group>
                       </Col>
@@ -439,6 +455,7 @@ const AddNewTraining = () => {
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                       <Form.Check 
                         type="checkbox" 
+                        checked={trainingData.user_roles.includes("coordinator")}
                         label="Co-ordinators"
                         onChange={() => {
                           if(trainingData.user_roles.includes("coordinator")) {
@@ -459,6 +476,7 @@ const AddNewTraining = () => {
                       <Form.Check 
                         type="checkbox" 
                         label="Educator"
+                        checked={trainingData.user_roles.includes("educator")}
                         onChange={() => {
                           if(trainingData.user_roles.includes("educator")) {
                             let data = trainingData.user_roles.filter(t => t !== "educator");
@@ -478,6 +496,7 @@ const AddNewTraining = () => {
                       <Form.Check 
                         type="checkbox" 
                         label="All Roles"
+                        checked={trainingData.user_roles.length === 2}
                         onChange={() => {
                           if(trainingData.user_roles.includes("coordinator") 
                               && trainingData.user_roles.includes("educator")) {
@@ -509,14 +528,22 @@ const AddNewTraining = () => {
                   <Multiselect
                     placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
                     displayValue="key"
+                    selectedValues={trainingData.assigned_users_data}
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck() {}}
+                    onRemove={function noRefCheck(data) {
+                      setTrainingData((prevState) => ({
+                        ...prevState,
+                        assigned_users: [...data.map(data => data.id)],
+                        assigned_users_data: [...data.map(data => data)]
+                      }));
+                    }}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
                       setTrainingData((prevState) => ({
                         ...prevState,
-                        assigned_users: [...data.map((data) => data.cat)],
+                        assigned_users: [...data.map((data) => data.id)],
+                        assigned_users_data: [...data.map(data => data)]
                       }));
                     }}
                     options={fetchedFranchiseeUsers}
