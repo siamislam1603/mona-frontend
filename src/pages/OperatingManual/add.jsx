@@ -13,8 +13,7 @@ import {
 } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
-let selectedUserRole = [];
-let selectedUserEmail = '';
+let selectedUserId = '';
 const AddOperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,20 +82,23 @@ const AddOperatingManual = () => {
         setOperatingManualData(response?.result);
         let data = formSettingData;
         data['applicable_to_all'] = response?.result?.accessible_to_all;
-        data['shared_role'] = response?.result?.shared_role;
+        data['shared_role'] = response?.result?.shared_role
+          ? response?.result?.shared_role
+          : '';
         data['accessible_to_role'] = response?.result?.accessible_to_role;
 
         if (response?.result?.accessible_to_role === 0) {
+          selectedUserId = response?.result?.shared_with;
           let users = [];
+          selectedUserId = '';
           user.map((item) => {
-            if (response?.result?.shared_with.includes(item.email)) {
+            if (response?.result?.shared_with.includes(item.id.toString())) {
               users.push(item);
+              selectedUserId += item.id + ',';
             }
           });
           setSelectedUser(users);
         }
-        setFormSettingData(data);
-
         setFormSettingData(data);
       })
       .catch((error) => console.log('error', error));
@@ -125,16 +127,27 @@ const AddOperatingManual = () => {
     if (!data?.id) {
       alert('Please save first operating manual information');
     } else {
-      if (!formSettingData.accessible_to_role) {
+      console.log(
+        'formSettingData.accessible_to_role---->',
+        formSettingData.shared_role
+      );
+
+      if (
+        formSettingData.accessible_to_role === null ||
+        formSettingData.accessible_to_role === undefined
+      ) {
+        console.log('Hello');
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
-        if (formSettingData.accessible_to_role === '1') {
-          data['shared_role'] = formSettingData.shared_role;
+        if (formSettingData.accessible_to_role === 1) {
+          data['shared_role'] = formSettingData.shared_role.slice(0, -1);
+          data['shared_with'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
         } else {
-          data['shared_with'] = selectedUserEmail;
+          data['shared_with'] = selectedUserId.slice(0, -1);
+          data['shared_role'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
         }
@@ -145,7 +158,7 @@ const AddOperatingManual = () => {
       myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
-        body: JSON.stringify(operatingManualData),
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
@@ -171,6 +184,7 @@ const AddOperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
+          alert('Operating manual Successfully Submited');
           setOperatingManualData(res?.result);
           // navigate('/operatingmanual');
         });
@@ -319,7 +333,7 @@ const AddOperatingManual = () => {
   };
   function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedUserEmail += selectedItem.email + ',';
+    selectedUserId += selectedItem.id + ',';
     selectedUser.push({
       id: selectedItem.id,
       email: selectedItem.email,
@@ -327,7 +341,7 @@ const AddOperatingManual = () => {
     console.log('selectedUser---->', selectedUser);
   }
   function onRemoveUser(selectedList, removedItem) {
-    selectedUserEmail = selectedUserEmail.replace(removedItem.email + ',', '');
+    selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
     const index = selectedUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
@@ -377,15 +391,15 @@ const AddOperatingManual = () => {
                         <Button
                           onClick={(e) => {
                             e.preventDefault();
-                            // const newErrors =
-                            //   createOperatingManualValidation(
-                            //     operatingManualData
-                            //   );
-                            // if (Object.keys(newErrors).length > 0) {
-                            //   setErrors(newErrors);
-                            // } else {
-                            setFormSettingFlag(true);
-                            // }
+                            const newErrors =
+                              createOperatingManualValidation(
+                                operatingManualData
+                              );
+                            if (Object.keys(newErrors).length > 0) {
+                              setErrors(newErrors);
+                            } else {
+                              setFormSettingFlag(true);
+                            }
                           }}
                         >
                           <img src="../../img/carbon_settings.svg" />
@@ -674,14 +688,17 @@ const AddOperatingManual = () => {
                   <Form.Label>Accessible to:</Form.Label>
                   <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
-                      <label for="yes1">
+                      <label for="yes">
                         <input
                           type="radio"
-                          value="1"
+                          value={1}
                           name="accessible_to_role"
-                          id="yes1"
+                          id="yes"
                           onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
+                            setFormSettingFields(
+                              e.target.name,
+                              parseInt(e.target.value)
+                            );
                           }}
                           checked={formSettingData.accessible_to_role === 1}
                         />
@@ -690,14 +707,17 @@ const AddOperatingManual = () => {
                       </label>
                     </div>
                     <div className="new-form-radio-box m-0 mt-3">
-                      <label for="no1">
+                      <label for="no">
                         <input
                           type="radio"
-                          value="0"
+                          value={0}
                           name="accessible_to_role"
-                          id="no1"
+                          id="no"
                           onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
+                            setFormSettingFields(
+                              e.target.name,
+                              parseInt(e.target.value)
+                            );
                           }}
                           checked={formSettingData.accessible_to_role === 0}
                         />
