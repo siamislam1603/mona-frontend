@@ -10,7 +10,7 @@ const CreatedTraining = ({ filter }) => {
   const fetchCreatedTrainings = async () => {
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training`, {
+    const response = await axios.get(`${BASE_URL}/training?category_id=${filter.category_id}&search=${filter.search}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -28,10 +28,10 @@ const CreatedTraining = ({ filter }) => {
 
   useEffect(() => {
     fetchCreatedTrainings();
-  }, []);
+  }, [filter]);
 
-  // myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
-  // otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
+  myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
+  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
 
   return (
     <>
@@ -45,7 +45,7 @@ const CreatedTraining = ({ filter }) => {
               <div className="item mt-3 mb-3">
                 <div className="pic">
                   <a href={`/training-detail/${training.id}`}>
-                    <img src={training.training_files[1]?.file} alt=""/>
+                    <img src={training.coverImage} alt=""/>
                     <span className="lthumb">
                       <img src="../img/logo-thumb.png" alt=""/>
                     </span>

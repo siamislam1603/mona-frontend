@@ -69,9 +69,9 @@ const TrainingDetail = () => {
     
 
     if(response.status === 200 && response.data.status === "success") {
-      const { all_trainings } = response.data;
-      setTrainingDetails(all_trainings);
-      setHideTrainingFinishButton(all_trainings.is_Training_completed);
+      const { training } = response.data;
+      setTrainingDetails(training);
+      setHideTrainingFinishButton(training.is_Training_completed);
     }
   }
 
@@ -134,7 +134,7 @@ const TrainingDetail = () => {
                   <header className="title-head">
                     <div className="traning-head">
                       <h1 className="title-sm mb-2">{trainingDetails.title}</h1>
-                      <small class="d-block">Due Date: 06/29/2022</small>
+                      <small class="d-block">Due Date: {moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
                     </div>
                     <div className="othpanel">
                       <div className="extra-btn">
@@ -152,7 +152,7 @@ const TrainingDetail = () => {
                   <div className="traning-detail-sec">
                     <div className="thumb-vid">
                       <img 
-                        src={trainingDetails.training_files[1].file}
+                        src={trainingDetails.coverImage}
                         alt="video thumbnail" />
                     </div>
                     <div className="created-by">
@@ -160,7 +160,7 @@ const TrainingDetail = () => {
                       <div className="createrimg">
                         <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
                       </div>
-                      <p>James Smith, <span>Co-ordinator</span></p>
+                      <p>{trainingDetails.user_data.fullname}, <span>{trainingDetails.user_data.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
                     </div>
                     <div className="training-cont mt-3 mb-5">
                       <p>{trainingDetails.description}</p>
@@ -172,13 +172,19 @@ const TrainingDetail = () => {
                           <h3 className="title-sm">Video Tutorials</h3>
                           <div className="vid-col-sec">
                               {
-                                trainingDetails.training_files.map((data,index) => (    
-                                  <VideoPop 
-                                    img ={data.thumbnail} 
-                                    data ={data.file} 
-                                    video ={videos} 
-                                    fun={handleClose}/>
-                                ))
+                                trainingDetails.training_files.map((data,index) =>    
+                                  data.fileType === '.mp4' && 
+                                    (
+                                      <VideoPop 
+                                        data={data}
+                                        title={`Training Video ${index + 1}`}
+                                        duration={trainingDetails.completion_time}
+                                        // img ={data.thumbnail} 
+                                        // data ={data.file} 
+                                        video ={videos} 
+                                        fun={handleClose}/>
+                                    )
+                                )
                               }
                           </div>
                         </div>
@@ -187,42 +193,25 @@ const TrainingDetail = () => {
                         <div className="related-files-sec mb-5">  
                           <h3 className="title-sm">Related Files</h3>
                           <div className="column-list files-list two-col mb-5">
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/book-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">document1.docx <span className="time">3 Hours</span></a></div>
-                              <div className="cta-col">
-                                <a href="">
-                                  <img src="../img/removeIcon.svg" alt="" />
-                                </a>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/book-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">document1.docx <span className="time">3 Hours</span></a></div>
-                              <div className="cta-col">
-                                <a href="">
-                                  <img src="../img/removeIcon.svg" alt="" />
-                                </a>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/ppt-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">presentation1.pptx <span className="time">3 Hours</span></a></div>
-                              <div className="cta-col">
-                                <a href="">
-                                  <img src="../img/removeIcon.svg" alt="" />
-                                </a>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/ppt-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">presentation1.pptx <span className="time">3 Hours</span></a></div>
-                              <div className="cta-col">
-                                <a href="">
-                                  <img src="../img/removeIcon.svg" alt="" />
-                                </a>
-                              </div>
-                            </div>
+                            {
+                              trainingDetails.training_files.map((data,index) => data.fileType !== '.mp4' && (
+                                <div className="item">
+                                  <div className="pic"><a href="">
+                                    <img src="../img/book-ico.png" alt="" /></a>
+                                  </div>
+                                  <div className="name">
+                                    <a href="">
+                                      {`document${index}${data.fileType}`} <span className="time">{ trainingDetails.completion_time}</span>
+                                    </a>
+                                  </div>
+                                  <div className="cta-col">
+                                    <a href="">
+                                      <img src="../img/removeIcon.svg" alt="" />
+                                    </a>
+                                  </div>
+                                </div>
+                              ))
+                            }
                           </div>
                         </div>
                       </Col>

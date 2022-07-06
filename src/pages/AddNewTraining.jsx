@@ -74,15 +74,40 @@ const AddNewTraining = () => {
     );
 
     // const response = await axios.post(`https://httpbin.org/anything`, data);
-    console.log('RESPONSE:', response);
+    // console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
-      console.log('SUCCESS RESPONSE!');
-      setLoader(false)
-      localStorage.setItem('success_msg', 'Training Created Successfully!');
-      localStorage.setItem('active_tab', '/created-training');
-      window.location.href="/training";
+      let { id } = response.data.training;
 
+      let data = new FormData();
+      data.append('id', id);
+      data.append('image', coverImage[0]);
+
+      let imgSaveResponse = await axios.post(
+        `${BASE_URL}/training/coverImg`, data, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        }
+      );
+
+      if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+        
+        console.log('SUCCESS RESPONSE!');
+        setLoader(false)
+        localStorage.setItem('success_msg', 'Training Created Successfully!');
+        localStorage.setItem('active_tab', '/created-training');
+        window.location.href="/training";
+      
+      } else {
+
+        console.log('ERROR RESPONSE!');
+        setTopErrorMessage("unable to save cover image!");
+        setTimeout(() => {
+          setTopErrorMessage(null);
+        }, 3000)
+      
+      }
 
     } else if(response.status === 200 && response.data.status === "fail") {
       console.log('ERROR RESPONSE!');
@@ -154,17 +179,12 @@ const AddNewTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
 
-    if(trainingData && coverImage && videoTutorialFiles && relatedFiles) {
+    if(trainingData && coverImage && videoTutorialFiles) {
       let data = new FormData();
 
       for(let [ key, values ] of Object.entries(trainingData)) {
         data.append(`${key}`, values)
       }
-
-      // let cover_img = { ...coverImage };
-      // cover_img.type = "cover_image";
-      // console.log('COVER IMAGE:', cover_img);
-      data.append('images', coverImage[0]);
 
       videoTutorialFiles.forEach((file, index) => {
         data.append(`images`, file);
