@@ -63,15 +63,17 @@ const AddNewTraining = () => {
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
+    console.log('CREATING THE TRAINING');
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
         headers: {
-          "Authorization": "Bearer "+ token
+          "Authorization": "Bearer " + token
         }
       }
     );
 
+    // const response = await axios.post(`https://httpbin.org/anything`, data);
     console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
@@ -160,9 +162,11 @@ const AddNewTraining = () => {
       }
 
       data.append('images', coverImage[0]);
+
       videoTutorialFiles.forEach((file, index) => {
         data.append(`images`, file);
       });
+
       relatedFiles.forEach((file, index) => {
         data.append(`images`, file);
       });
@@ -181,10 +185,10 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  coverImage && console.log('COVER IMAGE:', coverImage);
-  videoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', videoTutorialFiles);
-  relatedFiles && console.log('RELATED FILES:', relatedFiles);
+  // trainingData && console.log('TRAINING DATA:', trainingData);
+  // coverImage && console.log('COVER IMAGE:', coverImage);
+  // videoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', videoTutorialFiles);
+  // relatedFiles && console.log('RELATED FILES:', relatedFiles);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
