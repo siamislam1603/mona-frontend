@@ -24,6 +24,7 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 
+let upperRoleUser = '';
 let selectedUserId = '';
 const OperatingManual = () => {
   const navigate = useNavigate();
@@ -43,12 +44,44 @@ const OperatingManual = () => {
   const [errors, setErrors] = useState({});
   const [user, setUser] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [userRole, setUserRole] = useState([]);
   useEffect(() => {
     getOperatingManual();
+    getUserRoleData();
     getCategory();
     getUser();
-    console.log('email---->', localStorage.getItem('email'));
+    console.log('user_id---->', operatingManualdata[Index]?.operating_manuals[
+      innerIndex
+    ]?.created_by);
   }, []);
+  const getUserRoleData = () => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/api/user-role`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        // console.log('response0-------->1', localStorage.getItem('user_role'));
+        setUserRole(res?.userRoleList);
+
+        console.log('upperRoleUser--->', upperRoleUser);
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const getUpperRoleUser = () => {
+    let upper_role = '';
+    let flag = false;
+    userRole?.map((item) => {
+      if (item.role_name !== localStorage.getItem('user_role')) {
+        if (!flag) upper_role += item.role_name + ',';
+      } else {
+        flag = true;
+      }
+    });
+    return upper_role.slice(0, -1);
+  };
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append(
@@ -80,15 +113,16 @@ const OperatingManual = () => {
         var elm = el.parentNode;
         elm.classList.add('branch');
         var x = document.createElement('img');
+        el.classList.add('expand');
+        x.src = '../img/circle-minus.svg';
+        const childNode = elm.childNodes[0];
         if (index === 0) {
-          el.classList.add('expand');
-          x.src = '../img/circle-minus.svg';
-          const childNode = elm.childNodes[1];
           childNode.classList.add('tree-title');
-        } else {
-          x.src = '../img/plus-circle.svg';
-          el.classList.add('collapse');
         }
+        // } else {
+        //   x.src = '../img/plus-circle.svg';
+        //   el.classList.add('collapse');
+        // }
         if (elm.firstChild.tagName !== x.tagName) {
           console.log('tagName', x.tagName, elm.firstChild.tagName);
           elm.insertBefore(x, elm.firstChild);
@@ -306,7 +340,9 @@ const OperatingManual = () => {
           data['accessible_to_all'] = false;
         }
       }
-      console.log('Hello---->', data);
+      data['created_by'] = localStorage.getItem('user_id');
+      upperRoleUser = getUpperRoleUser();
+      data['upper_role'] = upperRoleUser;
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -472,51 +508,61 @@ const OperatingManual = () => {
                       </Button> */}
                       <div className="forms-toogle">
                         <div class="custom-menu-dots">
-                          <Dropdown>
-                            <Dropdown.Toggle id="dropdown-basic">
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </Dropdown.Toggle>
+                          {(operatingManualdata[Index]?.operating_manuals[
+                            innerIndex
+                          ]?.created_by === parseInt(localStorage.getItem('user_id')) ||
+                            operatingManualdata[Index]?.operating_manuals[
+                              innerIndex
+                            ]?.upper_role.includes(
+                              localStorage.getItem('user_role'))
+                            ) && (
+                              <Dropdown>
+                                <Dropdown.Toggle id="dropdown-basic">
+                                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                                </Dropdown.Toggle>
 
-                            <Dropdown.Menu>
-                              <Dropdown.Item
-                                href=""
-                                onClick={() => {
-                                  navigate('/operatingmanual/add', {
-                                    state: {
-                                      id: operatingManualdata[Index]
-                                        ?.operating_manuals[innerIndex]?.id,
-                                      category_name:
+                                <Dropdown.Menu>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      navigate('/operatingmanual/add', {
+                                        state: {
+                                          id: operatingManualdata[Index]
+                                            ?.operating_manuals[innerIndex]?.id,
+                                          category_name:
+                                            operatingManualdata[Index]
+                                              ?.category_name,
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faPen} /> Edit
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      deleteOperatingManual();
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faRemove} /> Remove
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      setFormSettingFlag(true);
+                                      getOneOperatingManual(
                                         operatingManualdata[Index]
-                                          ?.category_name,
-                                    },
-                                  });
-                                }}
-                              >
-                                <FontAwesomeIcon icon={faPen} /> Edit
-                              </Dropdown.Item>
-                              <Dropdown.Item
-                                href=""
-                                onClick={() => {
-                                  deleteOperatingManual();
-                                }}
-                              >
-                                <FontAwesomeIcon icon={faRemove} /> Remove
-                              </Dropdown.Item>
-                              <Dropdown.Item
-                                href=""
-                                onClick={() => {
-                                  setFormSettingFlag(true);
-                                  getOneOperatingManual(
-                                    operatingManualdata[Index]
-                                      ?.operating_manuals[innerIndex]?.id,
-                                    operatingManualdata[Index]?.category_name
-                                  );
-                                }}
-                              >
-                                <FontAwesomeIcon icon={faUsers} /> Sharing
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
+                                          ?.operating_manuals[innerIndex]?.id,
+                                        operatingManualdata[Index]
+                                          ?.category_name
+                                      );
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faUsers} /> Sharing
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            )}
                         </div>
                       </div>
                     </div>
