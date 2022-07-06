@@ -75,6 +75,7 @@ const AddNewTraining = () => {
     console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
+      console.log('SUCCESS RESPONSE!');
       setLoader(false)
       localStorage.setItem('success_msg', 'Training Created Successfully!');
       localStorage.setItem('active_tab', '/created-training');
@@ -82,6 +83,7 @@ const AddNewTraining = () => {
 
 
     } else if(response.status === 200 && response.data.status === "fail") {
+      console.log('ERROR RESPONSE!');
       const { msg } = response.data;
       setTopErrorMessage(msg);
       setTimeout(() => {
