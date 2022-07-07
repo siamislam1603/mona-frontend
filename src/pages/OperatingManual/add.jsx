@@ -389,7 +389,6 @@ const AddOperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
 
-  selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
       {console.log('errors--->', errors)}
@@ -405,8 +404,7 @@ const AddOperatingManual = () => {
                 <div className="new_module">
                   <TopHeader 
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee}
-                    msg="hello" />
+                    setSelectedFranchisee={setSelectedFranchisee} />
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">

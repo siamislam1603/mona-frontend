@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import path  from 'path';
 import { Container, Col, Row, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
@@ -7,46 +6,14 @@ import axios from "axios";
 import { BASE_URL } from "../components/App";
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
-
-import videos from "../assets/video/Cute Panda.mp4"
-import svideos from "../assets/video/d.mp4"
-import pdf from "../assets/pdf/1652501632697.pdf"
-import student from "../assets/img/student.jpg"
 import VideoPop from "../components/VideoPop";
 
 
-// const animatedComponents = makeAnimated();
-
-const styles = {
-  option: (styles, state) => ({
-    ...styles,
-    backgroundColor: state.isSelected ? '#E27235' : '',
-  }),
-};
-const file = () =>{
-  // var path = require('path');
-var file = '/home/user/dir/file.txt';
-
-// var filename = path.parse(file).base;
-}
-
-const training = [
-  {
-    newvideo :videos
-  },
-  {
-    newvideo :svideos
-
-  },
-];
-
-// console.log(training)
 const TrainingDetail = () => {
   const { trainingId } = useParams();
   const [trainingDetails, setTrainingDetails] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
-  let videoURL = ""
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -54,7 +21,10 @@ const TrainingDetail = () => {
 
   const [hideTrainingFinishButton, setHideTrainingFinishButton] = useState(false);
   const [trainingFinishedDate, setTrainingFinishedDate] = useState(null);
+  const [users, setUsers] = useState();
+  const [relatedForms, setRelatedForms] = useState();
   
+  // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
@@ -69,15 +39,34 @@ const TrainingDetail = () => {
     if(response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
       setTrainingDetails(training);
-      setHideTrainingFinishButton(training.is_Training_completed);
     }
   }
 
   const handleFinishTraining = (event) => {
-    console.log('HANDLING FINISH TRAINING');
     updateFinishTraining();
   };
 
+  // FETCHING THE LIST OF USERS WHO FINISHED THIS TRAINING
+  const fetchUsersWithFinishTraining = async () => {
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/completed-training-user-list/${trainingId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { userObj } = response.data;
+      setUsers(userObj.map(user => ({
+        id: user.id,
+        name: user.fullname,
+        role: user.role,
+        finish_date: user.finish_date 
+      })));
+    }
+  }
+
+  // MARKING THE TRAINING AS FINISHED
   const updateFinishTraining = async () => {
     console.log('UPDATING FINISH TRAINING');
     const user_id = localStorage.getItem('user_id');
@@ -94,6 +83,7 @@ const TrainingDetail = () => {
     }
   };
 
+  // FETCHING THE DATE ON WHICH THIS PARTICULAR TRAINING WAS FINISHED!
   const fetchTrainingFinishDate = async () => {
     console.log('FETCHING TRAINING FINISH DATE');
     const token = localStorage.getItem('token');
@@ -103,28 +93,20 @@ const TrainingDetail = () => {
       }
     });
 
-    console.log('TRAINING FINISH RESPONSE:', response);
 
     if(response.status === 200 && response.data.status === "hidden") {
-
-      // setHideTrainingFinishButton(false);
-      // console.log('HIDE TRAINING BUTTON =>', hideTrainingFinishButton);
-    
+      setHideTrainingFinishButton(false);
     } else if(response.status === 200 && response.data.status === "success") {
-      
       let { finished_date } = response.data;
       setTrainingFinishedDate(finished_date);
       setHideTrainingFinishButton(true);
-    
     }
   };
 
   useEffect(() =>{
-    getTrainingDetails()
-  }, [])
-
-  useEffect(() => {
+    getTrainingDetails();
     fetchTrainingFinishDate();
+    fetchUsersWithFinishTraining();
   }, []);
 
   trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
@@ -191,10 +173,7 @@ const TrainingDetail = () => {
                                       <VideoPop 
                                         data={data}
                                         title={`Training Video ${index + 1}`}
-                                        duration={trainingDetails.completion_time}
-                                        // img ={data.thumbnail} 
-                                        // data ={data.file} 
-                                        video ={videos} 
+                                        duration={trainingDetails.completion_time} 
                                         fun={handleClose}/>
                                     )
                                 )
@@ -228,146 +207,125 @@ const TrainingDetail = () => {
                           </div>
                         </div>
                       </Col>
-                      <Col md={12}>
-                        <div className="related-form-sec mb-5">  
-                          <h3 className="title-sm">Related Form</h3>
-                          <div className="column-list files-list three-col">
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Survey 1</a></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
+
+                      {
+                        relatedForms && 
+                        <Col md={12}>
+                          <div className="related-form-sec mb-5">  
+                            <h3 className="title-sm">Related Form</h3>
+                            <div className="column-list files-list three-col">
+                              <div className="item">
+                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                <div className="name"><a href="">Survey 1</a></div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt=""/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
                               </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Survey 1</a></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
+                              <div className="item">
+                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                <div className="name"><a href="">Survey 1</a></div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt=""/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
                               </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Survey 1</a></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
+                              <div className="item">
+                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                <div className="name"><a href="">Survey 1</a></div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt=""/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
                               </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Survey 1</a></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
+                              <div className="item">
+                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                <div className="name"><a href="">Survey 1</a></div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt=""/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
                               </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Survey 1</a></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
+                              <div className="item">
+                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                <div className="name"><a href="">Survey 1</a></div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt=""/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
                               </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Survey 1</a></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col md={12}>
-                        <div className="training-participants-sec mb-5">  
-                          <h3 className="title-sm">Training Participants:</h3>
-                          <div className="column-list files-list three-col">
-                            <div className="item">
-                              <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                              <div className="name"><a href="">Mark Ruffalo <span class="time">Parent</span></a></div>
-                              <div className="completed-col">
-                                Completed on <span class="date">20-06-2022</span>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                              <div className="name"><a href="">Mark Ruffalo <span class="time">Parent</span></a></div>
-                              <div className="completed-col">
-                                Completed on <span class="date">20-06-2022</span>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                              <div className="name"><a href="">Mark Ruffalo <span class="time">Parent</span></a></div>
-                              <div className="completed-col">
-                                Completed on <span class="date">20-06-2022</span>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                              <div className="name"><a href="">Mark Ruffalo <span class="time">Parent</span></a></div>
-                              <div className="completed-col">
-                                Completed on <span class="date">20-06-2022</span>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                              <div className="name"><a href="">Mark Ruffalo <span class="time">Parent</span></a></div>
-                              <div className="completed-col">
-                                Completed on <span class="date">20-06-2022</span>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                              <div className="name"><a href="">Mark Ruffalo <span class="time">Parent</span></a></div>
-                              <div className="completed-col">
-                                Completed on <span class="date">20-06-2022</span>
+                              <div className="item">
+                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                <div className="name"><a href="">Survey 1</a></div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt=""/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </Col>
+                        </Col>
+                      }
+                      
+                      {
+                        users && 
+                        <Col md={12}>
+                          <div className="training-participants-sec mb-5">  
+                            <h3 className="title-sm">Training Participants:</h3>
+                            <div className="column-list files-list three-col">
+                              {
+                                users.map(user => {
+                                  return (
+                                    <div className="item">
+                                      <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
+                                      <div className="name"><a href="">{user.name} <span class="time">{user.role}</span></a></div>
+                                      <div className="completed-col">
+                                        Completed on <span class="date">{moment(user.finish_date).format('MM/DD/YYYY')}</span>
+                                      </div>
+                                    </div>
+                                  );
+                                })
+                              }
+                            </div>
+                          </div>
+                        </Col>
+                      }
                     </Row>
 
                     <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
