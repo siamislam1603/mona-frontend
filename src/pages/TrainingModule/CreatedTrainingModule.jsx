@@ -30,9 +30,6 @@ const CreatedTraining = ({ filter }) => {
     fetchCreatedTrainings();
   }, [filter]);
 
-  myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
-  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
-
   return (
     <>
       <div id="main">
@@ -53,7 +50,7 @@ const CreatedTraining = ({ filter }) => {
                 </div>
                 <div className="fixcol">
                   <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                  <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                  <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a> <span className="time">{training.completion_time}</span></div>
                   <div className="cta-col">
                     <Dropdown>
                       <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -61,6 +58,8 @@ const CreatedTraining = ({ filter }) => {
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
                         <Dropdown.Item href="#">Delete</Dropdown.Item>
+                        <Dropdown.Item href="#">Edit</Dropdown.Item>
+                        <Dropdown.Item href="#">Share</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   </div>
@@ -82,7 +81,7 @@ const CreatedTraining = ({ filter }) => {
                 className="item mt-3 mb-3">
                 <div className="pic">
                   <a href={`/training-detail/${training.id}`}>
-                    <img src={training.training_files[0]?.thumbnail} alt=""/>
+                    <img src={training.coverImage} alt=""/>
                     <span className="lthumb">
                       <img src="../img/logo-thumb.png" alt=""/>
                     </span>
@@ -107,7 +106,7 @@ const CreatedTraining = ({ filter }) => {
                   <div className="createrimg">
                     <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
                   </div>
-                  <p>James Smith, <span>Co-ordinator</span></p>
+                  <p>{training.user.fullname}, <span>{training.user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
                 </div>
               </div>
             </Col>

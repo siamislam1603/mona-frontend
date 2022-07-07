@@ -44,6 +44,7 @@ const training = [
 const TrainingDetail = () => {
   const { trainingId } = useParams();
   const [trainingDetails, setTrainingDetails] = useState(null);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
   let videoURL = ""
   const [show, setShow] = useState(false);
@@ -51,11 +52,8 @@ const TrainingDetail = () => {
   const handleShow = () => setShow(true);
   const handleSaveAndClose = () => setShow(false);
 
-  const [thepdf,setPdfSet] = useState("https://s3.us-west-1.amazonaws.com/mona-cip-dev/public/assets/.docs/Rohan%27sResume_2022-06-13_1655102409338.pdf")
-  const [Trainingdata,setTrainingData] = useState("");
-  const [TrainingFile,setTrainingFile] = useState([]);
   const [hideTrainingFinishButton, setHideTrainingFinishButton] = useState(false);
-  const [trainingFinishedDate, setTrainingFinishedDate] = useState();
+  const [trainingFinishedDate, setTrainingFinishedDate] = useState(null);
   
   const getTrainingDetails = async () => {
     const user_id = localStorage.getItem('user_id');
@@ -76,10 +74,12 @@ const TrainingDetail = () => {
   }
 
   const handleFinishTraining = (event) => {
+    console.log('HANDLING FINISH TRAINING');
     updateFinishTraining();
   };
 
   const updateFinishTraining = async () => {
+    console.log('UPDATING FINISH TRAINING');
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
     const response = await axios.post(`${BASE_URL}/training/completeTraining/${trainingId}/${user_id}?training_status=finished`, {}, {
@@ -88,7 +88,6 @@ const TrainingDetail = () => {
       }
     });
 
-    console.log('TRAINING FINISH STATUS:', response);
     if(response.status === 200 && response.data.status === "success") {
       setTrainingFinishedDate(response.data.finished_date);
       setHideTrainingFinishButton(true);
@@ -96,28 +95,39 @@ const TrainingDetail = () => {
   };
 
   const fetchTrainingFinishDate = async () => {
+    console.log('FETCHING TRAINING FINISH DATE');
     const token = localStorage.getItem('token');
-    console.log('TRAINING ID:', training)
     const response = await axios.get(`${BASE_URL}/training/get-finish-training-date/${trainingId}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
 
-    if(response.status === 200 && response.data.status === "success" && response.data.is_training_finished === false) {
-    } else {
+    console.log('TRAINING FINISH RESPONSE:', response);
+
+    if(response.status === 200 && response.data.status === "hidden") {
+
+      setHideTrainingFinishButton(false);
+      console.log('HIDE TRAINING BUTTON =>', hideTrainingFinishButton);
+    
+    } else if(response.status === 200 && response.data.status === "success") {
+      
       let { finished_date } = response.data;
       setTrainingFinishedDate(finished_date);
       setHideTrainingFinishButton(true);
+    
     }
   };
 
   useEffect(() =>{
     getTrainingDetails()
-    fetchTrainingFinishDate();
   }, [])
 
-  trainingDetails && console.log('TRAINING ID:', trainingDetails);
+  useEffect(() => {
+    fetchTrainingFinishDate();
+  }, []);
+
+  hideTrainingFinishButton && console.log('HIDE BUTTON?', hideTrainingFinishButton);
   return (
     <>
       <div id="main">
@@ -128,7 +138,9 @@ const TrainingDetail = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader 
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={setSelectedFranchisee} />
                 {trainingDetails &&
                 <div className="entry-container">
                   <header className="title-head">
@@ -194,14 +206,14 @@ const TrainingDetail = () => {
                           <h3 className="title-sm">Related Files</h3>
                           <div className="column-list files-list two-col mb-5">
                             {
-                              trainingDetails.training_files.map((data,index) => data.fileType !== '.mp4' && (
+                              trainingDetails.training_files.map((data, index) => data.fileType !== '.mp4' && (
                                 <div className="item">
                                   <div className="pic"><a href="">
                                     <img src="../img/book-ico.png" alt="" /></a>
                                   </div>
                                   <div className="name">
                                     <a href="">
-                                      {`document${index}${data.fileType}`} <span className="time">{ trainingDetails.completion_time}</span>
+                                      {`document${index - 1}${data.fileType}`} <span className="time">{ trainingDetails.completion_time}</span>
                                     </a>
                                   </div>
                                   <div className="cta-col">
@@ -358,7 +370,7 @@ const TrainingDetail = () => {
                     </Row>
 
                     <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
-                      { hideTrainingFinishButton
+                      { hideTrainingFinishButton === true
                         ? <p> You've finished this training on {moment(trainingFinishedDate).format(
                           'MMMM Do, YYYY'
                         )}</p>
@@ -369,7 +381,7 @@ const TrainingDetail = () => {
                           </p>
                         
                       }
-                      <button className={`btn btn-primary ${hideTrainingFinishButton ? "d-none" : ""}`} onClick={handleFinishTraining}>
+                      <button className={`btn btn-primary ${hideTrainingFinishButton === true ? "d-none" : ""}`} onClick={handleFinishTraining}>
                         Yes, I have completed the training
                       </button>
                     </div>
