@@ -36,6 +36,8 @@ const AddOperatingManual = () => {
   const [categoryModalFlag, setCategoryModalFlag] = useState(false);
   const [categoryData, setCategoryData] = useState({});
   const [categoryError, setCategoryError] = useState({});
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+
   useEffect(() => {
     getUserRoleData();
   }, []);
@@ -386,6 +388,8 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
+
+  selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
       {console.log('errors--->', errors)}
@@ -399,7 +403,10 @@ const AddOperatingManual = () => {
               </aside>
               <div className="sec-column">
                 <div className="new_module">
-                  <TopHeader />
+                  <TopHeader 
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee}
+                    msg="hello" />
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
