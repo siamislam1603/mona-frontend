@@ -58,8 +58,7 @@ const CreatedTraining = ({ filter }) => {
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
                         <Dropdown.Item href="#">Delete</Dropdown.Item>
-                        <Dropdown.Item href="#">Edit</Dropdown.Item>
-                        <Dropdown.Item href="#">Share</Dropdown.Item>
+                        <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   </div>

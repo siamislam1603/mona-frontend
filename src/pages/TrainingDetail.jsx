@@ -107,8 +107,8 @@ const TrainingDetail = () => {
 
     if(response.status === 200 && response.data.status === "hidden") {
 
-      setHideTrainingFinishButton(false);
-      console.log('HIDE TRAINING BUTTON =>', hideTrainingFinishButton);
+      // setHideTrainingFinishButton(false);
+      // console.log('HIDE TRAINING BUTTON =>', hideTrainingFinishButton);
     
     } else if(response.status === 200 && response.data.status === "success") {
       
@@ -127,7 +127,8 @@ const TrainingDetail = () => {
     fetchTrainingFinishDate();
   }, []);
 
-  hideTrainingFinishButton && console.log('HIDE BUTTON?', hideTrainingFinishButton);
+  trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
+
   return (
     <>
       <div id="main">
@@ -212,7 +213,7 @@ const TrainingDetail = () => {
                                     <img src="../img/book-ico.png" alt="" /></a>
                                   </div>
                                   <div className="name">
-                                    <a href="">
+                                    <a href={data.file}>
                                       {`document${index - 1}${data.fileType}`} <span className="time">{ trainingDetails.completion_time}</span>
                                     </a>
                                   </div>
