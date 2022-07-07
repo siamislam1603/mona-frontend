@@ -8,6 +8,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
 
@@ -24,7 +25,8 @@ const timereq = [
   },
 ];
 
-const AddNewTraining = () => {
+const EditTraining = () => {
+  const { trainingId } = useParams();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -38,6 +40,7 @@ const AddNewTraining = () => {
   const [trainingData, setTrainingData] = useState({
     user_roles: []
   });
+  const [editTrainingData, setEditTrainingData] = useState();
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -58,6 +61,23 @@ const AddNewTraining = () => {
           key: data.role_label,
         })),
       ]);
+    }
+  };
+
+  const fetchTrainingData = async () => {
+    const userId = localStorage.getItem('user_id');
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${userId}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    console.log('RESPONSE EDIT TRAINING:', response);
+    if(response.status === 200 && response.data.status === "success") {
+      const { training } = response.data;
+
+      setEditTrainingData(training);
     }
   };
 
@@ -202,16 +222,14 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchUserRoles();
     fetchTrainingCategories();
+    fetchTrainingData();
   }, []);
 
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  // coverImage && console.log('COVER IMAGE:', coverImage);
-  // videoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', videoTutorialFiles);
-  // relatedFiles && console.log('RELATED FILES:', relatedFiles);
+  editTrainingData && console.log('EDIT:', editTrainingData);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -604,4 +622,4 @@ const AddNewTraining = () => {
   );
 };
 
-export default AddNewTraining;
+export default EditTraining;

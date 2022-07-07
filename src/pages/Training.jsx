@@ -40,7 +40,7 @@ const Training = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
-    category_id: 2,
+    category_id: null,
     search: ""
   });
 
@@ -72,12 +72,19 @@ const Training = () => {
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
       setTrainingCategory([
+        {
+          id: 0, 
+          value: 'select category', 
+          label: 'Select Category'
+        },
         ...categoryList.map((data) => ({
           id: data.id,
           value: data.category_alias,
           label: data.category_name,
         })),
       ]);
+
+      console.log('TRAINING CATEGORY:', trainingCategory);
     }
   };
 
@@ -105,7 +112,7 @@ const Training = () => {
     }
   }, []);
 
-  filterData && console.log('FILTER DATA:', filterData);
+  trainingCategory && console.log('FILTER DATA:', trainingCategory);
 
   return (
     <>
@@ -249,7 +256,7 @@ const Training = () => {
                           className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,
-                            category_id: e.id
+                            category_id: e.id === 0 ? null : e.id
                           }))}
                         />
                       </Form.Group>

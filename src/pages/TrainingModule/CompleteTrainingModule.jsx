@@ -16,7 +16,7 @@ const CompleteTraining = ({ filter }) => {
       }
     });
 
-    console.log('RESPONSE:', response);
+    console.log('RESPONSE DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       const { trainingList } = response.data;
       setCompletedTrainingData(trainingList);
@@ -26,6 +26,8 @@ const CompleteTraining = ({ filter }) => {
   useEffect(() => {
     fetchCompletedTrainingData();
   }, []);
+
+  completedTrainingData && console.log('COMPLETED TRAINING:', completedTrainingData);
 
   return (
     <>

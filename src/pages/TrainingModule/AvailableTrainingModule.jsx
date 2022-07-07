@@ -15,7 +15,7 @@ const AvailableTraining = ({ filter }) => {
     console.log('USER ID:', user_id)
     console.log('URL:', `${BASE_URL}/training/assigeedTraining/${user_id}`);
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}`, {
+    const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -51,7 +51,7 @@ const AvailableTraining = ({ filter }) => {
               return(
               <Col lg={4} md={6}>
                 <div className="item mt-3 mb-3">
-                  <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.training_files[0]?.thumbnail} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
+                  <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.coverImage} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                   <div className="fixcol">
                     <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
                     <div className="iconame">
@@ -68,6 +68,8 @@ const AvailableTraining = ({ filter }) => {
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                           <Dropdown.Item href="#">Delete</Dropdown.Item>
+                          <Dropdown.Item href="#">Edit</Dropdown.Item>
+                          <Dropdown.Item href="#">Share</Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     </div>
