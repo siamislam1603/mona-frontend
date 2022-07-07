@@ -41,6 +41,7 @@ const EditTraining = () => {
     user_roles: []
   });
   const [editTrainingData, setEditTrainingData] = useState();
+
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -229,7 +230,7 @@ const EditTraining = () => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
-  editTrainingData && console.log('EDIT:', editTrainingData);
+  editTrainingData && console.log('TRAINING CATEGORY:', editTrainingData);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -254,131 +255,138 @@ const EditTraining = () => {
                     </h1>
                   </header>
                     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
-                  <div className="training-form">
-                    <Row>
-                      <Col md={6} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Training Name</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="title"
-                            onChange={handleTrainingData}
-                          />
-                        </Form.Group>
-                      </Col>
+                  {
+                    editTrainingData &&
+                    <div className="training-form">
+                      <Row>
+                        <Col md={6} className="mb-3">
+                          <Form.Group>
+                            <Form.Label>Training Name</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="title"
+                              value={editTrainingData.title || ""}
+                              onChange={handleTrainingData}
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      <Col md={6} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Training Category</Form.Label>
-                          <Select
-                            closeMenuOnSelect={true}
-                            components={animatedComponents}
-                            options={trainingCategory}
-                            onChange={(event) =>
-                              setTrainingData((prevState) => ({
-                                ...prevState,
-                                category_id: event.id,
-                              }))
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Col md={6} className="mb-3">
+                          <Form.Group>
+                            <Form.Label>Training Category</Form.Label>
+                            <Select
+                              closeMenuOnSelect={true}
+                              components={animatedComponents}
+                              options={trainingCategory}
+                              selectedValues={trainingCategory.filter(category => category.id === editTrainingData.category_id)[0]}
+                              onChange={(event) =>
+                                setTrainingData((prevState) => ({
+                                  ...prevState,
+                                  category_id: event.id,
+                                }))
+                              }
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      <Col md={12} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Training Description</Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            name="description"
-                            rows={3}
-                            onChange={handleTrainingData}
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Col md={12} className="mb-3">
+                          <Form.Group>
+                            <Form.Label>Training Description</Form.Label>
+                            <Form.Control
+                              as="textarea"
+                              name="description"
+                              value={editTrainingData.description || ""}
+                              rows={3}
+                              onChange={handleTrainingData}
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      <Col md={12} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Meta Description</Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            name="meta_description"
-                            rows={3}
-                            onChange={handleTrainingData}
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Col md={12} className="mb-3">
+                          <Form.Group>
+                            <Form.Label>Meta Description</Form.Label>
+                            <Form.Control
+                              as="textarea"
+                              name="meta_description"
+                              value={editTrainingData.meta_description || ""}
+                              rows={3}
+                              onChange={handleTrainingData}
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      <Col md={6} className="mb-3">
-                        <Form.Group className="relative">
-                          <Form.Label>Time required to complete</Form.Label>
-                          <Select
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            options={timereq}
-                            onChange={(event) =>
-                              setTrainingData((prevState) => ({
-                                ...prevState,
-                                time_required_to_complete:
-                                  event.value + ' Hours',
-                              }))
-                            }
-                          />
-                          <span className="rtag">hours</span>
-                        </Form.Group>
-                        {/* <Form.Control.Feedback type="invalid">
-                            {errors.select_hour}
-                          </Form.Control.Feedback> */}
-                      </Col>
-                    </Row>
-                    <Row>
-      
-                      <Col md={6} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Upload Cover Image :</Form.Label>
-                          <DropOneFile
-                            onSave={setCoverImage}
-                            // setTrainingData={setTraining}
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Col md={6} className="mb-3">
+                          <Form.Group className="relative">
+                            <Form.Label>Time required to complete</Form.Label>
+                            <Select
+                              closeMenuOnSelect={false}
+                              components={animatedComponents}
+                              options={timereq}
+                              onChange={(event) =>
+                                setTrainingData((prevState) => ({
+                                  ...prevState,
+                                  time_required_to_complete:
+                                    event.value + ' Hours',
+                                }))
+                              }
+                            />
+                            <span className="rtag">hours</span>
+                          </Form.Group>
+                          {/* <Form.Control.Feedback type="invalid">
+                              {errors.select_hour}
+                            </Form.Control.Feedback> */}
+                        </Col>
+                      </Row>
+                      <Row>
+        
+                        <Col md={6} className="mb-3">
+                          <Form.Group>
+                            <Form.Label>Upload Cover Image :</Form.Label>
+                            <DropOneFile
+                              onSave={setCoverImage}
+                              // setTrainingData={setTraining}
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      <Col md={6} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <DropAllFile
-                            onSave={setVideoTutorialFiles}
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Col md={6} className="mb-3">
+                          <Form.Group>
+                            <Form.Label>Upload Video Tutorial Here :</Form.Label>
+                            <DropAllFile
+                              onSave={setVideoTutorialFiles}
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      <Col md={6} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Upload Related Files :</Form.Label>
-                          <DropAllFile
-                            onSave={setRelatedFiles}
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={12}>
-                        <div className="cta text-center mt-5 mb-5">
-                          <Button
-                            variant="outline"
-                            className="me-3"
-                            type="submit"
-                          >
-                            Preview
-                          </Button>
-                          <Button
-                            variant="primary"
-                            type="submit"
-                            onClick={handleDataSubmit}
-                          >
-                            Save
-                          </Button>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
+                        <Col md={6} className="mb-3">
+                          <Form.Group>
+                            <Form.Label>Upload Related Files :</Form.Label>
+                            <DropAllFile
+                              onSave={setRelatedFiles}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                          <div className="cta text-center mt-5 mb-5">
+                            <Button
+                              variant="outline"
+                              className="me-3"
+                              type="submit"
+                            >
+                              Preview
+                            </Button>
+                            <Button
+                              variant="primary"
+                              type="submit"
+                              onClick={handleDataSubmit}
+                            >
+                              Save
+                            </Button>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                    }
                 </div>
               </div>
             </div>

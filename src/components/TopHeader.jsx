@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 import { BASE_URL } from "./App";
 
-const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
-
+const TopHeader = (props) => {
+    console.log('FUNCTION:', props);
     const [franchiseeList, setFranchiseeList] = useState([]);
     const [permissionList, setPermissionList] = useState();
 
@@ -33,7 +33,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       const response = await axios.get(`${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`);
       if(response.status === 200) {
         const { franchisee } = response.data;
-        setSelectedFranchisee(franchisee.franchisee_name);
+        props.setSelectedFranchisee(franchisee.franchisee_name);
         setFranchiseeList([franchisee].map((data) => ({
           id: data.id,
           franchisee_name: `${data.franchisee_name}, ${data.city}`
@@ -60,7 +60,8 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
     };
 
     const selectFranchisee = (e) => {
-        setSelectedFranchisee(e);
+        // console.log('FRANCHISEE:', e);
+        props.setSelectedFranchisee(e);
         localStorage.setItem('selectedFranchisee', e);
     }
 

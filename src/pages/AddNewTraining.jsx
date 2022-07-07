@@ -212,6 +212,7 @@ const AddNewTraining = () => {
   // coverImage && console.log('COVER IMAGE:', coverImage);
   // videoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', videoTutorialFiles);
   // relatedFiles && console.log('RELATED FILES:', relatedFiles);
+  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
