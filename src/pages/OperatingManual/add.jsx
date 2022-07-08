@@ -413,7 +413,6 @@ const AddOperatingManual = () => {
                   <TopHeader 
                     selectedFranchisee={selectedFranchisee}
                     setSelectedFranchisee={setSelectedFranchisee} />
-                    />
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">

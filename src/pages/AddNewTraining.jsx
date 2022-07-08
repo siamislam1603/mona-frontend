@@ -8,6 +8,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
+import { TrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
 
@@ -35,8 +36,16 @@ const AddNewTraining = () => {
 
   const [userRoles, setUserRoles] = useState([]);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
+  const [allowSubmit, setAllowSubmit] = useState(false);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [trainingData, setTrainingData] = useState({ time_unit: "Hours" });
+  const [trainingData, setTrainingData] = useState({ 
+    time_unit: "Hours",
+    title: "",
+    description: "",
+    meta_description: "",
+    category_id: "",
+    time_required_to_complete: "" 
+  });
   const [trainingSettings, setTrainingSettings] = useState({ user_roles: [] });
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -170,29 +179,41 @@ const AddNewTraining = () => {
 
   const handleDataSubmit = event => {
     event.preventDefault();
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
+    
+    let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles); 
 
-    if(Object.keys(trainingSettings).length === 1) {
-      setSettingsModalPopup(true);
-    }
-
-    if(settingsModalPopup === false && trainingData && coverImage) {
-      let data = new FormData();
-
-      for(let [ key, values ] of Object.entries(trainingData)) {
-        data.append(`${key}`, values)
+    if(Object.keys(errorObj).length > 0) {
+      setErrors(errorObj);
+    } else {
+      setErrors({});
+      if(Object.keys(trainingSettings).length === 1) {
+        setSettingsModalPopup(true);
       }
 
-      videoTutorialFiles.forEach((file, index) => {
-        data.append(`images`, file);
-      });
+      if(settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+        let data = new FormData();
 
-      relatedFiles.forEach((file, index) => {
-        data.append(`images`, file);
-      });
+        for(let [key, values] of Object.entries(trainingSettings)) {
+          data.append(`${key}`, values);
+        }
 
-      // setLoader(true);
-      // createTraining(data);
+        for(let [ key, values ] of Object.entries(trainingData)) {
+          data.append(`${key}`, values)
+        }
+
+        videoTutorialFiles.forEach((file, index) => {
+          data.append(`images`, file);
+        });
+
+        relatedFiles.forEach((file, index) => {
+          data.append(`images`, file);
+        });
+        
+        window.scrollTo(0, 0);
+        setLoader(true);
+        createTraining(data);
+      }
     }
   };
 
@@ -206,6 +227,7 @@ const AddNewTraining = () => {
   }, [selectedFranchisee]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  trainingData && console.log('TRAINING DATA:', trainingData);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -240,6 +262,7 @@ const AddNewTraining = () => {
                             name="title"
                             onChange={handleTrainingData}
                           />
+                          { errors && errors.title && <span className="error">{errors.title}</span> }
                         </Form.Group>
                       </Col>
 
@@ -257,6 +280,7 @@ const AddNewTraining = () => {
                               }))
                             }
                           />
+                          { errors && errors.category_id && <span className="error">{errors.category_id}</span> }
                         </Form.Group>
                       </Col>
 
@@ -269,6 +293,7 @@ const AddNewTraining = () => {
                             rows={3}
                             onChange={handleTrainingData}
                           />
+                          { errors && errors.description && <span className="error">{errors.description}</span> }
                         </Form.Group>
                       </Col>
 
@@ -281,6 +306,7 @@ const AddNewTraining = () => {
                             rows={3}
                             onChange={handleTrainingData}
                           />
+                          { errors && errors.meta_description && <span className="error">{errors.meta_description}</span> }
                         </Form.Group>
                       </Col>
 
@@ -314,6 +340,7 @@ const AddNewTraining = () => {
                               }
                             />
                           </div>
+                          { errors && errors.time_required_to_complete && <span className="error">{errors.time_required_to_complete}</span> }
                         </Form.Group>
                         {/* <Form.Control.Feedback type="invalid">
                             {errors.select_hour}
@@ -329,6 +356,7 @@ const AddNewTraining = () => {
                             onSave={setCoverImage}
                             // setTrainingData={setTraining}
                           />
+                        { errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span> } 
                         </Form.Group>
                       </Col>
 
@@ -338,6 +366,7 @@ const AddNewTraining = () => {
                           <DropAllFile
                             onSave={setVideoTutorialFiles}
                           />
+                        { errors && errors.videoTutorialFiles && <span className="error mt-2">{errors.videoTutorialFiles}</span> } 
                         </Form.Group>
                       </Col>
 
@@ -347,6 +376,7 @@ const AddNewTraining = () => {
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />
+                        { errors && errors.relatedFiles && <span className="error mt-2">{errors.relatedFiles}</span> } 
                         </Form.Group>
                       </Col>
                       <Col md={12}>
@@ -586,7 +616,10 @@ const AddNewTraining = () => {
           <Button variant="transparent" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSaveAndClose}>
+          <Button variant="primary" onClick={() => {
+            setAllowSubmit(true);
+            setSettingsModalPopup(false)
+          }}>
             Save Settings
           </Button>
         </Modal.Footer>

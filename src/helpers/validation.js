@@ -166,3 +166,49 @@ export const ChildRegisterFormValidation = (form) => {
   }
   return newErrors;
 };
+
+
+export const TrainingFormValidation = (form, coverImage, videoTutorialFiles, relatedFiles) => {
+  let errors = {};
+  let {
+    title,
+    description,
+    meta_description,
+    category_id,
+    time_required_to_complete,
+  } = form;
+
+  if (!title) {
+    errors.title = 'Training title is required!';
+  }
+  
+  if (!description) {
+    errors.description = 'Training description is required!';
+  }
+  
+  if (!meta_description) {
+    errors.meta_description = 'Meta description is required!';
+  }
+  
+  if (!category_id) {
+    errors.category_id = 'Training category title is required!';
+  }
+  
+  if (!time_required_to_complete) {
+    errors.time_required_to_complete = 'Training time is required!';
+  }
+
+  if(Object.keys(coverImage).length === 0) {
+    errors.coverImage = 'Cover image required!';
+  }
+
+  if(videoTutorialFiles.length === 0) {
+    errors.videoTutorialFiles = 'Video Files are required!';
+  }
+
+  if(relatedFiles.length === 0) {
+    errors.relatedFiles = 'Related Files are required!';
+  }
+
+  return errors;
+};
