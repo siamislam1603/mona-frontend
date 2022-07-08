@@ -128,6 +128,18 @@ export const createOperatingManualValidation = (form) => {
 
   return newErrors;
 };
+//Validation for edit annoutment
+export const EditAnnouncementValidation = (form)=>{
+  let newErrors = {};
+  console.log("The form validat", form)
+  let { announcement_title,announcement_description} = form;
+  console.log("The tile valdiation", announcement_title)
+  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
+  
+  if(!announcement_description || announcement_description === ' ') newErrors.announcement_description="Description is Required"
+  
+  return newErrors;
+}
 export const ChildRegisterFormValidation = (form) => {
   let newErrors = {};
   let {

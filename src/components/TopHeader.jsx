@@ -3,8 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 import { BASE_URL } from "./App";
 
-const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
-
+const TopHeader = ({ setSelectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState([]);
     const [permissionList, setPermissionList] = useState();
 
@@ -60,6 +59,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
     };
 
     const selectFranchisee = (e) => {
+        // console.log('FRANCHISEE:', e);
         setSelectedFranchisee(e);
         localStorage.setItem('selectedFranchisee', e);
     }

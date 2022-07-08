@@ -6,156 +6,22 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
 import axios from "axios";
-import AllAnnouncements from "./AllAnnouncements";
-import MyAnnouncements from "./MyAnnouncements";
+import { NavLink } from "react-router-dom";
 
-
-const animatedComponents = makeAnimated();
-const training = [
-  {
-    value: "sydney",
-    label: "Sydney",
-  },
-  {
-    value: "melbourne",
-    label: "Melbourne",
-  },
-];
-
-const Announcements =  () => {
-  const [announcementDetails,setAnnouncementDetail] = useState("")
-  const [tabLinkPath, setTabLinkPath] = useState("/all-announcements");
-
-  const getAnnouncementDetails = async () =>{
-    const user_id = localStorage.getItem('user_id');
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/get_announcement/${user_id}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    if(response.status === 200 && response.data.status === "success") {
-        console.log("The annoucement",response.data)
-        setAnnouncementDetail(response.data);
-    }
-  }
-  const handleLinkClick = event => {
-    let path = event.target.getAttribute('path');
-    setTabLinkPath(path);
-  }
-  useEffect(() => {
-    getAnnouncementDetails()
-  }, [])
-
+const AllAnnouncements = () => {
   return (
-    <>
-      <div id="main">
-        <section className="mainsection">
-          <Container>
-            <div className="admin-wrapper">
-              <aside className="app-sidebar">
-                <LeftNavbar/>
-              </aside>
-              <div className="sec-column">
-                <TopHeader/>
-                <div className="entry-container">
-                  <header className="title-head">
-                    <h1 className="title-lg">Announcements</h1>
-                    <div className="othpanel">
-                      <div className="extra-btn">
-                        <div className="data-search me-3">
-                          <label for="search-bar" className="search-label">
-                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value=""/>
-                          </label>
-                        </div>
-                        <Dropdown className="filtercol me-3">
-                          <Dropdown.Toggle id="extrabtn" variant="btn-outline">
-                            <i className="filter-ico"></i> Add Filters
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <header>Filter by:</header>
-                            <div className="custom-radio btn-radio mb-2">
-                              <label>Users:</label>
-                              <Form.Group>
-                                <Form.Check
-                                  inline
-                                  label='Admin'
-                                  value='Admin'
-                                  name="users"
-                                  type="radio"
-                                  id='one'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Co-ordinator'
-                                  value='Co-ordinator'
-                                  name="users"
-                                  type="radio"
-                                  id='two'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Educator'
-                                  value='Educator'
-                                  name="users"
-                                  type="radio"
-                                  id='three'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Parent/Guardian'
-                                  value='Parent-Guardian'
-                                  name="users"
-                                  type="radio"
-                                  id='four'
-                                />
-                              </Form.Group>
-                            </div>
-                            <div className="custom-radio">
-                              <label className="mb-2">Location:</label>
-                              <Form.Group>
-                                <Select
-                                  closeMenuOnSelect={false}
-                                  components={animatedComponents}
-                                  isMulti
-                                  options={training}
-                                />
-                              </Form.Group>
-                            </div>
-                            <footer>
-                              <Button variant="transparent" type="submit">Cancel</Button>
-                              <Button variant="primary" type="submit">Apply</Button>
-                            </footer>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                        <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
-                        <Dropdown>
-                          <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt=""/>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#">Export All</Dropdown.Item>
-                            <Dropdown.Item href="#">Delete All</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
-                    </div>
-                  </header>
-                  <div className="training-cat mb-3">
-                    <ul>
-                      <li><a onClick={handleLinkClick}  path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
-                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements</a></li>
-                  
-                    </ul>
-                  </div>
-                  {/* <div className="announcement-accordion">
+    <div className="announcement-accordion">
                     <Accordion defaultActiveKey="0">
                       <Accordion.Item eventKey="0">
                         <Accordion.Header>
                           <div className="head-title">
                             <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
                             <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <small><span>Educator:</span> Smile Daycare</small></div>
-                            <div className="date">Sent on: <br/>05/15/2022</div>
+                            <div className="date">
+                                <NavLink to="/edit-announcement">
+                                <img src="../img/dot-ico.svg" alt=""/>
+                                </NavLink>
+                            </div>
                           </div>
                         </Accordion.Header>
                         <Accordion.Body>
@@ -204,7 +70,11 @@ const Announcements =  () => {
                           <div className="head-title">
                             <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
                             <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2020-21 <small><span>Educator:</span> Smile Daycare</small></div>
-                            <div className="date">Sent on: <br/>05/15/2022</div>
+                            <div className="date">
+                              <NavLink to="/edit-announcement">
+                                <img src="../img/dot-ico.svg" alt=""/>
+                              </NavLink>
+                            </div>
                           </div>
                         </Accordion.Header>
                         <Accordion.Body>
@@ -253,7 +123,11 @@ const Announcements =  () => {
                           <div className="head-title">
                             <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
                             <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2019-20 <small><span>Educator:</span> Smile Daycare</small></div>
-                            <div className="date">Sent on: <br/>05/15/2022</div>
+                            <div className="date">
+                               <NavLink to="/edit-announcement">
+                                  <img src="../img/dot-ico.svg" alt=""/>
+                                </NavLink>
+                            </div>
                           </div>
                         </Accordion.Header>
                         <Accordion.Body>
@@ -298,24 +172,8 @@ const Announcements =  () => {
                         </Accordion.Body>
                       </Accordion.Item>
                     </Accordion>
-                  </div> */}
-
-            <div className="training-column">
-                    {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements/>}
-                    {tabLinkPath === "/my-announcements" 
-                      && <MyAnnouncements
-                             />}
-                
                   </div>
-                </div>
-              </div>
-            </div>
-          </Container>
-        </section>
-      </div>
-    </>
-  );
-};
+  )
+}
 
-export default Announcements;
+export default AllAnnouncements

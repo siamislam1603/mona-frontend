@@ -13,8 +13,8 @@ import {
 } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
-let selectedUserRole = [];
-let selectedUserEmail = '';
+let selectedUserId = '';
+let upperRoleUser='';
 const AddOperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,26 +22,28 @@ const AddOperatingManual = () => {
     related_files: [],
   });
   const [errors, setErrors] = useState({});
-  const [loaderText, setLoaderText] = useState('');
-  const [loaderFlag, setLoaderFlag] = useState(false);
+  const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
+  const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
+  const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [user, setUser] = useState([]);
-  const [selectedUser, setSelectedUser] = useState([]);
-  const [franchisee, setFranchisee] = useState([]);
+  const [selectedUser, setSelectedUser] = useState([]); 
   const [userRole, setUserRole] = useState([]);
   const [category, setCategory] = useState([]);
   const [categoryModalFlag, setCategoryModalFlag] = useState(false);
   const [categoryData, setCategoryData] = useState({});
   const [categoryError, setCategoryError] = useState({});
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+
   useEffect(() => {
-    getUserRoleAndFranchiseeData();
+    getUserRoleData();
   }, []);
   useEffect(() => {
     getUser();
-  }, [userRole]);
+  }, [selectedFranchisee]);
   useEffect(() => {
     getCategory();
   }, [user]);
@@ -57,7 +59,12 @@ const AddOperatingManual = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
-    fetch(`${BASE_URL}/auth/users`, requestOptions)
+    let api_url="";
+    if(selectedFranchisee)
+      api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    else
+    api_url=`${BASE_URL}/auth/users`;
+    fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         result?.data?.map((item) => {
@@ -89,11 +96,13 @@ const AddOperatingManual = () => {
         data['accessible_to_role'] = response?.result?.accessible_to_role;
 
         if (response?.result?.accessible_to_role === 0) {
-          selectedUserEmail = response?.result?.shared_with;
+          selectedUserId = response?.result?.shared_with;
           let users = [];
+          selectedUserId = '';
           user.map((item) => {
-            if (response?.result?.shared_with.includes(item.email)) {
+            if (response?.result?.shared_with.includes(item.id.toString())) {
               users.push(item);
+              selectedUserId += item.id + ',';
             }
           });
           setSelectedUser(users);
@@ -102,6 +111,22 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
+  const getUpperRoleUser=()=>{
+    let upper_role='';
+      let flag=false;
+       userRole?.map((item)=>{
+          if(item.role_name!==localStorage.getItem('user_role'))
+          {
+            if(!flag)
+            upper_role+=item.role_name+","; 
+          }
+          else
+          {
+            flag=true;
+          }
+        })
+        return upper_role.slice(0, -1);
+  }
   const setCategoryField = (field, value) => {
     setCategoryData({ ...categoryData, [field]: value });
     if (!!categoryError[field]) {
@@ -123,6 +148,7 @@ const AddOperatingManual = () => {
   const onModelSubmit = (e) => {
     e.preventDefault();
     let data = operatingManualData;
+
     if (!data?.id) {
       alert('Please save first operating manual information');
     } else {
@@ -140,17 +166,21 @@ const AddOperatingManual = () => {
         data['accessible_to_all'] = true;
       } else {
         if (formSettingData.accessible_to_role === 1) {
-          data['shared_role'] = formSettingData.shared_role;
+          data['shared_role'] = formSettingData.shared_role.slice(0, -1);
           data['shared_with'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
         } else {
-          data['shared_with'] = selectedUserEmail;
+          data['shared_with'] = selectedUserId.slice(0, -1);
           data['shared_role'] = null;
           data['accessible_to_role'] = formSettingData.accessible_to_role;
           data['accessible_to_all'] = false;
         }
+
       }
+      data['created_by']=localStorage.getItem('user_id');
+      upperRoleUser=getUpperRoleUser();
+      data['upper_role']=upperRoleUser;
       console.log('Hello---->', data);
 
       var myHeaders = new Headers();
@@ -164,7 +194,7 @@ const AddOperatingManual = () => {
         .then((res) => {
           setOperatingManualData(res?.result);
           setFormSettingFlag(false);
-          // navigate('/operatingmanual');
+          navigate('/operatingmanual');
         });
     }
   };
@@ -174,17 +204,21 @@ const AddOperatingManual = () => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
+      upperRoleUser=getUpperRoleUser();
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
+      let data={...operatingManualData};
+      data.created_by=localStorage.getItem('user_id');
+      data.upper_role=upperRoleUser;
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
-        body: JSON.stringify(operatingManualData),
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
         .then((res) => {
-          alert('Operating manual Successfully Submited');
           setOperatingManualData(res?.result);
+          setFormSettingFlag(true);
           // navigate('/operatingmanual');
         });
     }
@@ -244,27 +278,30 @@ const AddOperatingManual = () => {
   };
   const uploadFiles = async (name, file) => {
     let flag = false;
-    if (!(name === 'reference_video')) {
-      setLoaderFlag(true);
-      setLoaderText('video');
+    if (name === 'cover_image') {
       if (file.size > 2048 * 1024) {
-        alert('file is too large');
+        let errorData={...errors};
+        errorData["cover_image"]= "File is too much large";
+        setErrors(errorData);
+        flag = true;
+      }
+    }
+    if (name === 'reference_video')
+    {
+      if (file.size > 1024 * 1024 * 1024) {
+        let errorData={...errors};
+        errorData["reference_video"]= "File is too much large";
+        setErrors(errorData);
         flag = true;
       }
     }
 
     if (flag === false) {
       if (name === 'cover_image') {
-        setLoaderFlag(true);
-        setLoaderText('image');
+        setImageLoaderFlag(true);
       }
       if (name === 'reference_video') {
-        setLoaderFlag(true);
-        setLoaderText('video');
-      }
-      if (name === 'related_files') {
-        setLoaderFlag(true);
-        setLoaderText('files');
+        setVideoLoaderFlag(true);
       }
       let data = { ...operatingManualData };
       const body = new FormData();
@@ -283,28 +320,20 @@ const AddOperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          if (name === 'related_files') {
-            if (!data[name]) {
-              data[name] = [];
-            }
-
-            data[name].push({ name: file.name, url: res.url });
-            setOperatingManualData(data);
-            setLoaderFlag(false);
-          } else if (name === 'reference_video') {
+          if (name === 'reference_video') {
             data['video_thumbnail'] = res.thumbnail;
             data[name] = res.url;
             setOperatingManualData(data);
 
             setTimeout(() => {
-              setLoaderFlag(false);
+              setVideoLoaderFlag(false);
             }, 8000);
           } else {
             data[name] = res.url;
             setOperatingManualData(data);
 
             setTimeout(() => {
-              setLoaderFlag(false);
+              setImageLoaderFlag(false);
             }, 5000);
           }
           if (!!errors[name]) {
@@ -332,7 +361,7 @@ const AddOperatingManual = () => {
   };
   function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedUserEmail += selectedItem.email + ',';
+    selectedUserId += selectedItem.id + ',';
     selectedUser.push({
       id: selectedItem.id,
       email: selectedItem.email,
@@ -340,7 +369,7 @@ const AddOperatingManual = () => {
     console.log('selectedUser---->', selectedUser);
   }
   function onRemoveUser(selectedList, removedItem) {
-    selectedUserEmail = selectedUserEmail.replace(removedItem.email + ',', '');
+    selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
     const index = selectedUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
@@ -349,29 +378,28 @@ const AddOperatingManual = () => {
       console.log('selectedUser---->', selectedUser);
     }
   }
-  const getUserRoleAndFranchiseeData = () => {
+  const getUserRoleData = () => {
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/api/user-shared_role`, requestOptions)
+    
+    fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
-        console.log('response0-------->1', res?.userRoleList);
+        console.log("res---->",res);
+        // console.log('response0-------->1', localStorage.getItem('user_role'));
         setUserRole(res?.userRoleList);
-      })
-      .catch((error) => console.log('error', error));
-    fetch(`${BASE_URL}/shared_role/franchisee`, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        setFranchisee(res?.franchiseeList);
+
       })
       .catch((error) => console.log('error', error));
   };
+
+  selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
-      {console.log('form setting--->', formSettingData)}
+      {console.log('errors--->', errors)}
       {console.log('operating manual--->', operatingManualData)}
       <div id="main">
         <section className="mainsection ">
@@ -382,7 +410,10 @@ const AddOperatingManual = () => {
               </aside>
               <div className="sec-column">
                 <div className="new_module">
-                  <TopHeader />
+                  <TopHeader 
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
+                    
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
@@ -504,7 +535,7 @@ const AddOperatingManual = () => {
                           </Form.Label>
                           <div className="upload_cover_box">
                             <div className="cover_image">
-                              {loaderFlag && loaderText === 'image' ? (
+                              {ImageloaderFlag ? (
                                 <img src="../img/loader.gif" />
                               ) : null}
                               <img
@@ -561,7 +592,7 @@ const AddOperatingManual = () => {
 
                           <div className="upload_cover_box video_reference">
                             <div className="cover_image">
-                              {loaderFlag && loaderText === 'video' ? (
+                              {videoloaderFlag ? (
                                 <img src="../img/loader.gif" />
                               ) : null}
                               <img

@@ -3,15 +3,47 @@ import { Button, Col, Container, Row, Form, Modal } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import Multiselect from "multiselect-react-dropdown";
-import DropAllFile from "../components/DragDrop";
+import DropAllFile from "../components/DragDropMultiple";
+import DropOneFile from '../components/DragDrop';
+import { EditAnnouncementValidation } from "../helpers/validation";
 
-const AddNewAnnouncements = () => {
+const EditAnnouncement = () => {
+  const [errors, setErrors] = useState({});
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [coverImage, setCoverImage] = useState({});
+  const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+  const [relatedFiles, setRelatedFiles] = useState([]);
+  const [operatingManualData, setOperatingManualData] = useState({
+    related_files: [],
+  });
+  coverImage && console.log('COVER IMAGE:', coverImage);
+  videoTutorialFiles && console.log('VIDEO FILES:', videoTutorialFiles);
+  relatedFiles && console.log('RELATED FILES:', relatedFiles);
 
-const [show, setShow] = useState(false);
-const handleClose = () => setShow(false);
-const handleShow = () => setShow(true);
-
+  const setOperatingManualField = (field, value) => {
+    console.log("The field and value",field,value)
+    setOperatingManualData({ ...operatingManualData, [field]: value });
+    if (!!errors[field]) {
+      setErrors({
+        ...errors,
+        [field]: null,
+      });
+    }
+  };
+ 
+  const onSubmit = (e) => {
+    e.preventDefault();
+     const newErrors = EditAnnouncementValidation(operatingManualData);
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      console.log("The API")
+    }
+  };
   return (
+    
     <>
       <div id="main">
         <section className="mainsection">
@@ -24,14 +56,29 @@ const handleShow = () => setShow(true);
                 <TopHeader/>
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-lg">New Announcement <span className="setting-ico" onClick={handleShow}><img src="../img/setting-ico.png" alt=""/></span></h1>
+                    <h1 className="title-lg">Edit Announcement <span className="setting-ico" onClick={handleShow}><img src="../img/setting-ico.png" alt=""/></span></h1>
                   </header>
                   <div className="training-form">
                     <Row>
                       <Col md={12} className="mb-3">
                         <Form.Group>
                           <Form.Label>Announcement Title</Form.Label>
-                          <Form.Control type="text" name="announcement_title" />
+                          <Form.Control 
+                              type="text" 
+                              name="announcement_title"
+                              value={operatingManualData?.title}
+                              placeholder="Enter Title"
+                              onChange={(e) => {
+                                setOperatingManualField(
+                                  e.target.name,
+                                  e.target.value
+                                );
+                              }}
+                              isInvalid={!!errors.announcement_title}
+                              />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.announcement_title}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                       <Col md={12} className="mb-3">
@@ -41,33 +88,46 @@ const handleShow = () => setShow(true);
                             as="textarea"
                             name="announcement_description"
                             rows={3}
+                            value={operatingManualData?.title}
+                            placeholder="Enter Description"
+                            onChange={(e) => {
+                              setOperatingManualField(
+                                e.target.name,
+                                e.target.value
+                              );
+                            }}
+                            isInvalid={!!errors.announcement_description}
                             />
+                             <Form.Control.Feedback type="invalid">
+                            {errors.announcement_description}
+                          </Form.Control.Feedback>
                         </Form.Group>
+                       
                       </Col>
                     </Row>
                     <Row>
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Related Image :</Form.Label>
-                          {/* <DropAllFile /> */}
+                          <DropOneFile onSave={setCoverImage} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          {/* <DropAllFile /> */}
+                          <DropAllFile onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
-                          {/* <DropAllFile /> */}
+                          <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
                       <Col md={12}>
                         <div className="cta text-center mt-5 mb-5">
                           <Button variant="outline" className="me-3" type="submit">Preview</Button>
-                          <Button variant="primary" type="submit">Save</Button>
+                          <Button variant="primary" type="submit" onClick={onSubmit}>Save</Button>
                         </div>
                       </Col>
                     </Row>
@@ -266,6 +326,7 @@ const handleShow = () => setShow(true);
       </Modal>
     </>
   );
-};
 
-export default AddNewAnnouncements;
+}
+
+export default EditAnnouncement

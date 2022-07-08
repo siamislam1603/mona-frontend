@@ -23,6 +23,7 @@ import AddFormField from '../pages/FormBuilder/FormField/add';
 import FormResponse from '../pages/FormBuilder/FormResponse';
 import Training from '../pages/Training';
 import AddNewTraining from '../pages/AddNewTraining';
+import EditTraining from '../pages/EditTraining';
 import TrainingDetail from '../pages/TrainingDetail';
 import FileRepository from '../pages/FileRepository';
 import Announcements from '../pages/Announcements';
@@ -33,6 +34,9 @@ import AddSubOperatingManual from '../pages/OperatingManual/addSubModule';
 import AvailableTraining from '../pages/AvailableTraining';
 import CompleteTraining from '../pages/CompletedTraining';
 import CreatedTraining from '../pages/CreatedTraining';
+import AllAnnouncements from '../pages/AllAnnouncements';
+import MyAnnouncements from '../pages/MyAnnouncements';
+import EditAnnouncement from '../pages/EditAnnouncement';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -313,6 +317,16 @@ const Main = () => {
         />
 
         <Route
+          path="/edit-training/:trainingId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <EditTraining />
+            </Protected>
+          }
+        />
+
+        <Route
           path="/training-detail/:trainingId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -328,6 +342,26 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AvailableTraining />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/all-announcements"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AllAnnouncements />
+            </Protected>
+          }
+        />
+
+      <Route
+          path="/my-announcements"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <MyAnnouncements />
             </Protected>
           }
         />
@@ -383,7 +417,18 @@ const Main = () => {
             )
           }
         />
+         <Route
+          path="/edit-announcement"
+          element={
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
+              <EditAnnouncement />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
       </Routes>
+      
     </main>
   );
 };

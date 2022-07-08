@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave }) {
+export default function DropAllFile({ onSave, setTrainingData }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -18,7 +18,7 @@ export default function DropAllFile({ onSave }) {
     maxFiles: 1,
     multiple: false,
     accept: {
-      'image/png': ['.png', '.jpg', '.jpeg'],
+      'image/*': ['.png', '.jpg', '.jpeg'],
     },
   });
 
@@ -42,6 +42,10 @@ export default function DropAllFile({ onSave }) {
 
   useEffect(() => {
     onSave(data);
+    // setTrainingData(prevState => ({
+    //   ...prevState,
+    //   cover_image: data[0]
+    // }))
   }, [data]);
 
   return (

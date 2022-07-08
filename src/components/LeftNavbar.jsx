@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
+import { LinkContainer } from "react-router-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from './App';
 import { Link } from 'react-router-dom';
@@ -18,7 +19,8 @@ const LeftNavbar = () => {
 
     if(response.status === 200 && response.data.status === "success") {
       let { permissionsObject } = response.data;
-      setPermissionList(permissionsObject);
+      console.log('PERMISSIONS OBJECT:', permissionsObject)
+      setPermissionList(permissionsObject.filter(permission => permission.controller.show_in_menu === true));
       localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
     }
   };
@@ -43,14 +45,16 @@ const LeftNavbar = () => {
             {permissionList && permissionList.map(permission => {
               return (
                 <React.Fragment key={permission.controller.id}>
-                  <Link to={`/${permission.controller.menu_link}`} className="nav-link">
-                    <span>
-                      <i className={`ico ${permission.controller.controller_icon}`}>
-                        &nbsp;
-                      </i>
-                      {permission.controller.controller_label}
-                    </span>
-                  </Link>
+                  <LinkContainer to={`/${permission.controller.menu_link}`}>
+                    <Nav.Link>
+                      <span>
+                        <i className={`ico ${permission.controller.controller_icon}`}>
+                          &nbsp;
+                        </i>
+                        {permission.controller.controller_label}
+                      </span>
+                    </Nav.Link>
+                  </LinkContainer>
                 </React.Fragment>
               );
             })}
