@@ -34,11 +34,10 @@ const AddNewTraining = () => {
   const [loader, setLoader] = useState(false);
 
   const [userRoles, setUserRoles] = useState([]);
+  const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [trainingData, setTrainingData] = useState({
-    user_roles: [],
-    time_unit: "Hours"
-  });
+  const [trainingData, setTrainingData] = useState({ time_unit: "Hours" });
+  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [] });
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -46,6 +45,7 @@ const AddNewTraining = () => {
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
 
   // LOG MESSAGES
+  const [errors, setErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
 
   // FETCHING USER ROLES
@@ -74,9 +74,6 @@ const AddNewTraining = () => {
       }
     );
 
-    // const response = await axios.post(`https://httpbin.org/anything`, data);
-    // console.log('RESPONSE:', response);
-
     if(response.status === 201 && response.data.status === "success") {
       let { id } = response.data.training;
 
@@ -93,27 +90,21 @@ const AddNewTraining = () => {
       );
 
       if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
-        
-        console.log('SUCCESS RESPONSE!');
         setLoader(false)
         localStorage.setItem('success_msg', 'Training Created Successfully!');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href="/training";
-      
       } else {
-
-        console.log('ERROR RESPONSE!');
         setTopErrorMessage("unable to save cover image!");
         setTimeout(() => {
           setTopErrorMessage(null);
         }, 3000)
-      
       }
 
     } else if(response.status === 200 && response.data.status === "fail") {
-      console.log('ERROR RESPONSE!');
       const { msg } = response.data;
       setTopErrorMessage(msg);
+      setLoader(false);
       setTimeout(() => {
         setTopErrorMessage(null);
       }, 3000)
@@ -162,7 +153,7 @@ const AddNewTraining = () => {
   // FUNCTION TO SAVE TRAINING SETTINGS
   const handleTrainingSettings = (event) => {
     const { name, value } = event.target;
-    setTrainingData((prevState) => ({
+    setTrainingSettings((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -181,7 +172,11 @@ const AddNewTraining = () => {
     event.preventDefault();
     window.scrollTo(0, 0);
 
-    if(trainingData && coverImage && videoTutorialFiles) {
+    if(Object.keys(trainingSettings).length === 1) {
+      setSettingsModalPopup(true);
+    }
+
+    if(settingsModalPopup === false && trainingData && coverImage) {
       let data = new FormData();
 
       for(let [ key, values ] of Object.entries(trainingData)) {
@@ -196,8 +191,8 @@ const AddNewTraining = () => {
         data.append(`images`, file);
       });
 
-      setLoader(true);
-      createTraining(data);
+      // setLoader(true);
+      // createTraining(data);
     }
   };
 
@@ -209,6 +204,8 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
+
+  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -227,7 +224,7 @@ const AddNewTraining = () => {
                   <header className="title-head">
                     <h1 className="title-lg">
                       Add New Training{' '}
-                      <span className="setting-ico" onClick={handleShow}>
+                      <span className="setting-ico" onClick={() => setSettingsModalPopup(true)}>
                         <img src="../img/setting-ico.png" alt="" />
                       </span>
                     </h1>
@@ -382,8 +379,8 @@ const AddNewTraining = () => {
       <Modal
         className="training-modal"
         size="lg"
-        show={show}
-        onHide={handleClose}
+        show={settingsModalPopup}
+        onHide={() => setSettingsModalPopup(false)}
       >
         <Modal.Header closeButton>
           <Modal.Title>
@@ -447,7 +444,7 @@ const AddNewTraining = () => {
                           name="roles"
                           id="yes1"
                           onChange={(event) => {
-                            setTrainingData((prevState) => ({
+                            setTrainingSettings((prevState) => ({
                               ...prevState,
                               is_applicable_to_all: true,
                             }));
@@ -465,7 +462,7 @@ const AddNewTraining = () => {
                           name="roles"
                           id="no1"
                           onChange={(event) => {
-                            setTrainingData((prevState) => ({
+                            setTrainingSettings((prevState) => ({
                               ...prevState,
                               is_applicable_to_all: false,
                             }));
@@ -480,66 +477,66 @@ const AddNewTraining = () => {
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
-                <div className={`custom-checkbox ${trainingData.is_applicable_to_all === false ? "d-none": ""}`}>
+                <div className={`custom-checkbox ${trainingSettings.is_applicable_to_all === false ? "d-none": ""}`}>
                   <Form.Label className="d-block">Select User Roles</Form.Label>
                   <div className="btn-checkbox d-block">
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                       <Form.Check 
                         type="checkbox" 
-                        checked={trainingData.user_roles.includes("coordinator")}
+                        checked={trainingSettings.user_roles.includes("coordinator")}
                         label="Co-ordinators"
                         onChange={() => {
-                          if(trainingData.user_roles.includes("coordinator")) {
-                            let data = trainingData.user_roles.filter(t => t !== "coordinator");
-                            setTrainingData(prevState => ({
+                          if(trainingSettings.user_roles.includes("coordinator")) {
+                            let data = trainingSettings.user_roles.filter(t => t !== "coordinator");
+                            setTrainingSettings(prevState => ({
                               ...prevState,
                               user_roles: [...data]
                             }));
                           }
 
-                          if(!trainingData.user_roles.includes("coordinator"))
-                            setTrainingData(prevState => ({
+                          if(!trainingSettings.user_roles.includes("coordinator"))
+                            setTrainingSettings(prevState => ({
                             ...prevState,
-                            user_roles: [...trainingData.user_roles, "coordinator"]
+                            user_roles: [...trainingSettings.user_roles, "coordinator"]
                         }))}} />
                     </Form.Group>
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
                       <Form.Check 
                         type="checkbox" 
                         label="Educator"
-                        checked={trainingData.user_roles.includes("educator")}
+                        checked={trainingSettings.user_roles.includes("educator")}
                         onChange={() => {
-                          if(trainingData.user_roles.includes("educator")) {
-                            let data = trainingData.user_roles.filter(t => t !== "educator");
-                            setTrainingData(prevState => ({
+                          if(trainingSettings.user_roles.includes("educator")) {
+                            let data = trainingSettings.user_roles.filter(t => t !== "educator");
+                            setTrainingSettings(prevState => ({
                               ...prevState,
                               user_roles: [...data]
                             }));
                           }
 
-                          if(!trainingData.user_roles.includes("educator"))
-                            setTrainingData(prevState => ({
+                          if(!trainingSettings.user_roles.includes("educator"))
+                            setTrainingSettings(prevState => ({
                             ...prevState,
-                            user_roles: [...trainingData.user_roles, "educator"]
+                            user_roles: [...trainingSettings.user_roles, "educator"]
                         }))}} />
                     </Form.Group>
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
                       <Form.Check 
                         type="checkbox" 
                         label="All Roles"
-                        checked={trainingData.user_roles.length === 2}
+                        checked={trainingSettings.user_roles.length === 2}
                         onChange={() => {
-                          if(trainingData.user_roles.includes("coordinator") 
-                              && trainingData.user_roles.includes("educator")) {
-                                setTrainingData(prevState => ({
+                          if(trainingSettings.user_roles.includes("coordinator") 
+                              && trainingSettings.user_roles.includes("educator")) {
+                                setTrainingSettings(prevState => ({
                                   ...prevState,
                                   user_roles: [],
                                 }));
                               }
                             
-                          if(!trainingData.user_roles.includes("coordinator") 
-                              && !trainingData.user_roles.includes("educator"))
-                            setTrainingData(prevState => ({
+                          if(!trainingSettings.user_roles.includes("coordinator") 
+                              && !trainingSettings.user_roles.includes("educator"))
+                            setTrainingSettings(prevState => ({
                               ...prevState,
                               user_roles: ["coordinator", "educator"]
                             })
@@ -553,17 +550,17 @@ const AddNewTraining = () => {
             <Row className={`mt-4`}>
               <Col lg={3} md={6}>
               </Col>
-              <Col lg={9} md={6} className={`mt-3 mt-md-0 ${trainingData.is_applicable_to_all === true ? "d-none": ""}`}>
+              <Col lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings.is_applicable_to_all === true ? "d-none": ""}`}>
                 <Form.Group>
                   <Form.Label>Select User Names</Form.Label>
                   <Multiselect
                     placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
                     displayValue="key"
-                    selectedValues={trainingData.assigned_users_data}
+                    selectedValues={trainingSettings.assigned_users_data}
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
                     onRemove={function noRefCheck(data) {
-                      setTrainingData((prevState) => ({
+                      setTrainingSettings((prevState) => ({
                         ...prevState,
                         assigned_users: [...data.map(data => data.id)],
                         assigned_users_data: [...data.map(data => data)]
@@ -571,7 +568,7 @@ const AddNewTraining = () => {
                     }}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
-                      setTrainingData((prevState) => ({
+                      setTrainingSettings((prevState) => ({
                         ...prevState,
                         assigned_users: [...data.map((data) => data.id)],
                         assigned_users_data: [...data.map(data => data)]
