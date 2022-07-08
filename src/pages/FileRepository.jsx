@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Container,
@@ -7,70 +7,89 @@ import {
   Modal,
   Row,
   Col,
-} from "react-bootstrap";
-import LeftNavbar from "../components/LeftNavbar";
-import TopHeader from "../components/TopHeader";
-import BootstrapTable from "react-bootstrap-table-next";
-import paginationFactory from "react-bootstrap-table2-paginator";
-import Select from "react-select";
-import makeAnimated from "react-select/animated";
+} from 'react-bootstrap';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import LeftNavbar from '../components/LeftNavbar';
+import TopHeader from '../components/TopHeader';
+import BootstrapTable from 'react-bootstrap-table-next';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
 import ToolkitProvider, {
   Search,
   CSVExport,
-} from "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
-import Multiselect from "multiselect-react-dropdown";
-import DragDropRepository from "../components/DragDropRepository";
-import { BASE_URL } from "../components/App";
-import { createFileRepoValidation } from "../helpers/validation";
-import moment from "moment";
+} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
+import Multiselect from 'multiselect-react-dropdown';
+import DragDropRepository from '../components/DragDropRepository';
+import { BASE_URL } from '../components/App';
+import { createFileRepoValidation } from '../helpers/validation';
+import moment from 'moment';
 
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
-let selectedFranchisee = [];
+let selectedFranchisee = [
+  { id: 1, registered_name: 'ABC' },
+  { id: 2, registered_name: 'PQR' },
+];
 let selectedUserRole = [];
-let selectedFranchiseeId = "";
-let selectedUserRoleName = "";
+let selectedFranchiseeId = '';
+let selectedUserRoleName = '';
 const styles = {
   option: (styles, state) => ({
     ...styles,
-    backgroundColor: state.isSelected ? "#E27235" : "",
+    backgroundColor: state.isSelected ? '#E27235' : '',
   }),
 };
 const training = [
   {
-    value: "sydney",
-    label: "Sydney",
+    value: 'sydney',
+    label: 'Sydney',
   },
   {
-    value: "melbourne",
-    label: "Melbourne",
+    value: 'melbourne',
+    label: 'Melbourne',
   },
 ];
 const selectRow = {
-  mode: "checkbox",
+  mode: 'checkbox',
   clickToSelect: true,
 };
 
 const FileRepository = () => {
+  let counter = 0;
+  const [count, setCount] = useState(0);
   const [show, setShow] = useState(false);
+  const [groupFlag, setGroupFlag] = useState(false);
+  const [user, setUser] = useState([]);
+  const [selectedUser, setSelectedUser] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [filterFlag, setFilterFlag] = useState(false);
+  const [selectedAll, setSelectedAll] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [franchisee, setFranchisee] = useState([]);
+  const [franchisee, setFranchisee] = useState([
+    { id: 1, registered_name: 'ABC' },
+    { id: 2, registered_name: 'PQR' },
+    { id: 3, registered_name: 'RST' },
+    { id: 4, registered_name: 'VWX' },
+    { id: 5, registered_name: 'XYZ' },
+  ]);
   const [userRole, setUserRole] = useState([]);
   const [settingData, setSettingData] = useState({
-    applicable_to_franchisee: "1",
-    applicable_to_user: "1",
+    applicable_to_franchisee: '1',
+    applicable_to_user: '1',
   });
+  const [loaderFlag, setLoaderFlag] = useState(false);
   const [columns, setColumns] = useState([
     {
-      dataField: "name",
-      text: "Name",
+      dataField: 'name',
+      text: 'Name',
       sort: true,
       formatter: (cell) => {
-        cell = cell.split(",");
+        cell = cell.split(',');
         return (
           <>
             <div className="user-list">
@@ -87,16 +106,16 @@ const FileRepository = () => {
       },
     },
     {
-      dataField: "createdon",
-      text: "Created on",
+      dataField: 'createdon',
+      text: 'Created on',
       sort: true,
     },
     {
-      dataField: "createdby",
-      text: "Created by",
+      dataField: 'createdby',
+      text: 'Created by',
       sort: true,
       formatter: (cell) => {
-        cell = cell.split(",");
+        cell = cell.split(',');
         return (
           <>
             <div className="user-list">
@@ -109,8 +128,8 @@ const FileRepository = () => {
       },
     },
     {
-      dataField: "action",
-      text: "",
+      dataField: 'action',
+      text: '',
       formatter: (cell) => {
         return (
           <>
@@ -138,7 +157,49 @@ const FileRepository = () => {
     getUserRoleAndFranchiseeData();
     getMyAddedFileRepoData();
     getFilesSharedWithMeData();
+    getFileCategory();
+    getUser();
   }, []);
+  const getFileCategory = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+
+    fetch(`${BASE_URL}/api/file-category`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => setCategory(result?.result))
+      .catch((error) => console.log('error', error));
+  };
+  const getUser = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    fetch(`${BASE_URL}/auth/users`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.data?.map((item) => {
+          item['status'] = false;
+        });
+        setUser(result?.data);
+      })
+      .catch((error) => console.log('error', error));
+  };
   const setField = (field, value) => {
     if (!value) {
       setSettingData({ ...settingData, setting_files: field });
@@ -170,55 +231,72 @@ const FileRepository = () => {
     // if (Object.keys(newErrors).length > 0) {
     //   setErrors(newErrors);
     // } else {
-      console.log("selectedFranchisee---->",selectedFranchiseeId);
-      console.log("selectedUserRole---->",selectedUserRoleName);
-    if (settingData.applicable_to_user === "1") {
-      selectedUserRole = "";
+
+    selectedUser?.map((item) => {
+      selectedFranchiseeId += item.id + ',';
+    });
+    if (settingData.applicable_to_user === '1') {
+      selectedUserRole = '';
     }
-    if (settingData.applicable_to_franchisee === "1") {
-      selectedFranchisee = "";
+    if (settingData.applicable_to_franchisee === '1') {
+      selectedFranchisee = '';
     }
+    setLoaderFlag(true);
     var myHeaders = new Headers();
-    myHeaders.append("role", localStorage.getItem("user_role"));
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
     const file = settingData.setting_files[0];
-    console.log("file------->", file);
+    console.log('file------->', file);
     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-    console.log("reader---->");
+    console.log('reader---->');
     var formdata = new FormData();
-    formdata.append("image", blob, file.name);
-    formdata.append("description", "abc");
-    formdata.append("title", "abc");
-    formdata.append("createdBy", localStorage.getItem("user_name"));
-    formdata.append("userId", localStorage.getItem("user_id"));
-    formdata.append("AccessToAllUser", settingData.applicable_to_user);
+    formdata.append('image', blob, file.name);
+    formdata.append('description', settingData.meta_description);
+    formdata.append('title', 'abc');
+    formdata.append('createdBy', localStorage.getItem('user_name'));
+    formdata.append('userId', localStorage.getItem('user_id'));
+    formdata.append('AccessToAllUser', settingData.applicable_to_user);
+    formdata.append('category_id', settingData.file_category);
     formdata.append(
-      "AccessToAllFranchisee",
+      'AccessToAllFranchisee',
       settingData.applicable_to_franchisee
     );
-    formdata.append("sharedWith", selectedFranchiseeId);
-    formdata.append("SharedRole", selectedUserRoleName);
+    formdata.append('sharedWith', selectedFranchiseeId);
+    formdata.append('SharedRole', selectedUserRoleName);
 
     var requestOptions = {
-      method: "POST",
+      method: 'POST',
       headers: myHeaders,
       body: formdata,
-      redirect: "follow",
+      redirect: 'follow',
     };
 
     fetch(`${BASE_URL}/uploads/`, requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error));
+      .then((response) => response.json())
+      .then((result) => {
+        if (result) {
+          setLoaderFlag(false);
+          setShow(false);
+        }
+      })
+      .catch((error) => console.log('error', error));
     // }
   };
   const getFilesSharedWithMeData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
     };
-
     fetch(
-      `${BASE_URL}/uploads/sharedWithMe/${localStorage.getItem("user_id")}`,
+      `${BASE_URL}/uploads/sharedWithMe/${localStorage.getItem('user_id')}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -226,131 +304,136 @@ const FileRepository = () => {
         let repoData = [];
 
         res?.map((item) => {
-          if (item.filesPath.includes("/")) {
-            item.filesPath = item.filesPath.split("/");
+          if (item.filesPath.includes('/')) {
+            item.filesPath = item.filesPath.split('/');
           }
 
-          if (item.filesPath.includes("\\")) {
-            console.log("Hello9009546546789875674");
-            item.filesPath = item.filesPath.split("\\");
+          if (item.filesPath.includes('\\')) {
+            console.log('Hello9009546546789875674');
+            item.filesPath = item.filesPath.split('\\');
           }
           repoData.push({
             id: item.id,
             name:
-              "../img/abstract-ico.png," +
+              '../img/abstract-ico.png,' +
               item.filesPath[item.filesPath.length - 1],
-            createdon: moment(item.createdAt).format("DD/MM/YYYY"),
-            createdby: item.creatorName + "," + item.creatorRole,
-            sharing: "../img/sharing-ico.png, Shared",
+            createdon: moment(item.createdAt).format('DD/MM/YYYY'),
+            createdby: item.creatorName + ',' + item.creatorRole,
+            sharing: '../img/sharing-ico.png, Shared',
           });
         });
-        console.log("repoData---->", repoData);
+        console.log('repoData---->', repoData);
         setSharedWithMeFileRepoData(repoData);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   const getMyAddedFileRepoData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(
-      `${BASE_URL}/uploads/dashboardFiles/${localStorage.getItem("user_id")}`,
+      `${BASE_URL}/uploads/dashboardFiles/${localStorage.getItem('user_id')}`,
       requestOptions
     )
       .then((response) => response.json())
-      .then((res) => {
+      .then((result) => {
         let repoData = [];
+        console.log('data--->', result);
+        // res?.map((item) => {
+        //   if (item.filesPath.includes('/')) {
+        //     item.filesPath = item.filesPath.split('/');
+        //   }
 
-        res?.map((item) => {
-          if (item.filesPath.includes("/")) {
-            item.filesPath = item.filesPath.split("/");
-          }
-
-          if (item.filesPath.includes("\\")) {
-            console.log("Hello9009546546789875674");
-            item.filesPath = item.filesPath.split("\\");
-          }
-          repoData.push({
-            id: item.id,
-            name:
-              "../img/abstract-ico.png," +
-              item.filesPath[item.filesPath.length - 1],
-            createdon: moment(item.createdAt).format("DD/MM/YYYY"),
-            createdby: item.creatorName + "," + item.creatorRole,
-            sharing: "../img/sharing-ico.png, Shared",
-          });
-        });
-        console.log("repoData---->", repoData);
-        setFileRepoData(repoData);
+        //   if (item.filesPath.includes('\\')) {
+        //     console.log('Hello9009546546789875674');
+        //     item.filesPath = item.filesPath.split('\\');
+        //   }
+        //   repoData.push({
+        //     id: item.id,
+        //     name:
+        //       '../img/abstract-ico.png,' +
+        //       item.filesPath[item.filesPath.length - 1],
+        //     createdon: moment(item.createdAt).format('DD/MM/YYYY'),
+        //     createdby: item.creatorName + ',' + item.creatorRole,
+        //     sharing: '../img/sharing-ico.png, Shared',
+        //   });
+        // });
+        console.log('repoData---->', repoData);
+        setFileRepoData(result);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   const getUserRoleAndFranchiseeData = () => {
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
     };
 
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         setUserRole(res?.userRoleList);
-        console.log("response0-------->1", res?.userRoleList);
+        console.log('response0-------->1', res?.userRoleList);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
     fetch(`${BASE_URL}/role/franchisee`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         setFranchisee(res?.franchiseeList);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   function onSelectFranchisee(optionsList, selectedItem) {
-    console.log("selected_item---->2", selectedItem);
-    selectedFranchiseeId += selectedItem.id + ",";
+    console.log('selected_item---->2', selectedItem);
+    selectedFranchiseeId += selectedItem.id + ',';
     selectedFranchisee.push({
       id: selectedItem.id,
       registered_name: selectedItem.registered_name,
     });
-    {console.log("selectedFranchisee---->",selectedFranchisee)}
+    {
+      console.log('selectedFranchisee---->', selectedFranchisee);
+    }
   }
   function onRemoveFranchisee(selectedList, removedItem) {
-    
-    selectedFranchiseeId = selectedFranchiseeId.replace(removedItem.id + ",", "");
+    selectedFranchiseeId = selectedFranchiseeId.replace(
+      removedItem.id + ',',
+      ''
+    );
     const index = selectedFranchisee.findIndex((object) => {
       return object.id === removedItem.id;
     });
     selectedFranchisee.splice(index, 1);
-    {console.log("selectedFranchisee---->",selectedFranchisee)}
+    {
+      console.log('selectedFranchisee---->', selectedFranchisee);
+    }
   }
-
-  function onSelectUserRole(optionsList, selectedItem) {
-    console.log("selected_item---->2", selectedItem);
-    selectedUserRoleName += selectedItem.role_label + ",";
-    selectedUserRole.push({
-      id: selectedItem.id,
-      role_label: selectedItem.role_label,
+  function onSelect(index) {
+    let data = [...user];
+    if (data[index]['status'] === true) {
+      data[index]['status'] = false;
+      setSelectedAll(false);
+    } else {
+      data[index]['status'] = true;
+    }
+    let count = 0;
+    data.map((item) => {
+      if (item.status === true) count++;
     });
-    console.log("form---->2selectedUserRole", selectedUserRole);
-  }
-  function onRemoveUserRole(selectedList, removedItem) {
-    selectedUserRoleName = selectedUserRoleName.replace(
-      removedItem.role_label + ",",
-      ""
-    );
-    const index = selectedUserRole.findIndex((object) => {
-      return object.id === removedItem.id;
-    });
-    selectedUserRole.splice(index, 1);
-    console.log("form---->2selectedUserRole", selectedUserRole);
+    if (count === data.length) {
+      setSelectedAll(true);
+    }
+    setUser(data);
   }
   return (
     <>
-      {console.log("form---->", settingData)}
-      {console.log("form----franchisee>", selectedFranchisee)}
-      {console.log("form----user-role>", selectedUserRole)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -458,7 +541,7 @@ const FileRepository = () => {
                                 >
                                   <FontAwesomeIcon
                                     icon={faArrowUpFromBracket}
-                                  />{" "}
+                                  />{' '}
                                   Upload File
                                 </span>
                                 <Dropdown>
@@ -490,9 +573,9 @@ const FileRepository = () => {
                                   onClick={() => {
                                     setTabFlag(true);
                                   }}
-                                  className={tabFlag === true ? "active" : ""}
+                                  className={tabFlag === true ? 'active' : ''}
                                 >
-                                  Files shared with me{" "}
+                                  Files shared with me{' '}
                                 </a>
                               </li>
                               <li>
@@ -500,9 +583,9 @@ const FileRepository = () => {
                                   onClick={() => {
                                     setTabFlag(false);
                                   }}
-                                  className={tabFlag === false ? "active" : ""}
+                                  className={tabFlag === false ? 'active' : ''}
                                 >
-                                  {" "}
+                                  {' '}
                                   My added files
                                 </a>
                               </li>
@@ -530,138 +613,196 @@ const FileRepository = () => {
         show={show}
         onHide={handleClose}
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+        <Modal.Header closeButton className="f-c-modal"></Modal.Header>
+        <Modal.Body className="p-0">
           <div className="form-settings-content">
-            <Row>
-              <Col md={12}>
-                <Form.Group>
-                  <DragDropRepository onChange={setField} />
-                  <p className="error">{errors.setting_files}</p>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row className="mt-4">
-              <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Accessible to all franchisee</Form.Label>
-                  <div className="new-form-radio">
-                    <div className="new-form-radio-box">
-                      <label for="yes1">
-                        <input
-                          type="radio"
-                          value="1"
-                          name="applicable_to_franchisee"
-                          id="yes1"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                          checked={settingData.applicable_to_franchisee === "1"}
-                        />
-                        <span className="radio-round"></span>
-                        <p>Yes</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box">
-                      <label for="no1">
-                        <input
-                          type="radio"
-                          value="0"
-                          name="applicable_to_franchisee"
-                          id="no1"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                          checked={settingData.applicable_to_franchisee === "0"}
-                        />
-                        <span className="radio-round"></span>
-                        <p>No</p>
-                      </label>
-                    </div>
+            <div className="modal-top">
+              <div className="modal-top-containt">
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <DragDropRepository onChange={setField} />
+                      <p className="error">{errors.setting_files}</p>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <div className="toggle-switch">
+                  <Row>
+                    <Col md={12}>
+                      <div className="t-switch">
+                        <p>Enable Sharing</p>
+                        <div className="toogle-swich">
+                          <input
+                            className="switch"
+                            name="required"
+                            type="checkbox"
+                          />
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+                <div className="setting-heading">
+                  <h2>Settings</h2>
+                </div>
+              </div>
+              <hr></hr>
+            </div>
+            <div className="modal-bottom">
+              <Row>
+                <Col lg={12}>
+                  <div className="metadescription">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Meta Description</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        name="meta_description"
+                        onChange={(e) => {
+                          setField(e.target.name, e.target.value);
+                        }}
+                      />
+                    </Form.Group>
                   </div>
-                </Form.Group>
-              </Col>
-              {settingData.applicable_to_franchisee === "0" ? (
-                <Col lg={9} md={6} className="mt-3 mt-md-0">
+                </Col>
+                <Col lg={12}>
                   <Form.Group>
-                    <Form.Label>Select Franchisee</Form.Label> 
-                    <Multiselect
-                      displayValue="registered_name"
-                      className="multiselect-box default-arrow-select"
-                      placeholder="Select Franchisee"
-                      selectedValues={selectedFranchisee}
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={onRemoveFranchisee}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={onSelectFranchisee}
-                      options={franchisee}
-                    />
-                    <p className="error">{errors.franchisee}</p>
+                    <Form.Label>File Category</Form.Label>
+                    <Form.Select
+                      name="file_category"
+                      onChange={(e) => {
+                        setField(e.target.name, e.target.value);
+                      }}
+                    >
+                      <option value="">Select File Category</option>
+                      {category?.map((item) => {
+                        return (
+                          <option value={item.id}>{item.category_name}</option>
+                        );
+                      })}
+                    </Form.Select>
                   </Form.Group>
                 </Col>
-              ) : null}
-              <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Applicable to all user roles</Form.Label>
-                  <div className="new-form-radio">
-                    <div className="new-form-radio-box">
-                      <label for="yes2">
-                        <input
-                          type="radio"
-                          value="1"
-                          name="applicable_to_user"
-                          id="yes2"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                            
-                          }}
-                          checked={settingData.applicable_to_user === "1"}
-                        />
-                        <span className="radio-round"></span>
-                        <p>Yes</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box">
-                      <label for="no2">
-                        <input
-                          type="radio"
-                          value="0"
-                          name="applicable_to_user"
-                          id="no2"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                          checked={settingData.applicable_to_user === "0"}
-                        />
-                        <span className="radio-round"></span>
-                        <p>No</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col>
-              {settingData.applicable_to_user === "0" ? (
-                <Col lg={9} md={6} className="mt-3 mt-md-0">
+              </Row>
+              <Row className="mt-4">
+                <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Select User Roles</Form.Label>
-                    <Multiselect
-                      placeholder="Select User Roles"
-                      displayValue="role_label"
-                      selectedValues={selectedUserRole}
-                      className="multiselect-box default-arrow-select"
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={onRemoveUserRole}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={onSelectUserRole}
-                      options={userRole}
-                    />
-                    <p className="error">{errors.user}</p>
+                    <Form.Label>Accessible to:</Form.Label>
+                    <div className="new-form-radio d-block">
+                      <div className="new-form-radio-box">
+                        <label for="yes1">
+                          <input
+                            type="radio"
+                            value="1"
+                            name="applicable_to_franchisee"
+                            id="yes1"
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.value);
+                            }}
+                            checked={
+                              settingData.applicable_to_franchisee === '1'
+                            }
+                          />
+                          <span className="radio-round"></span>
+                          <p>User Roles</p>
+                        </label>
+                      </div>
+                      <div className="new-form-radio-box m-0 mt-3">
+                        <label for="no1">
+                          <input
+                            type="radio"
+                            value="0"
+                            name="applicable_to_franchisee"
+                            id="no1"
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.value);
+                            }}
+                            checked={
+                              settingData.applicable_to_franchisee === '0'
+                            }
+                          />
+                          <span className="radio-round"></span>
+                          <p>Specific Users</p>
+                        </label>
+                      </div>
+                    </div>
                   </Form.Group>
                 </Col>
-              ) : null}
-            </Row>
+                <Col lg={9} md={12}>
+                  {settingData.applicable_to_franchisee === '1' ? (
+                    <Form.Group>
+                      <Form.Label>Select User Roles</Form.Label>
+                      <div className="modal-two-check user-roles-box">
+                        <label className="container">
+                          Co-ordinators
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                        <label className="container">
+                          Educators
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                        <label className="container">
+                          Parents
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                        <label className="container">
+                          All Roles
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                      </div>
+                    </Form.Group>
+                  ) : null}
+                  {settingData.applicable_to_franchisee === '0' ? (
+                    <Form.Group>
+                      <Form.Label>Select Franchisee</Form.Label>
+                      <div className="select-with-plus">
+                        {console.log('data----->', selectedUser)}
+                        <Multiselect
+                          displayValue="fullname"
+                          className="multiselect-box default-arrow-select"
+                          // placeholder="Select Franchisee"
+                          selectedValues={selectedUser}
+                          // onKeyPressFn={function noRefCheck() {}}
+                          onRemove={onRemoveFranchisee}
+                          // onSearch={function noRefCheck() {}}
+                          onSelect={onSelectFranchisee}
+                          // options={franchisee}
+                        />
+                        <Button
+                          className="add_operating_button"
+                          onClick={() => {
+                            setGroupFlag(true);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </Button>
+                      </div>
+                      <p className="error">{errors.franchisee}</p>
+                    </Form.Group>
+                  ) : null}
+                </Col>
+              </Row>
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -669,10 +810,264 @@ const FileRepository = () => {
             Cancel
           </Button>
           <Button variant="primary" onClick={onSubmit}>
-            Upload File
+            {loaderFlag === true ? (
+              <>
+                <img
+                  style={{ width: '24px' }}
+                  src={'/img/mini_loader1.gif'}
+                  alt=""
+                />
+                Uploading...
+              </>
+            ) : (
+              'Upload File'
+            )}
           </Button>
         </Modal.Footer>
       </Modal>
+      <div className="select-user-modal">
+        <Modal
+          className="select-user-modal select-user"
+          show={groupFlag}
+          onHide={() => {
+            setSelectedUser([]);
+            setGroupFlag(false);
+          }}
+          size="md"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Header closeButton className="select-users-header">
+            <Button className="ml-auto">
+              <img src="../../img/carbon_settings.svg" />
+            </Button>
+            <Modal.Title
+              id="contained-modal-title-vcenter"
+              className="modal-heading"
+            >
+              Select Users
+            </Modal.Title>
+            <button
+              type="button"
+              id="extrabtn"
+              aria-expanded="false"
+              class="filter-button btn btn-btn-outline "
+              onClick={() => {
+                setFilterFlag(true);
+              }}
+            >
+              <i class="filter-ico"></i> Add Filters
+            </button>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="select-user-modal-body ">
+              <div className="select-user-list-head"></div>
+              <div className="select-user-list-row main-lable">
+                <div className="s-modal-left s-modal-heading">
+                  <div className="select-user-checkbox  modal-two-check">
+                    <label className="container">
+                      <input
+                        type="checkbox"
+                        name="role"
+                        id="co-ordinators"
+                        checked={selectedAll === true}
+                        onClick={(e) => {
+                          setSelectedAll(e.target.checked);
+                          let data = [...user];
+                          data?.map((item) => {
+                            item.status = e.target.checked;
+                          });
+                          setUser(data);
+                        }}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
+                  </div>
+                  <div className="select-user-image-name main-lable-img">
+                    {/* <img alt="" id="user-pic" src="/img/user.png" /> */}
+                    <h6>Name</h6>
+                  </div>
+                </div>
+                <div className="select-user-role main-lable-heading">
+                  <h6>User Role</h6>
+                </div>
+              </div>
+            </div>
+            {console.log('user----->', user)}
+            {user?.map((item, index) => {
+              return (
+                <div className="select-user-modal-body">
+                  <div className="select-user-list-head"></div>
+                  <div className="select-user-list-row">
+                    <div className="s-modal-left">
+                      <div className="select-user-checkbox  modal-two-check">
+                        <label className="container">
+                          <input
+                            type="checkbox"
+                            name="role"
+                            id="co-ordinators"
+                            onClick={() => {
+                              onSelect(index);
+                            }}
+                            checked={item.status === true}
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                      </div>
+                      <div className="select-user-image-name">
+                        <img alt="" id="user-pic" src="/img/user.png" />
+                        <h6>{item.fullname}</h6>
+                      </div>
+                    </div>
+                    <div className="select-user-role text-capitalize">
+                      <h6>{item.role.split('_').join(' ')}</h6>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </Modal.Body>
+          <Modal.Footer className="justify-content-center">
+            <Button
+              variant="transparent"
+              onClick={() => {
+                setSelectedUser([]);
+                setGroupFlag(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setGroupFlag(false);
+                let data = [...user];
+                let selectedData = [];
+                data.map((item) => {
+                  if (item.status === true) {
+                    selectedData.push(item);
+                  }
+                });
+                setSelectedUser(selectedData);
+              }}
+            >
+              Done
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+
+      <div className="filter-user-modal-wrp">
+        <Modal
+          className="select-user-modal select-user filter-user-modal"
+          show={filterFlag}
+          onHide={() => {
+            setSelectedUser([]);
+            setFilterFlag(false);
+          }}
+          size="sm"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Header closeButton className="select-users-header">
+            <Modal.Title
+              id="contained-modal-title-vcenter"
+              className="modal-heading"
+            >
+              Filter by:
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group className="filter-wpr">
+              <Form.Label>Select Filter Criteria:</Form.Label>
+              <Form.Select
+                name="file_category"
+                onChange={(e) => {
+                  setField(e.target.name, e.target.value);
+                }}
+              >
+                <option value="">User based on their roles</option>
+                <option value="">Parents specific to a educator</option>
+                <option value="">Children specific to a educator</option>
+                <option value="">
+                  All users connected to a specific franchise
+                </option>
+                <option value="">
+                  All internal users connected to a specific franchise (excludes
+                  parents)
+                </option>
+                <option value="">All users</option>
+                <option value="">
+                  All internal users(all users excepts parents/children)
+                </option>
+                <option value="">
+                  User based on their roles for a specific franchise
+                </option>
+                <option value="">Parents specific to children</option>
+                <option value="">Co-ordinator specific to educator</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="select-role-wrp">
+              <Form.Label>Select a role</Form.Label>
+              <div className="select-check-wrp">
+                {userRole.map((item) => {
+                  return (
+                    <div class="form-group">
+                      <input type="radio" id={item.role_name} name="role" />
+                      <label for={item.role_name}>{item.role_label}</label>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* <div className="select-check-wrp">
+                <div class="form-group">
+                  <input type="checkbox" id="html" />
+                  <label for="html">Admin</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="css" />
+                  <label for="css">Co-ordinator</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="javascript" />
+                  <label for="javascript">Educator</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="javascript1" />
+                  <label for="javascript1">Parent/Guardian</label>
+                </div>
+              </div> */}
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer className="justify-content-center">
+            <Button
+              variant="transparent"
+              onClick={() => {
+                setSelectedUser([]);
+                setGroupFlag(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setFilterFlag(false);
+                let data = [...user];
+                let selectedData = [];
+                data.map((item) => {
+                  if (item.status === true) {
+                    selectedData.push(item);
+                  }
+                });
+                setSelectedUser(selectedData);
+              }}
+            >
+              Apply
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     </>
   );
 };

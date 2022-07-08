@@ -6,9 +6,20 @@ import { BASE_URL } from "./App";
 const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
 
     const [franchiseeList, setFranchiseeList] = useState([]);
+    const [permissionList, setPermissionList] = useState();
+
+    const savePermissionInState = async () => {
+      let menu_list = JSON.parse(localStorage.getItem('menu_list'));
+      setPermissionList(menu_list);
+    };
 
     const fetchFranchiseeList = async () => {
-      const response = await axios.get(`${BASE_URL}/role/franchisee`);
+      let token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
       if(response.status === 200) {
         const { franchiseeList: franchiseeData } = response.data;
         setFranchiseeList([...franchiseeData.map((data) => ({
@@ -22,10 +33,10 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       const response = await axios.get(`${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`);
       if(response.status === 200) {
         const { franchisee } = response.data;
-        setSelectedFranchisee(franchisee.registered_name);
+        setSelectedFranchisee(franchisee.franchisee_name);
         setFranchiseeList([franchisee].map((data) => ({
           id: data.id,
-          franchisee_name: `${data.registered_name}, ${data.city}`
+          franchisee_name: `${data.franchisee_name}, ${data.city}`
         })));
       }
     };
@@ -37,6 +48,8 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         localStorage.removeItem('user_id');
         localStorage.removeItem('user_name');
         localStorage.removeItem('user_role');
+        localStorage.removeItem('menu_list');
+        localStorage.removeItem('active_tab');
         localStorage.removeItem('selectedFranchisee');
         window.location.href = "/";
       }
@@ -57,6 +70,10 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
       } else {
         fetchAndPopulateFranchiseeDetails();
       }
+    }, []);
+
+    useEffect(() => {
+      savePermissionInState();
     }, []);
 
     return (
@@ -101,13 +118,13 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
                       
                       <small>{localStorage.getItem('user_role')?localStorage.getItem('user_role').split('_').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}</small></span>
                     </Dropdown.Toggle>
-                    <Dropdown.Menu>
+                    <Dropdown.Menu style={{ zIndex: "2000" }}>
 
                     {
-                      localStorage.getItem('menu_list')
-                        ? JSON.parse(localStorage.getItem('menu_list')).map((top_menu) => {
+                      permissionList
+                        ? permissionList.map((top_menu) => {
                           return (
-                                <Dropdown.Item key={top_menu.controller.id} href={top_menu.controller.menu_link}>
+                                <Dropdown.Item key={top_menu.id} href={top_menu.controller.menu_link}>
                                   {top_menu.controller.controller_label}
                                 </Dropdown.Item>
                            )}) : null

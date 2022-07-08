@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from "react";
 // import path  from 'path';
-import { Button, Col, Container, Row, Form, Dropdown,Modal } from "react-bootstrap";
+import { Container, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
 import { BASE_URL } from "../components/App";
-import { Link } from 'react-router-dom';
-import Select from 'react-select';
-import { PlayerSdk } from '@api.video/player-sdk'
+import moment from 'moment';
+import { useParams } from 'react-router-dom';
 
-import makeAnimated from 'react-select/animated';
-// import videos from "https://embed.api.video/vod/vi4RgvXlXiTRZsy2AEyY524Z"
+import videos from "../assets/video/Cute Panda.mp4"
 import svideos from "../assets/video/d.mp4"
 import pdf from "../assets/pdf/1652501632697.pdf"
 import student from "../assets/img/student.jpg"
 import VideoPop from "../components/VideoPop";
 
 
-const animatedComponents = makeAnimated();
-
-
-
+// const animatedComponents = makeAnimated();
 
 const styles = {
   option: (styles, state) => ({
@@ -38,6 +33,9 @@ var file = '/home/data/dir/file.txt';
 
 // console.log(training)
 const TrainingDetail = () => {
+  const { trainingId } = useParams();
+  const [trainingDetails, setTrainingDetails] = useState(null);
+
   let videoURL = ""
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -48,91 +46,69 @@ const TrainingDetail = () => {
   const [thepdf,setPdfSet] = useState("https://s3.us-west-1.amazonaws.com/mona-cip-dev/public/assets/.docs/Rohan%27sResume_2022-06-13_1655102409338.pdf")
   const [Trainingdata,setTrainingData] = useState("");
   const [TrainingFile,setTrainingFile] = useState([]);
-  const [TrainingComplete,setTrainingComplete] = useState(" ")
-  const [video,setVideo] = useState("https://embed.api.video/vod/vi4RgvXlXiTRZsy2AEyY524Z")
+  const [hideTrainingFinishButton, setHideTrainingFinishButton] = useState(false);
+  const [trainingFinishedDate, setTrainingFinishedDate] = useState();
+  
+  const getTrainingDetails = async () => {
+    const user_id = localStorage.getItem('user_id');
+    const token = localStorage.getItem('token');
 
-  const getTrainingDetail = async() =>{
-    console.log("The comments")
-    console.log("The token", localStorage.getItem("token"))
-    const userID =   localStorage.getItem('user_id');
-    // let response = await axios.get("http://localhost:4000/training/getTrainingById/3");
-    let response = await axios.get(`${BASE_URL}/training/getTrainingById/8/${userID}`, {
+    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${user_id}`, {
       headers: {
-        "Authorization": "Bearer " + localStorage.getItem('token')
+        "Authorization": "Bearer " + token
       }
     });
-    console.log("The response",response.data)
-    // const filename = response.headers['content-disposition'].split('filename=')[1];
-    // console.log("Fike name", filename)
-
-    if(response.status === 200){
-      
-      const {data} = response;
-      const Thetrainingdata= data
-      console.log("Traing data",Thetrainingdata)
-      setTrainingData(Thetrainingdata)
-      setTrainingFile(Thetrainingdata.training_files)
-    }
-}
-  const TrainingMarkCompleted = async() =>{
-    const userID =   localStorage.getItem('user_id');
-    let response = await axios.post(`${BASE_URL}/training/completeTraining/4/${userID}?training_status=in_progress`)
-    console.log("Training mark completed", response)
-    if(response.status === 200){
-      setTrainingComplete(response.data)
-      console.log(response.data)
-    }
-  }
-
-
-const getUploadTime = (thedate) =>{
-               var strSplitDate2 = String(thedate).split(' ')
-           
-              // var messages = item.message;
-              var date = new Date(strSplitDate2[0]);
     
-              var last = date.toLocaleString();
-              const myArray = last.split(" ");
-              console.log("MYarray", myArray)
 
-
-
-  var strSplitDate = String(thedate).split(' ')
-  console.log("The split date",strSplitDate[0])
-  var date = new Date(strSplitDate[0]) 
-  // console.log("The date",(new Date()-date/1000/31536000))
-  var seconds = Math.floor((new Date() - date) / 1000);
-  var interval = seconds / 31536000;                          
-  if (interval > 1) {
-      return Math.floor(interval) + " years";
-   }
-  interval = seconds / 2592000;
-   if (interval > 1) {
-    return Math.floor(interval) + " months";
-   }
-   interval = seconds / 86400;
-   if (interval > 1) {
-     let day = Math.floor(interval) + " days";
-      return day 
+    if(response.status === 200 && response.data.status === "success") {
+      const { all_trainings } = response.data;
+      setTrainingDetails(all_trainings);
+      setHideTrainingFinishButton(all_trainings.is_Training_completed);
+    }
   }
-  interval = seconds / 3600;
-  if (interval > 1) {
-      return Math.floor(interval) + " hours";
-  }
-  interval = seconds / 60;
-  if (interval > 1) {
-     return Math.floor(interval) + " minutes";
-  }
-  return Math.floor(seconds) + " seconds";
-                          
-}
 
+  const handleFinishTraining = (event) => {
+    updateFinishTraining();
+  };
+
+  const updateFinishTraining = async () => {
+    const user_id = localStorage.getItem('user_id');
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${BASE_URL}/training/completeTraining/${trainingId}/${user_id}?training_status=finished`, {}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    console.log('TRAINING FINISH STATUS:', response);
+    if(response.status === 200 && response.data.status === "success") {
+      setTrainingFinishedDate(response.data.finished_date);
+      setHideTrainingFinishButton(true);
+    }
+  };
+
+  const fetchTrainingFinishDate = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/get-finish-training-date/${trainingId}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success" && response.data.is_training_finished === false) {
+    } else {
+      let { finished_date } = response.data;
+      setTrainingFinishedDate(finished_date);
+      setHideTrainingFinishButton(true);
+    }
+  };
 
   useEffect(() =>{
-    getTrainingDetail()
-    
-    },[])
-  // console.log("The training file",TrainingFile[1])
+    getTrainingDetails()
+    fetchTrainingFinishDate();
+  }, [])
+
+  trainingDetails && console.log('TRAINING ID:', trainingDetails);
   return (
     <>
       <div id="main">
@@ -144,9 +120,10 @@ const getUploadTime = (thedate) =>{
               </aside>
               <div className="sec-column">
                 <TopHeader />
+                {trainingDetails &&
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-sm">{Trainingdata.title}</h1>
+                    <h1 className="title-sm">{trainingDetails.title}</h1>
                     <div className="othpanel">
                       <div className="extra-btn">
                         <Dropdown>
@@ -162,80 +139,52 @@ const getUploadTime = (thedate) =>{
                   </header>
                   <div className="traning-detail-sec">
                     <div className="thumb-vid">
-                      {/* {TrainingFile.map((user) => (
-                        user.fileType === ".mp4" && 
-                        <iframe src={user.file} width={500} height={500} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture full"></iframe>                  
-                      ))} */}
-                      {/* {showVideo()} */}
-                        {/* <div id="target"></div> */}
-                     
-     
-                   <div>
-             </div>
+                      <img 
+                        src={trainingDetails.training_files[0].thumbnail}
+                        alt="video thumbnail" />
                     </div>
                     <div className="training-cont mt-3 mb-5">
-                      {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis a sagittis varius vel, est quam quam. Orci blandit ac eleifend mi cursus velit pellentesque. Sodales iaculis netus ipsum facilisis suspendisse dolor. Sed sed neque enim tellus in tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis a sagittis varius vel, est quam quam.</p> */}
-                      <p>{Trainingdata.description}</p>
+                      <p>{trainingDetails.description}</p>
                     </div>
-                    {/* <iframe src="mypage.html" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"></iframe> */}
-                  
-                    {/* <iframe src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp"  title="dsk " allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="1280" height="720" frameborder="0"></iframe> */}
-                   <div style={{display:"flex"}}>
-
-                    <div>
-                    <h2 className="title-sm">Video Tutorial</h2>            
-                    {
-                      
-                         TrainingFile.map((data,index) => 
-                          {
-                            let thedate = ""
-                            if(data.fileType === ".mp4"){
-                              thedate =  getUploadTime(data.createdAt)
-                               console.log("Created at",data.createdAt)
-                            }
-                            
-                            return(  
-                              data.fileType === ".mp4" &&
-                              // <iframe src={videos}  width={500} height={500} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture  object-fit: contain;" allowFullScreen ></iframe>
-                              // <img  key={index} src={student} alt="" onClick={handleShow}  />
-                              <VideoPop img ={student} data ={data} video ={video} time = {thedate} theshow={show} handleClose={handleClose} showset={setShow} />
-                           )
-                          }
-                         
-                        )
-                      }
                     
-                    </div>
-                  <div>
-                  <h2 className="title-sm">Related Files</h2>
-                  <div className="column-list files-list three-col mb-5">  
-                      {TrainingFile.map((data) =>
-                       {
-                        let thedate = "" 
-                        if(data.fileType === ".pdf"){
-                          thedate =  getUploadTime(data.createdAt)
-                          console.log("Created at",data.createdAt)
+                  <div style={{ marginBottom: "40px" }}>
+                    <div style={{ display: "flex", marginBottom: "30px" }}>
+                      <div className="col-sm-6">
+                        <h2 className="title-sm">Video Tutorial</h2>
+                        {
+                            trainingDetails.training_files.map((data,index) => (    
+                                <VideoPop 
+                                  img ={data.thumbnail} 
+                                  data ={data.file} 
+                                  video ={videos} 
+                                  fun={handleClose}/>
+                            ))
                         }
-                        return  (
-                          data.fileType === ".pdf" && 
-                          <div className="item">
-                          <a href={data.file} download={data.file}> 
-                            <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-                           <div className="name">{data.file.split("/").pop()} <span className="time">{thedate}</span></div>
-                         </a>
-                         </div>              
-                        )
-                       }
-                      )}
-                    
-                    </div>
-                  </div>
-                 
+                      </div>
                       
-                      {/* Exprement  */}
-                     
-                  
-                    </div>  
+                      <div className="col-sm-6">  
+                        <h2 className="title-sm">Related Files</h2>
+                        <div className="column-list files-list three-col mb-5">
+                            {TrainingFile.map((user) => (
+                              user.fileType === ".pdf" && 
+                              <div className="item">
+                              <a href={user.file} download={user.file}> 
+                                <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
+                              <div className="name">{user.file.split("/").pop()} <span className="time">3 Hours</span></div>
+                            </a>
+                            </div>              
+                            ))}    
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="col-sm-12">
+                      <h2 className="title-sm">Related Forms</h2>
+                      <div>
+
+                      </div>
+                    </div>
+                  </div>  
                   
                     {/* Exprenment end */}
 
@@ -271,47 +220,29 @@ const getUploadTime = (thedate) =>{
                       </div>
                     </div> */}
 
-                    <div className="complete-training text-center">
-                      <p>
-                        Please acknowledge by clicking below that you have
-                        completed this training completely and can proceed
-                        further.
-                      </p>
-                      {/* <a href="" className="btn btn-primary" onClick={TrainingMarkCompleted}>
+                    <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
+                      { hideTrainingFinishButton
+                        ? <p> You've finished this training on {moment(trainingFinishedDate).format(
+                          'MMMM Do, YYYY'
+                        )}</p>
+                        : <p>
+                            Please acknowledge by clicking below that you have
+                            completed this training completely and can proceed
+                            further.
+                          </p>
+                        
+                      }
+                      <button className={`btn btn-primary ${hideTrainingFinishButton ? "d-none" : ""}`} onClick={handleFinishTraining}>
                         Yes, I have completed the training
-                      </a> */}
-                      <Link to="#" onClick={TrainingMarkCompleted}>
-
-                      {TrainingComplete =="training marked as completed!"? "Success,You have completed this training": "Yes, I have completed the training"  } 
-                       </Link>
+                      </button>
                     </div>
                   </div>
                 </div>
+              }
               </div>
             </div>
           </Container>
         </section>
-        {/* <VideoPop
-          
-        /> */}
-
-         {/* <Modal
-        className="training-modal"
-        size="lg"
-        show={show}
-        onHide={handleClose}
-      >
-        <Modal.Header closeButton>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="form-settings-content">
-            <Row>
-            <iframe width={200} height={200} src={videos} title="YouTube video player" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-              
-            </Row>   
-          </div>
-        </Modal.Body>
-      </Modal>  */}
       </div>
     </>
   );

@@ -5,7 +5,7 @@ import TopHeader from "../components/TopHeader";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
-import { useNavigate, useParams  } from 'react-router-dom';
+import { useNavigate, useParams, NavLink, useLocation  } from 'react-router-dom';
 import axios from "axios";
 
 const animatedComponents = makeAnimated();
@@ -27,55 +27,23 @@ const training = [
 ];
 
 const CompleteTraining = () => {
-  const [completeData, setCompleteData] = useState([]);
-  
+  const [completedTrainingData, setCompletedTrainingData] = useState([]);
+
+  const fetchCompletedTrainingData = async () => {
+    let user_id = localStorage.getItem('user_id');
+    const response = await axios.get(`${BASE_URL}/training/${user_id}`);
+
+    console.log('RESPONSE:', response);
+    if(response.status === 200 && response.data.status === "success") {
+      const { trainingList } = response.data;
+      setCompletedTrainingData(trainingList);
+    }
+  };  
 
   useEffect(() => {
-    // console.log("user_id user_id user_id", localStorage.getItem("user_id"));
-    
-    const id = localStorage.getItem("user_id");
-    console.log(id);
-    axios.get(`${BASE_URL}/training/${id}`)
-    .then(res => {
-      console.log(res)
-      setCompleteData(res.data)
-  })
-  .catch(err =>{
-      console.log(err)
-  })
-  },[]);
-  // const getAssignedData = () => {
-  //   var requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow",
-  //   };
-    // const AvailableTraining = async () => {
-    //   const [assignedData, setAssignedData] = useState([]);
-    //   const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${localStorage.getItem("user_id")}`);
-  
-    //   if (response.status === 200) {
-  
-    //     const { data_list } = response.data;
-  
-    //     setAssignedData(
-  
-    //       data_list.map((datas) => ({
-  
-    //         value: datas.id,
-  
-    //         label: datas.title,
-  
-    //       }))
-  
-    //     );
-  
-    //   }
-    // };
-  // fetch(`${BASE_URL}/training/assigeedTraining/${localStorage.getItem("user_id")}`, requestOptions)
-  //   .then((response) => response.json())
-  //   .then((result) => setAssignedData(result?.result))
-  //   .catch((error) => console.log("error", error));
-  // };
+    fetchCompletedTrainingData();
+  }, []);
+
   return (
     <>
       <div id="main">
@@ -172,20 +140,21 @@ const CompleteTraining = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                    <li><a className="active">Complete Training</a></li>
-                    {/* <li><a href="/" className="active">Trainings Created</a></li> */}
+                    <li><NavLink to="/available-training">Trainings Available</NavLink></li>
+                    <li><NavLink to="/complete-training">Complete Training</NavLink></li>
+                    <li><NavLink to="/">Trainings Created</NavLink></li>
                     </ul>
                   </div>
                   <div className="training-column">
                     <Row>
-                    {completeData?.map((item) => {
+                    {completedTrainingData?.map((item) => {
                       return(
-                      <Col lg={4} md={6}>
+                      <Col lg={4} md={6} key={item.id}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="{item.file}" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
+                          <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={`${item.training.training_files[0].thumbnail}`} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">{item.title}</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">{item.training.title}</a> <span className="time">{ item.training.completion_time }</span></div>
                             <div className="cta-col">
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">

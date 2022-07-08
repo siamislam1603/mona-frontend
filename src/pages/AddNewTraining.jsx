@@ -9,6 +9,7 @@ import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
@@ -30,13 +31,13 @@ const AddNewTraining = () => {
   const handleSaveAndClose = () => setShow(false);
 
   // CUSTOM STATES
-  const [hideSelect, setHideSelect] = useState(false);
-  const [hideRoleDialog, setHideRoleDialog] = useState(false);
-  const [hideUserDialog, setHideUserDialog] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   const [userRoles, setUserRoles] = useState([]);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [trainingData, setTrainingData] = useState();
+  const [trainingData, setTrainingData] = useState({
+    user_roles: []
+  });
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -74,7 +75,9 @@ const AddNewTraining = () => {
     console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
+      setLoader(false)
       localStorage.setItem('success_msg', 'Training Created Successfully!');
+      localStorage.setItem('active_tab', '/created-training');
       window.location.href="/training";
 
 
@@ -103,13 +106,21 @@ const AddNewTraining = () => {
 
   // FETCHING TRAINING CATEGORIES
   const fetchTrainingCategories = async () => {
+    const token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`
+      `${BASE_URL}/training/get-training-categories`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      }
     );
-    if (response.status === 200) {
-      const { categoryList } = response.data.data;
+
+    if (response.status === 200 && response.data.status === "success") {
+      const { categoryList } = response.data;
+      console.log('CATEGORY:', )
       setTrainingCategory([
         ...categoryList.map((data) => ({
+          id: data.id,
           value: data.category_alias,
           label: data.category_name,
         })),
@@ -153,6 +164,7 @@ const AddNewTraining = () => {
         data.append(`images`, file);
       });
 
+      setLoader(true);
       createTraining(data);
     }
   };
@@ -165,9 +177,9 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
-  
+
   return (
-    <>
+    <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -266,7 +278,7 @@ const AddNewTraining = () => {
                       </Col>
                     </Row>
                     <Row>
-       
+      
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image :</Form.Label>
@@ -378,7 +390,7 @@ const AddNewTraining = () => {
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Applicable to all users</Form.Label>
+                  <Form.Label>Applicable to:</Form.Label>
                   <div className="new-form-radio">
                     <div className="new-form-radio-box">
                       <label htmlFor="yes1">
@@ -392,11 +404,10 @@ const AddNewTraining = () => {
                               ...prevState,
                               is_applicable_to_all: true,
                             }));
-                            setHideSelect(true);
                           }}
                         />
                         <span className="radio-round"></span>
-                        <p>Yes</p>
+                        <p>User Roles</p>
                       </label>
                     </div>
                     <div className="new-form-radio-box">
@@ -411,11 +422,10 @@ const AddNewTraining = () => {
                               ...prevState,
                               is_applicable_to_all: false,
                             }));
-                            setHideSelect(false);
                           }}
                         />
                         <span className="radio-round"></span>
-                        <p>No</p>
+                        <p>Specific Users</p>
                       </label>
                     </div>
                   </div>
@@ -423,68 +433,87 @@ const AddNewTraining = () => {
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
-                <Form.Group className={hideSelect || hideRoleDialog ? 'd-none' : ''}>
-                  <Form.Label>Select User Roles</Form.Label>
-                  <Multiselect
-                    placeholder="Select User Roles"
-                    displayValue="key"
-                    onChange={() => {console.log("Change")}}
-                    className="multiselect-box default-arrow-select"
-                    onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck(data) {
-                      if(data.length === 0) {
-                        setHideUserDialog(false);
-                      }
-                    }}
-                    onSearch={function noRefCheck() {}}
-                    onSelect={function noRefCheck(data) {
-                      setHideUserDialog(true);
+                <div className={`custom-checkbox ${trainingData.is_applicable_to_all === false ? "d-none": ""}`}>
+                  <Form.Label className="d-block">Select User Roles</Form.Label>
+                  <div className="btn-checkbox d-block">
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                      <Form.Check 
+                        type="checkbox" 
+                        label="Co-ordinators"
+                        onChange={() => {
+                          if(trainingData.user_roles.includes("coordinator")) {
+                            let data = trainingData.user_roles.filter(t => t !== "coordinator");
+                            setTrainingData(prevState => ({
+                              ...prevState,
+                              user_roles: [...data]
+                            }));
+                          }
 
-                      if(hideUserDialog === true) {
-                        setTrainingData((prevState) => ({
-                          ...prevState,
-                          assigned_users: [],
-                        }));
-                      }
+                          if(!trainingData.user_roles.includes("coordinator"))
+                            setTrainingData(prevState => ({
+                            ...prevState,
+                            user_roles: [...trainingData.user_roles, "coordinator"]
+                        }))}} />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                      <Form.Check 
+                        type="checkbox" 
+                        label="Educator"
+                        onChange={() => {
+                          if(trainingData.user_roles.includes("educator")) {
+                            let data = trainingData.user_roles.filter(t => t !== "educator");
+                            setTrainingData(prevState => ({
+                              ...prevState,
+                              user_roles: [...data]
+                            }));
+                          }
 
-                      setTrainingData((prevState) => ({
-                        ...prevState,
-                        roles: [...data.map((data) => data.cat)],
-                      }));
-                    }}
-                    options={userRoles}
-                  />
-                </Form.Group>
+                          if(!trainingData.user_roles.includes("educator"))
+                            setTrainingData(prevState => ({
+                            ...prevState,
+                            user_roles: [...trainingData.user_roles, "educator"]
+                        }))}} />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                      <Form.Check 
+                        type="checkbox" 
+                        label="All Roles"
+                        onChange={() => {
+                          if(trainingData.user_roles.includes("coordinator") 
+                              && trainingData.user_roles.includes("educator")) {
+                                setTrainingData(prevState => ({
+                                  ...prevState,
+                                  user_roles: [],
+                                }));
+                              }
+                            
+                          if(!trainingData.user_roles.includes("coordinator") 
+                              && !trainingData.user_roles.includes("educator"))
+                            setTrainingData(prevState => ({
+                              ...prevState,
+                              user_roles: ["coordinator", "educator"]
+                            })
+                        )}} />
+                    </Form.Group>
+                  </div>
+                </div>
               </Col>
             </Row>
 
-            <Row className={`mt-4 ${hideUserDialog ? "d-none" : ""}`}>
+            <Row className={`mt-4`}>
               <Col lg={3} md={6}>
               </Col>
-              <Col lg={9} md={6} className="mt-3 mt-md-0">
-                <Form.Group className={hideSelect ? 'd-none' : ''}>
+              <Col lg={9} md={6} className={`mt-3 mt-md-0 ${trainingData.is_applicable_to_all === true ? "d-none": ""}`}>
+                <Form.Group>
                   <Form.Label>Select User Names</Form.Label>
                   <Multiselect
                     placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
                     displayValue="key"
                     className="multiselect-box default-arrow-select"
                     onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck(data) {
-                      if(data.length === 0) {
-                        setHideRoleDialog(false);
-                      }
-                    }}
+                    onRemove={function noRefCheck() {}}
                     onSearch={function noRefCheck() {}}
                     onSelect={function noRefCheck(data) {
-                      setHideRoleDialog(true);
-
-                      if(hideRoleDialog === true) {
-                        setTrainingData((prevState) => ({
-                          ...prevState,
-                          roles: [],
-                        }));
-                      }
-
                       setTrainingData((prevState) => ({
                         ...prevState,
                         assigned_users: [...data.map((data) => data.cat)],
@@ -492,7 +521,6 @@ const AddNewTraining = () => {
                     }}
                     options={fetchedFranchiseeUsers}
                   />
-                 {/* {roles ? null: <p>please choose roles</p>} */}
                   
                 </Form.Group>
               </Col>
@@ -507,8 +535,25 @@ const AddNewTraining = () => {
             Save Settings
           </Button>
         </Modal.Footer>
-      </Modal>
-    </>
+      </Modal> 
+      {
+        loader === true && <div style={{ 
+          width: "100vw", 
+          height: "100vh", 
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#ffffff80",
+          position: "absolute",
+          top: "0",
+          left: "0",
+          right: "0",
+          bottom: "0",
+        }}>
+          <ReactBootstrap.Spinner animation="border" />
+        </div>
+      }
+    </div>
   );
 };
 

@@ -1,11 +1,19 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
-import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
+import { Button, Container, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import AvailableTrainingModule from '../pages/TrainingModule/AvailableTrainingModule';
+import CompleteTrainingModule from '../pages/TrainingModule/CompleteTrainingModule';
+import CreatedTrainingModule from '../pages/TrainingModule/CreatedTrainingModule';
+import { verifyPermission } from '../helpers/roleBasedAccess';
 import { useEffect } from "react";
+import { BASE_URL } from "../components/App";
+import axios from 'axios';
 
 const animatedComponents = makeAnimated();
 const styles = {
@@ -24,9 +32,18 @@ const training = [
     label: "Melbourne",
   },
 ];
+
 const Training = () => {
   let location = useLocation();
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
+  const [tabLinkPath, setTabLinkPath] = useState("/available-training");
+  const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
+  const [trainingCategory, setTrainingCategory] = useState([]);
+  const [filterData, setFilterData] = useState({
+    category_id: 2,
+    search: ""
+  });
+
 
   // STYLE ACTIVE LINKS
   const navLinkStyles = ({ isActive }) => {
@@ -35,6 +52,33 @@ const Training = () => {
         fontWeight: "700", 
         opacity: 1
       } : {}
+  };
+
+  const handleLinkClick = event => {
+    let path = event.target.getAttribute('path');
+    setTabLinkPath(path);
+  }
+
+  const fetchTrainingCategories = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(
+      `${BASE_URL}/training/get-training-categories`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      }
+    );
+
+    if (response.status === 200 && response.data.status === "success") {
+      const { categoryList } = response.data;
+      setTrainingCategory([
+        ...categoryList.map((data) => ({
+          id: data.id,
+          value: data.category_alias,
+          label: data.category_name,
+        })),
+      ]);
+    }
   };
 
   useEffect(() => {
@@ -46,9 +90,23 @@ const Training = () => {
         setTopSuccessMessage(null);
       }, 3000);
     }
-  }, [])
+  }, []);
 
-  console.log('LOCATION:', location); 
+  useEffect(() => {
+    fetchTrainingCategories();
+    if(localStorage.getItem('user_role') !== 'franchisor_admin') {
+      setTabLinkPath('/available-training');
+    }
+
+    if(localStorage.getItem('active_tab')) {
+      let path = localStorage.getItem('active_tab');
+      console.log('PATH IS:', path);
+      setTabLinkPath(path);
+    }
+  }, []);
+
+  filterData && console.log('FILTER DATA:', filterData);
+
   return (
     <>
       <div id="main">
@@ -59,7 +117,9 @@ const Training = () => {
                 <LeftNavbar/>
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader 
+                 selectedFranchisee={selectedFranchisee}
+                 setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Trainings</h1>
@@ -67,7 +127,16 @@ const Training = () => {
                       <div className="extra-btn">
                         <div className="data-search me-3">
                           <label for="search-bar" className="search-label">
-                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value=""/>
+                            <input 
+                              id="search-bar" 
+                              type="text" 
+                              className="form-control" 
+                              placeholder="Search" 
+                              value={filterData.search}
+                              onChange={e => setFilterData(prevState => ({
+                                ...prevState,
+                                search: e.target.value
+                              }))} />
                           </label>
                         </div>
                         <Dropdown className="filtercol me-3">
@@ -82,45 +151,60 @@ const Training = () => {
                                 <Form.Check
                                   inline
                                   label='Admin'
-                                  value='Admin'
+                                  value='admin'
                                   name="users"
                                   type="radio"
                                   id='one'
+                                  onChange={e => setFilterData(prevState => ({
+                                    ...prevState,
+                                    user: e.target.value
+                                  }))}
                                 />
                                 <Form.Check
                                   inline
                                   label='Co-ordinator'
-                                  value='Co-ordinator'
+                                  value='coordinator'
                                   name="users"
                                   type="radio"
                                   id='two'
+                                  onChange={e => setFilterData(prevState => ({
+                                    ...prevState,
+                                    user: e.target.value
+                                  }))}
                                 />
                                 <Form.Check
                                   inline
                                   label='Educator'
-                                  value='Educator'
+                                  value='educator'
                                   name="users"
                                   type="radio"
                                   id='three'
+                                  onChange={e => setFilterData(prevState => ({
+                                    ...prevState,
+                                    user: e.target.value
+                                  }))}
                                 />
                                 <Form.Check
                                   inline
                                   label='Parent/Guardian'
-                                  value='Parent-Guardian'
+                                  value='guardian'
                                   name="users"
                                   type="radio"
                                   id='four'
+                                  // onChange={e => setFilterData(prevState => ({
+                                  //   ...prevState,
+                                  //   user: e.target.value
+                                  // }))}
                                 />
                               </Form.Group>
                             </div>
                             <div className="custom-radio">
-                              <label className="mb-2">Location:</label>
+                              <label className="mb-2">Choose Category</label>
                               <Form.Group>
                                 <Select
                                   closeMenuOnSelect={false}
                                   components={animatedComponents}
-                                  isMulti
-                                  options={training}
+                                  options={trainingCategory}
                                 />
                               </Form.Group>
                             </div>
@@ -130,7 +214,10 @@ const Training = () => {
                             </footer>
                           </Dropdown.Menu>
                         </Dropdown>
-                        <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
+                        {
+                          verifyPermission("training_files", "add") && 
+                          <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
+                        }
                         <Dropdown>
                           <Dropdown.Toggle id="extrabtn" className="ctaact">
                             <img src="../img/dot-ico.svg" alt=""/>
@@ -143,171 +230,44 @@ const Training = () => {
                       </div>
                     </div>
                   </header>
-                  <div className="training-cat mb-3">
+                  <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
-                      <li><NavLink to="/available-training" style={navLinkStyles}>Trainings Available</NavLink></li>
-                      <li><NavLink to="/complete-training" style={navLinkStyles}>Complete Training</NavLink></li>
-                      <li><NavLink to="/created-training" style={navLinkStyles}>Trainings Created</NavLink></li>
+                      <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
+                      <li><a onClick={handleLinkClick} path="/complete-training"  className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
+                      {
+                        verifyPermission("training_files", "add") &&
+                        <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
+                      }
                     </ul>
+                    <div className="selectdropdown ms-auto d-flex align-items-center">
+                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                        <Form.Label className="d-block me-2">Choose Category</Form.Label>
+                        <Select
+                          closeMenuOnSelect={true}
+                          components={animatedComponents}
+                          options={trainingCategory}
+                          className="selectdropdown-col"
+                          onChange={(e) => setFilterData(prevState => ({
+                            ...prevState,
+                            category_id: e.id
+                          }))}
+                        />
+                      </Form.Group>
+                    </div>
                   </div>
                   {
                     topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
                   } 
                   <div className="training-column">
-                    <Row>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic1.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic2.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic3.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic4.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic5.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic6.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic7.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="../img/trainingpic8.jpg" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">Getting and staying organized</a> <span className="time">3 Hours</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
+                    {tabLinkPath === "/available-training" 
+                      && <AvailableTrainingModule
+                            filter={filterData} />}
+                    {tabLinkPath === "/complete-training" 
+                      && <CompleteTrainingModule
+                            filter={filterData} />}
+                    {tabLinkPath === "/created-training" 
+                      && <CreatedTrainingModule 
+                            filter={filterData} />}
                   </div>
                 </div>
               </div>

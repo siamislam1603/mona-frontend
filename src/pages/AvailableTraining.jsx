@@ -7,6 +7,7 @@ import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
 import { useNavigate, useParams  } from 'react-router-dom';
 import axios from "axios";
+import moment from 'moment';
 
 const animatedComponents = makeAnimated();
 const styles = {
@@ -27,53 +28,24 @@ const training = [
 ];
 
 const AvailableTraining = () => {
-  const [assignedData, setAssignedData] = useState([]);
-  console.log(assignedData);
+  const [availableTrainingData, setAvailableTrainingData] = useState();
+
+  const fetchAvailableTrainings = async () => {
+    let user_id = localStorage.getItem('user_id');
+    console.log('USER ID:', user_id)
+    const response = await axios.get(`${BASE_URL}/training/getTraining/${user_id}`);
+    if(response.status === 200 && response.data.status === "success") {
+      const { all_trainings } = response.data;
+      setAvailableTrainingData(all_trainings);
+    }
+  };
 
   useEffect(() => {
-    // console.log("user_id user_id user_id", localStorage.getItem("user_id"));
-    const userId = localStorage.getItem("user_id");
-    axios.get(`${BASE_URL}/training/assigeedTraining/87`)
-    .then(res => {
-      console.log(res)
-      setAssignedData(res.data)
-  })
-  .catch(err =>{
-      console.log(err)
-  })
-  },[]);
-  // const getAssignedData = () => {
-  //   var requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow",
-  //   };
-    // const AvailableTraining = async () => {
-    //   const [assignedData, setAssignedData] = useState([]);
-    //   const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${localStorage.getItem("user_id")}`);
-  
-    //   if (response.status === 200) {
-  
-    //     const { data_list } = response.data;
-  
-    //     setAssignedData(
-  
-    //       data_list.map((datas) => ({
-  
-    //         value: datas.id,
-  
-    //         label: datas.title,
-  
-    //       }))
-  
-    //     );
-  
-    //   }
-    // };
-  // fetch(`${BASE_URL}/training/assigeedTraining/${localStorage.getItem("user_id")}`, requestOptions)
-  //   .then((response) => response.json())
-  //   .then((result) => setAssignedData(result?.result))
-  //   .catch((error) => console.log("error", error));
-  // };
+    fetchAvailableTrainings();
+  }, []);
+
+  availableTrainingData && console.log('DATA:', availableTrainingData);
+
   return (
     <>
       <div id="main">
@@ -175,15 +147,18 @@ const AvailableTraining = () => {
                   </div>
                   <div className="training-column">
                     <Row>
-                    {assignedData?.map((item) => {
+                    {availableTrainingData?.map((item) => {
                       return(
                       <Col lg={4} md={6}>
                         <div className="item mt-3 mb-3">
-                          <div className="pic"><a href="/training-detail"><img src="{item.file}" alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
+                          <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.training_files[0].thumbnail} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
                           <div className="fixcol">
                             <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">{item.title}</a> <span className="time">3 Hours</span></div>
+                            <div className="iconame"><a href="/training-detail">{item.id}</a> <span className="time">{moment(item.createdAt).format(
+                                        'MM/DD/YYYY'
+                                      )}</span></div>
                             <div className="cta-col">
+                              
                               <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
                                   <img src="../img/dot-ico.svg" alt=""/>

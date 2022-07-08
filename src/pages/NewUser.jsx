@@ -39,16 +39,16 @@ const NewUser = () => {
   const [cityData, setCityData] = useState([]);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [coordinatorData, setCoordinatorData] = useState([]);
+  const [trainingCategoryData, setTrainingCategoryData] = useState([]);
+  const [pdcData, setPdcData] = useState([]);
+  const [businessAssetData, setBuinessAssetData] = useState([]);
   const [trainingDocuments, setTrainingDocuments] = useState();
 
   // IMAGE CROPPING STATES
   const [image, setImage] = useState(null);
-  // const [croppedArea, setCroppedArea] = useState(null);
-  // const [crop, setCrop] = useState({ x: 0, y: 0 });
-  // const [zoom, setZoom] = useState(1);
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
-  // const inputRef = useRef();
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
@@ -73,14 +73,58 @@ const NewUser = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // setFormErrors(validateForm(formData));
-    // setIsSubmit(true);
+    setIsSubmit(true);
     console.log('FORM DATA:', formData);
     console.log('TRAINING DOCUMENTS:', trainingDocuments);
+
+    if (isSubmit === true) {
+      console.log('FORM SUBMISSION STARTED!');
+      let data = new FormData();
+      for (let [key, value] of Object.entries(formData)) {
+        data.append(`${key}`, `${value}`);
+      }
+
+      trainingDocuments.forEach(doc => {
+        data.append('images', doc);
+      });
+
+      data.append('franchisee', selectedFranchisee);
+
+      if (croppedImage) {
+        data.append('file', croppedImage);
+        console.log('SUBMITTING FORM DATA');
+        createUser(data);
+      } else {
+        console.log('Choose & Crop an image first!');
+      }
+    }
   };
+
+  const fetchCoordinatorData = async () => {
+    if (selectedFranchisee) {
+      let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(data => data.charAt(0).toLowerCase() + data.slice(1)).join("_");
+      
+      console.log('SELECTED FRANCHISEE:', franchisee_alias);
+      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}`);
+
+      if(response.status === 200 && response.data.status === "success") {
+        let { coordinatorList } = response.data;
+        setCoordinatorData(coordinatorList.map(coordinator => ({
+          value: coordinator.fullname,
+          label: coordinator.fullname
+        })));
+      }
+    }
+  }
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCountryData = async () => {
-    const response = await axios.get(`${BASE_URL}/api/country-data`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/country-data`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     if (response.status === 200) {
       const { countryDataList } = response.data;
       setCountryData(
@@ -94,7 +138,12 @@ const NewUser = () => {
 
   // FETCHES USER ROLES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchUserRoleData = async () => {
-    const response = await axios.get(`${BASE_URL}/api/user-role`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/user-role`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     if (response.status === 200) {
       const { userRoleList } = response.data;
       setUserRoleData(
@@ -108,7 +157,12 @@ const NewUser = () => {
 
   // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCities = async () => {
-    const response = await axios.get(`${BASE_URL}/api/cities`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/cities`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     if (response.status === 200) {
       const { cityList } = response.data;
       setCityData(
@@ -120,29 +174,60 @@ const NewUser = () => {
     }
   };
 
+  const fetchTrainingCategories = async () => {
+    const response = await axios.get(
+      `${BASE_URL}/training/get-training-categories`
+    );
+    if (response.status === 200 && response.data.status === "success") {
+      const { categoryList } = response.data;
+      setTrainingCategoryData([
+        ...categoryList.map((data) => ({
+          id: data.id,
+          value: data.category_alias,
+          label: data.category_name,
+        })),
+      ]);
+    }
+  };
+
+  const fetchProfessionalDevelopementCategories = async () => {
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
+    
+    if(response.status === 200 && response.data.status === "success") {
+      const { pdcList } = response.data;
+      setPdcData(pdcList.map(data => ({
+        id: data.id,
+        value: data.category_alias,
+        label: data.category_name
+      })));
+    }
+  }; 
+
+  const fetchBuinessAssets = async () => {
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
+    
+    if(response.status === 200 && response.data.status === "success") {
+      const { businessAssetList } = response.data;
+      setBuinessAssetData(businessAssetList.map(data => ({
+        id: data.id,
+        value: data.asset_alias,
+        label: data.asset_name
+      })));
+    }
+  };
+
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
     fetchCities();
+    fetchTrainingCategories();
+    fetchProfessionalDevelopementCategories();
+    fetchBuinessAssets();
   }, []);
 
   useEffect(() => {
-    if (Object.keys(formErrors).length === 0 && isSubmit === true) {
-      let data = new FormData();
-      for (let [key, value] of Object.entries(formData)) {
-        data.append(`${key}`, `${value}`);
-      }
-
-      data.append('franchisee', selectedFranchisee);
-
-      if (croppedImage) {
-        data.append('file', croppedImage);
-        createUser(data);
-      } else {
-        console.log('Choose & Crop an image first!');
-      }
-    }
-  }, [formErrors]);
+    fetchCoordinatorData();
+  }, [selectedFranchisee])
 
   return (
     <>
@@ -312,7 +397,7 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              options={training}
+                              options={trainingCategoryData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -328,7 +413,7 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              // options={professionDevCategories}
+                              options={pdcData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -343,7 +428,7 @@ const NewUser = () => {
                             <Select
                               placeholder="Which Co-ordinator?"
                               closeMenuOnSelect={true}
-                              // options={coordinatorData}
+                              options={coordinatorData}
                               onChange={(e) =>
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -359,7 +444,7 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              // options={businessAssets}
+                              options={businessAssetData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
