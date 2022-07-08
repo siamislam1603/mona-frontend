@@ -13,14 +13,14 @@ import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
-const timereq = [
+const timeqty = [
   {
-    value: '3',
-    label: '3',
+    value: 'hours',
+    label: 'Hours',
   },
   {
-    value: '5',
-    label: '5',
+    value: 'month',
+    label: 'Month',
   },
 ];
 
@@ -36,7 +36,8 @@ const AddNewTraining = () => {
   const [userRoles, setUserRoles] = useState([]);
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({
-    user_roles: []
+    user_roles: [],
+    time_unit: "Hours"
   });
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -208,12 +209,6 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  // coverImage && console.log('COVER IMAGE:', coverImage);
-  // videoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', videoTutorialFiles);
-  // relatedFiles && console.log('RELATED FILES:', relatedFiles);
-  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
-
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -294,19 +289,33 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group className="relative">
                           <Form.Label>Time required to complete</Form.Label>
-                          <Select
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            options={timereq}
-                            onChange={(event) =>
-                              setTrainingData((prevState) => ({
-                                ...prevState,
-                                time_required_to_complete:
-                                  event.value + ' Hours',
-                              }))
-                            }
-                          />
-                          <span className="rtag">hours</span>
+                          <div style={{ display: "flex", gap: "5px" }}>
+                            <Form.Control
+                              style={{ flex: 6 }}
+                              type="number"
+                              onChange={(event) =>
+                                setTrainingData((prevState) => ({
+                                  ...prevState,
+                                  time_required_to_complete: parseInt(event.target.value),
+                                }))
+                              }
+                            />
+                            <Select
+                              style={{ flex: 3 }}
+                              closeMenuOnSelect={true}
+                              placeholder={trainingData.time_unit}
+                              value={trainingData.time_unit || ""}
+                              components={animatedComponents}
+                              options={timeqty}
+                              onChange={(event) =>
+                                setTrainingData((prevState) => ({
+                                  ...prevState,
+                                  time_unit:
+                                    event.label,
+                                }))
+                              }
+                            />
+                          </div>
                         </Form.Group>
                         {/* <Form.Control.Feedback type="invalid">
                             {errors.select_hour}
