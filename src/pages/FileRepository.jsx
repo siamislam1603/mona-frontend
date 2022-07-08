@@ -26,7 +26,7 @@ import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import { createFileRepoValidation } from '../helpers/validation';
 import moment from 'moment';
-
+let selectedUserId = '';
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
 const animatedComponents = makeAnimated();
@@ -36,7 +36,6 @@ let selectedFranchisee = [
 ];
 let selectedUserRole = [];
 let selectedFranchiseeId = '';
-let selectedUserRoleName = '';
 const styles = {
   option: (styles, state) => ({
     ...styles,
@@ -66,37 +65,27 @@ const FileRepository = () => {
   const [user, setUser] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [category, setCategory] = useState([]);
+  const [filterFlag, setFilterFlag] = useState(false);
   const [selectedAll, setSelectedAll] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [franchisee, setFranchisee] = useState([
-    { id: 1, registered_name: 'ABC' },
-    { id: 2, registered_name: 'PQR' },
-    { id: 3, registered_name: 'RST' },
-    { id: 4, registered_name: 'VWX' },
-    { id: 5, registered_name: 'XYZ' },
-  ]);
   const [userRole, setUserRole] = useState([]);
-  const [settingData, setSettingData] = useState({
-    applicable_to_franchisee: '1',
-    applicable_to_user: '1',
-  });
+  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [loaderFlag, setLoaderFlag] = useState(false);
   const [columns, setColumns] = useState([
     {
-      dataField: 'name',
+      dataField: 'repository_files',
       text: 'Name',
       sort: true,
       formatter: (cell) => {
-        cell = cell.split(',');
         return (
           <>
             <div className="user-list">
-              <span className="user-pic">
-                <img src={cell[0]} alt="" />
-              </span>
+              {/* <span className="user-pic">
+                <img src={cell[0].} alt="" />
+              </span> */}
               <span className="user-name">
-                {cell[1]}
+                {cell[0].fileName+"."+cell[0].fileType.split("/")[1]}
                 {/* <small>{cell[2]}</small> */}
               </span>
             </div>
@@ -105,21 +94,19 @@ const FileRepository = () => {
       },
     },
     {
-      dataField: 'createdon',
+      dataField: 'repository_files',
       text: 'Created on',
       sort: true,
-    },
-    {
-      dataField: 'createdby',
-      text: 'Created by',
-      sort: true,
       formatter: (cell) => {
-        cell = cell.split(',');
         return (
           <>
             <div className="user-list">
+              {/* <span className="user-pic">
+                <img src={cell[0]} alt="" />
+              </span> */}
               <span className="user-name">
-                {cell[0]} <small>{cell[1]}</small>
+                {cell[0].createdAt.split("T")[0]}
+                {/* <small>{cell[2]}</small> */}
               </span>
             </div>
           </>
@@ -127,7 +114,23 @@ const FileRepository = () => {
       },
     },
     {
-      dataField: 'action',
+      dataField: 'repository_files',
+      text: 'Created by',
+      sort: true,
+      formatter: (cell) => {
+        return (
+          <>
+            <div className="user-list">
+              <span className="user-name">
+                {cell[0].creatorName} <small className='text-capitalize'>{cell[0].creatorRole.split("_").join(" ")}</small>
+              </span>
+            </div>
+          </>
+        );
+      },
+    },
+    {
+      dataField: 'repository_files',
       text: '',
       formatter: (cell) => {
         return (
@@ -137,9 +140,9 @@ const FileRepository = () => {
                 <Dropdown.Toggle variant="transparent" id="ctacol">
                   <img src="../img/dot-ico.svg" alt="" />
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
+                {/* <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-                </Dropdown.Menu>
+                </Dropdown.Menu> */}
               </Dropdown>
             </div>
           </>
@@ -153,7 +156,7 @@ const FileRepository = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // getUserRoleAndFranchiseeData();
+    getUserRoleAndFranchiseeData();
     getMyAddedFileRepoData();
     getFilesSharedWithMeData();
     getFileCategory();
@@ -200,10 +203,10 @@ const FileRepository = () => {
       .catch((error) => console.log('error', error));
   };
   const setField = (field, value) => {
-    if (!value) {
-      setSettingData({ ...settingData, setting_files: field });
+    if (value === null || value === undefined) {
+      setFormSettingData({ ...formSettingData, setting_files: field });
     } else {
-      setSettingData({ ...settingData, [field]: value });
+      setFormSettingData({ ...formSettingData, [field]: value });
     }
 
     if (!!errors[field]) {
@@ -223,7 +226,7 @@ const FileRepository = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     // const newErrors = createFileRepoValidation(
-    //   settingData,
+    //   formSettingData,
     //   selectedFranchisee,
     //   selectedUserRole
     // );
@@ -234,36 +237,72 @@ const FileRepository = () => {
     selectedUser?.map((item) => {
       selectedFranchiseeId += item.id + ',';
     });
-    if (settingData.applicable_to_user === '1') {
-      selectedUserRole = '';
-    }
-    if (settingData.applicable_to_franchisee === '1') {
-      selectedFranchisee = '';
-    }
     setLoaderFlag(true);
     var myHeaders = new Headers();
     myHeaders.append(
       'authorization',
       'Bearer ' + localStorage.getItem('token')
     );
-    const file = settingData.setting_files[0];
+    const file = formSettingData.setting_files[0];
     console.log('file------->', file);
     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
     console.log('reader---->');
     var formdata = new FormData();
     formdata.append('image', blob, file.name);
-    formdata.append('description', settingData.meta_description);
+    formdata.append('description', formSettingData.meta_description);
     formdata.append('title', 'abc');
     formdata.append('createdBy', localStorage.getItem('user_name'));
     formdata.append('userId', localStorage.getItem('user_id'));
-    formdata.append('AccessToAllUser', settingData.applicable_to_user);
-    formdata.append('category_id', settingData.file_category);
-    formdata.append(
-      'AccessToAllFranchisee',
-      settingData.applicable_to_franchisee
-    );
-    formdata.append('sharedWith', selectedFranchiseeId);
-    formdata.append('SharedRole', selectedUserRoleName);
+    formdata.append('categoryId', formSettingData.file_category);
+    if (
+      formSettingData.accessible_to_role === null ||
+      formSettingData.accessible_to_role === undefined
+    ) {
+      formdata.append(
+        'accessibleToRole',
+        null
+      );
+      formdata.append(
+        'accessibleToAll',
+        true
+      );
+    } else {
+    if (formSettingData.accessible_to_role === 1) {
+      formdata.append(
+        'sharedRole',
+        formSettingData.shared_role.slice(0, -1)
+      );
+      formdata.append(
+        'sharedWith',
+        null
+      );
+      formdata.append(
+        'accessibleToRole',
+        formSettingData.accessible_to_role
+      );
+      formdata.append(
+        'accessibleToAll',
+        false
+      );
+    } else {
+      formdata.append(
+        'sharedRole',
+        null
+      );
+      formdata.append(
+        'sharedWith',
+        selectedUserId.slice(0, -1)
+      );
+      formdata.append(
+        'accessibleToRole',
+        formSettingData.accessible_to_role
+      );
+      formdata.append(
+        'accessibleToAll',
+        false
+      );
+    }
+  }
 
     var requestOptions = {
       method: 'POST',
@@ -300,29 +339,29 @@ const FileRepository = () => {
     )
       .then((response) => response.json())
       .then((res) => {
-        let repoData = [];
+        // let repoData = [];
 
-        res?.map((item) => {
-          if (item.filesPath.includes('/')) {
-            item.filesPath = item.filesPath.split('/');
-          }
+        // res?.map((item) => {
+        //   if (item.filesPath.includes('/')) {
+        //     item.filesPath = item.filesPath.split('/');
+        //   }
 
-          if (item.filesPath.includes('\\')) {
-            console.log('Hello9009546546789875674');
-            item.filesPath = item.filesPath.split('\\');
-          }
-          repoData.push({
-            id: item.id,
-            name:
-              '../img/abstract-ico.png,' +
-              item.filesPath[item.filesPath.length - 1],
-            createdon: moment(item.createdAt).format('DD/MM/YYYY'),
-            createdby: item.creatorName + ',' + item.creatorRole,
-            sharing: '../img/sharing-ico.png, Shared',
-          });
-        });
-        console.log('repoData---->', repoData);
-        setSharedWithMeFileRepoData(repoData);
+        //   if (item.filesPath.includes('\\')) {
+        //     console.log('Hello9009546546789875674');
+        //     item.filesPath = item.filesPath.split('\\');
+        //   }
+        //   repoData.push({
+        //     id: item.id,
+        //     name:
+        //       '../img/abstract-ico.png,' +
+        //       item.filesPath[item.filesPath.length - 1],
+        //     createdon: moment(item.createdAt).format('DD/MM/YYYY'),
+        //     createdby: item.creatorName + ',' + item.creatorRole,
+        //     sharing: '../img/sharing-ico.png, Shared',
+        //   });
+        // });
+        // console.log('repoData---->', repoData);
+        setSharedWithMeFileRepoData(res);
       })
       .catch((error) => console.log('error', error));
   };
@@ -344,7 +383,7 @@ const FileRepository = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        let repoData = [];
+        // let repoData = [];
         console.log('data--->', result);
         // res?.map((item) => {
         //   if (item.filesPath.includes('/')) {
@@ -365,7 +404,7 @@ const FileRepository = () => {
         //     sharing: '../img/sharing-ico.png, Shared',
         //   });
         // });
-        console.log('repoData---->', repoData);
+        // console.log('repoData---->', repoData);
         setFileRepoData(result);
       })
       .catch((error) => console.log('error', error));
@@ -383,35 +422,24 @@ const FileRepository = () => {
         console.log('response0-------->1', res?.userRoleList);
       })
       .catch((error) => console.log('error', error));
-    fetch(`${BASE_URL}/role/franchisee`, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        setFranchisee(res?.franchiseeList);
-      })
-      .catch((error) => console.log('error', error));
   };
-  function onSelectFranchisee(optionsList, selectedItem) {
+  function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedFranchiseeId += selectedItem.id + ',';
-    selectedFranchisee.push({
+    selectedUserId += selectedItem.id + ',';
+    selectedUser.push({
       id: selectedItem.id,
-      registered_name: selectedItem.registered_name,
+      email: selectedItem.email,
     });
-    {
-      console.log('selectedFranchisee---->', selectedFranchisee);
-    }
+    console.log('selectedUser---->', selectedUser);
   }
-  function onRemoveFranchisee(selectedList, removedItem) {
-    selectedFranchiseeId = selectedFranchiseeId.replace(
-      removedItem.id + ',',
-      ''
-    );
-    const index = selectedFranchisee.findIndex((object) => {
+  function onRemoveUser(selectedList, removedItem) {
+    selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
+    const index = selectedUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
-    selectedFranchisee.splice(index, 1);
+    selectedUser.splice(index, 1);
     {
-      console.log('selectedFranchisee---->', selectedFranchisee);
+      console.log('selectedUser---->', selectedUser);
     }
   }
   function onSelect(index) {
@@ -433,6 +461,7 @@ const FileRepository = () => {
   }
   return (
     <>
+      {console.log('hello----->', formSettingData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -442,15 +471,16 @@ const FileRepository = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader />
-
+                {console.log("sharedWithMeFileRepoData------>",sharedWithMeFileRepoData)}
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
                     <ToolkitProvider
-                      keyField="name"
+                      keyField="id"
                       data={
                         tabFlag === false
                           ? fileRepoData
-                          : sharedWithMeFileRepoData
+                          : 
+                          sharedWithMeFileRepoData
                       }
                       columns={columns}
                       search
@@ -633,8 +663,11 @@ const FileRepository = () => {
                         <div className="toogle-swich">
                           <input
                             className="switch"
-                            name="required"
                             type="checkbox"
+                            name="enable_sharing"
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.checked);
+                            }}
                           />
                         </div>
                       </div>
@@ -689,36 +722,32 @@ const FileRepository = () => {
                     <Form.Label>Accessible to:</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
-                        <label for="yes1">
+                        <label for="yes">
                           <input
                             type="radio"
-                            value="1"
-                            name="applicable_to_franchisee"
-                            id="yes1"
+                            value={1}
+                            name="accessible_to_role"
+                            id="yes"
                             onChange={(e) => {
-                              setField(e.target.name, e.target.value);
+                              setField(e.target.name, parseInt(e.target.value));
                             }}
-                            checked={
-                              settingData.applicable_to_franchisee === '1'
-                            }
+                            checked={formSettingData.accessible_to_role === 1}
                           />
                           <span className="radio-round"></span>
                           <p>User Roles</p>
                         </label>
                       </div>
                       <div className="new-form-radio-box m-0 mt-3">
-                        <label for="no1">
+                        <label for="no">
                           <input
                             type="radio"
-                            value="0"
-                            name="applicable_to_franchisee"
-                            id="no1"
+                            value={0}
+                            name="accessible_to_role"
+                            id="no"
                             onChange={(e) => {
-                              setField(e.target.name, e.target.value);
+                              setField(e.target.name, parseInt(e.target.value));
                             }}
-                            checked={
-                              settingData.applicable_to_franchisee === '0'
-                            }
+                            checked={formSettingData.accessible_to_role === 0}
                           />
                           <span className="radio-round"></span>
                           <p>Specific Users</p>
@@ -728,7 +757,7 @@ const FileRepository = () => {
                   </Form.Group>
                 </Col>
                 <Col lg={9} md={12}>
-                  {settingData.applicable_to_franchisee === '1' ? (
+                  {formSettingData.accessible_to_role === 1 ? (
                     <Form.Group>
                       <Form.Label>Select User Roles</Form.Label>
                       <div className="modal-two-check user-roles-box">
@@ -736,8 +765,31 @@ const FileRepository = () => {
                           Co-ordinators
                           <input
                             type="checkbox"
-                            name="role"
-                            id="co-ordinators"
+                            name="shared_role"
+                            id="coordinator"
+                            onClick={(e) => {
+                              let data = { ...formSettingData };
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes(e.target.id)
+                              ) {
+                                data['shared_role'] += e.target.id + ',';
+                              } else {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace(e.target.id + ',', '');
+                                if (data['shared_role'].includes('all')) {
+                                  data['shared_role'] = data[
+                                    'shared_role'
+                                  ].replace('all,', '');
+                                }
+                              }
+                              setFormSettingData(data);
+                            }}
+                            checked={formSettingData?.shared_role
+                              ?.toString()
+                              .includes('coordinator')}
                           />
                           <span className="checkmark"></span>
                         </label>
@@ -745,8 +797,31 @@ const FileRepository = () => {
                           Educators
                           <input
                             type="checkbox"
-                            name="role"
-                            id="co-ordinators"
+                            name="shared_role"
+                            id="educator"
+                            onClick={(e) => {
+                              let data = { ...formSettingData };
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes(e.target.id)
+                              ) {
+                                data['shared_role'] += e.target.id + ',';
+                              } else {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace(e.target.id + ',', '');
+                                if (data['shared_role'].includes('all')) {
+                                  data['shared_role'] = data[
+                                    'shared_role'
+                                  ].replace('all,', '');
+                                }
+                              }
+                              setFormSettingData(data);
+                            }}
+                            checked={formSettingData?.shared_role
+                              ?.toString()
+                              .includes('educator')}
                           />
                           <span className="checkmark"></span>
                         </label>
@@ -754,8 +829,31 @@ const FileRepository = () => {
                           Parents
                           <input
                             type="checkbox"
-                            name="role"
-                            id="co-ordinators"
+                            name="shared_role"
+                            id="parent"
+                            onClick={(e) => {
+                              let data = { ...formSettingData };
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes(e.target.id)
+                              ) {
+                                data['shared_role'] += e.target.id + ',';
+                              } else {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace(e.target.id + ',', '');
+                                if (data['shared_role'].includes('all')) {
+                                  data['shared_role'] = data[
+                                    'shared_role'
+                                  ].replace('all,', '');
+                                }
+                              }
+                              setFormSettingData(data);
+                            }}
+                            checked={formSettingData?.shared_role?.includes(
+                              'parent'
+                            )}
                           />
                           <span className="checkmark"></span>
                         </label>
@@ -763,38 +861,70 @@ const FileRepository = () => {
                           All Roles
                           <input
                             type="checkbox"
-                            name="role"
-                            id="co-ordinators"
+                            name="shared_role"
+                            id="all_roles"
+                            onClick={(e) => {
+                              let data = { ...formSettingData };
+                              console.log('e.target.checked', e.target.checked);
+                              if (e.target.checked === true) {
+                                if (
+                                  !data['shared_role']
+                                    .toString()
+                                    .includes('parent')
+                                ) {
+                                  data['shared_role'] += 'parent,';
+                                }
+                                if (
+                                  !data['shared_role']
+                                    .toString()
+                                    .includes('educator')
+                                ) {
+                                  data['shared_role'] += 'educator,';
+                                }
+                                if (
+                                  !data['shared_role']
+                                    .toString()
+                                    .includes('coordinator')
+                                ) {
+                                  data['shared_role'] += 'coordinator,';
+                                }
+                                if (
+                                  !data['shared_role']
+                                    .toString()
+                                    .includes('all')
+                                ) {
+                                  data['shared_role'] += 'all,';
+                                }
+                                setFormSettingData(data);
+                              } else {
+                                data['shared_role'] = '';
+                                setFormSettingData(data);
+                              }
+                            }}
+                            checked={formSettingData?.shared_role?.includes(
+                              'all'
+                            )}
                           />
                           <span className="checkmark"></span>
                         </label>
                       </div>
                     </Form.Group>
                   ) : null}
-                  {settingData.applicable_to_franchisee === '0' ? (
+                  {formSettingData.accessible_to_role === 0 ? (
                     <Form.Group>
-                      <Form.Label>Select Franchisee</Form.Label>
+                      <Form.Label>Select User</Form.Label>
                       <div className="select-with-plus">
-                        {console.log('data----->', selectedUser)}
                         <Multiselect
-                          displayValue="fullname"
+                          displayValue="email"
                           className="multiselect-box default-arrow-select"
                           // placeholder="Select Franchisee"
                           selectedValues={selectedUser}
                           // onKeyPressFn={function noRefCheck() {}}
-                          onRemove={onRemoveFranchisee}
+                          onRemove={onRemoveUser}
                           // onSearch={function noRefCheck() {}}
-                          onSelect={onSelectFranchisee}
-                          // options={franchisee}
+                          onSelect={onSelectUser}
+                          options={user}
                         />
-                        <Button
-                          className="add_operating_button"
-                          onClick={() => {
-                            setGroupFlag(true);
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faPlus} />
-                        </Button>
                       </div>
                       <p className="error">{errors.franchisee}</p>
                     </Form.Group>
@@ -851,6 +981,9 @@ const FileRepository = () => {
               id="extrabtn"
               aria-expanded="false"
               class="filter-button btn btn-btn-outline "
+              onClick={() => {
+                setFilterFlag(true);
+              }}
             >
               <i class="filter-ico"></i> Add Filters
             </button>
@@ -948,6 +1081,118 @@ const FileRepository = () => {
               }}
             >
               Done
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+
+      <div className="filter-user-modal-wrp">
+        <Modal
+          className="select-user-modal select-user filter-user-modal"
+          show={filterFlag}
+          onHide={() => {
+            setSelectedUser([]);
+            setFilterFlag(false);
+          }}
+          size="sm"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Header closeButton className="select-users-header">
+            <Modal.Title
+              id="contained-modal-title-vcenter"
+              className="modal-heading"
+            >
+              Filter by:
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group className="filter-wpr">
+              <Form.Label>Select Filter Criteria:</Form.Label>
+              <Form.Select
+                name="file_category"
+                onChange={(e) => {
+                  setField(e.target.name, e.target.value);
+                }}
+              >
+                <option value="">User based on their roles</option>
+                <option value="">Parents specific to a educator</option>
+                <option value="">Children specific to a educator</option>
+                <option value="">
+                  All users connected to a specific franchise
+                </option>
+                <option value="">
+                  All internal users connected to a specific franchise (excludes
+                  parents)
+                </option>
+                <option value="">All users</option>
+                <option value="">
+                  All internal users(all users excepts parents/children)
+                </option>
+                <option value="">
+                  User based on their roles for a specific franchise
+                </option>
+                <option value="">Parents specific to children</option>
+                <option value="">Co-ordinator specific to educator</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="select-role-wrp">
+              <Form.Label>Select a role</Form.Label>
+              <div className="select-check-wrp">
+                {userRole.map((item) => {
+                  return (
+                    <div class="form-group">
+                      <input type="radio" id={item.role_name} name="role" />
+                      <label for={item.role_name}>{item.role_label}</label>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* <div className="select-check-wrp">
+                <div class="form-group">
+                  <input type="checkbox" id="html" />
+                  <label for="html">Admin</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="css" />
+                  <label for="css">Co-ordinator</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="javascript" />
+                  <label for="javascript">Educator</label>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="javascript1" />
+                  <label for="javascript1">Parent/Guardian</label>
+                </div>
+              </div> */}
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer className="justify-content-center">
+            <Button
+              variant="transparent"
+              onClick={() => {
+                setSelectedUser([]);
+                setGroupFlag(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setFilterFlag(false);
+                let data = [...user];
+                let selectedData = [];
+                data.map((item) => {
+                  if (item.status === true) {
+                    selectedData.push(item);
+                  }
+                });
+                setSelectedUser(selectedData);
+              }}
+            >
+              Apply
             </Button>
           </Modal.Footer>
         </Modal>

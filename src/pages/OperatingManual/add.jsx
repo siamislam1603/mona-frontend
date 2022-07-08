@@ -12,38 +12,68 @@ import {
   createOperatingManualValidation,
 } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
-let selectedFranchisee = [];
-let selectedUserRole = [];
-let selectedFranchiseeName = '';
-let selectedUserRoleName = '';
-let counter = 0;
+import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
+let selectedUserId = '';
+let upperRoleUser='';
 const AddOperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [operatingManualData, setOperatingManualData] = useState({});
-  const [count, setCount] = useState();
+  const [operatingManualData, setOperatingManualData] = useState({
+    related_files: [],
+  });
   const [errors, setErrors] = useState({});
-  const [loaderText, setLoaderText] = useState('');
-  const [loaderFlag, setLoaderFlag] = useState(false);
+  const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
+  const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
+  const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
+  const [relatedFiles, setRelatedFiles] = useState([]);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
-  const [formSettingData, setFormSettingData] = useState({
-    applicable_to_franchisee: '1',
-    applicable_to_user: '1',
-  });
-  const [franchisee, setFranchisee] = useState([]);
+  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+  const [user, setUser] = useState([]);
+  const [selectedUser, setSelectedUser] = useState([]); 
   const [userRole, setUserRole] = useState([]);
   const [category, setCategory] = useState([]);
   const [categoryModalFlag, setCategoryModalFlag] = useState(false);
   const [categoryData, setCategoryData] = useState({});
   const [categoryError, setCategoryError] = useState({});
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
   useEffect(() => {
-    getUserRoleAndFranchiseeData();
+    getUserRoleData();
   }, []);
   useEffect(() => {
+    getUser();
+  }, [selectedFranchisee]);
+  useEffect(() => {
     getCategory();
-  }, [userRole]);
+  }, [user]);
+  const getUser = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    let api_url="";
+    if(selectedFranchisee)
+      api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    else
+    api_url=`${BASE_URL}/auth/users`;
+    fetch(api_url, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.data?.map((item) => {
+          item['status'] = false;
+        });
+        setUser(result?.data);
+      })
+      .catch((error) => console.log('error', error));
+  };
   const getOneOperatingManual = async () => {
     var requestOptions = {
       method: 'GET',
@@ -59,41 +89,44 @@ const AddOperatingManual = () => {
         console.log('operating manual--->', response?.result);
         setOperatingManualData(response?.result);
         let data = formSettingData;
-        data.applicable_to_user =
-          response?.result?.applicable_to_user.toString();
-        data.applicable_to_franchisee =
-          response?.result?.applicable_to_franchisee.toString();
-        console.log('Franchisee--->', franchisee);
-        selectedFranchisee = [];
-        // franchisee.map((item) => {
-        //   if (response?.result?.shared_with.includes(item.franchisee_alias)) {
-        //     selectedFranchisee.push({
-        //       id: item.id,
-        //       franchisee_name: item.franchisee_name,
-        //       franchisee_alias: item.franchisee_alias,
-        //     });
-        //     selectedFranchiseeName += item.franchisee_alias + ',';
-        //   }
-        // });
-        selectedUserRole = [];
-        console.log('userRole---->', userRole);
-        userRole.map((item) => {
-          console.log('selectedUserRole---->', response?.result?.shared_role);
-          if (response?.result?.shared_role.includes(item.role_name)) {
-            selectedUserRole.push({
-              id: item.id,
-              role_label: item.role_label,
-              role_name: item.role_name,
-            });
-            selectedUserRoleName += item.role_name + ',';
-          }
-        });
-        console.log('selectedUserRole---->', selectedUserRole);
+        data['applicable_to_all'] = response?.result?.accessible_to_all;
+        data['shared_role'] = response?.result?.shared_role
+          ? response?.result?.shared_role
+          : '';
+        data['accessible_to_role'] = response?.result?.accessible_to_role;
 
+        if (response?.result?.accessible_to_role === 0) {
+          selectedUserId = response?.result?.shared_with;
+          let users = [];
+          selectedUserId = '';
+          user.map((item) => {
+            if (response?.result?.shared_with.includes(item.id.toString())) {
+              users.push(item);
+              selectedUserId += item.id + ',';
+            }
+          });
+          setSelectedUser(users);
+        }
         setFormSettingData(data);
       })
       .catch((error) => console.log('error', error));
   };
+  const getUpperRoleUser=()=>{
+    let upper_role='';
+      let flag=false;
+       userRole?.map((item)=>{
+          if(item.role_name!==localStorage.getItem('user_role'))
+          {
+            if(!flag)
+            upper_role+=item.role_name+","; 
+          }
+          else
+          {
+            flag=true;
+          }
+        })
+        return upper_role.slice(0, -1);
+  }
   const setCategoryField = (field, value) => {
     setCategoryData({ ...categoryData, [field]: value });
     if (!!categoryError[field]) {
@@ -115,26 +148,53 @@ const AddOperatingManual = () => {
   const onModelSubmit = (e) => {
     e.preventDefault();
     let data = operatingManualData;
+
     if (!data?.id) {
       alert('Please save first operating manual information');
     } else {
-      data['access_to_all_user'] = formSettingData.applicable_to_user;
-      data['access_to_all_franchise'] =
-        formSettingData.applicable_to_franchisee;
-      data['shared_with'] = selectedFranchiseeName;
-      data['shared_role'] = selectedUserRoleName;
+      console.log(
+        'formSettingData.accessible_to_role---->',
+        formSettingData.shared_role
+      );
+
+      if (
+        formSettingData.accessible_to_role === null ||
+        formSettingData.accessible_to_role === undefined
+      ) {
+        console.log('Hello');
+        data['accessible_to_role'] = null;
+        data['accessible_to_all'] = true;
+      } else {
+        if (formSettingData.accessible_to_role === 1) {
+          data['shared_role'] = formSettingData.shared_role.slice(0, -1);
+          data['shared_with'] = null;
+          data['accessible_to_role'] = formSettingData.accessible_to_role;
+          data['accessible_to_all'] = false;
+        } else {
+          data['shared_with'] = selectedUserId.slice(0, -1);
+          data['shared_role'] = null;
+          data['accessible_to_role'] = formSettingData.accessible_to_role;
+          data['accessible_to_all'] = false;
+        }
+
+      }
+      data['created_by']=localStorage.getItem('user_id');
+      upperRoleUser=getUpperRoleUser();
+      data['upper_role']=upperRoleUser;
+      console.log('Hello---->', data);
+
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
-        body: JSON.stringify(operatingManualData),
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
         .then((res) => {
           setOperatingManualData(res?.result);
           setFormSettingFlag(false);
-          // navigate('/operatingmanual');
+          navigate('/operatingmanual');
         });
     }
   };
@@ -144,16 +204,21 @@ const AddOperatingManual = () => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
+      upperRoleUser=getUpperRoleUser();
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
+      let data={...operatingManualData};
+      data.created_by=localStorage.getItem('user_id');
+      data.upper_role=upperRoleUser;
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
-        body: JSON.stringify(operatingManualData),
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
         .then((res) => {
           setOperatingManualData(res?.result);
+          setFormSettingFlag(true);
           // navigate('/operatingmanual');
         });
     }
@@ -213,29 +278,32 @@ const AddOperatingManual = () => {
   };
   const uploadFiles = async (name, file) => {
     let flag = false;
-    if (!(name === 'reference_video')) {
-      setLoaderFlag(true);
-      setLoaderText('video');
+    if (name === 'cover_image') {
       if (file.size > 2048 * 1024) {
-        alert('file is too large');
+        let errorData={...errors};
+        errorData["cover_image"]= "File is too much large";
+        setErrors(errorData);
+        flag = true;
+      }
+    }
+    if (name === 'reference_video')
+    {
+      if (file.size > 1024 * 1024 * 1024) {
+        let errorData={...errors};
+        errorData["reference_video"]= "File is too much large";
+        setErrors(errorData);
         flag = true;
       }
     }
 
     if (flag === false) {
       if (name === 'cover_image') {
-        setLoaderFlag(true);
-        setLoaderText('image');
+        setImageLoaderFlag(true);
       }
       if (name === 'reference_video') {
-        setLoaderFlag(true);
-        setLoaderText('video');
+        setVideoLoaderFlag(true);
       }
-      if (name === 'related_files') {
-        setLoaderFlag(true);
-        setLoaderText('files');
-      }
-      let data = operatingManualData;
+      let data = { ...operatingManualData };
       const body = new FormData();
       const blob = await fetch(await toBase64(file)).then((res) => res.blob());
       body.append('image', blob, file.name);
@@ -244,7 +312,7 @@ const AddOperatingManual = () => {
       body.append('uploadedBy', 'vaibhavi');
 
       var myHeaders = new Headers();
-      myHeaders.append('role', 'admin');
+      myHeaders.append('shared_role', 'admin');
       fetch(`${BASE_URL}/uploads/uiFiles`, {
         method: 'post',
         body: body,
@@ -252,34 +320,20 @@ const AddOperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          if (name === 'related_files') {
-            if (!data[name]) {
-              data[name] = [];
-            }
-
-            data[name].push({ name: file.name, url: res.url });
-            setOperatingManualData(data);
-            counter++;
-            setCount(counter);
-            setLoaderFlag(false);
-          } else if (name === 'reference_video') {
+          if (name === 'reference_video') {
             data['video_thumbnail'] = res.thumbnail;
             data[name] = res.url;
             setOperatingManualData(data);
-            counter++;
-            setCount(counter);
 
             setTimeout(() => {
-              setLoaderFlag(false);
+              setVideoLoaderFlag(false);
             }, 8000);
           } else {
             data[name] = res.url;
             setOperatingManualData(data);
-            counter++;
-            setCount(counter);
 
             setTimeout(() => {
-              setLoaderFlag(false);
+              setImageLoaderFlag(false);
             }, 5000);
           }
           if (!!errors[name]) {
@@ -292,8 +346,6 @@ const AddOperatingManual = () => {
         .catch((err) => {
           console.log('error---->', err);
         });
-      counter++;
-      setCount(counter);
     }
   };
 
@@ -307,73 +359,44 @@ const AddOperatingManual = () => {
       });
     }
   };
-  function onSelectFranchisee(optionsList, selectedItem) {
+  function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
-    selectedFranchiseeName += selectedItem.franchisee_alias + ',';
-    selectedFranchisee.push({
+    selectedUserId += selectedItem.id + ',';
+    selectedUser.push({
       id: selectedItem.id,
-      franchisee_name: selectedItem.franchisee_name,
-      franchisee_alias: selectedItem.franchisee_alias,
+      email: selectedItem.email,
     });
-    {
-      console.log('selectedFranchisee---->', selectedFranchisee);
-    }
+    console.log('selectedUser---->', selectedUser);
   }
-  function onRemoveFranchisee(selectedList, removedItem) {
-    selectedFranchiseeName = selectedFranchiseeName.replace(
-      removedItem.franchisee_alias + ',',
-      ''
-    );
-    const index = selectedFranchisee.findIndex((object) => {
+  function onRemoveUser(selectedList, removedItem) {
+    selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
+    const index = selectedUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
-    selectedFranchisee.splice(index, 1);
+    selectedUser.splice(index, 1);
     {
-      console.log('selectedFranchisee---->', selectedFranchisee);
+      console.log('selectedUser---->', selectedUser);
     }
   }
-
-  function onSelectUserRole(optionsList, selectedItem) {
-    console.log('selected_item---->2', selectedItem);
-    selectedUserRoleName += selectedItem.role_name + ',';
-    selectedUserRole.push({
-      id: selectedItem.id,
-      role_label: selectedItem.role_label,
-      role_name: selectedItem.role_name,
-    });
-    console.log('form---->2selectedUserRole', selectedUserRole);
-  }
-  function onRemoveUserRole(selectedList, removedItem) {
-    selectedUserRoleName = selectedUserRoleName.replace(
-      removedItem.role_name + ',',
-      ''
-    );
-    const index = selectedUserRole.findIndex((object) => {
-      return object.id === removedItem.id;
-    });
-    selectedUserRole.splice(index, 1);
-    console.log('form---->2selectedUserRole', selectedUserRole);
-  }
-  const getUserRoleAndFranchiseeData = () => {
+  const getUserRoleData = () => {
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
     };
 
+    
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
-        console.log('response0-------->1', res?.userRoleList);
+        console.log("res---->",res);
+        // console.log('response0-------->1', localStorage.getItem('user_role'));
         setUserRole(res?.userRoleList);
-      })
-      .catch((error) => console.log('error', error));
-    fetch(`${BASE_URL}/role/franchisee`, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        setFranchisee(res?.franchiseeList);
+
       })
       .catch((error) => console.log('error', error));
   };
+
+  selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
       {console.log('errors--->', errors)}
@@ -387,7 +410,10 @@ const AddOperatingManual = () => {
               </aside>
               <div className="sec-column">
                 <div className="new_module">
-                  <TopHeader />
+                  <TopHeader 
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
+                    />
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
@@ -509,7 +535,7 @@ const AddOperatingManual = () => {
                           </Form.Label>
                           <div className="upload_cover_box">
                             <div className="cover_image">
-                              {loaderFlag && loaderText === 'image' ? (
+                              {ImageloaderFlag ? (
                                 <img src="../img/loader.gif" />
                               ) : null}
                               <img
@@ -547,11 +573,9 @@ const AddOperatingManual = () => {
                             <Button
                               variant="link"
                               onClick={() => {
-                                let data = operatingManualData;
+                                let data = { ...operatingManualData };
                                 delete data['cover_image'];
                                 setOperatingManualData(data);
-                                counter++;
-                                setCount(counter);
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -568,7 +592,7 @@ const AddOperatingManual = () => {
 
                           <div className="upload_cover_box video_reference">
                             <div className="cover_image">
-                              {loaderFlag && loaderText === 'video' ? (
+                              {videoloaderFlag ? (
                                 <img src="../img/loader.gif" />
                               ) : null}
                               <img
@@ -611,12 +635,10 @@ const AddOperatingManual = () => {
                               variant="link"
                               className="remove_bin"
                               onClick={() => {
-                                let data = operatingManualData;
+                                let data = { ...operatingManualData };
                                 delete data['reference_video'];
                                 delete data['video_thumbnail'];
                                 setOperatingManualData(data);
-                                counter++;
-                                setCount(counter);
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -636,91 +658,17 @@ const AddOperatingManual = () => {
                             <Form.Label className="formlabel">
                               Upload Related Files :
                             </Form.Label>
-                            <Row>
-                              {operatingManualData.related_files?.map(
-                                (item, index) => {
-                                  return (
-                                    <Col sm={6}>
-                                      <div className="upload_related_box">
-                                        <div className="forms-content">
-                                          <div className="content-icon-section">
-                                            <img
-                                              src={
-                                                item.name.includes('.docx')
-                                                  ? '../img/doc_blue.svg'
-                                                  : item.name.includes('.pptx')
-                                                  ? '../img/doc_pptx.svg'
-                                                  : ''
-                                              }
-                                            />
-                                          </div>
-                                          <div className="content-title-section">
-                                            <h6>{item.name}</h6>
-                                            <h4>3 Hours</h4>
-                                          </div>
-                                        </div>
-                                        <Button
-                                          variant="link"
-                                          onClick={() => {
-                                            let data = operatingManualData;
-                                            data.related_files.splice(index, 1);
-                                            setOperatingManualData(data);
-                                            counter++;
-                                            setCount(counter);
-                                          }}
-                                        >
-                                          <img src="../../img/removeIcon.svg" />
-                                        </Button>
-                                      </div>
-                                    </Col>
-                                  );
-                                }
-                              )}
-                              {/* <Col sm={4}>
-                                <div className="upload_related_box">
-                                  <div className="forms-content">
-                                    <div className="content-icon-section">
-                                      <img src="../img/doc_pptx.svg" />
-                                    </div>
-                                    <div className="content-title-section">
-                                      <h6>presentation1.pptx</h6>
-                                      <h4>3 Hours</h4>
-                                    </div>
-                                  </div>
-                                  <Button variant="link">
-                                    <img src="../../img/removeIcon.svg" />
-                                  </Button>
-                                </div>
-                              </Col> */}
-                            </Row>
-                            <div className="add_image">
-                              <div className="add_image_box">
-                                <span>
-                                  <img
-                                    src={
-                                      loaderFlag && loaderText === 'files'
-                                        ? '../img/mini_loader.gif'
-                                        : '../img/bi_cloud-upload.svg'
-                                    }
-                                    alt=""
-                                  />
-                                  Add File
-                                </span>
-                                <Form.Control
-                                  className="add_image_input"
-                                  type="file"
-                                  name="related_files"
-                                  onChange={(e) => {
-                                    if (e.target.files) {
-                                      uploadFiles(
-                                        e.target.name,
-                                        e.target.files[0]
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
-                            </div>
+
+                            <DropAllRelatedFile
+                              onSave={(value) => {
+                                let data = { ...operatingManualData };
+                                data['related_files'] = value;
+                                setOperatingManualData(data);
+                              }}
+                              relatedFilesData={
+                                operatingManualData.related_files
+                              }
+                            />
                             <p className="form-errors">
                               {errors.related_files}
                             </p>
@@ -765,126 +713,226 @@ const AddOperatingManual = () => {
         <Modal.Body>
           <div className="form-settings-content">
             <Row className="mt-4">
-              {/* <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Accessible to all franchisee</Form.Label>
-                  <div className="new-form-radio">
-                    <div className="new-form-radio-box">
-                      <label for="yes1">
-                        <input
-                          type="radio"
-                          value="1"
-                          name="applicable_to_franchisee"
-                          id="yes1"
-                          onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
-                          }}
-                          checked={
-                            formSettingData.applicable_to_franchisee === '1'
-                          }
-                        />
-                        <span className="radio-round"></span>
-                        <p>Yes</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box">
-                      <label for="no1">
-                        <input
-                          type="radio"
-                          value="0"
-                          name="applicable_to_franchisee"
-                          id="no1"
-                          onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
-                          }}
-                          checked={
-                            formSettingData.applicable_to_franchisee === '0'
-                          }
-                        />
-                        <span className="radio-round"></span>
-                        <p>No</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col> */}
-              {/* {formSettingData.applicable_to_franchisee === '0' ? (
-                <Col lg={9} md={6} className="mt-3 mt-md-0">
-                  <Form.Group>
-                    <Form.Label>Select Franchisee</Form.Label>
-                    <Multiselect
-                      displayValue="franchisee_name"
-                      className="multiselect-box default-arrow-select"
-                      placeholder="Select Franchisee"
-                      selectedValues={selectedFranchisee}
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={onRemoveFranchisee}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={onSelectFranchisee}
-                      options={franchisee}
-                    />
-                    <p className="error">{errors.franchisee}</p>
-                  </Form.Group>
-                </Col>
-              ) : null} */}
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Applicable to all user roles</Form.Label>
-                  <div className="new-form-radio">
+                  <Form.Label>Accessible to:</Form.Label>
+                  <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
-                      <label for="yes2">
+                      <label for="yes">
                         <input
                           type="radio"
-                          value="1"
-                          name="applicable_to_user"
-                          id="yes2"
+                          value={1}
+                          name="accessible_to_role"
+                          id="yes"
                           onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
+                            setFormSettingFields(
+                              e.target.name,
+                              parseInt(e.target.value)
+                            );
                           }}
-                          checked={formSettingData.applicable_to_user === '1'}
+                          checked={formSettingData.accessible_to_role === 1}
                         />
                         <span className="radio-round"></span>
-                        <p>Yes</p>
+                        <p>User Roles</p>
                       </label>
                     </div>
-                    <div className="new-form-radio-box">
-                      <label for="no2">
+                    <div className="new-form-radio-box m-0 mt-3">
+                      <label for="no">
                         <input
                           type="radio"
-                          value="0"
-                          name="applicable_to_user"
-                          id="no2"
+                          value={0}
+                          name="accessible_to_role"
+                          id="no"
                           onChange={(e) => {
-                            setFormSettingFields(e.target.name, e.target.value);
+                            setFormSettingFields(
+                              e.target.name,
+                              parseInt(e.target.value)
+                            );
                           }}
-                          checked={formSettingData.applicable_to_user === '0'}
+                          checked={formSettingData.accessible_to_role === 0}
                         />
                         <span className="radio-round"></span>
-                        <p>No</p>
+                        <p>Specific Users</p>
                       </label>
                     </div>
                   </div>
                 </Form.Group>
               </Col>
-              {formSettingData.applicable_to_user === '0' ? (
-                <Col lg={9} md={6} className="mt-3 mt-md-0">
+              <Col lg={9} md={12}>
+                {formSettingData.accessible_to_role === 1 ? (
                   <Form.Group>
                     <Form.Label>Select User Roles</Form.Label>
-                    <Multiselect
-                      placeholder="Select User Roles"
-                      displayValue="role_label"
-                      selectedValues={selectedUserRole}
-                      className="multiselect-box default-arrow-select"
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={onRemoveUserRole}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={onSelectUserRole}
-                      options={userRole}
-                    />
-                    <p className="error">{errors.user}</p>
+                    <div className="modal-two-check user-roles-box">
+                      <label className="container">
+                        Co-ordinators
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="coordinator"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('coordinator')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Educators
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="educator"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('educator')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Parents
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="parent"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role?.includes(
+                            'parent'
+                          )}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        All Roles
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="all_roles"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            console.log('e.target.checked', e.target.checked);
+                            if (e.target.checked === true) {
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('parent')
+                              ) {
+                                data['shared_role'] += 'parent,';
+                              }
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('educator')
+                              ) {
+                                data['shared_role'] += 'educator,';
+                              }
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('coordinator')
+                              ) {
+                                data['shared_role'] += 'coordinator,';
+                              }
+                              if (
+                                !data['shared_role'].toString().includes('all')
+                              ) {
+                                data['shared_role'] += 'all,';
+                              }
+                              setFormSettingData(data);
+                            } else {
+                              data['shared_role'] = '';
+                              setFormSettingData(data);
+                            }
+                          }}
+                          checked={formSettingData?.shared_role?.includes(
+                            'all'
+                          )}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    </div>
                   </Form.Group>
-                </Col>
-              ) : null}
+                ) : null}
+                {formSettingData.accessible_to_role === 0 ? (
+                  <Form.Group>
+                    <Form.Label>Select User</Form.Label>
+                    <div className="select-with-plus">
+                      <Multiselect
+                        displayValue="email"
+                        className="multiselect-box default-arrow-select"
+                        // placeholder="Select Franchisee"
+                        selectedValues={selectedUser}
+                        // onKeyPressFn={function noRefCheck() {}}
+                        onRemove={onRemoveUser}
+                        // onSearch={function noRefCheck() {}}
+                        onSelect={onSelectUser}
+                        options={user}
+                      />
+                    </div>
+                    <p className="error">{errors.franchisee}</p>
+                  </Form.Group>
+                ) : null}
+              </Col>
             </Row>
           </div>
         </Modal.Body>

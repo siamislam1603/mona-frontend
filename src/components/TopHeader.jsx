@@ -3,8 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 import { BASE_URL } from "./App";
 
-const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
-
+const TopHeader = ({ setSelectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState([]);
     const [permissionList, setPermissionList] = useState();
 
@@ -48,6 +47,8 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
         localStorage.removeItem('user_id');
         localStorage.removeItem('user_name');
         localStorage.removeItem('user_role');
+        localStorage.removeItem('menu_list');
+        localStorage.removeItem('active_tab');
         localStorage.removeItem('selectedFranchisee');
         window.location.href = "/";
       }
@@ -58,6 +59,7 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
     };
 
     const selectFranchisee = (e) => {
+        // console.log('FRANCHISEE:', e);
         setSelectedFranchisee(e);
         localStorage.setItem('selectedFranchisee', e);
     }
@@ -73,8 +75,6 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
     useEffect(() => {
       savePermissionInState();
     }, []);
-
-    permissionList && console.log('PERMISSION:', permissionList);
 
     return (
       <>
@@ -118,14 +118,14 @@ const TopHeader = ({ selectedFranchisee, setSelectedFranchisee }) => {
                       
                       <small>{localStorage.getItem('user_role')?localStorage.getItem('user_role').split('_').map(data => data.charAt(0).toUpperCase() + data.slice(1)).join(' '):''}</small></span>
                     </Dropdown.Toggle>
-                    <Dropdown.Menu>
+                    <Dropdown.Menu style={{ zIndex: "2000" }}>
 
                     {
                       permissionList
                         ? permissionList.map((top_menu) => {
                           return (
-                                <Dropdown.Item key={top_menu.id} href={top_menu.menu_link}>
-                                  {top_menu.controller_label}
+                                <Dropdown.Item key={top_menu.id} href={top_menu.controller.menu_link}>
+                                  {top_menu.controller.controller_label}
                                 </Dropdown.Item>
                            )}) : null
                     }

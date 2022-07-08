@@ -3,6 +3,7 @@ import {
   faPen,
   faPlus,
   faRemove,
+  faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
@@ -21,22 +22,99 @@ import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
 import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
+import Multiselect from 'multiselect-react-dropdown';
 
+let upperRoleUser = '';
+let selectedUserId = '';
 const OperatingManual = () => {
   const navigate = useNavigate();
   const [Index, setIndex] = useState(0);
+  const [operatingManualData, setOperatingManualData] = useState({});
   const [innerIndex, setInnerIndex] = useState(0);
   const [operatingManualdata, setOperatingManualdata] = useState([]);
+  const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [show, setShow] = useState(false);
   let [videoUrl, setVideoUrl] = useState('');
   let [category, setCategory] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [formSettingError, setFormSettingError] = useState({});
+  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+  const [selectedUser, setSelectedUser] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [user, setUser] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [userRole, setUserRole] = useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   useEffect(() => {
     getOperatingManual();
+    getUserRoleData();
     getCategory();
-    console.log('role---->', localStorage.getItem('user_role'));
+    console.log('user_id---->', operatingManualdata[Index]?.operating_manuals[
+      innerIndex
+    ]?.created_by);
   }, []);
+  useEffect(() => {
+    getUser();
+  }, [selectedFranchisee]);
+  const getUserRoleData = () => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/api/user-role`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        // console.log('response0-------->1', localStorage.getItem('user_role'));
+        setUserRole(res?.userRoleList);
+
+        console.log('upperRoleUser--->', upperRoleUser);
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const getUpperRoleUser = () => {
+    let upper_role = '';
+    let flag = false;
+    userRole?.map((item) => {
+      if (item.role_name !== localStorage.getItem('user_role')) {
+        if (!flag) upper_role += item.role_name + ',';
+      } else {
+        flag = true;
+      }
+    });
+    return upper_role.slice(0, -1);
+  };
+  const getUser = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    let api_url="";
+    if(selectedFranchisee)
+      api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    else
+    api_url=`${BASE_URL}/auth/users`;
+    fetch(api_url, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.data?.map((item) => {
+          item['status'] = false;
+        });
+        if(selectedFranchisee)
+          setUser(result?.users);
+        else
+          setUser(result?.data);
+      })
+      .catch((error) => console.log('error', error));
+  };
 
   useEffect(() => {
     var tree = document.getElementById('tree1');
@@ -46,15 +124,16 @@ const OperatingManual = () => {
         var elm = el.parentNode;
         elm.classList.add('branch');
         var x = document.createElement('img');
+        el.classList.add('expand');
+        x.src = '../img/circle-minus.svg';
+        const childNode = elm.childNodes[0];
         if (index === 0) {
-          el.classList.add('expand');
-          x.src = '../img/circle-minus.svg';
-          const childNode = elm.childNodes[1];
           childNode.classList.add('tree-title');
-        } else {
-          x.src = '../img/plus-circle.svg';
-          el.classList.add('collapse');
         }
+        // } else {
+        //   x.src = '../img/plus-circle.svg';
+        //   el.classList.add('collapse');
+        // }
         if (elm.firstChild.tagName !== x.tagName) {
           console.log('tagName', x.tagName, elm.firstChild.tagName);
           elm.insertBefore(x, elm.firstChild);
@@ -85,6 +164,84 @@ const OperatingManual = () => {
       });
     }
   }, [operatingManualdata]);
+  const getOneOperatingManual = async (id, category_name) => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    await fetch(
+      `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(
+          'shared_with--->',
+          response?.result?.shared_with.includes('2')
+        );
+        setOperatingManualData(response?.result);
+        let data = formSettingData;
+        data['applicable_to_all'] = response?.result?.accessible_to_all;
+        data['shared_role'] = response?.result?.shared_role
+          ? response?.result?.shared_role
+          : '';
+        data['accessible_to_role'] = response?.result?.accessible_to_role;
+        if (response?.result?.accessible_to_role === 0) {
+          let users = [];
+          selectedUserId = '';
+          user.map((item) => {
+            if (response?.result?.shared_with.includes(item.id.toString())) {
+              users.push(item);
+              selectedUserId += item.id + ',';
+            }
+          });
+          setSelectedUser(users);
+        }
+        setFormSettingData(data);
+        // response?.result?.applicable_to_user.toString();
+        // data.applicable_to_franchisee =
+        //   response?.result?.applicable_to_franchisee.toString();
+        // console.log('Franchisee--->', franchisee);
+        // selectedFranchisee = [];
+        // franchisee.map((item) => {
+        //   if (response?.result?.shared_with.includes(item.franchisee_alias)) {
+        //     selectedFranchisee.push({
+        //       id: item.id,
+        //       franchisee_name: item.franchisee_name,
+        //       franchisee_alias: item.franchisee_alias,
+        //     });
+        //     selectedFranchiseeName += item.franchisee_alias + ',';
+        //   }
+        // });
+        // selectedUserRole = [];
+        // console.log('userRole---->', userRole);
+        // userRole.map((item) => {
+        //   console.log('selectedUserRole---->', response?.result?.shared_role);
+        //   if (response?.result?.shared_role.includes(item.role_name)) {
+        //     selectedUserRole.push({
+        //       id: item.id,
+        //       role_label: item.role_label,
+        //       role_name: item.role_name,
+        //     });
+        //     selectedUserRoleName += item.role_name + ',';
+        //   }
+        // });
+        // console.log('selectedUserRole---->', selectedUserRole);
+      })
+      .catch((error) => console.log('error', error));
+  };
+
+  const setFormSettingFields = (field, value) => {
+    setFormSettingData({ ...formSettingData, [field]: value });
+
+    if (!!formSettingError[field]) {
+      setFormSettingError({
+        ...formSettingError,
+        [field]: null,
+      });
+    }
+  };
   const getCategory = async () => {
     var requestOptions = {
       method: 'GET',
@@ -124,15 +281,17 @@ const OperatingManual = () => {
     if (key === 'category') {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
         'user_role'
-      )}`;
+      )}&id=${localStorage.getItem('user_id')}`;
+      setCategoryFilter(value);
     } else if (key === 'search') {
       api_url = `${BASE_URL}/operating_manual?search=${value}&role=${localStorage.getItem(
         'user_role'
-      )}`;
+      )}&id=${localStorage.getItem('user_id')}`;
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
-      )}`;
+      )}&id=${localStorage.getItem('user_id')}`;
+      setCategoryFilter('reset');
     }
 
     fetch(api_url, requestOptions)
@@ -142,6 +301,74 @@ const OperatingManual = () => {
         setOperatingManualdata(result.result);
       })
       .catch((error) => console.log('error', error));
+  };
+  function onSelectUser(optionsList, selectedItem) {
+    console.log('selected_item---->2', selectedItem);
+    selectedUserId += selectedItem.id + ',';
+    selectedUser.push({
+      id: selectedItem.id,
+      email: selectedItem.email,
+    });
+    console.log('selectedUser---->', selectedUser);
+  }
+  function onRemoveUser(selectedList, removedItem) {
+    selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
+    const index = selectedUser.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedUser.splice(index, 1);
+    {
+      console.log('selectedUser---->', selectedUser);
+    }
+  }
+  const onModelSubmit = (e) => {
+    e.preventDefault();
+    let data = operatingManualData;
+    if (!data?.id) {
+      alert('Please save first operating manual information');
+    } else {
+      console.log(
+        'formSettingData.accessible_to_role---->',
+        formSettingData.shared_role
+      );
+
+      if (
+        formSettingData.accessible_to_role === null ||
+        formSettingData.accessible_to_role === undefined
+      ) {
+        data['accessible_to_role'] = null;
+        data['accessible_to_all'] = true;
+      } else {
+        if (formSettingData.accessible_to_role === 1) {
+          data['shared_role'] = formSettingData.shared_role.slice(0, -1);
+          data['shared_with'] = null;
+          data['accessible_to_role'] = formSettingData.accessible_to_role;
+          data['accessible_to_all'] = false;
+        } else {
+          data['shared_with'] = selectedUserId.slice(0, -1);
+          data['shared_role'] = null;
+          data['accessible_to_role'] = formSettingData.accessible_to_role;
+          data['accessible_to_all'] = false;
+        }
+      }
+      data['created_by'] = localStorage.getItem('user_id');
+      upperRoleUser = getUpperRoleUser();
+      data['upper_role'] = upperRoleUser;
+
+      var myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+      fetch(`${BASE_URL}/operating_manual/add`, {
+        method: 'post',
+        body: JSON.stringify(data),
+        headers: myHeaders,
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setOperatingManualData(res?.result);
+          setFormSettingFlag(false);
+          // navigate('/operatingmanual');
+        });
+    }
   };
 
   return (
@@ -154,7 +381,10 @@ const OperatingManual = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+              <TopHeader 
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee}
+                    />
                 <Row>
                   <Col sm={4}>
                     <div className="tree_wrp">
@@ -187,8 +417,21 @@ const OperatingManual = () => {
                               </Dropdown.Toggle>
 
                               <Dropdown.Menu>
-                                {category?.map((item) => {
-                                  return (
+                                {category?.map((item, index) => {
+                                  return categoryFilter ===
+                                    item.category_name ? (
+                                    <Dropdown.Item
+                                      onClick={() => {
+                                        getOperatingManual(
+                                          'category',
+                                          item.category_name
+                                        );
+                                      }}
+                                      active
+                                    >
+                                      {item.category_name}
+                                    </Dropdown.Item>
+                                  ) : (
                                     <Dropdown.Item
                                       onClick={() => {
                                         getOperatingManual(
@@ -201,13 +444,31 @@ const OperatingManual = () => {
                                     </Dropdown.Item>
                                   );
                                 })}
+                                {categoryFilter === 'reset' ? (
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      getOperatingManual('', '');
+                                    }}
+                                    active
+                                  >
+                                    Reset
+                                  </Dropdown.Item>
+                                ) : (
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      getOperatingManual('', '');
+                                    }}
+                                  >
+                                    Reset
+                                  </Dropdown.Item>
+                                )}
                               </Dropdown.Menu>
                             </Dropdown>
                           </div>
                         </div>
                       </div>
                       <ul id="tree1" className="tree">
-                        {operatingManualdata.map((item, index) => {
+                        {operatingManualdata?.map((item, index) => {
                           return (
                             <li className="title_active">
                               <a href="#">
@@ -261,38 +522,61 @@ const OperatingManual = () => {
                       </Button> */}
                       <div className="forms-toogle">
                         <div class="custom-menu-dots">
-                          <Dropdown>
-                            <Dropdown.Toggle id="dropdown-basic">
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </Dropdown.Toggle>
+                          {(operatingManualdata[Index]?.operating_manuals[
+                            innerIndex
+                          ]?.created_by === parseInt(localStorage.getItem('user_id')) ||
+                            operatingManualdata[Index]?.operating_manuals[
+                              innerIndex
+                            ]?.upper_role.includes(
+                              localStorage.getItem('user_role'))
+                            ) && (
+                              <Dropdown>
+                                <Dropdown.Toggle id="dropdown-basic">
+                                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                                </Dropdown.Toggle>
 
-                            <Dropdown.Menu>
-                              <Dropdown.Item
-                                href=""
-                                onClick={() => {
-                                  navigate('/operatingmanual/add', {
-                                    state: {
-                                      id: operatingManualdata[Index]
-                                        ?.operating_manuals[innerIndex]?.id,
-                                      category_name:
+                                <Dropdown.Menu>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      navigate('/operatingmanual/add', {
+                                        state: {
+                                          id: operatingManualdata[Index]
+                                            ?.operating_manuals[innerIndex]?.id,
+                                          category_name:
+                                            operatingManualdata[Index]
+                                              ?.category_name,
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faPen} /> Edit
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      deleteOperatingManual();
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faRemove} /> Remove
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      setFormSettingFlag(true);
+                                      getOneOperatingManual(
                                         operatingManualdata[Index]
-                                          ?.category_name,
-                                    },
-                                  });
-                                }}
-                              >
-                                <FontAwesomeIcon icon={faPen} /> Edit
-                              </Dropdown.Item>
-                              <Dropdown.Item
-                                href=""
-                                onClick={() => {
-                                  deleteOperatingManual();
-                                }}
-                              >
-                                <FontAwesomeIcon icon={faRemove} /> Remove
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
+                                          ?.operating_manuals[innerIndex]?.id,
+                                        operatingManualdata[Index]
+                                          ?.category_name
+                                      );
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faUsers} /> Sharing
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            )}
                         </div>
                       </div>
                     </div>
@@ -434,6 +718,257 @@ const OperatingManual = () => {
             ></iframe>
           </div>
         </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={formSettingFlag}
+        onHide={() => setFormSettingFlag(false)}
+        size="lg"
+        className="form-settings-modal"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title
+            id="contained-modal-title-vcenter"
+            className="modal-heading"
+          >
+            <img src="../../img/carbon_settings.svg" />
+            Form Settings
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-settings-content">
+            <Row className="mt-4">
+              <Col lg={3} md={6}>
+                <Form.Group>
+                  <Form.Label>Accessible to:</Form.Label>
+                  <div className="new-form-radio d-block">
+                    <div className="new-form-radio-box">
+                      <label for="yes">
+                        <input
+                          type="radio"
+                          value={1}
+                          name="accessible_to_role"
+                          id="yes"
+                          onClick={(e) => {
+                            setFormSettingFields(
+                              e.target.name,
+                              parseInt(e.target.value)
+                            );
+                          }}
+                          checked={formSettingData.accessible_to_role === 1}
+                        />
+                        <span className="radio-round"></span>
+                        <p>User Roles</p>
+                      </label>
+                    </div>
+                    <div className="new-form-radio-box m-0 mt-3">
+                      <label for="no">
+                        <input
+                          type="radio"
+                          value={0}
+                          name="accessible_to_role"
+                          id="no"
+                          onClick={(e) => {
+                            setFormSettingFields(
+                              e.target.name,
+                              parseInt(e.target.value)
+                            );
+                          }}
+                          checked={formSettingData.accessible_to_role === 0}
+                        />
+                        <span className="radio-round"></span>
+                        <p>Specific Users</p>
+                      </label>
+                    </div>
+                  </div>
+                </Form.Group>
+              </Col>
+              <Col lg={9} md={12}>
+                {formSettingData.accessible_to_role === 1 ? (
+                  <Form.Group>
+                    <Form.Label>Select User Roles</Form.Label>
+                    <div className="modal-two-check user-roles-box">
+                      <label className="container">
+                        Co-ordinators
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="coordinator"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('coordinator')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Educators
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="educator"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('educator')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        Parents
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="parent"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role?.includes(
+                            'parent'
+                          )}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <label className="container">
+                        All Roles
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="all_roles"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            console.log('e.target.checked', e.target.checked);
+                            if (e.target.checked === true) {
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('parent')
+                              ) {
+                                data['shared_role'] += 'parent,';
+                              }
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('educator')
+                              ) {
+                                data['shared_role'] += 'educator,';
+                              }
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes('coordinator')
+                              ) {
+                                data['shared_role'] += 'coordinator,';
+                              }
+                              if (
+                                !data['shared_role'].toString().includes('all')
+                              ) {
+                                data['shared_role'] += 'all,';
+                              }
+                              setFormSettingData(data);
+                            } else {
+                              data['shared_role'] = '';
+                              setFormSettingData(data);
+                            }
+                          }}
+                          checked={formSettingData?.shared_role?.includes(
+                            'all'
+                          )}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    </div>
+                  </Form.Group>
+                ) : null}
+                {formSettingData.accessible_to_role === 0 ? (
+                  <Form.Group>
+                    <Form.Label>Select User</Form.Label>
+                    <div className="select-with-plus">
+                      <Multiselect
+                        displayValue="email"
+                        className="multiselect-box default-arrow-select"
+                        // placeholder="Select Franchisee"
+                        selectedValues={selectedUser}
+                        // onKeyPressFn={function noRefCheck() {}}
+                        onRemove={onRemoveUser}
+                        // onSearch={function noRefCheck() {}}
+                        onSelect={onSelectUser}
+                        options={user}
+                      />
+                    </div>
+                    <p className="error">{errors.franchisee}</p>
+                  </Form.Group>
+                ) : null}
+              </Col>
+            </Row>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="justify-content-center">
+          <Button className="back">Cancel</Button>
+          <Button className="done" onClick={onModelSubmit}>
+            Save Settings
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

@@ -23,6 +23,7 @@ import AddFormField from '../pages/FormBuilder/FormField/add';
 import FormResponse from '../pages/FormBuilder/FormResponse';
 import Training from '../pages/Training';
 import AddNewTraining from '../pages/AddNewTraining';
+import EditTraining from '../pages/EditTraining';
 import TrainingDetail from '../pages/TrainingDetail';
 import FileRepository from '../pages/FileRepository';
 import Announcements from '../pages/Announcements';
@@ -308,6 +309,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AddNewTraining />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/edit-training/:trainingId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <EditTraining />
             </Protected>
           }
         />

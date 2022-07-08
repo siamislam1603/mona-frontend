@@ -3,7 +3,7 @@ import { Col, Row, Dropdown } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from "axios";
 
-const CompleteTraining = () => {
+const CompleteTraining = ({ filter }) => {
   const [completedTrainingData, setCompletedTrainingData] = useState([]);
 
   const fetchCompletedTrainingData = async () => {
@@ -16,7 +16,7 @@ const CompleteTraining = () => {
       }
     });
 
-    console.log('RESPONSE:', response);
+    console.log('RESPONSE DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       const { trainingList } = response.data;
       setCompletedTrainingData(trainingList);
@@ -26,6 +26,8 @@ const CompleteTraining = () => {
   useEffect(() => {
     fetchCompletedTrainingData();
   }, []);
+
+  completedTrainingData && console.log('COMPLETED TRAINING:', completedTrainingData);
 
   return (
     <>
