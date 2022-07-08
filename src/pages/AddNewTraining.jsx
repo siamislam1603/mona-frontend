@@ -19,8 +19,8 @@ const timeqty = [
     label: 'Hours',
   },
   {
-    value: 'month',
-    label: 'Month',
+    value: 'months',
+    label: 'Months',
   },
 ];
 
@@ -179,6 +179,7 @@ const AddNewTraining = () => {
 
   const handleDataSubmit = event => {
     event.preventDefault();
+    window.scrollTo(0, 0);
 
     if(trainingData && coverImage && videoTutorialFiles) {
       let data = new FormData();
@@ -601,7 +602,7 @@ const AddNewTraining = () => {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#ffffff80",
-          position: "absolute",
+          position: "fixed",
           top: "0",
           left: "0",
           right: "0",
