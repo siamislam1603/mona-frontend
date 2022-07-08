@@ -45,15 +45,18 @@ const OperatingManual = () => {
   const [user, setUser] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('');
   const [userRole, setUserRole] = useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
     getCategory();
-    getUser();
     console.log('user_id---->', operatingManualdata[Index]?.operating_manuals[
       innerIndex
     ]?.created_by);
   }, []);
+  useEffect(() => {
+    getUser();
+  }, [selectedFranchisee]);
   const getUserRoleData = () => {
     var requestOptions = {
       method: 'GET',
@@ -94,13 +97,21 @@ const OperatingManual = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
-    fetch(`${BASE_URL}/auth/users`, requestOptions)
+    let api_url="";
+    if(selectedFranchisee)
+      api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    else
+    api_url=`${BASE_URL}/auth/users`;
+    fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         result?.data?.map((item) => {
           item['status'] = false;
         });
-        setUser(result?.data);
+        if(selectedFranchisee)
+          setUser(result?.users);
+        else
+          setUser(result?.data);
       })
       .catch((error) => console.log('error', error));
   };
@@ -370,7 +381,10 @@ const OperatingManual = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+              <TopHeader 
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee}
+                    />
                 <Row>
                   <Col sm={4}>
                     <div className="tree_wrp">

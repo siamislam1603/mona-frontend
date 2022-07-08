@@ -69,31 +69,23 @@ const FileRepository = () => {
   const [selectedAll, setSelectedAll] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [franchisee, setFranchisee] = useState([
-    { id: 1, registered_name: 'ABC' },
-    { id: 2, registered_name: 'PQR' },
-    { id: 3, registered_name: 'RST' },
-    { id: 4, registered_name: 'VWX' },
-    { id: 5, registered_name: 'XYZ' },
-  ]);
   const [userRole, setUserRole] = useState([]);
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [loaderFlag, setLoaderFlag] = useState(false);
   const [columns, setColumns] = useState([
     {
-      dataField: 'name',
+      dataField: 'repository_files',
       text: 'Name',
       sort: true,
       formatter: (cell) => {
-        cell = cell.split(',');
         return (
           <>
             <div className="user-list">
-              <span className="user-pic">
-                <img src={cell[0]} alt="" />
-              </span>
+              {/* <span className="user-pic">
+                <img src={cell[0].} alt="" />
+              </span> */}
               <span className="user-name">
-                {cell[1]}
+                {cell[0].fileName+"."+cell[0].fileType.split("/")[1]}
                 {/* <small>{cell[2]}</small> */}
               </span>
             </div>
@@ -102,21 +94,19 @@ const FileRepository = () => {
       },
     },
     {
-      dataField: 'createdon',
+      dataField: 'repository_files',
       text: 'Created on',
       sort: true,
-    },
-    {
-      dataField: 'createdby',
-      text: 'Created by',
-      sort: true,
       formatter: (cell) => {
-        cell = cell.split(',');
         return (
           <>
             <div className="user-list">
+              {/* <span className="user-pic">
+                <img src={cell[0]} alt="" />
+              </span> */}
               <span className="user-name">
-                {cell[0]} <small>{cell[1]}</small>
+                {cell[0].createdAt.split("T")[0]}
+                {/* <small>{cell[2]}</small> */}
               </span>
             </div>
           </>
@@ -124,7 +114,23 @@ const FileRepository = () => {
       },
     },
     {
-      dataField: 'action',
+      dataField: 'repository_files',
+      text: 'Created by',
+      sort: true,
+      formatter: (cell) => {
+        return (
+          <>
+            <div className="user-list">
+              <span className="user-name">
+                {cell[0].creatorName} <small className='text-capitalize'>{cell[0].creatorRole.split("_").join(" ")}</small>
+              </span>
+            </div>
+          </>
+        );
+      },
+    },
+    {
+      dataField: 'repository_files',
       text: '',
       formatter: (cell) => {
         return (
@@ -134,9 +140,9 @@ const FileRepository = () => {
                 <Dropdown.Toggle variant="transparent" id="ctacol">
                   <img src="../img/dot-ico.svg" alt="" />
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
+                {/* <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-                </Dropdown.Menu>
+                </Dropdown.Menu> */}
               </Dropdown>
             </div>
           </>
@@ -333,29 +339,29 @@ const FileRepository = () => {
     )
       .then((response) => response.json())
       .then((res) => {
-        let repoData = [];
+        // let repoData = [];
 
-        res?.map((item) => {
-          if (item.filesPath.includes('/')) {
-            item.filesPath = item.filesPath.split('/');
-          }
+        // res?.map((item) => {
+        //   if (item.filesPath.includes('/')) {
+        //     item.filesPath = item.filesPath.split('/');
+        //   }
 
-          if (item.filesPath.includes('\\')) {
-            console.log('Hello9009546546789875674');
-            item.filesPath = item.filesPath.split('\\');
-          }
-          repoData.push({
-            id: item.id,
-            name:
-              '../img/abstract-ico.png,' +
-              item.filesPath[item.filesPath.length - 1],
-            createdon: moment(item.createdAt).format('DD/MM/YYYY'),
-            createdby: item.creatorName + ',' + item.creatorRole,
-            sharing: '../img/sharing-ico.png, Shared',
-          });
-        });
-        console.log('repoData---->', repoData);
-        setSharedWithMeFileRepoData(repoData);
+        //   if (item.filesPath.includes('\\')) {
+        //     console.log('Hello9009546546789875674');
+        //     item.filesPath = item.filesPath.split('\\');
+        //   }
+        //   repoData.push({
+        //     id: item.id,
+        //     name:
+        //       '../img/abstract-ico.png,' +
+        //       item.filesPath[item.filesPath.length - 1],
+        //     createdon: moment(item.createdAt).format('DD/MM/YYYY'),
+        //     createdby: item.creatorName + ',' + item.creatorRole,
+        //     sharing: '../img/sharing-ico.png, Shared',
+        //   });
+        // });
+        // console.log('repoData---->', repoData);
+        setSharedWithMeFileRepoData(res);
       })
       .catch((error) => console.log('error', error));
   };
@@ -377,7 +383,7 @@ const FileRepository = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        let repoData = [];
+        // let repoData = [];
         console.log('data--->', result);
         // res?.map((item) => {
         //   if (item.filesPath.includes('/')) {
@@ -398,7 +404,7 @@ const FileRepository = () => {
         //     sharing: '../img/sharing-ico.png, Shared',
         //   });
         // });
-        console.log('repoData---->', repoData);
+        // console.log('repoData---->', repoData);
         setFileRepoData(result);
       })
       .catch((error) => console.log('error', error));
@@ -414,12 +420,6 @@ const FileRepository = () => {
       .then((res) => {
         setUserRole(res?.userRoleList);
         console.log('response0-------->1', res?.userRoleList);
-      })
-      .catch((error) => console.log('error', error));
-    fetch(`${BASE_URL}/role/franchisee`, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        setFranchisee(res?.franchiseeList);
       })
       .catch((error) => console.log('error', error));
   };
@@ -471,15 +471,16 @@ const FileRepository = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader />
-
+                {console.log("sharedWithMeFileRepoData------>",sharedWithMeFileRepoData)}
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
                     <ToolkitProvider
-                      keyField="name"
+                      keyField="id"
                       data={
                         tabFlag === false
                           ? fileRepoData
-                          : sharedWithMeFileRepoData
+                          : 
+                          sharedWithMeFileRepoData
                       }
                       columns={columns}
                       search

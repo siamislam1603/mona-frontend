@@ -43,7 +43,7 @@ const AddOperatingManual = () => {
   }, []);
   useEffect(() => {
     getUser();
-  }, [userRole]);
+  }, [selectedFranchisee]);
   useEffect(() => {
     getCategory();
   }, [user]);
@@ -59,7 +59,12 @@ const AddOperatingManual = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
-    fetch(`${BASE_URL}/auth/users`, requestOptions)
+    let api_url="";
+    if(selectedFranchisee)
+      api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    else
+    api_url=`${BASE_URL}/auth/users`;
+    fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         result?.data?.map((item) => {
@@ -379,9 +384,11 @@ const AddOperatingManual = () => {
       redirect: 'follow',
     };
 
+    
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
+        console.log("res---->",res);
         // console.log('response0-------->1', localStorage.getItem('user_role'));
         setUserRole(res?.userRoleList);
 
@@ -389,6 +396,7 @@ const AddOperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
 
+  selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
       {console.log('errors--->', errors)}
@@ -405,6 +413,7 @@ const AddOperatingManual = () => {
                   <TopHeader 
                     selectedFranchisee={selectedFranchisee}
                     setSelectedFranchisee={setSelectedFranchisee} />
+                    />
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
