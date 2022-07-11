@@ -632,9 +632,11 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 @media only screen and (max-width: 1199px) {
 .forms-managment-right { flex-wrap: wrap; }
 .form-settings-content .new-form-radio-box+.new-form-radio-box { margin: 0 0 0 15px; }
+.form-settings-content .new-form-radio-box-1+.new-form-radio-box-1 { margin: 0 0 0 15px; }
 .form-settings-modal>div { min-width: auto !important; max-width: 97%; }
 .new-form-radio { flex-wrap: wrap; }
 .new-form-radio-box+.new-form-radio-box { margin: 10px 0 0 0; }
+.new-form-radio-box-1+.new-form-radio-box-1 { margin: 10px 0 0 0; }
 .forms-managment-right>* { margin-bottom: 10px; }
 .topheader { lex-wrap: wrap; }
 .topheader .rpanel .user-sec li { margin-right: 15px !important; }
@@ -663,14 +665,15 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 #basic-navbar-nav .navbar-toggler:after {content: "";position: absolute;width: 1px;height: 100%;background: var(--white);transform: rotate(-45deg);pointer-events: none;left: 0;top: 0;}
 }
 @media only screen and (max-width: 767px) {
-.new-form-radio-box { idth: 100%; }
-.add-group-t-button { ustify-content: flex-start; }
+.new-form-radio-box { width: 100%; }
+.new-form-radio-box-1 { width: 100%; }
+.add-group-t-button { justify-content: flex-start; }
 .selectdropdown .dropdown .btn-primary, .selectdropdown .dropdown .btn-primary:active { font-size: 14px; }
 .mynewForm { font-size: 25px; }
 .responses-header-row { flex-wrap: wrap; padding-right: 15px; }
 .responses-header-left { width: 100%; }
 .responses-header-right { width: 100; padding: 15px 0 0 0; }
-.responses-header-right p { text-align: left; ont-size: 15px; }
+.responses-header-right p { text-align: left; font-size: 15px; }
 .responses-header-image { width: 46px; height: 46px; border: 2px solid var(--white); }
 .responses-header-detail h5 { font-size: 16px; }
 .responses-header-detail h6 { font-size: 14px; }
@@ -681,6 +684,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 @media only screen and (max-width: 575px) {
 .forms-filter button { margin-right: 15px; }
 .form-settings-content .new-form-radio-box { width: auto; }
+.form-settings-content .new-form-radio-box-1 { width: auto; }
 .topheader .lpanel, .topheader .rpanel { width: 100%; }
 .btn { min-width: initial; }
 .add-q button { padding: 0 10px; }

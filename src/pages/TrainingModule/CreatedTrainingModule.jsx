@@ -7,13 +7,34 @@ import Multiselect from 'multiselect-react-dropdown';
 const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [myTrainingData, setMyTrainingData] = useState();
   const [otherTrainingData, setOtherTrainingData] = useState();
+  const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [saveTrainingId, setSaveTrainingId] = useState(null);
+  const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
   const [shareType, setShareType] = useState("roles");
   const [userList, setUserList] = useState();
   const [formSettings, setFormSettings] = useState({
-    user_roles: []
+    user_roles: [],
+    assigned_franchisee: [],
+    assigned_users: []
   });
+
+  const fetchFranchiseeList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      setFranchiseeList(response.data.franchiseeList.map(data => ({
+        id: data.id,
+        cat: data.franchisee_alias,
+        key: `${data.franchisee_name}, ${data.city}`
+      })));
+    }
+  };
 
   const fetchUserList = async () => {
     let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_");
@@ -36,7 +57,6 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     let user_id = localStorage.getItem('user_id')
     const response = await axios.post(`${BASE_URL}/share/${saveTrainingId}`, {
       ...formSettings,
-      franchisee: selectedFranchisee,
       shared_by: user_id
     }, {
       headers: {
@@ -76,7 +96,13 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   useEffect(() => {
     fetchUserList();
   }, [selectedFranchisee]);
+  
+  useEffect(() => {
+    fetchFranchiseeList();
+  }, [])
 
+  formSettings && console.log('FORM SETTINGS:', formSettings);
+  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
   return (
     <>
       <div id="main">
@@ -156,7 +182,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                   <div className="createrimg">
                     <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
                   </div>
-                  <p>{training.user.fullname}, <span>{training.user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
+                  <p>{training.user?.fullname}, <span>{training.user?.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
                 </div>
               </div>
             </Col>
@@ -186,17 +212,93 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
             <div className="form-settings-content">
               <Row className="mt-4">
                 <Col lg={3} md={6}>
+                <Form.Group>
+                    <Form.Label>Send to all franchisee:</Form.Label>
+                    <div className="new-form-radio d-block">
+                      <div className="new-form-radio-box">
+                        <label for="all">
+                          <input
+                            type="radio"
+                            checked={sendToAllFranchisee === 'all'}
+                            name="send_to_all_franchisee"
+                            id="all"
+                            onChange={() => {
+                              setFormSettings(prevState => ({
+                                ...prevState,
+                                assigned_franchisee: ['all']
+                              }));
+                              setSendToAllFranchisee('all')
+                            }}
+                          />
+                          <span className="radio-round"></span>
+                          <p>Yes</p>
+                        </label>
+                      </div>
+                      <div className="new-form-radio-box m-0 mt-3">
+                        <label for="none">
+                          <input
+                            type="radio"
+                            name="send_to_all_franchisee"
+                            checked={sendToAllFranchisee === 'none'}
+                            id="none"
+                            onChange={() => {
+                              setFormSettings(prevState => ({
+                                ...prevState,
+                                assigned_franchisee: []
+                              }));
+                              setSendToAllFranchisee('none')
+                            }}
+                          />
+                          <span className="radio-round"></span>
+                          <p>No</p>
+                        </label>
+                      </div>
+                    </div>
+                  </Form.Group>
+                </Col>
+
+                <Col lg={9} md={12}>
+                  <Form.Group>
+                    <Form.Label>Select Franchisee</Form.Label>
+                    <div className="select-with-plus">
+                      <Multiselect
+                        disable={sendToAllFranchisee === 'all'}
+                        placeholder={"Select User Names"}
+                        displayValue="key"
+                        className="multiselect-box default-arrow-select"
+                        onKeyPressFn={function noRefCheck() {}}
+                        onRemove={function noRefCheck(data) {
+                          setFormSettings((prevState) => ({
+                            ...prevState,
+                            assigned_franchisee: [...data.map(data => data.id)],
+                          }));
+                        }}
+                        onSearch={function noRefCheck() {}}
+                        onSelect={function noRefCheck(data) {
+                          setFormSettings((prevState) => ({
+                            ...prevState,
+                            assigned_franchisee: [...data.map((data) => data.id)],
+                          }));
+                        }}
+                        options={franchiseeList}
+                      />
+                    </div>
+                  </Form.Group> 
+                </Col>
+              </Row>
+
+              <Row className="mt-4">
+                <Col lg={3} md={6}>
                   <Form.Group>
                     <Form.Label>Accessible to:</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
-                        <label for="yes">
+                        <label for="roles">
                           <input
                             type="radio"
-                            value={1}
                             checked={shareType === "roles"}
                             name="accessible_to_role"
-                            id="yes"
+                            id="roles"
                             onChange={() => {
                               setFormSettings(prevState => ({
                                 ...prevState,
@@ -211,13 +313,12 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                         </label>
                       </div>
                       <div className="new-form-radio-box m-0 mt-3">
-                        <label for="no">
+                        <label for="users">
                           <input
                             type="radio"
-                            value={0}
                             name="accessible_to_role"
                             checked={shareType === "users"}
-                            id="no"
+                            id="users"
                             onChange={() => {
                               setFormSettings(prevState => ({
                                 ...prevState,
