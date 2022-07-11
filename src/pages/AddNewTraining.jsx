@@ -366,7 +366,6 @@ const AddNewTraining = () => {
                           <DropAllFile
                             onSave={setVideoTutorialFiles}
                           />
-                        { errors && errors.videoTutorialFiles && <span className="error mt-2">{errors.videoTutorialFiles}</span> } 
                         </Form.Group>
                       </Col>
 
@@ -376,7 +375,6 @@ const AddNewTraining = () => {
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />
-                        { errors && errors.relatedFiles && <span className="error mt-2">{errors.relatedFiles}</span> } 
                         </Form.Group>
                       </Col>
                       <Col md={12}>
