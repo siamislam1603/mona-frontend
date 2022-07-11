@@ -476,7 +476,7 @@ const AddOperatingManual = () => {
                           setCategoryModalFlag(true);
                         }}
                       >
-                        <FontAwesomeIcon icon={faPlus} /> Add New Category
+                        <FontAwesomeIcon icon={faPlus} /> Add New Operating Manual
                       </Button>
                     </Col>
                   </Row>
