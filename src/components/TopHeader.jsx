@@ -32,7 +32,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
       const response = await axios.get(`${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`);
       if(response.status === 200) {
         const { franchisee } = response.data;
-        setSelectedFranchisee(franchisee.franchisee_name);
+        setSelectedFranchisee(franchisee.franchisee_name,franchisee.id);
         setFranchiseeList([franchisee].map((data) => ({
           id: data.id,
           franchisee_name: `${data.franchisee_name}, ${data.city}`
@@ -59,8 +59,14 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     };
 
     const selectFranchisee = (e) => {
-        // console.log('FRANCHISEE:', e);
-        setSelectedFranchisee(e);
+        let id;
+        franchiseeList.map((item)=>{
+          if(item.franchisee_name===e)
+          {
+            id=item.id; 
+          }
+        })
+        setSelectedFranchisee(e,id);
         localStorage.setItem('selectedFranchisee', e);
     }
 

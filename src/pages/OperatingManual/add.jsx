@@ -37,7 +37,7 @@ const AddOperatingManual = () => {
   const [categoryData, setCategoryData] = useState({});
   const [categoryError, setCategoryError] = useState({});
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-
+  const [selectedFranchiseeId,setSelectedFranchiseeId]=useState(null);
   useEffect(() => {
     getUserRoleData();
   }, []);
@@ -47,6 +47,9 @@ const AddOperatingManual = () => {
   useEffect(() => {
     getCategory();
   }, [user]);
+  useEffect(()=>{
+    getCategory();
+  },[selectedFranchiseeId])
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append(
@@ -81,7 +84,7 @@ const AddOperatingManual = () => {
     };
 
     await fetch(
-      `${BASE_URL}/operating_manual/one?id=${location?.state?.id}&category_name=${location?.state?.category_name}`,
+      `${BASE_URL}/operating_manual/one?id=${location?.state?.id}&category_name=${location?.state?.category_name}&franchisee_id=${localStorage.getItem("f_id")}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -89,24 +92,28 @@ const AddOperatingManual = () => {
         console.log('operating manual--->', response?.result);
         setOperatingManualData(response?.result);
         let data = formSettingData;
-        data['applicable_to_all'] = response?.result?.accessible_to_all;
-        data['shared_role'] = response?.result?.shared_role
-          ? response?.result?.shared_role
-          : '';
-        data['accessible_to_role'] = response?.result?.accessible_to_role;
+        data['applicable_to_all'] = response?.result?.permission?.accessible_to_all;
 
-        if (response?.result?.accessible_to_role === 0) {
-          selectedUserId = response?.result?.shared_with;
+        data['accessible_to_role'] = response?.result?.permission?.accessible_to_role;
+        // if (response?.result?.permission?.accessible_to_role === 0) {
           let users = [];
           selectedUserId = '';
           user.map((item) => {
-            if (response?.result?.shared_with.includes(item.id.toString())) {
+            if (response?.result?.permission?.shared_with.includes(item.id.toString())) {
               users.push(item);
               selectedUserId += item.id + ',';
             }
           });
           setSelectedUser(users);
-        }
+        // }
+        // else
+        // {
+          let role="";
+          response?.result?.permission?.shared_role.map((item)=>{
+            role+=item+",";
+          })
+          data['shared_role'] = role;
+        // }
         setFormSettingData(data);
       })
       .catch((error) => console.log('error', error));
@@ -158,29 +165,30 @@ const AddOperatingManual = () => {
       );
 
       if (
-        formSettingData.accessible_to_role === null ||
-        formSettingData.accessible_to_role === undefined
+        formSettingData.shared_role==="" &&
+        selectedUserId === ""
       ) {
         console.log('Hello');
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
-        if (formSettingData.accessible_to_role === 1) {
-          data['shared_role'] = formSettingData.shared_role.slice(0, -1);
-          data['shared_with'] = null;
-          data['accessible_to_role'] = formSettingData.accessible_to_role;
+        // if (formSettingData.accessible_to_role === 1) {
+          data['shared_role'] = formSettingData.shared_role ? formSettingData.shared_role.slice(0, -1) : null;
+          // data['shared_with'] = null;
+          data['accessible_to_role'] = null;
           data['accessible_to_all'] = false;
-        } else {
-          data['shared_with'] = selectedUserId.slice(0, -1);
-          data['shared_role'] = null;
-          data['accessible_to_role'] = formSettingData.accessible_to_role;
-          data['accessible_to_all'] = false;
-        }
-
+        // } else {
+          data['shared_with'] = selectedUserId ? selectedUserId.slice(0, -1) : null;
+          // data['shared_role'] = null;
+          // data['accessible_to_role'] = formSettingData.accessible_to_role;
+          // data['accessible_to_all'] = false;
+        // }
       }
       data['created_by']=localStorage.getItem('user_id');
+      data['shared_by']=localStorage.getItem('user_id');
       upperRoleUser=getUpperRoleUser();
       data['upper_role']=upperRoleUser;
+      data['franchisee_id']=selectedFranchiseeId;
       console.log('Hello---->', data);
 
       var myHeaders = new Headers();
@@ -210,6 +218,7 @@ const AddOperatingManual = () => {
       let data={...operatingManualData};
       data.created_by=localStorage.getItem('user_id');
       data.upper_role=upperRoleUser;
+      console.log("data---->",data);
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
         body: JSON.stringify(data),
@@ -399,7 +408,7 @@ const AddOperatingManual = () => {
   selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
-      {console.log('errors--->', errors)}
+      {console.log('selectedFranchiseeId--->', selectedFranchiseeId)}
       {console.log('operating manual--->', operatingManualData)}
       <div id="main">
         <section className="mainsection ">
@@ -412,8 +421,7 @@ const AddOperatingManual = () => {
                 <div className="new_module">
                   <TopHeader 
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
-                  <Row>
+                    setSelectedFranchisee={(name,id)=>{setSelectedFranchisee(name);setSelectedFranchiseeId(id);localStorage.setItem("f_id",id);}} />                 <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
                         <h4 className="mynewForm">New Category</h4>
@@ -712,7 +720,7 @@ const AddOperatingManual = () => {
         <Modal.Body>
           <div className="form-settings-content">
             <Row className="mt-4">
-              <Col lg={3} md={6}>
+              {/* <Col lg={3} md={6}>
                 <Form.Group>
                   <Form.Label>Accessible to:</Form.Label>
                   <div className="new-form-radio d-block">
@@ -756,9 +764,9 @@ const AddOperatingManual = () => {
                     </div>
                   </div>
                 </Form.Group>
-              </Col>
-              <Col lg={9} md={12}>
-                {formSettingData.accessible_to_role === 1 ? (
+              </Col> */}
+              <Col lg={12} md={12}>
+                {/* {formSettingData.accessible_to_role === 1 ? ( */}
                   <Form.Group>
                     <Form.Label>Select User Roles</Form.Label>
                     <div className="modal-two-check user-roles-box">
@@ -803,6 +811,7 @@ const AddOperatingManual = () => {
                           id="educator"
                           onClick={(e) => {
                             let data = { ...formSettingData };
+                            console.log("data['shared_role']---->",data['shared_role']);
                             if (
                               !data['shared_role']
                                 .toString()
@@ -911,8 +920,8 @@ const AddOperatingManual = () => {
                       </label>
                     </div>
                   </Form.Group>
-                ) : null}
-                {formSettingData.accessible_to_role === 0 ? (
+                {/* ) : null} */}
+                {/* {formSettingData.accessible_to_role === 0 ? ( */}
                   <Form.Group>
                     <Form.Label>Select User</Form.Label>
                     <div className="select-with-plus">
@@ -930,7 +939,7 @@ const AddOperatingManual = () => {
                     </div>
                     <p className="error">{errors.franchisee}</p>
                   </Form.Group>
-                ) : null}
+                {/* ) : null} */}
               </Col>
             </Row>
           </div>
