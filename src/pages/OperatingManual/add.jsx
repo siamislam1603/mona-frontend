@@ -84,7 +84,7 @@ const AddOperatingManual = () => {
     };
 
     await fetch(
-      `${BASE_URL}/operating_manual/one?id=${location?.state?.id}&category_name=${location?.state?.category_name}&franchisee_id=${localStorage.getItem("franchisee_id")}`,
+      `${BASE_URL}/operating_manual/one?id=${location?.state?.id}&category_name=${location?.state?.category_name}&franchisee_id=${localStorage.getItem("f_id")}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -421,7 +421,7 @@ const AddOperatingManual = () => {
                 <div className="new_module">
                   <TopHeader 
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={(name,id)=>{setSelectedFranchisee(name);setSelectedFranchiseeId(id);localStorage.setItem("franchisee_id",id);}} />                 <Row>
+                    setSelectedFranchisee={(name,id)=>{setSelectedFranchisee(name);setSelectedFranchiseeId(id);localStorage.setItem("f_id",id);}} />                 <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
                         <h4 className="mynewForm">New Category</h4>

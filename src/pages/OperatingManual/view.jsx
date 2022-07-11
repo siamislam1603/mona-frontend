@@ -172,7 +172,7 @@ const OperatingManual = () => {
     };
 
     await fetch(
-      `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}&franchisee_id=${localStorage.getItem("franchisee_id")}`,
+      `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}&franchisee_id=${localStorage.getItem("f_id")}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -369,7 +369,7 @@ const OperatingManual = () => {
               <div className="sec-column">
               <TopHeader 
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={(name,id)=>{setSelectedFranchisee(name);setSelectedFranchiseeId(id);localStorage.setItem("franchisee_id",id);
+                    setSelectedFranchisee={(name,id)=>{setSelectedFranchisee(name);setSelectedFranchiseeId(id);localStorage.setItem("f_id",id);
                       if(operatingManualdata[Index]
                         ?.operating_manuals[innerIndex]?.id && operatingManualdata[Index]
                         ?.category_name)
