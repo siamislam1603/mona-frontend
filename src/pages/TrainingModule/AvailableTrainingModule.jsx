@@ -57,7 +57,7 @@ const AvailableTraining = ({ filter }) => {
                     <div className="iconame">
                       <a href="/training-detail">{item.title}</a>
                       <div className="datecol">
-                        <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('MM/DD/YYYY')}</span>
+                        <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
                         <span className="time">{ item.completion_time } { item.completion_in}</span>
                       </div>
                     </div>

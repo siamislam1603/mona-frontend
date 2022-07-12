@@ -131,7 +131,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
                         <Dropdown.Item href="#">Delete</Dropdown.Item>
-                        <Dropdown.Item href="#">Edit</Dropdown.Item>
+                        <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
                         <Dropdown.Item href="#" onClick={() => {
                           setSaveTrainingId(training.id);
                           setShowModal(true)
@@ -165,7 +165,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                 </div>
                 <div className="fixcol">
                   <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                  <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                  <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
                   <div className="cta-col">
                     <Dropdown>
                       <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -264,6 +264,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                       <Multiselect
                         disable={sendToAllFranchisee === 'all'}
                         placeholder={"Select User Names"}
+                        singleSelect={true}
                         displayValue="key"
                         className="multiselect-box default-arrow-select"
                         onKeyPressFn={function noRefCheck() {}}
@@ -340,7 +341,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                   shareType === "roles" ? 
                   <>
                     <Form.Label className="d-block">Select User Roles</Form.Label>
-                      <div className="btn-checkbox" style={{ display: "flex", flexDirection: "column" }}>
+                      <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
                         <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                           <Form.Check 
                             type="checkbox" 

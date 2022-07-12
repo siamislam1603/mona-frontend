@@ -363,10 +363,11 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .rightcolumn { border-left: 1px solid #F0F0F0; padding-left: 50px; height: 100%; }
 
-.activity-list .item { display:flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; background-color: var(--offwhite); border-radius: 16px; padding: 16px; }
+.activity-list .item { display:flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; background-color: var(--offwhite); border-radius: 16px; padding: 16px; color:var(--darkblue); }
+.activity-list .item:hover { color:var(--purple); background-color: var(--yellow); }
 .activity-list .item .name { font-family: var(--fontrubik); font-weight: 500; flex: 0 0 60%; }
 .activity-list .item .separator { color:var(--purple); font-weight: 900; opacity: 1; margin: 0; flex: 0 0 25%; }
-.activity-list .item .num { color:var(--darkblue); flex: 0 0 15%; text-align: right; font-family: var(--fontmanrope); font-size: 30px; font-weight: 600; }
+.activity-list .item .num { flex: 0 0 15%; text-align: right; font-family: var(--fontmanrope); font-size: 30px; font-weight: 600; }
 
 .ads { opacity:.1; }
 .viewall { flex: 0 0 75px; text-align: right; color: var(--black); opacity: .5; }
@@ -378,8 +379,9 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .column-table.user-management-sec .table tr td:last-child { width:10%; }
 
 .column-list { position:relative; }
-.column-list .kidsart { position:absolute; left: -70px; bottom: 25px; max-width: 85px; }
-.column-list .item { display:flex; align-items: center; padding: 16px; margin-bottom: 1rem; background-color: var(--white); border-radius: 16px; box-shadow: 0 0 10px 0 rgba(0,0,0,.1); }
+.kidsart { position:absolute; left: -70px; bottom: 25px; max-width: 85px; }
+.column-list .item { display:flex; padding: 16px; margin-bottom: 1rem; background-color: var(--offwhite); border-radius: 16px; /*box-shadow: 0 0 10px 0 rgba(0,0,0,.1);*/ }
+.column-list.event-list .item { box-shadow: 0 0 10px 0 rgba(0,0,0,.1); background-color: var(--white); }
 .column-list .item .flex { display:flex; align-items: center; }
 .column-list .item:hover { background-color: var(--yellow); }
 .column-list .item .pic { margin-right:1rem; flex:0 0 47px; }
@@ -404,15 +406,15 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .three-col .item { flex: 0 0 32%; }
 .three-col .item:nth-child(3n) { margin-left: 1%; margin-right: 0; }
 
-.training-column .item { background-color: var(--offwhite); overflow: hidden; border-radius: 18px; }
+.training-column .item { background-color: var(--offwhite); overflow: hidden; border-radius: 18px; margin-bottom: 1rem; }
 .training-column .item .pic { overflow: hidden; border-radius: 18px; position: relative; }
 .training-column .item .pic .lthumb { position: absolute; right:25px; bottom: 25px; z-index: 2; }
 .training-column .item .fixcol { display:flex; align-items: center; padding: 15px; }
 .training-column .item .fixcol .icopic { margin-right:1rem; flex:0 0 47px; }
-.training-column .item .fixcol .iconame { font-weight: 600; font-size: var(--fontsm); line-height: 1.6; width: 100%; }
+.training-column .item .fixcol .iconame { font-weight: 600; font-size: var(--fontlg); line-height: 1.6; width: 100%; }
 .training-column .item .fixcol .iconame a { color:var(--primary); }
 .training-column .item .fixcol .iconame a:hover { color:var(--darkblue); }
-.training-column .item .fixcol .time, .training-column .item .fixcol .date { display: block; opacity: .7; font-size: var(--fontxs); font-weight: 300; }
+.training-column .item .fixcol .time, .training-column .item .fixcol .date, .training-column .item .fixcol .red-date { display: block; font-size: var(--fontxs); font-weight: 400; }
 .training-column .item .fixcol .cta-col { margin-left: auto; flex:0 0 47px; }
 .training-column .item .fixcol .cta-col .btn-transparent { opacity: .5; }
 .training-column .item hr { margin: 0 auto; opacity: .1; width: 95%; }
@@ -422,6 +424,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .training-column .item .status-col .col small { display: block; font-size: var(--fontxs); opacity: .8; }
 .training-column .item .status-col .col p { margin: 0; font-weight: 600; color: var(--darkblue); font-size: var(--fontsm); }
 .training-column .item .total-percentage { flex:0 0 120px; max-width: 120px; margin-left: auto; }
+.col-md-6 .training-column .nowrap { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 105px; }
 
 .cprogress { padding: 15px; }
 .cprogress .react-sweet-progress-symbol { color: var(--purple); font-weight: 800; }
@@ -439,9 +442,9 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .educator-sec .educator-detail { margin-left: 1.3rem; }
 .educator-sec .educator-detail .edu-name { font-size: var(--fontxxxl); font-family: var(--fontrubik); }
 .educator-sec .educator-detail .edu-tel { background: url("../img/tel-ico.png") no-repeat; background-position:left center; }
-.educator-sec .educator-detail .edu-email { background: url("../img/mail-ico.png") no-repeat; background-position:left center; }
+.educator-sec .educator-detail .edu-email { background: url("../img/mail-ico.png") no-repeat; background-position:left 6px; }
 .educator-sec .educator-detail .edu-know { background: url("../img/chart-ico.png") no-repeat; background-position:left center; }
-.educator-sec .educator-detail .edu-tel, .educator-sec .educator-detail .edu-email, .educator-sec .educator-detail .edu-know { padding-left: 25px; opacity: .5; }
+.educator-sec .educator-detail .edu-tel, .educator-sec .educator-detail .edu-email, .educator-sec .educator-detail .edu-know { padding-left: 25px; opacity: .5; overflow-wrap: normal; overflow-wrap: break-word; overflow-wrap: anywhere; }
 .educator-sec .educator-detail a { color: var(--black); }
 .educator-sec .educator-detail .edu-tel:hover, .educator-sec .educator-detail .edu-email:hover, .educator-sec .educator-detail .edu-know:hover { opacity: 1; }
 
@@ -599,7 +602,9 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .embed-responsive-16by9::before { padding-top: 56.25%; }
 .embed-responsive .embed-responsive-item, .embed-responsive embed, .embed-responsive iframe, .embed-responsive object, .embed-responsive video { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; height: 100%; order: 0; }
 
-
+.audit-form { border-radius:15px; padding: 25px; background-color: var(--yellow); display: flex; align-items: center; justify-content: center; }
+.audit-form p { margin: 0; line-height: normal; text-align: center; font-size: var(--fontxl); }
+.audit-form .totalaudit { background-color: var(--purple); width: 100px; height: 100px; border-radius: 100%; display: flex; align-items: center; justify-content: center; margin-left: 1rem; color: var(--white); font-weight: 700; font-size: 1.7rem; }
 
 
 

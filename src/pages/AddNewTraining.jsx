@@ -20,6 +20,14 @@ const timeqty = [
     label: 'Hours',
   },
   {
+    value: 'days',
+    label: 'Days',
+  },
+  {
+    value: 'weeks',
+    label: 'Weeks',
+  },
+  {
     value: 'months',
     label: 'Months',
   },
@@ -28,13 +36,14 @@ const timeqty = [
 const AddNewTraining = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const handleSaveAndClose = () => setShow(false);
 
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
+  const [createTrainingModal, setCreateTrainingModal] = useState(false);
 
   const [userRoles, setUserRoles] = useState([]);
+  const [sendToAllFranchisee, setSendToAllFranchisee] = useState('none');
+  const [franchiseeList, setFranchiseeList] = useState();
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [trainingCategory, setTrainingCategory] = useState([]);
@@ -46,7 +55,7 @@ const AddNewTraining = () => {
     category_id: "",
     time_required_to_complete: "" 
   });
-  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [] });
+  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [], is_applicable_to_all: false, assigned_franchisee: [] });
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -56,6 +65,24 @@ const AddNewTraining = () => {
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
+
+  // FETCHING FRANCHISEE LIST
+  const fetchFranchiseeList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      setFranchiseeList(response.data.franchiseeList.map(data => ({
+        id: data.id,
+        cat: data.franchisee_alias,
+        key: `${data.franchisee_name}, ${data.city}`
+      })));
+    }
+  };
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
@@ -86,43 +113,63 @@ const AddNewTraining = () => {
     if(response.status === 201 && response.data.status === "success") {
       let { id } = response.data.training;
 
-      let data = new FormData();
-      data.append('id', id);
-      data.append('image', coverImage[0]);
-
-      let imgSaveResponse = await axios.post(
-        `${BASE_URL}/training/coverImg`, data, {
-          headers: {
-            "Authorization": "Bearer " + token
-          }
+      let token = localStorage.getItem('token');
+      let user_id = localStorage.getItem('user_id')
+      const shareResponse = await axios.post(`${BASE_URL}/share/${id}`, {
+        assigned_franchisee: trainingSettings.assigned_franchisee,
+        assigned_users: trainingSettings.assigned_users,
+        user_roles: trainingSettings.user_roles,
+        shared_by: user_id,
+        is_applicable_to_all: trainingSettings.is_applicable_to_all,
+      }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
         }
-      );
+      });
 
-      if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
-        setLoader(false)
-        localStorage.setItem('success_msg', 'Training Created Successfully!');
-        localStorage.setItem('active_tab', '/created-training');
-        window.location.href="/training";
-      } else {
-        setTopErrorMessage("unable to save cover image!");
-        setTimeout(() => {
-          setTopErrorMessage(null);
-        }, 3000)
+      if(shareResponse.status === 201 && shareResponse.data.status === "success") {
+        let { id } = response.data.training;
+
+        let data = new FormData();
+        data.append('id', id);
+        data.append('image', coverImage[0]);
+
+        let imgSaveResponse = await axios.post(
+          `${BASE_URL}/training/coverImg`, data, {
+            headers: {
+              "Authorization": "Bearer " + token
+            }
+          }
+        );
+
+        if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+          setLoader(false)
+          localStorage.setItem('success_msg', 'Training Created Successfully!');
+          localStorage.setItem('active_tab', '/created-training');
+          window.location.href="/training";
+        } else {
+          setTopErrorMessage("unable to save cover image!");
+          setTimeout(() => {
+            setTopErrorMessage(null);
+          }, 3000)
+        }
+
+        } else if(response.status === 200 && response.data.status === "fail") {
+          const { msg } = response.data;
+          setTopErrorMessage(msg);
+          setLoader(false);
+          setCreateTrainingModal(false);
+          setTimeout(() => {
+            setTopErrorMessage(null);
+          }, 3000)
+        } 
       }
-
-    } else if(response.status === 200 && response.data.status === "fail") {
-      const { msg } = response.data;
-      setTopErrorMessage(msg);
-      setLoader(false);
-      setTimeout(() => {
-        setTopErrorMessage(null);
-      }, 3000)
-    }
   };  
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
-  const fetchFranchiseeUsers = async (franchisee_name) => {
-    const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
+  const fetchFranchiseeUsers = async (franchisee_id) => {
+    const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
+    console.log('RESPONSE:', response);
     if(response.status === 200 && Object.keys(response.data).length > 1) {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -187,7 +234,7 @@ const AddNewTraining = () => {
       setErrors(errorObj);
     } else {
       setErrors({});
-      if(Object.keys(trainingSettings).length === 1) {
+      if(Object.keys(trainingSettings).length === 3) {
         setSettingsModalPopup(true);
       }
 
@@ -211,6 +258,7 @@ const AddNewTraining = () => {
         });
         
         window.scrollTo(0, 0);
+        setCreateTrainingModal(true);
         setLoader(true);
         createTraining(data);
       }
@@ -220,11 +268,16 @@ const AddNewTraining = () => {
   useEffect(() => {
     fetchUserRoles();
     fetchTrainingCategories();
+    fetchFranchiseeList();
   }, []);
 
+  // useEffect(() => {
+  //   fetchFranchiseeUsers(selectedFranchisee);
+  // }, [selectedFranchisee]);
+
   useEffect(() => {
-    fetchFranchiseeUsers(selectedFranchisee);
-  }, [selectedFranchisee]);
+    fetchFranchiseeUsers(trainingSettings.assigned_franchisee[0]);
+  }, [trainingSettings.assigned_franchisee.length > 0]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   trainingData && console.log('TRAINING DATA:', trainingData);
@@ -327,6 +380,7 @@ const AddNewTraining = () => {
                             <Select
                               style={{ flex: 3 }}
                               closeMenuOnSelect={true}
+                              Multiselect={false}
                               placeholder={trainingData.time_unit}
                               value={trainingData.time_unit || ""}
                               components={animatedComponents}
@@ -459,17 +513,97 @@ const AddNewTraining = () => {
                 </Form.Group>
               </Col>
             </Row>
+
+            <Row className="mt-4">
+              <Col lg={3} md={6}>
+                <Form.Group>
+                  <Form.Label>Send to all franchisee:</Form.Label>
+                  <div className="new-form-radio d-block">
+                    <div className="new-form-radio-box">
+                      <label for="all">
+                        <input
+                          type="radio"
+                          checked={sendToAllFranchisee === 'all'}
+                          name="send_to_all_franchisee"
+                          id="all"
+                          onChange={() => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              assigned_franchisee: ['all']
+                            }));
+                            setSendToAllFranchisee('all')
+                          }}
+                        />
+                        <span className="radio-round"></span>
+                        <p>Yes</p>
+                      </label>
+                    </div>
+                    <div className="new-form-radio-box m-0 mt-3">
+                      <label for="none">
+                        <input
+                          type="radio"
+                          name="send_to_all_franchisee"
+                          checked={sendToAllFranchisee === 'none'}
+                          id="none"
+                          onChange={() => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              assigned_franchisee: []
+                            }));
+                            setSendToAllFranchisee('none')
+                          }}
+                        />
+                        <span className="radio-round"></span>
+                        <p>No</p>
+                      </label>
+                    </div>
+                  </div>
+                </Form.Group>
+              </Col>
+
+              <Col lg={9} md={12}>
+                <Form.Group>
+                  <Form.Label>Select Franchisee</Form.Label>
+                  <div className="select-with-plus">
+                    <Multiselect
+                      disable={sendToAllFranchisee === 'all'}
+                      singleSelect={true}
+                      placeholder={"Select User Names"}
+                      displayValue="key"
+                      className="multiselect-box default-arrow-select"
+                      onKeyPressFn={function noRefCheck() {}}
+                      onRemove={function noRefCheck(data) {
+                        setTrainingSettings((prevState) => ({
+                          ...prevState,
+                          assigned_franchisee: [...data.map(data => data.id)],
+                        }));
+                      }}
+                      onSearch={function noRefCheck() {}}
+                      onSelect={function noRefCheck(data) {
+                        setTrainingSettings((prevState) => ({
+                          ...prevState,
+                          assigned_franchisee: [...data.map((data) => data.id)],
+                        }));
+                      }}
+                      options={franchiseeList}
+                    />
+                  </div>
+                </Form.Group> 
+              </Col>
+            </Row>
+
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
                   <Form.Label>Applicable to:</Form.Label>
-                  <div className="new-form-radio">
+                  <div>
                     <div className="new-form-radio-box">
                       <label htmlFor="yes1">
                         <input
                           type="radio"
                           value="Y"
                           name="roles"
+                          checked={ trainingSettings.is_applicable_to_all === true }
                           id="yes1"
                           onChange={(event) => {
                             setTrainingSettings((prevState) => ({
@@ -482,12 +616,13 @@ const AddNewTraining = () => {
                         <p>User Roles</p>
                       </label>
                     </div>
-                    <div className="new-form-radio-box">
+                    <div className="new-form-radio-box" style={{ marginLeft: 0, marginTop: '10px' }}>
                       <label htmlFor="no1">
                         <input
                           type="radio"
                           value="N"
                           name="roles"
+                          checked={ trainingSettings.is_applicable_to_all === false }
                           id="no1"
                           onChange={(event) => {
                             setTrainingSettings((prevState) => ({
@@ -572,40 +707,36 @@ const AddNewTraining = () => {
                     </Form.Group>
                   </div>
                 </div>
-              </Col>
-            </Row>
 
-            <Row className={`mt-4`}>
-              <Col lg={3} md={6}>
-              </Col>
-              <Col lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings.is_applicable_to_all === true ? "d-none": ""}`}>
-                <Form.Group>
-                  <Form.Label>Select User Names</Form.Label>
-                  <Multiselect
-                    placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
-                    displayValue="key"
-                    selectedValues={trainingSettings.assigned_users_data}
-                    className="multiselect-box default-arrow-select"
-                    onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck(data) {
-                      setTrainingSettings((prevState) => ({
-                        ...prevState,
-                        assigned_users: [...data.map(data => data.id)],
-                        assigned_users_data: [...data.map(data => data)]
-                      }));
-                    }}
-                    onSearch={function noRefCheck() {}}
-                    onSelect={function noRefCheck(data) {
-                      setTrainingSettings((prevState) => ({
-                        ...prevState,
-                        assigned_users: [...data.map((data) => data.id)],
-                        assigned_users_data: [...data.map(data => data)]
-                      }));
-                    }}
-                    options={fetchedFranchiseeUsers}
-                  />
-                  
-                </Form.Group>
+                <div className={`mt-3 mt-md-0 ${trainingSettings.is_applicable_to_all === true ? "d-none": ""}`}>
+                  <Form.Group>
+                    <Form.Label>Select User Names</Form.Label>
+                    <Multiselect
+                      placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
+                      displayValue="key"
+                      selectedValues={trainingSettings.assigned_users_data}
+                      className="multiselect-box default-arrow-select"
+                      onKeyPressFn={function noRefCheck() {}}
+                      onRemove={function noRefCheck(data) {
+                        setTrainingSettings((prevState) => ({
+                          ...prevState,
+                          assigned_users: [...data.map(data => data.id)],
+                          assigned_users_data: [...data.map(data => data)]
+                        }));
+                      }}
+                      onSearch={function noRefCheck() {}}
+                      onSelect={function noRefCheck(data) {
+                        setTrainingSettings((prevState) => ({
+                          ...prevState,
+                          assigned_users: [...data.map((data) => data.id)],
+                          assigned_users_data: [...data.map(data => data)]
+                        }));
+                      }}
+                      options={fetchedFranchiseeUsers}
+                    />
+                    
+                  </Form.Group>
+                </div>
               </Col>
             </Row>
           </div>
@@ -623,21 +754,31 @@ const AddNewTraining = () => {
         </Modal.Footer>
       </Modal> 
       {
-        loader === true && <div style={{ 
-          width: "100vw", 
-          height: "100vh", 
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#ffffff80",
-          position: "fixed",
-          top: "0",
-          left: "0",
-          right: "0",
-          bottom: "0",
-        }}>
-          <ReactBootstrap.Spinner animation="border" />
-        </div>
+        createTrainingModal && 
+        <Modal
+          show={createTrainingModal}
+          onHide={() => setCreateTrainingModal(false)}>
+          <Modal.Header>
+            <Modal.Title>
+              Creating Training
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div className="create-training-modal" style={{ textAlign: 'center' }}>
+              <p>This may take some time.</p>
+              <p>Please Wait...</p>
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          {
+            loader === true && <div>
+              <ReactBootstrap.Spinner animation="border" />
+            </div>
+          }
+          </Modal.Footer>
+        </Modal>
       }
     </div>
   );
