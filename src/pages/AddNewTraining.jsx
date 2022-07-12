@@ -20,6 +20,14 @@ const timeqty = [
     label: 'Hours',
   },
   {
+    value: 'days',
+    label: 'Days',
+  },
+  {
+    value: 'weeks',
+    label: 'Weeks',
+  },
+  {
     value: 'months',
     label: 'Months',
   },
