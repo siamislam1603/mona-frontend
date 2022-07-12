@@ -625,9 +625,7 @@ const OperatingManual = () => {
                                           </Button>
                                           <div className="video_title">
                                             <h6>
-                                              Computer Literacy - The growing
-                                              reliance on technology and
-                                              computers also in experiment.
+                                              Video 1
                                             </h6>
                                           </div>
                                         </div>
@@ -698,8 +696,7 @@ const OperatingManual = () => {
       >
         <Modal.Header closeButton>
           <h2>
-            Computer Literacy - The growing reliance on technology and computers
-            also in experiment.
+            Video 1
           </h2>
         </Modal.Header>
         <Modal.Body>
