@@ -357,7 +357,7 @@ const Main = () => {
         />
 
       <Route
-          path="/my-announcements"
+          path="/my-announcements/:id"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -418,7 +418,7 @@ const Main = () => {
           }
         />
          <Route
-          path="/edit-announcement"
+          path="/edit-announcement/:id"
           element={
             typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
               <EditAnnouncement />

@@ -11,6 +11,7 @@ import {EditAnnouncementValidation} from '../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../components/DragDropMultipleRelatedFiles';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 let selectedUserId = '';
 let upperRoleUser='';
 const EditAnnouncement = () => {
@@ -37,7 +38,7 @@ const EditAnnouncement = () => {
   });
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
-  
+  const { id } = useParams();
   const setOperatingManualField = (field, value) => {
     console.log("The field and value",field,value)
     setOperatingManualData({ ...operatingManualData, [field]: value });
@@ -60,13 +61,12 @@ const EditAnnouncement = () => {
       ...operatingManualData,
       [name]:value
     }))
-    
   };
   const UpdateAnnouncement = async(data) =>{
   try {
      let token = localStorage.getItem('token')
      console.log("The token",token)
-    const res = await axios.put('http://localhost:4000/announcement/2',{
+    const res = await axios.put(`http://localhost:4000/announcement/${id}`,{
       title: announcementData.title,
       start_date : data.start_date,
       start_time : data.start_time,
@@ -80,7 +80,6 @@ const EditAnnouncement = () => {
   } catch (error) {
     console.log(error)
   }
-    
   }
   const onSubmit = (e) => {
     e.preventDefault();
@@ -89,38 +88,14 @@ const EditAnnouncement = () => {
       setErrors(newErrors);
     } 
     else{
-      
       setErrors({});
       if(Object.keys(AnnouncementsSettings).length === 1){
           setSettingsModalPopup(true)
       }
-
       if(settingsModalPopup === false && allowSubmit && operatingManualData ) {
          console.log("After submit the buton",operatingManualData)
-        UpdateAnnouncement(operatingManualData)
-
-        // for(let [key, values] of Object.entries(trainingSettings)) {
-        //   data.append(`${key}`, values);
-        // }
-
-      //   for(let [ key, values ] of Object.entries(trainingData)) {
-      //     data.append(`${key}`, values)
-      //   }
-
-      //   videoTutorialFiles.forEach((file, index) => {
-      //     data.append(`images`, file);
-      //   });
-
-      //   relatedFiles.forEach((file, index) => {
-      //     data.append(`images`, file);
-      //   });
-        
-      //   window.scrollTo(0, 0);
-      //   setLoader(true);
-      //   createTraining(data);
+         UpdateAnnouncement(operatingManualData)
       }
-      
-
     }
   };
  
@@ -205,9 +180,9 @@ const EditAnnouncement = () => {
           });
       }
     };
-  const AnnouncementDetails = async(id) => {
+  const AnnouncementDetails = async() => {
      let token = localStorage.getItem('token')
-     const response = await axios.get("http://localhost:4000/announcement/2", {
+     const response = await axios.get(`http://localhost:4000/announcement/${id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
