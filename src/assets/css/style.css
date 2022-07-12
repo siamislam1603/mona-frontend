@@ -689,3 +689,21 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .forms-header-section .tab-section .nav-tabs li button { margin: 0 auto; }
 .topheader .rpanel { margin-top: 20px; }
 }
+
+/* =================================================================================== */
+/* 
+  USER: Yatender Kumar
+  Note: There styles have been added later on, as and when the components demanded them.
+*/
+
+.cursor {
+  cursor: pointer;
+}
+
+.error {
+  color: tomato;
+}
+
+.mt-2 {
+  margin-top: 24px;
+}

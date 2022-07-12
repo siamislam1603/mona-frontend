@@ -18,9 +18,21 @@ const AllAnnouncements = () => {
                             <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
                             <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <small><span>Educator:</span> Smile Daycare</small></div>
                             <div className="date">
-                                <NavLink to="/edit-announcement">
-                                <img src="../img/dot-ico.svg" alt=""/>
-                                </NavLink>
+                                
+                                {/* <Dropdown.Toggle id="extrabtn" className="ctaact">
+                                    <NavLink to="/edit-announcement">
+                                      <img src="../img/dot-ico.svg" alt=""/>
+                                    </NavLink>
+                                 </Dropdown.Toggle> */}
+                                 <Dropdown>
+                                  <Dropdown id="extrabtn" className="ctaact">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href="/edit-announcement">Edit</Dropdown.Item>
+                                    <Dropdown.Item href="#">Delete All</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
                             </div>
                           </div>
                         </Accordion.Header>

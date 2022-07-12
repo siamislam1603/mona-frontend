@@ -26,10 +26,9 @@ const Announcements =  () => {
   const [announcementDetails,setAnnouncementDetail] = useState("")
   const [tabLinkPath, setTabLinkPath] = useState("/all-announcements");
 
-  const getAnnouncementDetails = async () =>{
-    const user_id = localStorage.getItem('user_id');
+  const AllAnnouncement = async () =>{
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/get_announcement/${user_id}`, {
+    const response = await axios.get(`${BASE_URL}/announcement`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -44,7 +43,7 @@ const Announcements =  () => {
     setTabLinkPath(path);
   }
   useEffect(() => {
-    getAnnouncementDetails()
+    AllAnnouncement()
   }, [])
 
   return (

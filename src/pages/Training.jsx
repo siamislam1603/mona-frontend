@@ -274,7 +274,8 @@ const Training = () => {
                             filter={filterData} />}
                     {tabLinkPath === "/created-training" 
                       && <CreatedTrainingModule 
-                            filter={filterData} />}
+                            filter={filterData}
+                            selectedFranchisee={selectedFranchisee} />}
                   </div>
                 </div>
               </div>

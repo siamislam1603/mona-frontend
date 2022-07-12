@@ -129,14 +129,27 @@ export const createOperatingManualValidation = (form) => {
   return newErrors;
 };
 //Validation for edit annoutment
-export const EditAnnouncementValidation = (form)=>{
+
+export const AddNewAnnouncementValidation = (form) =>{
   let newErrors = {};
   console.log("The form validat", form)
-  let { announcement_title,announcement_description} = form;
+  let { announcement_title,announcement_description,cover_image} = form;
   console.log("The tile valdiation", announcement_title)
   if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
-  
+  if (!cover_image || cover_image === '')newErrors.cover_image = 'Cover image is Required';
   if(!announcement_description || announcement_description === ' ') newErrors.announcement_description="Description is Required"
+  
+  return newErrors;
+
+}
+export const EditAnnouncementValidation = (form) =>{
+  let newErrors = {};
+  console.log("The form validat", form)
+  let { announcement_title,meta_description,cover_image} = form;
+  console.log("The tile valdiation", announcement_title)
+  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
+  if (!cover_image || cover_image === '')newErrors.cover_image = 'Cover image is Required';
+  if(!meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
   
   return newErrors;
 }
@@ -177,4 +190,50 @@ export const ChildRegisterFormValidation = (form) => {
     newErrors.languages_spoken_in_home = 'Language spoken in home is required';
   }
   return newErrors;
+};
+
+
+export const TrainingFormValidation = (form, coverImage, videoTutorialFiles, relatedFiles) => {
+  let errors = {};
+  let {
+    title,
+    description,
+    meta_description,
+    category_id,
+    time_required_to_complete,
+  } = form;
+
+  if (!title) {
+    errors.title = 'Training title is required!';
+  }
+  
+  if (!description) {
+    errors.description = 'Training description is required!';
+  }
+  
+  if (!meta_description) {
+    errors.meta_description = 'Meta description is required!';
+  }
+  
+  if (!category_id) {
+    errors.category_id = 'Training category title is required!';
+  }
+  
+  if (!time_required_to_complete) {
+    errors.time_required_to_complete = 'Training time is required!';
+  }
+
+  if(Object.keys(coverImage).length === 0) {
+    errors.coverImage = 'Cover image required!';
+  }
+
+  if(videoTutorialFiles.length === 0) {
+    errors.videoTutorialFiles = 'Video Files are required!';
+  }
+
+  if(relatedFiles.length === 0) {
+    errors.relatedFiles = 'Related Files are required!';
+  }
+
+  return errors;
 };
