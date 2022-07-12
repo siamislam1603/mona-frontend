@@ -42,6 +42,7 @@ const EditTraining = () => {
 
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
+  const [createTrainingModal, setCreateTrainingModal] = useState(false)
 
   const [userRoles, setUserRoles] = useState([]);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
@@ -131,6 +132,7 @@ const EditTraining = () => {
 
     if(response.status === 201 && response.data.status === "success") {
         setLoader(false)
+        setCreateTrainingModal(false);
         localStorage.setItem('success_msg', 'Training Updated Successfully!');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href="/training";
@@ -263,6 +265,7 @@ const EditTraining = () => {
         });
         
         window.scrollTo(0, 0);
+        setCreateTrainingModal(true);
         setLoader(true);
         updateTraining(data);
       }
@@ -302,7 +305,7 @@ const EditTraining = () => {
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">
-                      Add New Training{' '}
+                      Edit Training{' '}
                       <span className="setting-ico" onClick={() => setSettingsModalPopup(true)}>
                         <img src="../img/setting-ico.png" alt="" />
                       </span>
@@ -702,21 +705,31 @@ const EditTraining = () => {
         </Modal.Footer>
       </Modal> 
       {
-        loader === true && <div style={{ 
-          width: "100vw", 
-          height: "100vh", 
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#ffffff80",
-          position: "fixed",
-          top: "0",
-          left: "0",
-          right: "0",
-          bottom: "0",
-        }}>
-          <ReactBootstrap.Spinner animation="border" />
-        </div>
+        createTrainingModal && 
+        <Modal
+          show={createTrainingModal}
+          onHide={() => setCreateTrainingModal(false)}>
+          <Modal.Header>
+            <Modal.Title>
+              Updating Training
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div className="create-training-modal" style={{ textAlign: 'center' }}>
+              <p>This may take some time.</p>
+              <p>Please Wait...</p>
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          {
+            loader === true && <div>
+              <ReactBootstrap.Spinner animation="border" />
+            </div>
+          }
+          </Modal.Footer>
+        </Modal>
       }
     </div>
   );

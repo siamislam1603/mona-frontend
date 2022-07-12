@@ -264,6 +264,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                       <Multiselect
                         disable={sendToAllFranchisee === 'all'}
                         placeholder={"Select User Names"}
+                        singleSelect={true}
                         displayValue="key"
                         className="multiselect-box default-arrow-select"
                         onKeyPressFn={function noRefCheck() {}}
@@ -340,7 +341,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                   shareType === "roles" ? 
                   <>
                     <Form.Label className="d-block">Select User Roles</Form.Label>
-                      <div className="btn-checkbox" style={{ display: "flex", flexDirection: "column" }}>
+                      <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
                         <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                           <Form.Check 
                             type="checkbox" 
