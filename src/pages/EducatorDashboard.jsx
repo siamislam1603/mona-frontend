@@ -11,22 +11,22 @@ const products = [
   {
     id: 1,
     name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
+    specialneed: "Yes",
   },
   {
     id: 2,
     name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
+    specialneed: "Yes",
   },
   {
     id: 3,
     name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
+    specialneed: "No",
   },
   {
     id: 4,
     name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
+    specialneed: "Yes",
   },
 ];
 const columns = [
@@ -39,8 +39,8 @@ const columns = [
   },
 },
 {
-    dataField: 'educator',
-    text: 'Educator',
+    dataField: 'specialneed',
+    text: 'Child with special needs',
   },
   {
     dataField: "action",
@@ -119,7 +119,20 @@ const EducatorDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="files-sec pb-5">
+                        <div className="children-sec pb-5">
+                          <header className="title-head mb-4 justify-content-between">
+                            <h4 className="title-sm mb-0"><strong>Children</strong></h4>
+                            <Link to="/" className="viewall">View All</Link>
+                          </header>
+                          <div className="column-table user-management-sec">
+                            <BootstrapTable
+                              keyField="name"
+                              data={products}
+                              columns={ columns }
+                            />
+                          </div>
+                        </div>
+                        {/*<div className="files-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h2 className="title-sm mb-0"><strong>Forms</strong></h2>
                             <Link to="/" className="viewall">View All</Link>
@@ -215,7 +228,7 @@ const EducatorDashboard = () => {
                               <Link to="/"><img src="../img/akar-icons.png" alt=""/></Link>
                             </div>
                           </div>
-                        </div>
+                        </div>*/}
                       </div>
                     </Col>
                     <Col md={5}>
@@ -225,69 +238,131 @@ const EducatorDashboard = () => {
                             <h4 className="title-sm mb-0"><strong>Training</strong></h4>
                             <Link to="/" className="viewall">View All</Link>
                           </header>
-                          <div className="training-column">
-                            <div className="item">
-                              <div className="pic"><img src="../img/training-pic1.jpg" alt=""/></div>
-                              <div className="fixcol">
-                                <div className="icopic"><img src="../img/traning-audio-ico.png" alt=""/></div>
-                                <div className="iconame">Getting and staying organized <span className="time">3 Hours</span></div>
-                                <div className="cta-col">
-                                  <Dropdown>
-                                    <Dropdown.Toggle variant="transparent" id="ctacol">
-                                      <img src="../img/dot-ico.svg" alt=""/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
+                          <Row>
+                            <Col md={12}>
+                              <div className="training-column">
+                                <div className="item">
+                                  <div className="pic"><a href="/"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                                  <div className="fixcol">
+                                    <div className="icopic"><img src="../img/traning-audio-ico.png" alt=""/></div>
+                                    <div className="iconame">
+                                      <a href="/" className="nowrap">Getting and staying organized</a>
+                                      <div className="datecol">
+                                        <span className="red-date">Due Date: 22/01/2022</span>
+                                        <span className="time">3 Hours</span>
+                                      </div>
+                                    </div>
+                                    <div className="cta-col">
+                                      <Dropdown>
+                                        <Dropdown.Toggle variant="transparent" id="ctacol">
+                                          <img src="../img/dot-ico.svg" alt=""/>
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  </div>
+                                  {/*<hr/>
+                                  <div className="training-status">
+                                    <div className="status-col">
+                                      <div className="col">
+                                        <small>Status</small>
+                                        <p>In Progress</p>
+                                      </div>
+                                      <div className="col">
+                                        <small>Category</small>
+                                        <p>Getting Organised</p>
+                                      </div>
+                                      <div className="col">
+                                        <small>Label 1</small>
+                                        <p>Value 1</p>
+                                      </div>
+                                      <div className="col">
+                                        <small>Label 2</small>
+                                        <p>Value 2</p>
+                                      </div>
+                                    </div>
+                                    <div className="total-percentage">
+                                      <div className="cprogress">
+                                        <Progress type="circle" width={90} strokeWidth={9} percent={66}
+                                          theme={{
+                                            active: {
+                                              trailColor: '#dbdbdb',
+                                              color: '#AA0061'
+                                            }
+                                          }} />
+                                      </div>
+                                    </div>
+                                  </div>*/}
                                 </div>
                               </div>
-                              <hr/>
-                              <div className="training-status">
-                                <div className="status-col">
-                                  <div className="col">
-                                    <small>Status</small>
-                                    <p>In Progress</p>
-                                  </div>
-                                  <div className="col">
-                                    <small>Category</small>
-                                    <p>Getting Organised</p>
-                                  </div>
-                                  <div className="col">
-                                    <small>Label 1</small>
-                                    <p>Value 1</p>
-                                  </div>
-                                  <div className="col">
-                                    <small>Label 2</small>
-                                    <p>Value 2</p>
-                                  </div>
-                                </div>
-                                <div className="total-percentage">
-                                  <div className="cprogress">
-                                    <Progress type="circle" width={90} strokeWidth={9} percent={66}
-                                      theme={{
-                                        active: {
-                                          trailColor: '#dbdbdb',
-                                          color: '#AA0061'
-                                        }
-                                      }} />
+                            </Col>
+                            <Col md={6}>
+                              <div className="training-column">
+                                <div className="item">
+                                  <div className="pic"><a href="/"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                                  <div className="fixcol">
+                                    <div className="icopic"><img src="../img/traning-audio-ico.png" alt=""/></div>
+                                    <div className="iconame">
+                                      <a href="/" className="nowrap">Getting and staying organized</a>
+                                      <div className="datecol">
+                                        <span className="time">3 Hours</span>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
+                            </Col>
+                            <Col md={6}>
+                              <div className="training-column">
+                                <div className="item">
+                                  <div className="pic"><a href="/"><img src="../img/training-pic1.jpg" alt=""/></a></div>
+                                  <div className="fixcol">
+                                    <div className="icopic"><img src="../img/traning-audio-ico.png" alt=""/></div>
+                                    <div className="iconame">
+                                      <a href="/" className="nowrap">Getting and staying organized</a>
+                                      <div className="datecol">
+                                        <span className="time">3 Hours</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Col>
+                          </Row>
+                        </div>
+                        <div className="announcements-sec pb-5">
+                          <header className="title-head mb-4 justify-content-between">
+                            <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
+                            <Link to="/" className="viewall">View All</Link>
+                          </header>
+                          <div className="column-list announcements-list">
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
+                            </div>
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
                             </div>
                           </div>
                         </div>
-                        <div className="children-sec pb-5">
+                        <div className="educator-column">
                           <header className="title-head mb-4 justify-content-between">
-                            <h4 className="title-sm mb-0"><strong>Children</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <h4 className="title-sm mb-0"><strong>Primary Co-ordinators</strong></h4>
                           </header>
-                          <div className="column-table user-management-sec">
-                            <BootstrapTable
-                              keyField="name"
-                              data={products}
-                              columns={ columns }
-                            />
+                          <div className="educator-sec mb-5">
+                            <div className="educator-pic"><img src="../img/educator-pic.jpg" alt=""/></div>
+                            <div className="educator-detail">
+                              <h1 class="edu-name mb-2">James Parker</h1>
+                              <div className="edu-tel mb-2"><a href="tel:+6145434234">+61 454 342 34</a></div>
+                              <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">sarahp@specialdaycare.com</a></div>
+                            </div>
                           </div>
                         </div>
                       </aside>

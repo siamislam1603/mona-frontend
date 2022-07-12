@@ -30,7 +30,85 @@ const ParentsDashboard = () => {
                             <div className="edu-know mb-2">Languages, Science, General Knowledge</div>
                           </div>
                         </div>
-                        <div className="files-sec pb-5">
+                        <div className="event-sec pb-5">
+                          <header className="title-head mb-4 justify-content-between">
+                            <h4 className="title-sm mb-0"><strong>Events</strong></h4>
+                            <Link to="/" className="viewall">View All</Link>
+                          </header>
+                          <div className="column-list event-list">
+                            <div className="item">
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
+                              <div className="cta-col">
+                                <Dropdown>
+                                  <Dropdown.Toggle variant="transparent" id="ctacol">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              </div>
+                            </div>
+                            <div className="item">
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
+                              <div className="cta-col">
+                                <Dropdown>
+                                  <Dropdown.Toggle variant="transparent" id="ctacol">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              </div>
+                            </div>
+                            <div className="item">
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
+                              <div className="cta-col">
+                                <Dropdown>
+                                  <Dropdown.Toggle variant="transparent" id="ctacol">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              </div>
+                            </div>
+                            <div className="item">
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
+                              <div className="cta-col">
+                                <Dropdown>
+                                  <Dropdown.Toggle variant="transparent" id="ctacol">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              </div>
+                            </div>
+                            <div className="item">
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
+                              <div className="cta-col">
+                                <Dropdown>
+                                  <Dropdown.Toggle variant="transparent" id="ctacol">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {/*<div className="files-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h2 className="title-sm mb-0"><strong>Files</strong></h2>
                             <Link to="/" className="viewall">View All</Link>
@@ -185,7 +263,7 @@ const ParentsDashboard = () => {
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </div>*/}
                       </div>
                     </Col>
                     <Col md={5}>
@@ -205,97 +283,23 @@ const ParentsDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="event-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h4 className="title-sm mb-0"><strong>Events</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list event-list">
-                            <div className="item">
-                              <div className="pic"><img src="../img/event-ico.png" alt=""/></div>
-                              <div className="name">Some title of the event <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/event-ico.png" alt=""/></div>
-                              <div className="name">Some title of the event <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/event-ico.png" alt=""/></div>
-                              <div className="name">Some title of the event <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/event-ico.png" alt=""/></div>
-                              <div className="name">Some title of the event <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/event-ico.png" alt=""/></div>
-                              <div className="name">Some title of the event <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
                         <div className="announcements-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-                            <div className="item">
-                              <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
-                              <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
                             </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
-                              <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
                             </div>
                           </div>
                         </div>
