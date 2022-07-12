@@ -36,8 +36,6 @@ const timeqty = [
 const AddNewTraining = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const handleSaveAndClose = () => setShow(false);
 
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);

@@ -131,7 +131,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
                         <Dropdown.Item href="#">Delete</Dropdown.Item>
-                        <Dropdown.Item href="#">Edit</Dropdown.Item>
+                        <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
                         <Dropdown.Item href="#" onClick={() => {
                           setSaveTrainingId(training.id);
                           setShowModal(true)
