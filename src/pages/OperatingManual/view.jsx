@@ -99,10 +99,20 @@ const OperatingManual = () => {
       headers: myHeaders,
     };
     let api_url="";
+    console.log("selectedFranchisee--->",selectedFranchisee);
     if(selectedFranchisee)
-      api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    {
+      if(selectedFranchisee==="All")
+        api_url=`${BASE_URL}/auth/users`;
+      else
+        api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    }
     else
-    api_url=`${BASE_URL}/auth/users`;
+    {
+      api_url=`${BASE_URL}/auth/users`;
+    }
+      
+      
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -110,7 +120,12 @@ const OperatingManual = () => {
           item['status'] = false;
         });
         if(selectedFranchisee)
-          setUser(result?.users);
+        {
+          if(selectedFranchisee==="All")
+            setUser(result?.data);
+          else
+           setUser(result?.users);
+        }
         else
           setUser(result?.data);
       })
@@ -170,7 +185,6 @@ const OperatingManual = () => {
       method: 'GET',
       redirect: 'follow',
     };
-
     await fetch(
       `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}&franchisee_id=${localStorage.getItem("f_id")}`,
       requestOptions
@@ -193,7 +207,7 @@ const OperatingManual = () => {
 
         // if (response?.result?.permission?.accessible_to_role === 0) {
           
-          
+          console.log("user----->",user);
           user.map((item) => {
             if (response?.result?.permission?.shared_with.includes(item.id.toString())) {
               users.push(item);
@@ -215,16 +229,16 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
 
-  const setFormSettingFields = (field, value) => {
-    setFormSettingData({ ...formSettingData, [field]: value });
+  // const setFormSettingFields = (field, value) => {
+  //   setFormSettingData({ ...formSettingData, [field]: value });
 
-    if (!!formSettingError[field]) {
-      setFormSettingError({
-        ...formSettingError,
-        [field]: null,
-      });
-    }
-  };
+  //   if (!!formSettingError[field]) {
+  //     setFormSettingError({
+  //       ...formSettingError,
+  //       [field]: null,
+  //     });
+  //   }
+  // };
   const getCategory = async () => {
     var requestOptions = {
       method: 'GET',
@@ -241,7 +255,7 @@ const OperatingManual = () => {
   };
   const deleteOperatingManual = () => {
     var requestOptions = {
-      method: 'DELETE',
+      method: 'DELETE', 
       redirect: 'follow',
     };
 
