@@ -64,16 +64,31 @@ const AddOperatingManual = () => {
     };
     let api_url="";
     if(selectedFranchisee)
-      api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    {
+      if(selectedFranchisee==="All")
+        api_url=`${BASE_URL}/auth/users`;
+      else
+        api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+    }
     else
-    api_url=`${BASE_URL}/auth/users`;
+    {
+      api_url=`${BASE_URL}/auth/users`;
+    }
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         result?.data?.map((item) => {
           item['status'] = false;
         });
-        setUser(result?.data);
+        if(selectedFranchisee)
+        {
+          if(selectedFranchisee==="All")
+            setUser(result?.data);
+          else
+           setUser(result?.users);
+        }
+        else
+          setUser(result?.data);
       })
       .catch((error) => console.log('error', error));
   };
@@ -96,6 +111,12 @@ const AddOperatingManual = () => {
 
         data['accessible_to_role'] = response?.result?.permission?.accessible_to_role;
         // if (response?.result?.permission?.accessible_to_role === 0) {
+          if(Object.keys(response?.result?.permission).length===0)
+          {
+            selectedUserId = '';
+            setSelectedUser({});
+            data['shared_role']="";
+          }
           let users = [];
           selectedUserId = '';
           user.map((item) => {
@@ -104,6 +125,7 @@ const AddOperatingManual = () => {
               selectedUserId += item.id + ',';
             }
           });
+          console.log("users-retretertetretert-->",users);
           setSelectedUser(users);
         // }
         // else
@@ -424,7 +446,7 @@ const AddOperatingManual = () => {
                     setSelectedFranchisee={(name,id)=>{setSelectedFranchisee(name);setSelectedFranchiseeId(id);localStorage.setItem("f_id",id);}} />                 <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
-                        <h4 className="mynewForm">New Category</h4>
+                        <h4 className="mynewForm">New Operating Manual</h4>
                         <Button
                           onClick={(e) => {
                             e.preventDefault();
@@ -436,6 +458,10 @@ const AddOperatingManual = () => {
                               setErrors(newErrors);
                             } else {
                               setFormSettingFlag(true);
+                              if(location?.state?.id && location?.state?.category_name)
+                              {
+                                getOneOperatingManual();
+                              }
                             }
                           }}
                         >
