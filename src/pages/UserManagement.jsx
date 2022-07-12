@@ -39,78 +39,9 @@ const selectRow = {
   clickToSelect: true,
 };
 
-const columns = [
-  {
-    dataField: 'name',
-    text: 'Name',
-    sort: true,
-    formatter: (cell) => {
-      cell = cell.split(',');
-      return (
-        <>
-          <div className="user-list">
-            <span className="user-pic">
-              <img src={cell[0]} alt="" />
-            </span>
-            <span className="user-name">
-              {cell[1]} <small>{cell[2]}</small>
-            </span>
-          </div>
-        </>
-      );
-    },
-  },
-  {
-    dataField: 'email',
-    text: 'Email',
-    sort: true,
-  },
-  {
-    dataField: 'number',
-    text: 'Phone Number',
-    sort: true,
-  },
-  {
-    dataField: 'location',
-    text: 'Location',
-    sort: true,
-  },
-  {
-    dataField: 'action',
-    text: '',
-    formatter: (cell) => {
-      return (
-        <>
-          <div className="cta-col">
-            <Dropdown>
-              <Dropdown.Toggle variant="transparent" id="ctacol">
-                <img src="../img/dot-ico.svg" alt="" />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item href="#">Delete</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-        </>
-      );
-    },
-  },
-];
 
-const rowEvents = {
-  onClick: (e, row, rowIndex) => {
-    if (e.target.text === 'Delete') {
-      async function deleteUserFromDB() {
-        const response = await axios.patch(`${BASE_URL}/auth/user/${row.id}`, {
-          is_deleted: 1,
-        });
-        console.log('DELETE RESPONSE:', response);
-      }
 
-      deleteUserFromDB();
-    }
-  },
-};
+
 
 const UserManagement = () => {
   const [userData, setUserData] = useState([]);
@@ -119,6 +50,79 @@ const UserManagement = () => {
     user: '',
     location: [],
   });
+  const rowEvents = {
+    onClick: (e, row, rowIndex) => {
+      if (e.target.text === 'Delete') {
+        async function deleteUserFromDB() {
+          const response = await axios.patch(`${BASE_URL}/auth/user/${row.id}`, {
+            is_deleted: 1,
+          });
+          console.log('DELETE RESPONSE:', response);
+        }
+  
+        deleteUserFromDB();
+        fetchUserDetails();
+        
+      }
+    },
+  };
+  const columns = [
+    {
+      dataField: 'name',
+      text: 'Name',
+      sort: true,
+      formatter: (cell) => {
+        cell = cell.split(',');
+        return (
+          <>
+            <div className="user-list">
+              <span className="user-pic">
+                <img src={cell[0]} alt="" />
+              </span>
+              <span className="user-name">
+                {cell[1]} <small>{cell[2]}</small>
+              </span>
+            </div>
+          </>
+        );
+      },
+    },
+    {
+      dataField: 'email',
+      text: 'Email',
+      sort: true,
+    },
+    {
+      dataField: 'number',
+      text: 'Phone Number',
+      sort: true,
+    },
+    {
+      dataField: 'location',
+      text: 'Location',
+      sort: true,
+    },
+    {
+      dataField: 'action',
+      text: '',
+      formatter: (cell) => {
+        return (
+          <>
+            <div className="cta-col">
+              <Dropdown>
+                <Dropdown.Toggle variant="transparent" id="ctacol">
+                  <img src="../img/dot-ico.svg" alt="" />
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item href="#">Delete</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          </>
+        );
+      },
+    },
+  ];
 
   const fetchUserDetails = async () => {
     let franchiseeFormat = selectedFranchisee.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_").toLowerCase();
@@ -158,6 +162,9 @@ const UserManagement = () => {
       fetchUserDetails();
     }
   }, [selectedFranchisee]);
+useEffect(()=>{
+  fetchUserDetails();
+},[])
 
   return (
     <>
