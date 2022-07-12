@@ -9,19 +9,29 @@ import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { TrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
+import moment from 'moment';
 import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
-const timereq = [
+const timeqty = [
   {
-    value: '3',
-    label: '3',
+    value: 'hours',
+    label: 'Hours',
   },
   {
-    value: '5',
-    label: '5',
+    value: 'days',
+    label: 'Days',
+  },
+  {
+    value: 'weeks',
+    label: 'Weeks',
+  },
+  {
+    value: 'months',
+    label: 'Months',
   },
 ];
 
@@ -29,26 +39,26 @@ const EditTraining = () => {
   const { trainingId } = useParams();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const handleSaveAndClose = () => setShow(false);
 
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
 
   const [userRoles, setUserRoles] = useState([]);
+  const [settingsModalPopup, setSettingsModalPopup] = useState(false);
+  const [allowSubmit, setAllowSubmit] = useState(false);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [trainingData, setTrainingData] = useState({
-    user_roles: []
-  });
-  const [editTrainingData, setEditTrainingData] = useState();
-
+  const [trainingData, setTrainingData] = useState({});
+  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [] });
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
 
+  const [editTrainingData, setEditTrainingData] = useState();
+
   // LOG MESSAGES
+  const [errors, setErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
 
   // FETCHING USER ROLES
@@ -82,63 +92,80 @@ const EditTraining = () => {
     }
   };
 
+  // COPYING FETCHED DATA INTO INTERNAL STATE
+  const copyFetchedData = () => {
+    setTrainingData(prevState => ({
+      ...prevState,
+      title: editTrainingData?.title,
+      description: editTrainingData?.description,
+      meta_description: editTrainingData?.meta_description,
+      category_id: editTrainingData?.category_id,
+      time_required_to_complete: parseInt(editTrainingData?.completion_time.split(" ")[0]),
+      time_unit: editTrainingData?.completion_time.split(" ")[1],
+    }));
+
+    setTrainingSettings(prevState => ({
+      start_date: moment(editTrainingData?.start_date).format('YYYY-MM-DD'),
+      end_date: moment(editTrainingData?.end_date).format('YYYY-MM-DD'),
+      user_roles: editTrainingData?.assigned_role,
+      assigned_users: editTrainingData?.assigned_users,
+    }));
+
+    console.log('FETCHED DATA COPIED!');
+  }
+
   // FUNCTION TO SEND TRAINING DATA TO THE DB
-  const createTraining = async (data) => {
+  const updateTraining = async (data) => {
     console.log('CREATING THE TRAINING');
     const token = localStorage.getItem('token');
-    const response = await axios.post(
-      `${BASE_URL}/training/addTraining`, data, {
+    const response = await axios.put(
+      `${BASE_URL}/training/updateTraining/${trainingId}`, data, {
         headers: {
           "Authorization": "Bearer " + token
         }
       }
     );
 
-    // const response = await axios.post(`https://httpbin.org/anything`, data);
-    // console.log('RESPONSE:', response);
-
     if(response.status === 201 && response.data.status === "success") {
-      let { id } = response.data.training;
-
-      let data = new FormData();
-      data.append('id', id);
-      data.append('image', coverImage[0]);
-
-      let imgSaveResponse = await axios.post(
-        `${BASE_URL}/training/coverImg`, data, {
-          headers: {
-            "Authorization": "Bearer " + token
-          }
-        }
-      );
-
-      if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
-        
-        console.log('SUCCESS RESPONSE!');
         setLoader(false)
-        localStorage.setItem('success_msg', 'Training Created Successfully!');
+        localStorage.setItem('success_msg', 'Training Updated Successfully!');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href="/training";
-      
-      } else {
+      // let { id } = response.data.training;
 
-        console.log('ERROR RESPONSE!');
-        setTopErrorMessage("unable to save cover image!");
-        setTimeout(() => {
-          setTopErrorMessage(null);
-        }, 3000)
-      
-      }
+      // let data = new FormData();
+      // data.append('id', id);
+      // data.append('image', coverImage[0]);
+
+      // let imgSaveResponse = await axios.post(
+      //   `${BASE_URL}/training/coverImg`, data, {
+      //     headers: {
+      //       "Authorization": "Bearer " + token
+      //     }
+      //   }
+      // );
+
+      // if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+      //   setLoader(false)
+      //   localStorage.setItem('success_msg', 'Training Created Successfully!');
+      //   localStorage.setItem('active_tab', '/created-training');
+      //   window.location.href="/training";
+      // } else {
+      //   setTopErrorMessage("unable to save cover image!");
+      //   setTimeout(() => {
+      //     setTopErrorMessage(null);
+      //   }, 3000)
+      // }
 
     } else if(response.status === 200 && response.data.status === "fail") {
-      console.log('ERROR RESPONSE!');
       const { msg } = response.data;
       setTopErrorMessage(msg);
+      setLoader(false);
       setTimeout(() => {
         setTopErrorMessage(null);
       }, 3000)
     }
-  };  
+  };    
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_name) => {
@@ -199,24 +226,43 @@ const EditTraining = () => {
 
   const handleDataSubmit = event => {
     event.preventDefault();
+    // window.scrollTo(0, 0);
+    
+    let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles); 
 
-    if(trainingData && coverImage && videoTutorialFiles) {
-      let data = new FormData();
-
-      for(let [ key, values ] of Object.entries(trainingData)) {
-        data.append(`${key}`, values)
+    if(Object.keys(errorObj).length > 0) {
+      setErrors(errorObj);
+    } else {
+      setErrors({});
+      if(Object.keys(trainingSettings).length === 1) {
+        setSettingsModalPopup(true);
+      } else {
+        setAllowSubmit(true);
       }
 
-      videoTutorialFiles.forEach((file, index) => {
-        data.append(`images`, file);
-      });
+      if(settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+        let data = new FormData();
 
-      relatedFiles.forEach((file, index) => {
-        data.append(`images`, file);
-      });
+        for(let [key, values] of Object.entries(trainingSettings)) {
+          data.append(`${key}`, values);
+        }
 
-      setLoader(true);
-      createTraining(data);
+        for(let [ key, values ] of Object.entries(trainingData)) {
+          data.append(`${key}`, values)
+        }
+
+        videoTutorialFiles.forEach((file, index) => {
+          data.append(`images`, file);
+        });
+
+        relatedFiles.forEach((file, index) => {
+          data.append(`images`, file);
+        });
+        
+        window.scrollTo(0, 0);
+        setLoader(true);
+        updateTraining(data);
+      }
     }
   };
 
@@ -230,7 +276,12 @@ const EditTraining = () => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
-  editTrainingData && console.log('TRAINING CATEGORY:', editTrainingData);
+  useEffect(() => {
+    copyFetchedData();
+  }, [editTrainingData]);
+
+  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  trainingData && console.log('TRAINING DATA:', trainingData);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -249,7 +300,7 @@ const EditTraining = () => {
                   <header className="title-head">
                     <h1 className="title-lg">
                       Add New Training{' '}
-                      <span className="setting-ico" onClick={handleShow}>
+                      <span className="setting-ico" onClick={() => setSettingsModalPopup(true)}>
                         <img src="../img/setting-ico.png" alt="" />
                       </span>
                     </h1>
@@ -265,9 +316,10 @@ const EditTraining = () => {
                             <Form.Control
                               type="text"
                               name="title"
-                              value={editTrainingData.title || ""}
+                              value={trainingData.title || editTrainingData.title}
                               onChange={handleTrainingData}
                             />
+                            { errors && errors.title && <span className="error">{errors.title}</span> }
                           </Form.Group>
                         </Col>
 
@@ -278,14 +330,13 @@ const EditTraining = () => {
                               closeMenuOnSelect={true}
                               components={animatedComponents}
                               options={trainingCategory}
-                              selectedValues={trainingCategory.filter(category => category.id === editTrainingData.category_id)[0]}
-                              onChange={(event) =>
-                                setTrainingData((prevState) => ({
-                                  ...prevState,
-                                  category_id: event.id,
-                                }))
-                              }
+                              value={trainingCategory.filter(c => c.id === trainingData.category_id) || trainingCategory.filter(c => c.id === editTrainingData.category_id)}
+                              onChange={(e) => setTrainingData(prevState => ({
+                                ...prevState,
+                                category_id: e.id
+                              }))}
                             />
+                            { errors && errors.category_id && <span className="error">{errors.category_id}</span> }
                           </Form.Group>
                         </Col>
 
@@ -295,10 +346,11 @@ const EditTraining = () => {
                             <Form.Control
                               as="textarea"
                               name="description"
-                              value={editTrainingData.description || ""}
                               rows={3}
+                              value={trainingData.description || editTrainingData.description}
                               onChange={handleTrainingData}
                             />
+                            { errors && errors.description && <span className="error">{errors.description}</span> }
                           </Form.Group>
                         </Col>
 
@@ -308,33 +360,45 @@ const EditTraining = () => {
                             <Form.Control
                               as="textarea"
                               name="meta_description"
-                              value={editTrainingData.meta_description || ""}
                               rows={3}
+                              value={trainingData.meta_description || editTrainingData.meta_description}
                               onChange={handleTrainingData}
                             />
+                            { errors && errors.meta_description && <span className="error">{errors.meta_description}</span> }
                           </Form.Group>
                         </Col>
 
                         <Col md={6} className="mb-3">
                           <Form.Group className="relative">
                             <Form.Label>Time required to complete</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              options={timereq}
-                              onChange={(event) =>
-                                setTrainingData((prevState) => ({
+                            <div style={{ display: "flex", gap: "5px" }}>
+                              <Form.Control
+                                style={{ flex: 6 }}
+                                type="number"
+                                value={trainingData.time_required_to_complete || editTrainingData.completion_time.split(" ")[0]}
+                                onChange={() => setTrainingData(prevState => ({
                                   ...prevState,
-                                  time_required_to_complete:
-                                    event.value + ' Hours',
-                                }))
-                              }
-                            />
-                            <span className="rtag">hours</span>
+                                  time_required_to_complete: parseInt(editTrainingData.completion_time.split(" ")[0])
+                                }))}
+                              />
+                              <Select
+                                style={{ flex: 3 }}
+                                closeMenuOnSelect={true}
+                                placeholder={trainingData.time_unit}
+                                value={trainingData.time_unit || ""}
+                                components={animatedComponents}
+                                options={timeqty}
+                                onChange={(event) =>  
+                                  setTrainingData((prevState) => ({
+                                    ...prevState,
+                                    time_unit:
+                                      event.label,
+                                  }))
+                                }
+                              />
+                            </div>
+                            { errors && errors.time_required_to_complete && <span className="error">{errors.time_required_to_complete}</span> }
                           </Form.Group>
-                          {/* <Form.Control.Feedback type="invalid">
-                              {errors.select_hour}
-                            </Form.Control.Feedback> */}
                         </Col>
                       </Row>
                       <Row>
@@ -346,6 +410,7 @@ const EditTraining = () => {
                               onSave={setCoverImage}
                               // setTrainingData={setTraining}
                             />
+                          { errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span> } 
                           </Form.Group>
                         </Col>
 
@@ -397,8 +462,8 @@ const EditTraining = () => {
       <Modal
         className="training-modal"
         size="lg"
-        show={show}
-        onHide={handleClose}
+        show={settingsModalPopup}
+        onHide={() => setSettingsModalPopup(false)}
       >
         <Modal.Header closeButton>
           <Modal.Title>
@@ -406,205 +471,225 @@ const EditTraining = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="form-settings-content">
-            <Row>
-              <Col lg={3} sm={6}>
-                <Form.Group>
-                  <Form.Label>Start Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="start_date"
-                    onChange={handleTrainingSettings}
-                  />
-                </Form.Group>
-              </Col>
-              <Col lg={3} sm={6} className="mt-3 mt-sm-0">
-                <Form.Group>
-                  <Form.Label>Start Time</Form.Label>
-                  <Form.Control
-                    type="time"
-                    name="start_time"
-                    onChange={handleTrainingSettings}
-                  />
-                </Form.Group>
-              </Col>
-              <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                <Form.Group>
-                  <Form.Label>End Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="end_date"
-                    onChange={handleTrainingSettings}
-                  />
-                </Form.Group>
-              </Col>
-              <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                <Form.Group>
-                  <Form.Label>End Time</Form.Label>
-                  <Form.Control
-                    type="time"
-                    name="end_time"
-                    onChange={handleTrainingSettings}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row className="mt-4">
-              <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Applicable to:</Form.Label>
-                  <div className="new-form-radio">
-                    <div className="new-form-radio-box">
-                      <label htmlFor="yes1">
-                        <input
-                          type="radio"
-                          value="Y"
-                          name="roles"
-                          id="yes1"
-                          onChange={(event) => {
-                            setTrainingData((prevState) => ({
-                              ...prevState,
-                              is_applicable_to_all: true,
-                            }));
-                          }}
-                        />
-                        <span className="radio-round"></span>
-                        <p>User Roles</p>
-                      </label>
+          {
+            editTrainingData &&
+            <div className="form-settings-content">
+              <Row>
+                <Col lg={3} sm={6}>
+                  <Form.Group>
+                    <Form.Label>Start Date</Form.Label>
+                    <Form.Control
+                      type="date"
+                      name="start_date"
+                      value={trainingSettings.start_date}
+                      onChange={(e) => setTrainingSettings(prevState => ({
+                        ...prevState,
+                        start_date: e.target.value
+                      }))}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col lg={3} sm={6} className="mt-3 mt-sm-0">
+                  <Form.Group>
+                    <Form.Label>Start Time</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name="start_time"
+                      onChange={(e) => setTrainingSettings(prevState => ({
+                        ...prevState,
+                        start_time: e.target.value
+                      }))}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                  <Form.Group>
+                    <Form.Label>End Date</Form.Label>
+                    <Form.Control
+                      type="date"
+                      name="end_date"
+                      value={trainingSettings.end_date}
+                      onChange={(e) => setTrainingSettings(prevState => ({
+                        ...prevState,
+                        start_date: e.target.value
+                      }))}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                  <Form.Group>
+                    <Form.Label>End Time</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name="end_time"
+                      onChange={(e) => setTrainingSettings(prevState => ({
+                        ...prevState,
+                        end_time: e.target.value
+                      }))}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row className="mt-4">
+                <Col lg={3} md={6}>
+                  <Form.Group>
+                    <Form.Label>Applicable to:</Form.Label>
+                    <div className="new-form-radio">
+                      <div className="new-form-radio-box">
+                        <label htmlFor="yes1">
+                          <input
+                            type="radio"
+                            value="Y"
+                            name="roles"
+                            id="yes1"
+                            onChange={(event) => {
+                              setTrainingData((prevState) => ({
+                                ...prevState,
+                                is_applicable_to_all: true,
+                              }));
+                            }}
+                          />
+                          <span className="radio-round"></span>
+                          <p>User Roles</p>
+                        </label>
+                      </div>
+                      <div className="new-form-radio-box">
+                        <label htmlFor="no1">
+                          <input
+                            type="radio"
+                            value="N"
+                            name="roles"
+                            id="no1"
+                            onChange={(event) => {
+                              setTrainingData((prevState) => ({
+                                ...prevState,
+                                is_applicable_to_all: false,
+                              }));
+                            }}
+                          />
+                          <span className="radio-round"></span>
+                          <p>Specific Users</p>
+                        </label>
+                      </div>
                     </div>
-                    <div className="new-form-radio-box">
-                      <label htmlFor="no1">
-                        <input
-                          type="radio"
-                          value="N"
-                          name="roles"
-                          id="no1"
-                          onChange={(event) => {
-                            setTrainingData((prevState) => ({
+                
+                  </Form.Group>
+                </Col>
+                <Col lg={9} md={6} className="mt-3 mt-md-0">
+                  <div className={`custom-checkbox ${trainingData.is_applicable_to_all === false ? "d-none": ""}`}>
+                    <Form.Label className="d-block">Select User Roles</Form.Label>
+                    <div className="btn-checkbox d-block">
+                      <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                        <Form.Check 
+                          type="checkbox" 
+                          checked={trainingSettings.user_roles?.includes("coordinator")}
+                          label="Co-ordinators"
+                          onChange={() => {
+                            if(trainingSettings.user_roles?.includes("coordinator")) {
+                              let data = trainingSettings.user_roles.filter(t => t !== "coordinator");
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                user_roles: [...data]
+                              }));
+                            }
+
+                            if(!trainingSettings.user_roles?.includes("coordinator"))
+                              setTrainingSettings(prevState => ({
                               ...prevState,
-                              is_applicable_to_all: false,
-                            }));
-                          }}
-                        />
-                        <span className="radio-round"></span>
-                        <p>Specific Users</p>
-                      </label>
+                              user_roles: [...trainingSettings.user_roles, "coordinator"]
+                          }))}} />
+                      </Form.Group>
+                      <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                        <Form.Check 
+                          type="checkbox" 
+                          label="Educator"
+                          checked={trainingSettings.user_roles?.includes("educator")}
+                          onChange={() => {
+                            if(trainingSettings.user_roles?.includes("educator")) {
+                              let data = trainingSettings.user_roles.filter(t => t !== "educator");
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                user_roles: [...data]
+                              }));
+                            }
+
+                            if(!trainingSettings.user_roles?.includes("educator"))
+                              setTrainingSettings(prevState => ({
+                              ...prevState,
+                              user_roles: [...trainingSettings.user_roles, "educator"]
+                          }))}} />
+                      </Form.Group>
+                      <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                        <Form.Check 
+                          type="checkbox" 
+                          label="All Roles"
+                          checked={trainingSettings.user_roles?.length === 2}
+                          onChange={() => {
+                            if(trainingSettings.user_roles?.includes("coordinator") 
+                                && trainingSettings.user_roles.includes("educator")) {
+                                  setTrainingSettings(prevState => ({
+                                    ...prevState,
+                                    user_roles: [],
+                                  }));
+                                }
+                              
+                            if(!trainingSettings.user_roles?.includes("coordinator") 
+                                && !trainingSettings.user_roles.includes("educator"))
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                user_roles: ["coordinator", "educator"]
+                              })
+                          )}} />
+                      </Form.Group>
                     </div>
                   </div>
-              
-                </Form.Group>
-              </Col>
-              <Col lg={9} md={6} className="mt-3 mt-md-0">
-                <div className={`custom-checkbox ${trainingData.is_applicable_to_all === false ? "d-none": ""}`}>
-                  <Form.Label className="d-block">Select User Roles</Form.Label>
-                  <div className="btn-checkbox d-block">
-                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
-                      <Form.Check 
-                        type="checkbox" 
-                        checked={trainingData.user_roles.includes("coordinator")}
-                        label="Co-ordinators"
-                        onChange={() => {
-                          if(trainingData.user_roles.includes("coordinator")) {
-                            let data = trainingData.user_roles.filter(t => t !== "coordinator");
-                            setTrainingData(prevState => ({
-                              ...prevState,
-                              user_roles: [...data]
-                            }));
-                          }
+                </Col>
+              </Row>
 
-                          if(!trainingData.user_roles.includes("coordinator"))
-                            setTrainingData(prevState => ({
-                            ...prevState,
-                            user_roles: [...trainingData.user_roles, "coordinator"]
-                        }))}} />
-                    </Form.Group>
-                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
-                      <Form.Check 
-                        type="checkbox" 
-                        label="Educator"
-                        checked={trainingData.user_roles.includes("educator")}
-                        onChange={() => {
-                          if(trainingData.user_roles.includes("educator")) {
-                            let data = trainingData.user_roles.filter(t => t !== "educator");
-                            setTrainingData(prevState => ({
-                              ...prevState,
-                              user_roles: [...data]
-                            }));
-                          }
-
-                          if(!trainingData.user_roles.includes("educator"))
-                            setTrainingData(prevState => ({
-                            ...prevState,
-                            user_roles: [...trainingData.user_roles, "educator"]
-                        }))}} />
-                    </Form.Group>
-                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                      <Form.Check 
-                        type="checkbox" 
-                        label="All Roles"
-                        checked={trainingData.user_roles.length === 2}
-                        onChange={() => {
-                          if(trainingData.user_roles.includes("coordinator") 
-                              && trainingData.user_roles.includes("educator")) {
-                                setTrainingData(prevState => ({
-                                  ...prevState,
-                                  user_roles: [],
-                                }));
-                              }
-                            
-                          if(!trainingData.user_roles.includes("coordinator") 
-                              && !trainingData.user_roles.includes("educator"))
-                            setTrainingData(prevState => ({
-                              ...prevState,
-                              user_roles: ["coordinator", "educator"]
-                            })
-                        )}} />
-                    </Form.Group>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-
-            <Row className={`mt-4`}>
-              <Col lg={3} md={6}>
-              </Col>
-              <Col lg={9} md={6} className={`mt-3 mt-md-0 ${trainingData.is_applicable_to_all === true ? "d-none": ""}`}>
-                <Form.Group>
-                  <Form.Label>Select User Names</Form.Label>
-                  <Multiselect
-                    placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
-                    displayValue="key"
-                    selectedValues={trainingData.assigned_users_data}
-                    className="multiselect-box default-arrow-select"
-                    onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck(data) {
-                      setTrainingData((prevState) => ({
-                        ...prevState,
-                        assigned_users: [...data.map(data => data.id)],
-                        assigned_users_data: [...data.map(data => data)]
-                      }));
-                    }}
-                    onSearch={function noRefCheck() {}}
-                    onSelect={function noRefCheck(data) {
-                      setTrainingData((prevState) => ({
-                        ...prevState,
-                        assigned_users: [...data.map((data) => data.id)],
-                        assigned_users_data: [...data.map(data => data)]
-                      }));
-                    }}
-                    options={fetchedFranchiseeUsers}
-                  />
-                  
-                </Form.Group>
-              </Col>
-            </Row>
-          </div>
+              <Row className={`mt-4`}>
+                <Col lg={3} md={6}>
+                </Col>
+                <Col lg={9} md={6} className={`mt-3 mt-md-0 ${trainingData.is_applicable_to_all === true ? "d-none": ""}`}>
+                  <Form.Group>
+                    <Form.Label>Select User Names</Form.Label>
+                    <Multiselect
+                      placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
+                      displayValue="key"
+                      selectedValues={trainingSettings.assigned_users}
+                      className="multiselect-box default-arrow-select"
+                      onKeyPressFn={function noRefCheck() {}}
+                      onRemove={function noRefCheck(data) {
+                        setTrainingSettings((prevState) => ({
+                          ...prevState,
+                          assigned_users: [...data.map(data => data.id)],
+                          assigned_users_data: [...data.map(data => data)]
+                        }));
+                      }}
+                      onSearch={function noRefCheck() {}}
+                      onSelect={function noRefCheck(data) {
+                        setTrainingSettings((prevState) => ({
+                          ...prevState,
+                          assigned_users: [...data.map((data) => data.id)],
+                          assigned_users_data: [...data.map(data => data)]
+                        }));
+                      }}
+                      options={fetchedFranchiseeUsers}
+                    />
+                    
+                  </Form.Group>
+                </Col>
+              </Row>
+            </div>
+          }
         </Modal.Body>
         <Modal.Footer>
           <Button variant="transparent" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSaveAndClose}>
+          <Button variant="primary" onClick={() => {
+            setAllowSubmit(true);
+            setSettingsModalPopup(false)
+          }}>
             Save Settings
           </Button>
         </Modal.Footer>
@@ -617,7 +702,7 @@ const EditTraining = () => {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#ffffff80",
-          position: "absolute",
+          position: "fixed",
           top: "0",
           left: "0",
           right: "0",

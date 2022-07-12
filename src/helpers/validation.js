@@ -193,7 +193,7 @@ export const ChildRegisterFormValidation = (form) => {
 };
 
 
-export const TrainingFormValidation = (form, coverImage, videoTutorialFiles, relatedFiles) => {
+export const TrainingFormValidation = (form, coverImage) => {
   let errors = {};
   let {
     title,
@@ -225,14 +225,6 @@ export const TrainingFormValidation = (form, coverImage, videoTutorialFiles, rel
 
   if(Object.keys(coverImage).length === 0) {
     errors.coverImage = 'Cover image required!';
-  }
-
-  if(videoTutorialFiles.length === 0) {
-    errors.videoTutorialFiles = 'Video Files are required!';
-  }
-
-  if(relatedFiles.length === 0) {
-    errors.relatedFiles = 'Related Files are required!';
   }
 
   return errors;

@@ -20,6 +20,14 @@ const timeqty = [
     label: 'Hours',
   },
   {
+    value: 'days',
+    label: 'Days',
+  },
+  {
+    value: 'weeks',
+    label: 'Weeks',
+  },
+  {
     value: 'months',
     label: 'Months',
   },
@@ -28,8 +36,6 @@ const timeqty = [
 const AddNewTraining = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const handleSaveAndClose = () => setShow(false);
 
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
@@ -366,7 +372,6 @@ const AddNewTraining = () => {
                           <DropAllFile
                             onSave={setVideoTutorialFiles}
                           />
-                        { errors && errors.videoTutorialFiles && <span className="error mt-2">{errors.videoTutorialFiles}</span> } 
                         </Form.Group>
                       </Col>
 
@@ -376,7 +381,6 @@ const AddNewTraining = () => {
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />
-                        { errors && errors.relatedFiles && <span className="error mt-2">{errors.relatedFiles}</span> } 
                         </Form.Group>
                       </Col>
                       <Col md={12}>

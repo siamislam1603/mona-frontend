@@ -29,9 +29,9 @@ let selectedUserId = '';
 const OperatingManual = () => {
   const navigate = useNavigate();
   const [Index, setIndex] = useState(0);
-  const [operatingManualData, setOperatingManualData] = useState({});
   const [innerIndex, setInnerIndex] = useState(0);
   const [operatingManualdata, setOperatingManualdata] = useState([]);
+  const [singleOperatingManual,setSingleOperatingManual]=useState({});
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [show, setShow] = useState(false);
   let [videoUrl, setVideoUrl] = useState('');
@@ -46,6 +46,7 @@ const OperatingManual = () => {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [userRole, setUserRole] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchiseeId,setSelectedFranchiseeId]=useState(null);
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
@@ -171,63 +172,45 @@ const OperatingManual = () => {
     };
 
     await fetch(
-      `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}`,
+      `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}&franchisee_id=${localStorage.getItem("f_id")}`,
       requestOptions
     )
       .then((response) => response.json())
       .then((response) => {
         console.log(
-          'shared_with--->',
-          response?.result?.shared_with.includes('2')
+          'response--->',
+          response?.result
         );
-        setOperatingManualData(response?.result);
+        setSingleOperatingManual(response?.result);
         let data = formSettingData;
-        data['applicable_to_all'] = response?.result?.accessible_to_all;
-        data['shared_role'] = response?.result?.shared_role
-          ? response?.result?.shared_role
-          : '';
-        data['accessible_to_role'] = response?.result?.accessible_to_role;
-        if (response?.result?.accessible_to_role === 0) {
-          let users = [];
-          selectedUserId = '';
+        data['applicable_to_all'] = response?.result?.permission?.accessible_to_all;
+        data['accessible_to_role'] = response?.result?.permission?.accessible_to_role;
+        let users = [];
+        setSelectedUser(users);
+        let role="";
+        selectedUserId = '';
+        data['shared_role']="";
+
+        // if (response?.result?.permission?.accessible_to_role === 0) {
+          
+          
           user.map((item) => {
-            if (response?.result?.shared_with.includes(item.id.toString())) {
+            if (response?.result?.permission?.shared_with.includes(item.id.toString())) {
               users.push(item);
               selectedUserId += item.id + ',';
             }
           });
           setSelectedUser(users);
-        }
+        // }
+        // else
+        // {
+          
+          response?.result?.permission?.shared_role.map((item)=>{
+            role+=item+",";
+          })
+          data['shared_role'] = role;
+        // }
         setFormSettingData(data);
-        // response?.result?.applicable_to_user.toString();
-        // data.applicable_to_franchisee =
-        //   response?.result?.applicable_to_franchisee.toString();
-        // console.log('Franchisee--->', franchisee);
-        // selectedFranchisee = [];
-        // franchisee.map((item) => {
-        //   if (response?.result?.shared_with.includes(item.franchisee_alias)) {
-        //     selectedFranchisee.push({
-        //       id: item.id,
-        //       franchisee_name: item.franchisee_name,
-        //       franchisee_alias: item.franchisee_alias,
-        //     });
-        //     selectedFranchiseeName += item.franchisee_alias + ',';
-        //   }
-        // });
-        // selectedUserRole = [];
-        // console.log('userRole---->', userRole);
-        // userRole.map((item) => {
-        //   console.log('selectedUserRole---->', response?.result?.shared_role);
-        //   if (response?.result?.shared_role.includes(item.role_name)) {
-        //     selectedUserRole.push({
-        //       id: item.id,
-        //       role_label: item.role_label,
-        //       role_name: item.role_name,
-        //     });
-        //     selectedUserRoleName += item.role_name + ',';
-        //   }
-        // });
-        // console.log('selectedUserRole---->', selectedUserRole);
       })
       .catch((error) => console.log('error', error));
   };
@@ -290,7 +273,7 @@ const OperatingManual = () => {
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
-      )}&id=${localStorage.getItem('user_id')}`;
+      )}&id=${localStorage.getItem('user_id')}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
       setCategoryFilter('reset');
     }
 
@@ -323,8 +306,9 @@ const OperatingManual = () => {
   }
   const onModelSubmit = (e) => {
     e.preventDefault();
-    let data = operatingManualData;
+    let data = singleOperatingManual;
     if (!data?.id) {
+      console.log("data----->",data);
       alert('Please save first operating manual information');
     } else {
       console.log(
@@ -333,27 +317,29 @@ const OperatingManual = () => {
       );
 
       if (
-        formSettingData.accessible_to_role === null ||
-        formSettingData.accessible_to_role === undefined
+        formSettingData.shared_role==="" &&
+        selectedUserId === ""
       ) {
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
-        if (formSettingData.accessible_to_role === 1) {
-          data['shared_role'] = formSettingData.shared_role.slice(0, -1);
-          data['shared_with'] = null;
-          data['accessible_to_role'] = formSettingData.accessible_to_role;
+        // if (formSettingData.accessible_to_role === 1) {
+          data['shared_role'] = formSettingData.shared_role ? formSettingData.shared_role.slice(0, -1) : null;
+          // data['shared_with'] = null;
+          data['accessible_to_role'] = null;
           data['accessible_to_all'] = false;
-        } else {
-          data['shared_with'] = selectedUserId.slice(0, -1);
-          data['shared_role'] = null;
-          data['accessible_to_role'] = formSettingData.accessible_to_role;
-          data['accessible_to_all'] = false;
-        }
+        // } else {
+          data['shared_with'] = selectedUserId ? selectedUserId.slice(0, -1) : null;
+          // data['shared_role'] = null;
+          // data['accessible_to_role'] = formSettingData.accessible_to_role;
+          // data['accessible_to_all'] = false;
+        // }
       }
-      data['created_by'] = localStorage.getItem('user_id');
+      // data['created_by'] = localStorage.getItem('user_id');
+      data['shared_by']=localStorage.getItem('user_id');
       upperRoleUser = getUpperRoleUser();
       data['upper_role'] = upperRoleUser;
+      data['franchisee_id']=selectedFranchiseeId;
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -364,7 +350,7 @@ const OperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          setOperatingManualData(res?.result);
+          setSingleOperatingManual(res?.result);
           setFormSettingFlag(false);
           // navigate('/operatingmanual');
         });
@@ -383,8 +369,19 @@ const OperatingManual = () => {
               <div className="sec-column">
               <TopHeader 
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee}
-                    />
+                    setSelectedFranchisee={(name,id)=>{setSelectedFranchisee(name);setSelectedFranchiseeId(id);localStorage.setItem("f_id",id);
+                      if(operatingManualdata[Index]
+                        ?.operating_manuals[innerIndex]?.id && operatingManualdata[Index]
+                        ?.category_name)
+                        {
+                          getOneOperatingManual(
+                            operatingManualdata[Index]
+                              ?.operating_manuals[innerIndex]?.id,
+                            operatingManualdata[Index]
+                              ?.category_name
+                          );
+                        }
+                      }} />
                 <Row>
                   <Col sm={4}>
                     <div className="tree_wrp">
@@ -628,9 +625,7 @@ const OperatingManual = () => {
                                           </Button>
                                           <div className="video_title">
                                             <h6>
-                                              Computer Literacy - The growing
-                                              reliance on technology and
-                                              computers also in experiment.
+                                              Video 1
                                             </h6>
                                           </div>
                                         </div>
@@ -701,8 +696,7 @@ const OperatingManual = () => {
       >
         <Modal.Header closeButton>
           <h2>
-            Computer Literacy - The growing reliance on technology and computers
-            also in experiment.
+            Video 1
           </h2>
         </Modal.Header>
         <Modal.Body>
@@ -740,7 +734,7 @@ const OperatingManual = () => {
         <Modal.Body>
           <div className="form-settings-content">
             <Row className="mt-4">
-              <Col lg={3} md={6}>
+              {/* <Col lg={3} md={6}>
                 <Form.Group>
                   <Form.Label>Accessible to:</Form.Label>
                   <div className="new-form-radio d-block">
@@ -784,9 +778,9 @@ const OperatingManual = () => {
                     </div>
                   </div>
                 </Form.Group>
-              </Col>
-              <Col lg={9} md={12}>
-                {formSettingData.accessible_to_role === 1 ? (
+              </Col> */}
+              <Col lg={12} md={12}>
+                {/* {formSettingData.accessible_to_role === 1 ? ( */}
                   <Form.Group>
                     <Form.Label>Select User Roles</Form.Label>
                     <div className="modal-two-check user-roles-box">
@@ -939,8 +933,8 @@ const OperatingManual = () => {
                       </label>
                     </div>
                   </Form.Group>
-                ) : null}
-                {formSettingData.accessible_to_role === 0 ? (
+                {/* ) : null} */}
+                {/* {formSettingData.accessible_to_role === 0 ? ( */}
                   <Form.Group>
                     <Form.Label>Select User</Form.Label>
                     <div className="select-with-plus">
@@ -958,7 +952,7 @@ const OperatingManual = () => {
                     </div>
                     <p className="error">{errors.franchisee}</p>
                   </Form.Group>
-                ) : null}
+                {/* ) : null} */}
               </Col>
             </Row>
           </div>
