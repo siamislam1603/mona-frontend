@@ -35,6 +35,7 @@ import AvailableTraining from '../pages/AvailableTraining';
 import CompleteTraining from '../pages/CompletedTraining';
 import CreatedTraining from '../pages/CreatedTraining';
 
+
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 

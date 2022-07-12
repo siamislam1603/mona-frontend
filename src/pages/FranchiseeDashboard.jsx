@@ -61,37 +61,42 @@ const columns = [
 const products1 = [
   {
     id: 1,
-    name: "../img/user.png, James Smith",
-    additional: "Specialized learning strategies",
+    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
+    educatorname: "../img/user.png, James Smith, Homecare For Children",
   },
   {
     id: 2,
-    name: "../img/user.png, James Smith",
-    additional: "Specialized learning strategies",
+    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
+    educatorname: "../img/user.png, James Smith, Homecare For Children",
   },
   {
     id: 3,
-    name: "../img/user.png, James Smith",
-    additional: "Specialized learning strategies",
+    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
+    educatorname: "../img/user.png, James Smith, Homecare For Children",
   },
   {
     id: 4,
-    name: "../img/user.png, James Smith",
-    additional: "Specialized learning strategies",
+    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
+    educatorname: "../img/user.png, James Smith, Homecare For Children",
   },
+
 ];
 const columns1 = [
 {
-  dataField: 'name',
-  text: 'Child Name',
+  dataField: 'formname',
+  text: 'Form Name',
   formatter: (cell) => {
     cell=cell.split(",");
-    return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt=''/></span><span className="user-name">{cell[1]} </span></div></>)
+    return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt=''/></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
   },
 },
 {
-    dataField: 'additional',
-    text: 'Additional Needs',
+    dataField: 'educatorname',
+    text: 'Educator Name',
+    formatter: (cell) => {
+      cell=cell.split(",");
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt=''/></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+    },
   },
   {
     dataField: "action",
@@ -170,7 +175,7 @@ const FranchiseeDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="files-sec pb-5">
+                        {/*<div className="files-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h2 className="title-sm mb-0"><strong>Forms</strong></h2>
                             <Link to="/" className="viewall">View All</Link>
@@ -233,7 +238,7 @@ const FranchiseeDashboard = () => {
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </div>*/}
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h3 className="title-sm mb-0"><strong>Children With Additional Needs</strong></h3>
@@ -256,25 +261,33 @@ const FranchiseeDashboard = () => {
                             <h4 className="title-sm mb-0"><strong>Activity</strong></h4>
                           </header>
                           <div className="activity-list">
-                            <div className="item">
-                              <span className="name">Logged in Users</span>
-                              <span className="separator">|</span>
-                              <span className="num">04</span>
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <span className="name">Total Users</span>
+                                <span className="separator">|</span>
+                                <span className="num">04</span>
+                              </a>
                             </div>
-                            <div className="item">
-                              <span className="name">Users yet to log in</span>
-                              <span className="separator">|</span>
-                              <span className="num">04</span>
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <span className="name">Total Locations</span>
+                                <span className="separator">|</span>
+                                <span className="num">04</span>
+                              </a>
                             </div>
-                            <div className="item">
-                              <span className="name">Total Forms</span>
-                              <span className="separator">|</span>
-                              <span className="num">04</span>
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <span className="name">New Enrollments</span>
+                                <span className="separator">|</span>
+                                <span className="num">04</span>
+                              </a>
                             </div>
-                            <div className="item">
-                              <span className="name">Total Franchisee</span>
-                              <span className="separator">|</span>
-                              <span className="num">14</span>
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <span className="name">No. of audit forms created in last 30 days</span>
+                                <span className="separator">|</span>
+                                <span className="num">04</span>
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -289,6 +302,26 @@ const FranchiseeDashboard = () => {
                               data={products}
                               columns={ columns }
                             />
+                          </div>
+                        </div>
+                        <div className="announcements-sec pb-5">
+                          <header className="title-head mb-4 justify-content-between">
+                            <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
+                            <Link to="/" className="viewall">View All</Link>
+                          </header>
+                          <div className="column-list announcements-list">
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
+                            </div>
+                            <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
+                            </div>
                           </div>
                         </div>
                       </aside>
