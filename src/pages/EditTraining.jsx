@@ -100,13 +100,16 @@ const EditTraining = () => {
       description: editTrainingData?.description,
       meta_description: editTrainingData?.meta_description,
       category_id: editTrainingData?.category_id,
+      is_applicable_to_all: editTrainingData?.user_or_roles,
       time_required_to_complete: parseInt(editTrainingData?.completion_time.split(" ")[0]),
       time_unit: editTrainingData?.completion_time.split(" ")[1],
     }));
 
     setTrainingSettings(prevState => ({
       start_date: moment(editTrainingData?.start_date).format('YYYY-MM-DD'),
+      start_time: moment(editTrainingData?.start_date).format('HH:mm'),
       end_date: moment(editTrainingData?.end_date).format('YYYY-MM-DD'),
+      end_time: moment(editTrainingData?.end_date).format('HH:mm'),
       user_roles: editTrainingData?.assigned_role,
       assigned_users: editTrainingData?.assigned_users,
     }));
@@ -495,6 +498,7 @@ const EditTraining = () => {
                     <Form.Control
                       type="time"
                       name="start_time"
+                      value={trainingSettings.start_time}
                       onChange={(e) => setTrainingSettings(prevState => ({
                         ...prevState,
                         start_time: e.target.value
@@ -522,6 +526,7 @@ const EditTraining = () => {
                     <Form.Control
                       type="time"
                       name="end_time"
+                      value={trainingSettings.end_time}
                       onChange={(e) => setTrainingSettings(prevState => ({
                         ...prevState,
                         end_time: e.target.value
@@ -540,6 +545,7 @@ const EditTraining = () => {
                           <input
                             type="radio"
                             value="Y"
+                            checked={trainingData.is_applicable_to_all === 1}
                             name="roles"
                             id="yes1"
                             onChange={(event) => {
@@ -558,6 +564,7 @@ const EditTraining = () => {
                           <input
                             type="radio"
                             value="N"
+                            checked={trainingData.is_applicable_to_all === 0}
                             name="roles"
                             id="no1"
                             onChange={(event) => {
