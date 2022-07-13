@@ -321,7 +321,7 @@ const AddNewTraining = () => {
                             name="title"
                             onChange={handleTrainingData}
                           />
-                          { errors && errors.title && <span className="error">{errors.title}</span> }
+                          { errors.title && <span className="error">{errors.title}</span> }
                         </Form.Group>
                       </Col>
 
@@ -339,7 +339,7 @@ const AddNewTraining = () => {
                               }))
                             }
                           />
-                          { errors && errors.category_id && <span className="error">{errors.category_id}</span> }
+                          { errors.category_id && <span className="error">{errors.category_id}</span> }
                         </Form.Group>
                       </Col>
 
@@ -352,7 +352,7 @@ const AddNewTraining = () => {
                             rows={3}
                             onChange={handleTrainingData}
                           />
-                          { errors && errors.description && <span className="error">{errors.description}</span> }
+                          { errors.description && <span className="error">{errors.description}</span> }
                         </Form.Group>
                       </Col>
 
@@ -365,7 +365,7 @@ const AddNewTraining = () => {
                             rows={3}
                             onChange={handleTrainingData}
                           />
-                          { errors && errors.meta_description && <span className="error">{errors.meta_description}</span> }
+                          { errors.meta_description && <span className="error">{errors.meta_description}</span> }
                         </Form.Group>
                       </Col>
 
@@ -400,7 +400,7 @@ const AddNewTraining = () => {
                               }
                             />
                           </div>
-                          { errors && errors.time_required_to_complete && <span className="error">{errors.time_required_to_complete}</span> }
+                          { errors.time_required_to_complete && <span className="error">{errors.time_required_to_complete}</span> }
                         </Form.Group>
                         {/* <Form.Control.Feedback type="invalid">
                             {errors.select_hour}
@@ -416,7 +416,7 @@ const AddNewTraining = () => {
                             onSave={setCoverImage}
                             // setTrainingData={setTraining}
                           />
-                        { errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span> } 
+                        { errors.coverImage && <span className="error mt-2">{errors.coverImage}</span> } 
                         </Form.Group>
                       </Col>
 

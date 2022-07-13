@@ -14,13 +14,17 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import ToolkitProvider, {
   Search,
-  CSVExport,
+  // CSVExport,
 } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import { CSVDownload } from 'react-csv';
+import { useRef } from 'react';
+import { debounce } from 'lodash';
 
 const { SearchBar } = Search;
-const { ExportCSVButton } = CSVExport;
+// const { ExportCSVButton } = CSVExport;
+
 const animatedComponents = makeAnimated();
 
 const training = [
@@ -39,14 +43,18 @@ const selectRow = {
   clickToSelect: true,
 };
 
-
-
-
+const headers = [
+  { label: 'First Name', key: 'firstName' },
+  { label: 'Last Name', key: 'lastName' },
+  { label: 'Email', key: 'email' },
+  { label: 'Age', key: 'age' },
+];
 
 const UserManagement = () => {
   const [userData, setUserData] = useState([]);
-  const [allUserData,setAllUserData] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+  const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
+  const [csvData, setCsvData] = useState([]);
   const [filter, setFilter] = useState({
     user: '',
     location: [],
@@ -55,15 +63,17 @@ const UserManagement = () => {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
         async function deleteUserFromDB() {
-          const response = await axios.patch(`${BASE_URL}/auth/user/${row.id}`, {
-            is_deleted: 1,
-          });
+          const response = await axios.patch(
+            `${BASE_URL}/auth/user/${row.id}`,
+            {
+              is_deleted: 1,
+            }
+          );
           console.log('DELETE RESPONSE:', response);
         }
-  
+
         deleteUserFromDB();
         fetchUserDetails();
-        
       }
     },
   };
@@ -124,13 +134,33 @@ const UserManagement = () => {
       },
     },
   ];
+  const onFilter = debounce((data) => {
+    fetchUserDetails(data);
+  }, 200);
 
-  const fetchUserDetails = async () => {
-    let franchiseeFormat = selectedFranchisee.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_").toLowerCase();
-    console.log("The franchisee",franchiseeFormat)
-    let response = await axios.get(`${BASE_URL}/role/user/${franchiseeFormat}`, {
+  const fetchUserDetails = async (search,filter) => {
+    let api_url = '';
+    
+    let franchiseeFormat = selectedFranchisee
+      .split(',')[0]
+      .split(' ')
+      .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
+      .join('_')
+      .toLowerCase();
+    if (search) {
+      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?search=${search}`;
+    }
+    if(filter)
+    {
+      filter=filter.user;
+      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?filter=${filter}`;
+    }
+    if(!search && !filter) {
+      api_url = `${BASE_URL}/role/user/${franchiseeFormat}`;
+    }
+    let response = await axios.get(api_url, {
       headers: {
-        'authorization': `Bearer ${localStorage.getItem('token')}`,
+        authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
     if (response.status === 200) {
@@ -148,6 +178,22 @@ const UserManagement = () => {
       }));
       tempData = tempData.filter((data) => data.is_deleted === 0);
       setUserData(tempData);
+      let temp = tempData;
+      let csv_data = [];
+      temp.map((item) => {
+        // item['Name'] = item['name'];
+        // item['Email'] = item['email'];
+        // item['Phone Number'] = item['number'];
+        // item['Location'] = item['location'];
+        // delete item['name'];
+        // delete item['email'];
+        // delete item['number'];
+        // delete item['location'];
+        delete item.is_deleted;
+        delete item.id;
+        csv_data.push(item);
+      });
+      setCsvData(csv_data);
     }
   };
 
@@ -155,22 +201,24 @@ const UserManagement = () => {
     setFilter({});
   };
 
-  const handleApplyFilter = async () => {
+  const handleApplyFilter = async (data) => {
     // const res = await axios.post(`${BASE_URL}/`)
+    fetchUserDetails('',data);
   };
 
   // useEffect(() =>{
   //   fetchAllUsers()
   // },[])
   useEffect(() => {
-    if(selectedFranchisee) {
+    if (selectedFranchisee) {
       fetchUserDetails();
     }
   }, [selectedFranchisee]);
-useEffect(()=>{
-  fetchUserDetails();
-},[])
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
 
+  const csvLink = useRef();
   return (
     <>
       <div id="main">
@@ -181,17 +229,16 @@ useEffect(()=>{
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader 
+                <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee}
-                   />
+                />
                 <div className="entry-container">
                   <div className="user-management-sec">
                     <ToolkitProvider
                       keyField="name"
                       data={userData}
                       columns={columns}
-                      search
                     >
                       {(props) => (
                         <>
@@ -200,7 +247,26 @@ useEffect(()=>{
                             <div className="othpanel">
                               <div className="extra-btn">
                                 <div className="data-search me-3">
-                                  <SearchBar {...props.searchProps} />
+                                  <Form.Group
+                                    className="d-flex"
+                                    style={{ position: 'relative' }}
+                                  >
+                                    <div className="user-search">
+                                      <img
+                                        src="./img/search-icon-light.svg"
+                                        alt=""
+                                      />
+                                    </div>
+                                    <Form.Control
+                                      className="searchBox"
+                                      type="text"
+                                      placeholder="Search"
+                                      name="search"
+                                      onChange={(e) => {
+                                        onFilter(e.target.value);
+                                      }}
+                                    />
+                                  </Form.Group>
                                 </div>
                                 <Dropdown className="filtercol me-3">
                                   <Dropdown.Toggle
@@ -272,7 +338,7 @@ useEffect(()=>{
                                         />
                                       </Form.Group>
                                     </div>
-                                    <div className="custom-radio">
+                                    {/* <div className="custom-radio">
                                       <label className="mb-2">Location:</label>
                                       <Form.Group>
                                         <Select
@@ -292,7 +358,7 @@ useEffect(()=>{
                                           }
                                         />
                                       </Form.Group>
-                                    </div>
+                                    </div> */}
                                     <footer>
                                       <Button
                                         variant="transparent"
@@ -304,7 +370,7 @@ useEffect(()=>{
                                       <Button
                                         variant="primary"
                                         type="submit"
-                                        onClick={handleApplyFilter}
+                                        onClick={()=>{handleApplyFilter(filter)}}
                                       >
                                         Apply
                                       </Button>
@@ -325,10 +391,21 @@ useEffect(()=>{
                                     <img src="../img/dot-ico.svg" alt="" />
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
-                                    <Dropdown.Item>
-                                      <ExportCSVButton {...props.csvProps}>
-                                        Export CSV!!
-                                      </ExportCSVButton>
+                                    <Dropdown.Item
+                                      onClick={() => {
+                                        setCsvDownloadFlag(true);
+                                      }}
+                                    >
+                                      Export CSV!!
+                                      {csvDownloadFlag && (
+                                        <CSVDownload
+                                          data={csvData}
+                                          filename="user_management.csv"
+                                          ref={csvLink}
+                                        >
+                                          {setCsvDownloadFlag(false)}
+                                        </CSVDownload>
+                                      )}
                                     </Dropdown.Item>
                                     <Dropdown.Item href="#">
                                       Delete All Row

@@ -52,6 +52,7 @@ const AllFranchisees = () => {
         location: [],
     });
     const [franchiseeData, setFranchiseeData] = useState();
+    const [topSuccessMessage, setTopSuccessMessage] = useState();
 
     const handleCancelFilter = () => {
         setFilter({});
@@ -62,7 +63,12 @@ const AllFranchisees = () => {
     };
 
     const fetchFranchisees = async () => {
-        const response = await axios.get(`${BASE_URL}/role/franchisee/users`);
+        let token = localStorage.getItem('token')
+        const response = await axios.get(`${BASE_URL}/role/franchisee/users`, {
+            headers: {
+                "Authorization": `Bearer ${token}` 
+            }
+        });
 
         if(response.status === 200 && response.data.status === "success") {
             const { franchisees } = response.data;
@@ -81,6 +87,17 @@ const AllFranchisees = () => {
     };
 
     useEffect(() => {
+        if(localStorage.getItem('success_msg')) {
+            setTopSuccessMessage(localStorage.getItem('success_msg'));
+            localStorage.removeItem('success_msg');
+
+            setTimeout(() => {
+                setTopSuccessMessage(null);
+            }, 3000);
+        }
+    }, []);
+
+    useEffect(() => {
         fetchFranchisees();
     }, []);
 
@@ -97,6 +114,9 @@ const AllFranchisees = () => {
                                 <TopHeader />
                                 <div className="entry-container">
                                     <div className="user-management-sec">
+                                    {
+                                        topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                                    } 
                                         <>
                                             <header className="title-head">
                                                 <h1 className="title-lg">All Franchises</h1>

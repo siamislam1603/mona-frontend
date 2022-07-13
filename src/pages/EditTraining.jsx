@@ -54,6 +54,8 @@ const EditTraining = () => {
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
+  const [franchiseeList, setFranchiseeList] = useState();
+  const [sendToAllFranchisee, setSendToAllFranchisee] = useState();
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
 
   const [editTrainingData, setEditTrainingData] = useState();
@@ -71,6 +73,40 @@ const EditTraining = () => {
         ...userRoleList.map((data) => ({
           cat: data.role_name,
           key: data.role_label,
+        })),
+      ]);
+    }
+  };
+
+  // FETCHING FRANCHISEE LIST
+  const fetchFranchiseeList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      setFranchiseeList(response.data.franchiseeList.map(data => ({
+        id: data.id,
+        cat: data.franchisee_alias,
+        key: `${data.franchisee_name}, ${data.city}`
+      })));
+    }
+  };
+
+  // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
+  const fetchFranchiseeUsers = async (franchisee_id) => {
+    const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
+    console.log('RESPONSE:', response);
+    if(response.status === 200 && Object.keys(response.data).length > 1) {
+      const { users } = response.data;
+      setFetchedFranchiseeUsers([
+        ...users?.map((data) => ({
+          id: data.id,
+          cat: data.fullname.toLowerCase().split(" ").join("_"),
+          key: data.fullname
         })),
       ]);
     }
@@ -101,7 +137,7 @@ const EditTraining = () => {
       description: editTrainingData?.description,
       meta_description: editTrainingData?.meta_description,
       category_id: editTrainingData?.category_id,
-      is_applicable_to_all: editTrainingData?.user_or_roles,
+      is_applicable_to_all: editTrainingData?.shares[0].user_or_roles ? true : false,
       time_required_to_complete: parseInt(editTrainingData?.completion_time.split(" ")[0]),
       time_unit: editTrainingData?.completion_time.split(" ")[1],
     }));
@@ -111,8 +147,10 @@ const EditTraining = () => {
       start_time: moment(editTrainingData?.start_date).format('HH:mm'),
       end_date: moment(editTrainingData?.end_date).format('YYYY-MM-DD'),
       end_time: moment(editTrainingData?.end_date).format('HH:mm'),
-      user_roles: editTrainingData?.assigned_role,
-      assigned_users: editTrainingData?.assigned_users,
+      user_roles: editTrainingData?.shares[0].assigned_roles,
+      assigned_users: editTrainingData?.shares[0].assigned_users,
+      assigned_users_obj: fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0].assigned_users.includes(user.id + "")),
+      assigned_franchisee: parseInt(editTrainingData?.shares[0].franchisee)
     }));
 
     console.log('FETCHED DATA COPIED!');
@@ -130,62 +168,53 @@ const EditTraining = () => {
       }
     );
 
-    if(response.status === 201 && response.data.status === "success") {
+    if(response.status === 200 && response.data.status === "success") {
+      let token = localStorage.getItem('token');
+      let user_id = localStorage.getItem('user_id')
+      const shareResponse = await axios.post(`${BASE_URL}/share/${trainingId}`, {
+        assigned_franchisee: [trainingSettings.assigned_franchisee],
+        assigned_users: trainingSettings.assigned_users,
+        user_roles: trainingSettings.user_roles,
+        shared_by: user_id,
+        is_applicable_to_all: trainingSettings.is_applicable_to_all,
+      }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if(shareResponse.status === 201 && shareResponse.data.status === "success") {
         setLoader(false)
         setCreateTrainingModal(false);
         localStorage.setItem('success_msg', 'Training Updated Successfully!');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href="/training";
-      // let { id } = response.data.training;
 
-      // let data = new FormData();
-      // data.append('id', id);
-      // data.append('image', coverImage[0]);
-
-      // let imgSaveResponse = await axios.post(
-      //   `${BASE_URL}/training/coverImg`, data, {
-      //     headers: {
-      //       "Authorization": "Bearer " + token
-      //     }
-      //   }
-      // );
-
-      // if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
-      //   setLoader(false)
-      //   localStorage.setItem('success_msg', 'Training Created Successfully!');
-      //   localStorage.setItem('active_tab', '/created-training');
-      //   window.location.href="/training";
-      // } else {
-      //   setTopErrorMessage("unable to save cover image!");
-      //   setTimeout(() => {
-      //     setTopErrorMessage(null);
-      //   }, 3000)
-      // }
-
-    } else if(response.status === 200 && response.data.status === "fail") {
-      const { msg } = response.data;
-      setTopErrorMessage(msg);
-      setLoader(false);
-      setTimeout(() => {
-        setTopErrorMessage(null);
-      }, 3000)
+      } else if(response.status === 200 && response.data.status === "fail") {
+        const { msg } = response.data;
+        setTopErrorMessage(msg);
+        setLoader(false);
+        setTimeout(() => {
+          setTopErrorMessage(null);
+        }, 3000)
+      }
     }
   };    
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
-  const fetchFranchiseeUsers = async (franchisee_name) => {
-    const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
-    if(response.status === 200 && Object.keys(response.data).length > 1) {
-      const { users } = response.data;
-      setFetchedFranchiseeUsers([
-        ...users?.map((data) => ({
-          id: data.id,
-          cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: data.fullname
-        })),
-      ]);
-    }
-  };
+  // const fetchFranchiseeUsers = async (franchisee_name) => {
+  //   const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
+  //   if(response.status === 200 && Object.keys(response.data).length > 1) {
+  //     const { users } = response.data;
+  //     setFetchedFranchiseeUsers([
+  //       ...users?.map((data) => ({
+  //         id: data.id,
+  //         cat: data.fullname.toLowerCase().split(" ").join("_"),
+  //         key: data.fullname
+  //       })),
+  //     ]);
+  //   }
+  // };
 
   // FETCHING TRAINING CATEGORIES
   const fetchTrainingCategories = async () => {
@@ -276,6 +305,7 @@ const EditTraining = () => {
     fetchUserRoles();
     fetchTrainingCategories();
     fetchTrainingData();
+    fetchFranchiseeList();
   }, []);
 
   useEffect(() => {
@@ -284,10 +314,14 @@ const EditTraining = () => {
 
   useEffect(() => {
     copyFetchedData();
-  }, [editTrainingData]);
+  }, [fetchedFranchiseeUsers, editTrainingData]);
 
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  useEffect(() => {
+    fetchFranchiseeUsers(parseInt(trainingSettings.assigned_franchisee));
+  }, [trainingSettings.assigned_franchisee]);
+
   trainingData && console.log('TRAINING DATA:', trainingData);
+  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -322,7 +356,7 @@ const EditTraining = () => {
                             <Form.Control
                               type="text"
                               name="title"
-                              value={trainingData.title || editTrainingData.title}
+                              value={trainingData.title}
                               onChange={handleTrainingData}
                             />
                             { errors && errors.title && <span className="error">{errors.title}</span> }
@@ -353,7 +387,7 @@ const EditTraining = () => {
                               as="textarea"
                               name="description"
                               rows={3}
-                              value={trainingData.description || editTrainingData.description}
+                              value={trainingData.description}
                               onChange={handleTrainingData}
                             />
                             { errors && errors.description && <span className="error">{errors.description}</span> }
@@ -367,7 +401,7 @@ const EditTraining = () => {
                               as="textarea"
                               name="meta_description"
                               rows={3}
-                              value={trainingData.meta_description || editTrainingData.meta_description}
+                              value={trainingData.meta_description}
                               onChange={handleTrainingData}
                             />
                             { errors && errors.meta_description && <span className="error">{errors.meta_description}</span> }
@@ -381,10 +415,10 @@ const EditTraining = () => {
                               <Form.Control
                                 style={{ flex: 6 }}
                                 type="number"
-                                value={trainingData.time_required_to_complete || editTrainingData.completion_time.split(" ")[0]}
-                                onChange={() => setTrainingData(prevState => ({
+                                value={trainingData.time_required_to_complete}
+                                onChange={(e) => setTrainingData(prevState => ({
                                   ...prevState,
-                                  time_required_to_complete: parseInt(editTrainingData.completion_time.split(" ")[0])
+                                  time_required_to_complete: parseInt(e.target.value)
                                 }))}
                               />
                               <Select
@@ -538,6 +572,86 @@ const EditTraining = () => {
                   </Form.Group>
                 </Col>
               </Row>
+              
+              <Row className="mt-4">
+                <Col lg={3} md={6}>
+                  <Form.Group>
+                    <Form.Label>Send to all franchisee:</Form.Label>
+                    <div className="new-form-radio d-block">
+                      <div className="new-form-radio-box">
+                        <label for="all">
+                          <input
+                            type="radio"
+                            checked={sendToAllFranchisee === 'all'}
+                            name="send_to_all_franchisee"
+                            id="all"
+                            onChange={() => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                assigned_franchisee: ['all']
+                              }));
+                              setSendToAllFranchisee('all')
+                            }}
+                          />
+                          <span className="radio-round"></span>
+                          <p>Yes</p>
+                        </label>
+                      </div>
+                      <div className="new-form-radio-box m-0 mt-3">
+                        <label for="none">
+                          <input
+                            type="radio"
+                            name="send_to_all_franchisee"
+                            checked={sendToAllFranchisee === 'none'}
+                            id="none"
+                            onChange={() => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                assigned_franchisee: []
+                              }));
+                              setSendToAllFranchisee('none')
+                            }}
+                          />
+                          <span className="radio-round"></span>
+                          <p>No</p>
+                        </label>
+                      </div>
+                    </div>
+                  </Form.Group>
+                </Col>
+
+                <Col lg={9} md={12}>
+                  <Form.Group>
+                    <Form.Label>Select Franchisee</Form.Label>
+                    <div className="select-with-plus">
+                      <Multiselect
+                        disable={sendToAllFranchisee === 'all'}
+                        singleSelect={true}
+                        placeholder={"Select User Names"}
+                        displayValue="key"
+                        selectedValues={franchiseeList?.filter(franchisee => franchisee.id === trainingSettings.assigned_franchisee)}
+                        className="multiselect-box default-arrow-select"
+                        onKeyPressFn={function noRefCheck() {}}
+                        onRemove={function noRefCheck(data) {
+                          setTrainingSettings((prevState) => ({
+                            ...prevState,
+                            assigned_franchisee: [...data.map(data => data.id)],
+                          }));
+                        }}
+                        onSearch={function noRefCheck() {}}
+                        onSelect={function noRefCheck(data) {
+                          setTrainingSettings((prevState) => ({
+                            ...prevState,
+                            assigned_franchisee: [...data.map((data) => data.id)],
+                          }));
+                        }}
+                        options={franchiseeList}
+                      />
+                    </div>
+                  </Form.Group> 
+                </Col>
+              </Row>
+
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
@@ -548,7 +662,7 @@ const EditTraining = () => {
                           <input
                             type="radio"
                             value="Y"
-                            checked={trainingData.is_applicable_to_all === 1}
+                            checked={trainingData.is_applicable_to_all === true}
                             name="roles"
                             id="yes1"
                             onChange={(event) => {
@@ -567,7 +681,7 @@ const EditTraining = () => {
                           <input
                             type="radio"
                             value="N"
-                            checked={trainingData.is_applicable_to_all === 0}
+                            checked={trainingData.is_applicable_to_all === false}
                             name="roles"
                             id="no1"
                             onChange={(event) => {
@@ -653,40 +767,38 @@ const EditTraining = () => {
                       </Form.Group>
                     </div>
                   </div>
-                </Col>
-              </Row>
 
-              <Row className={`mt-4`}>
-                <Col lg={3} md={6}>
-                </Col>
-                <Col lg={9} md={6} className={`mt-3 mt-md-0 ${trainingData.is_applicable_to_all === true ? "d-none": ""}`}>
-                  <Form.Group>
-                    <Form.Label>Select User Names</Form.Label>
-                    <Multiselect
-                      placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
-                      displayValue="key"
-                      selectedValues={trainingSettings.assigned_users}
-                      className="multiselect-box default-arrow-select"
-                      onKeyPressFn={function noRefCheck() {}}
-                      onRemove={function noRefCheck(data) {
-                        setTrainingSettings((prevState) => ({
-                          ...prevState,
-                          assigned_users: [...data.map(data => data.id)],
-                          assigned_users_data: [...data.map(data => data)]
-                        }));
-                      }}
-                      onSearch={function noRefCheck() {}}
-                      onSelect={function noRefCheck(data) {
-                        setTrainingSettings((prevState) => ({
-                          ...prevState,
-                          assigned_users: [...data.map((data) => data.id)],
-                          assigned_users_data: [...data.map(data => data)]
-                        }));
-                      }}
-                      options={fetchedFranchiseeUsers}
-                    />
-                    
-                  </Form.Group>
+                  <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingData.is_applicable_to_all === true ? "d-none": ""}`}>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>Select User Names</Form.Label>
+                        <Multiselect
+                          placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
+                          displayValue="key"
+                          selectedValues={trainingSettings.assigned_users_obj}
+                          className="multiselect-box default-arrow-select"
+                          onKeyPressFn={function noRefCheck() {}}
+                          onRemove={function noRefCheck(data) {
+                            setTrainingSettings((prevState) => ({
+                              ...prevState,
+                              assigned_users: [...data.map(data => data.id)],
+                              assigned_users_obj: [...data.map(data => data)]
+                            }));
+                          }}
+                          onSearch={function noRefCheck() {}}
+                          onSelect={function noRefCheck(data) {
+                            setTrainingSettings((prevState) => ({
+                              ...prevState,
+                              assigned_users: [...data.map((data) => data.id)],
+                              assigned_users_obj: [...data.map(data => data)]
+                            }));
+                          }}
+                          options={fetchedFranchiseeUsers}
+                        />
+                        
+                      </Form.Group>
+                    </Col>
+                  </div>
                 </Col>
               </Row>
             </div>

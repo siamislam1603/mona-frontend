@@ -182,15 +182,19 @@ const Training = () => {
                           verifyPermission("training_files", "add") && 
                           <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
                         }
-                        <Dropdown>
-                          <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt=""/>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#">Export All</Dropdown.Item>
-                            <Dropdown.Item href="#">Delete All</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
+
+                        {
+                          localStorage.getItem('user_role') === 'stanley' &&
+                          <Dropdown>
+                            <Dropdown.Toggle id="extrabtn" className="ctaact">
+                              <img src="../img/dot-ico.svg" alt=""/>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item href="#">Export All</Dropdown.Item>
+                              <Dropdown.Item href="#">Delete All</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        }
                       </div>
                     </div>
                   </header>
