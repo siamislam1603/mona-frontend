@@ -44,6 +44,7 @@ const UserManagement = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
+  const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [filter, setFilter] = useState('');
   const [search,setSearch]=useState('');
   const [deleteResponse, setDeleteResponse] = useState(null);
@@ -52,7 +53,6 @@ const UserManagement = () => {
       if (e.target.text === 'Delete') {
 
         async function deleteUserFromDB() {
-          console.log("dddddddddddddddddddd", row)
 
           const response = await axios.patch(
             `${BASE_URL}/auth/user/${row.userID}`,
@@ -60,7 +60,7 @@ const UserManagement = () => {
               is_deleted: 1,
             }
           );
-          console.log('DELETE RESPONSE:', response);
+          
           setDeleteResponse(response);
         }
 
@@ -119,7 +119,7 @@ const UserManagement = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-                  {/* <Dropdown.Item href="/edit-user{}">Edit</Dropdown.Item> */}
+                  <Dropdown.Item href={`/edit-user/${112}`}>Edit</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -224,7 +224,18 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchUserDetails();
-  }, [deleteResponse])
+  }, [deleteResponse]);
+
+  useEffect(() => {
+    if(localStorage.getItem('success_msg')) {
+        setTopSuccessMessage(localStorage.getItem('success_msg'));
+        localStorage.removeItem('success_msg');
+
+        setTimeout(() => {
+            setTopSuccessMessage(null);
+        }, 3000);
+    }
+  }, []);
 
   const csvLink = useRef();
   userData && console.log('USER DATA:', userData.map(data => data));
@@ -251,6 +262,9 @@ const UserManagement = () => {
                     >
                       {(props) => (
                         <>
+                          {
+                            topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                          } 
                           <header className="title-head">
                             <h1 className="title-lg">All User</h1>
                             <div className="othpanel">

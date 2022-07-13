@@ -316,3 +316,61 @@ export const FranchiseeFormValidation = (formObj) => {
 
   return errors;
 }
+
+
+export const UserFormValidation = (formObj) => {
+  let errors = {};
+
+  let {
+    fullname,
+    role,
+    city,
+    address,
+    postalCode,
+    email,
+    phone,
+    trainingCategories,
+    professionalDevCategories,
+    coordinator,
+    businessAssets,
+    terminationDate,
+  } = formObj;
+
+  if(!fullname)
+    errors.fullname = "Username is required!";
+
+  if(!role)
+    errors.role = "User role is required!";
+  
+  if(!city)
+    errors.city = "City is required!";
+  
+  if(!address)
+    errors.address = "Address is required!";
+
+  if(!postalCode)
+    errors.postalCode = "Postal code is required!";
+
+  if(!email)
+    errors.email = "Email is required!";
+
+  if(!phone)
+    errors.phone = "Phone number is required!";
+
+  if(!trainingCategories)
+    errors.trainingCategories = "Training categories are required!";
+
+  if(!professionalDevCategories)
+    errors.professionalDevCategories = "Professional development categories are required!";
+
+  if(!coordinator)
+    errors.coordinator = "Select a coordinator!";
+
+  if(!businessAssets)
+    errors.businessAssets = "Business assets are required!";
+
+  if(!terminationDate)
+    errors.terminationDate = "select a termination date!";
+
+  return errors;
+};

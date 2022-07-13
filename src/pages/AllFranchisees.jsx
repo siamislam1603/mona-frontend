@@ -125,7 +125,10 @@ const AllFranchisees = () => {
                                                         <div className="data-search me-3">
                                                             <SearchBar />
                                                         </div>
-                                                        <Dropdown className="filtercol me-3">
+
+                                                        {
+                                                            localStorage.getItem('user_role') === 'stanley' &&
+                                                            <Dropdown className="filtercol me-3">
                                                             <Dropdown.Toggle
                                                                 id="extrabtn"
                                                                 variant="btn-outline"
@@ -233,12 +236,12 @@ const AllFranchisees = () => {
                                                                     </Button>
                                                                 </footer>
                                                             </Dropdown.Menu>
-                                                        </Dropdown>
+                                                        </Dropdown>}
                                                         <a
-                                                            href="/New-Franchises"
+                                                            href="/new-franchisees"
                                                             className="btn btn-primary me-3"
                                                         >
-                                                            + Create New User
+                                                            + Add New Franchisee
                                                         </a>
                                                         <Dropdown>
                                                             <Dropdown.Toggle

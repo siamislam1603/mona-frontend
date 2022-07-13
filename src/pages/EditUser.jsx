@@ -8,9 +8,10 @@ import DragDropCrop from '../components/DragDropCrop';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import validateForm from '../helpers/validateForm';
+import { useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 const animatedComponents = makeAnimated();
 
@@ -26,6 +27,7 @@ const training = [
 ];
 
 const EditUser = () => {
+  const { userId } = useParams();
   const [formErrors, setFormErrors] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,20 +46,70 @@ const EditUser = () => {
   const [pdcData, setPdcData] = useState([]);
   const [businessAssetData, setBuinessAssetData] = useState([]);
   const [trainingDocuments, setTrainingDocuments] = useState();
+  const [editUserData, setEditUserData] = useState();
 
   // IMAGE CROPPING STATES
   const [image, setImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
 
+  // FETCHES THE DATA OF USER FOR EDITING
+  const fetchEditUserData = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      const { user } = response.data;
+      setEditUserData(user);
+    }
+  };
+
+  const copyDataToState = () => {
+    setFormData(prevState => ({
+      fullname: editUserData?.fullname,
+
+      role: editUserData?.role,
+      roleObj:userRoleData.filter(d => d.value === editUserData.role),
+      
+      city: editUserData?.city,
+      address: editUserData?.address,
+      postalCode: editUserData?.postalCode,
+      email: editUserData?.email,
+      telcode: editUserData?.phone.split("-")[0],
+      phone: editUserData?.phone.split("-")[1],
+      
+      trainingCategories: editUserData?.training_categories.map(d => parseInt(d)),
+      trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories.includes(category.id + "")),
+
+      professionalDevCategories: editUserData?.professional_development_categories.map(d => parseInt(d)),
+      professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories.includes(user.id + "")),
+
+      coordinator: editUserData?.coordinator,
+
+      businessAssets: editUserData?.business_assets.map(d => parseInt(d)),
+      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + ' ')),
+      
+      terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD')
+    }));
+  }
+
   // CREATES NEW USER INSIDE THE DATABASE
-  const createUser = async (data) => {
-    const response = await axios.post(`${BASE_URL}/auth/signup`, data);
-    if (response.status === 201) {
-      localStorage.setItem('token', response.data.accessToken);
+  const updateUserDetails = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, formData, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 200 && response.data.status === 'success') {
+      localStorage.setItem('success_msg', 'User updated successfully!');
       window.location.href = '/user-management';
-    } else if (response.status === 201 && response.data.status === 'fail') {
-      console.log('MESSAGE:', response, data.msg);
+    } else if (response.status === 200 && response.data.status === 'fail') {
       setTopErrorMessage(response.data.msg);
     }
   };
@@ -72,32 +124,7 @@ const EditUser = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // setFormErrors(validateForm(formData));
-    setIsSubmit(true);
-    console.log('FORM DATA:', formData);
-    console.log('TRAINING DOCUMENTS:', trainingDocuments);
-
-    if (isSubmit === true) {
-      console.log('FORM SUBMISSION STARTED!');
-      let data = new FormData();
-      for (let [key, value] of Object.entries(formData)) {
-        data.append(`${key}`, `${value}`);
-      }
-
-      trainingDocuments.forEach(doc => {
-        data.append('images', doc);
-      });
-
-      data.append('franchisee', selectedFranchisee);
-
-      if (croppedImage) {
-        data.append('file', croppedImage);
-        console.log('SUBMITTING FORM DATA');
-        createUser(data);
-      } else {
-        console.log('Choose & Crop an image first!');
-      }
-    }
+    updateUserDetails();
   };
 
   const fetchCoordinatorData = async () => {
@@ -148,6 +175,7 @@ const EditUser = () => {
       const { userRoleList } = response.data;
       setUserRoleData(
         userRoleList.map((list) => ({
+          id: list.id,
           value: list.role_name,
           label: list.role_label,
         }))
@@ -239,14 +267,22 @@ const EditUser = () => {
     fetchTrainingCategories();
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
+    fetchEditUserData();
   }, []);
 
   useEffect(() => {
+    copyDataToState();
+  }, [editUserData]);
+
+  useEffect(() => {
     fetchCoordinatorData();
-  }, [selectedFranchisee])
+  }, [selectedFranchisee]);
 
-  selectedFranchisee && console.log('FRANCHISEE:', selectedFranchisee);
-
+  editUserData && console.log('EDIT USER DATA:',editUserData);
+  formData && console.log('FORM DATA:', formData);
+  businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
+  businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
+  formData && console.log('BUSINESS:', formData.businessAssets);
   return (
     <>
       <div id="main">
@@ -260,7 +296,7 @@ const EditUser = () => {
                 <TopHeader setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-lg">New User</h1>
+                    <h1 className="title-lg">Edit User</h1>
                   </header>
                   <div className="maincolumn">
                     <div className="new-user-sec">
@@ -292,7 +328,7 @@ const EditUser = () => {
                               type="text"
                               name="fullname"
                               placeholder="Enter Full Name"
-                              value={formData?.fullName}
+                              value={formData?.fullname}
                               onChange={handleChange}
                             />
                             <span className="error">
@@ -305,11 +341,13 @@ const EditUser = () => {
                             <Select
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
+                              value={formData.roleObj}
                               options={userRoleData}
                               onChange={(e) =>
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   role: e.value,
+                                  roleObj: e
                                 }))
                               }
                             />
@@ -342,7 +380,7 @@ const EditUser = () => {
                               type="text"
                               name="address"
                               placeholder="Enter Your Address"
-                              value={formData.address ?? ''}
+                              value={formData.address}
                               onChange={handleChange}
                             />
                             <span className="error">
@@ -356,7 +394,7 @@ const EditUser = () => {
                               type="number"
                               name="postalCode"
                               placeholder="Your Postal Code"
-                              value={formData.postalCode ?? ''}
+                              value={formData.postalCode}
                               onChange={handleChange}
                             />
                           </Form.Group>
@@ -367,7 +405,7 @@ const EditUser = () => {
                               type="email"
                               name="email"
                               placeholder="Enter Your Email ID"
-                              value={formData.email ?? ''}
+                              value={formData.email}
                               onChange={handleChange}
                             />
                             <span className="error">
@@ -415,11 +453,13 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
+                              value={formData.trainingCategoriesObj}
                               options={trainingCategoryData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  trainingCategories: selectedOptions
+                                  trainingCategories: [...selectedOptions.map(d => parseInt(d.id))],
+                                  trainingCategoriesObj: selectedOptions
                                 }));
                               }}
                             />
@@ -431,11 +471,13 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
+                              value={formData.professionalDevCategoriesObj}
                               options={pdcData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  professionalDevCategories: selectedOptions
+                                  professionalDevCategories: [...selectedOptions.map(d => parseInt(d.id))],
+                                  professionalDevCategoriesObj: selectedOptions
                                 }));
                               }}
                             />
@@ -462,11 +504,13 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
+                              value={formData.businessAssetsObj}
                               options={businessAssetData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  businessAssets: selectedOptions
+                                  businessAssets: [...selectedOptions.map(d => parseInt(d.id))],
+                                  businessAssetsObj: selectedOptions
                                 }));
                               }}
                             />
@@ -477,6 +521,7 @@ const EditUser = () => {
                             <Form.Control
                               type="date"
                               name="terminationDate"
+                              value={formData.terminationDate}
                               onChange={handleChange}
                             />
                           </Form.Group>
