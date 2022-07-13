@@ -168,6 +168,7 @@ const initialFields = {
                   </h1>
                 </header>
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+                  {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}                 
                 <div className="training-form">
                   <Row>
                   <Col md={12} className="mb-3">
