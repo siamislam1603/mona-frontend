@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Button, Container } from 'react-bootstrap';
+import { Row, Col, Button, Container, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
@@ -7,15 +7,31 @@ import Select from 'react-select';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { FranchiseeFormValidation } from '../helpers/validation';
+import * as ReactBootstrap from 'react-bootstrap';
 
 const NewFranchisees = () => {
 
-    const [franchiseeData, setFranchiseeData] = useState();
+    const [franchiseeData, setFranchiseeData] = useState({
+        franchisee_name: "",
+        abn: "",
+        city: "",
+        state: "",
+        franchisee_admin_email: "",
+        franchisee_admin: "",
+        franchisee_number: "",
+        acn: "",
+        address: "",
+        postcode: "",
+        contact: "",
+    });
     const [australianStatesData, setAustralianStatesData] = useState();
     const [cityData, setCityData] = useState([]);
     const [franchiseeAdminData, setFranchiseeAdminData] = useState();
     const [selectedFranchisee, setSelectedFranchisee] = useState();
-
+    const [topErrorMessage, setTopErrorMessage] = useState(null);
+    const [loader, setLoader] = useState(false);
+    const [createFranchiseeModal, setCreateFranchiseeModal] = useState(false);
+    
     // ERROR STATES
     const [formErrors, setFormErrors] = useState({});
 
@@ -27,7 +43,25 @@ const NewFranchisees = () => {
             }
         });
 
-        console.log('RESPONSE:', response);
+        if(response.status === 201 && response.data.status === "success") {
+            setLoader(false);
+            setCreateFranchiseeModal(false);
+            localStorage.setItem('success_msg', 'Franchisee Created Successfully!');
+            window.location.href="/all-franchisees";
+        } else {
+            setLoader(false);
+            setCreateFranchiseeModal(false);
+            // setTopErrorMessage(response.data.msg);
+            let { errorObject } = response.data;
+            errorObject.map(error => setFormErrors(prevState => ({
+                ...prevState,
+                [error.error_field]: error.error_msg
+            })));
+
+            setTimeout(() => {
+                setTopErrorMessage(null);
+            }, 3000)
+        }
     }
 
 
@@ -77,7 +111,12 @@ const NewFranchisees = () => {
         let errorObject = FranchiseeFormValidation(franchiseeData);
 
         if(Object.keys(errorObject).length > 0) {
+            console.log('ERROR OBJECT:', errorObject);
             setFormErrors(errorObject);
+        } else {
+            setCreateFranchiseeModal(true);
+            setLoader(true)
+            createFranchisee();
         }
     }
 
@@ -118,7 +157,7 @@ const NewFranchisees = () => {
                                         </header>
                                     </div>
                                 </div>
-
+                                {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
                                 <Form onSubmit={handleFranchiseeDataSubmission}>
                                     <Row>
                                         <Col sm={6} md={6} lg={6}>
@@ -128,7 +167,14 @@ const NewFranchisees = () => {
                                                     name="franchisee_name" 
                                                     type="text" 
                                                     placeholder="Special DayCare"
-                                                    onChange={handleChange} />
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setFormErrors(prevState => ({
+                                                            ...prevState,
+                                                            franchisee_name: null
+                                                        }));
+                                                    }} />
+                                                { formErrors.franchisee_name !== null && <span className="error">{formErrors.franchisee_name}</span> }
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -137,7 +183,14 @@ const NewFranchisees = () => {
                                                     name="abn" 
                                                     type="text" 
                                                     placeholder="6743433"
-                                                    onChange={handleChange} />
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setFormErrors(prevState => ({
+                                                            ...prevState,
+                                                            abn: null
+                                                        }));
+                                                    }} />
+                                                { formErrors.abn !== null && <span className="error">{formErrors.abn}</span> }
                                             </Form.Group>
 
                                             <Form.Group className="mb-3">
@@ -146,13 +199,17 @@ const NewFranchisees = () => {
                                                 placeholder="Which Suburb?"
                                                 closeMenuOnSelect={true}
                                                 options={cityData}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,
                                                         city: e.value,
-                                                    }))
-                                                }
-                                                />
+                                                    }));
+                                                    setFormErrors(prevState => ({
+                                                        ...prevState,
+                                                        city: null
+                                                    }));
+                                                }} />
+                                            { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
                                             </Form.Group>
 
                                             <Form.Group className="mb-3">
@@ -161,13 +218,34 @@ const NewFranchisees = () => {
                                                 placeholder="Which State?"
                                                 closeMenuOnSelect={true}
                                                 options={australianStatesData}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,
                                                         state: e.value,
-                                                    }))
-                                                }
-                                                />
+                                                    }));
+                                                    setFormErrors(prevState => ({
+                                                        ...prevState,
+                                                        state: null
+                                                    }));
+                                                }} />
+                                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
+                                            </Form.Group>
+
+                                            
+                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                                <Form.Label> Contact Number</Form.Label>
+                                                <Form.Control 
+                                                    name="contact"
+                                                    type="text" 
+                                                    placeholder="454 342 56"
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setFormErrors(prevState => ({
+                                                            ...prevState,
+                                                            contact: null
+                                                        }));
+                                                    }} />
+                                                { formErrors.contact !== null && <span className="error">{formErrors.contact}</span> }
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -176,22 +254,14 @@ const NewFranchisees = () => {
                                                     name="franchisee_admin_email"
                                                     type="text" 
                                                     placeholder="andy.smith@specialdaycare.com"
-                                                    onChange={handleChange} />
-                                            </Form.Group>
-
-                                            <Form.Group className="mb-3">
-                                                <Form.Label>Franchisee Admin</Form.Label>
-                                                <Select
-                                                placeholder="Select Franchisee Admin"
-                                                closeMenuOnSelect={true}
-                                                options={franchiseeAdminData}
-                                                onChange={(e) =>
-                                                    setFranchiseeData((prevState) => ({
-                                                        ...prevState,
-                                                        franchisee_admin: e.id,
-                                                    }))
-                                                }
-                                                />
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setFormErrors(prevState => ({
+                                                            ...prevState,
+                                                            franchisee_admin_email: null
+                                                        }));
+                                                    }} />
+                                                { formErrors.franchisee_admin_email !== null && <span className="error">{formErrors.franchisee_admin_email}</span> }
                                             </Form.Group>
                                         </Col>
 
@@ -202,7 +272,14 @@ const NewFranchisees = () => {
                                                     name="franchisee_number"
                                                     type="text" 
                                                     placeholder="ADS 00342"
-                                                    onChange={handleChange} />
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setFormErrors(prevState => ({
+                                                            ...prevState,
+                                                            franchisee_number: null
+                                                        }));
+                                                    }} />
+                                                { formErrors.franchisee_number !== null && <span className="error">{formErrors.franchisee_number}</span> }
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -211,7 +288,14 @@ const NewFranchisees = () => {
                                                     name="acn" 
                                                     type="text" 
                                                     placeholder="3453453453"
-                                                    onChange={handleChange} />
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setFormErrors(prevState => ({
+                                                            ...prevState,
+                                                            acn: null
+                                                        }));
+                                                    }} />
+                                                { formErrors.acn !== null && <span className="error">{formErrors.acn}</span> }
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -220,7 +304,14 @@ const NewFranchisees = () => {
                                                     name="address"
                                                     type="text" 
                                                     placeholder="5th Avenue, Central Park Street, Broadway"
-                                                    onChange={handleChange} />
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setFormErrors(prevState => ({
+                                                            ...prevState,
+                                                            address: null
+                                                        }));
+                                                    }} />
+                                                { formErrors.address !== null && <span className="error">{formErrors.address}</span> }
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -229,16 +320,35 @@ const NewFranchisees = () => {
                                                     name="postcode" 
                                                     type="text" 
                                                     placeholder="24545"
-                                                    onChange={handleChange} />
+                                                    onChange={(e) => {
+                                                        handleChange(e);
+                                                        setFormErrors(prevState => ({
+                                                            ...prevState,
+                                                            postcode: null
+                                                        }));
+                                                    }} />
+                                                { formErrors.postcode !== null && <span className="error">{formErrors.postcode}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                <Form.Label> Contact Number</Form.Label>
-                                                <Form.Control 
-                                                    name="contact"
-                                                    type="text" 
-                                                    placeholder="454 342 56"
-                                                    onChange={handleChange} />
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>Franchisee Admin</Form.Label>
+                                                <Select
+                                                placeholder="Select Franchisee Admin"
+                                                closeMenuOnSelect={true}
+                                                options={franchiseeAdminData}
+                                                onChange={(e) => {
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        franchisee_admin: e.id,
+                                                    }));
+
+                                                    setFormErrors(prevState => ({
+                                                        ...prevState,
+                                                        franchisee_admin: null
+                                                    }));   
+                                                }}
+                                                />
+                                                { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
                                             </Form.Group>
                                         </Col>
 
@@ -255,6 +365,33 @@ const NewFranchisees = () => {
                     </Container>
                 </section>
             </div >
+            {
+                createFranchiseeModal && 
+                <Modal
+                show={createFranchiseeModal}
+                onHide={() => setCreateFranchiseeModal(false)}>
+                    <Modal.Header>
+                        <Modal.Title>
+                        Creating Franchisee
+                        </Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <div className="create-training-modal" style={{ textAlign: 'center' }}>
+                        <p>Franchisee is being created!</p>
+                        <p>Please Wait...</p>
+                        </div>
+                    </Modal.Body>
+
+                    <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    {
+                        loader === true && <div>
+                        <ReactBootstrap.Spinner animation="border" />
+                        </div>
+                    }
+                    </Modal.Footer>
+                </Modal>
+            }
         </div >
     )
 }
