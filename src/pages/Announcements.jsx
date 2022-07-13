@@ -144,7 +144,7 @@ const Announcements =  () => {
                           <div className="head-title">
                             <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
                             <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <small><span>Educator:</span> Smile Daycare</small></div>
-                            <div className="date">Sent on: <br/>05/15/2022</div>
+                            <div className="date"><a href=""><img src="../img/edit-ico.png" alt=""/></a></div>
                           </div>
                         </Accordion.Header>
                         <Accordion.Body>

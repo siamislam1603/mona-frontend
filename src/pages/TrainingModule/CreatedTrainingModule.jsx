@@ -7,12 +7,14 @@ import Multiselect from 'multiselect-react-dropdown';
 const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [myTrainingData, setMyTrainingData] = useState();
   const [otherTrainingData, setOtherTrainingData] = useState();
+  const [applicableToAll, setApplicableToAll] = useState(false);
   const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [saveTrainingId, setSaveTrainingId] = useState(null);
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
   const [shareType, setShareType] = useState("roles");
   const [userList, setUserList] = useState();
+  const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [formSettings, setFormSettings] = useState({
     user_roles: [],
     assigned_franchisee: [],
@@ -57,7 +59,8 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     let user_id = localStorage.getItem('user_id')
     const response = await axios.post(`${BASE_URL}/share/${saveTrainingId}`, {
       ...formSettings,
-      shared_by: user_id
+      shared_by: user_id,
+      is_applicable_to_all: applicableToAll
     }, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -89,9 +92,27 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }
   };
 
+  const handleTrainingDelete = async (trainingId) => {
+    console.log('DELETING THE TRAINING!');
+    let token = localStorage.getItem('token');
+    let userId = localStorage.getItem('user_id');
+    const response = await axios.delete(`${BASE_URL}/training/deleteTraining/${trainingId}/${userId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    
+    // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
+    if(response.status === 200 && response.data.status === "success") {
+      setTrainingDeleteMessage(response.data.message);
+    } else if(response.status === 200 && response.data.status === "fail") {
+      setTrainingDeleteMessage(response.data.message);
+    }
+  }
+
   useEffect(() => {
     fetchCreatedTrainings();
-  }, [filter]);
+  }, [filter, trainingDeleteMessage]);
 
   useEffect(() => {
     fetchUserList();
@@ -130,7 +151,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                         <img src="../img/dot-ico.svg" alt=""/>
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleTrainingDelete(training.id)}>Delete</Dropdown.Item>
                         <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
                         <Dropdown.Item href="#" onClick={() => {
                           setSaveTrainingId(training.id);
@@ -264,6 +285,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                       <Multiselect
                         disable={sendToAllFranchisee === 'all'}
                         placeholder={"Select User Names"}
+                        singleSelect={true}
                         displayValue="key"
                         className="multiselect-box default-arrow-select"
                         onKeyPressFn={function noRefCheck() {}}
@@ -305,6 +327,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                 assigned_users: [],
                                 assigned_users_data: []
                               }));
+                              setApplicableToAll(true);
                               setShareType("roles");
                             }}
                           />
@@ -324,6 +347,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                 ...prevState,
                                 user_roles: []
                               }));
+                              setApplicableToAll(false);
                               setShareType("users");
                             }}
                           />
@@ -340,7 +364,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                   shareType === "roles" ? 
                   <>
                     <Form.Label className="d-block">Select User Roles</Form.Label>
-                      <div className="btn-checkbox" style={{ display: "flex", flexDirection: "column" }}>
+                      <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
                         <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                           <Form.Check 
                             type="checkbox" 

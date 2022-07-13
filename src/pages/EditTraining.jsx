@@ -42,6 +42,7 @@ const EditTraining = () => {
 
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
+  const [createTrainingModal, setCreateTrainingModal] = useState(false)
 
   const [userRoles, setUserRoles] = useState([]);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
@@ -100,13 +101,16 @@ const EditTraining = () => {
       description: editTrainingData?.description,
       meta_description: editTrainingData?.meta_description,
       category_id: editTrainingData?.category_id,
+      is_applicable_to_all: editTrainingData?.user_or_roles,
       time_required_to_complete: parseInt(editTrainingData?.completion_time.split(" ")[0]),
       time_unit: editTrainingData?.completion_time.split(" ")[1],
     }));
 
     setTrainingSettings(prevState => ({
       start_date: moment(editTrainingData?.start_date).format('YYYY-MM-DD'),
+      start_time: moment(editTrainingData?.start_date).format('HH:mm'),
       end_date: moment(editTrainingData?.end_date).format('YYYY-MM-DD'),
+      end_time: moment(editTrainingData?.end_date).format('HH:mm'),
       user_roles: editTrainingData?.assigned_role,
       assigned_users: editTrainingData?.assigned_users,
     }));
@@ -128,6 +132,7 @@ const EditTraining = () => {
 
     if(response.status === 201 && response.data.status === "success") {
         setLoader(false)
+        setCreateTrainingModal(false);
         localStorage.setItem('success_msg', 'Training Updated Successfully!');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href="/training";
@@ -260,6 +265,7 @@ const EditTraining = () => {
         });
         
         window.scrollTo(0, 0);
+        setCreateTrainingModal(true);
         setLoader(true);
         updateTraining(data);
       }
@@ -299,7 +305,7 @@ const EditTraining = () => {
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">
-                      Add New Training{' '}
+                      Edit Training{' '}
                       <span className="setting-ico" onClick={() => setSettingsModalPopup(true)}>
                         <img src="../img/setting-ico.png" alt="" />
                       </span>
@@ -495,6 +501,7 @@ const EditTraining = () => {
                     <Form.Control
                       type="time"
                       name="start_time"
+                      value={trainingSettings.start_time}
                       onChange={(e) => setTrainingSettings(prevState => ({
                         ...prevState,
                         start_time: e.target.value
@@ -522,6 +529,7 @@ const EditTraining = () => {
                     <Form.Control
                       type="time"
                       name="end_time"
+                      value={trainingSettings.end_time}
                       onChange={(e) => setTrainingSettings(prevState => ({
                         ...prevState,
                         end_time: e.target.value
@@ -540,6 +548,7 @@ const EditTraining = () => {
                           <input
                             type="radio"
                             value="Y"
+                            checked={trainingData.is_applicable_to_all === 1}
                             name="roles"
                             id="yes1"
                             onChange={(event) => {
@@ -558,6 +567,7 @@ const EditTraining = () => {
                           <input
                             type="radio"
                             value="N"
+                            checked={trainingData.is_applicable_to_all === 0}
                             name="roles"
                             id="no1"
                             onChange={(event) => {
@@ -695,21 +705,31 @@ const EditTraining = () => {
         </Modal.Footer>
       </Modal> 
       {
-        loader === true && <div style={{ 
-          width: "100vw", 
-          height: "100vh", 
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#ffffff80",
-          position: "fixed",
-          top: "0",
-          left: "0",
-          right: "0",
-          bottom: "0",
-        }}>
-          <ReactBootstrap.Spinner animation="border" />
-        </div>
+        createTrainingModal && 
+        <Modal
+          show={createTrainingModal}
+          onHide={() => setCreateTrainingModal(false)}>
+          <Modal.Header>
+            <Modal.Title>
+              Updating Training
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div className="create-training-modal" style={{ textAlign: 'center' }}>
+              <p>This may take some time.</p>
+              <p>Please Wait...</p>
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          {
+            loader === true && <div>
+              <ReactBootstrap.Spinner animation="border" />
+            </div>
+          }
+          </Modal.Footer>
+        </Modal>
       }
     </div>
   );

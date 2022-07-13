@@ -146,6 +146,8 @@ const Training = () => {
                               }))} />
                           </label>
                         </div>
+                        {
+                            localStorage.getItem('user_role') === 'stanley' &&
                         <Dropdown className="filtercol me-3">
                           <Dropdown.Toggle id="extrabtn" variant="btn-outline">
                             <i className="filter-ico"></i> Add Filters
@@ -157,8 +159,8 @@ const Training = () => {
                               <Form.Group>
                                 <Form.Check
                                   inline
-                                  label='Admin'
-                                  value='admin'
+                                  label='Franchisee'
+                                  value='franchisee'
                                   name="users"
                                   type="radio"
                                   id='one'
@@ -166,52 +168,6 @@ const Training = () => {
                                     ...prevState,
                                     user: e.target.value
                                   }))}
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Co-ordinator'
-                                  value='coordinator'
-                                  name="users"
-                                  type="radio"
-                                  id='two'
-                                  onChange={e => setFilterData(prevState => ({
-                                    ...prevState,
-                                    user: e.target.value
-                                  }))}
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Educator'
-                                  value='educator'
-                                  name="users"
-                                  type="radio"
-                                  id='three'
-                                  onChange={e => setFilterData(prevState => ({
-                                    ...prevState,
-                                    user: e.target.value
-                                  }))}
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Parent/Guardian'
-                                  value='guardian'
-                                  name="users"
-                                  type="radio"
-                                  id='four'
-                                  // onChange={e => setFilterData(prevState => ({
-                                  //   ...prevState,
-                                  //   user: e.target.value
-                                  // }))}
-                                />
-                              </Form.Group>
-                            </div>
-                            <div className="custom-radio">
-                              <label className="mb-2">Choose Category</label>
-                              <Form.Group>
-                                <Select
-                                  closeMenuOnSelect={false}
-                                  components={animatedComponents}
-                                  options={trainingCategory}
                                 />
                               </Form.Group>
                             </div>
@@ -221,6 +177,7 @@ const Training = () => {
                             </footer>
                           </Dropdown.Menu>
                         </Dropdown>
+                        }
                         {
                           verifyPermission("training_files", "add") && 
                           <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
