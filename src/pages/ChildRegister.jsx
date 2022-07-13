@@ -1,14 +1,14 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Col, Container, Form, Row, Button } from "react-bootstrap";
-
+import { BASE_URL } from "../components/App";
 
 const ChildRegister = () => {
   const [form, setForm] = useState({ school: "Y", sex: "M", physical: "Y", service: "Y" });
   const [errors, setErrors] = useState({});
 
   const addChild = async (data) => {
-    const res = await axios.post('http://localhost:4000/child/signup', data);
+    const res = await axios.post(`${BASE_URL}/child/signup`, data);
     if (res.status === 201 && res.data?.status === 'success') {
       window.location.ref = "/dashboard";
     }

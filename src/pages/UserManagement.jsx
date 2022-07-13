@@ -200,6 +200,9 @@ const UserManagement = () => {
     fetchUserDetails();
   };
 
+  // useEffect(() =>{
+  //   fetchAllUsers()
+  // },[])
   useEffect(() => {
     if (selectedFranchisee) {
       fetchUserDetails();

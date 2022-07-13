@@ -104,12 +104,12 @@ const NewUser = () => {
     if (selectedFranchisee) {
       let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(data => data.charAt(0).toLowerCase() + data.slice(1)).join("_");
       
-      console.log('SELECTED FRANCHISEE:', franchisee_alias);
-      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}`);
+      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}/coordinator`);
 
       if(response.status === 200 && response.data.status === "success") {
-        let { coordinatorList } = response.data;
-        setCoordinatorData(coordinatorList.map(coordinator => ({
+        let { coordinators } = response.data;
+        setCoordinatorData(coordinators.map(coordinator => ({
+          id: coordinator.id,
           value: coordinator.fullname,
           label: coordinator.fullname
         })));
@@ -175,8 +175,14 @@ const NewUser = () => {
   };
 
   const fetchTrainingCategories = async () => {
+    let token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`
+      `${BASE_URL}/training/get-training-categories`,
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
@@ -191,7 +197,12 @@ const NewUser = () => {
   };
 
   const fetchProfessionalDevelopementCategories = async () => {
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     
     if(response.status === 200 && response.data.status === "success") {
       const { pdcList } = response.data;
@@ -204,7 +215,12 @@ const NewUser = () => {
   }; 
 
   const fetchBuinessAssets = async () => {
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     
     if(response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
@@ -228,6 +244,10 @@ const NewUser = () => {
   useEffect(() => {
     fetchCoordinatorData();
   }, [selectedFranchisee])
+
+  formData && console.log('FORM DATA:', formData);
+  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
+  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
 
   return (
     <>
@@ -301,7 +321,7 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Suburb</Form.Label>
+                            <Form.Label>City</Form.Label>
                             <Select
                               placeholder="Which Suburb?"
                               closeMenuOnSelect={true}
@@ -401,7 +421,7 @@ const NewUser = () => {
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  trainingCategories: selectedOptions
+                                  trainingCategories: [...selectedOptions.map(option => option.id)]
                                 }));
                               }}
                             />
@@ -417,7 +437,7 @@ const NewUser = () => {
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  professionalDevCategories: selectedOptions
+                                  professionalDevCategories: [...selectedOptions.map(option => option.id)]
                                 }));
                               }}
                             />
@@ -432,7 +452,7 @@ const NewUser = () => {
                               onChange={(e) =>
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  coordinator: e.value,
+                                  coordinator: e.id,
                                 }))
                               }
                             />
@@ -448,7 +468,7 @@ const NewUser = () => {
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  businessAssets: selectedOptions
+                                  businessAssets: [...selectedOptions.map(option => option.id)]
                                 }));
                               }}
                             />

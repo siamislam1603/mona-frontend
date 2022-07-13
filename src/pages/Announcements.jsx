@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Button, Container, Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { BASE_URL } from "../components/App";
+import axios from "axios";
+import AllAnnouncements from "./AllAnnouncements";
+import MyAnnouncements from "./MyAnnouncements";
+
 
 const animatedComponents = makeAnimated();
 const training = [
@@ -16,7 +21,22 @@ const training = [
     label: "Melbourne",
   },
 ];
-const Announcements = () => {
+
+const Announcements =  () => {
+  const [announcementDetails,setAnnouncementDetail] = useState("")
+  const [tabLinkPath, setTabLinkPath] = useState("/all-announcements");
+
+ 
+  const handleLinkClick = event => {
+    let path = event.target.getAttribute('path');
+    setTabLinkPath(path);
+  }
+  const [filterData, setFilterData] = useState({
+    category_id: null,
+    search: ""
+  });
+
+
   return (
     <>
       <div id="main">
@@ -35,7 +55,17 @@ const Announcements = () => {
                       <div className="extra-btn">
                         <div className="data-search me-3">
                           <label for="search-bar" className="search-label">
-                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value=""/>
+                            <input 
+                                  id="search-bar" 
+                                  type="text" 
+                                  className="form-control" 
+                                  placeholder="Search"
+                                  value={filterData.search}
+                                  onChange={e => setFilterData(prevState => ({
+                                     ...prevState,
+                                   search: e.target.value
+                              }))} 
+                                  />
                           </label>
                         </div>
                         <Dropdown className="filtercol me-3">
@@ -81,17 +111,6 @@ const Announcements = () => {
                                 />
                               </Form.Group>
                             </div>
-                            <div className="custom-radio">
-                              <label className="mb-2">Location:</label>
-                              <Form.Group>
-                                <Select
-                                  closeMenuOnSelect={false}
-                                  components={animatedComponents}
-                                  isMulti
-                                  options={training}
-                                />
-                              </Form.Group>
-                            </div>
                             <footer>
                               <Button variant="transparent" type="submit">Cancel</Button>
                               <Button variant="primary" type="submit">Apply</Button>
@@ -113,11 +132,12 @@ const Announcements = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                      <li><a href="/" className="active">All Announcements</a></li>
-                      <li><a href="/">My Announcements</a></li>
+                      <li><a onClick={handleLinkClick}  path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
+                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements</a></li>
+                  
                     </ul>
                   </div>
-                  <div className="announcement-accordion">
+                  {/* <div className="announcement-accordion">
                     <Accordion defaultActiveKey="0">
                       <Accordion.Item eventKey="0">
                         <Accordion.Header>
@@ -267,6 +287,15 @@ const Announcements = () => {
                         </Accordion.Body>
                       </Accordion.Item>
                     </Accordion>
+                  </div> */}
+
+            <div className="training-column">
+                    {tabLinkPath === "/all-announcements" 
+                      && <AllAnnouncements/>}
+                    {tabLinkPath === "/my-announcements" 
+                      && <MyAnnouncements
+                             />}
+                
                   </div>
                 </div>
               </div>
