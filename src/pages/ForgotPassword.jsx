@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import WelcomeMsg from "../components/WelcomeMsg";
 import validateResetPassword from "../helpers/validateResetPassword";
+import { Link } from 'react-router-dom';
 
 const ForgotPassword = () => {
   const initialFields = {
@@ -45,7 +46,7 @@ const ForgotPassword = () => {
             <Col md={6}>
               <div className="custom_signin_page">
                 <div className="custom_title">
-                  <p>Reset Password</p>
+                  <p> Forgot Password</p>
                 </div>
                 
                 <Form className="login_form">
@@ -63,12 +64,23 @@ const ForgotPassword = () => {
                       {!fields.email && formErrors.email}
                       {!formErrors.email && formErrors.validemail}
                     </span>
+                    <Row>
+                      <Col className="text-end">
+                        <p className="custom_rest">Already have an account?  <Link to="/" className="custom_rest">
+                          Log in
+                        </Link></p>
+                       
+                      </Col>
+                    </Row>
                   </Form.Group>
 
                   <div className="custom_submit text-center pt-3">
                     <Button variant="primary" className="w-100" type="submit" onClick={handleSubmit}>
-                      Reset Your Password
+                      Submit
                     </Button>
+                    <div className="kids-art">
+                      <img src="../img/kid-art.svg" alt="" />
+                    </div>
                   </div>
                 </Form>
               </div>
