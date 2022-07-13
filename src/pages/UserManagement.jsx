@@ -169,12 +169,12 @@ const UserManagement = () => {
       const { users } = response.data;
       let tempData = users.map((dt) => ({
         id: dt.id,
-        name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role
+        name: `${dt.fullname}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}`,
         email: dt.email,
-        number: dt.phone,
+        number: dt.phone.slice(1),
         location: dt.city,
         is_deleted: dt.is_deleted,
       }));
