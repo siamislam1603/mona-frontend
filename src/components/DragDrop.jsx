@@ -32,7 +32,9 @@ export default function DropAllFile({ onSave, setTrainingData }) {
   // so that it could be used with <Img>:src tag.
   const getBase64 = (file) => {
     let reader = new FileReader(); 
+    console.log("The reader",reader)
     reader.readAsDataURL(file);
+    console.log(reader)
     reader.onload = function () {
       setCurrentURI(reader.result);
     };

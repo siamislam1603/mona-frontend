@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
 import ChildEnrollment from '../pages/ChildEnrollment';
 import SignIn from '../pages/SignIn';
-import ResetPassword from '../pages/ResetPassword';
+import ForgotPassword from '../pages/ForgotPassword';
 import UserManagement from '../pages/UserManagement';
 import NewUser from '../pages/NewUser';
 import AddPermissions from '../pages/AddPermissions';
@@ -34,7 +34,10 @@ import AddSubOperatingManual from '../pages/OperatingManual/addSubModule';
 import AvailableTraining from '../pages/AvailableTraining';
 import CompleteTraining from '../pages/CompletedTraining';
 import CreatedTraining from '../pages/CreatedTraining';
-
+import AllAnnouncements from '../pages/AllAnnouncements';
+import MyAnnouncements from '../pages/MyAnnouncements';
+import EditAnnouncement from '../pages/EditAnnouncement';
+import ChangePassword from "../pages/ChangePassword"
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -83,10 +86,10 @@ const Main = () => {
         />
 
         <Route
-          path="/upload_file"
+          path="/forgot-password"
           element={
             <Protected isLoggedIn={isLoggedIn}>
-              <ResetPassword />
+              <ForgotPassword />
               <UploadFile />
             </Protected>
           }
@@ -96,7 +99,7 @@ const Main = () => {
           path="/add-permissions"
           element={
             <Protected isLoggedIn={isLoggedIn}>
-              <ResetPassword />
+              <ForgotPassword />
               <AddPermissions />
             </Protected>
           }
@@ -345,6 +348,26 @@ const Main = () => {
         />
 
         <Route
+          path="/all-announcements"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <AllAnnouncements />
+            </Protected>
+          }
+        />
+
+      <Route
+          path="/my-announcements/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <MyAnnouncements />
+            </Protected>
+          }
+        />
+
+        <Route
           path="/complete-training"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -395,7 +418,28 @@ const Main = () => {
             )
           }
         />
+         <Route
+          path="/edit-announcement/:id"
+          element={
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
+              <EditAnnouncement />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/change-password"
+          element={
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
+              <ChangePassword />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
       </Routes>
+      
     </main>
   );
 };

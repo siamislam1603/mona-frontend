@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { PlayerSdk } from '@api.video/player-sdk'
 import { Button, Col, Container, Row, Form, Dropdown,Modal } from "react-bootstrap";
 
 const VideoPop = ({ data, title, duration }) => {

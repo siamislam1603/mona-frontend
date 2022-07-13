@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './AddUserRole.css';
+import { BASE_URL } from '../components/App';
 
 const AddUserRole = (props) => {
 
@@ -11,7 +12,7 @@ const AddUserRole = (props) => {
   // SAVING THE SELECTED PERMISSIONS INSIDE DATABASE
   const savePermissions = async data => {
     console.log('saving permissions!');
-    let response = await axios.post('http://localhost:4000/rbac/addRolePermissions', data);
+    let response = await axios.post(`${BASE_URL}/rbac/addRolePermissions`, data);
     console.log(response);
   }
 
@@ -43,7 +44,7 @@ const AddUserRole = (props) => {
   }
 
   const loadControllerAndActions = async () => {
-    let response = await axios.get('http://localhost:4000/rbac/fetchControllerAndActions');
+    let response = await axios.get(`${BASE_URL}/rbac/fetchControllerAndActions`);
     if(response.status === 200) {
       const { dataList } = response.data;
       setData(dataList);
