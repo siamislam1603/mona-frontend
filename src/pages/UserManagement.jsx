@@ -11,18 +11,14 @@ import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import Select from 'react-select';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import makeAnimated from 'react-select/animated';
-import ToolkitProvider, {
-  Search,
-  // CSVExport,
-} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { CSVDownload } from 'react-csv';
 import { useRef } from 'react';
 import { debounce } from 'lodash';
 
-const { SearchBar } = Search;
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
@@ -43,22 +39,13 @@ const selectRow = {
   clickToSelect: true,
 };
 
-const headers = [
-  { label: 'First Name', key: 'firstName' },
-  { label: 'Last Name', key: 'lastName' },
-  { label: 'Email', key: 'email' },
-  { label: 'Age', key: 'age' },
-];
-
 const UserManagement = () => {
   const [userData, setUserData] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
-  const [filter, setFilter] = useState({
-    user: '',
-    location: [],
-  });
+  const [filter, setFilter] = useState('');
+  const [search,setSearch]=useState('');
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
@@ -134,11 +121,11 @@ const UserManagement = () => {
       },
     },
   ];
-  const onFilter = debounce((data) => {
-    fetchUserDetails(data);
+  const onFilter = debounce(() => {
+    fetchUserDetails();
   }, 200);
 
-  const fetchUserDetails = async (search,filter) => {
+  const fetchUserDetails = async () => {
     let api_url = '';
     
     let franchiseeFormat = selectedFranchisee
@@ -152,8 +139,11 @@ const UserManagement = () => {
     }
     if(filter)
     {
-      filter=filter.user;
       api_url = `${BASE_URL}/role/user/${franchiseeFormat}?filter=${filter}`;
+    }
+    if(search && filter)
+    {
+      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?search=${search}&filter=${filter}`;
     }
     if(!search && !filter) {
       api_url = `${BASE_URL}/role/user/${franchiseeFormat}`;
@@ -180,7 +170,7 @@ const UserManagement = () => {
       setUserData(tempData);
       let temp = tempData;
       let csv_data = [];
-      temp.map((item) => {
+      temp.map((item,index) => {
         // item['Name'] = item['name'];
         // item['Email'] = item['email'];
         // item['Phone Number'] = item['number'];
@@ -189,21 +179,25 @@ const UserManagement = () => {
         // delete item['email'];
         // delete item['number'];
         // delete item['location'];
+        
         delete item.is_deleted;
         delete item.id;
         csv_data.push(item);
+        let data={...csv_data[index]};
+        data["name"]=data.name.split(",")[1];
+        csv_data[index]=data;
       });
       setCsvData(csv_data);
     }
   };
 
   const handleCancelFilter = () => {
-    setFilter({});
+     fetchUserDetails();
   };
 
-  const handleApplyFilter = async (data) => {
+  const handleApplyFilter = async () => {
     // const res = await axios.post(`${BASE_URL}/`)
-    fetchUserDetails('',data);
+    fetchUserDetails();
   };
 
   // useEffect(() =>{
@@ -263,7 +257,8 @@ const UserManagement = () => {
                                       placeholder="Search"
                                       name="search"
                                       onChange={(e) => {
-                                        onFilter(e.target.value);
+                                        setSearch(e.target.value);
+                                        onFilter();
                                       }}
                                     />
                                   </Form.Group>
@@ -287,11 +282,9 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="one"
+                                          checked={filter==="Admin"}
                                           onChange={(event) =>
-                                            setFilter((prevState) => ({
-                                              ...prevState,
-                                              user: event.target.value,
-                                            }))
+                                            setFilter(event.target.value)
                                           }
                                         />
                                         <Form.Check
@@ -301,11 +294,9 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="two"
+                                          checked={filter==="Coordinator"}
                                           onChange={(event) =>
-                                            setFilter((prevState) => ({
-                                              ...prevState,
-                                              user: event.target.value,
-                                            }))
+                                            setFilter(event.target.value)
                                           }
                                         />
                                         <Form.Check
@@ -315,11 +306,9 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="three"
+                                          checked={filter==="Educator"}
                                           onChange={(event) =>
-                                            setFilter((prevState) => ({
-                                              ...prevState,
-                                              user: event.target.value,
-                                            }))
+                                            setFilter(event.target.value)
                                           }
                                         />
                                         <Form.Check
@@ -329,11 +318,9 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="four"
+                                          checked={filter==="Guardian"}
                                           onChange={(event) =>
-                                            setFilter((prevState) => ({
-                                              ...prevState,
-                                              user: event.target.value,
-                                            }))
+                                            setFilter(event.target.value)
                                           }
                                         />
                                       </Form.Group>
@@ -363,7 +350,7 @@ const UserManagement = () => {
                                       <Button
                                         variant="transparent"
                                         type="submit"
-                                        onClick={handleCancelFilter}
+                                        onClick={()=>{setFilter('');handleCancelFilter()}}
                                       >
                                         Reset
                                       </Button>
@@ -407,9 +394,9 @@ const UserManagement = () => {
                                         </CSVDownload>
                                       )}
                                     </Dropdown.Item>
-                                    <Dropdown.Item href="#">
+                                    {/* <Dropdown.Item href="#">
                                       Delete All Row
-                                    </Dropdown.Item>
+                                    </Dropdown.Item> */}
                                   </Dropdown.Menu>
                                 </Dropdown>
                               </div>
