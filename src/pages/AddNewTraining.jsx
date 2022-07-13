@@ -222,6 +222,12 @@ const AddNewTraining = () => {
       ...prevState,
       [name]: value,
     }));
+    if (!!errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null,
+      });
+    }
   };
 
   const handleDataSubmit = event => {

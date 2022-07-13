@@ -229,3 +229,28 @@ export const TrainingFormValidation = (form, coverImage) => {
 
   return errors;
 };
+
+export const PasswordValidation = (form) => {
+ let errors = {};
+  let {
+    oldpassword,
+    new_password,
+    confirm_password
+  } = form;
+  if (!oldpassword) {
+    errors.oldpassword = 'oldpassword is required!';
+  }
+  if(!new_password){
+    errors.new_password = 'new Password is required'
+  }
+  if(!confirm_password){
+    errors.confirm_password = 'confirm password'
+  }
+  if(new_password && confirm_password && new_password != confirm_password ){
+      errors.new_password = "new password and confirm password need to be same"
+      errors.confirm_password = "new password and confirm password need to be same"
+  }
+  
+
+  return errors;
+};

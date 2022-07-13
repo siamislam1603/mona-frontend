@@ -37,7 +37,7 @@ import CreatedTraining from '../pages/CreatedTraining';
 import AllAnnouncements from '../pages/AllAnnouncements';
 import MyAnnouncements from '../pages/MyAnnouncements';
 import EditAnnouncement from '../pages/EditAnnouncement';
-
+import ChangePassword from "../pages/ChangePassword"
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -86,7 +86,7 @@ const Main = () => {
         />
 
         <Route
-          path="/upload_file"
+          path="/resetpassword"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <ResetPassword />
@@ -423,6 +423,16 @@ const Main = () => {
           element={
             typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
               <EditAnnouncement />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/change-password"
+          element={
+            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
+              <ChangePassword />
             ) : (
               <Navigate to="/" />
             )

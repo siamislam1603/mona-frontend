@@ -66,12 +66,12 @@ const EditAnnouncement = () => {
   try {
      let token = localStorage.getItem('token')
      console.log("The token",token)
-    const res = await axios.put(`http://localhost:4000/announcement/${id}`,{
+      const res = await axios.put(`${BASE_URL}/announcement/${id}`,{
       title: announcementData.title,
       start_date : data.start_date,
       start_time : data.start_time,
       meta_description:data.meta_description,
-    },{
+    },{ 
       headers: {
         "Authorization": "Bearer " + token
       }
