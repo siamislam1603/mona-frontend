@@ -38,6 +38,7 @@ import AllAnnouncements from '../pages/AllAnnouncements';
 import MyAnnouncements from '../pages/MyAnnouncements';
 import EditAnnouncement from '../pages/EditAnnouncement';
 import ChangePassword from "../pages/ChangePassword"
+import EditUser from '../pages/EditUser';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -141,6 +142,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <NewUser />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/edit-user"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <EditUser />
             </Protected>
           }
         />
