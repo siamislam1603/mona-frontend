@@ -2052,3 +2052,14 @@ img#user-pic {}
     color: #b10061;
     background-color: white;
 }
+
+.user-search{
+    position: absolute;
+    top:20%;
+    left:3.5%;
+}
+
+.searchBox{
+    background: #fff !important;
+    padding-left: 40px;
+}

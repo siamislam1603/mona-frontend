@@ -36,7 +36,14 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     );
     if (response.status === 200) {
       const { franchisee } = response.data;
-      setSelectedFranchisee(franchisee.franchisee_name ? franchisee.franchisee_name==="All" ? "" : franchisee.franchisee_name : "", franchisee.id);
+      setSelectedFranchisee(
+        franchisee.franchisee_name
+          ? franchisee.franchisee_name === 'All'
+            ? ''
+            : franchisee.franchisee_name
+          : '',
+        franchisee.id
+      );
       setFranchiseeList(
         [franchisee].map((data) => ({
           id: data.id,
@@ -94,9 +101,11 @@ const TopHeader = ({ setSelectedFranchisee }) => {
           <div className="selectdropdown">
             <Dropdown onSelect={selectFranchisee}>
               <Dropdown.Toggle id="dropdown-basic">
-                {localStorage.getItem('selectedFranchisee') ||
-                  franchiseeList[0]?.franchisee_name ||
-                  'No Data Available'}
+                {localStorage.getItem('selectedFranchisee') === 'All'
+                  ? 'All Franchisee'
+                  : localStorage.getItem('selectedFranchisee') ||
+                    franchiseeList[0]?.franchisee_name ||
+                    'No Data Available'}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <React.Fragment key="">
