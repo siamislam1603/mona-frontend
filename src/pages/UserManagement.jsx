@@ -46,17 +46,22 @@ const UserManagement = () => {
   const [csvData, setCsvData] = useState([]);
   const [filter, setFilter] = useState('');
   const [search,setSearch]=useState('');
+  const [deleteResponse, setDeleteResponse] = useState(null);
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
+
         async function deleteUserFromDB() {
+          console.log("dddddddddddddddddddd", row)
+
           const response = await axios.patch(
-            `${BASE_URL}/auth/user/${row.id}`,
+            `${BASE_URL}/auth/user/${row.userID}`,
             {
               is_deleted: 1,
             }
           );
           console.log('DELETE RESPONSE:', response);
+          setDeleteResponse(response);
         }
 
         deleteUserFromDB();
@@ -114,7 +119,7 @@ const UserManagement = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-                  <Dropdown.Item href="/edit-user">Edit</Dropdown.Item>
+                  {/* <Dropdown.Item href="/edit-user{}">Edit</Dropdown.Item> */}
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -157,9 +162,10 @@ const UserManagement = () => {
     });
     if (response.status === 200) {
       const { users } = response.data;
+      console.log('USERS:', users);
       let tempData = users.map((dt) => ({
-        id: dt.id,
-        name: `${dt.fullname}, ${dt.role
+  
+        name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}`,
@@ -167,8 +173,10 @@ const UserManagement = () => {
         number: dt.phone.slice(1),
         location: dt.city,
         is_deleted: dt.is_deleted,
+        userID: dt.id,
       }));
       tempData = tempData.filter((data) => data.is_deleted === 0);
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee",tempData)
       setUserData(tempData);
       let temp = tempData;
       let csv_data = [];
@@ -183,7 +191,7 @@ const UserManagement = () => {
         // delete item['location'];
         
         delete item.is_deleted;
-        delete item.id;
+        // delete item.user_id;
         csv_data.push(item);
         let data={...csv_data[index]};
         data["name"]=data.name.split(",")[1];
@@ -214,7 +222,12 @@ const UserManagement = () => {
     fetchUserDetails();
   }, []);
 
+  useEffect(() => {
+    fetchUserDetails();
+  }, [deleteResponse])
+
   const csvLink = useRef();
+  userData && console.log('USER DATA:', userData.map(data => data));
   return (
     <>
       <div id="main">
