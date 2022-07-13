@@ -29,6 +29,7 @@ const [announcementData, setAnnouncementData] = useState({
   // const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
+  const [error, setError] = useState({user_roles: []});
 
   const [topErrorMessage, setTopErrorMessage] = useState(null);
 
@@ -82,7 +83,7 @@ const createAnnouncement = async (data) => {
         setLoader(false)
         localStorage.setItem('success_msg', 'Announcement Created Successfully!');
         localStorage.setItem('active_tab', '/created-announcement');
-        window.location.href="/training";
+        window.location.href="/announcements";
       
       } else {
     
@@ -127,11 +128,32 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
+      checkValidity(name, value);
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
       }));
+      
+      // setAnnouncementData({...announcementData, [name]: value});
     };
+
+    const checkValidity = (inputName, inputValue) => {
+      switch (inputName) {
+        case "title":
+          let pattern = /^[A-Za-z]{3,}[ ]{0,1}[A-Za-z]{0,}$/i;
+          announcementData.titleValid = pattern.test(inputValue);
+          break;
+        case "meta_description":
+          announcementData.meta_descriptionValid = inputValue.length >= 10;
+          break;
+        case "coverImage":
+          let image_pattern = /\.(jpe?g|png|gif|bmp)$/i;
+          announcementData.coverImageValid = image_pattern.test(inputValue);
+        default:
+          break;
+      }
+    };
+      
 
     const handleDataSubmit = event => {
       event.preventDefault();
@@ -157,6 +179,30 @@ const createAnnouncement = async (data) => {
         setLoader(true);
       createAnnouncement(data);
     }
+    if (!announcementData.titleValid) {
+      setError(prevError => {
+          return { 
+              ...prevError, 
+              title: "Required Title" 
+            }
+      }); 
+    }
+    if (!announcementData.meta_descriptionValid) {
+      setError(prevError => {
+          return {
+        ...prevError,
+        meta_description: "Description must be at least ten characters long"
+      }
+    }); 
+  }
+  if (!announcementData.coverImageValid) {
+    setError(prevError => {
+        return {
+      ...prevError,
+      coverImage: "Required CoverImage"
+    }
+  }); 
+}
   };
 
   useEffect(() => {
@@ -387,7 +433,11 @@ const createAnnouncement = async (data) => {
                           type="text" 
                           name="title"
                           onChange={handleAnnouncementData} 
+                          isInvalid = {!!error.title}
                           />
+                          <Form.Control.Feedback type="invalid">
+                            {(error.title)}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                       <Col md={12} className="mb-3">
@@ -398,10 +448,17 @@ const createAnnouncement = async (data) => {
                             name="meta_description"
                             rows={3}
                             onChange={handleAnnouncementData}
+                            isInvalid = {!!error.meta_description}
                             />
+<<<<<<< HEAD
+                            <Form.Control.Feedback type="invalid">
+                              {(error.meta_description)}
+                            </Form.Control.Feedback>
+=======
                              <Form.Control.Feedback type="invalid">
                             {errors.announcement_description}
                           </Form.Control.Feedback>
+>>>>>>> 135a40e7e0ef574f75df8f3c7713bb94f25b18fa
                         </Form.Group>
                       </Col>
                     
@@ -414,7 +471,11 @@ const createAnnouncement = async (data) => {
                         <Form.Group>
                           <Form.Label>Upload Related Image :</Form.Label>
                           <DropOneFile onSave={setCoverImage} 
+                          isInvalid = {!!error.coverImage}
                           />
+                          <Form.Control.Feedback type="invalid">
+                              {(error.coverImage)}
+                            </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                       <Col sm={6}>

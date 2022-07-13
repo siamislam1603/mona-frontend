@@ -108,14 +108,14 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                     'No Data Available'}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <React.Fragment key="">
+                {localStorage.getItem("user_role")==="franchisor_admin" ? <React.Fragment key="">
                   <Dropdown.Item eventKey="All">
                     <span className="loction-pic">
                       <img alt="" id="user-pic" src="/img/user.png" />
                     </span>
                     All Franchisee
                   </Dropdown.Item>
-                </React.Fragment>
+                </React.Fragment> : null}
                 {franchiseeList.map((data) => {
                   return (
                     <React.Fragment key={data.id}>
