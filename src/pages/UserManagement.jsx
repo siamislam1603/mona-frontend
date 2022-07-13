@@ -42,12 +42,72 @@ const selectRow = {
   mode: 'checkbox',
   clickToSelect: true,
 };
+<<<<<<< HEAD
 
 const headers = [
   { label: 'First Name', key: 'firstName' },
   { label: 'Last Name', key: 'lastName' },
   { label: 'Email', key: 'email' },
   { label: 'Age', key: 'age' },
+=======
+const columns = [
+  {
+    dataField: 'name',
+    text: 'Name',
+    sort: true,
+    formatter: (cell) => {
+      console.log(cell);
+      cell = cell.split(',');
+      return (
+        <>
+          <div className="user-list">
+            <span className="user-pic">
+              <img src={cell[0]} alt="" />
+            </span>
+            <span className="user-name">
+              {cell[1]} <small>{cell[2]}</small>
+            </span>
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    dataField: 'email',
+    text: 'Email',
+    sort: true,
+  },
+  {
+    dataField: 'number',
+    text: 'Phone Number',
+    sort: true,
+  },
+  {
+    dataField: 'location',
+    text: 'Location',
+    sort: true,
+  },
+  // {
+  //   dataField: 'action',
+  //   text: '',
+  //   formatter: (cell) => {
+  //     return (
+  //       <>
+  //         <div className="cta-col">
+  //           <Dropdown>
+  //             <Dropdown.Toggle variant="transparent" id="ctacol">
+  //               <img src="../img/dot-ico.svg" alt="" />
+  //             </Dropdown.Toggle>
+  //             <Dropdown.Menu>
+  //               <Dropdown.Item href="#">Delete</Dropdown.Item>
+  //             </Dropdown.Menu>
+  //           </Dropdown>
+  //         </div>
+  //       </>
+  //     );
+  //   },
+  // },
+>>>>>>> mona-training
 ];
 
 const UserManagement = () => {
@@ -165,35 +225,29 @@ const UserManagement = () => {
     });
     if (response.status === 200) {
       const { users } = response.data;
+      // let temp=users.map(data=>{
+      //   console.log(data);
+      //   let object = {
+      //     id: data.id,
+      //     full_name: data.fullname,
+      //   }
+      //   return object;
+      //  });
       let tempData = users.map((dt) => ({
         id: dt.id,
-        name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role
+        name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}`,
         email: dt.email,
-        number: dt.phone,
+        number: dt.phone.slice(1),
         location: dt.city,
         is_deleted: dt.is_deleted,
       }));
       tempData = tempData.filter((data) => data.is_deleted === 0);
+      // temp = temp.filter((data) => data.is_deleted === 0);
       setUserData(tempData);
-      let temp = tempData;
-      let csv_data = [];
-      temp.map((item) => {
-        // item['Name'] = item['name'];
-        // item['Email'] = item['email'];
-        // item['Phone Number'] = item['number'];
-        // item['Location'] = item['location'];
-        // delete item['name'];
-        // delete item['email'];
-        // delete item['number'];
-        // delete item['location'];
-        delete item.is_deleted;
-        delete item.id;
-        csv_data.push(item);
-      });
-      setCsvData(csv_data);
+      
     }
   };
 
