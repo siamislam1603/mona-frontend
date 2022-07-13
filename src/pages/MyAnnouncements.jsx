@@ -24,6 +24,8 @@ const MyAnnouncements = () => {
         setmyAnnouncement(response.data.createdAnnouncement)
      }
   }
+  const userName = localStorage.getItem("user_name");
+  const userROle = localStorage.getItem("user_role")
   useEffect(() =>{
     myAnnouncementData()
   },[])
@@ -37,7 +39,7 @@ const MyAnnouncements = () => {
           <Accordion.Header>
             <div className="head-title">
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-              <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <small><span>Educator:</span> Smile Daycare</small></div>
+              <div className="title-xxs">{data.title} <small><span>Educator:</span>{userName}</small></div>
               <div className="date">
                  
                   {/* <Dropdown.Toggle id="extrabtn" className="ctaact">
@@ -72,10 +74,10 @@ const MyAnnouncements = () => {
                 <div className="head">Related Images :</div>
                 <div className="cont">
                   <div className="related-images">
-                    <div className="item"><a href="/"><img src="../img/related-pic1.png" alt=""/></a></div>
-                    <div className="item"><a href="/"><img src="../img/related-pic2.png" alt=""/></a></div>
-                    <div className="item"><a href="/"><img src="../img/related-pic3.png" alt=""/></a></div>
-                    <div className="item"><a href="/"><img src="../img/related-pic4.png" alt=""/></a></div>
+            
+                    {/* <div className="item"><a href="/"><img src="../img/related-pic4.png" alt=""/></a></div> */}
+                    <div className="item"><a href="/"><img src={data.coverImage} alt=""/></a></div>
+                  
                   </div>
                 </div>
                 <div className="head">Related Files :</div>

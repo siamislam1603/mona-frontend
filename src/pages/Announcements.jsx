@@ -31,6 +31,10 @@ const Announcements =  () => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
+  const [filterData, setFilterData] = useState({
+    category_id: null,
+    search: ""
+  });
 
 
   return (
@@ -51,7 +55,17 @@ const Announcements =  () => {
                       <div className="extra-btn">
                         <div className="data-search me-3">
                           <label for="search-bar" className="search-label">
-                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value=""/>
+                            <input 
+                                  id="search-bar" 
+                                  type="text" 
+                                  className="form-control" 
+                                  placeholder="Search"
+                                  value={filterData.search}
+                                  onChange={e => setFilterData(prevState => ({
+                                     ...prevState,
+                                   search: e.target.value
+                              }))} 
+                                  />
                           </label>
                         </div>
                         <Dropdown className="filtercol me-3">
@@ -94,17 +108,6 @@ const Announcements =  () => {
                                   name="users"
                                   type="radio"
                                   id='four'
-                                />
-                              </Form.Group>
-                            </div>
-                            <div className="custom-radio">
-                              <label className="mb-2">Location:</label>
-                              <Form.Group>
-                                <Select
-                                  closeMenuOnSelect={false}
-                                  components={animatedComponents}
-                                  isMulti
-                                  options={training}
                                 />
                               </Form.Group>
                             </div>

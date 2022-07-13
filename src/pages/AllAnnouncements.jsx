@@ -28,7 +28,7 @@ const [announcementFiles,setAnnouncementFiles] = useState([])
 useEffect(() => {
   AllAnnouncementData()
 }, [])
-console.log("The annoumce detial",announcementDetails,announcementFiles)
+console.log("The annoumce detial",announcementDetails)
   return (
     <div className="announcement-accordion">
                     <Accordion defaultActiveKey="0">
@@ -68,13 +68,11 @@ console.log("The annoumce detial",announcementDetails,announcementFiles)
                                 <div className="head">Related Images :</div>
                                 <div className="cont">
                                   <div className="related-images">
-                                   
-                                   {announcementDetails.map((datafiles,index) =>(
+  
+
                                     <div className="item">
-                                       {/* <h1>{datafiles.announcement_files[index]}</h1> */}
-                                      <a href="/"><img src="https://s3.us-west-1.amazonaws.com/mona-cip-dev/public/assets/.images/download_2022-07-12_1657610105529.jpeg" alt=""/></a>
+                                      <a href="/"><img src={details.coverImage} alt=""/></a>
                                     </div>
-                                   ))}
           
                                   </div>
                                 </div>

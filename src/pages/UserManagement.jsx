@@ -114,12 +114,23 @@ const rowEvents = {
 
 const UserManagement = () => {
   const [userData, setUserData] = useState([]);
+  const [allUserData,setAllUserData] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [filter, setFilter] = useState({
     user: '',
     location: [],
   });
-
+  const fetchAllUsers = async () =>{
+    let token = localStorage.getItem("token")
+    const response = await axios.get(`http://localhost:4000/user-group/users`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+     })
+     if(response.status === 200) {
+      setAllUserData(response.data)
+     }
+  }
   const fetchUserDetails = async () => {
     let franchiseeFormat = selectedFranchisee.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_").toLowerCase();
     let response = await axios.get(`${BASE_URL}/role/user/${franchiseeFormat}`, {
@@ -153,12 +164,16 @@ const UserManagement = () => {
     // const res = await axios.post(`${BASE_URL}/`)
   };
 
+  useEffect(() =>{
+    fetchAllUsers()
+  },[])
   useEffect(() => {
     if(selectedFranchisee) {
       fetchUserDetails();
     }
   }, [selectedFranchisee]);
-
+  console.log("The users all data",allUserData)
+  console.log("The user data",userData)
   return (
     <>
       <div id="main">
