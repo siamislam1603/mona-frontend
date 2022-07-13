@@ -29,6 +29,7 @@ const SignIn = () => {
       localStorage.setItem('user_role', res.data.user.role);
       localStorage.setItem('user_name', res.data.user.name);
       localStorage.setItem('email', res.data.user.email);
+      localStorage.setItem('selectedFranchisee',"All")
       localStorage.setItem('franchisee_id', res.data.user.franchisee_id);
       if (res.data.user.role === 'franchisor_admin')
         window.location.href = '/franchisor-dashboard';
