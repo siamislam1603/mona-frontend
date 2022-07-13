@@ -204,3 +204,66 @@ export const TrainingFormValidation = (form, coverImage) => {
 
   return errors;
 };
+
+export const FranchiseeFormValidation = (formObj) => {
+  let errors = {};
+  let {
+    franchisee_name,
+    abn,
+    city,
+    state,
+    franchisee_admin_email,
+    franchisee_admin,
+    franchisee_number,
+    acn,
+    address,
+    postcode,
+    contact,
+  } = formObj;
+
+  if(!franchisee_name) {
+    errors.franchisee_name = "Franchisee Name is required!"
+  }
+
+  if(!abn) {
+    errors.abn = "provide australian business number";
+  }
+
+  if(!city) {
+    errors.city = "City is required!";
+  }
+
+  if(!state) {
+    errors.state = "State is required!";
+  }
+
+  if(!franchisee_admin_email) {
+    errors.franchisee_admin_email = "Franchisee Admin's email is required!";
+  }
+
+  if(!franchisee_admin) {
+    errors.franchisee_admin = "please select Franchisee admin";
+  }
+
+  if(!franchisee_number) {
+    errors.franchisee_number = "Franchisee number is required!";
+  }
+
+  if(!acn) {
+    errors.acn = "provide australian company number!";
+  }
+
+  if(!address) {
+    errors.address = "Address is required!";
+  }
+
+  if(!postcode) {
+    errors.postcode = "postal code is required!";
+  }
+
+  if(!contact) {
+    errors.contact = "contact number is required!";
+  }
+
+  return errors;
+}

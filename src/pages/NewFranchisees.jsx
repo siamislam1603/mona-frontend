@@ -6,6 +6,7 @@ import LeftNavbar from '../components/LeftNavbar';
 import Select from 'react-select';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import { FranchiseeFormValidation } from '../helpers/validation';
 
 const NewFranchisees = () => {
 
@@ -14,6 +15,9 @@ const NewFranchisees = () => {
     const [cityData, setCityData] = useState([]);
     const [franchiseeAdminData, setFranchiseeAdminData] = useState();
     const [selectedFranchisee, setSelectedFranchisee] = useState();
+
+    // ERROR STATES
+    const [formErrors, setFormErrors] = useState({});
 
     // CREATES A NEW FRANCHISEE
     const createFranchisee = async () => {
@@ -70,11 +74,10 @@ const NewFranchisees = () => {
     const handleFranchiseeDataSubmission = event => {
         event.preventDefault();
 
-        if(Object.keys(franchiseeData).length === 12) {
-            console.log('FRANCHISEE DATA:', franchiseeData);
-            createFranchisee();
-        } else {
-            console.log('All fields are necessary.');
+        let errorObject = FranchiseeFormValidation(franchiseeData);
+
+        if(Object.keys(errorObject).length > 0) {
+            setFormErrors(errorObject);
         }
     }
 
@@ -93,7 +96,7 @@ const NewFranchisees = () => {
         fetchFranchiseeAdmins();
     }, []);
 
-    console.log('DATA')
+    franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
 
     return (
         <div>
@@ -168,11 +171,11 @@ const NewFranchisees = () => {
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                <Form.Label> Email Address  </Form.Label>
-                                                <Form.Control
-                                                    name="email" 
-                                                    type="email" 
-                                                    placeholder="admin@specialdaycare.com"
+                                                <Form.Label>Franchisee Admin’s Email</Form.Label>
+                                                <Form.Control 
+                                                    name="franchisee_admin_email"
+                                                    type="text" 
+                                                    placeholder="andy.smith@specialdaycare.com"
                                                     onChange={handleChange} />
                                             </Form.Group>
 
@@ -235,15 +238,6 @@ const NewFranchisees = () => {
                                                     name="contact"
                                                     type="text" 
                                                     placeholder="454 342 56"
-                                                    onChange={handleChange} />
-                                            </Form.Group>
-
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                <Form.Label>Franchisee Admin’s Email</Form.Label>
-                                                <Form.Control 
-                                                    name="franchisee_admin_email"
-                                                    type="text" 
-                                                    placeholder="andy.smith@specialdaycare.com"
                                                     onChange={handleChange} />
                                             </Form.Group>
                                         </Col>
