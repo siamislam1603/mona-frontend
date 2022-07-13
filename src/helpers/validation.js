@@ -128,6 +128,31 @@ export const createOperatingManualValidation = (form) => {
 
   return newErrors;
 };
+//Validation for edit annoutment
+
+export const AddNewAnnouncementValidation = (form) =>{
+  let newErrors = {};
+  console.log("The form validat", form)
+  let { announcement_title,announcement_description,cover_image} = form;
+  console.log("The tile valdiation", announcement_title)
+  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
+  if (!cover_image || cover_image === '')newErrors.cover_image = 'Cover image is Required';
+  if(!announcement_description || announcement_description === ' ') newErrors.announcement_description="Description is Required"
+  
+  return newErrors;
+
+}
+export const EditAnnouncementValidation = (form) =>{
+  let newErrors = {};
+  console.log("The form validat", form)
+  let { announcement_title,meta_description,cover_image} = form;
+  console.log("The tile valdiation", announcement_title)
+  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
+  if (!cover_image || cover_image === '')newErrors.cover_image = 'Cover image is Required';
+  if(!meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
+  
+  return newErrors;
+}
 export const ChildRegisterFormValidation = (form) => {
   let newErrors = {};
   let {
@@ -205,6 +230,30 @@ export const TrainingFormValidation = (form, coverImage) => {
   return errors;
 };
 
+export const PasswordValidation = (form) => {
+ let errors = {};
+  let {
+    oldpassword,
+    new_password,
+    confirm_password
+  } = form;
+  if (!oldpassword) {
+    errors.oldpassword = 'oldpassword is required!';
+  }
+  if(!new_password){
+    errors.new_password = 'new Password is required'
+  }
+  if(!confirm_password){
+    errors.confirm_password = 'confirm password'
+  }
+  if(new_password && confirm_password && new_password != confirm_password ){
+      errors.new_password = "new password and confirm password need to be same"
+      errors.confirm_password = "new password and confirm password need to be same"
+  }
+  
+
+  return errors;
+};
 export const FranchiseeFormValidation = (formObj) => {
   let errors = {};
   let {
