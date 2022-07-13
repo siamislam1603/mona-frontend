@@ -51,15 +51,18 @@ const NewUser = () => {
   const [popupVisible, setPopupVisible] = useState(false);
 
   // CREATES NEW USER INSIDE THE DATABASE
-  const createUser = async (data) => {
-    const response = await axios.post(`${BASE_URL}/auth/signup`, data);
-    if (response.status === 201) {
-      localStorage.setItem('token', response.data.accessToken);
-      window.location.href = '/user-management';
-    } else if (response.status === 201 && response.data.status === 'fail') {
-      console.log('MESSAGE:', response, data.msg);
-      setTopErrorMessage(response.data.msg);
-    }
+  const createUser = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee});
+
+    console.log('RESPONSE', response);
+    // if (response.status === 201) {
+    //   localStorage.setItem('token', response.data.accessToken);
+    //   window.location.href = '/user-management';
+    // } else if (response.status === 201 && response.data.status === 'fail') {
+    //   console.log('MESSAGE:', response, data.msg);
+    //   setTopErrorMessage(response.data.msg);
+    // }
   };
 
   const handleChange = (event) => {
@@ -74,29 +77,31 @@ const NewUser = () => {
     event.preventDefault();
     // setFormErrors(validateForm(formData));
     setIsSubmit(true);
-    console.log('FORM DATA:', formData);
-    console.log('TRAINING DOCUMENTS:', trainingDocuments);
+    // console.log('FORM DATA:', formData);
+    // console.log('TRAINING DOCUMENTS:', trainingDocuments);
 
     if (isSubmit === true) {
       console.log('FORM SUBMISSION STARTED!');
-      let data = new FormData();
-      for (let [key, value] of Object.entries(formData)) {
-        data.append(`${key}`, `${value}`);
-      }
+      // let data = new FormData();
+      // for (let [key, value] of Object.entries(formData)) {
+      //   data.append(`${key}`, `${value}`);
+      // }
 
-      trainingDocuments.forEach(doc => {
-        data.append('images', doc);
-      });
+      // trainingDocuments.forEach(doc => {
+      //   data.append('images', doc);
+      // });
 
-      data.append('franchisee', selectedFranchisee);
+      // data.append('franchisee', selectedFranchisee);
 
-      if (croppedImage) {
-        data.append('file', croppedImage);
-        console.log('SUBMITTING FORM DATA');
-        createUser(data);
-      } else {
-        console.log('Choose & Crop an image first!');
-      }
+      // if (croppedImage) {
+      //   data.append('file', croppedImage);
+      //   console.log('SUBMITTING FORM DATA');
+      //   createUser(data);
+      // } else {
+      //   console.log('Choose & Crop an image first!');
+      // }
+
+      createUser();
     }
   };
 
@@ -245,9 +250,9 @@ const NewUser = () => {
     fetchCoordinatorData();
   }, [selectedFranchisee])
 
-  formData && console.log('FORM DATA:', formData);
-  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
-  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
+  // formData && console.log('FORM DATA:', formData);
+  // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
+  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
 
   return (
     <>
@@ -421,7 +426,7 @@ const NewUser = () => {
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  trainingCategories: [...selectedOptions.map(option => option.id)]
+                                  trainingCategories: [...selectedOptions.map(option => option.id + "")]
                                 }));
                               }}
                             />
@@ -437,7 +442,7 @@ const NewUser = () => {
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  professionalDevCategories: [...selectedOptions.map(option => option.id)]
+                                  professionalDevCategories: [...selectedOptions.map(option => option.id + "")]
                                 }));
                               }}
                             />
@@ -468,7 +473,7 @@ const NewUser = () => {
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  businessAssets: [...selectedOptions.map(option => option.id)]
+                                  businessAssets: [...selectedOptions.map(option => option.id + " ")]
                                 }));
                               }}
                             />

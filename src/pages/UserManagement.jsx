@@ -219,6 +219,7 @@ const UserManagement = () => {
   }, []);
 
   const csvLink = useRef();
+  userData && console.log('USER DATA:', userData);
   return (
     <>
       <div id="main">
