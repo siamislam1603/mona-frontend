@@ -77,6 +77,7 @@ const UserManagement = () => {
       }
     },
   };
+
   const columns = [
     {
       dataField: 'name',
@@ -126,6 +127,7 @@ const UserManagement = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
+                  <Dropdown.Item href="/edit-user">Edit</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
