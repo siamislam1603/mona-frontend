@@ -450,15 +450,9 @@ const createAnnouncement = async (data) => {
                             onChange={handleAnnouncementData}
                             isInvalid = {!!error.meta_description}
                             />
-<<<<<<< HEAD
-                            <Form.Control.Feedback type="invalid">
-                              {(error.meta_description)}
-                            </Form.Control.Feedback>
-=======
                              <Form.Control.Feedback type="invalid">
                             {errors.announcement_description}
                           </Form.Control.Feedback>
->>>>>>> 135a40e7e0ef574f75df8f3c7713bb94f25b18fa
                         </Form.Group>
                       </Col>
                     
