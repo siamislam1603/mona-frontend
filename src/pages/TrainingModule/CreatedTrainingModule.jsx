@@ -7,6 +7,7 @@ import Multiselect from 'multiselect-react-dropdown';
 const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [myTrainingData, setMyTrainingData] = useState();
   const [otherTrainingData, setOtherTrainingData] = useState();
+  const [applicableToAll, setApplicableToAll] = useState(false);
   const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [saveTrainingId, setSaveTrainingId] = useState(null);
@@ -57,7 +58,8 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     let user_id = localStorage.getItem('user_id')
     const response = await axios.post(`${BASE_URL}/share/${saveTrainingId}`, {
       ...formSettings,
-      shared_by: user_id
+      shared_by: user_id,
+      is_applicable_to_all: applicableToAll
     }, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -306,6 +308,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                 assigned_users: [],
                                 assigned_users_data: []
                               }));
+                              setApplicableToAll(true);
                               setShareType("roles");
                             }}
                           />
@@ -325,6 +328,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                 ...prevState,
                                 user_roles: []
                               }));
+                              setApplicableToAll(false);
                               setShareType("users");
                             }}
                           />

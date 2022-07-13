@@ -55,7 +55,7 @@ const AddNewTraining = () => {
     category_id: "",
     time_required_to_complete: "" 
   });
-  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [], is_applicable_to_all: false, assigned_franchisee: [] });
+  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [], is_applicable_to_all: false, assigned_franchisee: [], assigned_users: [] });
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -135,7 +135,7 @@ const AddNewTraining = () => {
         data.append('image', coverImage[0]);
 
         let imgSaveResponse = await axios.post(
-          `${BASE_URL}/training/coverImg`, data, {
+          `${BASE_URL}/training/coverImg?title="training"`, data, {
             headers: {
               "Authorization": "Bearer " + token
             }
@@ -234,7 +234,7 @@ const AddNewTraining = () => {
       setErrors(errorObj);
     } else {
       setErrors({});
-      if(Object.keys(trainingSettings).length === 3) {
+      if(Object.keys(trainingSettings).length === 4) {
         setSettingsModalPopup(true);
       }
 
