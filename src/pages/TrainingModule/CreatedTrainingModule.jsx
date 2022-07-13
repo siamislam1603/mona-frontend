@@ -14,6 +14,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
   const [shareType, setShareType] = useState("roles");
   const [userList, setUserList] = useState();
+  const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [formSettings, setFormSettings] = useState({
     user_roles: [],
     assigned_franchisee: [],
@@ -91,9 +92,27 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }
   };
 
+  const handleTrainingDelete = async (trainingId) => {
+    console.log('DELETING THE TRAINING!');
+    let token = localStorage.getItem('token');
+    let userId = localStorage.getItem('user_id');
+    const response = await axios.delete(`${BASE_URL}/training/deleteTraining/${trainingId}/${userId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    
+    // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
+    if(response.status === 200 && response.data.status === "success") {
+      setTrainingDeleteMessage(response.data.message);
+    } else if(response.status === 200 && response.data.status === "fail") {
+      setTrainingDeleteMessage(response.data.message);
+    }
+  }
+
   useEffect(() => {
     fetchCreatedTrainings();
-  }, [filter]);
+  }, [filter, trainingDeleteMessage]);
 
   useEffect(() => {
     fetchUserList();
@@ -132,7 +151,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                         <img src="../img/dot-ico.svg" alt=""/>
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleTrainingDelete(training.id)}>Delete</Dropdown.Item>
                         <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
                         <Dropdown.Item href="#" onClick={() => {
                           setSaveTrainingId(training.id);
