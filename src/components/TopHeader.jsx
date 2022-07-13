@@ -104,7 +104,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                     <span className="loction-pic">
                       <img alt="" id="user-pic" src="/img/user.png" />
                     </span>
-                    All
+                    All Franchisee
                   </Dropdown.Item>
                 </React.Fragment>
                 {franchiseeList.map((data) => {
