@@ -15,7 +15,7 @@ const MyAnnouncements = () => {
   const myAnnouncementData = async() =>{
     let token = localStorage.getItem('token')
     let userid= localStorage.getItem("user_id")
-    const response = await axios.get(`http://localhost:4000/announcement/myAnnouncement/${userid}`, {
+    const response = await axios.get(`${BASE_URL}/announcement/myAnnouncement/${userid}`, {
       headers: {
         "Authorization": "Bearer " + token
       }

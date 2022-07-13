@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
 import ChildEnrollment from '../pages/ChildEnrollment';
 import SignIn from '../pages/SignIn';
-import ResetPassword from '../pages/ResetPassword';
+import ForgotPassword from '../pages/ForgotPassword';
 import UserManagement from '../pages/UserManagement';
 import NewUser from '../pages/NewUser';
 import AddPermissions from '../pages/AddPermissions';
@@ -86,10 +86,10 @@ const Main = () => {
         />
 
         <Route
-          path="/resetpassword"
+          path="/forgot-password"
           element={
             <Protected isLoggedIn={isLoggedIn}>
-              <ResetPassword />
+              <ForgotPassword />
               <UploadFile />
             </Protected>
           }
@@ -99,7 +99,7 @@ const Main = () => {
           path="/add-permissions"
           element={
             <Protected isLoggedIn={isLoggedIn}>
-              <ResetPassword />
+              <ForgotPassword />
               <AddPermissions />
             </Protected>
           }

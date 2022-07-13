@@ -115,15 +115,15 @@ export const createFormValidation = (form) => {
       newErrors.previous_form = 'Previous Form is Required';
   return newErrors;
 };
-export const createOperatingManualValidation = (form) => {
+export const createOperatingManualValidation = (form,imageUrl,videoUrl) => {
   let newErrors = {};
-  let { title, description, cover_image, reference_video } = form;
+  let { title, description } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-  if (!cover_image || cover_image === '')
+  if (!imageUrl || imageUrl === '')
     newErrors.cover_image = 'Cover image is Required';
-  if (!reference_video || reference_video === '')
+  if (!videoUrl || videoUrl === '')
     newErrors.reference_video = 'Reference video is Required';
 
   return newErrors;

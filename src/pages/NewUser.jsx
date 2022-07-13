@@ -175,8 +175,14 @@ const NewUser = () => {
   };
 
   const fetchTrainingCategories = async () => {
+    let token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`
+      `${BASE_URL}/training/get-training-categories`,
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
@@ -191,7 +197,12 @@ const NewUser = () => {
   };
 
   const fetchProfessionalDevelopementCategories = async () => {
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     
     if(response.status === 200 && response.data.status === "success") {
       const { pdcList } = response.data;
@@ -204,7 +215,12 @@ const NewUser = () => {
   }; 
 
   const fetchBuinessAssets = async () => {
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     
     if(response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
@@ -228,6 +244,8 @@ const NewUser = () => {
   useEffect(() => {
     fetchCoordinatorData();
   }, [selectedFranchisee])
+
+  selectedFranchisee && console.log('FRANCHISEE:', selectedFranchisee);
 
   return (
     <>

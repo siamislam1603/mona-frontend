@@ -151,8 +151,8 @@ const SignIn = () => {
                         <Form.Check type="checkbox" label="Remember me" />
                       </Col>
                       <Col className="text-end">
-                        <Link to="/resetpassword" className="custom_rest">
-                          Reset Password?
+                        <Link to="/forgot-password" className="custom_rest">
+                        Forgot Password?
                         </Link>
                       </Col>
                     </Row>
