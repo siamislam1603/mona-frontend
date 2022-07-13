@@ -5,7 +5,7 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import WelcomeMsg from "../components/WelcomeMsg";
 import validateResetPassword from "../helpers/validateResetPassword";
 
-const ResetPassword = () => {
+const ForgotPassword = () => {
   const initialFields = {
     email:''
   }
@@ -80,4 +80,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default ForgotPassword;

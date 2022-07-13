@@ -78,7 +78,7 @@ const ChangePassword = () => {
         let token = localStorage.getItem("token");
         let userId = localStorage.getItem("user_id");
         const response = await axios.post(`${BASE_URL}/auth/changePassword`,{
-        id: "51",
+        id: userId,
         oldPassword:data.oldpassword,
         newPassword:data.new_password
       },{

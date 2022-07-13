@@ -182,7 +182,7 @@ const EditAnnouncement = () => {
     };
   const AnnouncementDetails = async() => {
      let token = localStorage.getItem('token')
-     const response = await axios.get(`http://localhost:4000/announcement/${id}`, {
+     const response = await axios.get(`${BASE_URL}/announcement/${id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
