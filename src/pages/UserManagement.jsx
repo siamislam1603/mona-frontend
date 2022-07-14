@@ -18,6 +18,7 @@ import { BASE_URL } from '../components/App';
 import { CSVDownload } from 'react-csv';
 import { useRef } from 'react';
 import { debounce } from 'lodash';
+import { useNavigate } from 'react-router-dom';
 
 // const { ExportCSVButton } = CSVExport;
 
@@ -38,8 +39,8 @@ const selectRow = {
   mode: 'checkbox',
   clickToSelect: true,
 };
-
 const UserManagement = () => {
+  const navigate=useNavigate();
   const [userData, setUserData] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
@@ -75,6 +76,10 @@ const UserManagement = () => {
         }
 
         fetchUserDetails();
+      }
+      if(e.target.text==="Edit")
+      {
+        navigate(`/edit-user/${row.userID}`);
       }
     },
   };
@@ -129,7 +134,7 @@ const UserManagement = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-                  <Dropdown.Item href={`/edit-user/${134}`}>Edit</Dropdown.Item>
+                  <Dropdown.Item href="#">Edit</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -316,12 +321,24 @@ const UserManagement = () => {
                                       <Form.Group>
                                         <Form.Check
                                           inline
-                                          label="Admin"
-                                          value="Admin"
+                                          label="Franchisor Admin"
+                                          value="Franchisor_Admin"
                                           name="users"
                                           type="radio"
                                           id="one"
-                                          checked={filter==="Admin"}
+                                          checked={filter==="Franchisor_Admin"}
+                                          onChange={(event) =>
+                                            setFilter(event.target.value)
+                                          }
+                                        />
+                                        <Form.Check
+                                          inline
+                                          label="Franchisee Admin"
+                                          value="Franchisee_Admin"
+                                          name="users"
+                                          type="radio"
+                                          id="five"
+                                          checked={filter==="Franchisee_Admin"}
                                           onChange={(event) =>
                                             setFilter(event.target.value)
                                           }

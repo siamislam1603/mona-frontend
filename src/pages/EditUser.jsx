@@ -82,15 +82,15 @@ const EditUser = () => {
       telcode: editUserData?.phone.split("-")[0],
       phone: editUserData?.phone.split("-")[1],
       
-      trainingCategories: editUserData?.training_categories.map(d => parseInt(d)),
-      trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories.includes(category.id + "")),
+      trainingCategories: editUserData?.training_categories?.map(d => parseInt(d)),
+      trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories?.includes(category.id + "")),
 
-      professionalDevCategories: editUserData?.professional_development_categories.map(d => parseInt(d)),
+      professionalDevCategories: editUserData?.professional_development_categories?.map(d => parseInt(d)),
       professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories.includes(user.id + "")),
 
       coordinator: editUserData?.coordinator,
 
-      businessAssets: editUserData?.business_assets.map(d => parseInt(d)),
+      businessAssets: editUserData?.business_assets?.map(d => parseInt(d)),
       businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + '')),
       
       terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD')
