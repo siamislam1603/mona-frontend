@@ -658,7 +658,7 @@ const OperatingManual = () => {
                                                     file_item
                                                   )}
 
-                                                  <div className="forms-content">
+                                                  <div className="forms-content" onClick={()=>{window.open(file_item.url)}}>
                                                     <div className="content-icon-section">
                                                       <img
                                                         src={
