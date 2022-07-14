@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import DragDropCrop from '../components/DragDropCrop';
+import DragDropSingle from '../components/DragDropSingle';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -267,9 +267,9 @@ const NewUser = () => {
     fetchCoordinatorData();
   }, [selectedFranchisee])
 
-  formData && console.log('FORM DATA:', formData);
+  // formData && console.log('FORM DATA:', formData);
   // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
-  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
+  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
 
   return (
     <>
@@ -289,7 +289,7 @@ const NewUser = () => {
                   <div className="maincolumn">
                     <div className="new-user-sec">
                       <div className="user-pic-sec">
-                        <DragDropCrop
+                        <DragDropSingle
                           croppedImage={croppedImage}
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
