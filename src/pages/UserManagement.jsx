@@ -35,10 +35,7 @@ const training = [
   },
 ];
 
-const selectRow = {
-  mode: 'checkbox',
-  clickToSelect: true,
-};
+let DeleteId=[];
 const UserManagement = () => {
   const navigate=useNavigate();
   const [userData, setUserData] = useState([]);
@@ -46,7 +43,7 @@ const UserManagement = () => {
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState(null);
   const [search,setSearch]=useState('');
   const [deleteResponse, setDeleteResponse] = useState(null);
   const rowEvents = {
@@ -83,7 +80,59 @@ const UserManagement = () => {
       }
     },
   };
+  const selectRow = {
 
+    mode: 'checkbox',
+    onSelect: (row, isSelect, rowIndex, e) => {
+      if(DeleteId.includes(row.userID))
+      {
+        let Index;
+        DeleteId.map((item,index)=>{
+          if(item===row.userID)
+          {
+            Index=index;
+          }
+        })
+        DeleteId.splice(Index, 1);
+      }
+      else
+      {
+        DeleteId.push(row.userID);
+      }
+
+    },
+    onSelectAll: (isSelect, rows, e) => {
+      if(isSelect)
+      {
+        userData.map((item)=>{
+          DeleteId.push(item.userID);
+        });
+      }
+      else
+      {
+        DeleteId=[];
+      }
+    }
+  };
+  const onDeleteAll=async()=>{
+
+    if(window.confirm('Are you sure you want to delete All Records?')){
+
+      let response = await axios.post( `${BASE_URL}/auth/user/delete/all`,{id:DeleteId}, {
+
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        
+      });
+      if(response.status === 200)
+      {
+        fetchUserDetails();
+        DeleteId=[];
+      }
+
+    }
+  }
   const columns = [
     {
       dataField: 'name',
@@ -216,10 +265,6 @@ const UserManagement = () => {
     }
   };
 
-  const handleCancelFilter = () => {
-     fetchUserDetails();
-  };
-
   const handleApplyFilter = async () => {
     // const res = await axios.post(`${BASE_URL}/`)
     fetchUserDetails();
@@ -233,13 +278,16 @@ const UserManagement = () => {
       fetchUserDetails();
     }
   }, [selectedFranchisee]);
-  useEffect(() => {
-    fetchUserDetails();
-  }, []);
 
   useEffect(() => {
-    fetchUserDetails();
+    if(deleteResponse!==null)
+      fetchUserDetails();
   }, [deleteResponse]);
+
+  useEffect(() => {
+    if(filter==="")
+      fetchUserDetails();
+  }, [filter]);
 
   useEffect(() => {
     if(localStorage.getItem('success_msg')) {
@@ -406,7 +454,7 @@ const UserManagement = () => {
                                       <Button
                                         variant="transparent"
                                         type="submit"
-                                        onClick={()=>{setFilter('');handleCancelFilter()}}
+                                        onClick={()=>{setFilter('');}}
                                       >
                                         Reset
                                       </Button>
@@ -450,9 +498,9 @@ const UserManagement = () => {
                                         </CSVDownload>
                                       )}
                                     </Dropdown.Item>
-                                    {/* <Dropdown.Item href="#">
+                                    <Dropdown.Item onClick={()=>{onDeleteAll()}}>
                                       Delete All Row
-                                    </Dropdown.Item> */}
+                                    </Dropdown.Item>
                                   </Dropdown.Menu>
                                 </Dropdown>
                               </div>
