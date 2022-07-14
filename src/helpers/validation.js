@@ -238,22 +238,37 @@ export const PasswordValidation = (form) => {
     confirm_password
   } = form;
   if (!oldpassword) {
-    errors.oldpassword = 'oldpassword is required!';
+    errors.oldpassword = 'Old password is required!';
   }
   if(!new_password){
-    errors.new_password = 'new Password is required'
+    errors.new_password = 'New Password is required'
   }
   if(!confirm_password){
-    errors.confirm_password = 'confirm password'
+    errors.confirm_password = 'Confirm password'
   }
-  if(new_password && confirm_password && new_password != confirm_password ){
-      errors.new_password = "new password and confirm password need to be same"
-      errors.confirm_password = "new password and confirm password need to be same"
+  if(new_password && confirm_password && new_password !== confirm_password ){
+      errors.new_password = "New password and Confirm password need to be same"
+      errors.confirm_password = "New password and Confirm password need to be same"
   }
   
 
   return errors;
 };
+export const ResetPasswordValidation = (form) =>{
+  let errors = {};
+  let {new_password,confirm_password} = form;
+  if(!new_password){
+    errors.new_password = "New password require"
+  }
+  if(!confirm_password){
+    errors.confirm_password = "Confirm password require"
+  }
+  if(new_password && confirm_password && new_password !== confirm_password ){
+    errors.new_password = "New password and Confirm password need to be same"
+    errors.confirm_password = "New password and Confirm password need to be same"
+  }
+  return errors;
+}
 export const FranchiseeFormValidation = (formObj) => {
   let errors = {};
   let {

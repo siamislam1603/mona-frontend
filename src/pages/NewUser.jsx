@@ -41,6 +41,7 @@ const NewUser = () => {
     professionalDevCategories: "",
     coordinator: "",
     businessAssets: "",
+    terminationDate: "",
     telcode: '+61',
   });
   const [countryData, setCountryData] = useState([]);
@@ -62,9 +63,17 @@ const NewUser = () => {
   const [createUserModal, setCreateUserModal] = useState(false);
 
   // CREATES NEW USER INSIDE THE DATABASE
-  const createUser = async () => {
+  const createUser = async (data) => {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee}, {
+
+    // const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
+    //   headers: {
+    //     "Authorization": `Bearer ${token}`
+    //   }
+    // });
+
+    const response = await axios.post(`${BASE_URL}/auth/signup`, data, {
+
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -103,10 +112,31 @@ const NewUser = () => {
       [name]: value,
     }));
   };
-
-  const handleSubmit = (event) => {
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  const handleSubmit = async(event) => {
     event.preventDefault();
+    console.log("trainingDocuments---->",trainingDocuments);
+    let doc=[];
+    trainingDocuments?.map(async(item)=>{
+      const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+      doc.push(blob);
+    })
+    console.log("trainingDocuments---->123",doc);
+    const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+    doc.push(blob);
+    let data=new FormData();
+    Object.keys(formData)?.map((item,index)=>{
+      data.append(item,Object.values(formData)[index]);
+    })
     
+    data.append("image",doc);
+    data.append("franchisee",selectedFranchisee || 'Alphabet Kids, Armidale')
     let errorObject = UserFormValidation(formData);
 
     if(Object.keys(errorObject).length > 0) {
@@ -116,10 +146,10 @@ const NewUser = () => {
         console.log('CREATING USER!');
         setCreateUserModal(true);
         setLoader(true)
-        createUser();
+        createUser(data);
     }
     
-    createUser();
+    createUser(data);
   };
 
   const fetchCoordinatorData = async () => {
@@ -394,7 +424,7 @@ const NewUser = () => {
                             <Form.Label>Postal Code</Form.Label>
                             <Form.Control
                               type="tel"
-                              name="postalCode" 
+                              name="postalCode"
                               maxlength="4"
                               placeholder="Your Postal Code"
                               value={formData.postalCode ?? ''}
@@ -529,6 +559,22 @@ const NewUser = () => {
                                 }));
                               }}
                             />
+                          </Form.Group>
+                          
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Termination Date</Form.Label>
+                            <Form.Control
+                              type="date"
+                              name="terminationDate"
+                              onChange={(e) => {
+                                handleChange(e);
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  terminationDate: null
+                                })); 
+                              }}
+                            />
+                            { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">

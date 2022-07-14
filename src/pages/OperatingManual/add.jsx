@@ -108,6 +108,9 @@ const AddOperatingManual = () => {
       .then((response) => {
         console.log('operating manual--->', response?.result);
         setOperatingManualData(response?.result);
+        setImageUrl(response?.result?.cover_image);
+        setVideoThumbnailUrl(response?.result?.video_thumbnail);
+        setVideoUrl(response?.result?.reference_video);
         let data = formSettingData;
         data['applicable_to_all'] =
           response?.result?.permission?.accessible_to_all;
@@ -466,7 +469,7 @@ const AddOperatingManual = () => {
                             e.preventDefault();
                             const newErrors =
                               createOperatingManualValidation(
-                                operatingManualData
+                                operatingManualData,imageUrl,videoUrl
                               );
                             if (Object.keys(newErrors).length > 0) {
                               setErrors(newErrors);
@@ -987,7 +990,7 @@ const AddOperatingManual = () => {
           </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button className="back">Cancel</Button>
+          <Button className="back" onClick={()=>{setFormSettingFlag(false) }}>Cancel</Button>
           <Button className="done" onClick={onModelSubmit}>
             Save Settings
           </Button>

@@ -11,11 +11,13 @@ import * as ReactBootstrap from 'react-bootstrap';
 const ChangePassword = () => {
   const [userRoles, setUserRoles] = useState([]);
   const [franchiseeList, setFranchiseeList] = useState();
-  const [allowSubmit, setAllowSubmit] = useState(false);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [passwords, setPasswords] = useState({});
   const [hide, setHide] = useState(true);
+  const [secHide, setSecHide] = useState(true);
+  const [ThreHide, setThreHide] = useState(true);
+
 
   // LOG MESSAGES
   
@@ -93,7 +95,14 @@ const ChangePassword = () => {
         }, 2000);
     }
     } catch (error) {
-        setTopMessage("Old passsword is incorrect")
+      console.log("The error", error)
+        if( error.response.status ==404 && error.response.data.msg === "password incorrect!"){
+            setTopErrorMessage("Old passsword is incorrect")
+        }
+        setTimeout(() => {
+          setTopErrorMessage(null)
+      }, 3000);
+
     }
    } 
    const logout = async () => {
@@ -144,10 +153,7 @@ const ChangePassword = () => {
 //   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 //   trainingData && console.log('TRAINING DATA:', trainingData);
 // console.log("All password", passwords)
-const initialFields = {
-    oldpassword:'',
-    new_password:""
-  }
+
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
     <div id="main">
@@ -169,9 +175,9 @@ const initialFields = {
                 </header>
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}                 
-                <div className="training-form">
+                <div className="change-pass-sec">
                   <Row>
-                  <Col md={12} className="mb-3">
+                  {/* <Col md={12} className="mb-3">
                         <Form.Group>
                           <Form.Label>Old Password</Form.Label>
                           <Form.Control
@@ -183,46 +189,94 @@ const initialFields = {
                             }}
                             isInvalid={!!errors.oldpassword}
                           />
-                           {!hide ? (
-                      <FontAwesomeIcon
-                        onClick={() => {
-                          setHide(true);
-                        }}
-                        className="custom_hide"
-                        icon={faEye}
-                      />
-                    ) : (
-                      <FontAwesomeIcon
-                        onClick={() => {
-                          setHide(false);
-                        }}
-                        className="custom_hide"
-                        icon={faEyeSlash}
-                      />
-                    )}
+
                          <Form.Control.Feedback type="invalid">
                             {errors.oldpassword}
                           </Form.Control.Feedback>
                         </Form.Group>
-                 </Col>
-                 <Col md={12} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>New Password</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="new_password"
-                            onChange={(e) => {
-                                setField(e.target.name,e.target.value)
-                            }}
-                            isInvalid={!!errors.new_password}
-
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors.new_password}
-                          </Form.Control.Feedback>
-                        </Form.Group>
+                 </Col> */}
+              <Col md={6}>
+                <Form.Group
+                  className="form-group"
+                  controlId="formBasicPassword"
+                  >
+                  <Form.Label>Old Password</Form.Label>
+                  <Form.Control
+                    className="form_input"
+                    type={!hide ? 'text' : 'password'}                   
+                    name="oldpassword"
+                    placeholder='Old Password'
+                    value={passwords?.oldpassword}
+                    onChange={(e) => {
+                        setField(e.target.name,e.target.value)
+                    }}
+                    isInvalid={!!errors.oldpassword}
+                  />
+                   
+                  {!hide ? (
+                    <FontAwesomeIcon
+                      onClick={() => {
+                        setHide(true);
+                      }}
+                      className="custom_hide"
+                      icon={faEye}
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      onClick={() => {
+                        setHide(false);
+                      }}
+                      className="custom_hide"
+                      icon={faEyeSlash}
+                    />
+                  )}
+                    <span className="error">
+                      {errors.oldpassword}
+                    </span>
+                </Form.Group>
                     </Col>
-                    <Col md={12} className="mb-3">
+                </Row>
+                <Row>
+                 <Col md={6}>
+                <Form.Group
+                  className="form-group"
+                  controlId="formBasicPassword"
+                  >
+                  <Form.Label>New Password</Form.Label>
+                  <Form.Control
+                    className="form_input"
+                    type={!secHide ? 'text' : 'password'}                   
+                    name="new_password"
+                    placeholder='New Password'
+                    onChange={(e) => {
+                      setField(e.target.name,e.target.value)
+                    }}
+                    isInvalid={!!errors.new_password}
+                  />
+                   
+                  {!secHide ? (
+                    <FontAwesomeIcon
+                      onClick={() => {
+                        setSecHide(true);
+                      }}
+                      className="custom_hide"
+                      icon={faEye}
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      onClick={() => {
+                        setSecHide(false);
+                      }}
+                      className="custom_hide"
+                      icon={faEyeSlash}
+                    />
+                  )}
+                    <span className="error">
+                      {errors.new_password}
+                    </span>
+                </Form.Group>
+                    </Col>
+                    {/* <Col md={12} className="mb-3">
                         <Form.Group>
                           <Form.Label>Confirm Password</Form.Label>
                           <Form.Control
@@ -239,9 +293,49 @@ const initialFields = {
                             {errors.confirm_password}
                           </Form.Control.Feedback>
                         </Form.Group>
-                      </Col>
+                      </Col> */}
+
+                <Col md={6}>
+                  <Form.Group
+                    className="form-group"
+                    controlId="formBasicPassword"
+                    >
+                    <Form.Label>Confirm New Password</Form.Label>
+                    <Form.Control
+                      className="form_input"
+                      type={!ThreHide ? 'text' : 'password'}                   
+                      name="confirm_password"
+                      placeholder='Confirm Password'
+                      value={passwords?.confirm_password}
+                      onChange={(e) => {
+                          setField(e.target.name,e.target.value)
+                      }}
+                      isInvalid={!!errors.confirm_password}
+                    />   
+                   {!ThreHide ? (
+                      <FontAwesomeIcon
+                        onClick={() => {
+                          setThreHide(true);
+                      }}
+                      className="custom_hide"
+                      icon={faEye}
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      onClick={() => {
+                        setThreHide(false);
+                      }}
+                      className="custom_hide"
+                      icon={faEyeSlash}
+                    />
+                  )}
+                    <span className="error">
+                      {errors.confirm_password}
+                    </span>
+                    </Form.Group>
+                    </Col>
                       <div className="custom_submit text-center pt-3">
-                    <Button variant="primary" className="w-100" type="submit" onClick={onSubmit}>
+                    <Button variant="primary" type="submit" onClick={onSubmit}>
                       Submit
                     </Button>
                     </div>
