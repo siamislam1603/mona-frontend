@@ -563,11 +563,13 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .custom-checkbox .btn-checkbox .form-group { display:inline-block; }
 
+.edit-ico { position: absolute; top: 20px; right: 15px; opacity: .5; max-width: 18px; z-index: 5; }
+.edit-ico:hover { opacity: 1; }
 
 /* Pradeep CODE */
 .Card_design {background: #F7F7F7; border: none; border-radius: 20px }
 .Text_design { font-size: 1rem; color: #AA0061; text-align: left; }
-#Down_Text { font-size: 0.75rem;color: #333333;}
+.Card_design .card-text { font-size: 0.75rem;color: #333333; text-align: left;}
 .Arrow_icon {font-weight: 500;font-size: 1.5rem;float: right}
 .Card_Footer {background: #ffffff00; padding-left: 0rem;}
 .Footer_text {border-right: 2px solid #AA0061; font-weight: 500; font-size: 14px;}

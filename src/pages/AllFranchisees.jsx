@@ -309,6 +309,7 @@ const AllFranchisees = () => {
                                                             <Col key={data.franchisee.id} sm={6} md={4} className="my-2">
                                                                 <Card className="text-center Card_design">
                                                                     <Card.Body className="d-flex flex-row bd-highlight align-items-center">
+                                                                        <div className="edit-ico"><a href=""><img src="../img/edit-ico.png" alt="" /></a></div>
                                                                         <img src={CardImg} alt="" width="65px" />
                                                                         <div className="p-1">
                                                                             <Card.Title className="mb-0 Text_design"
@@ -317,9 +318,9 @@ const AllFranchisees = () => {
                                                                                 {data.franchisee.location}
                                                                             </Card.Text>
                                                                         </div>
-                                                                        <div style={{ paddingLeft: "2rem" }}>
-                                                                            {/* <b><AiOutlineArrowRight className="Arrow_icon" /></b> */}
-                                                                        </div>
+                                                                        {/*<div style={{ paddingLeft: "2rem" }}>
+                                                                             <b><AiOutlineArrowRight className="Arrow_icon" /></b> 
+                                                                        </div>*/}
                                                                     </Card.Body>
                                                                     <Card.Footer className="Card_Footer">
                                                                         <div className="d-flex justify-content-around">
