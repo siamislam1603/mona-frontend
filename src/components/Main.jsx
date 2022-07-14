@@ -128,7 +128,7 @@ const Main = () => {
           }
         />
         <Route
-          path="/edit-franchisees"
+          path="/edit-franchisees/:id"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
