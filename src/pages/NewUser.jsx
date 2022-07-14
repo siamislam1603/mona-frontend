@@ -166,8 +166,9 @@ const NewUser = () => {
     });
     if (response.status === 200) {
       const { userRoleList } = response.data;
+      let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
       setUserRoleData(
-        userRoleList.map((list) => ({
+        newRoleList.map((list) => ({
           value: list.role_name,
           label: list.role_label,
         }))
@@ -265,7 +266,7 @@ const NewUser = () => {
     fetchCoordinatorData();
   }, [selectedFranchisee])
 
-  // formData && console.log('FORM DATA:', formData);
+  formData && console.log('FORM DATA:', formData);
   // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
 
@@ -501,7 +502,8 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Primary Co-ordinator</Form.Label>
                             <Select
-                              placeholder="Which Co-ordinator?"
+                              isDisabled={formData.role !== 'educator'}
+                              placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
                               closeMenuOnSelect={true}
                               options={coordinatorData}
                               onChange={(e) => {
@@ -529,7 +531,7 @@ const NewUser = () => {
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  businessAssets: [...selectedOptions.map(option => option.id + " ")]
+                                  businessAssets: [...selectedOptions.map(option => option.id + "")]
                                 }));
 
                                 setFormErrors(prevState => ({

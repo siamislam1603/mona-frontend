@@ -91,7 +91,7 @@ const EditUser = () => {
       coordinator: editUserData?.coordinator,
 
       businessAssets: editUserData?.business_assets.map(d => parseInt(d)),
-      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + ' ')),
+      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + '')),
       
       terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD')
     }));
@@ -131,12 +131,13 @@ const EditUser = () => {
     if (selectedFranchisee) {
       let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(data => data.charAt(0).toLowerCase() + data.slice(1)).join("_");
       
-      console.log('SELECTED FRANCHISEE:', franchisee_alias);
-      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}`);
+      console.log('SELECTED FRANCHISEE ALIAS:', franchisee_alias);
+      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}/coordinator`);
 
       if(response.status === 200 && response.data.status === "success") {
-        let { coordinatorList } = response.data;
-        setCoordinatorData(coordinatorList.map(coordinator => ({
+        let { coordinators } = response.data;
+        setCoordinatorData(coordinators.map(coordinator => ({
+          id: coordinator.id,
           value: coordinator.fullname,
           label: coordinator.fullname
         })));
@@ -486,13 +487,14 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Primary Co-ordinator</Form.Label>
                             <Select
-                              placeholder="Which Co-ordinator?"
+                              isDisabled={formData.role !== 'educator'}
+                              placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
                               closeMenuOnSelect={true}
                               options={coordinatorData}
                               onChange={(e) =>
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  coordinator: e.value,
+                                  coordinator: e.id,
                                 }))
                               }
                             />

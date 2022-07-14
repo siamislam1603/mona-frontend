@@ -55,13 +55,17 @@ const UserManagement = () => {
         async function deleteUserFromDB() {
 
           const response = await axios.patch(
-            `${BASE_URL}/auth/user/${row.userID}`,
+            `${BASE_URL}/auth/user/delete/${row.userID}`,
             {
               is_deleted: 1,
+            }, {
+              headers: {
+                "Authorization": `Bearer ${localStorage.getItem('token')}`
+              }
             }
           );
-          
-          setDeleteResponse(response);
+          if(response.status === 200 && response.data.status === "success")
+            setDeleteResponse(response);
         }
 
         deleteUserFromDB();
