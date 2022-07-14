@@ -676,7 +676,7 @@ const OperatingManual = () => {
                                                         Added On :
                                                         {moment(
                                                           inner_item.createdAt
-                                                        ).format('MM/DD/YYYY')}
+                                                        ).format('DD/MM/YYYY')}
                                                       </h4>
                                                     </div>
                                                   </div>

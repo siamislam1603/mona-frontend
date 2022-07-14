@@ -469,7 +469,7 @@ const AddOperatingManual = () => {
                             e.preventDefault();
                             const newErrors =
                               createOperatingManualValidation(
-                                operatingManualData
+                                operatingManualData,imageUrl,videoUrl
                               );
                             if (Object.keys(newErrors).length > 0) {
                               setErrors(newErrors);
@@ -990,7 +990,7 @@ const AddOperatingManual = () => {
           </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button className="back">Cancel</Button>
+          <Button className="back" onClick={()=>{setFormSettingFlag(false) }}>Cancel</Button>
           <Button className="done" onClick={onModelSubmit}>
             Save Settings
           </Button>
