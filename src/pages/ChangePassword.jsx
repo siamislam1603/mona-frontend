@@ -205,6 +205,7 @@ const ChangePassword = () => {
                     className="form_input"
                     type={!hide ? 'text' : 'password'}                   
                     name="oldpassword"
+                    placeholder='Old Password'
                     value={passwords?.oldpassword}
                     onChange={(e) => {
                         setField(e.target.name,e.target.value)
@@ -246,6 +247,7 @@ const ChangePassword = () => {
                     className="form_input"
                     type={!secHide ? 'text' : 'password'}                   
                     name="new_password"
+                    placeholder='New Password'
                     onChange={(e) => {
                       setField(e.target.name,e.target.value)
                     }}
@@ -303,6 +305,7 @@ const ChangePassword = () => {
                       className="form_input"
                       type={!ThreHide ? 'text' : 'password'}                   
                       name="confirm_password"
+                      placeholder='Confirm Password'
                       value={passwords?.confirm_password}
                       onChange={(e) => {
                           setField(e.target.name,e.target.value)

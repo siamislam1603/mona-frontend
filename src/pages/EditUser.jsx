@@ -11,7 +11,9 @@ import makeAnimated from 'react-select/animated';
 import { useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { Link } from 'react-router-dom';
+import Signature from './InputFields/Signature';
 import moment from 'moment';
+import DragDropSingle from '../components/DragDropSingle';
 
 const animatedComponents = makeAnimated();
 
@@ -29,7 +31,6 @@ const training = [
 const EditUser = () => {
   const { userId } = useParams();
   const [formErrors, setFormErrors] = useState([]);
-  const [isSubmit, setIsSubmit] = useState(false);
   const [formData, setFormData] = useState({
     city: 'Sydney',
     phone: '',
@@ -55,6 +56,9 @@ const EditUser = () => {
 
   // DIALOG STATES
   const [showConsentDialog, setShowConsentDialog] = useState(false);
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [signatureImage, setSignatureImage] = useState(null);
+  const [isSubmit, setIsSubmit] = useState(false);
 
   // FETCHES THE DATA OF USER FOR EDITING
   const fetchEditUserData = async () => {
@@ -96,19 +100,22 @@ const EditUser = () => {
       businessAssets: editUserData?.business_assets?.map(d => parseInt(d)),
       businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + '')),
       
-      terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD')
+      terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD'),
+      termination_reach_me: false
     }));
   }
 
   // CREATES NEW USER INSIDE THE DATABASE
-  const updateUserDetails = async () => {
+  const updateUserDetails = async (data) => {
     const token = localStorage.getItem('token');
-    const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, { ...formData, franchisee: selectedFranchisee }, {
+    // const response = await axios.post(`https://httpbin.org/anything`, data);
+    // console.log('RESPONSE:', response);
+    const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, data, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    
     if (response.status === 200 && response.data.status === 'success') {
       localStorage.setItem('success_msg', 'User updated successfully!');
       window.location.href = '/user-management';
@@ -125,9 +132,25 @@ const EditUser = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    updateUserDetails();
+
+    const base64Response = await fetch(`${croppedImage}`);
+    const blob = await base64Response.blob();
+    console.log('Blob:', blob);
+
+    let data = new FormData();
+    for(let [key, value] of Object.entries(formData)) {
+      data.append(`${key}`, value);
+    }
+
+    // appending image data
+    data.append('images', blob);
+    data.append('franchisee', selectedFranchisee);
+
+    trainingDocuments.map(doc => data.append('images', doc));
+
+    updateUserDetails(data);
   };
 
   const fetchCoordinatorData = async () => {
@@ -264,6 +287,20 @@ const EditUser = () => {
     }
   };
 
+  // DIALOG HANDLING
+  const handleConsentDialog = () => {
+    if(formData?.termination_reach_me && formData?.terminationDate.length > 0) {
+      setShowConsentDialog(false);
+      setShowSignatureDialog(true);
+    }
+  }
+
+  const handleSignatureDialog = () => {
+    if(signatureImage) {
+      setShowSignatureDialog(false);
+    }
+  }
+
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
@@ -286,8 +323,11 @@ const EditUser = () => {
   // formData && console.log('FORM DATA:', formData);
   // businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
   // businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
-  // formData && console.log('BUSINESS:', formData.businessAssets);
-  showConsentDialog && console.log('CONSENT DIALOG:', showConsentDialog);
+  // formData && console.log('BUSINESS:', formData);
+  // showConsentDialog && console.log('CONSENT DIALOG:', showConsentDialog);
+  // signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
+  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
+  trainingDocuments && console.log('Training Documents:', trainingDocuments);
   return (
     <>
       <div id="main">
@@ -306,7 +346,7 @@ const EditUser = () => {
                   <div className="maincolumn">
                     <div className="new-user-sec">
                       <div className="user-pic-sec">
-                        <DragDropCrop
+                        <DragDropSingle
                           croppedImage={croppedImage}
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
@@ -584,7 +624,18 @@ const EditUser = () => {
 
                   <Form.Group className="col-md-12 mb-6 mt-4">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        value="" 
+                        id="flexCheckDefault"
+                        checked={formData?.termination_reach_me ? true : false}
+                        onChange={() => {
+                          setFormData(prevState => ({
+                            ...prevState,
+                            termination_reach_me: !formData?.termination_reach_me 
+                          }));
+                        }} />
                       <label class="form-check-label" for="flexCheckDefault">
                         I am happy to be reached if you have any questions.
                       </label>
@@ -595,7 +646,40 @@ const EditUser = () => {
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
               <div class="text-center">
-                <button type="button" className="btn btn-primary" style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}>Submit</button>
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => {
+                    handleConsentDialog();
+                  }}>Submit</button>
+              </div>
+              </Modal.Footer>
+            </Modal>
+          }
+
+          {
+            <Modal
+              size="lg"
+              show={showSignatureDialog}
+              onHide={() => setShowSignatureDialog(false)}>
+              <Modal.Header>
+                <Modal.Title>Termination</Modal.Title>
+              </Modal.Header>
+
+              <Modal.Body>
+                <Row>
+                  <Signature
+                    field_label="Signature:"
+                    onChange={setSignatureImage} />
+                </Row>
+              </Modal.Body>
+
+              <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
+              <div class="text-center">
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => handleSignatureDialog()}>Submit</button>
               </div>
               </Modal.Footer>
             </Modal>
