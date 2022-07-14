@@ -108,6 +108,9 @@ const AddOperatingManual = () => {
       .then((response) => {
         console.log('operating manual--->', response?.result);
         setOperatingManualData(response?.result);
+        setImageUrl(response?.result?.cover_image);
+        setVideoThumbnailUrl(response?.result?.video_thumbnail);
+        setVideoUrl(response?.result?.reference_video);
         let data = formSettingData;
         data['applicable_to_all'] =
           response?.result?.permission?.accessible_to_all;
