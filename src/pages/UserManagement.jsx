@@ -44,26 +44,41 @@ const UserManagement = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
+  const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [filter, setFilter] = useState('');
   const [search,setSearch]=useState('');
+  const [deleteResponse, setDeleteResponse] = useState(null);
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
+
         async function deleteUserFromDB() {
+
           const response = await axios.patch(
-            `${BASE_URL}/auth/user/${row.id}`,
+            `${BASE_URL}/auth/user/delete/${row.userID}`,
             {
               is_deleted: 1,
+            }, {
+              headers: {
+                "Authorization": `Bearer ${localStorage.getItem('token')}`
+              }
             }
           );
-          console.log('DELETE RESPONSE:', response);
+          if(response.status === 200 && response.data.status === "success")
+            setDeleteResponse(response);
         }
 
+        if(window.confirm('Are you sure you want to delete?')){
+
         deleteUserFromDB();
+
+        }
+
         fetchUserDetails();
       }
     },
   };
+
   const columns = [
     {
       dataField: 'name',
@@ -71,6 +86,7 @@ const UserManagement = () => {
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
+        console.log('CELL:', cell);
         return (
           <>
             <div className="user-list">
@@ -113,6 +129,7 @@ const UserManagement = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
+                  <Dropdown.Item href={`/edit-user/${134}`}>Edit</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -155,18 +172,21 @@ const UserManagement = () => {
     });
     if (response.status === 200) {
       const { users } = response.data;
+      console.log('USERS:', users);
       let tempData = users.map((dt) => ({
-        id: dt.id,
+  
         name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}`,
         email: dt.email,
-        number: dt.phone,
+        number: dt.phone.slice(1),
         location: dt.city,
         is_deleted: dt.is_deleted,
+        userID: dt.id,
       }));
       tempData = tempData.filter((data) => data.is_deleted === 0);
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee",tempData)
       setUserData(tempData);
       let temp = tempData;
       let csv_data = [];
@@ -181,7 +201,7 @@ const UserManagement = () => {
         // delete item['location'];
         
         delete item.is_deleted;
-        delete item.id;
+        // delete item.user_id;
         csv_data.push(item);
         let data={...csv_data[index]};
         data["name"]=data.name.split(",")[1];
@@ -212,7 +232,23 @@ const UserManagement = () => {
     fetchUserDetails();
   }, []);
 
+  useEffect(() => {
+    fetchUserDetails();
+  }, [deleteResponse]);
+
+  useEffect(() => {
+    if(localStorage.getItem('success_msg')) {
+        setTopSuccessMessage(localStorage.getItem('success_msg'));
+        localStorage.removeItem('success_msg');
+
+        setTimeout(() => {
+            setTopSuccessMessage(null);
+        }, 3000);
+    }
+  }, []);
+
   const csvLink = useRef();
+  userData && console.log('USER DATA:', userData.map(data => data));
   return (
     <>
       <div id="main">
@@ -236,6 +272,9 @@ const UserManagement = () => {
                     >
                       {(props) => (
                         <>
+                          {
+                            topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                          } 
                           <header className="title-head">
                             <h1 className="title-lg">All User</h1>
                             <div className="othpanel">

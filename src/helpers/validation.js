@@ -310,9 +310,55 @@ export const FranchiseeFormValidation = (formObj) => {
     errors.postcode = "postal code is required!";
   }
 
+  if(postcode.length !== 4) {
+    errors.postcode = "postal code should be 4-digit long."
+  }
+
   if(!contact) {
     errors.contact = "contact number is required!";
   }
 
   return errors;
 }
+
+
+export const UserFormValidation = (formObj) => {
+  let errors = {};
+
+  let {
+    fullname,
+    role,
+    city,
+    address,
+    postalCode,
+    email,
+    phone,
+    terminationDate,
+  } = formObj;
+
+  if(!fullname)
+    errors.fullname = "Username is required!";
+
+  if(!role)
+    errors.role = "User role is required!";
+  
+  if(!city)
+    errors.city = "City is required!";
+  
+  if(!address)
+    errors.address = "Address is required!";
+
+  if(!postalCode)
+    errors.postalCode = "Postal code is required!";
+
+  if(!email)
+    errors.email = "Email is required!";
+
+  if(!phone)
+    errors.phone = "Phone number is required!";
+
+  if(!terminationDate)
+    errors.terminationDate = "select a termination date!";
+
+  return errors;
+};

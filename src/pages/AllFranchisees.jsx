@@ -51,6 +51,8 @@ const AllFranchisees = () => {
         user: '',
         location: [],
     });
+    const [search,setSearch]=useState('');
+
     const [franchiseeData, setFranchiseeData] = useState();
     const [topSuccessMessage, setTopSuccessMessage] = useState();
 
@@ -62,13 +64,26 @@ const AllFranchisees = () => {
         // const res = await axios.post(`${BASE_URL}/`)
     };
 
+    // const onFilter = debounce(() => {
+    //     fetchUserDetails();
+    //   }, 200);
+
+
     const fetchFranchisees = async () => {
         let token = localStorage.getItem('token')
-        const response = await axios.get(`${BASE_URL}/role/franchisee/users`, {
+
+        let api_url = `${BASE_URL}/role/franchisee/users`;
+        if (search) {
+            api_url = `${BASE_URL}/role/franchisee/users?search=${search}`;
+          }
+
+        const response = await axios.get(api_url, {
             headers: {
                 "Authorization": `Bearer ${token}` 
             }
         });
+
+
 
         if(response.status === 200 && response.data.status === "success") {
             const { franchisees } = response.data;
@@ -101,6 +116,14 @@ const AllFranchisees = () => {
         fetchFranchisees();
     }, []);
 
+    useEffect(() => {
+        fetchFranchisees();
+        console.log("searched datata",search)
+    }, [search]);
+    
+
+
+
     return (
         <div>
             <div id="main">
@@ -123,9 +146,27 @@ const AllFranchisees = () => {
                                                 <div className="othpanel">
                                                     <div className="extra-btn">
                                                         <div className="data-search me-3">
-                                                            <SearchBar />
+                                                        <label for="search-bar" className="search-label">
+                                                            <input 
+                                                            id="search-bar" 
+                                                            type="text" 
+                                                            className="form-control" 
+                                                            placeholder="Search" 
+                                                            value={search}
+                                                            onChange={(e) => {
+                                                                setSearch(e.target.value);
+                                                              }}
+                                                            
+                                                            />
+                                                        </label>
+
+
+
                                                         </div>
-                                                        <Dropdown className="filtercol me-3">
+
+                                                        {
+                                                            localStorage.getItem('user_role') === 'stanley' &&
+                                                            <Dropdown className="filtercol me-3">
                                                             <Dropdown.Toggle
                                                                 id="extrabtn"
                                                                 variant="btn-outline"
@@ -233,12 +274,12 @@ const AllFranchisees = () => {
                                                                     </Button>
                                                                 </footer>
                                                             </Dropdown.Menu>
-                                                        </Dropdown>
+                                                        </Dropdown>}
                                                         <a
-                                                            href="/New-Franchises"
+                                                            href="/new-franchisees"
                                                             className="btn btn-primary me-3"
                                                         >
-                                                            + Create New User
+                                                            + Add New Franchisee
                                                         </a>
                                                         <Dropdown>
                                                             <Dropdown.Toggle

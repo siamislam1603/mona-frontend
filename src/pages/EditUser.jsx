@@ -1,18 +1,17 @@
 import axios from 'axios';
 import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
 import React, { useEffect, useState, useRef } from 'react';
-import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
+import { Button, Col, Container, Row, Form } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import DragDropCrop from '../components/DragDropCrop';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import validateForm from '../helpers/validateForm';
+import { useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { Link } from 'react-router-dom';
-import { UserFormValidation } from '../helpers/validation';
-import * as ReactBootstrap from 'react-bootstrap';
+import moment from 'moment';
 
 const animatedComponents = makeAnimated();
 
@@ -27,21 +26,14 @@ const training = [
   },
 ];
 
-const NewUser = () => {
+const EditUser = () => {
+  const { userId } = useParams();
   const [formErrors, setFormErrors] = useState([]);
+  const [isSubmit, setIsSubmit] = useState(false);
   const [formData, setFormData] = useState({
-    fullname: "",
-    role: "",
-    city: "",
-    address: "",
-    postalCode: "",
-    email: "",
-    phone: "",
-    trainingCategories: "",
-    professionalDevCategories: "",
-    coordinator: "",
-    businessAssets: "",
-    terminationDate: "",
+    city: 'Sydney',
+    phone: '',
+    role: '',
     telcode: '+61',
   });
   const [countryData, setCountryData] = useState([]);
@@ -54,45 +46,72 @@ const NewUser = () => {
   const [pdcData, setPdcData] = useState([]);
   const [businessAssetData, setBuinessAssetData] = useState([]);
   const [trainingDocuments, setTrainingDocuments] = useState();
+  const [editUserData, setEditUserData] = useState();
 
   // IMAGE CROPPING STATES
   const [image, setImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
-  const [loader, setLoader] = useState(false);
-  const [createUserModal, setCreateUserModal] = useState(false);
 
-  // CREATES NEW USER INSIDE THE DATABASE
-  const createUser = async () => {
+  // FETCHES THE DATA OF USER FOR EDITING
+  const fetchEditUserData = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
+    const response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
-    if(response.status === 201 && response.data.status === "success") {
-      setLoader(false);
-      setCreateUserModal(false);
-      localStorage.setItem('success_msg', 'User created successfully!');
-      window.location.href="/user-management";
-
-    } else if(response.status === 200 && response.data.status === "fail") {
-      setLoader(false);
-      setCreateUserModal(false);
-      let { errorObject } = response.data;
-      errorObject.map(error => setFormErrors(prevState => ({
-          ...prevState,
-          [error.error_field]: error.error_msg
-      })));
+    if(response.status === 200 && response.data.status === "success") {
+      const { user } = response.data;
+      setEditUserData(user);
     }
-    // if (response.status === 201) {
-    //   localStorage.setItem('token', response.data.accessToken);
-    //   window.location.href = '/user-management';
-    // } else if (response.status === 201 && response.data.status === 'fail') {
-    //   console.log('MESSAGE:', response, data.msg);
-    //   setTopErrorMessage(response.data.msg);
-    // }
+  };
+
+  const copyDataToState = () => {
+    setFormData(prevState => ({
+      fullname: editUserData?.fullname,
+
+      role: editUserData?.role,
+      roleObj:userRoleData.filter(d => d.value === editUserData.role),
+      
+      city: editUserData?.city,
+      address: editUserData?.address,
+      postalCode: editUserData?.postalCode,
+      email: editUserData?.email,
+      telcode: editUserData?.phone.split("-")[0],
+      phone: editUserData?.phone.split("-")[1],
+      
+      trainingCategories: editUserData?.training_categories.map(d => parseInt(d)),
+      trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories.includes(category.id + "")),
+
+      professionalDevCategories: editUserData?.professional_development_categories.map(d => parseInt(d)),
+      professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories.includes(user.id + "")),
+
+      coordinator: editUserData?.coordinator,
+
+      businessAssets: editUserData?.business_assets.map(d => parseInt(d)),
+      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + '')),
+      
+      terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD')
+    }));
+  }
+
+  // CREATES NEW USER INSIDE THE DATABASE
+  const updateUserDetails = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, formData, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 200 && response.data.status === 'success') {
+      localStorage.setItem('success_msg', 'User updated successfully!');
+      window.location.href = '/user-management';
+    } else if (response.status === 200 && response.data.status === 'fail') {
+      setTopErrorMessage(response.data.msg);
+    }
   };
 
   const handleChange = (event) => {
@@ -105,26 +124,14 @@ const NewUser = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
-    let errorObject = UserFormValidation(formData);
-
-    if(Object.keys(errorObject).length > 0) {
-        console.log(errorObject);
-        setFormErrors(errorObject);
-    } else {
-        console.log('CREATING USER!');
-        setCreateUserModal(true);
-        setLoader(true)
-        createUser();
-    }
-    
-    createUser();
+    updateUserDetails();
   };
 
   const fetchCoordinatorData = async () => {
     if (selectedFranchisee) {
       let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(data => data.charAt(0).toLowerCase() + data.slice(1)).join("_");
       
+      console.log('SELECTED FRANCHISEE ALIAS:', franchisee_alias);
       const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}/coordinator`);
 
       if(response.status === 200 && response.data.status === "success") {
@@ -167,9 +174,9 @@ const NewUser = () => {
     });
     if (response.status === 200) {
       const { userRoleList } = response.data;
-      let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
       setUserRoleData(
-        newRoleList.map((list) => ({
+        userRoleList.map((list) => ({
+          id: list.id,
           value: list.role_name,
           label: list.role_label,
         }))
@@ -261,16 +268,22 @@ const NewUser = () => {
     fetchTrainingCategories();
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
+    fetchEditUserData();
   }, []);
 
   useEffect(() => {
+    copyDataToState();
+  }, [editUserData]);
+
+  useEffect(() => {
     fetchCoordinatorData();
-  }, [selectedFranchisee])
+  }, [selectedFranchisee]);
 
+  editUserData && console.log('EDIT USER DATA:',editUserData);
   formData && console.log('FORM DATA:', formData);
-  // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
-  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
-
+  businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
+  businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
+  formData && console.log('BUSINESS:', formData.businessAssets);
   return (
     <>
       <div id="main">
@@ -284,7 +297,7 @@ const NewUser = () => {
                 <TopHeader setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-lg">New User</h1>
+                    <h1 className="title-lg">Edit User</h1>
                   </header>
                   <div className="maincolumn">
                     <div className="new-user-sec">
@@ -316,16 +329,12 @@ const NewUser = () => {
                               type="text"
                               name="fullname"
                               placeholder="Enter Full Name"
-                              value={formData?.fullName}
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  fullname: null
-                                }));
-                              }}
+                              value={formData?.fullname}
+                              onChange={handleChange}
                             />
-                            { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
+                            <span className="error">
+                              {!formData.fullname && formErrors.fullname}
+                            </span>
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -333,41 +342,37 @@ const NewUser = () => {
                             <Select
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
+                              value={formData.roleObj}
                               options={userRoleData}
-                              onChange={(e) => {
+                              onChange={(e) =>
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   role: e.value,
-                                }));
-
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  role: null
-                                }));
-                              }}
+                                  roleObj: e
+                                }))
+                              }
                             />
-                            { formErrors.role !== null && <span className="error">{formErrors.role}</span> }
+                            <span className="error">
+                              {!formData.role && formErrors.role}
+                            </span>
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>City</Form.Label>
+                            <Form.Label>Suburb</Form.Label>
                             <Select
                               placeholder="Which Suburb?"
                               closeMenuOnSelect={true}
                               options={cityData}
-                              onChange={(e) => {
+                              onChange={(e) =>
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   city: e.value,
-                                }));
-
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  city: null
-                                }));
-                              }}
+                                }))
+                              }
                             />
-                            { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
+                            <span className="error">
+                              {!formData.city && formErrors.city}
+                            </span>
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -376,16 +381,12 @@ const NewUser = () => {
                               type="text"
                               name="address"
                               placeholder="Enter Your Address"
-                              value={formData.address ?? ''}
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  address: null
-                                }));
-                              }}
+                              value={formData.address}
+                              onChange={handleChange}
                             />
-                            { formErrors.address !== null && <span className="error">{formErrors.address}</span> }
+                            <span className="error">
+                              {!formData.address && formErrors.address}
+                            </span>
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -394,16 +395,9 @@ const NewUser = () => {
                               type="number"
                               name="postalCode"
                               placeholder="Your Postal Code"
-                              value={formData.postalCode ?? ''}
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  postalCode: null
-                                }));
-                              }}
+                              value={formData.postalCode}
+                              onChange={handleChange}
                             />
-                            { formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span> }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
@@ -412,16 +406,17 @@ const NewUser = () => {
                               type="email"
                               name="email"
                               placeholder="Enter Your Email ID"
-                              value={formData.email ?? ''}
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  email: null
-                                }));
-                              }}
+                              value={formData.email}
+                              onChange={handleChange}
                             />
-                            { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
+                            <span className="error">
+                              {!formData.email && formErrors.email}
+                            </span>
+                            {topErrorMessage && (
+                              <span className="toast-error">
+                                {topErrorMessage}
+                              </span>
+                            )}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -444,16 +439,13 @@ const NewUser = () => {
                                 name="phone"
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
-                                onChange={(e) => {
-                                  handleChange(e);
-                                  setFormErrors(prevState => ({
-                                    ...prevState,
-                                    phone: null
-                                  }));
-                                }}
+                                onChange={handleChange}
                               />
                             </div>
-                            { formErrors.phone !== null && <span className="error">{formErrors.phone}</span> }
+                            <span className="error">
+                              {!formData.telcode ||
+                                (!formData.phone && formErrors.phone)}
+                            </span>
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
@@ -462,11 +454,13 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
+                              value={formData.trainingCategoriesObj}
                               options={trainingCategoryData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  trainingCategories: [...selectedOptions.map(option => option.id + "")]
+                                  trainingCategories: [...selectedOptions.map(d => parseInt(d.id))],
+                                  trainingCategoriesObj: selectedOptions
                                 }));
                               }}
                             />
@@ -478,11 +472,13 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
+                              value={formData.professionalDevCategoriesObj}
                               options={pdcData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  professionalDevCategories: [...selectedOptions.map(option => option.id + "")]
+                                  professionalDevCategories: [...selectedOptions.map(d => parseInt(d.id))],
+                                  professionalDevCategoriesObj: selectedOptions
                                 }));
                               }}
                             />
@@ -495,12 +491,12 @@ const NewUser = () => {
                               placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
                               closeMenuOnSelect={true}
                               options={coordinatorData}
-                              onChange={(e) => {
+                              onChange={(e) =>
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   coordinator: e.id,
-                                }));
-                              }}
+                                }))
+                              }
                             />
                           </Form.Group>
 
@@ -510,11 +506,13 @@ const NewUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
+                              value={formData.businessAssetsObj}
                               options={businessAssetData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  businessAssets: [...selectedOptions.map(option => option.id + "")]
+                                  businessAssets: [...selectedOptions.map(d => parseInt(d.id))],
+                                  businessAssetsObj: selectedOptions
                                 }));
                               }}
                             />
@@ -525,15 +523,9 @@ const NewUser = () => {
                             <Form.Control
                               type="date"
                               name="terminationDate"
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  terminationDate: null
-                                })); 
-                              }}
+                              value={formData.terminationDate}
+                              onChange={handleChange}
                             />
-                            { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
@@ -563,36 +555,9 @@ const NewUser = () => {
             </div>
           </Container>
         </section>
-        {
-                createUserModal && 
-                <Modal
-                show={createUserModal}
-                onHide={() => setCreateUserModal(false)}>
-                    <Modal.Header>
-                        <Modal.Title>
-                        Creating User
-                        </Modal.Title>
-                    </Modal.Header>
-
-                    <Modal.Body>
-                        <div className="create-training-modal" style={{ textAlign: 'center' }}>
-                        <p>User is being created!</p>
-                        <p>Please Wait...</p>
-                        </div>
-                    </Modal.Body>
-
-                    <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                    {
-                        loader === true && <div>
-                        <ReactBootstrap.Spinner animation="border" />
-                        </div>
-                    }
-                    </Modal.Footer>
-                </Modal>
-            }
       </div>
     </>
   );
 };
 
-export default NewUser;
+export default EditUser;
