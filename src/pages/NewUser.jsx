@@ -65,7 +65,7 @@ const NewUser = () => {
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee}, {
+    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -109,6 +109,7 @@ const NewUser = () => {
     let errorObject = UserFormValidation(formData);
 
     if(Object.keys(errorObject).length > 0) {
+        console.log(errorObject);
         setFormErrors(errorObject);
     } else {
         console.log('CREATING USER!');
@@ -467,14 +468,8 @@ const NewUser = () => {
                                   ...prevState,
                                   trainingCategories: [...selectedOptions.map(option => option.id + "")]
                                 }));
-
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  trainingCategories: null
-                                }));
                               }}
                             />
-                            { formErrors.trainingCategories !== null && <span className="error">{formErrors.trainingCategories}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -489,14 +484,8 @@ const NewUser = () => {
                                   ...prevState,
                                   professionalDevCategories: [...selectedOptions.map(option => option.id + "")]
                                 }));
-
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  professionalDevCategories: null
-                                }));
                               }}
                             />
-                            { formErrors.professionalDevCategories !== null && <span className="error">{formErrors.professionalDevCategories}</span> }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
@@ -511,14 +500,8 @@ const NewUser = () => {
                                   ...prevState,
                                   coordinator: e.id,
                                 }));
-
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  coordinator: null
-                                }));
                               }}
                             />
-                            { formErrors.coordinator !== null && <span className="error">{formErrors.coordinator}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -533,14 +516,8 @@ const NewUser = () => {
                                   ...prevState,
                                   businessAssets: [...selectedOptions.map(option => option.id + "")]
                                 }));
-
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  businessAssets: null
-                                }));
                               }}
                             />
-                            { formErrors.businessAssets !== null && <span className="error">{formErrors.businessAssets}</span> }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">

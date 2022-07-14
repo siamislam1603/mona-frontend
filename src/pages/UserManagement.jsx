@@ -81,6 +81,7 @@ const UserManagement = () => {
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
+        console.log('CELL:', cell);
         return (
           <>
             <div className="user-list">
@@ -123,7 +124,7 @@ const UserManagement = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-                  <Dropdown.Item href={`/edit-user/${112}`}>Edit</Dropdown.Item>
+                  <Dropdown.Item href={`/edit-user/${134}`}>Edit</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
