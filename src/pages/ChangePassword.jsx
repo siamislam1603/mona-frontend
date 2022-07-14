@@ -175,7 +175,7 @@ const ChangePassword = () => {
                 </header>
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}                 
-                <div className="training-form">
+                <div className="change-pass-sec">
                   <Row>
                   {/* <Col md={12} className="mb-3">
                         <Form.Group>
@@ -195,7 +195,7 @@ const ChangePassword = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
                  </Col> */}
-              <Col md={12}>
+              <Col md={6}>
                 <Form.Group
                   className="form-group"
                   controlId="formBasicPassword"
@@ -234,8 +234,9 @@ const ChangePassword = () => {
                     </span>
                 </Form.Group>
                     </Col>
-                 
-                 <Col md={12}>
+                </Row>
+                <Row>
+                 <Col md={6}>
                 <Form.Group
                   className="form-group"
                   controlId="formBasicPassword"
@@ -292,12 +293,12 @@ const ChangePassword = () => {
                         </Form.Group>
                       </Col> */}
 
-                <Col md={12}>
+                <Col md={6}>
                   <Form.Group
                     className="form-group"
                     controlId="formBasicPassword"
                     >
-                    <Form.Label>Confirm Password</Form.Label>
+                    <Form.Label>Confirm New Password</Form.Label>
                     <Form.Control
                       className="form_input"
                       type={!ThreHide ? 'text' : 'password'}                   
@@ -331,7 +332,7 @@ const ChangePassword = () => {
                     </Form.Group>
                     </Col>
                       <div className="custom_submit text-center pt-3">
-                    <Button variant="primary" className="w-100" type="submit" onClick={onSubmit}>
+                    <Button variant="primary" type="submit" onClick={onSubmit}>
                       Submit
                     </Button>
                     </div>
