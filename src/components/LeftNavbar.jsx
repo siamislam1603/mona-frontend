@@ -7,25 +7,30 @@ import { Link } from 'react-router-dom';
 
 const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
-
   const fetchPermissionList = async () => {
-    console.log('FETCHING PERMISSION LIST');
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    })
 
-    if(response.status === 200 && response.data.status === "success") {
-      let { permissionsObject } = response.data;
-      console.log('PERMISSIONS OBJECT:', permissionsObject)
-      setPermissionList(permissionsObject.filter(permission => permission.controller.show_in_menu === true));
-      localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
-    }
+    console.log("dddddddddddddddddddddddddddddddddddddd")
+    let menu_list = JSON.parse(localStorage.getItem('menu_list'));
+    setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
+
+    // console.log('FETCHING PERMISSION LIST');
+    // let token = localStorage.getItem('token');
+    // const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
+    //   headers: {
+    //     "Authorization": "Bearer " + token
+    //   }
+    // })
+
+    // if(response.status === 200 && response.data.status === "success") {
+    //   let { permissionsObject } = response.data;
+    //   console.log('PERMISSIONS OBJECT:', permissionsObject)
+    //   setPermissionList(permissionsObject.filter(permission => permission.controller.show_in_menu === true));
+    //   localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
+    // }
   };
 
   useEffect(() => {
+    
     fetchPermissionList();
   }, []);
 

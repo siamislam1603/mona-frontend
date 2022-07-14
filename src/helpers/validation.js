@@ -234,22 +234,37 @@ export const PasswordValidation = (form) => {
     confirm_password
   } = form;
   if (!oldpassword) {
-    errors.oldpassword = 'oldpassword is required!';
+    errors.oldpassword = 'Old password is required!';
   }
   if(!new_password){
-    errors.new_password = 'new Password is required'
+    errors.new_password = 'New Password is required'
   }
   if(!confirm_password){
-    errors.confirm_password = 'confirm password'
+    errors.confirm_password = 'Confirm password'
   }
-  if(new_password && confirm_password && new_password != confirm_password ){
-      errors.new_password = "new password and confirm password need to be same"
-      errors.confirm_password = "new password and confirm password need to be same"
+  if(new_password && confirm_password && new_password !== confirm_password ){
+      errors.new_password = "New password and Confirm password need to be same"
+      errors.confirm_password = "New password and Confirm password need to be same"
   }
   
 
   return errors;
 };
+export const ResetPasswordValidation = (form) =>{
+  let errors = {};
+  let {new_password,confirm_password} = form;
+  if(!new_password){
+    errors.new_password = "New password require"
+  }
+  if(!confirm_password){
+    errors.confirm_password = "Confirm password require"
+  }
+  if(new_password && confirm_password && new_password !== confirm_password ){
+    errors.new_password = "New password and Confirm password need to be same"
+    errors.confirm_password = "New password and Confirm password need to be same"
+  }
+  return errors;
+}
 export const FranchiseeFormValidation = (formObj) => {
   let errors = {};
   let {
@@ -325,7 +340,6 @@ export const UserFormValidation = (formObj) => {
     postalCode,
     email,
     phone,
-    terminationDate,
   } = formObj;
 
   if(!fullname)
@@ -343,14 +357,14 @@ export const UserFormValidation = (formObj) => {
   if(!postalCode)
     errors.postalCode = "Postal code is required!";
 
+  if(postalCode.length !== 4) 
+    errors.postalCodeLength = "Postal code should be 4-digit long!"
+
   if(!email)
     errors.email = "Email is required!";
 
   if(!phone)
     errors.phone = "Phone number is required!";
-
-  if(!terminationDate)
-    errors.terminationDate = "select a termination date!";
 
   return errors;
 };

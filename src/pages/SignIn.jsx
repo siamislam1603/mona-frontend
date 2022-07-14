@@ -23,14 +23,39 @@ const SignIn = () => {
 
   const verifyUser = async (data) => {
     const res = await axios.post(`${BASE_URL}/auth/login`, data);
+
+
+
+
     if (res.status === 200 && res.data.status === 'success') {
+
+
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user_id', res.data.user.id);
       localStorage.setItem('user_role', res.data.user.role);
       localStorage.setItem('user_name', res.data.user.name);
       localStorage.setItem('email', res.data.user.email);
-      
       localStorage.setItem('franchisee_id', res.data.user.franchisee_id);
+
+
+      let token = res.data.accessToken;
+      const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      })
+
+      if(response.status === 200 && response.data.status === "success") {
+        let { permissionsObject } = response.data;
+        
+        console.log('PERMISSIONS OBJECT:', permissionsObject)
+        // setPermissionList(permissionsObject.filter(permission => permission.controller.show_in_menu === true));
+        // let active_menu_list = permissionsObject.filter(permission => permission.controller.show_in_menu === true)
+
+        localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
+      }
+
+
       if (res.data.user.role === 'franchisor_admin')
       {
         window.location.href = '/franchisor-dashboard';
