@@ -310,6 +310,10 @@ export const FranchiseeFormValidation = (formObj) => {
     errors.postcode = "postal code is required!";
   }
 
+  if(postcode.length !== 4) {
+    errors.postcode = "postal code should be 4-digit long."
+  }
+
   if(!contact) {
     errors.contact = "contact number is required!";
   }
@@ -329,10 +333,6 @@ export const UserFormValidation = (formObj) => {
     postalCode,
     email,
     phone,
-    trainingCategories,
-    professionalDevCategories,
-    coordinator,
-    businessAssets,
     terminationDate,
   } = formObj;
 
@@ -356,18 +356,6 @@ export const UserFormValidation = (formObj) => {
 
   if(!phone)
     errors.phone = "Phone number is required!";
-
-  if(!trainingCategories)
-    errors.trainingCategories = "Training categories are required!";
-
-  if(!professionalDevCategories)
-    errors.professionalDevCategories = "Professional development categories are required!";
-
-  if(!coordinator)
-    errors.coordinator = "Select a coordinator!";
-
-  if(!businessAssets)
-    errors.businessAssets = "Business assets are required!";
 
   if(!terminationDate)
     errors.terminationDate = "select a termination date!";
