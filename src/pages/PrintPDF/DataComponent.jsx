@@ -11,11 +11,10 @@ class DataComponent extends React.Component {
         dangerouslySetInnerHTML={{
           __html: `<div class="module_detail">
                 <div class="image_banner">
-                  <img src=${
+                  ${this.props.cover_image && `<img src=${
                     this.props.cover_image
-                      ? this.props.cover_image
-                      : '../img/demo_image.png'
-                  } alt="" />
+                    
+                } alt="" />`} 
                 </div>
                 <div class="module_title">
                   <h3>
