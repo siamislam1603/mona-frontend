@@ -215,7 +215,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 /* Gurpreet */
 .admin-wrapper { display:flex; }
 .logo-column { padding:0; margin: 0; }
-.logo-column .navbar-brand { padding:70px 0; margin: 0; }
+.logo-column .navbar-brand { padding:40px 0; margin: 0; }
 .container { width:100%; max-width: 1550px; }
 .app-sidebar { flex: 0 0 260px; width:260px; border-right:1px solid #F0F0F0; position: relative; padding-bottom: 210px; }
 .app-sidebar .navbar-nav { display: block; }
@@ -238,7 +238,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .app-sidebar .navbar-expand-lg .navbar-nav .nav-link .manual-ico { background: url("../img/manual-ico.svg") no-repeat; background-size: cover; }
 .app-sidebar .navbar-expand-lg .navbar-nav .nav-link .usermana-ico { background: url("../img/user-management-ico.svg") no-repeat; background-size: cover; }
 
-.sec-column { width: 100%; padding: 30px 48px 0 48px; }
+.sec-column { width: 100%; padding: 40px; }
 .topheader { display:flex; align-items: center; }
 .topheader .lpanel, .topheader .rpanel { display:flex; align-items: center; }
 .topheader .rpanel .user-sec ul, .topheader .rpanel .user-sec li { margin: 0; padding: 0; list-style: none; display: inline-block; vertical-align: middle; }
