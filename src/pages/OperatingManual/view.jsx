@@ -658,7 +658,7 @@ const OperatingManual = () => {
                                                     file_item
                                                   )}
 
-                                                  <div className="forms-content">
+                                                  <div className="forms-content" onClick={()=>{window.open(file_item.url)}}>
                                                     <div className="content-icon-section">
                                                       <img
                                                         src={
@@ -676,7 +676,7 @@ const OperatingManual = () => {
                                                         Added On :
                                                         {moment(
                                                           inner_item.createdAt
-                                                        ).format('MM/DD/YYYY')}
+                                                        ).format('DD/MM/YYYY')}
                                                       </h4>
                                                     </div>
                                                   </div>
