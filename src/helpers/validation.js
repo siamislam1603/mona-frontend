@@ -266,7 +266,7 @@ export const FranchiseeFormValidation = (formObj) => {
     franchisee_number,
     acn,
     address,
-    postcode,
+    postalcode,
     contact,
   } = formObj;
 
@@ -306,12 +306,12 @@ export const FranchiseeFormValidation = (formObj) => {
     errors.address = "Address is required!";
   }
 
-  if(!postcode) {
+  if(!postalcode) {
     errors.postcode = "postal code is required!";
   }
 
-  if(postcode.length !== 4) {
-    errors.postcode = "postal code should be 4-digit long."
+  if(postalcode.length !== 4) {
+    errors.postalcodeLength = "postal code should be 4-digit long."
   }
 
   if(!contact) {

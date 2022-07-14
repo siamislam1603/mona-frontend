@@ -404,6 +404,7 @@ const NewUser = () => {
                               }}
                             />
                             { formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span> }
+                            { formErrors.postalcodeLength !== null && <span className="error">{formErrors.postalcodeLength}</span> }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
