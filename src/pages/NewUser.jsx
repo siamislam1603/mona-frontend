@@ -41,7 +41,6 @@ const NewUser = () => {
     professionalDevCategories: "",
     coordinator: "",
     businessAssets: "",
-    terminationDate: "",
     telcode: '+61',
   });
   const [countryData, setCountryData] = useState([]);
@@ -65,11 +64,13 @@ const NewUser = () => {
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
+    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee}, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
+
+    console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
       setLoader(false);
@@ -109,7 +110,7 @@ const NewUser = () => {
     let errorObject = UserFormValidation(formData);
 
     if(Object.keys(errorObject).length > 0) {
-        console.log(errorObject);
+        console.log('THERE ARE STILL ERRORS', errorObject);
         setFormErrors(errorObject);
     } else {
         console.log('CREATING USER!');
@@ -269,7 +270,8 @@ const NewUser = () => {
 
   // formData && console.log('FORM DATA:', formData);
   // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
-  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
+  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
+  // formErrors && console.log('FORM ERRORS:', formErrors);
 
   return (
     <>
@@ -391,20 +393,28 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Postal Code</Form.Label>
                             <Form.Control
-                              type="number"
-                              name="postalCode"
+                              type="tel"
+                              name="postalCode" 
+                              maxlength="4"
                               placeholder="Your Postal Code"
                               value={formData.postalCode ?? ''}
                               onChange={(e) => {
+
                                 handleChange(e);
                                 setFormErrors(prevState => ({
                                   ...prevState,
                                   postalCode: null
                                 }));
+
+                                if(e.target.value.length === 4) {
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    postalCodeLength: null
+                                  }))
+                                }
                               }}
                             />
-                            { formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span> }
-                            { formErrors.postalcodeLength !== null && <span className="error">{formErrors.postalcodeLength}</span> }
+                            { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
@@ -519,22 +529,6 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                          </Form.Group>
-                          
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Termination Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              name="terminationDate"
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  terminationDate: null
-                                })); 
-                              }}
-                            />
-                            { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
