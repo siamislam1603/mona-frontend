@@ -202,8 +202,8 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                       <Dropdown.Item href="#">Trainings</Dropdown.Item>
                       <Dropdown.Item href="#">File Repository</Dropdown.Item> */}
 
-                    <Dropdown.Item href="/change-password">My Profile</Dropdown.Item>
-                    <Dropdown.Item href="#">My Profile</Dropdown.Item>
+                    <Dropdown.Item href="/change-password">Change Password</Dropdown.Item>
+                    <Dropdown.Item href={`/edit-user/${localStorage.getItem('user_id')}`}>My Profile</Dropdown.Item>
                     <Dropdown.Item href="#">Settings</Dropdown.Item>
                     <Dropdown.Item href="#" onClick={handleLogout}>
                       Logout

@@ -281,7 +281,7 @@ const AllFranchisees = () => {
                                                         >
                                                             + Add New Franchisee
                                                         </a>
-                                                        <Dropdown>
+                                                        {/* <Dropdown>
                                                             <Dropdown.Toggle
                                                                 id="extrabtn"
                                                                 className="ctaact"
@@ -298,7 +298,7 @@ const AllFranchisees = () => {
                                                                     Delete All Row
                                                                 </Dropdown.Item>
                                                             </Dropdown.Menu>
-                                                        </Dropdown>
+                                                        </Dropdown> */}
                                                     </div>
                                                 </div>
                                             </header>
