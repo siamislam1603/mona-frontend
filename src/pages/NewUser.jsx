@@ -267,9 +267,9 @@ const NewUser = () => {
     fetchCoordinatorData();
   }, [selectedFranchisee])
 
-  formData && console.log('FORM DATA:', formData);
+  // formData && console.log('FORM DATA:', formData);
   // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
-  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
+  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
 
   return (
     <>
