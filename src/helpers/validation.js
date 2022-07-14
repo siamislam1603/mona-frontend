@@ -115,15 +115,15 @@ export const createFormValidation = (form) => {
       newErrors.previous_form = 'Previous Form is Required';
   return newErrors;
 };
-export const createOperatingManualValidation = (form) => {
+export const createOperatingManualValidation = (form,imageUrl,videoUrl) => {
   let newErrors = {};
-  let { title, description, cover_image, reference_video } = form;
+  let { title, description } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-  if (!cover_image || cover_image === '')
+  if (!imageUrl || imageUrl === '')
     newErrors.cover_image = 'Cover image is Required';
-  if (!reference_video || reference_video === '')
+  if (!videoUrl || videoUrl === '')
     newErrors.reference_video = 'Reference video is Required';
 
   return newErrors;
@@ -331,3 +331,44 @@ export const FranchiseeFormValidation = (formObj) => {
 
   return errors;
 }
+
+
+export const UserFormValidation = (formObj) => {
+  let errors = {};
+
+  let {
+    fullname,
+    role,
+    city,
+    address,
+    postalCode,
+    email,
+    phone,
+  } = formObj;
+
+  if(!fullname)
+    errors.fullname = "Username is required!";
+
+  if(!role)
+    errors.role = "User role is required!";
+  
+  if(!city)
+    errors.city = "City is required!";
+  
+  if(!address)
+    errors.address = "Address is required!";
+
+  if(!postalCode)
+    errors.postalCode = "Postal code is required!";
+
+  if(postalCode.length !== 4) 
+    errors.postalCodeLength = "Postal code should be 4-digit long!"
+
+  if(!email)
+    errors.email = "Email is required!";
+
+  if(!phone)
+    errors.phone = "Phone number is required!";
+
+  return errors;
+};

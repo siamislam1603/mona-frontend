@@ -9,7 +9,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
 
   const savePermissionInState = async () => {
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
-    setPermissionList(menu_list);
+    setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
   };
 
   const fetchFranchiseeList = async () => {
@@ -99,14 +99,14 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                   'No Data Available'}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <React.Fragment key="">
+                {localStorage.getItem("user_role")==="franchisor_admin" ? <React.Fragment key="">
                   <Dropdown.Item eventKey="All">
                     <span className="loction-pic">
                       <img alt="" id="user-pic" src="/img/user.png" />
                     </span>
                     All
                   </Dropdown.Item>
-                </React.Fragment>
+                </React.Fragment> : null}
                 {franchiseeList.map((data) => {
                   return (
                     <React.Fragment key={data.id}>
@@ -193,6 +193,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                       <Dropdown.Item href="#">Trainings</Dropdown.Item>
                       <Dropdown.Item href="#">File Repository</Dropdown.Item> */}
 
+                    <Dropdown.Item href="/change-password">My Profile</Dropdown.Item>
                     <Dropdown.Item href="#">My Profile</Dropdown.Item>
                     <Dropdown.Item href="#">Settings</Dropdown.Item>
                     <Dropdown.Item href="#" onClick={handleLogout}>

@@ -46,7 +46,7 @@ const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible }) => {
         <div className="popup-container">
             <div className="popup">
                 <div className="container-cropper">
-                `    <div className="cropper">
+                    <div className="cropper">
                         <Cropper 
                             image={tempImage}
                             crop={crop}
@@ -55,7 +55,7 @@ const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible }) => {
                             onCropChange={setCrop}
                             onZoomChange={setZoom}
                             onCropComplete={onCropComplete} />
-                `    </div>
+                    </div>
 
                     <div className="slider">
                         <Slider 
@@ -69,11 +69,11 @@ const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible }) => {
                 </div>
 
                 <div className="container-buttons">
-                    <Button 
-                        variant="contained" 
-                        color="primary" 
-                        onClick={onImageCrop}>
-                        Save Image
+                    <Button variant="contained" color="primary" className="me-3">
+                      Cancel
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={onImageCrop}>
+                      Save Image
                     </Button>
                 </div>
             </div>
