@@ -1,7 +1,7 @@
 import axios from 'axios';
 import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
 import React, { useEffect, useState, useRef } from 'react';
-import { Button, Col, Container, Row, Form } from 'react-bootstrap';
+import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import DragDropCrop from '../components/DragDropCrop';
@@ -53,6 +53,9 @@ const EditUser = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
 
+  // DIALOG STATES
+  const [showConsentDialog, setShowConsentDialog] = useState(false);
+
   // FETCHES THE DATA OF USER FOR EDITING
   const fetchEditUserData = async () => {
     const token = localStorage.getItem('token');
@@ -82,15 +85,15 @@ const EditUser = () => {
       telcode: editUserData?.phone.split("-")[0],
       phone: editUserData?.phone.split("-")[1],
       
-      trainingCategories: editUserData?.training_categories.map(d => parseInt(d)),
-      trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories.includes(category.id + "")),
+      trainingCategories: editUserData?.training_categories?.map(d => parseInt(d)),
+      trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories?.includes(category.id + "")),
 
-      professionalDevCategories: editUserData?.professional_development_categories.map(d => parseInt(d)),
+      professionalDevCategories: editUserData?.professional_development_categories?.map(d => parseInt(d)),
       professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories.includes(user.id + "")),
 
       coordinator: editUserData?.coordinator,
 
-      businessAssets: editUserData?.business_assets.map(d => parseInt(d)),
+      businessAssets: editUserData?.business_assets?.map(d => parseInt(d)),
       businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + '')),
       
       terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD')
@@ -100,7 +103,7 @@ const EditUser = () => {
   // CREATES NEW USER INSIDE THE DATABASE
   const updateUserDetails = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, formData, {
+    const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, { ...formData, franchisee: selectedFranchisee }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -279,11 +282,12 @@ const EditUser = () => {
     fetchCoordinatorData();
   }, [selectedFranchisee]);
 
-  editUserData && console.log('EDIT USER DATA:',editUserData);
-  formData && console.log('FORM DATA:', formData);
-  businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
-  businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
-  formData && console.log('BUSINESS:', formData.businessAssets);
+  // editUserData && console.log('EDIT USER DATA:',editUserData);
+  // formData && console.log('FORM DATA:', formData);
+  // businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
+  // businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
+  // formData && console.log('BUSINESS:', formData.businessAssets);
+  showConsentDialog && console.log('CONSENT DIALOG:', showConsentDialog);
   return (
     <>
       <div id="main">
@@ -360,7 +364,7 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Suburb</Form.Label>
                             <Select
-                              placeholder="Which Suburb?"
+                              placeholder={formData?.city || "Which Suburb?"}
                               closeMenuOnSelect={true}
                               options={cityData}
                               onChange={(e) =>
@@ -411,12 +415,7 @@ const EditUser = () => {
                             />
                             <span className="error">
                               {!formData.email && formErrors.email}
-                            </span>
-                            {topErrorMessage && (
-                              <span className="toast-error">
-                                {topErrorMessage}
-                              </span>
-                            )}
+                            </span> 
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -519,6 +518,12 @@ const EditUser = () => {
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Upload Training Documents</Form.Label>
+                            <DragDropMultiple 
+                              onSave={setTrainingDocuments} />
+                          </Form.Group>
+
+                          <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
                               type="date"
@@ -526,12 +531,7 @@ const EditUser = () => {
                               value={formData.terminationDate}
                               onChange={handleChange}
                             />
-                          </Form.Group>
-                          
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Upload Training Documents</Form.Label>
-                            <DragDropMultiple 
-                              onSave={setTrainingDocuments} />
+                            <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
                           </Form.Group>
 
                           <Col md={12}>
@@ -554,6 +554,52 @@ const EditUser = () => {
               </div>
             </div>
           </Container>
+          {
+            <Modal
+              size="lg"
+              show={showConsentDialog}
+              onHide={() => setShowConsentDialog(false)}>
+              <Modal.Header>
+                <Modal.Title>Termination</Modal.Title>
+              </Modal.Header>
+
+              <Modal.Body>
+                <Row>
+                  <p><strong>To whom it may concern,</strong></p>
+                  
+                  <div className="mt-2">
+                    <p style={{ fontSize: "16px" }}>I hereby formally provide notice of my intention to terminate my arrangement with Mona.</p>
+                    <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of:</p>
+                  </div>
+
+                  <Form.Group className="col-md-6 mb-3 mt-4">
+                    <Form.Label>Termination Date</Form.Label>
+                    <Form.Control
+                      type="date"
+                      name="terminationDate"
+                      value={formData.terminationDate}
+                      onChange={handleChange}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="col-md-12 mb-6 mt-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="flexCheckDefault">
+                        I am happy to be reached if you have any questions.
+                      </label>
+                    </div>
+                  </Form.Group>
+                </Row>
+              </Modal.Body>
+
+              <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
+              <div class="text-center">
+                <button type="button" className="btn btn-primary" style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}>Submit</button>
+              </div>
+              </Modal.Footer>
+            </Modal>
+          }
         </section>
       </div>
     </>

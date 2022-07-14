@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import DragDropCrop from '../components/DragDropCrop';
+import DragDropSingle from '../components/DragDropSingle';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -41,7 +41,6 @@ const NewUser = () => {
     professionalDevCategories: "",
     coordinator: "",
     businessAssets: "",
-    terminationDate: "",
     telcode: '+61',
   });
   const [countryData, setCountryData] = useState([]);
@@ -65,11 +64,13 @@ const NewUser = () => {
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
+    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee}, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
+
+    console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
       setLoader(false);
@@ -109,7 +110,7 @@ const NewUser = () => {
     let errorObject = UserFormValidation(formData);
 
     if(Object.keys(errorObject).length > 0) {
-        console.log(errorObject);
+        console.log('THERE ARE STILL ERRORS', errorObject);
         setFormErrors(errorObject);
     } else {
         console.log('CREATING USER!');
@@ -267,9 +268,10 @@ const NewUser = () => {
     fetchCoordinatorData();
   }, [selectedFranchisee])
 
-  formData && console.log('FORM DATA:', formData);
+  // formData && console.log('FORM DATA:', formData);
   // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
+  // formErrors && console.log('FORM ERRORS:', formErrors);
 
   return (
     <>
@@ -289,7 +291,7 @@ const NewUser = () => {
                   <div className="maincolumn">
                     <div className="new-user-sec">
                       <div className="user-pic-sec">
-                        <DragDropCrop
+                        <DragDropSingle
                           croppedImage={croppedImage}
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
@@ -391,19 +393,28 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Postal Code</Form.Label>
                             <Form.Control
-                              type="number"
-                              name="postalCode"
+                              type="tel"
+                              name="postalCode" 
+                              maxlength="4"
                               placeholder="Your Postal Code"
                               value={formData.postalCode ?? ''}
                               onChange={(e) => {
+
                                 handleChange(e);
                                 setFormErrors(prevState => ({
                                   ...prevState,
                                   postalCode: null
                                 }));
+
+                                if(e.target.value.length === 4) {
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    postalCodeLength: null
+                                  }))
+                                }
                               }}
                             />
-                            { formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span> }
+                            { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
@@ -518,22 +529,6 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                          </Form.Group>
-                          
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Termination Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              name="terminationDate"
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  terminationDate: null
-                                })); 
-                              }}
-                            />
-                            { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
