@@ -134,8 +134,6 @@ const EditFranchisees = () => {
         fetchFranchiseeAdmins();
     }, []);
 
-    franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
-
     return (
         <div>
             <div id="main">

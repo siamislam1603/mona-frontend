@@ -121,8 +121,6 @@ const AllFranchisees = () => {
         console.log("searched datata",search)
     }, [search]);
     
-
-
     return (
         <div>
             <div id="main">
