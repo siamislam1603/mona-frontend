@@ -55,29 +55,28 @@ export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, 
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
         <div className="picimg">
-          {/* <ul> */}
-            {
-              croppedImage ?
-                <div className="crop-sec">
-                  <img src={currentURI} alt="cover_file" />
-                  <span className="ms-2">
-                    <Link to="#" onClick={() => setCroppedImage(null)}>
-                        <img src="../img/removeIcon.svg" alt="" />
-                    </Link>
-                  </span>
-                </div>
-                : data.map((file, index) => (
-                <div className="imgcol" key={index}>
-                  <img src={getBase64(file) || currentURI} alt="" />
-                  <span className="ms-2">
-                    <Link to="#" onClick={() => handleFileDelete(file)}>
-                        <img src="../img/removeIcon.svg" alt="" />
-                    </Link>
-                  </span>
-                </div>
-              ))
-            }
-          {/* </ul> */}
+          {
+            (currentURI) ?
+            croppedImage ?
+              <div className="crop-sec">
+                <img src={currentURI} alt="cover_file" />
+                <span className="ms-2">
+                  <Link to="#" onClick={() => setCroppedImage(null)}>
+                      <img src="../img/removeIcon.svg" alt="" />
+                  </Link>
+                </span>
+              </div>
+              : data.map((file, index) => (
+              <div className="imgcol" key={index}>
+                <img src={getBase64(file) || currentURI} alt="" />
+                <span className="ms-2">
+                  <Link to="#" onClick={() => handleFileDelete(file)}>
+                      <img src="../img/removeIcon.svg" alt="" />
+                  </Link>
+                </span>
+              </div>
+            )) : <img src="../img/upload.jpg" alt="" />
+          }
         </div>
         <span className="text-center infotxt">Upload profile image for this user here</span>
       </div>
