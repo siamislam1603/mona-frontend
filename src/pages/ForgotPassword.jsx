@@ -15,15 +15,6 @@ const ForgotPassword = () => {
   const { email} = fields;
   const [formErrors, setFormErrors] = useState([]);
 
-  function ValidateEmail(mail) 
-      {
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test())
-        {
-          return (true)
-        }
-          alert("You have entered an invalid email address!")
-          return (false)
-      }
     const handleChange = (e) =>{
       const {name,value} = e.target;
       setFields({

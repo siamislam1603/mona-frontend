@@ -303,6 +303,13 @@ export const FranchiseeFormValidation = (formObj) => {
 
   if(!franchisee_admin_email) {
     errors.franchisee_admin_email = "Franchisee Admin's email is required!";
+   
+  }
+  if(franchisee_admin_email){
+    if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(franchisee_admin_email))) 
+    {  
+        errors.validemail= "Enter a valid email"
+    }
   }
 
   if(!franchisee_admin) {

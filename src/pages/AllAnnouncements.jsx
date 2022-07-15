@@ -13,7 +13,8 @@ const userName = localStorage.getItem("user_name");
 const userROle = localStorage.getItem("user_role")
 const [announcementDetails,setAnnouncementDetail] = useState([])
 const [announcementFiles,setAnnouncementFiles] = useState([])
-
+const [videoFile, setVideoFile] = useState("https://embed.api.video/vod/vi38jFGbfBrkIlcrHXWLszG");
+ 
   const AllAnnouncementData = async () =>{
     console.log("Announcement detial API")
   const token = localStorage.getItem('token');
@@ -31,7 +32,10 @@ useEffect(() => {
 }, [])
 console.log("The annoumce detial",announcementDetails)
   return (
+    
     <div className="announcement-accordion">
+      <iframe  src="https://embed.api.video/vod/vi38jFGbfBrkIlcrHXWLszG">
+                                  </iframe>
                     <Accordion defaultActiveKey="0">
                       {
                         announcementDetails.map((details,index) => (
@@ -59,10 +63,12 @@ console.log("The annoumce detial",announcementDetails)
                             <Row>
                               <Col md={4}>
                                 <div className="video-col">
-                                  <a href="/" className="vid-col">
+                                  {/* <a href="/" className="vid-col">
                                     <img src="../img/video-pic.jpg" alt="" />
                                     <span className="caption">Regarding Submission of Documents of all classes students admitted in AY 2021-22</span>
-                                  </a>
+                                  </a> */}
+                                  <iframe  src="https://embed.api.video/vod/vi38jFGbfBrkIlcrHXWLszG">
+                                  </iframe>
                                 </div>
                               </Col>
                               <Col md={8}>

@@ -121,6 +121,7 @@ const EditFranchisees = () => {
 
     const handleChange = event => {
         const { name, value } = event.target;
+        console.log("")
 
         setFranchiseeData(prevState => ({
             ...prevState,
@@ -235,6 +236,7 @@ const EditFranchisees = () => {
                                                     name="contact"
                                                     type="text" 
                                                     placeholder="454 342 56"
+                                                    maxLength={10}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -255,10 +257,13 @@ const EditFranchisees = () => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
                                                             ...prevState,
-                                                            franchisee_admin_email: null
+                                                            franchisee_admin_email: null,
+                                                            validemail:null
                                                         }));
                                                     }} />
                                                 { formErrors.franchisee_admin_email !== null && <span className="error">{formErrors.franchisee_admin_email}</span> }
+                                                {!formErrors.franchisee_admin_email &&<span className="error">{formErrors.validemail}</span>  }
+                                              
                                             </Form.Group>
                                         </Col>
 
@@ -316,7 +321,10 @@ const EditFranchisees = () => {
                                                 <Form.Control
                                                     name="postcode" 
                                                     type="text" 
+                                                    pattern="[0-9]*"
+                                                    maxLength={4}
                                                     placeholder="24545"
+                                                    
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({

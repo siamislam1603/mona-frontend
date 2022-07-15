@@ -436,7 +436,7 @@ const createAnnouncement = async (data) => {
                           isInvalid = {!!error.title}
                           />
                           <Form.Control.Feedback type="invalid">
-                            {(error.title)}
+                            {error.title}
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
