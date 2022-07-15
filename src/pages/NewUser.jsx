@@ -339,6 +339,7 @@ const NewUser = () => {
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
                           setPopupVisible={setPopupVisible}
+                          fetchedPhoto={""}
                         />
 
                         {

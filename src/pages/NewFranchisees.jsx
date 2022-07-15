@@ -31,6 +31,7 @@ const NewFranchisees = () => {
     const [topErrorMessage, setTopErrorMessage] = useState(null);
     const [loader, setLoader] = useState(false);
     const [createFranchiseeModal, setCreateFranchiseeModal] = useState(false);
+    const [franchiseeCollecion, setFranchiseeCollection] = useState(null);
     
     // ERROR STATES
     const [formErrors, setFormErrors] = useState({});
@@ -135,6 +136,25 @@ const NewFranchisees = () => {
         window.location.href="/all-franchisees";
     }
 
+    const fetchFranchiseeList = async () => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+            headers: {
+            "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if(response.status === 200 && response.data.status === "success") {
+            let { franchiseeList } = response.data;
+
+            setFranchiseeCollection(franchiseeList.map(franchisee => ({
+                id: franchisee.id,
+                value: franchisee.franchisee_alias,
+                label: franchisee.franchisee_name
+            })));  
+        }
+    }
+
     useEffect(() => {
         setFranchiseeData((prevState) => ({
             ...prevState,
@@ -145,7 +165,9 @@ const NewFranchisees = () => {
     useEffect(() => {
         fetchAustralianStates();
         fetchCities();
+        fetchFranchiseeList();
         fetchFranchiseeAdmins();
+        fetchFranchiseeList();
     }, []);
 
     return (
@@ -340,6 +362,32 @@ const NewFranchisees = () => {
                                                         }));
                                                     }} />
                                                 { formErrors.postcode !== null && <span className="error">{formErrors.postcode}</span> }
+                                            </Form.Group>
+                                            
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>Select Franchisee:</Form.Label>
+                                                <Select
+                                                placeholder="Select Franchisee"
+                                                closeMenuOnSelect={true}
+                                                // options={franchiseeCollection}
+                                                onChange={(e) => {
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        franchisee_admin: e.id,
+                                                    }));
+
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        franchisee_object: e
+                                                    }));
+
+                                                    setFormErrors(prevState => ({
+                                                        ...prevState,
+                                                        franchisee_admin: null
+                                                    }));   
+                                                }}
+                                                />
+                                                { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
                                             </Form.Group>
 
                                             <Form.Group className="mb-3">
