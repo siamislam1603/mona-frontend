@@ -117,10 +117,12 @@ export const createFormValidation = (form) => {
 };
 export const createOperatingManualValidation = (form) => {
   let newErrors = {};
-  let { title, description } = form;
+  let { title, description,order } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
+  if (!order || order === '')
+    newErrors.order = 'Position is Required';
   
   return newErrors;
 };
