@@ -41,6 +41,7 @@ import ChangePassword from "../pages/ChangePassword"
 import ResetPassword from '../pages/ResetPassword';
 import EditFranchisees from "../pages/EditFranchisees"
 import EditUser from '../pages/EditUser';
+import RandomPage from '../pages/RandomPage';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -84,6 +85,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <ChildEnrollment />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/random-page"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <RandomPage />
             </Protected>
           }
         />

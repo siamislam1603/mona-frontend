@@ -66,12 +66,6 @@ const NewUser = () => {
   const createUser = async (data) => {
     const token = localStorage.getItem('token');
 
-    // const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
-    //   headers: {
-    //     "Authorization": `Bearer ${token}`
-    //   }
-    // });
-
     const response = await axios.post(`${BASE_URL}/auth/signup`, data, {
 
       headers: {
@@ -96,13 +90,6 @@ const NewUser = () => {
           [error.error_field]: error.error_msg
       })));
     }
-    // if (response.status === 201) {
-    //   localStorage.setItem('token', response.data.accessToken);
-    //   window.location.href = '/user-management';
-    // } else if (response.status === 201 && response.data.status === 'fail') {
-    //   console.log('MESSAGE:', response, data.msg);
-    //   setTopErrorMessage(response.data.msg);
-    // }
   };
 
   const handleChange = (event) => {
@@ -112,6 +99,7 @@ const NewUser = () => {
       [name]: value,
     }));
   };
+
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -119,10 +107,10 @@ const NewUser = () => {
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
+
   const handleSubmit = async(event) => {
     event.preventDefault();
     let data=new FormData();
-    console.log("trainingDocuments---->",trainingDocuments);
     let doc=[];
     trainingDocuments?.map(async(item)=>{
       const blob=await fetch(await toBase64(item)).then((res) => res.blob());
