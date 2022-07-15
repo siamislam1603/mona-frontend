@@ -548,6 +548,27 @@ const AddOperatingManual = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label className="formlabel">Position in the tree-structure</Form.Label>
+                          <Form.Control
+                            type="number"
+                            name="order"
+                            value={operatingManualData?.order}
+                            placeholder="Enter Position"
+                            onChange={(e) => {
+                              setOperatingManualField(
+                                e.target.name,
+                                e.target.value
+                              );
+                            }}
+                            isInvalid={!!errors.order}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.order}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
                     </Row>
                     <Row>
                       <Col sm={12}>
