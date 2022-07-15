@@ -128,6 +128,10 @@ const EditFranchisees = () => {
         }));
     } 
 
+    const handleCancel = () => {
+        window.location.href="/all-franchisees";
+    }
+
     useEffect(() => {
         fetchAustralianStates();
         fetchCities();
@@ -351,7 +355,7 @@ const EditFranchisees = () => {
 
                                         <div className="d-flex justify-content-center my-5">
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }}>Cancel</Button>
+                                                <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => handleCancel()}>Cancel</Button>
                                                 <Button type="submit">Save Details</Button>
                                             </Form.Group>
                                         </div>

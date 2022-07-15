@@ -276,6 +276,10 @@ const NewUser = () => {
     }
   };
 
+  const fetchFranchiseeList = async () => {
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, );
+  }
+
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
@@ -283,6 +287,7 @@ const NewUser = () => {
     fetchTrainingCategories();
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
+    fetchFranchiseeList();
   }, []);
 
   useEffect(() => {
