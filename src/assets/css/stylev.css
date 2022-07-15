@@ -1428,6 +1428,15 @@ li.branch {
     color: #333333;
 }
 
+.description_wrp .table > table{
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+.description_wrp .table>tbody,td,th,tr{
+    border-width: 1px;
+    padding: 15px;
+}
 span.module_dot {
     margin: 0 15px;
 }

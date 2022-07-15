@@ -43,12 +43,14 @@ const NewUser = () => {
     businessAssets: "",
     terminationDate: "",
     telcode: '+61',
+    franchisee: ""
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
   const [cityData, setCityData] = useState([]);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [franchiseeData, setFranchiseeData] = useState(null);
   const [coordinatorData, setCoordinatorData] = useState([]);
   const [trainingCategoryData, setTrainingCategoryData] = useState([]);
   const [pdcData, setPdcData] = useState([]);
@@ -110,53 +112,56 @@ const NewUser = () => {
 
   const handleSubmit = async(event) => {
     event.preventDefault();
-    let data=new FormData();
-    let doc=[];
-    trainingDocuments?.map(async(item)=>{
-      const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+
+    const errorObj = UserFormValidation(formData);
+    if(Object.keys(errorObj).length > 0) {
+      console.log('There are errors in the code!');
+      setFormErrors(errorObj);
+    } else {
+      console.log('Erorrs removed!');
+      let data=new FormData();
+      let doc=[];
+      trainingDocuments?.map(async(item)=>{
+        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+        // doc.push(blob);
+        data.append('images', blob);
+      })
+      console.log("trainingDocuments---->123",doc);
+      const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
       // doc.push(blob);
       data.append('images', blob);
-    })
-    console.log("trainingDocuments---->123",doc);
-    const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-    // doc.push(blob);
-    data.append('images', blob);
-    
-    Object.keys(formData)?.map((item,index) => {
-      data.append(item,Object.values(formData)[index]);
-    })
-    
-    // data.append("images", doc);
-    data.append("franchisee",selectedFranchisee || 'Alphabet Kids, Armidale')
-    let errorObject = UserFormValidation(formData);
+      
+      Object.keys(formData)?.map((item,index) => {
+        data.append(item,Object.values(formData)[index]);
+      })
+      
+      // data.append("images", doc);
+      let errorObject = UserFormValidation(formData);
 
-    if(Object.keys(errorObject).length > 0) {
-        console.log('THERE ARE STILL ERRORS', errorObject);
-        setFormErrors(errorObject);
-    } else {
-        console.log('CREATING USER!');
-        setCreateUserModal(true);
-        setLoader(true)
-        createUser(data);
+      if(Object.keys(errorObject).length > 0) {
+          console.log('THERE ARE STILL ERRORS', errorObject);
+          setFormErrors(errorObject);
+      } else {
+          console.log('CREATING USER!');
+          setCreateUserModal(true);
+          setLoader(true)
+          createUser(data);
+      }
+      
+      createUser(data);
     }
-    
-    createUser(data);
   };
 
-  const fetchCoordinatorData = async () => {
-    if (selectedFranchisee) {
-      let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(data => data.charAt(0).toLowerCase() + data.slice(1)).join("_");
-      
-      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}/coordinator`);
-
-      if(response.status === 200 && response.data.status === "success") {
-        let { coordinators } = response.data;
-        setCoordinatorData(coordinators.map(coordinator => ({
-          id: coordinator.id,
-          value: coordinator.fullname,
-          label: coordinator.fullname
-        })));
-      }
+  const fetchCoordinatorData = async (franchisee_id) => {
+    console.log('FETCHING COORDINATOR DATA');
+    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
+    if(response.status === 200 && response.data.status === "success") {
+      let { coordinators } = response.data;
+      setCoordinatorData(coordinators.map(coordinator => ({
+        id: coordinator.id,
+        value: coordinator.fullname,
+        label: coordinator.fullname
+      })));
     }
   }
 
@@ -277,7 +282,22 @@ const NewUser = () => {
   };
 
   const fetchFranchiseeList = async () => {
-    const response = await axios.get(`${BASE_URL}/role/franchisee`, );
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { franchiseeList } = response.data;
+
+      setFranchiseeData(franchiseeList.map(franchisee => ({
+        id: franchisee.id,
+        value: franchisee.franchisee_alias,
+        label: franchisee.franchisee_name
+      })));  
+    }
   }
 
   useEffect(() => {
@@ -291,13 +311,10 @@ const NewUser = () => {
   }, []);
 
   useEffect(() => {
-    fetchCoordinatorData();
-  }, [selectedFranchisee])
+    fetchCoordinatorData(formData.franchisee)
+  }, [formData.franchisee]);
 
-  formData && console.log('FORM DATA:', formData);
-  // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
-  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
-  // formErrors && console.log('FORM ERRORS:', formErrors);
+  formData && console.log('FORM ERRORS:', formData);
 
   return (
     <>
@@ -323,9 +340,6 @@ const NewUser = () => {
                           onSave={setImage}
                           setPopupVisible={setPopupVisible}
                         />
-                        <span className="error">
-                          {!formData.file && formErrors.file}
-                        </span>
 
                         {
                           popupVisible && 
@@ -524,7 +538,33 @@ const NewUser = () => {
                               }}
                             />
                           </Form.Group>
-                          
+                            
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Select Franchisee</Form.Label>
+                            <Select
+                              placeholder="Which Franchisee?"
+                              closeMenuOnSelect={true}
+                              options={franchiseeData}
+                              onChange={(e) => {
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  franchisee: e.id,
+                                }));
+
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  franchiseeObj: e
+                                }))
+
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  franchisee: null
+                                }));
+                              }}
+                            />
+                            { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
+                          </Form.Group>
+
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Primary Co-ordinator</Form.Label>
                             <Select

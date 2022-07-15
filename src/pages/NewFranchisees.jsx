@@ -95,9 +95,11 @@ const NewFranchisees = () => {
         const response = await axios.get(`${BASE_URL}/role/franchisee-admin-list`);
         if (response.status === 200 && response.data.status === "success") {
         const { franchiseeAdminList } = response.data;
+        console.log('data', franchiseeAdminList);
         setFranchiseeAdminData(
             franchiseeAdminList.map((dt) => ({
                 id: dt.id,
+                email: dt.email,
                 value: dt.fullname,
                 label: dt.fullname,
             }))
@@ -134,12 +136,17 @@ const NewFranchisees = () => {
     }
 
     useEffect(() => {
+        setFranchiseeData((prevState) => ({
+            ...prevState,
+            franchisee_admin_email: franchiseeData.franchisee_object?.email
+        }))
+    }, [franchiseeData.franchisee_admin]);
+
+    useEffect(() => {
         fetchAustralianStates();
         fetchCities();
         fetchFranchiseeAdmins();
     }, []);
-
-    franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
 
     return (
         <div>
@@ -256,6 +263,7 @@ const NewFranchisees = () => {
                                                 <Form.Label>Franchisee Admin’s Email</Form.Label>
                                                 <Form.Control 
                                                     name="franchisee_admin_email"
+                                                    value={franchiseeData?.franchisee_admin_email}
                                                     type="text" 
                                                     placeholder="andy.smith@specialdaycare.com"
                                                     onChange={(e) => {
@@ -344,6 +352,11 @@ const NewFranchisees = () => {
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,
                                                         franchisee_admin: e.id,
+                                                    }));
+
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        franchisee_object: e
                                                     }));
 
                                                     setFormErrors(prevState => ({
