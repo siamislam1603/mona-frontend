@@ -15,6 +15,7 @@ const [announcementDetails,setAnnouncementDetail] = useState([])
 const [announcementFiles,setAnnouncementFiles] = useState([])
 
   const AllAnnouncementData = async () =>{
+    console.log("Announcement detial API")
   const token = localStorage.getItem('token');
   const response = await axios.get(`${BASE_URL}/announcement`, {
     headers: {

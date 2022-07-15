@@ -9,7 +9,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
 
   const savePermissionInState = async () => {
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
-    setPermissionList(menu_list);
+    setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
   };
 
   const fetchFranchiseeList = async () => {
@@ -36,14 +36,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     );
     if (response.status === 200) {
       const { franchisee } = response.data;
-      setSelectedFranchisee(
-        franchisee.franchisee_name
-          ? franchisee.franchisee_name === 'All'
-            ? ''
-            : franchisee.franchisee_name
-          : '',
-        franchisee.id
-      );
+      setSelectedFranchisee(franchisee.franchisee_name ? franchisee.franchisee_name==="All" ? "" : franchisee.franchisee_name : "", franchisee.id);
       setFranchiseeList(
         [franchisee].map((data) => ({
           id: data.id,
@@ -101,11 +94,9 @@ const TopHeader = ({ setSelectedFranchisee }) => {
           <div className="selectdropdown">
             <Dropdown onSelect={selectFranchisee}>
               <Dropdown.Toggle id="dropdown-basic">
-                {localStorage.getItem('selectedFranchisee') === 'All'
-                  ? 'All Franchisee'
-                  : localStorage.getItem('selectedFranchisee') ||
-                    franchiseeList[0]?.franchisee_name ||
-                    'No Data Available'}
+                {localStorage.getItem('selectedFranchisee') ||
+                  franchiseeList[0]?.franchisee_name ||
+                  'No Data Available'}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 {localStorage.getItem("user_role")==="franchisor_admin" ? <React.Fragment key="">
@@ -113,7 +104,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                     <span className="loction-pic">
                       <img alt="" id="user-pic" src="/img/user.png" />
                     </span>
-                    All Franchisee
+                    All
                   </Dropdown.Item>
                 </React.Fragment> : null}
                 {franchiseeList.map((data) => {
@@ -202,7 +193,8 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                       <Dropdown.Item href="#">Trainings</Dropdown.Item>
                       <Dropdown.Item href="#">File Repository</Dropdown.Item> */}
 
-                    <Dropdown.Item href="#">My Profile</Dropdown.Item>
+                    <Dropdown.Item href="/change-password">Change Password</Dropdown.Item>
+                    <Dropdown.Item href={`/edit-user/${localStorage.getItem('user_id')}`}>My Profile</Dropdown.Item>
                     <Dropdown.Item href="#">Settings</Dropdown.Item>
                     <Dropdown.Item href="#" onClick={handleLogout}>
                       Logout

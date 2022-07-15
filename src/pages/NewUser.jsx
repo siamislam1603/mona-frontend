@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import DragDropCrop from '../components/DragDropCrop';
+import DragDropSingle from '../components/DragDropSingle';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -63,13 +63,17 @@ const NewUser = () => {
   const [createUserModal, setCreateUserModal] = useState(false);
 
   // CREATES NEW USER INSIDE THE DATABASE
-  const createUser = async () => {
+  const createUser = async (data) => {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
+
+    const response = await axios.post(`${BASE_URL}/auth/signup`, data, {
+
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
+
+    console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
       setLoader(false);
@@ -86,13 +90,6 @@ const NewUser = () => {
           [error.error_field]: error.error_msg
       })));
     }
-    // if (response.status === 201) {
-    //   localStorage.setItem('token', response.data.accessToken);
-    //   window.location.href = '/user-management';
-    // } else if (response.status === 201 && response.data.status === 'fail') {
-    //   console.log('MESSAGE:', response, data.msg);
-    //   setTopErrorMessage(response.data.msg);
-    // }
   };
 
   const handleChange = (event) => {
@@ -103,22 +100,47 @@ const NewUser = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const handleSubmit = async(event) => {
     event.preventDefault();
+    let data=new FormData();
+    let doc=[];
+    trainingDocuments?.map(async(item)=>{
+      const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+      // doc.push(blob);
+      data.append('images', blob);
+    })
+    console.log("trainingDocuments---->123",doc);
+    const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+    // doc.push(blob);
+    data.append('images', blob);
     
+    Object.keys(formData)?.map((item,index) => {
+      data.append(item,Object.values(formData)[index]);
+    })
+    
+    // data.append("images", doc);
+    data.append("franchisee",selectedFranchisee || 'Alphabet Kids, Armidale')
     let errorObject = UserFormValidation(formData);
 
     if(Object.keys(errorObject).length > 0) {
-        console.log(errorObject);
+        console.log('THERE ARE STILL ERRORS', errorObject);
         setFormErrors(errorObject);
     } else {
         console.log('CREATING USER!');
         setCreateUserModal(true);
         setLoader(true)
-        createUser();
+        createUser(data);
     }
     
-    createUser();
+    createUser(data);
   };
 
   const fetchCoordinatorData = async () => {
@@ -254,6 +276,10 @@ const NewUser = () => {
     }
   };
 
+  const fetchFranchiseeList = async () => {
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, );
+  }
+
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
@@ -261,6 +287,7 @@ const NewUser = () => {
     fetchTrainingCategories();
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
+    fetchFranchiseeList();
   }, []);
 
   useEffect(() => {
@@ -270,6 +297,7 @@ const NewUser = () => {
   formData && console.log('FORM DATA:', formData);
   // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
+  // formErrors && console.log('FORM ERRORS:', formErrors);
 
   return (
     <>
@@ -289,7 +317,7 @@ const NewUser = () => {
                   <div className="maincolumn">
                     <div className="new-user-sec">
                       <div className="user-pic-sec">
-                        <DragDropCrop
+                        <DragDropSingle
                           croppedImage={croppedImage}
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
@@ -391,20 +419,28 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Postal Code</Form.Label>
                             <Form.Control
-                              type="number"
+                              type="tel"
                               name="postalCode"
+                              maxlength="4"
                               placeholder="Your Postal Code"
                               value={formData.postalCode ?? ''}
                               onChange={(e) => {
+
                                 handleChange(e);
                                 setFormErrors(prevState => ({
                                   ...prevState,
                                   postalCode: null
                                 }));
+
+                                if(e.target.value.length === 4) {
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    postalCodeLength: null
+                                  }))
+                                }
                               }}
                             />
-                            { formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span> }
-                            { formErrors.postalcodeLength !== null && <span className="error">{formErrors.postalcodeLength}</span> }
+                            { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
@@ -521,7 +557,7 @@ const NewUser = () => {
                             />
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          {/* <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
                               type="date"
@@ -535,7 +571,7 @@ const NewUser = () => {
                               }}
                             />
                             { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
-                          </Form.Group>
+                          </Form.Group> */}
                           
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Upload Training Documents</Form.Label>
