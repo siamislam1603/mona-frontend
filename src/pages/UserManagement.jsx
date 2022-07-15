@@ -129,7 +129,7 @@ const UserManagement = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-                  <Dropdown.Item href={`/edit-user/${134}`}>Edit</Dropdown.Item>
+                  <Dropdown.Item href={`/edit-user/${106}`}>Edit</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
