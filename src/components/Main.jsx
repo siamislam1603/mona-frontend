@@ -38,9 +38,8 @@ import AllAnnouncements from '../pages/AllAnnouncements';
 import MyAnnouncements from '../pages/MyAnnouncements';
 import EditAnnouncement from '../pages/EditAnnouncement';
 import ChangePassword from "../pages/ChangePassword"
-import ResetPassword from '../pages/ResetPassword';
-import EditFranchisees from "../pages/EditFranchisees"
 import EditUser from '../pages/EditUser';
+import EditFranchisees from '../pages/EditFranchisees';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -109,16 +108,6 @@ const Main = () => {
         />
 
         <Route
-          path="/reset-password/"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ResetPassword />
-            </Protected>
-          }
-        />
-
-        <Route
           path="/new-franchisees"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -127,15 +116,16 @@ const Main = () => {
             </Protected>
           }
         />
+
         <Route
-          path="/edit-franchisees/:id"
+          path="/edit-franchisees/:franchiseeId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <EditFranchisees />
             </Protected>
           }
-        />
+        />    
 
         <Route
           path="/all-franchisees"
@@ -168,7 +158,7 @@ const Main = () => {
         />
 
         <Route
-          path="/edit-user/:userId"
+          path="/edit-user"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -470,6 +460,11 @@ const Main = () => {
             )
           }
         />
+
+        {/* <Route path="/not-found" component={NotFound } />
+        <Redirect from="/" to="/not-found" /> */}
+
+
       </Routes>
       
     </main>
