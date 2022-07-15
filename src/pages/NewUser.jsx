@@ -66,12 +66,6 @@ const NewUser = () => {
   const createUser = async (data) => {
     const token = localStorage.getItem('token');
 
-    // const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
-    //   headers: {
-    //     "Authorization": `Bearer ${token}`
-    //   }
-    // });
-
     const response = await axios.post(`${BASE_URL}/auth/signup`, data, {
 
       headers: {
@@ -96,13 +90,6 @@ const NewUser = () => {
           [error.error_field]: error.error_msg
       })));
     }
-    // if (response.status === 201) {
-    //   localStorage.setItem('token', response.data.accessToken);
-    //   window.location.href = '/user-management';
-    // } else if (response.status === 201 && response.data.status === 'fail') {
-    //   console.log('MESSAGE:', response, data.msg);
-    //   setTopErrorMessage(response.data.msg);
-    // }
   };
 
   const handleChange = (event) => {
@@ -112,6 +99,7 @@ const NewUser = () => {
       [name]: value,
     }));
   };
+
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -119,23 +107,26 @@ const NewUser = () => {
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
+
   const handleSubmit = async(event) => {
     event.preventDefault();
-    console.log("trainingDocuments---->",trainingDocuments);
+    let data=new FormData();
     let doc=[];
     trainingDocuments?.map(async(item)=>{
       const blob=await fetch(await toBase64(item)).then((res) => res.blob());
-      doc.push(blob);
+      // doc.push(blob);
+      data.append('images', blob);
     })
     console.log("trainingDocuments---->123",doc);
     const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-    doc.push(blob);
-    let data=new FormData();
-    Object.keys(formData)?.map((item,index)=>{
+    // doc.push(blob);
+    data.append('images', blob);
+    
+    Object.keys(formData)?.map((item,index) => {
       data.append(item,Object.values(formData)[index]);
     })
     
-    data.append("image",doc);
+    // data.append("images", doc);
     data.append("franchisee",selectedFranchisee || 'Alphabet Kids, Armidale')
     let errorObject = UserFormValidation(formData);
 
@@ -298,7 +289,7 @@ const NewUser = () => {
     fetchCoordinatorData();
   }, [selectedFranchisee])
 
-  // formData && console.log('FORM DATA:', formData);
+  formData && console.log('FORM DATA:', formData);
   // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
   // formErrors && console.log('FORM ERRORS:', formErrors);
@@ -561,7 +552,7 @@ const NewUser = () => {
                             />
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          {/* <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
                               type="date"
@@ -575,7 +566,7 @@ const NewUser = () => {
                               }}
                             />
                             { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
-                          </Form.Group>
+                          </Form.Group> */}
                           
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Upload Training Documents</Form.Label>
