@@ -259,6 +259,8 @@ const EditFranchisees = () => {
                                                             ...prevState,
                                                             franchisee_admin_email: null,
                                                             validemail:null
+
+
                                                         }));
                                                     }} />
                                                 { formErrors.franchisee_admin_email !== null && <span className="error">{formErrors.franchisee_admin_email}</span> }

@@ -34,8 +34,8 @@ console.log("The annoumce detial",announcementDetails)
   return (
     
     <div className="announcement-accordion">
-      <iframe  src="https://embed.api.video/vod/vi38jFGbfBrkIlcrHXWLszG">
-                                  </iframe>
+      <iframe title="video file" className="embed-responsive-item" src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+
                     <Accordion defaultActiveKey="0">
                       {
                         announcementDetails.map((details,index) => (

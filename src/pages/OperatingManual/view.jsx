@@ -612,7 +612,7 @@ const OperatingManual = () => {
                                   {console.log('inner_item----->', inner_item)}
                                   <PdfComponent {...inner_item} />
                                   <Row>
-                                    <Col sm={7}>
+                                    {inner_item.reference_video && <Col sm={7}>
                                       <div className="reference_wrp">
                                         <h1>Reference Videos</h1>
                                         <div className="reference_videos">
@@ -644,8 +644,8 @@ const OperatingManual = () => {
                                           </div>
                                         </div>
                                       </div>
-                                    </Col>
-                                    {inner_item.related_files ? (
+                                    </Col>}
+                                    {inner_item.related_files.length!==0 ? (
                                       <Col sm={5}>
                                         <div className="related_files">
                                           <h1>Related Files</h1>

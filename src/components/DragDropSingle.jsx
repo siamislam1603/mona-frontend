@@ -19,7 +19,7 @@ export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, 
     maxFiles: 1,
     multiple: false,
     accept: {
-      'image/png': ['.png', '.jpg', '.jpeg'],
+      'image/*': ['.png', '.jpg', '.jpeg'],
     },
   });
 

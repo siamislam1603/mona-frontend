@@ -240,7 +240,7 @@ const AddOperatingManual = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    const newErrors = createOperatingManualValidation(operatingManualData,imageUrl,videoUrl);
+    const newErrors = createOperatingManualValidation(operatingManualData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
@@ -326,7 +326,7 @@ const AddOperatingManual = () => {
     if (name === 'cover_image') {
       if (file.size > 2048 * 1024) {
         let errorData = { ...errors };
-        errorData['cover_image'] = 'File is too much large';
+        errorData['cover_image'] = 'File is too large. File limit 2 MB.';
         setErrors(errorData);
         flag = true;
       }
@@ -334,7 +334,7 @@ const AddOperatingManual = () => {
     if (name === 'reference_video') {
       if (file.size > 1024 * 1024 * 1024) {
         let errorData = { ...errors };
-        errorData['reference_video'] = 'File is too much large';
+        errorData['reference_video'] = 'File is too large. File limit 1 GB.';
         setErrors(errorData);
         flag = true;
       }
@@ -463,13 +463,13 @@ const AddOperatingManual = () => {
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
-                        <h4 className="mynewForm">New Operating Manual</h4>
+                        <h4 className="mynewForm">Create New</h4>
                         <Button
                           onClick={(e) => {
                             e.preventDefault();
                             const newErrors =
                               createOperatingManualValidation(
-                                operatingManualData,imageUrl,videoUrl
+                                operatingManualData
                               );
                             if (Object.keys(newErrors).length > 0) {
                               setErrors(newErrors);
@@ -492,7 +492,7 @@ const AddOperatingManual = () => {
                       <div className="select_module">
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Select Category
+                            Select Module
                           </Form.Label>
                           <Form.Select
                             name="category_name"
@@ -521,8 +521,7 @@ const AddOperatingManual = () => {
                           setCategoryModalFlag(true);
                         }}
                       >
-                        <FontAwesomeIcon icon={faPlus} /> Add New Operating
-                        Manual
+                        <FontAwesomeIcon icon={faPlus} /> Add New Module
                       </Button>
                     </Col>
                   </Row>
@@ -530,7 +529,7 @@ const AddOperatingManual = () => {
                     <Row>
                       <Col sm={6}>
                         <Form.Group>
-                          <Form.Label className="formlabel">title</Form.Label>
+                          <Form.Label className="formlabel">Sub-Module Name</Form.Label>
                           <Form.Control
                             type="text"
                             name="title"
@@ -637,7 +636,7 @@ const AddOperatingManual = () => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Reference Video Here :
+                            Upload Video Tutorial Here :
                           </Form.Label>
 
                           <div className="upload_cover_box video_reference">
