@@ -342,10 +342,14 @@ export const UserFormValidation = (formObj) => {
     postalCode,
     email,
     phone,
+    franchisee
   } = formObj;
 
   if(!fullname)
     errors.fullname = "Username is required!";
+
+  if(!franchisee) 
+    errors.franchisee = "Franchisee is required!";
 
   if(!role)
     errors.role = "User role is required!";

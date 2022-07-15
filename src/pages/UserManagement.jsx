@@ -229,7 +229,7 @@ const UserManagement = () => {
       console.log('USERS:', users);
       let tempData = users.map((dt) => ({
   
-        name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role
+        name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}`,

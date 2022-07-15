@@ -42,6 +42,8 @@ const EditUser = () => {
   const [cityData, setCityData] = useState([]);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [franchiseeData, setFranchiseeData] = useState(null);
+  const [franchiseePlaceholder, setFranchiseePlaceholder] = useState(null);
   const [coordinatorData, setCoordinatorData] = useState([]);
   const [trainingCategoryData, setTrainingCategoryData] = useState([]);
   const [pdcData, setPdcData] = useState([]);
@@ -88,6 +90,7 @@ const EditUser = () => {
       email: editUserData?.email,
       telcode: editUserData?.phone.split("-")[0],
       phone: editUserData?.phone.split("-")[1],
+      franchisee_id: editUserData?.franchisee_id,
       
       trainingCategories: editUserData?.training_categories?.map(d => parseInt(d)),
       trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories?.includes(category.id + "")),
@@ -132,44 +135,34 @@ const EditUser = () => {
     }));
   };
 
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const base64Response = await fetch(`${croppedImage}`);
-    const blob = await base64Response.blob();
-    console.log('Blob:', blob);
+    let data=new FormData();
+    trainingDocuments?.map(async(item)=>{
+      const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+      data.append('images', blob);
+    })
 
-    let data = new FormData();
-    for(let [key, value] of Object.entries(formData)) {
-      data.append(`${key}`, value);
-    }
-
-    // appending image data
+    const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
     data.append('images', blob);
-    data.append('franchisee', selectedFranchisee);
+    
+    Object.keys(formData)?.map((item,index) => {
+      data.append(item,Object.values(formData)[index]);
+    })
 
     trainingDocuments.map(doc => data.append('images', doc));
 
     updateUserDetails(data);
   };
-
-  const fetchCoordinatorData = async () => {
-    if (selectedFranchisee) {
-      let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(data => data.charAt(0).toLowerCase() + data.slice(1)).join("_");
-      
-      console.log('SELECTED FRANCHISEE ALIAS:', franchisee_alias);
-      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}/coordinator`);
-
-      if(response.status === 200 && response.data.status === "success") {
-        let { coordinators } = response.data;
-        setCoordinatorData(coordinators.map(coordinator => ({
-          id: coordinator.id,
-          value: coordinator.fullname,
-          label: coordinator.fullname
-        })));
-      }
-    }
-  }
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCountryData = async () => {
@@ -287,6 +280,39 @@ const EditUser = () => {
     }
   };
 
+  const fetchFranchiseeList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { franchiseeList } = response.data;
+
+      setFranchiseeData(franchiseeList.map(franchisee => ({
+        id: franchisee.id,
+        value: franchisee.franchisee_alias,
+        label: franchisee.franchisee_name
+      })));  
+    }
+  }
+
+  const fetchCoordinatorData = async (franchisee_id) => {
+    console.log('Franchisee id', franchisee_id);
+    console.log('FETCHING COORDINATOR DATA');
+    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
+    if(response.status === 200 && response.data.status === "success") {
+      let { coordinators } = response.data;
+      setCoordinatorData(coordinators.map(coordinator => ({
+        id: coordinator.id,
+        value: coordinator.fullname,
+        label: coordinator.fullname
+      })));
+    }
+  }
+
   // DIALOG HANDLING
   const handleConsentDialog = () => {
     if(formData?.termination_reach_me && formData?.terminationDate.length > 0) {
@@ -309,25 +335,23 @@ const EditUser = () => {
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
     fetchEditUserData();
+    fetchFranchiseeList();
   }, []);
 
   useEffect(() => {
     copyDataToState();
   }, [editUserData]);
 
-  useEffect(() => {
-    fetchCoordinatorData();
-  }, [selectedFranchisee]);
+  // useEffect(() => {
+  //   fetchCoordinatorData();
+  // }, [selectedFranchisee]);
 
-  // editUserData && console.log('EDIT USER DATA:',editUserData);
-  // formData && console.log('FORM DATA:', formData);
-  // businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
-  // businessAssetData && console.log('BUSINESS ASSET:', businessAssetData);
-  // formData && console.log('BUSINESS:', formData);
-  // showConsentDialog && console.log('CONSENT DIALOG:', showConsentDialog);
-  // signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
-  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
-  trainingDocuments && console.log('Training Documents:', trainingDocuments);
+  useEffect(() => {
+    console.log('Fetching cooordinator data');
+    fetchCoordinatorData(formData.franchisee_id);
+  }, [formData.franchisee_id]);
+
+  formData && console.log('FRANCHISEE ID:', formData);
   return (
     <>
       <div id="main">
@@ -351,6 +375,7 @@ const EditUser = () => {
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
                           setPopupVisible={setPopupVisible}
+                          fetchedPhoto={editUserData?.profile_photo || ""}
                         />
                         <span className="error">
                           {!formData.file && formErrors.file}
@@ -523,6 +548,32 @@ const EditUser = () => {
                             />
                           </Form.Group>
                           
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Select Franchisee</Form.Label>
+                            <Select
+                              placeholder={"Which Franchisee?"}
+                              closeMenuOnSelect={true}
+                              options={franchiseeData}
+                              onChange={(e) => {
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  franchisee_id: e.id,
+                                }));
+
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  franchiseeObj: e
+                                }))
+
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  franchisee: null
+                                }));
+                              }}
+                            />
+                            { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
+                          </Form.Group>
+
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Primary Co-ordinator</Form.Label>
                             <Select
