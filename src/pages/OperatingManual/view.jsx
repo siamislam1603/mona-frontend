@@ -23,6 +23,7 @@ import TopHeader from '../../components/TopHeader';
 import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
+import { verifyPermission } from '../../helpers/roleBasedAccess';
 
 let upperRoleUser = '';
 let selectedUserId = '';
@@ -412,14 +413,15 @@ const OperatingManual = () => {
                             }}
                           />
                         </div>
-                        <Button
+                        {
+                          verifyPermission("operating_manual", "add") && <Button
                           className="add_operating_button"
                           onClick={() => {
                             navigate('/operatingmanual/add');
                           }}
                         >
                           <FontAwesomeIcon icon={faPlus} />
-                        </Button>
+                        </Button>}
                         <div className="forms-toogle">
                           <div class="custom-menu-dots">
                             <Dropdown>
