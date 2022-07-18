@@ -124,8 +124,10 @@ const AllFranchisees = () => {
             }));
             console.log("The tempdata",temp)
             // temp = temp.filter((data) => data.isDeleted === 0);
-            let tempData = temp.filter((data) =>data.franchisee.isDeleted === 0);
+            let tempData = temp.filter((data) =>data.franchisee.isDeleted === null || data.franchisee.isDeleted === 0);
             setFranchiseeData(tempData)
+            console.log("The tempdata",tempData)
+
         }
     };
 
@@ -336,7 +338,9 @@ const AllFranchisees = () => {
                                                 </div>
                                             </header>
                                             <Row>
+                                                {console.log("checking franchise", franchiseeData)    }
                                                 {
+
                                                     franchiseeData && franchiseeData.map(data => {
                                                         return (
                                                             <Col key={data.franchisee.id} sm={6} md={4} className="my-2">
