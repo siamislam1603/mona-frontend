@@ -16,8 +16,6 @@ const NewFranchisees = () => {
         abn: "",
         city: "",
         state: "",
-        franchisee_admin_email: "",
-        franchisee_admin: "",
         franchisee_number: "",
         acn: "",
         address: "",
@@ -364,7 +362,7 @@ const NewFranchisees = () => {
                                                 { formErrors.postcode !== null && <span className="error">{formErrors.postcode}</span> }
                                             </Form.Group>
                                             
-                                            <Form.Group className="mb-3">
+                                            {/* <Form.Group className="mb-3">
                                                 <Form.Label>Select Franchisee:</Form.Label>
                                                 <Select
                                                 placeholder="Select Franchisee"
@@ -388,7 +386,7 @@ const NewFranchisees = () => {
                                                 }}
                                                 />
                                                 { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
 
                                             {/* <Form.Group className="mb-3">
                                                 <Form.Label>Franchisee Admin</Form.Label>

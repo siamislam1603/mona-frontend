@@ -91,9 +91,15 @@ const getUser =  async() =>{
 useEffect(() =>{
     getUser()
     setTheToken(token)
+<<<<<<< HEAD
 },[])
 console.log("checkPassword", checkResetPassword)
 
+=======
+},[]);
+// console.log("The user id", userID)
+  passwords && console.log('Passwords:', passwords);
+>>>>>>> master
   return (
     <>
      {checkResetPassword === true? (
