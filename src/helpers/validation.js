@@ -274,8 +274,6 @@ export const FranchiseeFormValidation = (formObj) => {
     abn,
     city,
     state,
-    franchisee_admin_email,
-    franchisee_admin,
     franchisee_number,
     acn,
     address,
@@ -297,21 +295,6 @@ export const FranchiseeFormValidation = (formObj) => {
 
   if(!state) {
     errors.state = "State is required!";
-  }
-
-  if(!franchisee_admin_email) {
-    errors.franchisee_admin_email = "Franchisee Admin's email is required!";
-   
-  }
-  if(franchisee_admin_email){
-    if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(franchisee_admin_email))) 
-    {  
-        errors.validemail= "Enter a valid email"
-    }
-  }
-
-  if(!franchisee_admin) {
-    errors.franchisee_admin = "please select Franchisee admin";
   }
 
   if(!franchisee_number) {
