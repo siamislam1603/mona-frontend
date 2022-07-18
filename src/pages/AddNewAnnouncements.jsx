@@ -8,7 +8,7 @@ import DropOneFile from '../components/DragDrop';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { useParams } from 'react-router-dom';
-
+import {AddNewAnnouncementValidation} from "../helpers/validation" 
 const AddNewAnnouncements = () => {
 
   // const [show, setShow] = useState(false);
@@ -23,6 +23,8 @@ const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
   user_roles: []
 });
+// const [allowSubmit, setAllowSubmit] = useState(false);
+
 
   // const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -97,6 +99,7 @@ const createAnnouncement = async (data) => {
     } else if(response.status === 200 && response.data.status === "fail") {
       console.log('ERROR RESPONSE!');
       const { msg } = response.data;
+      console.log("Annoncement Already exit",msg)
       setTopErrorMessage(msg);
       setTimeout(() => {
         setTopErrorMessage(null);
@@ -120,6 +123,7 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementSettings = (event) => {
       const { name, value } = event.target;
+  
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
@@ -128,11 +132,17 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
-      checkValidity(name, value);
+      console.log("The name and value",name,value)
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
       }));
+      if (!!error[name]) {
+        setError({
+          ...error,
+          [name]: null,
+        });
+      }
       
       // setAnnouncementData({...announcementData, [name]: value});
     };
@@ -142,6 +152,7 @@ const createAnnouncement = async (data) => {
         case "title":
           let pattern = /^[A-Za-z]{3,}[ ]{0,1}[A-Za-z]{0,}$/i;
           announcementData.titleValid = pattern.test(inputValue);
+          console.log("The titlevalid",announcementData.titleValid )
           break;
         case "meta_description":
           announcementData.meta_descriptionValid = inputValue.length >= 10;
@@ -158,26 +169,37 @@ const createAnnouncement = async (data) => {
     const handleDataSubmit = event => {
       event.preventDefault();
 
-      console.log(announcementData);
-      console.log("ppppppppppppppppppppppppppppp");
-  
-      if(announcementData && coverImage && videoTutorialFiles) {
-        let data = new FormData();
-  
-        for(let [ key, values ] of Object.entries(announcementData)) {
-          data.append(`${key}`, values)
+      let errorObj = AddNewAnnouncementValidation(announcementData,coverImage);
+      console.log("The error of announcement",errorObj)
+       if(Object.keys(errorObj).length>0){
+        setError(errorObj);
+       }
+       else{
+        setError({});
+        if(announcementData.start_date== " " || announcementData.start_time == " "){
+          setSettingsModalPopup(true)
+          console.log("Start date empty")
         }
+        if(announcementData && coverImage && videoTutorialFiles) {
+          let data = new FormData();
+    
+          for(let [ key, values ] of Object.entries(announcementData)) {
+            data.append(`${key}`, values)
+          }
+    
+          videoTutorialFiles.forEach((file, index) => {
+            data.append(`images`, file);
+          });
+    
+          relatedFiles.forEach((file, index) => {
+            data.append(`images`, file);
+          });
   
-        videoTutorialFiles.forEach((file, index) => {
-          data.append(`images`, file);
-        });
-  
-        relatedFiles.forEach((file, index) => {
-          data.append(`images`, file);
-        });
-
-        setLoader(true);
-      createAnnouncement(data);
+          setLoader(true);
+        createAnnouncement(data);
+       }
+       
+     
     }
     if (!announcementData.titleValid) {
       setError(prevError => {
@@ -209,23 +231,15 @@ const createAnnouncement = async (data) => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
-  
-
-  // coverImage && console.log('COVER IMAGE:', coverImage);
-  // videoTutorialFiles && console.log('VIDEO FILES:', videoTutorialFiles);
-  // relatedFiles && console.log('RELATED FILES:', relatedFiles);
-
-  announcementData && console.log('announcementData', announcementData);
-
-
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  const handleClose = () => setSettingsModalPopup(false);
   const handleShow = () => setShow(true);
+  
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
 
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
-  const [errors, setErrors] = useState({});
+  // const [errors, setErrors] = useState({});
   const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
   const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
   const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
@@ -239,25 +253,25 @@ const createAnnouncement = async (data) => {
   });
   const [coverImage, setCoverImage] = useState({});
   
-  const setOperatingManualField = (field, value) => {
-    console.log("The field and value",field,value)
-    setOperatingManualData({ ...operatingManualData, [field]: value });
-    if (!!errors[field]) {
-      setErrors({
-        ...errors,
-        [field]: null,
-      });
-    }
-  };
+  // const setOperatingManualField = (field, value) => {
+  //   console.log("The field and value",field,value)
+  //   setOperatingManualData({ ...operatingManualData, [field]: value });
+  //   if (!!errors[field]) {
+  //     setErrors({
+  //       ...errors,
+  //       [field]: null,
+  //     });
+  //   }
+  // };
 
-  const handleAnnouncementsSettings = (event) => {
-    const { name, value } = event.target;
+  // const handleAnnouncementsSettings = (event) => {
+  //   const { name, value } = event.target;
     
-    setAnnouncementsSettings((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  //   setAnnouncementsSettings((prevState) => ({
+  //     ...prevState,
+  //     [name]: value,
+  //   }));
+  // };
 
   // const onSubmit = (e) => {
   //   e.preventDefault();
@@ -328,78 +342,78 @@ const createAnnouncement = async (data) => {
       reader.onerror = (error) => reject(error);
     });
  
-    const uploadFiles = async (name, file) => {
-      let flag = false;
-      if (name === 'cover_image') {
-        if (file.size > 2048 * 1024) {
-          let errorData={...errors};
-          errorData["cover_image"]= "File is too much large";
-          setErrors(errorData);
-          flag = true;
-        }
-      }
-      if (name === 'reference_video')
-      {
-        if (file.size > 1024 * 1024 * 1024) {
-          let errorData={...errors};
-          errorData["reference_video"]= "File is too much large";
-          setErrors(errorData);
-          flag = true;
-        }
-      }
+    // const uploadFiles = async (name, file) => {
+    //   let flag = false;
+    //   if (name === 'cover_image') {
+    //     if (file.size > 2048 * 1024) {
+    //       let errorData={...errors};
+    //       errorData["cover_image"]= "File is too much large";
+    //       setErrors(errorData);
+    //       flag = true;
+    //     }
+    //   }
+    //   if (name === 'reference_video')
+    //   {
+    //     if (file.size > 1024 * 1024 * 1024) {
+    //       let errorData={...errors};
+    //       errorData["reference_video"]= "File is too much large";
+    //       setErrors(errorData);
+    //       flag = true;
+    //     }
+    //   }
   
-      if (flag === false) {
-        if (name === 'cover_image') {
-          setImageLoaderFlag(true);
-        }
-        if (name === 'reference_video') {
-          setVideoLoaderFlag(true);
-        }
-        let data = { ...operatingManualData };
-        const body = new FormData();
-        const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-        body.append('image', blob, file.name);
-        body.append('description', 'operating manual');
-        body.append('title', name);
-        body.append('uploadedBy', 'vaibhavi');
+    //   if (flag === false) {
+    //     if (name === 'cover_image') {
+    //       setImageLoaderFlag(true);
+    //     }
+    //     if (name === 'reference_video') {
+    //       setVideoLoaderFlag(true);
+    //     }
+    //     let data = { ...operatingManualData };
+    //     const body = new FormData();
+    //     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
+    //     body.append('image', blob, file.name);
+    //     body.append('description', 'operating manual');
+    //     body.append('title', name);
+    //     body.append('uploadedBy', 'vaibhavi');
   
-        var myHeaders = new Headers();
-        myHeaders.append('shared_role', 'admin');
-        fetch(`${BASE_URL}/uploads/uiFiles`, {
-          method: 'post',
-          body: body,
-          headers: myHeaders,
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            if (name === 'reference_video') {
-              data['video_thumbnail'] = res.thumbnail;
-              data[name] = res.url;
-              setOperatingManualData(data);
+    //     var myHeaders = new Headers();
+    //     myHeaders.append('shared_role', 'admin');
+    //     fetch(`${BASE_URL}/uploads/uiFiles`, {
+    //       method: 'post',
+    //       body: body,
+    //       headers: myHeaders,
+    //     })
+    //       .then((res) => res.json())
+    //       .then((res) => {
+    //         if (name === 'reference_video') {
+    //           data['video_thumbnail'] = res.thumbnail;
+    //           data[name] = res.url;
+    //           setOperatingManualData(data);
   
-              setTimeout(() => {
-                setVideoLoaderFlag(false);
-              }, 8000);
-            } else {
-              data[name] = res.url;
-              setOperatingManualData(data);
+    //           setTimeout(() => {
+    //             setVideoLoaderFlag(false);
+    //           }, 8000);
+    //         } else {
+    //           data[name] = res.url;
+    //           setOperatingManualData(data);
   
-              setTimeout(() => {
-                setImageLoaderFlag(false);
-              }, 5000);
-            }
-            if (!!errors[name]) {
-              setErrors({
-                ...errors,
-                [name]: null,
-              });
-            }
-          })
-          .catch((err) => {
-            console.log('error---->', err);
-          });
-      }
-    };
+    //           setTimeout(() => {
+    //             setImageLoaderFlag(false);
+    //           }, 5000);
+    //         }
+    //         if (!!errors[name]) {
+    //           setErrors({
+    //             ...errors,
+    //             [name]: null,
+    //           });
+    //         }
+    //       })
+    //       .catch((err) => {
+    //         console.log('error---->', err);
+    //       });
+    //   }
+    // };
     useEffect(() =>{
       const role = localStorage.getItem("user_role")
       console.log("The role 3", role) 
@@ -407,9 +421,8 @@ const createAnnouncement = async (data) => {
     },[])
   return (
     <>
-      {console.log(topErrorMessage)}
-      {console.log('errors--->', errors)}
-      {console.log('operating manual--->', operatingManualData)}
+    {console.log("The annno",announcementData)}
+
       <div id="main">
         <section className="mainsection ">
           <Container>
@@ -431,12 +444,12 @@ const createAnnouncement = async (data) => {
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                           type="text" 
-                          name="title"
+                          name="announcement_title"
                           onChange={handleAnnouncementData} 
-                          isInvalid = {!!error.title}
+                          isInvalid = {!!error.announcement_title}
                           />
                           <Form.Control.Feedback type="invalid">
-                            {error.title}
+                            {error.announcement_title}
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
@@ -445,21 +458,20 @@ const createAnnouncement = async (data) => {
                           <Form.Label>Announcement Description</Form.Label>
                           <Form.Control
                             as="textarea"
-                            name="meta_description"
+                            name="announcement_description"
                             rows={3}
                             onChange={handleAnnouncementData}
-                            isInvalid = {!!error.meta_description}
+                            isInvalid = {!!error.announcement_description}
                             />
                              <Form.Control.Feedback type="invalid">
-                            {errors.announcement_description}
+                            {error.announcement_description}
                           </Form.Control.Feedback>
+                       
                         </Form.Group>
                       </Col>
                     
                     </Row>
                   <div className="my-new-formsection">
-                  
-              
                     <Row>
                       <Col sm={6}>
                         <Form.Group>
@@ -467,9 +479,12 @@ const createAnnouncement = async (data) => {
                           <DropOneFile onSave={setCoverImage} 
                           isInvalid = {!!error.coverImage}
                           />
-                          <Form.Control.Feedback type="invalid">
+                          {/* <Form.Control.Feedback type="invalid">
                               {(error.coverImage)}
-                            </Form.Control.Feedback>
+                            </Form.Control.Feedback> */}
+                           <span  className="error">
+                            {error.coverImage}
+                           </span>
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
@@ -781,7 +796,10 @@ const createAnnouncement = async (data) => {
           <Button variant="transparent" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSaveAndClose}>
+          <Button variant="primary" onClick={() =>{
+            setAllowSubmit(true)
+            setSettingsModalPopup(false)
+          }}>
             Save Settings
           </Button>
         </Modal.Footer>

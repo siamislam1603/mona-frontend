@@ -4,12 +4,15 @@ import Form from 'react-bootstrap/Form';
 import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Select from 'react-select';
+import { useParams } from 'react-router-dom';
+
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { FranchiseeFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
 
 const EditFranchisees = () => {
+    const { franchiseeId } = useParams();
     const [franchiseeData, setFranchiseeData] = useState({
         franchisee_name: "",
         abn: "",
@@ -30,36 +33,74 @@ const EditFranchisees = () => {
     const [topErrorMessage, setTopErrorMessage] = useState(null);
     const [loader, setLoader] = useState(false);
     const [createFranchiseeModal, setCreateFranchiseeModal] = useState(false);
+    const [editFranchiseeData, setEditFranchiseeData] = useState();
     
     // ERROR STATES
     const [formErrors, setFormErrors] = useState({});
 
+
+  // FETCHES THE DATA OF USER FOR EDITING
+  const fetchEditFranchiseData = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee/${franchiseeId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      const { franchiseeList } = response.data;
+      setEditFranchiseeData(franchiseeList);
+    }
+  };
+
+  const copyDataToLocalState = () => {
+    setFranchiseeData(prevState => ({
+        franchisee_name: editFranchiseeData?.franchisee_name,
+        abn: editFranchiseeData?.abn,
+        city: editFranchiseeData?.city,
+        state: editFranchiseeData?.state,
+        contact: editFranchiseeData?.contact,
+        franchisee_admin_email: editFranchiseeData?.franchisee_admin_email,
+        franchisee_number: editFranchiseeData?.franchisee_number,
+        acn: editFranchiseeData?.acn,
+        address: editFranchiseeData?.address,
+        postcode: editFranchiseeData?.postcode,
+        franchisee_admin: editFranchiseeData?.franchisee_admin,
+    }));
+  }
+
+
+
     // CREATES A NEW FRANCHISEE
-    const createFranchisee = async () => {
-        const response = await axios.post(`${BASE_URL}/role/franchisee`, franchiseeData, {
+    const updateFranchisee = async () => {
+        const response = await axios.patch(`${BASE_URL}/role/franchisee/${franchiseeId}`, franchiseeData, {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem('token')
             }
         });
 
-        if(response.status === 201 && response.data.status === "success") {
+        if(response.status === 200 && response.data.status === "success") {
             setLoader(false);
             setCreateFranchiseeModal(false);
-            localStorage.setItem('success_msg', 'Franchisee Created Successfully!');
+            localStorage.setItem('success_msg', 'Franchisee Updated Successfully!');
             window.location.href="/all-franchisees";
         } else {
             setLoader(false);
             setCreateFranchiseeModal(false);
-            // setTopErrorMessage(response.data.msg);
-            let { errorObject } = response.data;
-            errorObject.map(error => setFormErrors(prevState => ({
-                ...prevState,
-                [error.error_field]: error.error_msg
-            })));
+            localStorage.setItem('success_msg', response.data.msg);
+            window.location.href="/all-franchisees";
 
-            setTimeout(() => {
-                setTopErrorMessage(null);
-            }, 3000)
+            // setTopErrorMessage(response.data.msg);
+            // let { errorObject } = response.data;
+            // errorObject.map(error => setFormErrors(prevState => ({
+            //     ...prevState,
+            //     [error.error_field]: error.error_msg
+            // })));
+
+            // setTimeout(() => {
+            //     setTopErrorMessage(null);
+            // }, 3000)
         }
     }
 
@@ -106,22 +147,20 @@ const EditFranchisees = () => {
 
     const handleFranchiseeDataSubmission = event => {
         event.preventDefault();
-
-        let errorObject = FranchiseeFormValidation(franchiseeData);
-
+        let errorObject = FranchiseeFormValidation(franchiseeData)
         if(Object.keys(errorObject).length > 0) {
             console.log('ERROR OBJECT:', errorObject);
             setFormErrors(errorObject);
-        } else {
+        }
+        else{
             setCreateFranchiseeModal(true);
             setLoader(true)
-            createFranchisee();
-        }
+            updateFranchisee();
+        }   
     }
 
     const handleChange = event => {
         const { name, value } = event.target;
-        console.log("")
 
         setFranchiseeData(prevState => ({
             ...prevState,
@@ -129,12 +168,25 @@ const EditFranchisees = () => {
         }));
     } 
 
+    const handleCancel = () => {
+        window.location.href="/all-franchisees";
+    }
+
     useEffect(() => {
         fetchAustralianStates();
         fetchCities();
         fetchFranchiseeAdmins();
+        fetchEditFranchiseData(); 
     }, []);
 
+
+
+    useEffect(() => {
+        copyDataToLocalState();
+    }, [editFranchiseeData]);
+
+    editFranchiseeData && console.log('EDIT DATA:', editFranchiseeData);
+    franchiseeData && console.log('DATA:', franchiseeData);
     return (
         <div>
             <div id="main">
@@ -153,6 +205,7 @@ const EditFranchisees = () => {
                                         <header className="title-head">
                                             <h1 className="title-lg">Edit Franchises</h1>
                                         </header>
+                                    
                                     </div>
                                 </div>
                                 {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -163,7 +216,8 @@ const EditFranchisees = () => {
                                                 <Form.Label>Franchise Name</Form.Label>
                                                 <Form.Control
                                                     name="franchisee_name" 
-                                                    type="text" 
+                                                    type="text"
+                                                    value={franchiseeData?.franchisee_name} 
                                                     placeholder="Special DayCare"
                                                     onChange={(e) => {
                                                         handleChange(e);
@@ -180,6 +234,7 @@ const EditFranchisees = () => {
                                                 <Form.Control
                                                     name="abn" 
                                                     type="text" 
+                                                    value={franchiseeData?.abn}
                                                     placeholder="6743433"
                                                     onChange={(e) => {
                                                         handleChange(e);
@@ -194,8 +249,9 @@ const EditFranchisees = () => {
                                             <Form.Group className="mb-3">
                                                 <Form.Label>Suburb</Form.Label>
                                                 <Select
-                                                placeholder="Which Suburb?"
+                                                placeholder={franchiseeData?.city || "Which Suburb?"}
                                                 closeMenuOnSelect={true}
+                                                value={{ label: franchiseeData.city, value: franchiseeData.city }}
                                                 options={cityData}
                                                 onChange={(e) => {
                                                     setFranchiseeData((prevState) => ({
@@ -210,12 +266,13 @@ const EditFranchisees = () => {
                                             { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3">
+                                            <Form.Group className="mb-3" defaultValue={franchiseeData.state} >
                                                 <Form.Label>State</Form.Label>
                                                 <Select
-                                                placeholder="Which State?"
+                                                value={{ label: franchiseeData.state, value: franchiseeData.state }}
+                                                placeholder={franchiseeData?.state || "Which State?"}
                                                 closeMenuOnSelect={true}
-                                                options={australianStatesData}
+                                                options={australianStatesData }
                                                 onChange={(e) => {
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,
@@ -228,15 +285,14 @@ const EditFranchisees = () => {
                                                 }} />
                                             { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
                                             </Form.Group>
-
-                                            
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                                 <Form.Label> Contact Number</Form.Label>
                                                 <Form.Control 
                                                     name="contact"
                                                     type="text" 
+                                                    maxLength="10"
+                                                    value={franchiseeData?.contact}
                                                     placeholder="454 342 56"
-                                                    maxLength={10}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -247,26 +303,26 @@ const EditFranchisees = () => {
                                                 { formErrors.contact !== null && <span className="error">{formErrors.contact}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            {/* <Form.Group className="mb-3" controlId="formBasicPassword">
                                                 <Form.Label>Franchisee Admin’s Email</Form.Label>
                                                 <Form.Control 
                                                     name="franchisee_admin_email"
                                                     type="text" 
-                                                    placeholder="andy.smith@specialdaycare.com"
+                                                    value={franchiseeData?.franchisee_admin_email}
+                                                    placeholder="you@example.com"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
                                                             ...prevState,
                                                             franchisee_admin_email: null,
                                                             validemail:null
-
-
                                                         }));
                                                     }} />
-                                                { formErrors.franchisee_admin_email !== null && <span className="error">{formErrors.franchisee_admin_email}</span> }
-                                                {!formErrors.franchisee_admin_email &&<span className="error">{formErrors.validemail}</span>  }
-                                              
-                                            </Form.Group>
+                                                <span className="error">
+                                                    {!franchiseeData.franchisee_admin_email && formErrors.franchisee_admin_email}
+                                                    {!formErrors.franchisee_admin_email && formErrors.validemail}
+                                                 </span>       
+                                            </Form.Group> */}
                                         </Col>
 
                                         <Col sm={6} md={6} lg={6}>
@@ -275,12 +331,13 @@ const EditFranchisees = () => {
                                                 <Form.Control 
                                                     name="franchisee_number"
                                                     type="text" 
+                                                    value={franchiseeData?.franchisee_number}
                                                     placeholder="ADS 00342"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
                                                             ...prevState,
-                                                            franchisee_number: null
+                                                            franchisee_number: null,
                                                         }));
                                                     }} />
                                                 { formErrors.franchisee_number !== null && <span className="error">{formErrors.franchisee_number}</span> }
@@ -291,6 +348,7 @@ const EditFranchisees = () => {
                                                 <Form.Control
                                                     name="acn" 
                                                     type="text" 
+                                                    value={franchiseeData?.acn}
                                                     placeholder="3453453453"
                                                     onChange={(e) => {
                                                         handleChange(e);
@@ -307,6 +365,7 @@ const EditFranchisees = () => {
                                                 <Form.Control 
                                                     name="address"
                                                     type="text" 
+                                                    value={franchiseeData?.address}
                                                     placeholder="5th Avenue, Central Park Street, Broadway"
                                                     onChange={(e) => {
                                                         handleChange(e);
@@ -323,10 +382,9 @@ const EditFranchisees = () => {
                                                 <Form.Control
                                                     name="postcode" 
                                                     type="text" 
-                                                    pattern="[0-9]*"
-                                                    maxLength={4}
+                                                    value={franchiseeData?.postcode}
+                                                    maxLength="4"
                                                     placeholder="24545"
-                                                    
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -337,7 +395,7 @@ const EditFranchisees = () => {
                                                 { formErrors.postcode !== null && <span className="error">{formErrors.postcode}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3">
+                                            {/* <Form.Group className="mb-3">
                                                 <Form.Label>Franchisee Admin</Form.Label>
                                                 <Select
                                                 placeholder="Select Franchisee Admin"
@@ -356,12 +414,12 @@ const EditFranchisees = () => {
                                                 }}
                                                 />
                                                 { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
                                         </Col>
 
                                         <div className="d-flex justify-content-center my-5">
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }}>Cancel</Button>
+                                                <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => handleCancel()}>Cancel</Button>
                                                 <Button type="submit">Save Details</Button>
                                             </Form.Group>
                                         </div>

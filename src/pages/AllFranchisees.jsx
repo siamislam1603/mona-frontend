@@ -55,6 +55,7 @@ const AllFranchisees = () => {
 
     const [franchiseeData, setFranchiseeData] = useState();
     const [topSuccessMessage, setTopSuccessMessage] = useState();
+    const [deleteResponseMessage, setDeleteResponseMessage] = useState(null);
 
     const handleCancelFilter = () => {
         setFilter({});
@@ -67,6 +68,31 @@ const AllFranchisees = () => {
     // const onFilter = debounce(() => {
     //     fetchUserDetails();
     //   }, 200);
+    const deleteAlert = (id) =>{
+        if(window.confirm('Are you sure you want to delete?')){
+            deleteFranchisees(id);
+        }
+    }
+    const deleteFranchisees = async(id) =>{
+        console.log("The id",id)
+        let response = await axios.patch(`${BASE_URL}/role/franchisee/delete/${id}`,{
+            isDeleted:1
+        }, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+        if(response.status === 200 && response.data.status==="success" ){
+            setDeleteResponseMessage("Franchisee Delete")
+            fetchFranchisees()
+
+        }
+      
+        else{
+            console.log("The error res",response)
+        }
+       
+    }
 
 
     const fetchFranchisees = async () => {
@@ -82,12 +108,9 @@ const AllFranchisees = () => {
                 "Authorization": `Bearer ${token}` 
             }
         });
-
-
-
         if(response.status === 200 && response.data.status === "success") {
             const { franchisees } = response.data;
-            setFranchiseeData(franchisees.map(franchisee => ({
+            let temp = franchisees.map(franchisee => ({
                 franchisee: {
                     id: franchisee.id,
                     name: franchisee.franchisee_name,
@@ -95,9 +118,14 @@ const AllFranchisees = () => {
                     educators: 
                         franchisee.users.filter(user => user.role === 'educator').length,
                     children: 
-                        franchisee.users.filter(user => user.role === 'child').length
+                        franchisee.users.filter(user => user.role === 'child').length,
+                    isDeleted:franchisee.isDeleted  
                 },
-            })));
+            }));
+            console.log("The tempdata",temp)
+            // temp = temp.filter((data) => data.isDeleted === 0);
+            let tempData = temp.filter((data) =>data.franchisee.isDeleted === 0);
+            setFranchiseeData(tempData)
         }
     };
 
@@ -120,6 +148,11 @@ const AllFranchisees = () => {
         fetchFranchisees();
         console.log("searched datata",search)
     }, [search]);
+    useEffect(() =>{
+        setTimeout(() => {
+            setDeleteResponseMessage(null)
+        }, 3000);
+    },[deleteResponseMessage])
     
     return (
         <div>
@@ -136,6 +169,9 @@ const AllFranchisees = () => {
                                     <div className="user-management-sec">
                                     {
                                         topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                                    } 
+                                     {
+                                        deleteResponseMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{deleteResponseMessage}</p>
                                     } 
                                         <>
                                             <header className="title-head">
@@ -306,7 +342,9 @@ const AllFranchisees = () => {
                                                             <Col key={data.franchisee.id} sm={6} md={4} className="my-2">
                                                                 <Card className="text-center Card_design">
                                                                     <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                                        <div className="edit-ico"><a href={`/edit-franchisees/${data.franchisee.id}`}><img src="../img/edit-ico.png" alt="" /></a></div>
+                                                                        {/* <div className="edit-ico"><a href={`/edit-franchisees/${data.franchisee.id}`}><img src="../img/edit-ico.png" alt="" /></a></div> */}
+                                                                        
+                                                                        
                                                                         <img src={CardImg} alt="" width="65px" />
                                                                         <div className="p-1">
                                                                             <Card.Title className="mb-0 Text_design"
@@ -315,6 +353,19 @@ const AllFranchisees = () => {
                                                                                 {data.franchisee.location}
                                                                             </Card.Text>
                                                                         </div>
+                                                                        <div className="cta-col">
+                                                                            <Dropdown>
+                                                                                <Dropdown.Toggle variant="transparent" id="ctacol">
+                                                                                <img src="../img/dot-ico.svg" alt="" />
+                                                                                </Dropdown.Toggle>
+                                                                                <Dropdown.Menu>
+                                                                                <Dropdown.Item onClick={() =>{
+                                                                                    deleteAlert(data.franchisee.id)
+                                                                                }}>Delete</Dropdown.Item>
+                                                                                <Dropdown.Item href={`/edit-franchisees/${data.franchisee.id}`}>Edit</Dropdown.Item>
+                                                                                </Dropdown.Menu>
+                                                                            </Dropdown>
+                                                                            </div>
                                                                         {/*<div style={{ paddingLeft: "2rem" }}>
                                                                              <b><AiOutlineArrowRight className="Arrow_icon" /></b> 
                                                                         </div>*/}

@@ -252,7 +252,7 @@ const NewFranchisees = () => {
                                                 { formErrors.contact !== null && <span className="error">{formErrors.contact}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            {/* <Form.Group className="mb-3" controlId="formBasicPassword">
                                                 <Form.Label>Franchisee Admin’s Email</Form.Label>
                                                 <Form.Control 
                                                     name="franchisee_admin_email"
@@ -266,7 +266,7 @@ const NewFranchisees = () => {
                                                         }));
                                                     }} />
                                                 { formErrors.franchisee_admin_email !== null && <span className="error">{formErrors.franchisee_admin_email}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
                                         </Col>
 
                                         <Col sm={6} md={6} lg={6}>
@@ -334,7 +334,7 @@ const NewFranchisees = () => {
                                                 { formErrors.postcode !== null && <span className="error">{formErrors.postcode}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3">
+                                            {/* <Form.Group className="mb-3">
                                                 <Form.Label>Franchisee Admin</Form.Label>
                                                 <Select
                                                 placeholder="Select Franchisee Admin"
@@ -353,7 +353,7 @@ const NewFranchisees = () => {
                                                 }}
                                                 />
                                                 { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
                                         </Col>
 
                                         <div className="d-flex justify-content-center my-5">
