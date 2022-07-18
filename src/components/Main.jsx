@@ -165,7 +165,7 @@ const Main = () => {
         />
 
         <Route
-          path="/edit-user"
+          path="/edit-user/:userId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

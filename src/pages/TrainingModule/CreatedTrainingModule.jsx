@@ -83,9 +83,9 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     });
 
     if(response.status === 200 && response.data.status === "success") {
-      const { createdTrainingList } = response.data;
-      let myTrainings = createdTrainingList.filter(training => training.addedBy === parseInt(user_id));
-      let otherTrainings = createdTrainingList.filter(training => training.addedBy !== parseInt(user_id));
+      const { searchedData } = response.data;
+      let myTrainings = searchedData.filter(training => training.addedBy === parseInt(user_id));
+      let otherTrainings = searchedData.filter(training => training.addedBy !== parseInt(user_id));
 
       setMyTrainingData(myTrainings);
       setOtherTrainingData(otherTrainings);
