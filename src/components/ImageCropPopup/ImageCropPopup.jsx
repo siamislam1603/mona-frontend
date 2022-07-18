@@ -69,7 +69,7 @@ const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible }) => {
                 </div>
 
                 <div className="container-buttons">
-                    <Button variant="contained" color="primary" className="me-3">
+                    <Button variant="contained" color="primary" className="me-3" onClick={() => setPopupVisible(false)}>
                       Cancel
                     </Button>
                     <Button variant="contained" color="primary" onClick={onImageCrop}>

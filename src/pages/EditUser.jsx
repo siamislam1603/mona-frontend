@@ -352,6 +352,8 @@ const EditUser = () => {
   }, [formData.franchisee_id]);
 
   formData && console.log('FRANCHISEE ID:', formData);
+  signatureImage && console.log('Signature Image:', signatureImage);
+  croppedImage && console.log('Cropped Image:', croppedImage);
   return (
     <>
       <div id="main">
@@ -386,7 +388,8 @@ const EditUser = () => {
                           <ImageCropPopup 
                             image={image} 
                             setCroppedImage={setCroppedImage} 
-                            setPopupVisible={setPopupVisible} />
+                            setPopupVisible={setPopupVisible}
+                             />
                         }
                         
                       </div>
