@@ -70,7 +70,8 @@ const logout = async () => {
   }
 };
 const getUser =  async() =>{
-  let response = await axios.get(`${BASE_URL}/auth/user/${userID}`)
+  const user_id = localStorage.getItem('user_id');
+  let response = await axios.get(`${BASE_URL}/auth/user/${user_id}`)
   if(response.data.user.resetToken){
     setCheckResetPassword(true)
     console.log("The Token inside",response.data.user.resetToken)
@@ -83,9 +84,9 @@ const getUser =  async() =>{
 useEffect(() =>{
     getUser()
     setTheToken(token)
-},[])
+},[]);
 // console.log("The user id", userID)
-
+  passwords && console.log('Passwords:', passwords);
   return (
     <>
      {checkResetPassword? (
