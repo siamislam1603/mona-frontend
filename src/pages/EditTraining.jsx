@@ -98,6 +98,7 @@ const EditTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
+    const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
     console.log('RESPONSE:', response);
     if(response.status === 200 && Object.keys(response.data).length > 1) {
@@ -137,7 +138,6 @@ const EditTraining = () => {
       description: editTrainingData?.description,
       meta_description: editTrainingData?.meta_description,
       category_id: editTrainingData?.category_id,
-      is_applicable_to_all: editTrainingData?.shares[0].user_or_roles ? true : false,
       time_required_to_complete: parseInt(editTrainingData?.completion_time.split(" ")[0]),
       time_unit: editTrainingData?.completion_time.split(" ")[1],
     }));
@@ -150,8 +150,13 @@ const EditTraining = () => {
       user_roles: editTrainingData?.shares[0].assigned_roles,
       assigned_users: editTrainingData?.shares[0].assigned_users,
       assigned_users_obj: fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0].assigned_users.includes(user.id + "")),
-      assigned_franchisee: parseInt(editTrainingData?.shares[0].franchisee)
+      assigned_franchisee: editTrainingData?.shares[0].franchisee === null ? ['all'] : [parseInt(editTrainingData?.shares[0].franchisee)],
+      assigned_franchisee_obj: editTrainingData?.shares[0].franchisee === null ? [] : franchiseeList?.filter(franchisee => franchisee.id === parseInt(editTrainingData?.shares[0].franchisee)),
+      is_applicable_to_all: editTrainingData?.shares[0].user_or_roles === 1 ? true : false,
     }));
+
+    setSendToAllFranchisee(editTrainingData?.shares[0].franchisee === null ? "all" : "none");
+    setVideoTutorialFiles(editTrainingData?.trainingFiles?.filter(file => file.fileType === ".mp4"));
 
     console.log('FETCHED DATA COPIED!');
   }
@@ -172,7 +177,7 @@ const EditTraining = () => {
       let token = localStorage.getItem('token');
       let user_id = localStorage.getItem('user_id')
       const shareResponse = await axios.post(`${BASE_URL}/share/${trainingId}`, {
-        assigned_franchisee: [trainingSettings.assigned_franchisee],
+        assigned_franchisee: trainingSettings.assigned_franchisee,
         assigned_users: trainingSettings.assigned_users,
         user_roles: trainingSettings.user_roles,
         shared_by: user_id,
@@ -314,7 +319,7 @@ const EditTraining = () => {
 
   useEffect(() => {
     copyFetchedData();
-  }, [fetchedFranchiseeUsers, editTrainingData]);
+  }, [franchiseeList, editTrainingData]);
 
   useEffect(() => {
     fetchFranchiseeUsers(parseInt(trainingSettings.assigned_franchisee));
@@ -323,6 +328,7 @@ const EditTraining = () => {
   trainingData && console.log('TRAINING DATA:', trainingData);
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 
+  // fetchedFranchiseeUsers && console.log('USER OBJ:', fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0].assigned_users.includes(user.id + "")));
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -629,7 +635,7 @@ const EditTraining = () => {
                         singleSelect={true}
                         placeholder={"Select User Names"}
                         displayValue="key"
-                        selectedValues={franchiseeList?.filter(franchisee => franchisee.id === trainingSettings.assigned_franchisee)}
+                        selectedValues={trainingSettings.assigned_franchisee_obj}
                         className="multiselect-box default-arrow-select"
                         onKeyPressFn={function noRefCheck() {}}
                         onRemove={function noRefCheck(data) {
@@ -662,11 +668,11 @@ const EditTraining = () => {
                           <input
                             type="radio"
                             value="Y"
-                            checked={trainingData.is_applicable_to_all === true}
+                            checked={trainingSettings.is_applicable_to_all === true}
                             name="roles"
                             id="yes1"
                             onChange={(event) => {
-                              setTrainingData((prevState) => ({
+                              setTrainingSettings((prevState) => ({
                                 ...prevState,
                                 is_applicable_to_all: true,
                               }));
@@ -681,11 +687,11 @@ const EditTraining = () => {
                           <input
                             type="radio"
                             value="N"
-                            checked={trainingData.is_applicable_to_all === false}
+                            checked={trainingSettings.is_applicable_to_all === false}
                             name="roles"
                             id="no1"
                             onChange={(event) => {
-                              setTrainingData((prevState) => ({
+                              setTrainingSettings((prevState) => ({
                                 ...prevState,
                                 is_applicable_to_all: false,
                               }));
@@ -700,7 +706,7 @@ const EditTraining = () => {
                   </Form.Group>
                 </Col>
                 <Col lg={9} md={6} className="mt-3 mt-md-0">
-                  <div className={`custom-checkbox ${trainingData.is_applicable_to_all === false ? "d-none": ""}`}>
+                  <div className={`custom-checkbox ${trainingSettings.is_applicable_to_all === false ? "d-none": ""}`}>
                     <Form.Label className="d-block">Select User Roles</Form.Label>
                     <div className="btn-checkbox d-block">
                       <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
@@ -768,7 +774,7 @@ const EditTraining = () => {
                     </div>
                   </div>
 
-                  <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingData.is_applicable_to_all === true ? "d-none": ""}`}>
+                  <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings.is_applicable_to_all === true ? "d-none": ""}`}>
                     <Col>
                       <Form.Group>
                         <Form.Label>Select User Names</Form.Label>
