@@ -8,7 +8,7 @@ import WelcomeMsg from '../components/WelcomeMsg';
 import { BASE_URL } from '../components/App';
 import { ResetPasswordValidation } from '../helpers/validation';
 import axios from 'axios';
-
+import ResetPasswordLink from './ResetPasswordLink';
 const ResetPassword = () => {
 const [passwords, setPasswords] = useState({});
 const [errors, setErrors] = useState({});
@@ -52,6 +52,7 @@ const setField = (field, value) => {
       setTimeout(() => {
         logout()
       }, 2000);
+      console.log("The success",response)
   }
     
 
@@ -70,26 +71,32 @@ const logout = async () => {
   }
 };
 const getUser =  async() =>{
-  const user_id = localStorage.getItem('user_id');
-  let response = await axios.get(`${BASE_URL}/auth/user/${user_id}`)
-  if(response.data.user.resetToken){
+ try {
+  let response = await axios.get(`${BASE_URL}/auth/${userID}`)
+  console.log("The repsonse user",response)
+  if(response.status === 200 && response.data.status === "success" ){
     setCheckResetPassword(true)
-    console.log("The Token inside",response.data.user.resetToken)
+    console.log("The Token inside",response.data)
   }
-  else{
-    setCheckResetPassword(false)
+  // else{
+  //   setCheckResetPassword(false)
+  //   console.log("Link invalid")
+  // }
+ } catch (error) {
+      setCheckResetPassword(false)
     console.log("Link invalid")
-  }
+    console.log("The error",error)
+ }
 }
 useEffect(() =>{
     getUser()
     setTheToken(token)
-},[]);
-// console.log("The user id", userID)
-  passwords && console.log('Passwords:', passwords);
+},[])
+console.log("checkPassword", checkResetPassword)
+
   return (
     <>
-     {checkResetPassword? (
+     {checkResetPassword === true? (
         <section className="login-bg">
         <Container>
           <Row className="justify-content-between align-items-center flex-row-reverse">
@@ -197,20 +204,7 @@ useEffect(() =>{
         </Container>
       </section>
      ):(
-      <Container>
-      <Row className="justify-content-md-center">
-        <Col>
-          <h1>This link is expired</h1>
-          <p className="custom_rest">Already have an account?  <Link to="/" className="custom_rest">
-                          Log in
-          </Link></p>
-          <p className="custom_rest">Want to reset password?  <Link to="/forgot-password" className="custom_rest">
-                         Reset Password
-          </Link></p>
-
-        </Col>
-      </Row> 
-    </Container>
+      <ResetPasswordLink/>
      )}
   </>
   )
