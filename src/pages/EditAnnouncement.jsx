@@ -189,6 +189,7 @@ const EditAnnouncement = () => {
      })
      if(response.status === 200) {
        setAnnouncementData(response.data.data.all_announcements)
+
      }
   } 
 
