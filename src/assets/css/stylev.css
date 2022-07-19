@@ -1259,6 +1259,11 @@ button:focus {
     line-height: 19px;
     /* identical to box height */
     text-transform: uppercase;
+    white-space: nowrap;
+    width: 278px;
+    vertical-align: sub;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tree li.branch>a img {
@@ -1351,7 +1356,7 @@ li.branch:before {
 li.branch {
     position: relative;
     margin: 15px 0;
-
+    
     text-transform: uppercase;
 }
 
@@ -1925,13 +1930,13 @@ img#user-pic {}
     width: 60px;
     height: 34px;
 }
-
+  
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
-
+  
 .slider {
     position: absolute;
     cursor: pointer;
@@ -1943,7 +1948,7 @@ img#user-pic {}
     -webkit-transition: .4s;
     transition: .4s;
 }
-
+  
 .slider:before {
     position: absolute;
     content: "";
@@ -1955,26 +1960,26 @@ img#user-pic {}
     -webkit-transition: .4s;
     transition: .4s;
 }
-
+  
 input:checked+.slider {
     background-color: #2196F3;
 }
-
+  
 input:focus+.slider {
     box-shadow: 0 0 1px #2196F3;
 }
-
+  
 input:checked+.slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
-
+  
 /* Rounded sliders */
 .slider.round {
     border-radius: 34px;
 }
-
+  
 .slider.round:before {
     border-radius: 50%;
 }
@@ -2085,7 +2090,7 @@ hr {
     display: none;
     cursor: pointer;
 }
-
+  
 .select-check-wrp .form-group label {
     position: relative;
     cursor: pointer;

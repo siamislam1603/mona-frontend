@@ -49,6 +49,25 @@ export default function MyEditor(props) {
           config={{
             extraPlugins: [uploadPlugin],
             rows: 5,
+            toolbar : {
+                items: [
+                  'heading',
+                  '|','bold',
+                  'italic',
+                  '|',
+                  'Link',
+                  'bulletedList',
+                  'numberedList',
+                  '|',
+                  'insertTable',
+                  '|',
+                  'imageUpload',
+                  '|',
+                  'undo',
+                  'redo']
+              }
+
+            // removePlugins: ['Image'], 
           }}
           data={props.operatingManual.description}
           editor={ClassicEditor}
