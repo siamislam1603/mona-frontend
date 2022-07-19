@@ -31,20 +31,20 @@ const products1 = [
 
 ];
 const columns1 = [
-{
-  dataField: 'formname',
-  text: 'Form Name',
-  formatter: (cell) => {
-    cell=cell.split(",");
-    return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt=''/></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+  {
+    dataField: 'formname',
+    text: 'Form Name',
+    formatter: (cell) => {
+      cell = cell.split(",");
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+    },
   },
-},
-{
+  {
     dataField: 'educatorname',
     text: 'Educator Name',
     formatter: (cell) => {
-      cell=cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt=''/></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      cell = cell.split(",");
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
     },
   },
   {
@@ -54,7 +54,7 @@ const columns1 = [
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
-            <img src="../img/dot-ico.svg" alt=""/>
+            <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item href="#">Delete</Dropdown.Item>
@@ -73,10 +73,10 @@ const FranchisorDashboard = () => {
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader />
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>
@@ -88,31 +88,31 @@ const FranchisorDashboard = () => {
                           <div className="column-list access-list three-col">
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/xero-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
                                 <div className="name">Xero</div>
                               </a>
                             </div>
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/bitool-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
                               </a>
                             </div>
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/story-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/story-ico.png" alt="" /></div>
                                 <div className="name">Story park</div>
                               </a>
                             </div>
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/harmony-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                                 <div className="name">Harmony</div>
                               </a>
                             </div>
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/engagebay-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
                                 <div className="name">Engagebay</div>
                               </a>
                             </div>
@@ -124,11 +124,11 @@ const FranchisorDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="audit-form">
-                            <p>Total Number of Audit Forms <br/>in Last 30 Days</p>
+                            <p>Total Number of Audit Forms <br />in Last 30 Days</p>
                             <span className="totalaudit">70</span>
                           </div>
                         </div>
-                          {/*<div className="record-column">
+                        {/*<div className="record-column">
                             <div className="item">
                               <div className="fixcol">
                                 <div className="icopic"><img src="../img/folder-ico.png" alt=""/></div>
@@ -249,13 +249,13 @@ const FranchisorDashboard = () => {
                                 <span className="num">04</span>
                               </a>
                             </div>
-                            <div className="listing">
+                            {/* <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">04</span>
                               </a>
-                            </div>
+                            </div> */}
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
@@ -280,13 +280,13 @@ const FranchisorDashboard = () => {
                           <div className="column-list announcements-list">
                             <div className="listing">
                               <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                 <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                 <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
                               </a>
                             </div>
