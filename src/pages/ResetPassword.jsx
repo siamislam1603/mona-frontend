@@ -49,9 +49,10 @@ const setField = (field, value) => {
     const password =passwords.confirm_password
     let response = await axios.get(`${BASE_URL}/auth/passwordReset/?token=${theToken}&password=${password}`)
     if(response.status===200 && response.data.status === "success"){
+      setTopMessage("Password Reset Successfully ")
       setTimeout(() => {
         logout()
-      }, 2000);
+      }, 3000);
       console.log("The success",response)
   }
     
@@ -108,6 +109,8 @@ console.log("checkPassword", checkResetPassword)
                 <div className="custom_title">
                   <p>Reset Password</p>
                 </div>
+                {topMessage && <p className="alert alert-success">{topMessage}</p>} 
+
                 <Form className="login_form" onSubmit={onSubmit}>
                 <Form.Group
                     className="mb-4 form-group"
