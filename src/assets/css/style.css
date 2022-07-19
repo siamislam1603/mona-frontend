@@ -718,3 +718,30 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .mt-2 {
   margin-top: 24px;
 }
+
+/* TRAINING FILES LISTING: EDIT TRAINING */
+.file-container {
+  width: 250px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.file-thumbnail {
+  width: 100px;
+  height: auto;
+}
+
+.file-thumbnail-vector {
+  width: 30px;
+  height: auto;
+}
+
+.file-text {
+  margin-bottom: 0;
+}
+
+.file-remove {
+  cursor: pointer;
+}

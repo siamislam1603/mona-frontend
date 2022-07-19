@@ -51,8 +51,13 @@ const EditTraining = () => {
   const [trainingData, setTrainingData] = useState({});
   const [trainingSettings, setTrainingSettings] = useState({ user_roles: [] });
   const [coverImage, setCoverImage] = useState({});
+  
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+  const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
+
   const [relatedFiles, setRelatedFiles] = useState([]);
+  const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
+
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [franchiseeList, setFranchiseeList] = useState();
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState();
@@ -156,8 +161,10 @@ const EditTraining = () => {
     }));
 
     setSendToAllFranchisee(editTrainingData?.shares[0].franchisee === null ? "all" : "none");
-    setVideoTutorialFiles(editTrainingData?.trainingFiles?.filter(file => file.fileType === ".mp4"));
-
+    
+    setFetchedVideoTutorialFiles(editTrainingData?.training_files?.filter(file => file.fileType === ".mp4"));
+    
+    setFetchedRelatedFiles(editTrainingData?.training_files?.filter(file => file.type !== '.mp4'));
     console.log('FETCHED DATA COPIED!');
   }
 
@@ -306,6 +313,10 @@ const EditTraining = () => {
     }
   };
 
+  const handleTrainingFileDelete = (fileId) => {
+    console.log(`Delete file with id: ${fileId}`);
+  }
+
   useEffect(() => {
     fetchUserRoles();
     fetchTrainingCategories();
@@ -325,8 +336,9 @@ const EditTraining = () => {
     fetchFranchiseeUsers(parseInt(trainingSettings.assigned_franchisee));
   }, [trainingSettings.assigned_franchisee]);
 
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  // trainingData && console.log('TRAINING DATA:', trainingData);
+  // trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  // videoTutorialFiles && console.log('Vide Tutorial:', videoTutorialFiles);
 
   // fetchedFranchiseeUsers && console.log('USER OBJ:', fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0].assigned_users.includes(user.id + "")));
   return (
@@ -466,6 +478,24 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setVideoTutorialFiles}
                             />
+                            <div className="media-container">
+                              {
+                                fetchedVideoTutorialFiles &&
+                                fetchedVideoTutorialFiles.map((video, index) => {
+                                  return (
+                                    <div className="file-container">
+                                      <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
+                                      <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
+                                      <img 
+                                        onClick={() => handleTrainingFileDelete(video.id)}
+                                        className="file-remove" 
+                                        src="../img/removeIcon.svg" 
+                                        alt="" />
+                                    </div>
+                                  )
+                                })
+                              }
+                            </div>
                           </Form.Group>
                         </Col>
 
@@ -475,6 +505,24 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
+                            <div className="media-container">
+                              {
+                                fetchedRelatedFiles &&
+                                fetchedRelatedFiles.map((file, index) => {
+                                  return (
+                                    <div className="file-container">
+                                      <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
+                                      <p className="file-text"><strong>{`Related File ${relatedFiles.length + (index + 1)}`}</strong></p>
+                                      <img 
+                                        onClick={() => handleTrainingFileDelete(file.id)}
+                                        className="file-remove" 
+                                        src="../img/removeIcon.svg" 
+                                        alt="" />
+                                    </div>
+                                  )
+                                })
+                              }
+                            </div>
                           </Form.Group>
                         </Col>
                         <Col md={12}>

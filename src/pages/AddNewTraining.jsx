@@ -291,6 +291,7 @@ const AddNewTraining = () => {
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   // trainingData && console.log('TRAINING DATA:', trainingData);
+  videoTutorialFiles && console.log('VIDEO TUTORIAL FILE:', videoTutorialFiles);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>

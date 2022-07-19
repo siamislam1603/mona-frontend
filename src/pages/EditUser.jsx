@@ -60,6 +60,7 @@ const EditUser = () => {
   // DIALOG STATES
   const [showConsentDialog, setShowConsentDialog] = useState(false);
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [showUserAgreementDialog, setShowUserAgreementDialog] = useState(false);
   const [signatureImage, setSignatureImage] = useState(null);
   const [isSubmit, setIsSubmit] = useState(false);
   const [signatureUploaded, setSignatureUploaded] = useState(false);
@@ -83,6 +84,7 @@ const EditUser = () => {
 
   const copyDataToState = () => {
     setFormData(prevState => ({
+      id: editUserData?.id,
       fullname: editUserData?.fullname,
 
       role: editUserData?.role,
@@ -382,6 +384,8 @@ const EditUser = () => {
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
+  editUserData && console.log('EDIT USER DATA:', editUserData);
+
   return (
     <>
       <div id="main">
@@ -582,7 +586,7 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
                             <Select
-                              placeholder={franchiseeData?.filter(data => data.id === formData?.franchisee_id)[0].label ||"Which Franchisee?"}
+                              placeholder={"Which Franchisee?"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
                               onChange={(e) => {
@@ -649,16 +653,28 @@ const EditUser = () => {
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
                               type="date"
+                              disabled={true}
                               name="terminationDate"
                               value={formData.terminationDate}
                               onChange={handleChange}
                             />
-                            <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
                             {
-                              formData.termination_reach_me && 
+                              formData.termination_reach_me === false &&
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
+                              <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
+                            }
+                            {
+                              formData.termination_reach_me === true &&
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
                               <div>
-                                <p>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{formData.terminationDate}</strong>.</p>
+                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData.termination_date).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
                                 <img style={{ width: "100px", height: "auto" }}src={`${formData.user_signature}`} alt="" />
+                              </div>
+                              }
+                              {
+                                (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') && 
+                              <div>
+                                <p style={{ fontSize: "14px", marginTop: '10px' }}>Consent Form: <strong style={{ color: '#C2488D', cursor: 'pointer' }} onClick={() => setShowUserAgreementDialog(true)}>Click Here!</strong></p>
                               </div>
                               }
                           </Form.Group>
@@ -683,6 +699,44 @@ const EditUser = () => {
               </div>
             </div>
           </Container>
+          {
+            <Modal
+              size="lg"
+              show={showUserAgreementDialog}
+              onHide={() => setShowUserAgreementDialog(false)}>
+              <Modal.Header>
+                <Modal.Title>Termination Agreement</Modal.Title>
+              </Modal.Header>
+
+              <Modal.Body>
+                <Row>
+                  <p><strong>To whom it may concern,</strong></p>
+                  
+                  <div className="mt-2">
+                    <p style={{ fontSize: "16px" }}>I hereby formally provide notice of my intention to terminate my arrangement with Mona.</p>
+                    <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of <strong style={{ color: '#C2488D' }}>{moment(formData.termination_date).format('DD/MM/YYYY')}</strong>.</p>
+                  </div>
+
+                  <p></p>
+
+                  <p class="form-check-label" for="flexCheckDefault">
+                    I am happy to be reached if you have any questions.
+                  </p>
+
+                  <img style={{ width: '200px', height: 'auto' }} src={formData.user_signature} alt="consented user signature" />
+                </Row>
+              </Modal.Body>
+
+              <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
+              <div class="text-center">
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => setShowUserAgreementDialog(false)}>Close</button>
+              </div>
+              </Modal.Footer>
+            </Modal>
+          }
           {
             <Modal
               size="lg"
