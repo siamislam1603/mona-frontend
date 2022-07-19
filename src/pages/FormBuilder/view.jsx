@@ -2059,7 +2059,7 @@ function ViewFormBuilder(props) {
                 <div className="user_role">
                   <div className="user_detail">
                     <h4>Educator</h4>
-                    <button>View Reponse</button>
+                    <button>View Response</button>
                   </div>
                 </div>
               </div>
@@ -2073,7 +2073,7 @@ function ViewFormBuilder(props) {
                 <div className="user_role">
                   <div className="user_detail">
                     <h4>Educator</h4>
-                    <button>View Reponse</button>
+                    <button>View Response</button>
                   </div>
                 </div>
               </div>
@@ -2087,7 +2087,7 @@ function ViewFormBuilder(props) {
                 <div className="user_role">
                   <div className="user_detail">
                     <h4>Educator</h4>
-                    <button>View Reponse</button>
+                    <button>View Response</button>
                   </div>
                 </div>
               </div>
