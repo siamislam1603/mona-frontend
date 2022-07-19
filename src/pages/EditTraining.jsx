@@ -162,9 +162,9 @@ const EditTraining = () => {
 
     setSendToAllFranchisee(editTrainingData?.shares[0].franchisee === null ? "all" : "none");
     
-    setFetchedVideoTutorialFiles(editTrainingData?.training_files?.filter(file => file.fileType === ".mp4"));
+    setFetchedVideoTutorialFiles(editTrainingData?.training_files?.filter(file => file.fileType === ".mp4" && file.is_deleted === false));
     
-    setFetchedRelatedFiles(editTrainingData?.training_files?.filter(file => file.type !== '.mp4'));
+    setFetchedRelatedFiles(editTrainingData?.training_files?.filter(file => file.type !== '.mp4' && file.is_deleted === false));
     console.log('FETCHED DATA COPIED!');
   }
 
@@ -313,8 +313,19 @@ const EditTraining = () => {
     }
   };
 
-  const handleTrainingFileDelete = (fileId) => {
+  const handleTrainingFileDelete = async (fileId) => {
     console.log(`Delete file with id: ${fileId}`);
+    let token = localStorage.getItem('token');
+    const deleteRespone = await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    console.log('Delete response:', deleteRespone);
+    // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
+
+    // }
   }
 
   useEffect(() => {
