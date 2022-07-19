@@ -16,8 +16,6 @@ const NewFranchisees = () => {
         abn: "",
         city: "",
         state: "",
-        franchisee_admin_email: "",
-        franchisee_admin: "",
         franchisee_number: "",
         acn: "",
         address: "",
@@ -26,12 +24,10 @@ const NewFranchisees = () => {
     });
     const [australianStatesData, setAustralianStatesData] = useState();
     const [cityData, setCityData] = useState([]);
-    const [franchiseeAdminData, setFranchiseeAdminData] = useState();
     const [selectedFranchisee, setSelectedFranchisee] = useState();
     const [topErrorMessage, setTopErrorMessage] = useState(null);
     const [loader, setLoader] = useState(false);
     const [createFranchiseeModal, setCreateFranchiseeModal] = useState(false);
-    const [franchiseeCollecion, setFranchiseeCollection] = useState(null);
     
     // ERROR STATES
     const [formErrors, setFormErrors] = useState({});
@@ -91,23 +87,6 @@ const NewFranchisees = () => {
         }
     };
 
-    // FETCHES FRANCHISEE ADMINS FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-    const fetchFranchiseeAdmins = async () => {
-        const response = await axios.get(`${BASE_URL}/role/franchisee-admin-list`);
-        if (response.status === 200 && response.data.status === "success") {
-        const { franchiseeAdminList } = response.data;
-        console.log('data', franchiseeAdminList);
-        setFranchiseeAdminData(
-            franchiseeAdminList.map((dt) => ({
-                id: dt.id,
-                email: dt.email,
-                value: dt.fullname,
-                label: dt.fullname,
-            }))
-        );
-        }
-    };
-
     const handleFranchiseeDataSubmission = event => {
         event.preventDefault();
 
@@ -135,40 +114,12 @@ const NewFranchisees = () => {
     const handleCancel = () => {
         window.location.href="/all-franchisees";
     }
-
-    const fetchFranchiseeList = async () => {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${BASE_URL}/role/franchisee`, {
-            headers: {
-            "Authorization": `Bearer ${token}`
-            }
-        });
-
-        if(response.status === 200 && response.data.status === "success") {
-            let { franchiseeList } = response.data;
-
-            setFranchiseeCollection(franchiseeList.map(franchisee => ({
-                id: franchisee.id,
-                value: franchisee.franchisee_alias,
-                label: franchisee.franchisee_name
-            })));  
-        }
-    }
-
-    useEffect(() => {
-        setFranchiseeData((prevState) => ({
-            ...prevState,
-            franchisee_admin_email: franchiseeData.franchisee_object?.email
-        }))
-    }, [franchiseeData.franchisee_admin]);
-
     useEffect(() => {
         fetchAustralianStates();
         fetchCities();
-        fetchFranchiseeList();
-        fetchFranchiseeAdmins();
-        fetchFranchiseeList();
     }, []);
+
+    franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
 
     return (
         <div>
@@ -281,7 +232,7 @@ const NewFranchisees = () => {
                                                 { formErrors.contact !== null && <span className="error">{formErrors.contact}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            {/* <Form.Group className="mb-3" controlId="formBasicPassword">
                                                 <Form.Label>Franchisee Admin’s Email</Form.Label>
                                                 <Form.Control 
                                                     name="franchisee_admin_email"
@@ -296,7 +247,7 @@ const NewFranchisees = () => {
                                                         }));
                                                     }} />
                                                 { formErrors.franchisee_admin_email !== null && <span className="error">{formErrors.franchisee_admin_email}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
                                         </Col>
 
                                         <Col sm={6} md={6} lg={6}>
@@ -364,7 +315,7 @@ const NewFranchisees = () => {
                                                 { formErrors.postcode !== null && <span className="error">{formErrors.postcode}</span> }
                                             </Form.Group>
                                             
-                                            <Form.Group className="mb-3">
+                                            {/* <Form.Group className="mb-3">
                                                 <Form.Label>Select Franchisee:</Form.Label>
                                                 <Select
                                                 placeholder="Select Franchisee"
@@ -388,9 +339,9 @@ const NewFranchisees = () => {
                                                 }}
                                                 />
                                                 { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
 
-                                            <Form.Group className="mb-3">
+                                            {/* <Form.Group className="mb-3">
                                                 <Form.Label>Franchisee Admin</Form.Label>
                                                 <Select
                                                 placeholder="Select Franchisee Admin"
@@ -414,7 +365,7 @@ const NewFranchisees = () => {
                                                 }}
                                                 />
                                                 { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
                                         </Col>
 
                                         <div className="d-flex justify-content-center my-5">

@@ -128,14 +128,14 @@ export const createOperatingManualValidation = (form) => {
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form) =>{
+export const AddNewAnnouncementValidation = (form,coverImage) =>{
   let newErrors = {};
   console.log("The form validat", form)
   let { announcement_title,announcement_description,cover_image} = form;
   console.log("The tile valdiation", announcement_title)
-  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
-  if (!cover_image || cover_image === '')newErrors.cover_image = 'Cover image is Required';
-  if(!announcement_description || announcement_description === ' ') newErrors.announcement_description="Description is Required"
+  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Announcement Title is Required"
+  if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
+  if(!announcement_description || announcement_description === ' ') newErrors.announcement_description="Announcement Description is Required"
   
   return newErrors;
 
@@ -274,8 +274,6 @@ export const FranchiseeFormValidation = (formObj) => {
     abn,
     city,
     state,
-    franchisee_admin_email,
-    franchisee_admin,
     franchisee_number,
     acn,
     address,
@@ -297,14 +295,6 @@ export const FranchiseeFormValidation = (formObj) => {
 
   if(!state) {
     errors.state = "State is required!";
-  }
-
-  if(!franchisee_admin_email) {
-    errors.franchisee_admin_email = "Franchisee Admin's email is required!";
-  }
-
-  if(!franchisee_admin) {
-    errors.franchisee_admin = "please select Franchisee admin";
   }
 
   if(!franchisee_number) {

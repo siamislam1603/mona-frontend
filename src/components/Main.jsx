@@ -40,7 +40,7 @@ import EditAnnouncement from '../pages/EditAnnouncement';
 import ChangePassword from "../pages/ChangePassword"
 import EditUser from '../pages/EditUser';
 import EditFranchisees from '../pages/EditFranchisees';
-
+import ResetPassword from "../pages/ResetPassword"
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -97,12 +97,21 @@ const Main = () => {
             </Protected>
           }
         />
+        <Route
+          path="/reset-password"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ResetPassword />
+            </Protected> 
+          }
+        />
 
         <Route
           path="/add-permissions"
           element={
             <Protected isLoggedIn={isLoggedIn}>
-              <ForgotPassword />
+              {/* <ForgotPassword /> */}
               <AddPermissions />
             </Protected>
           }
@@ -454,11 +463,10 @@ const Main = () => {
         <Route
           path="/change-password"
           element={
-            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
               <ChangePassword />
-            ) : (
-              <Navigate to="/" />
-            )
+            </Protected>
           }
         />
 

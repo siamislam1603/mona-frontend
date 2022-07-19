@@ -239,9 +239,11 @@ const UserManagement = () => {
         is_deleted: dt.is_deleted,
         userID: dt.id,
       }));
+      
       tempData = tempData.filter((data) => data.is_deleted === 0);
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee",tempData)
       setUserData(tempData);
+
       let temp = tempData;
       let csv_data = [];
       temp.map((item,index) => {
