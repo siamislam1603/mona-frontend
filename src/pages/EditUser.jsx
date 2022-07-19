@@ -61,6 +61,7 @@ const EditUser = () => {
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [signatureImage, setSignatureImage] = useState(null);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [signatureUploaded, setSignatureUploaded] = useState(false);
 
   // FETCHES THE DATA OF USER FOR EDITING
   const fetchEditUserData = async () => {
@@ -111,8 +112,6 @@ const EditUser = () => {
   // CREATES NEW USER INSIDE THE DATABASE
   const updateUserDetails = async (data) => {
     const token = localStorage.getItem('token');
-    // const response = await axios.post(`https://httpbin.org/anything`, data);
-    // console.log('RESPONSE:', response);
     const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, data, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -120,8 +119,31 @@ const EditUser = () => {
     });
     
     if (response.status === 200 && response.data.status === 'success') {
-      localStorage.setItem('success_msg', 'User updated successfully!');
-      window.location.href = '/user-management';
+      console.log('USER EDITED SUCCESSFULLY!');
+      if(signatureImage) {
+        let data = new FormData();
+        const blob = await fetch(signatureImage).then((res) => res.blob());
+        console.log('BLOB:', blob);
+        data.append('image', blob);
+        let signatureImageResponse = await axios.put(`${BASE_URL}/auth/${response.data.userId}`, data, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
+          localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
+          window.location.href = '/user-management';
+          setSignatureUploaded(true);
+        } else if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "fail") {
+          setTopErrorMessage(signatureImageResponse.data.msg);
+        }
+      }
+
+      if(signatureUploaded !== true) {
+        localStorage.setItem('success_msg', 'User updated successfully!');
+        window.location.href = '/user-management';
+      }
     } else if (response.status === 200 && response.data.status === 'fail') {
       setTopErrorMessage(response.data.msg);
     }
@@ -351,9 +373,6 @@ const EditUser = () => {
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
-  formData && console.log('FRANCHISEE ID:', formData);
-  signatureImage && console.log('Signature Image:', signatureImage);
-  croppedImage && console.log('Cropped Image:', croppedImage);
   return (
     <>
       <div id="main">
@@ -554,7 +573,7 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
                             <Select
-                              placeholder={"Which Franchisee?"}
+                              placeholder={franchiseeData?.filter(data => data.id === formData?.franchisee_id)[0].label ||"Which Franchisee?"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
                               onChange={(e) => {
