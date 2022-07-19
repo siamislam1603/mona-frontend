@@ -48,28 +48,30 @@ const SignIn = () => {
         localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
       }
 
+      console.log('ROLE:', res.data.user.role);
+      console.log('IS LOGGED IN?', res.data.user.isLoggedIn);
 
       if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/franchisor-dashboard';
         localStorage.setItem('selectedFranchisee',"All")
-      } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = '/reset-password';
+      } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 0) {
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/coordinator-dashboard';
       } else if(res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 0) {
-        window.location.href = '/reset-password';
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/franchisee-dashboard';
       } else if(res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = '/reset-password';
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'educator' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/educator-dashboard';
       } else if(res.data.user.role === 'educator' && res.data.user.isLoggedIn === 0) {
-        window.location.href="/reset-password";
+        window.location.href="/change-password";
       } else if (res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/parents-dashboard';
       } else if(res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 0) {
-        window.location.href="/reset-password";
+        window.location.href="/change-password";
       }
     } else if (res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);

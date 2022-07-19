@@ -11,9 +11,10 @@ import makeAnimated from 'react-select/animated';
 import { useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { Link } from 'react-router-dom';
-import Signature from './InputFields/Signature';
+import UserSignature from './InputFields/UserSignature';
 import moment from 'moment';
 import DragDropSingle from '../components/DragDropSingle';
+import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
@@ -62,6 +63,8 @@ const EditUser = () => {
   const [signatureImage, setSignatureImage] = useState(null);
   const [isSubmit, setIsSubmit] = useState(false);
   const [signatureUploaded, setSignatureUploaded] = useState(false);
+  const [loader, setLoader] = useState(false);
+  const [createUserModal, setCreateUserModal] = useState(false);
 
   // FETCHES THE DATA OF USER FOR EDITING
   const fetchEditUserData = async () => {
@@ -105,7 +108,9 @@ const EditUser = () => {
       businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + '')),
       
       terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD'),
-      termination_reach_me: false
+      termination_reach_me: editUserData?.termination_reach_me,
+      user_signature: editUserData?.user_signature,
+      termination_date: editUserData?.termination_date
     }));
   }
 
@@ -132,6 +137,8 @@ const EditUser = () => {
         });
 
         if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
+          setCreateUserModal(false);
+          setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
           window.location.href = '/user-management';
           setSignatureUploaded(true);
@@ -183,6 +190,8 @@ const EditUser = () => {
 
     trainingDocuments.map(doc => data.append('images', doc));
 
+    setCreateUserModal(true);
+    setLoader(true)
     updateUserDetails(data);
   };
 
@@ -645,6 +654,13 @@ const EditUser = () => {
                               onChange={handleChange}
                             />
                             <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
+                            {
+                              formData.termination_reach_me && 
+                              <div>
+                                <p>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{formData.terminationDate}</strong>.</p>
+                                <img style={{ width: "100px", height: "auto" }}src={`${formData.user_signature}`} alt="" />
+                              </div>
+                              }
                           </Form.Group>
 
                           <Col md={12}>
@@ -741,7 +757,7 @@ const EditUser = () => {
 
               <Modal.Body>
                 <Row>
-                  <Signature
+                  <UserSignature
                     field_label="Signature:"
                     onChange={setSignatureImage} />
                 </Row>
@@ -757,6 +773,33 @@ const EditUser = () => {
               </Modal.Footer>
             </Modal>
           }
+          {
+                createUserModal && 
+                <Modal
+                show={createUserModal}
+                onHide={() => setCreateUserModal(false)}>
+                    <Modal.Header>
+                        <Modal.Title>
+                        Creating User
+                        </Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <div className="create-training-modal" style={{ textAlign: 'center' }}>
+                        <p>User details are being updated!</p>
+                        <p>Please Wait...</p>
+                        </div>
+                    </Modal.Body>
+
+                    <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    {
+                        loader === true && <div>
+                        <ReactBootstrap.Spinner animation="border" />
+                        </div>
+                    }
+                    </Modal.Footer>
+                </Modal>
+            }
         </section>
       </div>
     </>
