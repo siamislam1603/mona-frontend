@@ -1,7 +1,15 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
-import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Table,
+} from 'react-bootstrap';
 import LeftNavbar from '../../../components/LeftNavbar';
 import TopHeader from '../../../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
@@ -1139,6 +1147,7 @@ const AddFormField = (props) => {
 
                   <div className="select-section-modal">
                     <Modal
+                     className='select_group_model'
                       show={groupFlag}
                       onHide={() => {
                         setGroupFlag(false);
@@ -1168,28 +1177,95 @@ const AddFormField = (props) => {
                                     id={item}
                                     value={item}
                                     name="section_name"
-                                    checked={
-                                      groupModelData[Index]?.section_name ===
-                                      item.toLowerCase().split(' ').join('_')
-                                    }
-                                    onChange={(e) => {
-                                      counter++;
-                                      setCount(counter);
-                                      e.target.value = e.target.value
-                                        .toLocaleLowerCase()
-                                        .split(' ')
-                                        .join('_');
-                                      const tempArr = groupModelData;
-                                      const tempObj = tempArr[Index];
-                                      tempObj[e.target.name] = e.target.value;
-                                      tempArr[Index] = tempObj;
-                                      setGroupModelData(tempArr);
-                                    }}
+                                    // checked={
+                                    //   groupModelData[Index]?.section_name ===
+                                    //   item.toLowerCase().split(' ').join('_')
+                                    // }
+                                    // onChange={(e) => {
+                                    //   counter++;
+                                    //   setCount(counter);
+                                    //   e.target.value = e.target.value
+                                    //     .toLocaleLowerCase()
+                                    //     .split(' ')
+                                    //     .join('_');
+                                    //   const tempArr = groupModelData;
+                                    //   const tempObj = tempArr[Index];
+                                    //   tempObj[e.target.name] = e.target.value;
+                                    //   tempArr[Index] = tempObj;
+                                    //   setGroupModelData(tempArr);
+                                    // }}
                                   />
                                   <span className="checkmark"></span>
                                 </label>
                               );
                             })}
+                          </div>
+                          <div className="sub_check_box">
+                            <h2>Applicable to:</h2>
+                            <div className="sub_check_box_list">
+                              <div className="modal_check_box">
+                                <div className="modal-two-check">
+                                  <label class="container">
+                                  Franchisor Admin
+                                    <input
+                                      type="radio"
+                                      id="abc"
+                                      name="section_name"
+                                      value="abc"
+                                    />
+                                    <span class="checkmark"></span>
+                                  </label>
+                                </div>
+                                <div className="modal-two-check">
+                                  <label class="container">
+                                  Franchisee Admin
+                                    <input
+                                      type="radio"
+                                      id="abc"
+                                      name="section_name"
+                                      value="abc"
+                                    />
+                                    <span class="checkmark"></span>
+                                  </label>
+                                </div>
+                                <div className="modal-two-check">
+                                  <label class="container">
+                                  Co-ordinators
+                                    <input
+                                      type="radio"
+                                      id="abc"
+                                      name="section_name"
+                                      value="abc"
+                                    />
+                                    <span class="checkmark"></span>
+                                  </label>
+                                </div>
+                                <div className="modal-two-check">
+                                  <label class="container">
+                                  Co-ordinators
+                                    <input
+                                      type="radio"
+                                      id="abc"
+                                      name="section_name"
+                                      value="abc"
+                                    />
+                                    <span class="checkmark"></span>
+                                  </label>
+                                </div>
+                                <div className="modal-two-check">
+                                  <label class="container">
+                                  Co-ordinators
+                                    <input
+                                      type="radio"
+                                      id="abc"
+                                      name="section_name"
+                                      value="abc"
+                                    />
+                                    <span class="checkmark"></span>
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </Modal.Body>
@@ -1270,7 +1346,654 @@ const AddFormField = (props) => {
                       </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <div className="form-settings-content">
+                      <div className="form_setting_fields">
+                        <Row>
+                          <Col lg={3} sm={6}>
+                            <Form.Group className="form_fields_box">
+                              <Form.Label>Start Date</Form.Label>
+                              <Form.Control
+                                type="date"
+                                name="start_date"
+                                // value={formSettingData?.start_date}
+                                // onChange={(e) => {
+                                //   setFormSettingFields(
+                                //     e.target.name,
+                                //     e.target.value
+                                //   );
+                                // }}
+                                // isInvalid={!!formSettingError.start_date}
+                              />
+                              <img
+                                className="form_fields_icon"
+                                src="../../img/calendar_icons.png"
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {/* {formSettingError.start_date} */}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3} sm={6} className="mt-3 mt-sm-0">
+                            <Form.Group className="form_fields_box">
+                              <Form.Label>Start Time</Form.Label>
+                              <Form.Control
+                                type="time"
+                                name="start_time"
+                                // value={formSettingData?.start_time}
+                                // onChange={(e) => {
+                                //   setFormSettingFields(
+                                //     e.target.name,
+                                //     e.target.value
+                                //   );
+                                // }}
+                                // isInvalid={!!formSettingError.start_time}
+                              />
+                              <img
+                                className="form_fields_icon"
+                                src="../../img/clock-circle-icon.png"
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {/* {formSettingError.start_time} */}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                            <Form.Group className="form_fields_box">
+                              <Form.Label>End Date</Form.Label>
+                              <Form.Control
+                                type="date"
+                                name="end_date"
+                                // value={formSettingData?.end_date}
+                                // onChange={(e) => {
+                                //   setFormSettingFields(
+                                //     e.target.name,
+                                //     e.target.value
+                                //   );
+                                // }}
+                                // isInvalid={!!formSettingError.end_date}
+                              />
+                              <img
+                                className="form_fields_icon"
+                                src="../../img/calendar_icons.png"
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {/* {formSettingError.end_date} */}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                            <Form.Group className="form_fields_box">
+                              <Form.Label>End Time</Form.Label>
+                              <Form.Control
+                                type="time"
+                                name="end_time"
+                                // value={formSettingData?.end_time}
+                                // onChange={(e) => {
+                                //   setFormSettingFields(
+                                //     e.target.name,
+                                //     e.target.value
+                                //   );
+                                // }}
+                                // isInvalid={!!formSettingError.end_time}
+                              />
+                              <img
+                                className="form_fields_icon"
+                                src="../../img/clock-circle-icon.png"
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {/* {formSettingError.end_time} */}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                      </div>
+                      <div className="applicable_section">
+                        <Row>
+                          <Col md={4}>
+                            <Form.Group>
+                              <Form.Label className="form_label_title">
+                                Applicable to:
+                              </Form.Label>
+                              <div className="new-form-radio">
+                                <div className="new-form-radio-box">
+                                  <label for="user_role">
+                                    <input
+                                      type="radio"
+                                      value="user_role"
+                                      name="applicable"
+                                      id="user_role"
+                                      // onChange={(e) => {
+                                      //   setFormSettingFields(
+                                      //     e.target.name,
+                                      //     e.target.value
+                                      //   );
+                                      // }}
+                                      // checked={
+                                      //   formSettingData?.applicable_to_franchisee ===
+                                      //     true ||
+                                      //   formSettingData?.applicable_to_franchisee ===
+                                      //     'Yes'
+                                      // }
+                                    />
+                                    <span className="radio-round"></span>
+                                    <p>User Roles</p>
+                                  </label>
+                                </div>
+                                <div className="new-form-radio-box">
+                                  <label for="specific_user">
+                                    <input
+                                      type="radio"
+                                      value="specific_user"
+                                      name="applicable"
+                                      id="specific_user"
+                                      // onChange={(e) => {
+                                      //   setFormSettingFields(
+                                      //     e.target.name,
+                                      //     e.target.value
+                                      //   );
+                                      // }}
+                                      // checked={
+                                      //   formSettingData?.applicable_to_franchisee ===
+                                      //     false ||
+                                      //   formSettingData?.applicable_to_franchisee ===
+                                      //     'No'
+                                      // }
+                                    />
+                                    <span className="radio-round"></span>
+                                    <p>Specific Users</p>
+                                  </label>
+                                </div>
+                              </div>
+                            </Form.Group>
+                            <div className="sharing_section">
+                              <div className="sharing">
+                                <div className="sharing-title">
+                                  <p>Enable Sharing</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    className="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    // checked={form[index]?.required}
+                                    // onChange={(e) => {
+                                    //   setField(
+                                    //     e.target.name,
+                                    //     e.target.checked,
+                                    //     index
+                                    //   );
+                                    // }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="sharing">
+                                <div className="sharing-title">
+                                  <p>Enable Editing</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    className="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    // checked={form[index]?.required}
+                                    // onChange={(e) => {
+                                    //   setField(
+                                    //     e.target.name,
+                                    //     e.target.checked,
+                                    //     index
+                                    //   );
+                                    // }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="sharing">
+                                <div className="sharing-title">
+                                  <p>Stop Form Submissions</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    className="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    // checked={form[index]?.required}
+                                    // onChange={(e) => {
+                                    //   setField(
+                                    //     e.target.name,
+                                    //     e.target.checked,
+                                    //     index
+                                    //   );
+                                    // }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="sharing">
+                                <div className="sharing-title">
+                                  <p>For Training Module</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    className="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    // checked={form[index]?.required}
+                                    // onChange={(e) => {
+                                    //   setField(
+                                    //     e.target.name,
+                                    //     e.target.checked,
+                                    //     index
+                                    //   );
+                                    // }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <Col md={12} className="mt-3 mt-md-0">
+                              <div className="submissions_section">
+                                <Form.Group>
+                                  <Form.Label>
+                                    Select folder to save submissions
+                                  </Form.Label>
+                                  <Form.Select
+                                    name="previous_form"
+                                    isInvalid={!!errors.previous_form}
+                                  >
+                                    <option value="1">
+                                      Select folder to save submissions
+                                    </option>
+                                    {/* {formData?.map((item) => {
+                                              return (
+                                                <option
+                                                  value={item.form_name}
+                                                  selected={
+                                                    form?.previous_form ===
+                                                    item.form_name
+                                                  }
+                                                >
+                                                  {item.form_name}
+                                                </option>
+                                              );
+                                            })} */}
+                                  </Form.Select>
+                                  <Form.Control.Feedback type="invalid">
+                                    {errors.previous_form}
+                                  </Form.Control.Feedback>
+                                </Form.Group>
+                              </div>
+                            </Col>
+                          </Col>
+                          <Col md={8}>
+                            <section className="user_role_section">
+                              <Form.Label className="form_label_title">
+                                Select User Roles
+                              </Form.Label>
+
+                              <div className="user_role_table">
+                                <Table bordered>
+                                  <thead className="table_title">
+                                    <tr>
+                                      <th>User Type</th>
+                                      <th>Targeted Users</th>
+                                      <th>Fill Access Users</th>
+                                      <th>Response Visibility</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td className="border_left_box">
+                                        Franchisor Admin
+                                      </td>
+                                      <td className="footer_modal ">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            className="input_checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Franchisee admin </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Coordinator</td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Educator</td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Parent/Guardian</td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr className="child_table_row">
+                                      <td>
+                                        <ul>
+                                          <li className="child_tag">Child</li>
+                                        </ul>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </Table>
+                              </div>
+                              <div className="signatories_section">
+                                <Row>
+                                  <Col md={3}>
+                                    <div className="sharing">
+                                      <div className="sharing-title">
+                                        <p>Signatories</p>
+                                      </div>
+                                      <div className="toogle-swich">
+                                        <input
+                                          className="switch"
+                                          name="required"
+                                          type="checkbox"
+                                          // checked={form[index]?.required}
+                                          // onChange={(e) => {
+                                          //   setField(
+                                          //     e.target.name,
+                                          //     e.target.checked,
+                                          //     index
+                                          //   );
+                                          // }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </Col>
+                                  <Col md={8}>
+                                    <div className="footer_modal footer_user-roles-box">
+                                      <div className="footer_modal_checkbox">
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </div>
+                                      <div className="footer_modal_checkbox">
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </div>
+                              <div className="Visible_section">
+                                <Form.Label className="form_label_title">
+                                  Form Visible To
+                                </Form.Label>
+                                <Col md={12}>
+                                  <Row>
+                                    <div className="footer_modal footer_user-roles-box">
+                                      <div className="footer_modal_checkbox">
+                                        <div className="main_checkbox">
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                        <div className="main_checkbox_second">
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </Row>
+                                </Col>
+
+                                <Row></Row>
+                              </div>
+                            </section>
+                          </Col>
+                        </Row>
+                      </div>
+                      {/* <div className="form-settings-content">
                         <Row>
                           <Col lg={3} sm={6}>
                             <Form.Group>
@@ -1510,7 +2233,7 @@ const AddFormField = (props) => {
                             </Col>
                           ) : null}
                         </Row>
-                      </div>
+                      </div> */}
                     </Modal.Body>
                     <Modal.Footer className="justify-content-center">
                       <Button className="back">Cancel</Button>
