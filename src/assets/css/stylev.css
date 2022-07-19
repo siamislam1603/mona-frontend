@@ -1259,6 +1259,11 @@ button:focus {
     line-height: 19px;
     /* identical to box height */
     text-transform: uppercase;
+    white-space: nowrap;
+    width: 278px;
+    vertical-align: sub;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tree li.branch>a img {
