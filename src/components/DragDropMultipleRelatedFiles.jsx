@@ -68,7 +68,7 @@ export default function DropAllRelatedFile({ relatedFilesData, onSave }) {
           {relatedFiles.map((file, index) => (
             <Col sm={6}>
               <div className="upload_related_box">
-                <div className="forms-content">
+                <div className="forms-content create-other" style={{"border-bottom":"none"}}>
                   <div className="content-icon-section">
                     <img
                       src={
@@ -76,13 +76,13 @@ export default function DropAllRelatedFile({ relatedFilesData, onSave }) {
                           ? '../img/doc_blue.svg'
                           : file.name.includes('.pptx')
                           ? '../img/doc_pptx.svg'
-                          : ''
+                          : '../img/doc_blue.svg'
                       }
                     />
                   </div>
                   <div className="content-title-section">
                     <h6>{file.name}</h6>
-                    <h4>3 Hours</h4>
+                    {/* <h4>3 Hours</h4> */}
                   </div>
                 </div>
                 <Button

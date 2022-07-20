@@ -239,7 +239,7 @@ const AddNewTraining = () => {
     // window.scrollTo(0, 0);
     
     let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles); 
-
+    console.log(errorObj);
     if(Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
@@ -289,9 +289,10 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(trainingSettings.assigned_franchisee[0]);
   }, [trainingSettings.assigned_franchisee.length > 0]);
 
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  // trainingData && console.log('TRAINING DATA:', trainingData);
-
+  // trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  // // trainingData && console.log('TRAINING DATA:', trainingData);
+  // videoTutorialFiles && console.log('VIDEO TUTORIAL FILE:', videoTutorialFiles);
+  errors && console.log('ERRORS:', errors);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -418,9 +419,10 @@ const AddNewTraining = () => {
                           <Form.Label>Upload Cover Image :</Form.Label>
                           <DropOneFile
                             onSave={setCoverImage}
+                            setErrors={setErrors}
                             // setTrainingData={setTraining}
                           />
-                        { errors.coverImage && <span className="error mt-2">{errors.coverImage}</span> } 
+                        { errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span> } 
                         </Form.Group>
                       </Col>
 

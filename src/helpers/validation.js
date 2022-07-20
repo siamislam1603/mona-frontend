@@ -276,8 +276,8 @@ export const FranchiseeFormValidation = (formObj) => {
     state,
     franchisee_number,
     acn,
-    address,
     postcode,
+    address,
     contact,
   } = formObj;
 
