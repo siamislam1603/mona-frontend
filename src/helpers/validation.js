@@ -131,11 +131,11 @@ export const createOperatingManualValidation = (form) => {
 export const AddNewAnnouncementValidation = (form,coverImage) =>{
   let newErrors = {};
   console.log("The form validat", form)
-  let { announcement_title,announcement_description,cover_image} = form;
-  console.log("The tile valdiation", announcement_title)
-  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Announcement Title is Required"
-  if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
-  if(!announcement_description || announcement_description === ' ') newErrors.announcement_description="Announcement Description is Required"
+  let { title,meta_description} = form;
+  console.log("The tile valdiation", title)
+  if(!title || title === ' ') newErrors.title="Announcement Title is Required"
+  if (!coverImage)newErrors.coverImage = 'Cover image is Required';
+  if(!meta_description || meta_description === ' ') newErrors.meta_description="Announcement Description is Required"
   
   return newErrors;
 
