@@ -87,6 +87,7 @@ export default function DropAllFile({ onSave,Files }) {
             data.map((file, index) => (
               <li className="mt-3" key={index}>
                 {file.path}
+                {/* {file.path} - {file.size} bytes */}
                 <span className="ms-2">
                   <Link to="#" onClick={() => handleFileDelete(file)}>
                       <img src="../img/removeIcon.svg" alt="" />

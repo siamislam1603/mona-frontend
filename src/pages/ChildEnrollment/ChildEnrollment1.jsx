@@ -63,7 +63,16 @@ const country = [
 ];
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
-  const [formOneData, setFormOneData] = useState({});
+  const [formOneChildData, setFormOneChildData] = useState({
+    gender: "M",
+    child_origin: "NATSI",
+    development_delay: false,
+    another_service: false,
+    school_status: "no-school"
+  });
+  const [formOneParentData, setFormOneParentData] = useState({
+
+  });
 
   const saveFormOneData = async (data) => {
     const response = await axios.post(`${BASE_URL}/child/signup`, data);
@@ -72,20 +81,29 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       nextStep();
   };
 
-  const handleFormOneChange = event => {
+  const handleChildData = event => {
     const { name, value } = event.target;
-    setFormOneData({
-      ...formOneData,
+    setFormOneChildData({
+      ...formOneChildData,
       [name]: value
     });
   };
 
+  const handleParentData = event => {
+    const { name, value } = event.target;
+    setFormOneParentData({
+      ...formOneParentData,
+      [name]: value
+    })
+  }
+
   const submitFormData = (e) => {
     e.preventDefault();
-    saveFormOneData(formOneData);
+    saveFormOneData(formOneChildData, formOneParentData);
     nextStep();
   };
 
+  formOneChildData && console.log('FORM ONE:', formOneChildData);
 
   return (
     <>
@@ -103,8 +121,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       type="text"
                       name="fullname"
                       placeholder="Child’s Full Name"
-                      value={formOneData.fullname || ""}
-                      onChange={handleFormOneChange} />
+                      value={formOneChildData.fullname || ""}
+                      onChange={handleChildData} />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -114,8 +132,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       type="text"
                       placeholder="Family Name"
                       name="family_name"
-                      value={formOneData.family_name || ""}
-                      onChange={handleFormOneChange} />
+                      value={formOneChildData.family_name || ""}
+                      onChange={handleChildData} />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -125,8 +143,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       type="text"
                       placeholder="Usually Called"
                       name="usually_called"
-                      value={formOneData.usually_called || ""}
-                      onChange={handleFormOneChange} />
+                      value={formOneChildData.usually_called || ""}
+                      onChange={handleChildData} />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -136,8 +154,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       type="date"
                       placeholder=""
                       name="dob"
-                      value={formOneData.dob || ""}
-                      onChange={handleFormOneChange} />
+                      value={formOneChildData.dob || ""}
+                      onChange={handleChildData} />
                   </Form.Group>
                 </Col>
                 <Col md={12}>
@@ -150,7 +168,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         id="malecheck"
                         label="Male"
                         defaultChecked
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           gender: "M"
                         }))} />
@@ -159,7 +177,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="gender"
                         id="femalecheck"
                         label="Female"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           gender: "F"
                         }))} />
@@ -174,8 +192,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       rows={3}
                       placeholder="Some text here for the label"
                       name="home_address"
-                      value={formOneData.home_address || ""}
-                      onChange={handleFormOneChange} />
+                      value={formOneChildData.home_address || ""}
+                      onChange={handleChildData} />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -186,7 +204,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       closeMenuOnSelect={true}
                       options={language}
                       onChange={(e) =>
-                        setFormOneData((prevState) => ({
+                        setFormOneChildData((prevState) => ({
                           ...prevState,
                           language: e.value,
                         }))}
@@ -201,7 +219,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       closeMenuOnSelect={true}
                       options={country}
                       onChange={(e) =>
-                        setFormOneData((prevState) => ({
+                        setFormOneChildData((prevState) => ({
                           ...prevState,
                           country_of_birth: e.value,
                         }))}
@@ -218,7 +236,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         id="noaboriginaltorres"
                         defaultChecked
                         label="No, not Aboriginal or Torres Straight Islander"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           child_origin: "NATSI"
                         }))} />
@@ -228,7 +246,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="aboriginaltorres"
                         id="yesaboriginal"
                         label="Yes, Aboriginal"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           child_origin: "A"
                         }))} />
@@ -237,7 +255,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="aboriginaltorres"
                         id="yesaboriginaltorres"
                         label="Yes, Aboriginal and Torres Straight Islander"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           child_origin: "YATSI"
                         }))} />
@@ -246,7 +264,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="aboriginaltorres"
                         id="yestorres"
                         label="Yes, Torres Straight Islander"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           child_origin: "TSI"
                         }))} />
@@ -263,8 +281,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         id="yesc"
                         className="ps-0"
                         label="Yes"
-                        defaultChecked
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           development_delay: true
                         }))} />
@@ -273,9 +290,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="disability"
                         id="noc"
                         label="No"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        defaultChecked
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
-                          development_delay: false
+                          development_delay: false,
+                          child_medicare_no: null,
+                          child_crn: null,
+                          parent_crn_1: null,
+                          parent_crn_2: null
                         }))} />
                     </div>
                     <Form.Text className="text-muted">
@@ -283,46 +305,51 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Form.Text>
                   </Form.Group>
                 </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Child Medical No.</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="child_medicare_no"
-                      value={formOneData.child_medicare_no || ""}
-                      onChange={handleFormOneChange} />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Child CRN</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="child_crn"
-                      value={formOneData.child_crn || ""}
-                      onChange={handleFormOneChange} />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Parents CRN 1</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="parent_crn_1"
-                      value={formOneData.parent_crn_1 || ""}
-                      onChange={handleFormOneChange} />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Parents CRN 2</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="parent_crn_2"
-                      value={formOneData.parent_crn_2 || ""}
-                      onChange={handleFormOneChange} />
-                  </Form.Group>
-                </Col>
+                {
+                  formOneChildData.development_delay &&
+                  <>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Child Medical No.</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="child_medicare_no"
+                          value={formOneChildData.child_medicare_no || ""}
+                          onChange={handleChildData} />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Child CRN</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="child_crn"
+                          value={formOneChildData.child_crn || ""}
+                          onChange={handleChildData} />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Parents CRN 1</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="parent_crn_1"
+                          value={formOneChildData.parent_crn_1 || ""}
+                          onChange={handleChildData} />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Parents CRN 2</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="parent_crn_2"
+                          value={formOneChildData.parent_crn_2 || ""}
+                          onChange={handleChildData} />
+                      </Form.Group>
+                    </Col>
+                  </>
+                }
                 <Col md={12}>
                   <Form.Group className="mb-3">
                     <Form.Label>Is the child using another service?</Form.Label>
@@ -333,7 +360,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         id="yess"
                         className="ps-0"
                         label="Yes"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           another_service: true
                         }))} />
@@ -341,8 +368,9 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         type="radio"
                         name="anotherser"
                         id="nos"
+                        defaultChecked
                         label="No"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           another_service: false
                         }))} />
@@ -352,36 +380,41 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Form.Text>
                   </Form.Group>
                 </Col>
-                <Col xl={3} lg={4} md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Monday</Form.Label>
-                    <Form.Control type="number" />
-                  </Form.Group>
-                </Col>
-                <Col xl={3} lg={4} md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Tuesday</Form.Label>
-                    <Form.Control type="number" />
-                  </Form.Group>
-                </Col>
-                <Col xl={3} lg={4} md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Wednesday</Form.Label>
-                    <Form.Control type="number" />
-                  </Form.Group>
-                </Col>
-                <Col xl={3} lg={4} md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Thrusday</Form.Label>
-                    <Form.Control type="number" />
-                  </Form.Group>
-                </Col>
-                <Col xl={3} lg={4} md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Friday</Form.Label>
-                    <Form.Control type="number" />
-                  </Form.Group>
-                </Col>
+                {
+                  formOneChildData.another_service &&
+                  <>
+                    <Col xl={3} lg={4} md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Monday</Form.Label>
+                        <Form.Control type="number" />
+                      </Form.Group>
+                    </Col>
+                    <Col xl={3} lg={4} md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Tuesday</Form.Label>
+                        <Form.Control type="number" />
+                      </Form.Group>
+                    </Col>
+                    <Col xl={3} lg={4} md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Wednesday</Form.Label>
+                        <Form.Control type="number" />
+                      </Form.Group>
+                    </Col>
+                    <Col xl={3} lg={4} md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Thrusday</Form.Label>
+                        <Form.Control type="number" />
+                      </Form.Group>
+                    </Col>
+                    <Col xl={3} lg={4} md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Friday</Form.Label>
+                        <Form.Control type="number" />
+                      </Form.Group>
+                    </Col>
+                  </>
+                }
                 <Col md={12}>
                   <Form.Group className="mb-3">
                     <div className="btn-radio inline-col">
@@ -391,8 +424,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="school"
                         id="atschool"
                         label="At School"
-                        defaultChecked
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           school_status: "at-school"
                         }))} />
@@ -400,40 +432,46 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         type="radio"
                         name="school"
                         id="nonschool"
+                        defaultChecked
                         label="Non School"
-                        onChange={(event) => setFormOneData(prevState => ({
+                        onChange={(event) => setFormOneChildData(prevState => ({
                           ...prevState,
                           school_status: "no-school"
                         }))} />
                     </div>
                   </Form.Group>
                 </Col>
-                <Col md={4}>
-                  <Form.Group className="mb-3">
-                    <Form.Label className="py-3"> if at School, Date first went to School :</Form.Label>
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Control type="date" placeholder="" name="dob" />
-                  </Form.Group>
-                </Col>
-                <Col md={2}>
+                {
+                  formOneChildData.school_status === 'at-school' &&
+                  <>
+                    <Col md={4}>
+                      <Form.Group className="mb-3">
+                        <Form.Label className="py-3"> if at School, Date first went to School :</Form.Label>
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Control type="date" placeholder="" name="dob" />
+                      </Form.Group>
+                    </Col>
+                    <Col md={2}>
 
-                </Col>
-                <Col md={4}>
-                  <Form.Group className="mb-3">
-                    <Form.Label className="py-3">if at School, Name and address of School</Form.Label>
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Control type="date" placeholder="" name="dob" />
-                  </Form.Group>
-                </Col>
-                <Col md={2}>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group className="mb-3">
+                        <Form.Label className="py-3">if at School, Name and address of School</Form.Label>
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Control type="date" placeholder="" name="dob" />
+                      </Form.Group>
+                    </Col>
+                    <Col md={2}>
 
-                </Col>
+                    </Col>
+                  </>
+                }
                 {/* <Col md={12} className="">
                   <Form.Group className="mb-3">
                     <Form.Label>Name of the school</Form.Label>

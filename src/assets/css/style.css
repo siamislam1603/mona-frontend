@@ -721,7 +721,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 /* TRAINING FILES LISTING: EDIT TRAINING */
 .file-container {
-  width: 250px;
+  width: 200px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -744,4 +744,11 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .file-remove {
   cursor: pointer;
+}
+
+/* COVER IMAGE STYLE */
+.cover-image-style {
+  margin-top: 10px;
+  width: 150px;
+  height: auto;
 }

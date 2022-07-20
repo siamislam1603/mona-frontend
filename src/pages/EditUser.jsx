@@ -4,7 +4,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import DragDropCrop from '../components/DragDropCrop';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -66,6 +65,9 @@ const EditUser = () => {
   const [signatureUploaded, setSignatureUploaded] = useState(false);
   const [loader, setLoader] = useState(false);
   const [createUserModal, setCreateUserModal] = useState(false);
+
+  // ERROR HANDLING
+  const [errors, setErrors] = useState({});
 
   // FETCHES THE DATA OF USER FOR EDITING
   const fetchEditUserData = async () => {

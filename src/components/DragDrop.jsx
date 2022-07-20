@@ -2,8 +2,10 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave,image,p }) {
-  console.log("The cover image",image)
+
+
+export default function DropAllFile({ onSave, setTrainingData, setErrors, setFetchedCoverImage=random }) {
+  
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
   const [theImage,setTheImage] = useState()
@@ -48,6 +50,11 @@ export default function DropAllFile({ onSave,image,p }) {
 
   useEffect(() => {
     onSave(data);
+    setErrors(prevState => ({
+      ...prevState,
+      coverImage: null
+    }));
+    setFetchedCoverImage(null);
     // setTrainingData(prevState => ({
     //   ...prevState,
     //   cover_image: data[0]
@@ -61,7 +68,7 @@ export default function DropAllFile({ onSave,image,p }) {
     <div className="file-upload-form mt-3">
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
-        <span className="text-center uploadfile cursor">
+        <span className="text-center uploadfile cursor" style={{ display: 'inline-block' }}>
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
           Files
         </span>
