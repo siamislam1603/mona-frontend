@@ -140,7 +140,6 @@ const UserManagement = () => {
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
-        console.log('CELL:', cell);
         return (
           <>
             <div className="user-list">

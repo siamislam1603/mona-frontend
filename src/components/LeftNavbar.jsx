@@ -3,13 +3,11 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from "react-router-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from './App';
-import { Link } from 'react-router-dom';
 
 const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
   const fetchPermissionList = async () => {
 
-    console.log("dddddddddddddddddddddddddddddddddddddd")
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
     setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
 
