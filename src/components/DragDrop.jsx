@@ -4,12 +4,11 @@ import { Link } from 'react-router-dom';
 
 
 
-export default function DropAllFile({ onSave, setTrainingData, setErrors, setFetchedCoverImage=random }) {
+export default function DropAllFile({ image,onSave, setTrainingData, setErrors, setFetchedCoverImage=random }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
   const [theImage,setTheImage] = useState()
-  const [thep,setThep] = useState(p)
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach(file => {
