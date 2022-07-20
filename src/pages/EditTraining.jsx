@@ -162,9 +162,9 @@ const EditTraining = () => {
 
     setSendToAllFranchisee(editTrainingData?.shares[0].franchisee === null ? "all" : "none");
     
-    setFetchedVideoTutorialFiles(editTrainingData?.training_files?.filter(file => file.fileType === ".mp4" && file.is_deleted === false));
+    setFetchedVideoTutorialFiles(editTrainingData?.training_files?.filter(file => file.fileType === ".mp4"));
     
-    setFetchedRelatedFiles(editTrainingData?.training_files?.filter(file => file.type !== '.mp4' && file.is_deleted === false));
+    setFetchedRelatedFiles(editTrainingData?.training_files?.filter(file => file.type !== '.mp4'));
     console.log('FETCHED DATA COPIED!');
   }
 
