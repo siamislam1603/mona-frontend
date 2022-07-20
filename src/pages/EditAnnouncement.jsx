@@ -25,7 +25,7 @@ const EditAnnouncement = () => {
   const handleShow = () => setShow(true);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
-
+  // const [relatedFiles,setRealtedFiles]=useState([])
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
   const [errors, setErrors] = useState({});
@@ -33,12 +33,14 @@ const EditAnnouncement = () => {
   const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
   const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
   const [relatedFiles, setRelatedFiles] = useState([]);
+  const [theRelatedFiles,setTheRelatedFiles] = useState([])
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [userRole,setUserRole] = useState("");
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
+   
   });
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
@@ -264,11 +266,15 @@ const EditAnnouncement = () => {
     useEffect(() =>{
       AnnouncementDetails();
       const role = localStorage.getItem("user_role")
-  
       setUserRole(role)  
      
     },[])
-  console.log("The data we revce ",announcementData)
+    useEffect(() =>{
+      setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
+
+    },[announcementData])
+
+  console.log("The data we revce ",theRelatedFiles)
   return (
     <>
       {console.log('errors--->', errors)}
@@ -335,9 +341,9 @@ const EditAnnouncement = () => {
                               //           const data = editor.getData();
                               //           setOperatingManualField("answer", data);
                               //           }}
+                              name ="meta_description"
                               operatingManual={{ ...operatingManualData }}
                               errors={errors}
-                              name="meta_description"
                               handleChange={(e,data) => {
                                 setOperatingManualField(
                                  e,data
@@ -485,7 +491,8 @@ const EditAnnouncement = () => {
                             {/* </Button>
                           </div> */} 
                           {/* <Form.Label>Upload Video Tutorial Here :</Form.Label> */}
-                          <DropAllFile onSave={setVideoTutorialFiles} />
+                          <DropAllFile onSave={setVideoTutorialFiles}
+                           />
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
@@ -520,7 +527,10 @@ const EditAnnouncement = () => {
                      <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
-                          <DropAllFile onSave={setRelatedFiles}/>
+                          <DropAllFile onSave={setRelatedFiles}
+                            Files={theRelatedFiles}
+
+                          />
                         </Form.Group>
                       </Col>
                   </div>

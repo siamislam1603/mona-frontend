@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
 export default function DropAllFile({ onSave,Files }) {
- 
+  console.log("The files",Files)
   const [data, setData] = useState([]);
   const [theFiles,setTheFiles] = useState();
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
@@ -43,6 +43,15 @@ export default function DropAllFile({ onSave,Files }) {
   useEffect(() =>{
     setTheFiles(Files)
   },[Files])
+    
+  const getRelatedFileName = (str) => {
+      let arr = str.split("/");
+      let fileName = arr[arr.length - 1].split("_")[0];
+      let ext =arr[arr.length-1].split(".")[1]
+      let name = fileName.concat(".",ext)
+      return name;
+  }
+
   return (
     <div className="file-upload-form mt-3">
       <div {...getRootProps({ className: 'dropzone' })}>
@@ -60,7 +69,7 @@ export default function DropAllFile({ onSave,Files }) {
              theFiles.map((file, index) => (
                <li className="mt-3" key={index}>
                  <p>{file.path}</p>
-                 {file.id}
+                 {getRelatedFileName(file.file)}
                  <span className="ms-2">
                    <Link to="#" onClick={() => handleDelete(file)}>
                        <img src="../img/removeIcon.svg" alt="" />
