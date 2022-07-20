@@ -4,9 +4,13 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 // import VideoPop from "../components/VideoPop";
 import AnnouncementVideo from "./AnnouncementVideo";
+import MyEditor from "./CKEditor";
 
 
 const AllAnnouncements = () => {
+  const [operatingManualData, setOperatingManualData] = useState({
+    related_files: [],
+  });
 const userName = localStorage.getItem("user_name");
 const userROle = localStorage.getItem("user_role")
 const [theRelatedFiles,setTheRelatedFiles] = useState([])
@@ -52,6 +56,15 @@ console.log("The annoumce detial",announcementDetails,theRelatedFiles)
   return (
     
     <div className="announcement-accordion">
+      {/* <MyEditor
+                              operatingManual={{ ...operatingManualData }}
+                              
+                              name="meta"
+                              handleChange={(e, data) => {
+                              
+                                setOperatingManualField(e, data);
+                              }}
+                            /> */}
       {/* <iframe title="video file" className="embed-responsive-item" src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
 
                     <Accordion defaultActiveKey="0">

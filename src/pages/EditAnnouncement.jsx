@@ -282,23 +282,17 @@ const EditAnnouncement = () => {
                          </div>      
                           </Form.Group>
                     
-                      <Col md={12} className="mb-3">
+                      <Col md={12}>
                         <Form.Group>
                           <Form.Label>Announcement Description</Form.Label>
-                          {/* <Form.Control
-                            as="textarea"
-                            name="meta_description"
-                            rows={3}
-                            defaultValue={announcementData.meta_description}
-                            placeholder="Enter Description"
-                            onChange={(e) => {
-                              setOperatingManualField(
-                                e.target.name,
-                                e.target.value
-                              );
-                            }}
-                            isInvalid={!!errors.meta_description}
+                          {/* <MyEditor
+                              operatingManual={{ ...operatingManualData }}
+                              errors={errors}
+                              handleChange={(e, data) => {
+                                setOperatingManualField(e, data);
+                              }}
                             /> */}
+                            
                               <MyEditor
                               data={announcementData.meta_description} 
                               // onChange={(event, editor) => {
