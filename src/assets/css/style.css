@@ -568,6 +568,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 /* Pradeep CODE */
 .Card_design {background: #F7F7F7; border: none; border-radius: 20px }
+.Card_design .cta-col { margin-left: auto; }
 .Text_design { font-size: 1rem; color: #AA0061; text-align: left; }
 .Card_design .card-text { font-size: 0.75rem;color: #333333; text-align: left;}
 .Arrow_icon {font-weight: 500;font-size: 1.5rem;float: right}
@@ -716,4 +717,31 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .mt-2 {
   margin-top: 24px;
+}
+
+/* TRAINING FILES LISTING: EDIT TRAINING */
+.file-container {
+  width: 250px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.file-thumbnail {
+  width: 100px;
+  height: auto;
+}
+
+.file-thumbnail-vector {
+  width: 30px;
+  height: auto;
+}
+
+.file-text {
+  margin-bottom: 0;
+}
+
+.file-remove {
+  cursor: pointer;
 }

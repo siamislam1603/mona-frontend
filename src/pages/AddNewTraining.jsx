@@ -110,6 +110,8 @@ const AddNewTraining = () => {
       }
     );
 
+    console.log('Training Details Response:', response);
+
     if(response.status === 201 && response.data.status === "success") {
       let { id } = response.data.training;
 
@@ -126,6 +128,8 @@ const AddNewTraining = () => {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      console.log('TRAINING SHARED RESPONSE:', shareResponse);
 
       if(shareResponse.status === 201 && shareResponse.data.status === "success") {
         let { id } = response.data.training;
@@ -286,7 +290,8 @@ const AddNewTraining = () => {
   }, [trainingSettings.assigned_franchisee.length > 0]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  trainingData && console.log('TRAINING DATA:', trainingData);
+  // trainingData && console.log('TRAINING DATA:', trainingData);
+  videoTutorialFiles && console.log('VIDEO TUTORIAL FILE:', videoTutorialFiles);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -616,6 +621,12 @@ const AddNewTraining = () => {
                               ...prevState,
                               is_applicable_to_all: true,
                             }));
+
+                            setTrainingSettings((prevState) => ({
+                              ...prevState,
+                              assigned_users: [],
+                              assigned_users_data: []
+                            }));
                           }}
                         />
                         <span className="radio-round"></span>
@@ -634,6 +645,11 @@ const AddNewTraining = () => {
                             setTrainingSettings((prevState) => ({
                               ...prevState,
                               is_applicable_to_all: false,
+                            }));
+
+                            setTrainingSettings((prevState) => ({
+                              ...prevState,
+                              user_roles: []
                             }));
                           }}
                         />
