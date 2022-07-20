@@ -32,7 +32,7 @@ export default function DropAllFile({ onSave }) {
     <div className="file-upload-form mt-3">
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
-        <span className="text-center uploadfile cursor">
+        <span className="text-center uploadfile cursor" style={{ display: 'inline-block', marginBottom: '10px' }}>
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
           Files
         </span>
@@ -43,7 +43,8 @@ export default function DropAllFile({ onSave }) {
           {
             data.map((file, index) => (
               <li className="mt-3" key={index}>
-                {file.path} - {file.size} bytes
+                {file.path}
+                {/* {file.path} - {file.size} bytes */}
                 <span className="ms-2">
                   <Link to="#" onClick={() => handleFileDelete(file)}>
                       <img src="../img/removeIcon.svg" alt="" />

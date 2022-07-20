@@ -314,6 +314,15 @@ const NewUser = () => {
     fetchCoordinatorData(formData.franchisee)
   }, [formData.franchisee]);
 
+  useEffect(() => { 
+    let franchisee_id = localStorage.getItem('franchisee_id');
+    setFormData(prevState => ({
+      ...prevState,
+      franchisee: franchisee_id,
+      franchiseeObj: franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id)) 
+    }));
+  }, [localStorage.getItem('user_role') === 'franchisee_admin', franchiseeData]);
+
   formData && console.log('FORM ERRORS:', formData);
 
   return (
@@ -353,22 +362,22 @@ const NewUser = () => {
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Full Name</Form.Label>
+                        <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Email Address</Form.Label>
                             <Form.Control
-                              type="text"
-                              name="fullname"
-                              placeholder="Enter Full Name"
-                              value={formData?.fullName}
+                              type="email"
+                              name="email"
+                              placeholder="Enter Your Email ID"
+                              value={formData.email ?? ''}
                               onChange={(e) => {
                                 handleChange(e);
                                 setFormErrors(prevState => ({
                                   ...prevState,
-                                  fullname: null
+                                  email: null
                                 }));
                               }}
                             />
-                            { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
+                            { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -390,6 +399,24 @@ const NewUser = () => {
                               }}
                             />
                             { formErrors.role !== null && <span className="error">{formErrors.role}</span> }
+                          </Form.Group>
+
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Full Name</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="fullname"
+                              placeholder="Enter Full Name"
+                              value={formData?.fullName}
+                              onChange={(e) => {
+                                handleChange(e);
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  fullname: null
+                                }));
+                              }}
+                            />
+                            { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -456,24 +483,6 @@ const NewUser = () => {
                               }}
                             />
                             { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
-                          </Form.Group>
-                          
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Email Address</Form.Label>
-                            <Form.Control
-                              type="email"
-                              name="email"
-                              placeholder="Enter Your Email ID"
-                              value={formData.email ?? ''}
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  email: null
-                                }));
-                              }}
-                            />
-                            { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -542,27 +551,38 @@ const NewUser = () => {
                             
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
-                            <Select
-                              placeholder="Which Franchisee?"
-                              closeMenuOnSelect={true}
-                              options={franchiseeData}
-                              onChange={(e) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  franchisee: e.id,
-                                }));
+                            {
+                              localStorage.getItem('user_role') === 'franchisor_admin' && 
+                              <Select
+                                placeholder="Which Franchisee?"
+                                closeMenuOnSelect={true}
+                                options={franchiseeData}
+                                onChange={(e) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    franchisee: e.id,
+                                  }));
 
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  franchiseeObj: e
-                                }))
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    franchiseeObj: e
+                                  }))
 
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  franchisee: null
-                                }));
-                              }}
-                            />
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    franchisee: null
+                                  }));
+                                }}
+                              />
+                            }
+                            {
+                              localStorage.getItem('user_role') === 'franchisee_admin' && 
+                              <Select
+                                placeholder={formData?.franchiseeObj[0].label || "Which Franchisee?"}
+                                closeMenuOnSelect={true}
+                                hideSelectedOptions={true}
+                              />
+                            }
                             { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
 

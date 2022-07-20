@@ -35,6 +35,17 @@ const timeqty = [
   },
 ];
 
+// HELPER FUNCTIONS
+/* FETCHES RELATED FILE NAME*/
+function fetchRealatedFileName(fileURLString) {
+  let arr = fileURLString.split('%5C');
+  arr = arr[arr.length-1];
+  let extension = arr.split('_')[2].split(".")[1];
+  arr = arr.split('_')[0];
+  arr = arr.split('-').join(" ");
+  return arr + '.' + extension;
+}
+
 const EditTraining = () => {
   const { trainingId } = useParams();
   const [show, setShow] = useState(false);
@@ -50,15 +61,23 @@ const EditTraining = () => {
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({});
   const [trainingSettings, setTrainingSettings] = useState({ user_roles: [] });
+
   const [coverImage, setCoverImage] = useState({});
+  const [fetchedCoverImage, setFetchedCoverImage] = useState();
+
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+  const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
+
   const [relatedFiles, setRelatedFiles] = useState([]);
+  const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
+
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [franchiseeList, setFranchiseeList] = useState();
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState();
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
 
   const [editTrainingData, setEditTrainingData] = useState();
+  const [fileDeleteResponse, setFileDeleteResponse] = useState();
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
@@ -155,9 +174,14 @@ const EditTraining = () => {
       is_applicable_to_all: editTrainingData?.shares[0].user_or_roles === 1 ? true : false,
     }));
 
-    setSendToAllFranchisee(editTrainingData?.shares[0].franchisee === null ? "all" : "none");
-    setVideoTutorialFiles(editTrainingData?.trainingFiles?.filter(file => file.fileType === ".mp4"));
+    setCoverImage(editTrainingData?.coverImage);
+    setFetchedCoverImage(editTrainingData?.coverImage);
 
+    setSendToAllFranchisee(editTrainingData?.shares[0].franchisee === null ? "all" : "none");
+    
+    setFetchedVideoTutorialFiles(editTrainingData?.training_files?.filter(file => file.fileType === ".mp4"));
+    
+    setFetchedRelatedFiles(editTrainingData?.training_files?.filter(file => file.fileType !== '.mp4'));
     console.log('FETCHED DATA COPIED!');
   }
 
@@ -189,11 +213,30 @@ const EditTraining = () => {
       });
 
       if(shareResponse.status === 201 && shareResponse.data.status === "success") {
-        setLoader(false)
-        setCreateTrainingModal(false);
-        localStorage.setItem('success_msg', 'Training Updated Successfully!');
-        localStorage.setItem('active_tab', '/created-training');
-        window.location.href="/training";
+        let data = new FormData();
+        data.append('id', trainingId);
+        data.append('image', coverImage[0]);
+
+        let imgSaveResponse = await axios.post(
+          `${BASE_URL}/training/coverImg?title="training"`, data, {
+            headers: {
+              "Authorization": "Bearer " + token
+            }
+          }
+        );
+
+        if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+          setLoader(false)
+          setCreateTrainingModal(false);
+          localStorage.setItem('success_msg', 'Training Updated Successfully!');
+          localStorage.setItem('active_tab', '/created-training');
+          window.location.href="/training";
+        } else {
+          setTopErrorMessage("unable to save cover image!");
+          setTimeout(() => {
+            setTopErrorMessage(null);
+          }, 3000)
+        }
 
       } else if(response.status === 200 && response.data.status === "fail") {
         const { msg } = response.data;
@@ -306,6 +349,22 @@ const EditTraining = () => {
     }
   };
 
+  const handleTrainingFileDelete = async (fileId) => {
+    console.log(`Delete file with id: ${fileId}`);
+    let token = localStorage.getItem('token');
+    const deleteResponse = await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    console.log('Delete response:', deleteResponse);
+    setFileDeleteResponse(deleteResponse);
+    // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
+
+    // }
+  }
+
   useEffect(() => {
     fetchUserRoles();
     fetchTrainingCategories();
@@ -325,8 +384,14 @@ const EditTraining = () => {
     fetchFranchiseeUsers(parseInt(trainingSettings.assigned_franchisee));
   }, [trainingSettings.assigned_franchisee]);
 
+  useEffect(() => {
+    console.log('COPYING FETCHED DATA ONCE AGAIN');
+    copyFetchedData();
+  }, [fileDeleteResponse]);
+
   trainingData && console.log('TRAINING DATA:', trainingData);
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  // videoTutorialFiles && console.log('Vide Tutorial:', videoTutorialFiles);
 
   // fetchedFranchiseeUsers && console.log('USER OBJ:', fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0].assigned_users.includes(user.id + "")));
   return (
@@ -454,8 +519,11 @@ const EditTraining = () => {
                             <Form.Label>Upload Cover Image :</Form.Label>
                             <DropOneFile
                               onSave={setCoverImage}
+                              setErrors={setErrors}
+                              setFetchedCoverImage={setFetchedCoverImage}
                               // setTrainingData={setTraining}
                             />
+                            {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
                           { errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span> } 
                           </Form.Group>
                         </Col>
@@ -466,6 +534,24 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setVideoTutorialFiles}
                             />
+                            <div className="media-container">
+                              {
+                                fetchedVideoTutorialFiles &&
+                                fetchedVideoTutorialFiles.map((video, index) => {
+                                  return (
+                                    <div className="file-container">
+                                      <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
+                                      <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
+                                      <img 
+                                        onClick={() => handleTrainingFileDelete(video.id)}
+                                        className="file-remove" 
+                                        src="../img/removeIcon.svg" 
+                                        alt="" />
+                                    </div>
+                                  )
+                                })
+                              }
+                            </div>
                           </Form.Group>
                         </Col>
 
@@ -475,6 +561,24 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
+                            <div className="media-container">
+                              {
+                                fetchedRelatedFiles &&
+                                fetchedRelatedFiles.map((file, index) => {
+                                  return (
+                                    <div className="file-container">
+                                      {/* <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} /> */}
+                                      <p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p>
+                                      <img 
+                                        onClick={() => handleTrainingFileDelete(file.id)}
+                                        className="file-remove" 
+                                        src="../img/removeIcon.svg" 
+                                        alt="" />
+                                    </div>
+                                  )
+                                })
+                              }
+                            </div>
                           </Form.Group>
                         </Col>
                         <Col md={12}>
