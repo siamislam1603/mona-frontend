@@ -1260,7 +1260,7 @@ button:focus {
     /* identical to box height */
     text-transform: uppercase;
     white-space: nowrap;
-    width: 278px;
+    width: 228px;
     vertical-align: sub;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2621,11 +2621,15 @@ li.child_tag {
 }
 
 .user_list_wrp .user_box .user_name {
-    width: 50%;
+    width: 35%;
 }
 
 .user_list_wrp .user_box .user_role {
-    width: 50%;
+    width: 25%;
+}
+
+.user_list_wrp .user_box .date {
+    width: 40%;
 }
 
 .table_body .user_box {
@@ -2664,13 +2668,13 @@ li.child_tag {
     color: #333333;
 }
 
-.table_body .user_role .user_detail {
+.table_body .user_detail {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.table_body .user_role .user_detail h4 {
+.table_body .user_detail h4 {
     font-family: 'Noto Sans';
     font-style: normal;
     font-weight: 500;
@@ -2680,7 +2684,7 @@ li.child_tag {
     margin: 0;
 }
 
-.table_body .user_role .user_detail button {
+.table_body .user_detail button {
     border: 1px solid #3E5D58;
     padding: 13px 14px;
     font-family: 'Rubik';

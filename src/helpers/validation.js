@@ -103,7 +103,9 @@ export const createFormValidation = (form) => {
     form_description,
     form_template_select,
     previous_form,
+    category_id
   } = form;
+  
   if (!form_name || form_name === '')
     newErrors.form_name = 'Form Title is Required';
   if (!form_type || form_type === '')
@@ -113,6 +115,9 @@ export const createFormValidation = (form) => {
   if (form_template_select === 'Yes')
     if (!previous_form || previous_form === '')
       newErrors.previous_form = 'Previous Form is Required';
+  if(!category_id || category_id==='')
+  newErrors.category_id = 'Category is Required';
+
   return newErrors;
 };
 export const createOperatingManualValidation = (form) => {

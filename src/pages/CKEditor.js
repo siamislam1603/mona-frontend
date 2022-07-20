@@ -46,31 +46,36 @@ export default function MyEditor(props) {
     <div className="App">
       {props.operatingManual ? (
         <CKEditor
+          // editor={ClassicEditor}
           config={{
             extraPlugins: [uploadPlugin],
             rows: 5,
-            toolbar : {
-                items: [
+            
+            toolbar: {
+              items: [
                   'heading',
-                  '|','bold',
-                  'italic',
                   '|',
-                  'Link',
+                  'bold',
+                  'italic',
+                  'link',
                   'bulletedList',
                   'numberedList',
                   '|',
+                  'outdent',
+                  'indent',
+                  '|',
+                  'uploadImage',
+                  'blockQuote',
                   'insertTable',
-                  '|',
-                  'imageUpload',
-                  '|',
                   'undo',
-                  'redo']
-              }
+                  'redo',
+              ]
+          }
 
             // removePlugins: ['Image'], 
           }}
           data={props.operatingManual.description}
-          editor={ClassicEditor}
+         
           onChange={(event, editor) => {
             props.handleChange('description', editor.getData());
           }}
