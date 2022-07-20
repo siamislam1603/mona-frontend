@@ -297,8 +297,6 @@ const createAnnouncement = async (data) => {
       setUserRole(role)
     },[])
 
-    console.log(announcementData);
-    console.log("ppppppppppppppppppppppppp");
   return (
     <>
     {console.log("The annno",announcementData)}
