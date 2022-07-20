@@ -25,14 +25,13 @@ function FormResponse(props) {
   const navigate = useNavigate();
   const [responseData, setResponseData] = useState([]);
   useEffect(() => {
-    console.log('location---->', location.state.form_id);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
     };
 
     fetch(
-      `${BASE_URL}/form/response?form_id=${location.state.form_id}`,
+      `${BASE_URL}/form/response?form_id=1`,
       requestOptions
     )
       .then((response) => response.json())
