@@ -5,14 +5,14 @@ import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
 import MyEditor from './CKEditor';
+import Select from 'react-select';
+
 import DropAllFile from "../components/DragDropMultiple";
 import DropOneFile from '../components/DragDrop';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {EditAnnouncementValidation} from '../helpers/validation';
-import { useLocation, useNavigate } from 'react-router-dom';
-import DropAllRelatedFile from '../components/DragDropMultipleRelatedFiles';
 import axios from 'axios';
+import * as ReactBootstrap from 'react-bootstrap';
+
 
 import { useParams } from 'react-router-dom';
 let selectedUserId = '';
@@ -21,22 +21,21 @@ const EditAnnouncement = () => {
 
 
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+
+
+  const [createTrainingModal, setCreateTrainingModal] = useState(false);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   // const [relatedFiles,setRealtedFiles]=useState([])
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
   const [errors, setErrors] = useState({});
-  const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
-  const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
-  const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
+
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [theRelatedFiles,setTheRelatedFiles] = useState([])
-  const [formSettingFlag, setFormSettingFlag] = useState(false);
-  const [formSettingError, setFormSettingError] = useState({});
-  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+  const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
+  const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
+  
   const [userRole,setUserRole] = useState("");
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
@@ -46,6 +45,7 @@ const EditAnnouncement = () => {
   const [coverImage, setCoverImage] = useState({});
   const [loader, setLoader] = useState(false);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
+  const [franchiseeData, setFranchiseeData] = useState(null);
 
 
   const { id } = useParams();
@@ -117,17 +117,48 @@ const EditAnnouncement = () => {
      else if(response.status === 200 && response.data.status === "fail") {
       console.log('ERROR RESPONSE!');
       const { msg } = response.data;
+    
       console.log("Annoncement Already exit",msg)
       setTopErrorMessage(msg);
+      setLoader(false);
+      setCreateTrainingModal(false);
       setTimeout(() => {
         setTopErrorMessage(null);
       }, 3000)
     }
     
+    const fetchFranchiseeUsers = async (franchisee_name) => {
+      const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
+      if(response.status === 200 && Object.keys(response.data).length > 1) {
+        const { users } = response.data;
+        setFetchedFranchiseeUsers([
+          ...users?.map((data) => ({
+            id: data.id,
+            cat: data.fullname.toLowerCase().split(" ").join("_"),
+            key: data.fullname
+          })),
+        ]);
+      }
+    };
   
-   
-   
+  }
+  const fetchFranchiseeList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    console.log("The franchiselist",response.data)
+    if(response.status === 200 && response.data.status === "success") {
+      let { franchiseeList } = response.data;
 
+      setFranchiseeData(franchiseeList.map(franchisee => ({
+        id: franchisee.id,
+        value: franchisee.franchisee_alias,
+        label: franchisee.franchisee_name
+      })));  
+    }
   }
 
   const onSubmit = (e) => {
@@ -138,11 +169,8 @@ const EditAnnouncement = () => {
       setErrors(newErrors);
     } 
     else{
-      setErrors({});
-      if(Object.keys(AnnouncementsSettings).length === 1){
-          setSettingsModalPopup(true)
-      }
-      if(settingsModalPopup === false && allowSubmit && operatingManualData && coverImage) {
+      setErrors({})
+      if(operatingManualData && coverImage) {
          console.log("After submit the buton",operatingManualData)
          let data = new FormData();
       
@@ -155,101 +183,14 @@ const EditAnnouncement = () => {
           relatedFiles.forEach((file, index) => {
             data.append(`images`, file);
           });
-          
+          setCreateTrainingModal(true);
+          setLoader(true)
           UpdateAnnouncement(data)
       }
     }
   };
  
 
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
- 
-    // const uploadFiles = async (name, file) => {
-    //   console.log("The file and name",name,file)
-    //   let flag = false;
-    //   if (name === 'cover_image') {
-    //     if (file.size > 2048 * 1024) {
-    //       let errorData={...errors};
-    //       errorData["cover_image"]= "File is too much large";
-    //       setErrors(errorData);
-    //       flag = true;
-    //     }
-    //   }
-    //   if (name === 'reference_video')
-    //   {
-    //     if (file.size > 1024 * 1024 * 1024) {
-    //       let errorData={...errors};
-    //       errorData["reference_video"]= "File is too much large";
-    //       setErrors(errorData);
-    //       flag = true;
-    //     }
-    //   }
-  
-    //   if (flag === false) {
-    //     if (name === 'cover_image') {
-    //       setImageLoaderFlag(true);
-    //     }
-    //     if (name === 'reference_video') {
-    //       setVideoLoaderFlag(true);
-    //     }
-    //     let data = { ...operatingManualData };
-    //     console.log("The data image", data)
-    //     const body = new FormData();
-    //     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-    //     body.append('image', blob, file.name);
-    //     body.append('description', 'operating manual');
-    //     body.append('title', name);
-    //     body.append('uploadedBy', 'vaibhavi');
-  
-    //     var myHeaders = new Headers();
-    //     myHeaders.append('shared_role', 'admin');
-    //     const response = fetch(`${BASE_URL}/uploads/uiFiles`, {
-    //       method: 'post',
-    //       body: body,
-    //       headers: myHeaders,
-    //     })
-    //       .then((res) => res.json())
-    //       // console.log("The response",response)
-
-    //       .then((res) => {
-    //         if (name === 'reference_video') {
-    //            console.log("The response",response)
-
-    //            data['video_thumbnail'] = res.thumbnail;
-    //            data[name] = res.url;
-
-    //            setOperatingManualData(data);
-  
-    //           setTimeout(() => {
-    //             setVideoLoaderFlag(false);
-    //           }, 8000);
-
-    //         } else {
-    //           data[name] = res.url;
-    //           setOperatingManualData(data);
-  
-    //           setTimeout(() => {
-    //             setImageLoaderFlag(false);
-    //           }, 5000);
-    //         }
-    //         if (!!errors[name]) {
-    //           setErrors({
-    //             ...errors,
-    //             [name]: null,
-    //           });
-    //         }
-    //       })
-    //       .catch((err) => {
-    //         console.log('error---->', err);
-    //       });
-    //   }
-    // };
   const AnnouncementDetails = async() => {
      let token = localStorage.getItem('token')
      const response = await axios.get(`${BASE_URL}/announcement/${id}`, {
@@ -267,14 +208,19 @@ const EditAnnouncement = () => {
       AnnouncementDetails();
       const role = localStorage.getItem("user_role")
       setUserRole(role)  
+    
+
      
     },[])
     useEffect(() =>{
       setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
 
     },[announcementData])
+    useEffect(() => {
+      fetchFranchiseeList();
+    }, []);
 
-  console.log("The data we revce ",theRelatedFiles)
+  console.log("FRANCHISESS DATA ",franchiseeData)
   return (
     <>
       {console.log('errors--->', errors)}
@@ -291,12 +237,12 @@ const EditAnnouncement = () => {
                 <TopHeader/>
                 <div className='entry-container'>
                 <header className="title-head">
-                    <h1 className="title-lg">Edit Announcement <span className="setting-ico" onClick={() => setSettingsModalPopup(true)}><img src="../img/setting-ico.png" alt=""/></span></h1>
+                    <h1 className="title-lg">Edit Announcement</h1>
                   </header>
                 </div>
                   <Row>
-                      <Col md={12} className="mb-3">
-                        <Form.Group>
+                      
+                        <Form.Group className="col-md-6 mb-3" >
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                             type="text" 
@@ -317,7 +263,25 @@ const EditAnnouncement = () => {
                             {errors.title}
                           </Form.Control.Feedback>
                         </Form.Group>
-                      </Col>
+                        <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Select Franchisee</Form.Label>
+
+                            <div className="select-with-plus">
+                            <Select
+                              placeholder="Which Franchisee?"
+                              closeMenuOnSelect={false}
+                              isMulti
+                              options={franchiseeData} 
+                              onChange={(selectedOptions) => {
+                                setOperatingManualData((prevState) => ({
+                                  ...prevState,
+                                  franchise: [...selectedOptions.map(option => option.id + "")]
+                                }));
+                              }}
+                            />
+                         </div>      
+                          </Form.Group>
+                    
                       <Col md={12} className="mb-3">
                         <Form.Group>
                           <Form.Label>Announcement Description</Form.Label>
@@ -358,6 +322,28 @@ const EditAnnouncement = () => {
                       </Col>
                     
                     </Row>
+                    <Row>
+              <Col lg={3} sm={6}>
+                <Form.Group>
+                  <Form.Label>Schedule Date</Form.Label>
+                  <Form.Control  
+                        type="date"
+                        name="start_date"
+                        onChange={handleAnnouncementsSettings}
+                      />
+                </Form.Group>
+              </Col>
+              <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                <Form.Group>
+                  <Form.Label>Schedule Time</Form.Label>
+                  <Form.Control 
+                    type="time"
+                    name="start_time"
+                    onChange={handleAnnouncementsSettings}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
                   <div className="my-new-formsection">
                     <Row>
                       <Col sm={6}>
@@ -492,6 +478,7 @@ const EditAnnouncement = () => {
                           </div> */} 
                           {/* <Form.Label>Upload Video Tutorial Here :</Form.Label> */}
                           <DropAllFile onSave={setVideoTutorialFiles}
+
                            />
                           <p className="form-errors">
                             {errors.reference_video}
@@ -550,203 +537,34 @@ const EditAnnouncement = () => {
           </Container>
         </section>
       </div>
-      <Modal className="training-modal" 
-              size="lg" show={settingsModalPopup} 
-              onHide={() => setSettingsModalPopup(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title><img src="../img/setting-ico.png" alt=""/> Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="form-settings-content">
-            <Row>
-              {userRole === "franchisor_admin" ? <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Send to all franchisee</Form.Label>
-                  <div className="new-form-radio">
-                    <div className="new-form-radio-box">
-                      <label for="yes1">
-                        <input
-                          type="radio"
-                          value="Yes"
-                          name="form_template_select1"
-                          id="yes1"
-                        />
-                        <span className="radio-round"></span>
-                        <p>Yes</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box">
-                      <label for="no1">
-                        <input
-                          type="radio"
-                          value="No"
-                          name="form_template_select1"
-                          id="no1"
-                        />
-                        <span className="radio-round"></span>
-                        <p>No</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col>: null}
-             {userRole === "franchisor_admin" ?  <Col lg={9} md={6}  className="mt-3 mt-md-0">
-                <Form.Group>
-                  <Form.Label>Select Franchisee</Form.Label>
-                  <Multiselect
-                    placeholder="Select Franchisee"
-                    displayValue="key"
-                    className="multiselect-box default-arrow-select"
-                    onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck() {}}
-                    onSearch={function noRefCheck() {}}
-                    onSelect={function noRefCheck() {}}
-                    options={[
-                      {
-                        cat: "Group 1",
-                        key: "Option 1",
-                      },
-                      {
-                        cat: "Group 1",
-                        key: "Option 2",
-                      },
-                      {
-                        cat: "Group 1",
-                        key: "Option 3",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 4",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 5",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 6",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 7",
-                      },
-                    ]}
-                  />
-                </Form.Group>
-              </Col>: null}
-            </Row>
-            <Row className="mt-4">
-              <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Send to all user roles</Form.Label>
-                  <div className="new-form-radio">
-                    <div className="new-form-radio-box">
-                      <label for="yes2">
-                        <input
-                          type="radio"
-                          value="Yes"
-                          name="form_template_select2"
-                          id="yes2"
-                        />
-                        <span className="radio-round"></span>
-                        <p>Yes</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box">
-                      <label for="no2">
-                        <input
-                          type="radio"
-                          value="No"
-                          name="form_template_select2"
-                          id="no2"
-                        />
-                        <span className="radio-round"></span>
-                        <p>No</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col>
-              <Col lg={9} md={6}  className="mt-3 mt-md-0">
-                <Form.Group>
-                  <Form.Label>Select User Roles</Form.Label>
-                  <Multiselect
-                    placeholder="Select User Roles"
-                    displayValue="key"
-                    className="multiselect-box default-arrow-select"
-                    onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck() {}}
-                    onSearch={function noRefCheck() {}}
-                    onSelect={function noRefCheck() {}}
-                    options={[
-                      {
-                        cat: "Group 1",
-                        key: "Option 1",
-                      },
-                      {
-                        cat: "Group 1",
-                        key: "Option 2",
-                      },
-                      {
-                        cat: "Group 1",
-                        key: "Option 3",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 4",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 5",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 6",
-                      },
-                      {
-                        cat: "Group 2",
-                        key: "Option 7",
-                      },
-                    ]}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row className="mt-4">
-              <Col lg={3} sm={6}>
-                <Form.Group>
-                  <Form.Label>Schedule Date</Form.Label>
-                  <Form.Control  
-                        type="date"
-                        name="start_date"
-                        onChange={handleAnnouncementsSettings}
-                      />
-                </Form.Group>
-              </Col>
-              <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                <Form.Group>
-                  <Form.Label>Schedule Time</Form.Label>
-                  <Form.Control 
-                    type="time"
-                    name="start_time"
-                    onChange={handleAnnouncementsSettings}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="transparent" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={() => {
-            setAllowSubmit(true);
-            setSettingsModalPopup(false)
-          }}>
-            Save Settings
-          </Button>
-        </Modal.Footer>
+      <Modal className="training-modal">
+        {
+        createTrainingModal && 
+        <Modal
+          show={createTrainingModal}
+          onHide={() => setCreateTrainingModal(false)}>
+          <Modal.Header>
+            <Modal.Title>
+              Creating Training
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div className="create-training-modal" style={{ textAlign: 'center' }}>
+              <p>This may take some time.</p>
+              <p>Please Wait...</p>
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          {
+            loader === true && <div>
+              <ReactBootstrap.Spinner animation="border" />
+            </div>
+          }
+          </Modal.Footer>
+        </Modal>
+      }
       </Modal>
     </>
   );

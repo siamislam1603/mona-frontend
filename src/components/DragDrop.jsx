@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
 
+let random = () => {}
 
 export default function DropAllFile({ image,onSave, setTrainingData, setErrors, setFetchedCoverImage=random }) {
   
@@ -49,10 +50,10 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
 
   useEffect(() => {
     onSave(data);
-    setErrors(prevState => ({
-      ...prevState,
-      coverImage: null
-    }));
+    // setErrors(prevState => ({
+    //   ...prevState,
+    //   coverImage: null
+    // }));
     setFetchedCoverImage(null);
     // setTrainingData(prevState => ({
     //   ...prevState,

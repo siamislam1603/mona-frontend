@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave,Files }) {
+export default function DropAllFile({ onSave,Files,setErrors }) {
   console.log("The files",Files)
   const [data, setData] = useState([]);
   const [theFiles,setTheFiles] = useState();

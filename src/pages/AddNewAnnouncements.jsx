@@ -365,7 +365,7 @@ const createAnnouncement = async (data) => {
                             />
                             { errors.meta_description && <span className="error mt-2">{errors.meta_description}</span> } */}
 
-<Form.Control 
+                    <Form.Control 
                           type="text" 
                           name="meta_description"
                           onChange={handleAnnouncementData} 
