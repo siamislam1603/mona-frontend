@@ -2,10 +2,12 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave, setTrainingData }) {
-  
+export default function DropAllFile({ onSave,image,p }) {
+  console.log("The cover image",image)
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
+  const [theImage,setTheImage] = useState()
+  const [thep,setThep] = useState(p)
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach(file => {
@@ -27,6 +29,10 @@ export default function DropAllFile({ onSave, setTrainingData }) {
     temp.splice(temp.indexOf(file), 1);
     setData(temp);
   }
+  const handleDelete = () =>{
+    console.log("Handle Delete")
+    setTheImage(null)
+  }
 
   // Converting the current image to BASE-64 URI string,
   // so that it could be used with <Img>:src tag.
@@ -46,8 +52,11 @@ export default function DropAllFile({ onSave, setTrainingData }) {
     //   ...prevState,
     //   cover_image: data[0]
     // }))
-  }, [data]);
 
+  }, [data]);
+  useEffect(() =>{
+    setTheImage(image)
+  },[image])
   return (
     <div className="file-upload-form mt-3">
       <div {...getRootProps({ className: 'dropzone' })}>
@@ -58,22 +67,43 @@ export default function DropAllFile({ onSave, setTrainingData }) {
         </span>
       </div>
       
-      <div className="showfiles">
+     {
+      theImage ? (
+        <div className="showfiles">
+        
+          {
+              <div className="mt-3">
+                <img src={theImage} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file 1" />
+                <span className="ms-2">
+                  <Link to="#" onClick={() => handleDelete()}>
+                      <img src="../img/removeIcon.svg" alt="" />
+                  </Link>
+                </span>
+              </div>
+            
+          }
+     
+      </div>
+      ):(
+        <div className="showfiles">
         <ul>
           {
             data.map((file, index) => (
               <li className="mt-3" key={index}>
-                <img src={getBase64(file) || currentURI} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
+                <img src={getBase64(file) || currentURI ||image} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
                 <span className="ms-2">
                   <Link to="#" onClick={() => handleFileDelete(file)}>
                       <img src="../img/removeIcon.svg" alt="" />
                   </Link>
                 </span>
+              
               </li>
             ))
           }
         </ul>
       </div>
+      )
+     }
     </div>
   );
 }

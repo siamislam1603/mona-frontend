@@ -268,7 +268,7 @@ const EditAnnouncement = () => {
       setUserRole(role)  
      
     },[])
-  console.log("The data we revce ",announcementData,videoTutorialFiles)
+  console.log("The data we revce ",announcementData)
   return (
     <>
       {console.log('errors--->', errors)}
@@ -337,6 +337,7 @@ const EditAnnouncement = () => {
                               //           }}
                               operatingManual={{ ...operatingManualData }}
                               errors={errors}
+                              name="meta_description"
                               handleChange={(e,data) => {
                                 setOperatingManualField(
                                  e,data
@@ -408,6 +409,8 @@ const EditAnnouncement = () => {
                           </div> */}
                            <DropOneFile onSave={setCoverImage} 
                            isInvalid = {!!errors.coverImage}
+                            image = {announcementData.coverImage}
+                          
                           />
                           {/* <Form.Control.Feedback type="invalid">
                               {(error.coverImage)}
