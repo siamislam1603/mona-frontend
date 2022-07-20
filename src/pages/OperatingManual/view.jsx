@@ -24,6 +24,7 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { verifyPermission } from '../../helpers/roleBasedAccess';
+import { saveAs } from "file-saver";
 
 let upperRoleUser = '';
 let selectedUserId = '';
@@ -680,13 +681,16 @@ const OperatingManual = () => {
                                                     file_item
                                                   )}
 
-                                                  <a
-                                                    href="#"
+                                                  <button
                                                     className="forms-content create-other"
                                                     onClick={() => {
-                                                      window.open(
-                                                        file_item.url
+                                                      saveAs(
+                                                        file_item.url,
+                                                        file_item.name
                                                       );
+                                                      // window.open(
+                                                      //   file_item.url
+                                                      // );
                                                     }}
                                                   >
                                                     <div className="content-icon-section">
@@ -709,7 +713,7 @@ const OperatingManual = () => {
                                                         ).format('DD/MM/YYYY')}
                                                       </h4>
                                                     </div>
-                                                  </a>
+                                                  </button>
                                                 </>
                                               );
                                             }

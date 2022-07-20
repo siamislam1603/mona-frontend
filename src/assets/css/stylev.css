@@ -311,6 +311,7 @@ button:focus {
     margin-bottom: 1px;
     color: #000;
     word-break: break-all;
+    text-align: left;
 }
 
 .content-icon-section img {
@@ -1598,6 +1599,7 @@ button.vidico img {
     font-size: 12px;
     line-height: 14px;
     color: rgba(51, 51, 51, 0.7);
+    text-align: left;
 }
 
 .related_files h1,
@@ -1609,7 +1611,10 @@ button.vidico img {
     line-height: 33px;
     color: #333333;
 }
-
+button.forms-content.create-other {
+    border: none;
+    min-width: 300px;
+}
 .new_module .formlabel.form-label {
     margin-bottom: 8px !important;
     line-height: normal !important;
