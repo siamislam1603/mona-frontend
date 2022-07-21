@@ -123,7 +123,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   }, [])
 
   formSettings && console.log('FORM SETTINGS:', formSettings);
-  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
+  // otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
   return (
     <>
       <div id="main">
