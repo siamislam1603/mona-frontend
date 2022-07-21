@@ -311,6 +311,7 @@ button:focus {
     margin-bottom: 1px;
     color: #000;
     word-break: break-all;
+    text-align: left;
 }
 
 .content-icon-section img {
@@ -1260,7 +1261,7 @@ button:focus {
     /* identical to box height */
     text-transform: uppercase;
     white-space: nowrap;
-    width: 278px;
+    width: 228px;
     vertical-align: sub;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1356,7 +1357,7 @@ li.branch:before {
 li.branch {
     position: relative;
     margin: 15px 0;
-    
+
     text-transform: uppercase;
 }
 
@@ -1598,6 +1599,7 @@ button.vidico img {
     font-size: 12px;
     line-height: 14px;
     color: rgba(51, 51, 51, 0.7);
+    text-align: left;
 }
 
 .related_files h1,
@@ -1609,7 +1611,10 @@ button.vidico img {
     line-height: 33px;
     color: #333333;
 }
-
+button.forms-content.create-other {
+    border: none;
+    min-width: 300px;
+}
 .new_module .formlabel.form-label {
     margin-bottom: 8px !important;
     line-height: normal !important;
@@ -1930,12 +1935,14 @@ img#user-pic {}
     width: 60px;
     height: 34px;
 }
+
   
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
+
   
 .slider {
     position: absolute;
@@ -1948,6 +1955,7 @@ img#user-pic {}
     -webkit-transition: .4s;
     transition: .4s;
 }
+
   
 .slider:before {
     position: absolute;
@@ -1960,6 +1968,15 @@ img#user-pic {}
     -webkit-transition: .4s;
     transition: .4s;
 }
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
   
 input:checked+.slider {
     background-color: #2196F3;
@@ -1974,11 +1991,13 @@ input:checked+.slider:before {
     -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
+
   
 /* Rounded sliders */
 .slider.round {
     border-radius: 34px;
 }
+
   
 .slider.round:before {
     border-radius: 50%;
@@ -2090,6 +2109,7 @@ hr {
     display: none;
     cursor: pointer;
 }
+
   
 .select-check-wrp .form-group label {
     position: relative;
@@ -2606,11 +2626,15 @@ li.child_tag {
 }
 
 .user_list_wrp .user_box .user_name {
-    width: 50%;
+    width: 35%;
 }
 
 .user_list_wrp .user_box .user_role {
-    width: 50%;
+    width: 25%;
+}
+
+.user_list_wrp .user_box .date {
+    width: 40%;
 }
 
 .table_body .user_box {
@@ -2649,13 +2673,13 @@ li.child_tag {
     color: #333333;
 }
 
-.table_body .user_role .user_detail {
+.table_body .user_detail {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.table_body .user_role .user_detail h4 {
+.table_body .user_detail h4 {
     font-family: 'Noto Sans';
     font-style: normal;
     font-weight: 500;
@@ -2665,7 +2689,7 @@ li.child_tag {
     margin: 0;
 }
 
-.table_body .user_role .user_detail button {
+.table_body .user_detail button {
     border: 1px solid #3E5D58;
     padding: 13px 14px;
     font-family: 'Rubik';

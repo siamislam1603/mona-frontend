@@ -103,7 +103,9 @@ export const createFormValidation = (form) => {
     form_description,
     form_template_select,
     previous_form,
+    category_id
   } = form;
+  
   if (!form_name || form_name === '')
     newErrors.form_name = 'Form Title is Required';
   if (!form_type || form_type === '')
@@ -113,6 +115,9 @@ export const createFormValidation = (form) => {
   if (form_template_select === 'Yes')
     if (!previous_form || previous_form === '')
       newErrors.previous_form = 'Previous Form is Required';
+  if(!category_id || category_id==='')
+  newErrors.category_id = 'Category is Required';
+
   return newErrors;
 };
 export const createOperatingManualValidation = (form) => {
@@ -131,22 +136,22 @@ export const createOperatingManualValidation = (form) => {
 export const AddNewAnnouncementValidation = (form,coverImage) =>{
   let newErrors = {};
   console.log("The form validat", form)
-  let { announcement_title,announcement_description,cover_image} = form;
-  console.log("The tile valdiation", announcement_title)
-  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Announcement Title is Required"
-  if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
-  if(!announcement_description || announcement_description === ' ') newErrors.announcement_description="Announcement Description is Required"
+  let { title,meta_description} = form;
+  console.log("The tile valdiation", title)
+  if(!title || title === ' ') newErrors.title="Announcement Title is Required"
+  if (!coverImage)newErrors.coverImage = 'Cover image is Required';
+  if(!meta_description || meta_description === ' ') newErrors.meta_description="Announcement Description is Required"
   
   return newErrors;
 
 }
-export const EditAnnouncementValidation = (form) =>{
+export const EditAnnouncementValidation = (form,coverImage) =>{
   let newErrors = {};
   console.log("The form validat", form)
-  let { announcement_title,meta_description,cover_image} = form;
-  console.log("The tile valdiation", announcement_title)
-  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
-  if (!cover_image || cover_image === '')newErrors.cover_image = 'Cover image is Required';
+  let { title,meta_description} = form;
+  console.log("The tile valdiation", title)
+  if(!title || title === ' ') newErrors.title="Title is Required"
+  if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
   if(!meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
   
   return newErrors;

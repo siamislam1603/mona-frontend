@@ -38,12 +38,12 @@ const timeqty = [
 // HELPER FUNCTIONS
 /* FETCHES RELATED FILE NAME*/
 function fetchRealatedFileName(fileURLString) {
-  let arr = fileURLString.split('%5C');
-  arr = arr[arr.length-1];
-  let extension = arr.split('_')[2].split(".")[1];
-  arr = arr.split('_')[0];
-  arr = arr.split('-').join(" ");
-  return arr + '.' + extension;
+  let name = fileURLString.split("/");
+  name = name[name.length-1];
+  name = name.split("_");
+  let extension = name[2].split(".")[1];
+  name = name[0].split("-").join(" ");
+  return name + "." + extension;
 }
 
 const EditTraining = () => {
