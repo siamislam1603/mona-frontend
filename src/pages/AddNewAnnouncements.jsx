@@ -127,6 +127,9 @@ const createAnnouncement = async (data) => {
 
     const fetchFranchiseeList = async () => {
       const token = localStorage.getItem('token');
+      const id = localStorage.getItem("user_id");
+      const role = localStorage.getItem("user_role");
+      if(role == "franchisor_admin"){
       const response = await axios.get(`${BASE_URL}/role/franchisee`, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -143,6 +146,25 @@ const createAnnouncement = async (data) => {
         })));  
       }
     }
+    else if(role == "franchisee_admin"){
+      const response = await axios.get(`${BASE_URL}/role/franchisee/${id}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+  
+      if(response.status === 200 && response.data.status === "success") {
+        let { franchiseeByIdList } = response.data;
+  
+        setFranchiseeData(franchiseeByIdList.map(franchisee => ({
+          id: franchisee.id,
+          value: franchisee.franchisee_alias,
+          label: franchisee.franchisee_name
+        })));  
+      }
+
+    }
+    }
 
     useEffect(() => {
       fetchFranchiseeList();
@@ -153,6 +175,16 @@ const createAnnouncement = async (data) => {
         ...prevState,
         franchise: [...event.map(option => option.id + "")]
       }));
+    };
+
+    const announcementDescription = (field, value) => {
+      setAnnouncementData({ ...announcementData, [field]: value });
+      if (!!error[field]) {
+        setError({
+          ...error,
+          [field]: null,
+        });
+      }
     };
 
     const handleAnnouncementData = (event) => {
@@ -171,7 +203,7 @@ const createAnnouncement = async (data) => {
     const handleDataSubmit = event => {
       event.preventDefault();
       console.log("The annoucement ",announcementData)
-      let errorObj = AddNewAnnouncementValidation(announcementData,coverImage);
+      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage);
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
@@ -197,9 +229,10 @@ const createAnnouncement = async (data) => {
         createAnnouncement(data);
         console.log("The data",data)
        }
+      }
        
      
-    }
+    // }
     if (!announcementData.title) {
       setError(prevError => {
           return { 
@@ -259,6 +292,9 @@ const createAnnouncement = async (data) => {
       setUserRole(role)
     },[])
 
+   
+    
+
   return (
     <>
     {console.log("The annno",announcementData)}
@@ -299,6 +335,7 @@ const createAnnouncement = async (data) => {
                               placeholder="Which Franchisee?"
                               closeMenuOnSelect={false}
                               isMulti
+                              value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
                               options={franchiseeData} 
                               onChange={handleAnnouncementFranchisee}
                             />
@@ -310,29 +347,25 @@ const createAnnouncement = async (data) => {
                       <Col md={12} className="mb-3">
                         <Form.Group>
                         <Form.Label>Announcement Description</Form.Label>
-                            {/* <MyEditor
-                              announcement={{ ...announcementData }}
-                              name="meta_description"
-                              errors={errors}
+                        <MyEditor
+                              errors={error}
+                              name ="meta_description"
+                              data={announcementData.meta_description} 
+
                               handleChange={(e, data) => {
-                                handleAnnouncementField(e, data);
+                                announcementDescription(e, data);
                               }}
                             />
-                            { errors.meta_description && <span className="error mt-2">{errors.meta_description}</span> } */}
-                            <Form.Control
-// <Form.Control 
+                           {error.meta_description && <p className="form-errors">{error.meta_description}</p>}
+                            {/* <Form.Control
                           type="text" 
                           name="meta_description"
                           onChange={handleAnnouncementData} 
                           isInvalid = {!!error.meta_description}
                           />
-                          
                           <Form.Control.Feedback type="invalid">
                             {error.meta_description}
-                          </Form.Control.Feedback>
-                          
-                          
-
+                          </Form.Control.Feedback> */}
                         </Form.Group>
                       </Col>
                     </Row>
@@ -402,6 +435,7 @@ const createAnnouncement = async (data) => {
     </>
   );
 };
+
 
 export default AddNewAnnouncements;
 
