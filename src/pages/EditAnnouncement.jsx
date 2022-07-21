@@ -1,46 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
-import { BASE_URL } from '../components/App';
+import { BASE_URL } from "../components/App";
 import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
 import MyEditor from './CKEditor';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useParams } from 'react-router-dom';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  createCategoryValidation,
+  createOperatingManualValidation,
+} from '../helpers/validation';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
 import DropAllFile from "../components/DragDropMultiple";
 import DropOneFile from '../components/DragDrop';
 import {EditAnnouncementValidation} from '../helpers/validation';
 import axios from 'axios';
-import * as ReactBootstrap from 'react-bootstrap';
-
-
-import { useParams } from 'react-router-dom';
+import DropAllRelatedFile from '../components/DragDropMultipleRelatedFiles';
 let selectedUserId = '';
-let upperRoleUser='';
+let upperRoleUser = '';
 const EditAnnouncement = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [operatingManualData, setOperatingManualData] = useState({
+    related_files: [],
+  });
+  const [errors, setErrors] = useState({});
+  const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
+  const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
+  const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
+  const [relatedFiles, setRelatedFiles] = useState([]);
+  const [imageUrl,setImageUrl]=useState("");
+  const [videoUrl,setVideoUrl]=useState("");
+  const [videoThumbnailUrl,setVideoThumbnailUrl]=useState("");
+  const [formSettingFlag, setFormSettingFlag] = useState(false);
+  const [formSettingError, setFormSettingError] = useState({});
+  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+  const [user, setUser] = useState([]);
+  const [selectedUser, setSelectedUser] = useState([]);
+  const [userRole, setUserRole] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [categoryModalFlag, setCategoryModalFlag] = useState(false);
+  const [categoryData, setCategoryData] = useState({});
+  const [categoryError, setCategoryError] = useState({});
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
 
-
-  const [show, setShow] = useState(false);
-
-
-  const [createTrainingModal, setCreateTrainingModal] = useState(false);
+   const [createTrainingModal, setCreateTrainingModal] = useState(false);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   // const [relatedFiles,setRealtedFiles]=useState([])
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
-  const [errors, setErrors] = useState({});
 
-  const [relatedFiles, setRelatedFiles] = useState([]);
   const [theRelatedFiles,setTheRelatedFiles] = useState([])
-  const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   
-  const [userRole,setUserRole] = useState("");
-  const [operatingManualData, setOperatingManualData] = useState({
-    related_files: [],
-   
-  });
+
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
   const [loader, setLoader] = useState(false);
@@ -49,8 +69,8 @@ const EditAnnouncement = () => {
 
 
   const { id } = useParams();
+
   const setOperatingManualField = (field, value) => {
-    console.log("The field and value",field,value)
     setOperatingManualData({ ...operatingManualData, [field]: value });
     if (!!errors[field]) {
       setErrors({
@@ -59,7 +79,6 @@ const EditAnnouncement = () => {
       });
     }
   };
-
   const handleAnnouncementsSettings = (event) => {
     const { name, value } = event.target;
     
@@ -71,6 +90,34 @@ const EditAnnouncement = () => {
       ...operatingManualData,
       [name]:value
     }))
+  };
+  const onSubmit = (e) => {
+    e.preventDefault();
+ 
+    const newErrors = EditAnnouncementValidation(operatingManualData,coverImage);
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } 
+    else{
+      setErrors({})
+      if(operatingManualData && coverImage) {
+         console.log("After submit the buton",operatingManualData)
+         let data = new FormData();
+      
+         for(let [ key, values ] of Object.entries(operatingManualData)) {
+           data.append(`${key}`, values)
+          }
+          videoTutorialFiles.forEach((file, index) => {
+            data.append(`images`, file);
+          });
+          relatedFiles.forEach((file, index) => {
+            data.append(`images`, file);
+          });
+          setCreateTrainingModal(true);
+          setLoader(true)
+          UpdateAnnouncement(data)
+      }
+    }
   };
   const UpdateAnnouncement = async(data) =>{
   
@@ -126,20 +173,6 @@ const EditAnnouncement = () => {
         setTopErrorMessage(null);
       }, 3000)
     }
-    
-    const fetchFranchiseeUsers = async (franchisee_name) => {
-      const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
-      if(response.status === 200 && Object.keys(response.data).length > 1) {
-        const { users } = response.data;
-        setFetchedFranchiseeUsers([
-          ...users?.map((data) => ({
-            id: data.id,
-            cat: data.fullname.toLowerCase().split(" ").join("_"),
-            key: data.fullname
-          })),
-        ]);
-      }
-    };
   
   }
   const fetchFranchiseeList = async () => {
@@ -161,69 +194,45 @@ const EditAnnouncement = () => {
     }
   }
 
-  const onSubmit = (e) => {
-    e.preventDefault();
- 
-    const newErrors = EditAnnouncementValidation(operatingManualData,coverImage);
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } 
-    else{
-      setErrors({})
-      if(operatingManualData && coverImage) {
-         console.log("After submit the buton",operatingManualData)
-         let data = new FormData();
-      
-         for(let [ key, values ] of Object.entries(operatingManualData)) {
-           data.append(`${key}`, values)
-          }
-          videoTutorialFiles.forEach((file, index) => {
-            data.append(`images`, file);
-          });
-          relatedFiles.forEach((file, index) => {
-            data.append(`images`, file);
-          });
-          setCreateTrainingModal(true);
-          setLoader(true)
-          UpdateAnnouncement(data)
-      }
-    }
-  };
- 
+
+
 
   const AnnouncementDetails = async() => {
-     let token = localStorage.getItem('token')
-     const response = await axios.get(`${BASE_URL}/announcement/${id}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-     })
-     console.log("The detalis",response)
-     if(response.status === 200) {
-       setAnnouncementData(response.data.data.all_announcements)
+    let token = localStorage.getItem('token')
+    const response = await axios.get(`${BASE_URL}/announcement/${id}`, {
+     headers: {
+       "Authorization": "Bearer " + token
      }
-  } 
+    })
+    console.log("The detalis",response)
+    if(response.status === 200) {
+      setAnnouncementData(response.data.data.all_announcements)
+    }
+ } 
+ useEffect(() =>{
+  AnnouncementDetails();
+  const role = localStorage.getItem("user_role")
+  setUserRole(role)       
+  },[])
+  useEffect(() => {
+    fetchFranchiseeList();
+  }, []);
+  useEffect(() =>{
+    setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
 
-    useEffect(() =>{
-      AnnouncementDetails();
-      const role = localStorage.getItem("user_role")
-      setUserRole(role)  
-    
+  },[announcementData])
 
-     
-    },[])
-    useEffect(() =>{
-      setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
 
-    },[announcementData])
-    useEffect(() => {
-      fetchFranchiseeList();
-    }, []);
 
-  console.log("FRANCHISESS DATA ",franchiseeData)
+
+
+
+
+
+  // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
-      {console.log('errors--->', errors)}
+      {console.log('selectedFranchiseeId--->', selectedFranchiseeId)}
       {console.log('operating manual--->', operatingManualData)}
       <div id="main">
         <section className="mainsection ">
@@ -234,15 +243,14 @@ const EditAnnouncement = () => {
               </aside>
               <div className="sec-column">
                 <div className="new_module">
-                <TopHeader/>
-                <div className='entry-container'>
+                  <TopHeader/>
+                  <Row>
+                  <div className='entry-container'>
                 <header className="title-head">
                     <h1 className="title-lg">Edit Announcement</h1>
                   </header>
                 </div>
-                  <Row>
-                      
-                        <Form.Group className="col-md-6 mb-3" >
+                <Form.Group className="col-md-6 mb-3" >
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                             type="text" 
@@ -281,21 +289,16 @@ const EditAnnouncement = () => {
                             />
                          </div>      
                           </Form.Group>
-                    
-                      <Col md={12}>
+                  </Row>
+                  <div>
+                    <Row>
+                      <Col sm={12}>
                         <Form.Group>
-                          <Form.Label>Announcement Description</Form.Label>
+                          <Form.Label className="formlabel">
+                            Description
+                          </Form.Label>
                           {/* <MyEditor
-                              operatingManual={{ ...operatingManualData }}
-                              errors={errors}
-                              handleChange={(e, data) => {
-                                setOperatingManualField(e, data);
-                              }}
-                            /> */}
-                            
-                              <MyEditor
                               data={announcementData.meta_description} 
-            
                               name ="meta_description"
                               operatingManual={{ ...operatingManualData }}
                               errors={errors}
@@ -305,16 +308,25 @@ const EditAnnouncement = () => {
                                 );
                               }}
 
+                            /> */}
+                         
+                           
+                          
+                            <MyEditor
+                              errors={errors}
+                              name ="meta_description"
+                              data={announcementData.meta_description} 
+
+                              handleChange={(e, data) => {
+                                setOperatingManualField(e, data);
+                              }}
                             />
-                             <Form.Control.Feedback type="invalid">
-                            {errors.meta_description}
-                          </Form.Control.Feedback>
+                           {errors.meta_description && <p className="form-errors">{errors.meta_description}</p>}
                         </Form.Group>
                       </Col>
-                    
                     </Row>
                     <Row>
-              <Col lg={3} sm={6}>
+                    <Col lg={3} sm={6}>
                 <Form.Group>
                   <Form.Label>Schedule Date</Form.Label>
                   <Form.Control  
@@ -334,70 +346,20 @@ const EditAnnouncement = () => {
                   />
                 </Form.Group>
               </Col>
-            </Row>
-                  <div className="my-new-formsection">
+                    </Row>
+                    <div className="my-new-formsection">
                     <Row>
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
                             Upload Cover Image :
                           </Form.Label>
-                          {/* <div className="upload_cover_box">
-                            <div className="cover_image">
-                              {ImageloaderFlag ? (
-                                <img src="../img/loader.gif" />
-                              ) : <img src={announcementData.coverImage}/>}
-                              <img
-                                src={
-                                  operatingManualData.cover_image
-                                    ? operatingManualData.cover_image
-                                    : '../img/image_icon.png'
-                                }
-                              ></img>
-                            </div>
-                            <div className="add_image">
-                              <div className="add_image_box">
-                                <span>
-                                  <img
-                                    src="../img/bi_cloud-upload.svg"
-                                    alt=""
-                                  />
-                                  Add Image
-                                </span>
-                                <Form.Control
-                                  className="add_image_input"
-                                  type="file"
-                                  name="cover_image"
-                                  onChange={(e) => {
-                                    if (e.target.files) {
-                                      uploadFiles(
-                                        e.target.name,
-                                        e.target.files[0]
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <Button
-                              variant="link"
-                              onClick={() => {
-                                let data = { ...operatingManualData };
-                                delete data['cover_image'];
-                                setOperatingManualData(data);
-                              }}
-                            >
-                              <img src="../../img/removeIcon.svg" />
-                            </Button>
-                          </div> */}
+                          
                            <DropOneFile onSave={setCoverImage} 
                            isInvalid = {!!errors.coverImage}
                             image = {announcementData.coverImage}
                           
                           />
-                          {/* <Form.Control.Feedback type="invalid">
-                              {(error.coverImage)}
-                            </Form.Control.Feedback> */}
                            <span  className="error">
                             {errors.coverImage}
                            </span>
@@ -411,63 +373,6 @@ const EditAnnouncement = () => {
                           <Form.Label className="formlabel">
                             Upload Reference Video Here :
                           </Form.Label>
-
-                          {/* <div className="upload_cover_box video_reference">
-                            <div className="cover_image">
-                              {videoloaderFlag ? (
-                                <img src="../img/loader.gif" />
-                              ) : null}
-                              <img
-                                src={
-                                  operatingManualData.video_thumbnail
-                                    ? operatingManualData.video_thumbnail
-                                    : '../img/video_icon_demo.png'
-                                }
-                              ></img>
-                            </div>
-                            <div className="add_image">
-                              <div className="add_image_box">
-                                <span>
-                                  <img
-                                    src="../img/bi_cloud-upload.svg"
-                                    alt=""
-                                  />
-                                  Add File
-                                </span>
-                                <Form.Control
-                                  className="add_image_input"
-                                  type="file"
-                                  name="reference_video"
-                                  onChange={(e) => {
-                                    console.log(
-                                      'e.target.files---->',
-                                      e.target.files
-                                    );
-                                    if (e.target.files) {
-                                      uploadFiles(
-                                        e.target.name,
-                                        e.target.files[0]
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <Button
-                              variant="link"
-                              className="remove_bin"
-                              onClick={() => {
-                                let data = { ...operatingManualData };
-                                delete data['reference_video'];
-                                delete data['video_thumbnail'];
-                                setOperatingManualData(data);
-                              }}
-                            >
-                              <img src="../../img/removeIcon.svg" />
-                              {/* <span>Remove</span> */}
-                            {/* </Button>
-                          </div> */} 
-                          {/* <Form.Label>Upload Video Tutorial Here :</Form.Label> */}
                           <DropAllFile onSave={setVideoTutorialFiles}
 
                            />
@@ -477,31 +382,8 @@ const EditAnnouncement = () => {
                         </Form.Group>
                       </Col>
                     </Row>
-                    {/* <Row>
-                      <Col sm={12}>
-                        <div className="upload_related_files">
-                          <Form.Group>
-                            <Form.Label className="formlabel">
-                              Upload Related Files :
-                            </Form.Label>
-
-                            <DropAllRelatedFile
-                              onSave={(value) => {
-                                let data = { ...operatingManualData };
-                                data['related_files'] = value;
-                                setOperatingManualData(data);
-                              }}
-                              relatedFilesData={
-                                operatingManualData.related_files
-                              }
-                            />
-                            <p className="form-errors">
-                              {errors.related_files}
-                            </p>
-                          </Form.Group>
-                        </div>
-                      </Col>
-                    </Row> */}
+  
+                      
                      <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
@@ -512,6 +394,8 @@ const EditAnnouncement = () => {
                         </Form.Group>
                       </Col>
                   </div>
+                  </div>
+                  <Row>
                   <Row>
                     <Col sm={12}>
                       <div className="bottom_button">
@@ -521,6 +405,7 @@ const EditAnnouncement = () => {
                         </Button>
                       </div>
                     </Col>
+                  </Row>
                   </Row>
                 </div>
               </div>

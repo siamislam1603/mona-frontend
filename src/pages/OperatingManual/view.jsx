@@ -24,7 +24,7 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { verifyPermission } from '../../helpers/roleBasedAccess';
-import { saveAs } from "file-saver";
+import { saveAs } from 'file-saver';
 
 let upperRoleUser = '';
 let selectedUserId = '';
@@ -552,9 +552,12 @@ const OperatingManual = () => {
                           '--------',
                           parseInt(localStorage.getItem('user_id'))
                         )}
-                        {console.log("Hello2--->", operatingManualdata[Index]?.operating_manuals[
-                              innerIndex
-                            ]?.upper_role)}
+                        {console.log(
+                          'Hello2--->',
+                          operatingManualdata[Index]?.operating_manuals[
+                            innerIndex
+                          ]?.upper_role
+                        )}
                         <div class="custom-menu-dots">
                           {(operatingManualdata[Index]?.operating_manuals[
                             innerIndex
@@ -683,9 +686,13 @@ const OperatingManual = () => {
 
                                                   <button
                                                     className="forms-content create-other"
-                                                    onClick={() => {
+                                                    onClick={(e) => {
+                                                      e.preventDefault();
                                                       saveAs(
-                                                        file_item.url,
+                                                        'data:text/plain;charset=utf-8, ' +
+                                                          encodeURIComponent(
+                                                            file_item.url
+                                                          ),
                                                         file_item.name
                                                       );
                                                       // window.open(

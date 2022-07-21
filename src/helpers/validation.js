@@ -152,7 +152,7 @@ export const EditAnnouncementValidation = (form,coverImage) =>{
   console.log("The tile valdiation", title)
   if(!title || title === ' ') newErrors.title="Title is Required"
   if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
-  // if(!meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
+  if(!meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
   
   return newErrors;
 }

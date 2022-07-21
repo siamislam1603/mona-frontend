@@ -41,6 +41,7 @@ export default function MyEditor(props) {
       return uploadAdapter(loader);
     };
   }
+  console.log("THe ERRORS",props.errors)
 
   return (
     <div className="App">
