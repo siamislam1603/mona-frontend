@@ -147,14 +147,12 @@ const createAnnouncement = async (data) => {
       fetchFranchiseeList();
     }, []);
 
-    // const handleAnnouncementSettings = (event) => {
-    //   const { name, value } = event.target;
-  
-    //   setAnnouncementData((prevState) => ({
-    //     ...prevState,
-    //     [name]: value,
-    //   }));
-    // };
+    const handleAnnouncementFranchisee = (event) => {
+      setAnnouncementData((prevState) => ({
+        ...prevState,
+        franchise: [...event.map(option => option.id + "")]
+      }));
+    };
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
@@ -164,36 +162,9 @@ const createAnnouncement = async (data) => {
         [name]: value,
       })); 
     };
-  
-  const handleAnnouncementField = (field, value) => {
-    setAnnouncementData({ ...announcementData, [field]: value });
-      if (!!error[field]) {
-        setError({
-          ...error,
-          [field]: null,
-        });
-      }
 
-  }
-    
 
-    // const checkValidity = (inputName, inputValue) => {
-    //   switch (inputName) {
-    //     case "title":
-    //       let pattern = /^[A-Za-z]{3,}[ ]{0,1}[A-Za-z]{0,}$/i;
-    //       announcementData.titleValid = pattern.test(inputValue);
-    //       console.log("The titlevalid",announcementData.titleValid )
-    //       break;
-    //     case "meta_description":
-    //       announcementData.meta_descriptionValid = inputValue.length >= 10;
-    //       break;
-    //     case "coverImage":
-    //       let image_pattern = /\.(jpe?g|png|gif|bmp)$/i;
-    //       announcementData.coverImageValid = image_pattern.test(inputValue);
-    //     default:
-    //       break;
-    //   }
-    // };
+
       
 
     const handleDataSubmit = event => {
@@ -206,10 +177,6 @@ const createAnnouncement = async (data) => {
        }
        else{
         setError({});
-        // if(announcementData.start_date== " " || announcementData.start_time == " "){
-        //   setSettingsModalPopup(true)
-        //   console.log("Start date empty")
-        // }
         if(announcementData && coverImage && videoTutorialFiles) {
           let data = new FormData();
     
@@ -258,20 +225,14 @@ const createAnnouncement = async (data) => {
   };
 
   useEffect(() => {
-    handleAnnouncementField();
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
 
   const [show, setShow] = useState(false);
-  // const handleClose = () => setSettingsModalPopup(false);
   const handleShow = () => setShow(true);
-  
-  // const [settingsModalPopup, setSettingsModalPopup] = useState(false);
-
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
-  // const [errors, setErrors] = useState({});
   const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
   const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
   const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
@@ -283,7 +244,6 @@ const createAnnouncement = async (data) => {
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
   });
-  // const [coverImage, setCoverImage] = useState({});
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -338,12 +298,7 @@ const createAnnouncement = async (data) => {
                               closeMenuOnSelect={false}
                               isMulti
                               options={franchiseeData} 
-                              onChange={(selectedOptions) => {
-                                setAnnouncementData((prevState) => ({
-                                  ...prevState,
-                                  franchise: [...selectedOptions.map(option => option.id + "")]
-                                }));
-                              }}
+                              onChange={handleAnnouncementFranchisee}
                             />
                   </div>
                             
@@ -362,16 +317,19 @@ const createAnnouncement = async (data) => {
                               }}
                             />
                             { errors.meta_description && <span className="error mt-2">{errors.meta_description}</span> } */}
-
-<Form.Control 
+                            <Form.Control
+// <Form.Control 
                           type="text" 
                           name="meta_description"
                           onChange={handleAnnouncementData} 
                           isInvalid = {!!error.meta_description}
                           />
+                          
                           <Form.Control.Feedback type="invalid">
                             {error.meta_description}
                           </Form.Control.Feedback>
+                          
+                          
 
                         </Form.Group>
                       </Col>
@@ -383,15 +341,8 @@ const createAnnouncement = async (data) => {
                           <Form.Label>Upload Related Image :</Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
-                          // isInvalid = {!!error.coverImage}
                           />
-                          {/* <Form.Control.Feedback type="invalid">
-                              {(error.coverImage)}
-                            </Form.Control.Feedback> */}
                             { error.coverImage && <span className="error mt-2">{error.coverImage}</span> }
-                           {/* <span  className="error">
-                            {error.coverImage}
-                           </span> */}
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
@@ -406,6 +357,26 @@ const createAnnouncement = async (data) => {
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
+                  <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                  <Form.Group>
+                  <Form.Label>Schedule Date</Form.Label>
+                  <Form.Control 
+                   type="date"
+                   name="start_date"
+                  onChange={handleAnnouncementData}
+                  />
+                </Form.Group>
+              </Col>
+              <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                <Form.Group>
+                  <Form.Label>Schedule Time</Form.Label>
+                  <Form.Control 
+                  type="time"
+                  name="start_time"
+                  onChange={handleAnnouncementData}
+                  />
+                </Form.Group>
+              </Col>
                       <Col md={12}>
                         <div className="cta text-center mt-5 mb-5">
                           <Button variant="outline" className="me-3" type="submit">Preview</Button>
@@ -417,10 +388,6 @@ const createAnnouncement = async (data) => {
                   <Row>
                     <Col sm={12}>
                       <div className="bottom_button">
-                        {/* <Button className="preview">Preview</Button>
-                        <Button className="saveForm" onClick={onSubmit}>
-                          Save
-                        </Button> */}
                       </div>
                     </Col>
                   </Row>

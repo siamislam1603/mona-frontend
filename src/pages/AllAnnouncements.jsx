@@ -23,8 +23,10 @@ const [videoFile, setVideoFile] = useState("https://embed.api.video/vod/vi38jFGb
       "Authorization": "Bearer " + token
     }
   });
+  console.log(response);
+  
   if(response.status === 200 && response.data.status === "success") {
-      setAnnouncementDetail(response.data.data.all_announcements);
+      setAnnouncementDetail(response.data.createdAnnouncement);
   }
 }
 useEffect(() => {
