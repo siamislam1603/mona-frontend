@@ -1,10 +1,30 @@
 import React, { useState } from "react";
 import { Button, Col, Row, Form, Table } from "react-bootstrap";
+import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
 
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
+
+  const [healthInformation, setHealthInformation] = useState({
+    medical_service: "",
+    telephone: "",
+    medical_service_address: "",
+    maternal_and_child_health_centre: "",
+    has_health_record: false
+  });
+
+  // ERROR HANDLING STATES
+  const [healthInfoFormErrors, setHealthInfoFormErrors] = useState(null);
+
   const submitFormData = (e) => {
     e.preventDefault();
-    nextStep();
+    
+    const errors = healthInformationFormValidator(healthInformation);
+    if(Object.keys(errors).length > 0) {
+      setHealthInfoFormErrors(errors);
+    } else {
+
+    }
+    // nextStep();
   };
 
   return (
@@ -78,70 +98,160 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   <Col md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Doctor’s Name/Medical Service</Form.Label>
-                      <Form.Control type="text" />
+                      <Form.Control 
+                        type="text"
+                        name="medical_service"
+                        value={healthInformation.medical_service || ""}
+                        onChange={(e) => {
+                          setHealthInformation(prevState => ({
+                            ...prevState,
+                            medical_service: e.target.value 
+                          }));
+
+                          setHealthInfoFormErrors(prevState => ({
+                            ...prevState,
+                            medical_service: null
+                          }));
+                        }} 
+                      />
+                      { healthInfoFormErrors?.medical_service !== null && <span className="error">{healthInfoFormErrors?.medical_service}</span> }
                     </Form.Group>
                   </Col>
+                  
                   <Col md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Telephone</Form.Label>
-                      <Form.Control type="tel" />
+                      <Form.Control 
+                        type="tel"
+                        name="telephone"
+                        value={healthInformation.telephone || ""}
+                        onChange={(e) => {
+                          setHealthInformation(prevState => ({
+                          ...prevState,
+                          telephone: e.target.value 
+                        }));
+
+                        setHealthInfoFormErrors(prevState => ({
+                          ...prevState,
+                          telephone: null
+                        }));
+                      }} 
+                    />
+                    { healthInfoFormErrors?.telephone !== null && <span className="error">{healthInfoFormErrors?.telephone}</span> }
                     </Form.Group>
                   </Col>
+
                   <Col md={12}>
                     <Form.Group className="mb-3">
                       <Form.Label>Doctor’s Address/Medical Service</Form.Label>
-                      <Form.Control type="text" />
+                      <Form.Control 
+                        type="text"
+                        name="medical_service_address"
+                        value={healthInformation.medical_service_address || ""}
+                        onChange={(e) => {
+                          setHealthInformation(prevState => ({
+                            ...prevState,
+                            medical_service_address: e.target.value 
+                          }));
+
+                          setHealthInfoFormErrors(prevState => ({
+                            ...prevState,
+                            medical_service_address: null
+                          }));
+                      }} 
+                    />
+                    { healthInfoFormErrors?.medical_service_address !== null && <span className="error">{healthInfoFormErrors?.medical_service_address}</span> }
                     </Form.Group>
                   </Col>
+                  
                   <Col md={12}>
                     <Form.Group className="mb-3">
                       <Form.Label>Maternal And Child Health Centre</Form.Label>
-                      <Form.Control type="text" />
+                      <Form.Control 
+                        type="text"
+                        name="maternal_and_child_health_centre"
+                        value={healthInformation.maternal_and_child_health_centre || ""}
+                        onChange={(e) => { 
+                          setHealthInformation(prevState => ({
+                            ...prevState,
+                            maternal_and_child_health_centre: e.target.value 
+                          }));
+
+                          setHealthInfoFormErrors(prevState => ({
+                            ...prevState,
+                            maternal_and_child_health_centre: null
+                          }));
+                        }} 
+                      />
+                      { healthInfoFormErrors?.maternal_and_child_health_centre !== null && <span className="error">{healthInfoFormErrors?.maternal_and_child_health_centre}</span> }
                     </Form.Group>
                   </Col>
+
                   <Col md={12}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Does ypur child have a child health record?</Form.Label>
+                      <Form.Label>Does your child have a child health record?</Form.Label>
                       <div className="btn-radio inline-col">
-                        <Form.Check type="radio" name="health" id="yesh" className="ps-0" label="Yes" />
-                        <Form.Check type="radio" name="health" id="noh" label="No" />
+                        <Form.Check 
+                          type="radio" 
+                          name="health" 
+                          id="yes" 
+                          className="ps-0" 
+                          label="Yes"
+                          onChange={() => setHealthInformation(prevState => ({
+                            ...prevState,
+                            has_health_record: true
+                          }))} />
+                        <Form.Check 
+                          type="radio" 
+                          name="health" 
+                          id="no" 
+                          label="No"
+                          defaultChecked
+                          onChange={() => setHealthInformation(prevState => ({
+                            ...prevState,
+                            has_health_record: false
+                          }))} />
                       </div>
                       <Form.Text className="text-muted">
                         if ‘Yes’ please provide to the service for sighting.
                       </Form.Text>
                     </Form.Group>
                   </Col>
-                  <Col md={12}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Name and position of person at the service who has sighted the child’s health record</Form.Label>
-                      <Row>
-                        <Col md={4}>
-                          <div className="mb-3">
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control type="text" />
-                          </div>
-                        </Col>
-                        <Col md={4}>
-                          <div className="mb-3">
-                            <Form.Label>Signature & Date</Form.Label>
-                            <Form.Control type="text" />
-                          </div>
-                        </Col>
-                        <Col md={4}>
-                          <div className="mb-3">
-                            <Form.Label>&nbsp;</Form.Label>
-                            <Form.Control type="date" placeholder="" name="dob" />
-                          </div>
-                        </Col>
-                        <Col md={4}>
-                          <div className="mb-3">
-                            <Form.Label>Position</Form.Label>
-                            <Form.Control type="text" />
-                          </div>
-                        </Col>
-                      </Row>
-                    </Form.Group>
-                  </Col>
+
+                  {
+                    healthInformation.has_health_record &&
+                    <Col md={12}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Name and position of person at the service who has sighted the child’s health record</Form.Label>
+                        <Row>
+                          <Col md={4}>
+                            <div className="mb-3">
+                              <Form.Label>Name</Form.Label>
+                              <Form.Control type="text" />
+                            </div>
+                          </Col>
+                          <Col md={4}>
+                            <div className="mb-3">
+                              <Form.Label>Signature & Date</Form.Label>
+                              <Form.Control type="text" />
+                            </div>
+                          </Col>
+                          <Col md={4}>
+                            <div className="mb-3">
+                              <Form.Label>&nbsp;</Form.Label>
+                              <Form.Control type="date" placeholder="" name="dob" />
+                            </div>
+                          </Col>
+                          <Col md={4}>
+                            <div className="mb-3">
+                              <Form.Label>Position</Form.Label>
+                              <Form.Control type="text" />
+                            </div>
+                          </Col>
+                        </Row>
+                      </Form.Group>
+                    </Col>
+                  }
                 </Row>
               </div>
 

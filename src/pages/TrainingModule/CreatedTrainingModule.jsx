@@ -123,7 +123,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   }, [])
 
   formSettings && console.log('FORM SETTINGS:', formSettings);
-  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
+  // otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
   return (
     <>
       <div id="main">
@@ -486,7 +486,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
             </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button className="back">Cancel</Button>
+          <Button className="back" onClick={() => setShowModal(false)}>Cancel</Button>
           <Button 
             className="done" 
             onClick={() => {
