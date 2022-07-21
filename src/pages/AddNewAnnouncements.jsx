@@ -99,7 +99,8 @@ const createAnnouncement = async (data) => {
         }, 3000)
       
       }
-    } else if(response.status === 200 && response.data.status === "fail") {
+    } 
+    else if(response.status === 200 && response.data.status === "fail") {
       console.log('ERROR RESPONSE!');
       const { msg } = response.data;
       console.log("Annoncement Already exit",msg)
@@ -198,7 +199,7 @@ const createAnnouncement = async (data) => {
 
     const handleDataSubmit = event => {
       event.preventDefault();
-
+      console.log("The annoucement ",announcementData)
       let errorObj = AddNewAnnouncementValidation(announcementData,coverImage);
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
@@ -227,6 +228,7 @@ const createAnnouncement = async (data) => {
   
           setLoader(true);
         createAnnouncement(data);
+        console.log("The data",data)
        }
        
      
@@ -363,7 +365,7 @@ const createAnnouncement = async (data) => {
                             />
                             { errors.meta_description && <span className="error mt-2">{errors.meta_description}</span> } */}
 
-<Form.Control 
+                    <Form.Control 
                           type="text" 
                           name="meta_description"
                           onChange={handleAnnouncementData} 

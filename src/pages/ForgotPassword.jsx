@@ -33,11 +33,11 @@ const ForgotPassword = () => {
     const sendLink =  async() =>{
       try {
         let response = await axios.get(`${BASE_URL}/auth/forgotPassword/${email}`)
-      if(response.status === 200 && response.data.status === "success"){
-        setTopMessage("Email sent Please check your email Address")
-        console.log("The success")
+        console.log("The response",response)
+       if(response.status === 200){
+          setTopMessage("Email sent Please check your email Address")
+          console.log("The success")
       }
-     
       } catch (error) {
         console.log("The error",)
         setTopErrorMessage(error.response.data.msg);

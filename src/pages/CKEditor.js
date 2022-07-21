@@ -41,6 +41,7 @@ export default function MyEditor(props) {
       return uploadAdapter(loader);
     };
   }
+  console.log("THe ERRORS",props.errors)
 
   return (
     <div className="App">
@@ -77,7 +78,7 @@ export default function MyEditor(props) {
           data={props.operatingManual.description}
          
           onChange={(event, editor) => {
-            props.handleChange('description', editor.getData());
+            props.handleChange(props.name, editor.getData());
           }}
           {...props}
         />
@@ -89,7 +90,7 @@ export default function MyEditor(props) {
           }}
           editor={ClassicEditor}
           onChange={(event, editor) => {
-            props.handleChange('description', editor.getData());
+            props.handleChange(props.name, editor.getData());
           }}
           {...props}
         />

@@ -77,7 +77,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    console.log("The reponse", response)
     if(response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
       setEditUserData(user);
@@ -322,7 +322,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    console.log("The franchisee data",response)
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 
