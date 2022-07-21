@@ -17,6 +17,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 function AddFormBuilder(props) {
   const [formData, setFormData] = useState([]);
   const [form, setForm] = useState({ form_template_select: 'Yes' });
+  const [formCategory,setFormCategory]=useState([]);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,7 +27,19 @@ function AddFormBuilder(props) {
       getParticularFormData();
     }
     getFormData();
+    getFormCategory();
   }, []);
+  const getFormCategory=()=>{
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/category`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {setFormCategory(result?.result)})
+      .catch((error) => console.log('error', error));
+  }
   const setField = (field, value) => {
     setForm({ ...form, [field]: value });
     console.log('form---->', form);
@@ -44,10 +57,12 @@ function AddFormBuilder(props) {
       setErrors(newErrors);
     } else {
       var myHeaders = new Headers();
+      let data={...form};
+      data["created_by"]=localStorage.getItem("user_id");
       myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/form/add`, {
         method: 'post',
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
@@ -248,29 +263,27 @@ function AddFormBuilder(props) {
                       <Form.Group>
                         <Form.Label>Select Category</Form.Label>
                         <Form.Select
-                          name="previous_form"
-                          isInvalid={!!errors.previous_form}
+                          name="category_id"
+                          isInvalid={!!errors.category_id}
+                          onChange={(e)=>{
+                            setField(e.target.name, e.target.value);
+                          }}
                         >
-                          <option value="1">Select Category</option>
-                          {formData?.map((item) => {
+                          <option value="">Select Category</option>
+                          {formCategory?.map((item)=>{
                             return (
-                              <option
-                                value={item.form_name}
-                                selected={
-                                  form?.previous_form === item.form_name
-                                }
-                              >
-                                {item.form_name}
-                              </option>
-                            );
+                              <option value={item.id} selected={
+                                form?.category_id === item.id
+                              }>{item.category}</option>
+                            )
                           })}
                         </Form.Select>
                         <Form.Control.Feedback type="invalid">
-                          {errors.previous_form}
+                          {errors.category_id}
                         </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
-                    <Col md={12} className="mt-3 mt-md-0">
+                    {/* <Col md={12} className="mt-3 mt-md-0">
                       <div className="form_setting">
                         <Accordion defaultActiveKey="0">
                           <Accordion.Item eventKey="0">
@@ -303,7 +316,7 @@ function AddFormBuilder(props) {
                                         src="../../img/calendar_icons.png"
                                       />
                                       <Form.Control.Feedback type="invalid">
-                                        {/* {formSettingError.start_date} */}
+                                         {formSettingError.start_date} 
                                       </Form.Control.Feedback>
                                     </Form.Group>
                                   </Col>
@@ -327,7 +340,7 @@ function AddFormBuilder(props) {
                                         src="../../img/clock-circle-icon.png"
                                       />
                                       <Form.Control.Feedback type="invalid">
-                                        {/* {formSettingError.start_time} */}
+                                       {formSettingError.start_time} 
                                       </Form.Control.Feedback>
                                     </Form.Group>
                                   </Col>
@@ -351,7 +364,7 @@ function AddFormBuilder(props) {
                                         src="../../img/calendar_icons.png"
                                       />
                                       <Form.Control.Feedback type="invalid">
-                                        {/* {formSettingError.end_date} */}
+                                       {formSettingError.end_date} 
                                       </Form.Control.Feedback>
                                     </Form.Group>
                                   </Col>
@@ -375,7 +388,7 @@ function AddFormBuilder(props) {
                                         src="../../img/clock-circle-icon.png"
                                       />
                                       <Form.Control.Feedback type="invalid">
-                                        {/* {formSettingError.end_time} */}
+                                       {formSettingError.end_time} 
                                       </Form.Control.Feedback>
                                     </Form.Group>
                                   </Col>
@@ -798,7 +811,7 @@ function AddFormBuilder(props) {
                           </Accordion.Item>
                         </Accordion>
                       </div>
-                    </Col>
+                    </Col> */}
                     <Col sm={12}>
                       <div className="mt-5 mb-5 d-flex justify-content-center">
                         <Button
