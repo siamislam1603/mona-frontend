@@ -34,7 +34,7 @@ const TrainingDetail = () => {
         "Authorization": "Bearer " + token
       }
     });
-    
+    console.log("The response",response)
 
     if(response.status === 200 && response.data.status === "success") {
       const { training } = response.data;

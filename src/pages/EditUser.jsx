@@ -77,7 +77,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    console.log("The reponse", response)
     if(response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
       setEditUserData(user);
@@ -104,12 +104,12 @@ const EditUser = () => {
       trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories?.includes(category.id + "")),
 
       professionalDevCategories: editUserData?.professional_development_categories?.map(d => parseInt(d)),
-      professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories.includes(user.id + "")),
+      professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories?.includes(user.id + "")),
 
       coordinator: editUserData?.coordinator,
 
       businessAssets: editUserData?.business_assets?.map(d => parseInt(d)),
-      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + '')),
+      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets?.includes(user.id + '')),
       
       terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD'),
       termination_reach_me: editUserData?.termination_reach_me,
@@ -322,7 +322,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    console.log("The franchisee data",response)
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 

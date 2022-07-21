@@ -41,38 +41,44 @@ export default function MyEditor(props) {
       return uploadAdapter(loader);
     };
   }
+  console.log("THe ERRORS",props.errors)
 
   return (
     <div className="App">
       {props.operatingManual ? (
         <CKEditor
+          // editor={ClassicEditor}
           config={{
             extraPlugins: [uploadPlugin],
             rows: 5,
-            toolbar : {
-                items: [
+            
+            toolbar: {
+              items: [
                   'heading',
-                  '|','bold',
-                  'italic',
                   '|',
-                  'Link',
+                  'bold',
+                  'italic',
+                  'link',
                   'bulletedList',
                   'numberedList',
                   '|',
+                  'outdent',
+                  'indent',
+                  '|',
+                  'uploadImage',
+                  'blockQuote',
                   'insertTable',
-                  '|',
-                  'imageUpload',
-                  '|',
                   'undo',
-                  'redo']
-              }
+                  'redo',
+              ]
+          }
 
             // removePlugins: ['Image'], 
           }}
           data={props.operatingManual.description}
-          editor={ClassicEditor}
+         
           onChange={(event, editor) => {
-            props.handleChange('description', editor.getData());
+            props.handleChange(props.name, editor.getData());
           }}
           {...props}
         />
@@ -84,7 +90,7 @@ export default function MyEditor(props) {
           }}
           editor={ClassicEditor}
           onChange={(event, editor) => {
-            props.handleChange('description', editor.getData());
+            props.handleChange(props.name, editor.getData());
           }}
           {...props}
         />
