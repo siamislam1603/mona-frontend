@@ -539,7 +539,8 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .announcement-accordion .head-title .title-xxs { font-weight: bold; }
 .announcement-accordion .head-title .title-xxs small { display: block; font-size: var(--fontxs); font-weight: normal; color: var(--darkblue); }
 .announcement-accordion .head-title .title-xxs small span { opacity: .5; }
-.announcement-accordion .head-title .date { flex:0 0 110px; margin-left: auto; margin-right: 2rem; text-align: right; opacity: .5; font-size: var(--fontxs); font-family: 'Rubik', sans-serif; }
+.announcement-accordion .head-title .date { flex:0 0 110px; margin-left: auto; margin-right: 2rem; text-align: right; opacity: 1; font-size: var(--fontxs); font-family: 'Rubik', sans-serif; }
+.announcement-accordion .head-title .date .btn { min-width: inherit; background-color: rgba(0,0,0,.1); }
 .announcement-accordion .accordion-button:not(.collapsed)::after { filter: brightness(0); }
 .announcement-accordion .accordion-button::after { right:1rem; position: relative; }
 .announcement-accordion .accordion-button.collapsed { margin: 0; }
