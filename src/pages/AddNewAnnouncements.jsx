@@ -129,7 +129,7 @@ const createAnnouncement = async (data) => {
       const token = localStorage.getItem('token');
       const id = localStorage.getItem("user_id");
       const role = localStorage.getItem("user_role");
-      if(role == "franchisor_admin"){
+
       const response = await axios.get(`${BASE_URL}/role/franchisee`, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -145,25 +145,6 @@ const createAnnouncement = async (data) => {
           label: franchisee.franchisee_name
         })));  
       }
-    }
-    else if(role == "franchisee_admin"){
-      const response = await axios.get(`${BASE_URL}/role/franchisee/${id}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-  
-      if(response.status === 200 && response.data.status === "success") {
-        let { franchiseeByIdList } = response.data;
-  
-        setFranchiseeData(franchiseeByIdList.map(franchisee => ({
-          id: franchisee.id,
-          value: franchisee.franchisee_alias,
-          label: franchisee.franchisee_name
-        })));  
-      }
-
-    }
     }
 
     useEffect(() => {
@@ -335,6 +316,7 @@ const createAnnouncement = async (data) => {
                               placeholder="Which Franchisee?"
                               closeMenuOnSelect={false}
                               isMulti
+                              isDisabled={true}
                               value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
                               options={franchiseeData} 
                               onChange={handleAnnouncementFranchisee}
