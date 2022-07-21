@@ -18,6 +18,7 @@ import Select from 'react-select';
 
 import DropAllFile from "../components/DragDropMultiple";
 import DropOneFile from '../components/DragDrop';
+import DropVideo from '../components/DragDropVideo';
 import {EditAnnouncementValidation} from '../helpers/validation';
 import axios from 'axios';
 import DropAllRelatedFile from '../components/DragDropMultipleRelatedFiles';
@@ -63,6 +64,7 @@ const EditAnnouncement = () => {
 
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
+  const [theVideo,setTheVideo] = useState({})
   const [loader, setLoader] = useState(false);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState(null);
@@ -81,7 +83,12 @@ const EditAnnouncement = () => {
   };
   const handleAnnouncementsSettings = (event) => {
     const { name, value } = event.target;
-    
+    if (!!errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null,
+      });
+    }
     setOperatingManualData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -107,7 +114,7 @@ const EditAnnouncement = () => {
          for(let [ key, values ] of Object.entries(operatingManualData)) {
            data.append(`${key}`, values)
           }
-          videoTutorialFiles.forEach((file, index) => {
+          theVideo.forEach((file, index) => {
             data.append(`images`, file);
           });
           relatedFiles.forEach((file, index) => {
@@ -209,6 +216,19 @@ const EditAnnouncement = () => {
       setAnnouncementData(response.data.data.all_announcements)
     }
  } 
+ const selectedfranhise = () =>{
+  if(franchiseeData){
+    console.log("Inside selectFranhi",franchiseeData)
+  let size = franchiseeData.length
+  console.log("INSIDE INSDEI",announcementData.franchise[0])
+  // console.log("The SeletedFranhise", franchiseeData.length)
+    for(let i=0;i<size;i++){
+       if(franchiseeData[i] === announcementData.franchise[i]){
+        console.log("The Rohan data",announcementData.franchise[i])
+       }
+    }
+  }
+ }
  useEffect(() =>{
   AnnouncementDetails();
   const role = localStorage.getItem("user_role")
@@ -216,23 +236,23 @@ const EditAnnouncement = () => {
   },[])
   useEffect(() => {
     fetchFranchiseeList();
+
   }, []);
+  useEffect(() =>{
+  selectedfranhise()
+
+  },[franchiseeData])
   useEffect(() =>{
     setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
 
   },[announcementData])
-
-
-
-
-
-
-
+// console.log("The time",announcementData.scheduled_date.split("T")[1])
 
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
-      {console.log('selectedFranchiseeId--->', selectedFranchiseeId)}
+      {console.log('Annoucement--->', announcementData)}
+      {console.log("The franhciess",franchiseeData)}
       {console.log('operating manual--->', operatingManualData)}
       <div id="main">
         <section className="mainsection ">
@@ -277,9 +297,10 @@ const EditAnnouncement = () => {
                             <div className="select-with-plus">
                             <Select
                               placeholder="Which Franchisee?"
-                              closeMenuOnSelect={false}
+                              closeMenuOnSelect={true}
                               isMulti
                               options={franchiseeData} 
+                              value={franchiseeData && franchiseeData.filter(c => announcementData.franchise?.includes(c.id + ""))}
                               onChange={(selectedOptions) => {
                                 setOperatingManualData((prevState) => ({
                                   ...prevState,
@@ -309,9 +330,7 @@ const EditAnnouncement = () => {
                               }}
 
                             /> */}
-                         
-                           
-                          
+                        
                             <MyEditor
                               errors={errors}
                               name ="meta_description"
@@ -332,9 +351,12 @@ const EditAnnouncement = () => {
                   <Form.Control  
                         type="date"
                         name="start_date"
+                        defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
                         onChange={handleAnnouncementsSettings}
+                        isInvalid={!!errors.start_date}
                       />
                 </Form.Group>
+                {errors.start_date && <p className="form-errors">{errors.start_date}</p>}
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
@@ -342,9 +364,15 @@ const EditAnnouncement = () => {
                   <Form.Control 
                     type="time"
                     name="start_time"
+                    defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[1].split(".")[0]}
                     onChange={handleAnnouncementsSettings}
+                    isInvalid={!!errors.start_time}
+
                   />
                 </Form.Group>
+                
+                {errors.start_time && <p className="form-errors">{errors.start_time}</p>}
+
               </Col>
                     </Row>
                     <div className="my-new-formsection">
@@ -363,19 +391,22 @@ const EditAnnouncement = () => {
                            <span  className="error">
                             {errors.coverImage}
                            </span>
-
+                           
 
                           {/* <p className="form-errors">{errors.cover_image}</p> */}
                         </Form.Group>
-                      </Col>
+                       </Col>
+
+  
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
                             Upload Reference Video Here :
                           </Form.Label>
-                          <DropAllFile onSave={setVideoTutorialFiles}
+                          {/* <DropOneFile onSave={setVideoTutorialFiles}
 
-                           />
+                           /> */}
+                       <DropVideo onSave={setTheVideo}/>
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
