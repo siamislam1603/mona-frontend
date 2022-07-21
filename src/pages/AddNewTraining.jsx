@@ -572,8 +572,8 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="date"
                     name="end_date"
-                    onChange={() => {
-                      handleTrainingSettings();
+                    onChange={(e) => {
+                      handleTrainingSettings(e);
                       setTrainingSettingErrors(prevState => ({
                         ...prevState,
                         start_time: null

@@ -38,12 +38,12 @@ const timeqty = [
 // HELPER FUNCTIONS
 /* FETCHES RELATED FILE NAME*/
 function fetchRealatedFileName(fileURLString) {
-  let arr = fileURLString.split('%5C');
-  arr = arr[arr.length-1];
-  let extension = arr.split('_')[2].split(".")[1];
-  arr = arr.split('_')[0];
-  arr = arr.split('-').join(" ");
-  return arr + '.' + extension;
+  let name = fileURLString.split("/");
+  name = name[name.length-1];
+  name = name.split("_");
+  let extension = name[2].split(".")[1];
+  name = name[0].split("-").join(" ");
+  return name + "." + extension;
 }
 
 const EditTraining = () => {
@@ -164,8 +164,8 @@ const EditTraining = () => {
     setTrainingSettings(prevState => ({
       start_date: moment(editTrainingData?.start_date).format('YYYY-MM-DD'),
       start_time: moment(editTrainingData?.start_date).format('HH:mm'),
-      end_date: moment(editTrainingData?.end_date).format('YYYY-MM-DD'),
-      end_time: moment(editTrainingData?.end_date).format('HH:mm'),
+      end_date: editTrainingData?.end_date ? moment(editTrainingData?.end_date).format('YYYY-MM-DD') : '',
+      end_time: editTrainingData?.end_date ? moment(editTrainingData?.end_date).format('HH:mm') : '',
       user_roles: editTrainingData?.shares[0].assigned_roles,
       assigned_users: editTrainingData?.shares[0].assigned_users,
       assigned_users_obj: fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0].assigned_users.includes(user.id + "")),
