@@ -295,10 +295,7 @@ const EditAnnouncement = () => {
                             
                               <MyEditor
                               data={announcementData.meta_description} 
-                              // onChange={(event, editor) => {
-                              //           const data = editor.getData();
-                              //           setOperatingManualField("answer", data);
-                              //           }}
+            
                               name ="meta_description"
                               operatingManual={{ ...operatingManualData }}
                               errors={errors}
@@ -531,35 +528,7 @@ const EditAnnouncement = () => {
           </Container>
         </section>
       </div>
-      <Modal className="training-modal">
-        {
-        createTrainingModal && 
-        <Modal
-          show={createTrainingModal}
-          onHide={() => setCreateTrainingModal(false)}>
-          <Modal.Header>
-            <Modal.Title>
-              Creating Training
-            </Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <div className="create-training-modal" style={{ textAlign: 'center' }}>
-              <p>This may take some time.</p>
-              <p>Please Wait...</p>
-            </div>
-          </Modal.Body>
-
-          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          {
-            loader === true && <div>
-              <ReactBootstrap.Spinner animation="border" />
-            </div>
-          }
-          </Modal.Footer>
-        </Modal>
-      }
-      </Modal>
+   
     </>
   );
 };

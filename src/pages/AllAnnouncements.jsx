@@ -56,14 +56,9 @@ console.log("The annoumce detial",announcementDetails,theRelatedFiles)
   return (
     
     <div className="announcement-accordion">
-      {/* <MyEditor
-                              operatingManual={{ ...operatingManualData }}
-                              
-                              name="meta"
-                              handleChange={(e, data) => {
-                              
-                                setOperatingManualField(e, data);
-                              }}
+                        {/* <MyEditor
+                              operatingManual={{ ...operatingManualData }} 
+                             
                             /> */}
       {/* <iframe title="video file" className="embed-responsive-item" src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
 
@@ -88,8 +83,14 @@ console.log("The annoumce detial",announcementDetails,theRelatedFiles)
                                 <div className="head">Description :</div>
                               </Col>
                               <Col xl={10} lg={9}>
-                                
-                                <div className="cont"> {details.meta_description}</div>
+                                  <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: details.meta_description
+                                      ? details.meta_description
+                                      : null,
+                                  }}
+                                  />
+                                {/* <div className="cont"> {details.meta_description}</div> */}
                               </Col>
                             </Row>
                             <Row>
