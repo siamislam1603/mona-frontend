@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 let random = () => {}
 
-export default function DropAllFile({ image,onSave, setTrainingData, setErrors, setFetchedCoverImage=random }) {
+export default function DropVideo({ image,onSave, setTrainingData, setErrors, setFetchedCoverImage=random }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -21,9 +21,11 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
     onDrop,
     maxFiles: 1,
     multiple: false,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg'],
-    },
+      accept: {
+        "video/*" :['.mp4','.mkv']
+      }
+
+   
   });
 
   const handleFileDelete = (file) => {
@@ -74,13 +76,13 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
         </span>
       </div>
       
-     {/* {
+     {
       theImage ? (
         <div className="showfiles">
         
           {
               <div className="mt-3">
-                <img src={theImage} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file 1" />
+                {/* <img src={theImage} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file 1" /> */}
                 <span className="ms-2">
                   <Link to="#" onClick={() => handleDelete()}>
                       <img src="../img/removeIcon.svg" alt="" />
@@ -91,13 +93,15 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
           }
      
       </div>
-      ):( */}
+      ):(
         <div className="showfiles">
         <ul>
           {
             data.map((file, index) => (
               <li className="mt-3" key={index}>
-                <img src={getBase64(file) || currentURI ||image} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
+                {file.path}
+
+                {/* <img src={getBase64(file) || currentURI ||image} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" /> */}
                 <span className="ms-2">
                   <Link to="#" onClick={() => handleFileDelete(file)}>
                       <img src="../img/removeIcon.svg" alt="" />
@@ -109,8 +113,8 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
           }
         </ul>
       </div>
-      
-     
+      )
+     }
     </div>
   );
 }

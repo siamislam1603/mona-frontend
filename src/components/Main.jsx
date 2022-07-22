@@ -101,10 +101,8 @@ const Main = () => {
         <Route
           path="/reset-password"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
+            
               <ResetPassword />
-            </Protected> 
           }
         />
 
@@ -399,7 +397,7 @@ const Main = () => {
         />
 
       <Route
-          path="/my-announcements/:id"
+          path="/my-announcements"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

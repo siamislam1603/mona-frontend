@@ -153,12 +153,14 @@ export const AddNewAnnouncementValidation = (form,coverImage) =>{
 export const EditAnnouncementValidation = (form,coverImage) =>{
   let newErrors = {};
   console.log("The form validat", form)
-  let { title,meta_description} = form;
-  console.log("The tile valdiation", title)
+  let { title,meta_description,start_date,start_time} = form;
+  
+  console.log("All valiatiion",title,start_date,meta_description)
   if(!title || title === ' ') newErrors.title="Title is Required"
   if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
   if(!meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
-  
+  if(!start_date || start_date === ' ') newErrors.start_date="Start Date Required"
+  if(!start_time || start_time === ' ') newErrors.start_time="Start Time Required"
   return newErrors;
 }
 export const ChildRegisterFormValidation = (form) => {
