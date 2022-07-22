@@ -50,7 +50,7 @@ const deleteAnnouncement = async (id) =>{
     }
   }); 
   console.log("The response after delete",response)
-  if(response.status === 200 && response.data.status === "success"){
+  if(response.status === 200){
       console.log("Delete succussfully")
       AllAnnouncementData()
   }

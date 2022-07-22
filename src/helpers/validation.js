@@ -150,17 +150,18 @@ export const AddNewAnnouncementValidation = (form,coverImage) =>{
   return newErrors;
 
 }
-export const EditAnnouncementValidation = (form,coverImage) =>{
+export const EditAnnouncementValidation = (form,coverImage,Data)=>{
   let newErrors = {};
   console.log("The form validat", form)
+  // console.log("The DATA VALIDATION",newData)
   let { title,meta_description,start_date,start_time} = form;
   
   console.log("All valiatiion",title,start_date,meta_description)
   if(!title || title === ' ') newErrors.title="Title is Required"
   if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
-  if(!meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
-  if(!start_date || start_date === ' ') newErrors.start_date="Start Date Required"
-  if(!start_time || start_time === ' ') newErrors.start_time="Start Time Required"
+  if( !meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
+  // if(newData.start_date === " " &&!start_date || start_date === ' ') newErrors.start_date="Start Date Required"
+  // if(newData.start_time === " "&& !start_time || start_time === ' ') newErrors.start_time="Start Time Required"
   return newErrors;
 }
 export const ChildRegisterFormValidation = (form) => {
