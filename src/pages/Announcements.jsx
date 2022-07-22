@@ -24,7 +24,7 @@ const training = [
 
 const Announcements =  () => {
   const [announcementDetails,setAnnouncementDetail] = useState("")
-  const [tabLinkPath, setTabLinkPath] = useState("/announcements");
+  const [tabLinkPath, setTabLinkPath] = useState("/all-announcements");
 
  
   const handleLinkClick = event => {

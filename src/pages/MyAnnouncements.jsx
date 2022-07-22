@@ -14,14 +14,9 @@ const MyAnnouncements = () => {
   // const {id} = useParams
   const myAnnouncementData = async() =>{
     let token = localStorage.getItem('token')
-<<<<<<< HEAD
     let id= localStorage.getItem("user_id")
     console.log("sending response");
     const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${id}`, {
-=======
-    let userid= localStorage.getItem("user_id")
-    const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${userid}`, {
->>>>>>> ca99c11d50310be4d51ae4ae8c1f9c5a423cf4e9
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -37,8 +32,8 @@ const MyAnnouncements = () => {
         "Authorization": "Bearer " + token
       }
     }); 
-    console.log("The response after delete",response)
-    if(response.status === 200 && response.data.status === "success"){
+    console.log("The response after delete",response.status);
+    if(response.status === 200){
         console.log("Delete succussfully")
         myAnnouncementData()
 

@@ -230,14 +230,14 @@ const createAnnouncement = async (data) => {
       }
     }); 
   }
-  if (!announcementData.coverImage) {
-    setError(prevError => {
-        return {
-      ...prevError,
-      coverImage: "Required CoverImage"
-    }
-  }); 
-}
+//   if (!announcementData.coverImage) {
+//     setError(prevError => {
+//         return {
+//       ...prevError,
+//       coverImage: "Required CoverImage"
+//     }
+//   }); 
+// }
   };
 
   useEffect(() => {
@@ -411,7 +411,7 @@ console.log(franchiseeData);
                     <Row>
                       <Col sm={6}>
                         <Form.Group>
-                          <Form.Label>Upload Related Image :</Form.Label>
+                          <Form.Label> Cover Image :</Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
                           />

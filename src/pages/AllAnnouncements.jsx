@@ -49,8 +49,8 @@ const deleteAnnouncement = async (id) =>{
       "Authorization": "Bearer " + token
     }
   }); 
-  console.log("The response after delete",response)
-  if(response.status === 200 && response.data.status === "success"){
+  console.log("The response after delete",response.status);
+  if(response.status === 200){
       console.log("Delete succussfully")
       AllAnnouncementData()
   }

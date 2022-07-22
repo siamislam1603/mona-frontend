@@ -146,7 +146,7 @@ const EditAnnouncement = () => {
           setLoader(false)
           localStorage.setItem('success_msg', 'Announcement Created Successfully!');
           localStorage.setItem('active_tab', '/created-announcement');
-          // window.location.href="/announcements";    
+          window.location.href="/announcements";    
         }
         else{
               console.log('ERROR RESPONSE!');
@@ -229,7 +229,7 @@ const EditAnnouncement = () => {
   setAnnouncementsSettings(prevState =>({
     ...prevState,
     start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
-      start_time: moment(announcementData?.scheduled_date).format('HH:mm'),
+      start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
     // start_date :announcementData&& announcementData?.scheduled_date.split("T")[0],
     // start_time: announcementData&& announcementData?.scheduled_date.split("T")[1].split(".")[0]
   }))
@@ -371,7 +371,6 @@ const EditAnnouncement = () => {
                         defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_date}
                         // defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
                         onChange={handleAnnouncementsSettings}
-                        isInvalid={!!errors.start_date}
                       />
                 </Form.Group>
                 {errors.start_date && <p className="form-errors">{errors.start_date}</p>}
@@ -384,8 +383,6 @@ const EditAnnouncement = () => {
                     name="start_time"
                     defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_time}
                     onChange={handleAnnouncementsSettings}
-                    isInvalid={!!errors.start_time}
-
                   />
                 </Form.Group>
                 
