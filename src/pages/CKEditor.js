@@ -51,7 +51,6 @@ export default function MyEditor(props) {
           config={{
             extraPlugins: [uploadPlugin],
             rows: 5,
-            
             toolbar: {
               items: [
                   'heading',
@@ -87,7 +86,28 @@ export default function MyEditor(props) {
           config={{
             extraPlugins: [uploadPlugin],
             rows: 5,
+            toolbar: {
+              items: [
+                  'heading',
+                  '|',
+                  'bold',
+                  'italic',
+                  'link',
+                  'bulletedList',
+                  'numberedList',
+                  '|',
+                  'outdent',
+                  'indent',
+                  '|',
+                  'uploadImage',
+                  'blockQuote',
+                  'insertTable',
+                  'undo',
+                  'redo',
+              ]
+            }
           }}
+          
           editor={ClassicEditor}
           onChange={(event, editor) => {
             props.handleChange(props.name, editor.getData());
