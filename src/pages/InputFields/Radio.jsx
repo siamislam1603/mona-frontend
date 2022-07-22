@@ -135,7 +135,7 @@ const Radio = (props) => {
           'dropdown_selection' ? (
           <Col sm={6}>
             <div className="child_info_field sex">
-              <span>{Object.values(eval(controls.option)[Index])[0].field_label}:</span>
+              <span className='form-label'>{Object.values(eval(controls.option)[Index])[0].field_label}</span>
               <div className="d-flex mt-2"></div>
               <div className="btn-radio d-flex align-items-center">
                 <Form.Select
@@ -144,7 +144,7 @@ const Radio = (props) => {
                     props.onChange(e.target.name, e.target.value);
                   }}
                 >
-                  <option>Select {Object.values(eval(controls.option)[Index])[0].label}</option>
+                  <option>Select {Object.values(eval(controls.option)[Index])[0].field_label}</option>
                   {Object.values(eval(controls.option)[Index])[0]['option'].map((item) => {
                     return (
                       <>
@@ -198,7 +198,7 @@ const Radio = (props) => {
           'instruction_text' ? (
           <Col sm={6}>
             <div className="child_info_field">
-              <span>
+              <span className='form-label'>
                 {Object.values(eval(controls.option)[Index])[0].field_label}:
               </span>
               <Form.Control
