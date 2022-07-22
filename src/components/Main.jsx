@@ -41,6 +41,7 @@ import ChangePassword from "../pages/ChangePassword"
 import EditUser from '../pages/EditUser';
 import EditFranchisees from '../pages/EditFranchisees';
 import ResetPassword from "../pages/ResetPassword"
+import FormSetting from '../pages/FormBuilder/formSetting';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -288,7 +289,15 @@ const Main = () => {
             </Protected>
           }
         />
-
+        <Route
+        path='/form/setting'
+        element={
+          <Protected isLoggedIn={isLoggedIn}>
+            <SignIn />
+            <FormSetting />
+          </Protected>
+        }
+        />
         <Route
           path="/form/add"
           element={
