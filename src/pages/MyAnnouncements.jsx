@@ -11,17 +11,18 @@ import { useParams } from "react-router-dom";
 
 const MyAnnouncements = () => {
   const [myAnnouncement,setmyAnnouncement] = useState([]);
-  const {id} = useParams
+  // const {id} = useParams
   const myAnnouncementData = async() =>{
     let token = localStorage.getItem('token')
-    let userid= localStorage.getItem("user_id")
-    const response = await axios.get(`${BASE_URL}/announcement/myAnnouncement/${userid}`, {
+    let id= localStorage.getItem("user_id")
+    console.log("sending response");
+    const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
      })
      if(response.status === 200) {
-        setmyAnnouncement(response.data.createdAnnouncement)
+        setmyAnnouncement(response.data.data.all_announcements)
      }
   }
   const userName = localStorage.getItem("user_name");
@@ -29,6 +30,7 @@ const MyAnnouncements = () => {
   useEffect(() =>{
     myAnnouncementData()
   },[])
+ 
   return (
     <div className="announcement-accordion">
         <h1> My Announecment</h1>

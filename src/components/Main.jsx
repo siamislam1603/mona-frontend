@@ -390,7 +390,7 @@ const Main = () => {
         />
 
       <Route
-          path="/my-announcements/:id"
+          path="/my-announcements"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

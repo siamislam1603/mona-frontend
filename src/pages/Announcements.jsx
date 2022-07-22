@@ -134,7 +134,7 @@ const Announcements =  () => {
                   <div className="training-cat mb-3">
                     <ul>
                       <li><a onClick={handleLinkClick}  path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
-                      <li><a onClick={handleLinkClick} path="/my-announcements/:id" className={`${tabLinkPath === "/my-announcements/:id" ? "active" : ""}`} >My Announcements</a></li>
+                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements</a></li>
                   
                     </ul>
                   </div>
