@@ -2274,6 +2274,15 @@ label.form_label_title.form-label {
     margin: 0px;
 }
 
+.form-label{
+    color: var(--black) !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    line-height: 22px !important;
+    font-family: var(--fontrubik) !important;
+    margin-bottom: 0.5rem !important;
+}
+
 .sharing_section {
     margin-top: 46px;
     display: flex;
