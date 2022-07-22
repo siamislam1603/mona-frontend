@@ -5,7 +5,7 @@ const TextArea = (props) => {
   return (
     <Col sm={6}>
       <div className="child_info_field">
-        <span>{controls.field_label}:</span>
+        <span className="form-label">{controls.field_label}</span>
         <Form.Control
           as="textarea"
           rows={controls.row ? controls.row : 3}
