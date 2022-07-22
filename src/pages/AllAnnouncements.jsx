@@ -28,7 +28,7 @@ const handleClose = () => setShow(false);
       "Authorization": "Bearer " + token
     }
   });
-  console.log(response);
+  console.log("The data",response);
   
   if(response.status === 200 && response.data.status === "success") {
       setAnnouncementDetail(response.data.createdAnnouncement);
@@ -50,8 +50,9 @@ const deleteAnnouncement = async (id) =>{
     }
   }); 
   console.log("The response after delete",response)
-  if(response.data.status === 200 && response.data.status === "success"){
+  if(response.status === 200 && response.data.status === "success"){
       console.log("Delete succussfully")
+      AllAnnouncementData()
   }
 
 }
@@ -66,7 +67,7 @@ useEffect(() => {
   AllAnnouncementData()
 }, [])
 
-console.log("The annoumce detial",announcementDetails,theRelatedFiles)
+console.log("The annoumce detial",announcementDetails)
   return (
     
     <div className="announcement-accordion">
@@ -91,8 +92,8 @@ console.log("The annoumce detial",announcementDetails,theRelatedFiles)
                                     <img src="../img/dot-ico.svg" alt=""/>
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    <Dropdown.Item href={`/edit-announcement/${details.id}`}>Edit</Dropdown.Item>
+                                    <Dropdown.Item onClick={() =>deleteAnnouncement(details.id)}>Delete</Dropdown.Item>
                                   </Dropdown.Menu>
                                 </Dropdown>
                               </div>

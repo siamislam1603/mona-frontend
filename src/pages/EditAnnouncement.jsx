@@ -225,6 +225,7 @@ const EditAnnouncement = () => {
     meta_description: announcementData?.meta_description,
     
   }))
+  console.log("The setAnnoucementdata inside cop",)
   setAnnouncementsSettings(prevState =>({
     ...prevState,
     start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
@@ -257,10 +258,14 @@ const EditAnnouncement = () => {
     setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
 
   },[announcementData])
+  useEffect(() =>{
+    setOperatingManualData(announcementData)
+  },[announcementData])
  
 // console.log("The time",announcementData.scheduled_date.split("T")[1])
-console.log("The Image settig",coverImage,fetchedCoverImage)
+// console.log("The Image settig",coverImage,typeof coverImage)
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
+  console.log("The ")
   return (
     <>
       {console.log('Annoucement--->', announcementData)}
@@ -312,7 +317,7 @@ console.log("The Image settig",coverImage,fetchedCoverImage)
                               closeMenuOnSelect={true}
                               isMulti
                               options={franchiseeData} 
-                              value={franchiseeData && franchiseeData.filter(c => announcementData.franchise?.includes(c.id + ""))}
+                              defaultValue={franchiseeData && franchiseeData.filter(c => announcementData.franchise?.includes(c.id + ""))}
                               onChange={(selectedOptions) => {
                                 setOperatingManualData((prevState) => ({
                                   ...prevState,

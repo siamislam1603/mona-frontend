@@ -15,14 +15,29 @@ const MyAnnouncements = () => {
   const myAnnouncementData = async() =>{
     let token = localStorage.getItem('token')
     let userid= localStorage.getItem("user_id")
-    const response = await axios.get(`${BASE_URL}/announcement/myAnnouncement/${userid}`, {
+    const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${userid}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
      })
      if(response.status === 200) {
-        setmyAnnouncement(response.data.createdAnnouncement)
+        setmyAnnouncement(response.data.data.all_announcements)
      }
+  }
+  const deleteAnnouncement = async (id) =>{
+    const token = localStorage.getItem('token');
+    const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }); 
+    console.log("The response after delete",response)
+    if(response.status === 200 && response.data.status === "success"){
+        console.log("Delete succussfully")
+        myAnnouncementData()
+
+    }
+  
   }
   const userName = localStorage.getItem("user_name");
   const userROle = localStorage.getItem("user_role")
@@ -47,9 +62,17 @@ const MyAnnouncements = () => {
                         <img src="../img/dot-ico.svg" alt=""/>
                       </NavLink>
                    </Dropdown.Toggle> */}
-                 <div className="date">
-                  <a href={`/edit-announcement/${data.id}`}><img src="../img/editPen.png" alt=""/></a></div>
-              </div>
+                     <Dropdown>
+                                  <Dropdown.Toggle id="extrabtn" className="ctaact">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>
+                                    <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                
+            </div>
             </div>
           </Accordion.Header>
           <Accordion.Body>
