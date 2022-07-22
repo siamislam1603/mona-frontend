@@ -24,13 +24,14 @@ const training = [
 
 const Announcements =  () => {
   const [announcementDetails,setAnnouncementDetail] = useState("")
-  const [tabLinkPath, setTabLinkPath] = useState("/all-announcements");
+  const [tabLinkPath, setTabLinkPath] = useState("/announcements");
 
  
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
+
   const [filterData, setFilterData] = useState({
     category_id: null,
     search: ""
@@ -133,7 +134,7 @@ const Announcements =  () => {
                   <div className="training-cat mb-3">
                     <ul>
                       <li><a onClick={handleLinkClick}  path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
-                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements</a></li>
+                      <li><a onClick={handleLinkClick} path="/my-announcements/:id" className={`${tabLinkPath === "/my-announcements/:id" ? "active" : ""}`} >My Announcements</a></li>
                   
                     </ul>
                   </div>

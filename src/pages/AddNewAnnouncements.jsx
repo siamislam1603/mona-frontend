@@ -275,7 +275,7 @@ const createAnnouncement = async (data) => {
 
    
     
-
+console.log(franchiseeData);
   return (
     <>
     {console.log("The annno",announcementData)}
@@ -311,17 +311,51 @@ const createAnnouncement = async (data) => {
                       <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
 
+                            {
+
+                            localStorage.getItem('user_role') === 'franchisee_admin' ?
+
                             <div className="select-with-plus">
+
                             <Select
-                              placeholder="Which Franchisee?"
-                              closeMenuOnSelect={false}
-                              isMulti
-                              isDisabled={true}
-                              value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
-                              options={franchiseeData} 
-                              onChange={handleAnnouncementFranchisee}
+
+                            placeholder="Which Franchisee?"
+
+                            closeMenuOnSelect={false}
+
+                            isMulti
+
+                            isDisabled={true}
+
+                            value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
+
+                            options={franchiseeData}
+
+                            onChange={handleAnnouncementFranchisee}
+
                             />
-                  </div>
+
+                            </div>
+
+                          : <div className="select-with-plus">
+
+                          <Select
+
+                            placeholder="Which Franchisee?"
+
+                            closeMenuOnSelect={false}
+
+                            isMulti
+
+                            options={franchiseeData}
+
+                            onChange={handleAnnouncementFranchisee}
+
+                            />
+
+                            </div>
+
+                          }
                             
                           </Form.Group>
                           </Row>
