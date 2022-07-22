@@ -67,7 +67,7 @@ function AddFormBuilder(props) {
       })
         .then((res) => res.json())
         .then((res) => {
-          navigate('/form/field/add', {
+          navigate('/form/setting', {
             state: { form_name: form?.form_name },
           });
         });
@@ -107,9 +107,18 @@ function AddFormBuilder(props) {
               <div className="sec-column">
                 <TopHeader />
                 <Row>
-                  <div className="forms-managment-left new-form-title">
-                    <h6>New Form</h6>
-                  </div>
+                <Col sm={8}>
+                    <div className="mynewForm-heading">
+                      <Button
+                        onClick={() => {
+                          navigate('/form/add');
+                        }}
+                      >
+                        <img src="../../img/back-arrow.svg" />
+                      </Button>
+                      <h4 className="mynewForm">My New Form</h4>
+                    </div>
+                  </Col>
                 </Row>
                 <Form>
                   <Row>
