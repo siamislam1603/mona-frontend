@@ -4,7 +4,7 @@ const Select = (props) => {
   return (
     <Col sm={6}>
     <div className="child_info_field sex">
-      <span>{controls.field_label}:</span>
+      <span className="form-label">{controls.field_label}</span>
       <div className="d-flex mt-2"></div>
       <div className="btn-radio d-flex align-items-center">
         <Form.Select

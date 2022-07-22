@@ -123,7 +123,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   }, [])
 
   formSettings && console.log('FORM SETTINGS:', formSettings);
-  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
+  // otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
   return (
     <>
       <div id="main">
@@ -151,7 +151,10 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                         <img src="../img/dot-ico.svg" alt=""/>
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => handleTrainingDelete(training.id)}>Delete</Dropdown.Item>
+                        <Dropdown.Item onClick={() => {
+                          if(window.confirm("Are you sure you want to delete this training?"))
+                            handleTrainingDelete(training.id)
+                        }}>Delete</Dropdown.Item>
                         <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
                         <Dropdown.Item href="#" onClick={() => {
                           setSaveTrainingId(training.id);
@@ -486,7 +489,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
             </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button className="back">Cancel</Button>
+          <Button className="back" onClick={() => setShowModal(false)}>Cancel</Button>
           <Button 
             className="done" 
             onClick={() => {

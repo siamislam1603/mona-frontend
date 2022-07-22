@@ -127,6 +127,9 @@ const createAnnouncement = async (data) => {
 
     const fetchFranchiseeList = async () => {
       const token = localStorage.getItem('token');
+      const id = localStorage.getItem("user_id");
+      const role = localStorage.getItem("user_role");
+
       const response = await axios.get(`${BASE_URL}/role/franchisee`, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -148,14 +151,22 @@ const createAnnouncement = async (data) => {
       fetchFranchiseeList();
     }, []);
 
-    // const handleAnnouncementSettings = (event) => {
-    //   const { name, value } = event.target;
-  
-    //   setAnnouncementData((prevState) => ({
-    //     ...prevState,
-    //     [name]: value,
-    //   }));
-    // };
+    const handleAnnouncementFranchisee = (event) => {
+      setAnnouncementData((prevState) => ({
+        ...prevState,
+        franchise: [...event.map(option => option.id + "")]
+      }));
+    };
+
+    const announcementDescription = (field, value) => {
+      setAnnouncementData({ ...announcementData, [field]: value });
+      if (!!error[field]) {
+        setError({
+          ...error,
+          [field]: null,
+        });
+      }
+    };
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
@@ -165,52 +176,21 @@ const createAnnouncement = async (data) => {
         [name]: value,
       })); 
     };
-  
-  const handleAnnouncementField = (field, value) => {
-    setAnnouncementData({ ...announcementData, [field]: value });
-      if (!!error[field]) {
-        setError({
-          ...error,
-          [field]: null,
-        });
-      }
 
-  }
-    
 
-    // const checkValidity = (inputName, inputValue) => {
-    //   switch (inputName) {
-    //     case "title":
-    //       let pattern = /^[A-Za-z]{3,}[ ]{0,1}[A-Za-z]{0,}$/i;
-    //       announcementData.titleValid = pattern.test(inputValue);
-    //       console.log("The titlevalid",announcementData.titleValid )
-    //       break;
-    //     case "meta_description":
-    //       announcementData.meta_descriptionValid = inputValue.length >= 10;
-    //       break;
-    //     case "coverImage":
-    //       let image_pattern = /\.(jpe?g|png|gif|bmp)$/i;
-    //       announcementData.coverImageValid = image_pattern.test(inputValue);
-    //     default:
-    //       break;
-    //   }
-    // };
+
       
 
     const handleDataSubmit = event => {
       event.preventDefault();
       console.log("The annoucement ",announcementData)
-      let errorObj = AddNewAnnouncementValidation(announcementData,coverImage);
+      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage);
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
        }
        else{
         setError({});
-        // if(announcementData.start_date== " " || announcementData.start_time == " "){
-        //   setSettingsModalPopup(true)
-        //   console.log("Start date empty")
-        // }
         if(announcementData && coverImage && videoTutorialFiles) {
           let data = new FormData();
     
@@ -230,9 +210,10 @@ const createAnnouncement = async (data) => {
         createAnnouncement(data);
         console.log("The data",data)
        }
+      }
        
      
-    }
+    // }
     if (!announcementData.title) {
       setError(prevError => {
           return { 
@@ -260,20 +241,14 @@ const createAnnouncement = async (data) => {
   };
 
   useEffect(() => {
-    handleAnnouncementField();
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
 
 
   const [show, setShow] = useState(false);
-  // const handleClose = () => setSettingsModalPopup(false);
   const handleShow = () => setShow(true);
-  
-  // const [settingsModalPopup, setSettingsModalPopup] = useState(false);
-
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
-  // const [errors, setErrors] = useState({});
   const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
   const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
   const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
@@ -285,7 +260,6 @@ const createAnnouncement = async (data) => {
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
   });
-  // const [coverImage, setCoverImage] = useState({});
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -298,6 +272,9 @@ const createAnnouncement = async (data) => {
       console.log("The role 3", role) 
       setUserRole(role)
     },[])
+
+   
+    
 
   return (
     <>
@@ -339,13 +316,10 @@ const createAnnouncement = async (data) => {
                               placeholder="Which Franchisee?"
                               closeMenuOnSelect={false}
                               isMulti
+                              isDisabled={true}
+                              value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
                               options={franchiseeData} 
-                              onChange={(selectedOptions) => {
-                                setAnnouncementData((prevState) => ({
-                                  ...prevState,
-                                  franchise: [...selectedOptions.map(option => option.id + "")]
-                                }));
-                              }}
+                              onChange={handleAnnouncementFranchisee}
                             />
                   </div>
                             
@@ -355,17 +329,17 @@ const createAnnouncement = async (data) => {
                       <Col md={12} className="mb-3">
                         <Form.Group>
                         <Form.Label>Announcement Description</Form.Label>
-                            {/* <MyEditor
-                              announcement={{ ...announcementData }}
-                              name="meta_description"
-                              errors={errors}
+                        <MyEditor
+                              errors={error}
+                              name ="meta_description"
+                              data={announcementData.meta_description} 
+
                               handleChange={(e, data) => {
-                                handleAnnouncementField(e, data);
+                                announcementDescription(e, data);
                               }}
                             />
-                            { errors.meta_description && <span className="error mt-2">{errors.meta_description}</span> } */}
-
-                    <Form.Control 
+                           {error.meta_description && <p className="form-errors">{error.meta_description}</p>}
+                            {/* <Form.Control
                           type="text" 
                           name="meta_description"
                           onChange={handleAnnouncementData} 
@@ -373,8 +347,7 @@ const createAnnouncement = async (data) => {
                           />
                           <Form.Control.Feedback type="invalid">
                             {error.meta_description}
-                          </Form.Control.Feedback>
-
+                          </Form.Control.Feedback> */}
                         </Form.Group>
                       </Col>
                     </Row>
@@ -385,15 +358,8 @@ const createAnnouncement = async (data) => {
                           <Form.Label>Upload Related Image :</Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
-                          // isInvalid = {!!error.coverImage}
                           />
-                          {/* <Form.Control.Feedback type="invalid">
-                              {(error.coverImage)}
-                            </Form.Control.Feedback> */}
                             { error.coverImage && <span className="error mt-2">{error.coverImage}</span> }
-                           {/* <span  className="error">
-                            {error.coverImage}
-                           </span> */}
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
@@ -408,6 +374,26 @@ const createAnnouncement = async (data) => {
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
+                  <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                  <Form.Group>
+                  <Form.Label>Schedule Date</Form.Label>
+                  <Form.Control 
+                   type="date"
+                   name="start_date"
+                  onChange={handleAnnouncementData}
+                  />
+                </Form.Group>
+              </Col>
+              <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                <Form.Group>
+                  <Form.Label>Schedule Time</Form.Label>
+                  <Form.Control 
+                  type="time"
+                  name="start_time"
+                  onChange={handleAnnouncementData}
+                  />
+                </Form.Group>
+              </Col>
                       <Col md={12}>
                         <div className="cta text-center mt-5 mb-5">
                           <Button variant="outline" className="me-3" type="submit">Preview</Button>
@@ -419,10 +405,6 @@ const createAnnouncement = async (data) => {
                   <Row>
                     <Col sm={12}>
                       <div className="bottom_button">
-                        {/* <Button className="preview">Preview</Button>
-                        <Button className="saveForm" onClick={onSubmit}>
-                          Save
-                        </Button> */}
                       </div>
                     </Col>
                   </Row>
@@ -435,6 +417,7 @@ const createAnnouncement = async (data) => {
     </>
   );
 };
+
 
 export default AddNewAnnouncements;
 
