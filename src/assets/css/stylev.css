@@ -225,6 +225,10 @@ button:focus {
     /* align-items: center; */
     /* padding: 15px 20px 16px 20px; */
 }
+.date-line {
+    margin-top: 0 !important;
+    margin-bottom: 24px !important;
+}
 
 .content-title-section {
     margin-left: 15px;

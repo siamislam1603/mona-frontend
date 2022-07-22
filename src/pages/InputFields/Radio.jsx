@@ -1,10 +1,25 @@
-import React, { useState } from "react";
-import { Col, Form, Row } from "react-bootstrap";
+import React, { useRef, useState } from 'react';
+import { Col, Form, Row } from 'react-bootstrap';
+import SignaturePad from 'react-signature-canvas';
 // let default_checked_value;
 const Radio = (props) => {
   const { ...controls } = props;
-  const [optionValue, setOptionValue] = useState("");
+  const [optionValue, setOptionValue] = useState('');
   const [Index, setIndex] = useState(0);
+  const sigPad = useRef({});
+  const clear = (e) => {
+    e.preventDefault();
+    sigPad.current.clear();
+  };
+  const trim = (e) => {
+    e.preventDefault();
+    console.log(
+      controls.field_name,
+      '-------->',
+      sigPad.current.getTrimmedCanvas().toDataURL('image/png')
+    );
+    props.onChange(sigPad.current.getTrimmedCanvas().toDataURL('image/png'));
+  };
   //   const [defaultValueCheck, setDefaultValueCheck] = useState(
   //     controls?.default_value
   //   );
@@ -20,11 +35,11 @@ const Radio = (props) => {
               return (
                 <>
                   {console.log(
-                    "eval(controls.option)",
+                    'eval(controls.option)',
                     Object.keys(eval(controls.option)[index])[0]
                   )}
                   {console.log(
-                    "eval(controls.option)",
+                    'eval(controls.option)',
                     Object.values(eval(controls.option)[index])[0]
                   )}
                   {Object.keys(eval(controls.option)[index])[0] ===
@@ -75,26 +90,30 @@ const Radio = (props) => {
         </Form.Group>
       </Col>
       {optionValue ===
-      Object.values(eval(controls.option)[Index])[0]["option_key"] ? (
-        Object.values(eval(controls.option)[Index])[0]["field_type"] ===
-        "radio" ? (
+      Object.values(eval(controls.option)[Index])[0]['option_key'] ? (
+        Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+        'radio' ? (
           <Col sm={6}>
             <Form.Group>
               <Form.Label>
-                {Object.values(eval(controls.option)[Index])[0]["field_name"]}
+                {Object.values(eval(controls.option)[Index])[0]['field_name']}
               </Form.Label>
               <div className="new-form-radio">
-                {Object.values(eval(controls.option)[Index])[0]["option"].map(
+                {Object.values(eval(controls.option)[Index])[0]['option'].map(
                   (item) => {
                     return (
                       <div className="new-form-radio-box">
                         <label for={Object.keys(item)[0]}>
                           <input
-                            type="radio"
+                            type={
+                              Object.values(eval(controls.option)[Index])[0][
+                                'field_type'
+                              ]
+                            }
                             value={Object.values(item)[0]}
                             name={
                               Object.values(eval(controls.option)[Index])[0][
-                                "field_name"
+                                'field_name'
                               ]
                             }
                             id={Object.keys(item)[0]}
@@ -112,7 +131,155 @@ const Radio = (props) => {
               </div>
             </Form.Group>
           </Col>
-        ) : null
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'dropdown_selection' ? (
+          <Col sm={6}>
+            <div className="child_info_field sex">
+              <span>{Object.values(eval(controls.option)[Index])[0].field_label}:</span>
+              <div className="d-flex mt-2"></div>
+              <div className="btn-radio d-flex align-items-center">
+                <Form.Select
+                  name={controls.field_name}
+                  onChange={(e) => {
+                    props.onChange(e.target.name, e.target.value);
+                  }}
+                >
+                  <option>Select {Object.values(eval(controls.option)[Index])[0].label}</option>
+                  {Object.values(eval(controls.option)[Index])[0]['option'].map((item) => {
+                    return (
+                      <>
+                        <option>{Object.keys(item)[0]}</option>
+                      </>
+                    );
+                  })}
+                </Form.Select>
+              </div>
+              <p>{controls.error[controls.field_name]}</p>
+            </div>
+          </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'checkbox' ? (
+          <Col sm={6}>
+            <div className="child_info_field sex">
+              <span>
+                {Object.values(eval(controls.option)[Index])[0].field_label}:
+              </span>
+              <div className="d-flex mt-2"></div>
+              <div className="btn-radio d-flex align-items-center">
+                {Object.values(eval(controls.option)[Index])[0]['option'].map(
+                  (item) => {
+                    return (
+                      <>
+                        <label htmlFor={Object.keys(item)[0]}>
+                          {Object.keys(item)[0]}
+                        </label>
+                        <Form.Check
+                          type="checkbox"
+                          className="checktest"
+                          name={
+                            Object.values(eval(controls.option)[Index])[0]
+                              .field_name
+                          }
+                          id={Object.keys(item)[0]}
+                          value={Object.keys(item)[0]}
+                          onClick={(e) => {
+                            //  setDefaultValueCheck(e.target.value);
+                            props.onChange(e.target.name, e.target.value);
+                          }}
+                        />
+                      </>
+                    );
+                  }
+                )}
+              </div>
+            </div>
+          </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'instruction_text' ? (
+          <Col sm={6}>
+            <div className="child_info_field">
+              <span>
+                {Object.values(eval(controls.option)[Index])[0].field_label}:
+              </span>
+              <Form.Control
+                as="textarea"
+                rows={controls.row ? controls.row : 3}
+                name={Object.values(eval(controls.option)[Index])[0].field_name}
+                className="child_input"
+                onChange={(e) => {
+                  e.preventDefault();
+                  props.onChange(e.target.name, e.target.value);
+                }}
+              />
+            </div>
+          </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'signature' ? (
+          <Col sm={6}>
+            <Form.Group>
+              <Form.Label>
+                {Object.values(eval(controls.option)[Index])[0].field_label}
+              </Form.Label>
+              <SignaturePad
+                canvasProps={{
+                  style: {
+                    background: 'white',
+                    border: '1px solid #e5e5e5',
+                    width: '700px',
+                    height: '250px',
+                  },
+                }}
+                ref={sigPad}
+              />
+              <div>
+                <button
+                  onClick={clear}
+                  style={{ padding: '12px 35px', marginRight: '10px' }}
+                >
+                  Clear
+                </button>
+                <button onClick={trim} style={{ padding: '12px 35px' }}>
+                  Trim
+                </button>
+              </div>
+            </Form.Group>
+          </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+            'image_upload' ||
+          Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+            'document_attachment' ? (
+          <Col sm={6}>
+            <Form.Group>
+              <Form.Label>
+                {Object.values(eval(controls.option)[Index])[0].field_label}
+              </Form.Label>
+
+              <Form.Control
+                type="file"
+                name={Object.values(eval(controls.option)[Index])[0].field_name}
+                onChange={(e) => {
+                  props.onChange(e.target.name, e.target.value);
+                }}
+              />
+            </Form.Group>
+          </Col>
+        ) : (
+          <Col sm={6}>
+            <Form.Group>
+              <Form.Label>
+                {Object.values(eval(controls.option)[Index])[0].field_label}
+              </Form.Label>
+
+              <Form.Control
+                type={Object.values(eval(controls.option)[Index])[0].field_type}
+                name={Object.values(eval(controls.option)[Index])[0].field_name}
+                onChange={(e) => {
+                  props.onChange(e.target.name, e.target.value);
+                }}
+              />
+            </Form.Group>
+          </Col>
+        )
       ) : null}
     </>
   );
