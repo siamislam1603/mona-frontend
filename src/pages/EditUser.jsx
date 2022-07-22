@@ -116,6 +116,7 @@ const EditUser = () => {
       user_signature: editUserData?.user_signature,
       termination_date: editUserData?.termination_date
     }));
+    setCroppedImage(editUserData?.profile_photo);
   }
 
   // CREATES NEW USER INSIDE THE DATABASE
@@ -179,18 +180,26 @@ const EditUser = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let data=new FormData();
+    let data = new FormData();
     trainingDocuments?.map(async(item)=>{
       const blob=await fetch(await toBase64(item)).then((res) => res.blob());
       data.append('images', blob);
     })
 
-    const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-    data.append('images', blob);
+    let blob;
+    if(typeof croppedImage === "object") {
+      console.log('Image Type: Object');
+      blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+      data.append('images', blob);
+    } else {
+      console.log('Image Type: String');
+      blob = croppedImage
+      data.append('profile_photo', blob);
+    }
     
     Object.keys(formData)?.map((item,index) => {
       data.append(item,Object.values(formData)[index]);
-    })
+    });
 
     trainingDocuments.map(doc => data.append('images', doc));
 
@@ -382,7 +391,6 @@ const EditUser = () => {
   // }, [selectedFranchisee]);
 
   useEffect(() => {
-    console.log('Fetching cooordinator data');
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
@@ -591,6 +599,8 @@ const EditUser = () => {
                               placeholder={"Which Franchisee?"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
+                              // isMulti
+                              value={formData?.franchiseeObj || franchiseeData?.filter(data => parseInt(data.id) === parseInt(formData?.franchisee_id))}
                               onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -617,13 +627,19 @@ const EditUser = () => {
                               isDisabled={formData.role !== 'educator'}
                               placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
                               closeMenuOnSelect={true}
+                              value={formData?.coordinatorObj || coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
                               options={coordinatorData}
-                              onChange={(e) =>
+                              onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   coordinator: e.id,
+                                }));
+
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  coordinatorObj: e
                                 }))
-                              }
+                              }}
                             />
                           </Form.Group>
 
