@@ -90,7 +90,7 @@ function AddFormBuilder(props) {
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/form?search=`, requestOptions)
+    fetch(`${BASE_URL}/form/list`, requestOptions)
       .then((response) => response.json())
       .then((result) => setFormData(result?.result))
       .catch((error) => console.log('error', error));

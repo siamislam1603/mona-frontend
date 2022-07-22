@@ -73,8 +73,15 @@ console.log("The annoumce detial",announcementDetails,theRelatedFiles)
                               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
                               <div className="title-xxs">{details.title}<small><span>{userROle}:</span>{userName}</small></div>
                               <div className="date">
-                                 <div className="date">
-                                  <a href={`/edit-announcement/${details.id}`}><img src="../img/editPen.png" alt=""/></a></div>
+                                 <Dropdown>
+                                  <Dropdown.Toggle id="extrabtn" className="ctaact">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href="#">Edit</Dropdown.Item>
+                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
                               </div>
                             </div>
                           </Accordion.Header>
