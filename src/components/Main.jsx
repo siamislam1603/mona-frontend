@@ -100,10 +100,8 @@ const Main = () => {
         <Route
           path="/reset-password"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
+            
               <ResetPassword />
-            </Protected> 
           }
         />
 

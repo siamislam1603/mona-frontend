@@ -4,7 +4,8 @@ import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
-
+import axios from 'axios';
+import { BASE_URL } from '../components/App';
 const products = [
   {
     id: 1,
@@ -28,20 +29,20 @@ const products = [
   },
 ];
 const columns = [
-{
-  dataField: 'name',
-  text: 'Child Name',
-  formatter: (cell) => {
-    cell=cell.split(",");
-    return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt=''/></span><span className="user-name">{cell[1]} </span></div></>)
+  {
+    dataField: 'name',
+    text: 'Child Name',
+    formatter: (cell) => {
+      cell = cell.split(",");
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+    },
   },
-},
-{
+  {
     dataField: 'educator',
     text: 'Educator Name',
     formatter: (cell) => {
-      cell=cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt=''/></span><span className="user-name">{cell[1]} </span></div></>)
+      cell = cell.split(",");
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
     },
   },
   {
@@ -51,7 +52,7 @@ const columns = [
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
-            <img src="../img/dot-ico.svg" alt=""/>
+            <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item href="#">Delete</Dropdown.Item>
@@ -63,6 +64,21 @@ const columns = [
 ];
 
 const CoordinatorDashboard = () => {
+  const [count, setcount] = React.useState();
+  const count_Api = () => {
+    const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
+    axios.get(countUrl).then((response) => {
+      setcount(response.data);
+    }).catch((e) => {
+      console.log(e);
+    })
+  }
+  console.log(count)
+  React.useEffect(() => {
+    count_Api();
+  }, []);
+
+  if (!count) return null;
   return (
     <>
       <div id="main">
@@ -70,10 +86,10 @@ const CoordinatorDashboard = () => {
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader />
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>
@@ -85,31 +101,31 @@ const CoordinatorDashboard = () => {
                           <div className="column-list access-list three-col">
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/story-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/story-ico.png" alt="" /></div>
                                 <div className="name">Story park</div>
                               </a>
                             </div>
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/harmony-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                                 <div className="name">Harmony</div>
                               </a>
                             </div>
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/engagebay-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
                                 <div className="name">Engagebay</div>
                               </a>
                             </div>
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/xero-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
                                 <div className="name">Xero</div>
                               </a>
                             </div>
                             <div className="item">
                               <a href="/" className="flex">
-                                <div className="pic"><img src="../img/bitool-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
                               </a>
                             </div>
@@ -124,7 +140,7 @@ const CoordinatorDashboard = () => {
                             <BootstrapTable
                               keyField="name"
                               data={products}
-                              columns={ columns }
+                              columns={columns}
                             />
                           </div>
                         </div>
@@ -234,32 +250,32 @@ const CoordinatorDashboard = () => {
                               <a href="/" className="item">
                                 <span className="name">Educators logged in</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.educatorsLoggedIn}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Overdue Forms</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.overdueForms}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Overdue Trainings</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.overdueTrainings}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">New Enrolments</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="kidsart">
-                              <img src="../img/kid-art.svg" alt=""/>
+                              <img src="../img/kid-art.svg" alt="" />
                             </div>
                           </div>
                         </div>
