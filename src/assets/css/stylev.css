@@ -2738,3 +2738,7 @@ li.child_tag {
     width: 100%;
     max-width: 175px;
 }
+
+.uploadfile {
+    cursor: pointer;
+}
