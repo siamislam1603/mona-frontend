@@ -74,7 +74,7 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
         </span>
       </div>
       
-     {
+     {/* {
       theImage ? (
         <div className="showfiles">
         
@@ -91,7 +91,7 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
           }
      
       </div>
-      ):(
+      ):( */}
         <div className="showfiles">
         <ul>
           {
@@ -109,8 +109,8 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
           }
         </ul>
       </div>
-      )
-     }
+      
+     
     </div>
   );
 }

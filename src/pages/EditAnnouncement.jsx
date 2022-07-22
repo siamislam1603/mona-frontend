@@ -5,8 +5,9 @@ import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
 import MyEditor from './CKEditor';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
+
+import moment from 'moment';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -31,35 +32,22 @@ const EditAnnouncement = () => {
     related_files: [],
   });
   const [errors, setErrors] = useState({});
-  const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
-  const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
-  const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
+ 
   const [relatedFiles, setRelatedFiles] = useState([]);
-  const [imageUrl,setImageUrl]=useState("");
-  const [videoUrl,setVideoUrl]=useState("");
-  const [videoThumbnailUrl,setVideoThumbnailUrl]=useState("");
-  const [formSettingFlag, setFormSettingFlag] = useState(false);
-  const [formSettingError, setFormSettingError] = useState({});
-  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
-  const [user, setUser] = useState([]);
-  const [selectedUser, setSelectedUser] = useState([]);
+  
+  const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
+  
   const [userRole, setUserRole] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [categoryModalFlag, setCategoryModalFlag] = useState(false);
-  const [categoryData, setCategoryData] = useState({});
-  const [categoryError, setCategoryError] = useState({});
-  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
+ 
+  const [fetchedCoverImage, setFetchedCoverImage] = useState();
 
    const [createTrainingModal, setCreateTrainingModal] = useState(false);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
-  // const [relatedFiles,setRealtedFiles]=useState([])
-  const [allowSubmit, setAllowSubmit] = useState(false);
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
 
   const [theRelatedFiles,setTheRelatedFiles] = useState([])
-  const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
+  const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
   
 
   const [announcementData,setAnnouncementData] = useState("")
@@ -143,7 +131,8 @@ const EditAnnouncement = () => {
         let data = new FormData()
         data.append('id',id);
         data.append('image', coverImage[0]);
-
+        const theres = await  axios.post('https://httpbin.org/anything', data);
+        console.log("THE RESPONSE",theres)
         let imgSaveResponse = await axios.post(
           `${BASE_URL}/training/coverImg?title=announcement`, data, {
             headers: {
@@ -157,7 +146,7 @@ const EditAnnouncement = () => {
           setLoader(false)
           localStorage.setItem('success_msg', 'Announcement Created Successfully!');
           localStorage.setItem('active_tab', '/created-announcement');
-          window.location.href="/announcements";    
+          // window.location.href="/announcements";    
         }
         else{
               console.log('ERROR RESPONSE!');
@@ -229,6 +218,30 @@ const EditAnnouncement = () => {
     }
   }
  }
+ const copyFetchedData = () =>{
+  setAnnouncementData(prevState =>({
+    ...prevState,
+    title: announcementData?.title,
+    meta_description: announcementData?.meta_description,
+    
+  }))
+  setAnnouncementsSettings(prevState =>({
+    ...prevState,
+    start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
+      start_time: moment(announcementData?.scheduled_date).format('HH:mm'),
+    // start_date :announcementData&& announcementData?.scheduled_date.split("T")[0],
+    // start_time: announcementData&& announcementData?.scheduled_date.split("T")[1].split(".")[0]
+  }))
+  setCoverImage(announcementData?.coverImage)
+  setFetchedCoverImage(announcementData?.coverImage)
+  setFetchedVideoTutorialFiles(announcementData?.announcement_files?.filter(file => file.fileType === ".mp4"));
+  setFetchedRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4'));
+   
+  console.log("FETCHED DATA COPIED",fetchedCoverImage)
+ }
+ useEffect(() => {
+  copyFetchedData();
+}, [franchiseeData]);
  useEffect(() =>{
   AnnouncementDetails();
   const role = localStorage.getItem("user_role")
@@ -236,18 +249,17 @@ const EditAnnouncement = () => {
   },[])
   useEffect(() => {
     fetchFranchiseeList();
-
   }, []);
   useEffect(() =>{
   selectedfranhise()
-
   },[franchiseeData])
   useEffect(() =>{
     setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
 
   },[announcementData])
+ 
 // console.log("The time",announcementData.scheduled_date.split("T")[1])
-
+console.log("The Image settig",coverImage,fetchedCoverImage)
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
@@ -351,7 +363,8 @@ const EditAnnouncement = () => {
                   <Form.Control  
                         type="date"
                         name="start_date"
-                        defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
+                        defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_date}
+                        // defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
                         onChange={handleAnnouncementsSettings}
                         isInvalid={!!errors.start_date}
                       />
@@ -364,7 +377,7 @@ const EditAnnouncement = () => {
                   <Form.Control 
                     type="time"
                     name="start_time"
-                    defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[1].split(".")[0]}
+                    defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_time}
                     onChange={handleAnnouncementsSettings}
                     isInvalid={!!errors.start_time}
 
@@ -384,10 +397,12 @@ const EditAnnouncement = () => {
                           </Form.Label>
                           
                            <DropOneFile onSave={setCoverImage} 
-                           isInvalid = {!!errors.coverImage}
-                            image = {announcementData.coverImage}
+                            isInvalid = {!!errors.coverImage}
+                            setFetchedCoverImage={setFetchedCoverImage}
                           
                           />
+                            {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
+
                            <span  className="error">
                             {errors.coverImage}
                            </span>

@@ -41,6 +41,19 @@ const formatMetaDescription = (str) => {
     return newFile;
 }
 
+const deleteAnnouncement = async (id) =>{
+  const token = localStorage.getItem('token');
+  const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  }); 
+  console.log("The response after delete",response)
+  if(response.data.status === 200 && response.data.status === "success"){
+      console.log("Delete succussfully")
+  }
+
+}
 const getRelatedFileName = (str) => {
   let arr = str.split("/");
   let fileName = arr[arr.length - 1].split("_")[0];
