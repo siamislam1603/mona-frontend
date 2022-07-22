@@ -395,6 +395,8 @@ const EditUser = () => {
   }, [formData.franchisee_id]);
 
   editUserData && console.log('EDIT USER DATA:', editUserData);
+  formData && console.log('FORM DATA:', formData);
+  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
 
   return (
     <>
