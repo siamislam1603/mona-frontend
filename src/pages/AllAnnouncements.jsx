@@ -159,7 +159,7 @@ console.log("The annoumce detial",announcementDetails)
                                   <div className="related-files">
                                     {details.announcement_files.map((detail,index) =>(
                                            <>
-                                           {detail.fileType !== ".mp4" ?(
+                                           {detail.fileType !== ".mp4" && !detail.is_deleted ?(
                                              <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
                                               <p>{getRelatedFileName(detail.file)}</p>
                                               <small>
