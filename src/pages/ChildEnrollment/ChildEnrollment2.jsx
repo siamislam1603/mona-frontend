@@ -18,13 +18,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const submitFormData = (e) => {
     e.preventDefault();
     
-    const errors = healthInformationFormValidator(healthInformation);
-    if(Object.keys(errors).length > 0) {
-      setHealthInfoFormErrors(errors);
-    } else {
+    // const errors = healthInformationFormValidator(healthInformation);
+    // if(Object.keys(errors).length > 0) {
+    //   setHealthInfoFormErrors(errors);
+    // } else {
 
-    }
-    // nextStep();
+    // }
+    nextStep();
   };
 
   return (
