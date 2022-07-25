@@ -253,7 +253,7 @@ const EditAnnouncement = () => {
   if(franchiseeData){
     console.log("Inside selectFranhi",franchiseeData)
   let size = franchiseeData.length
-  console.log("INSIDE INSDEI",announcementData.franchise[0])
+  // console.log("INSIDE INSDEI",announcementData.franchise[0])
   // console.log("The SeletedFranhise", franchiseeData.length)
     for(let i=0;i<size;i++){
        if(franchiseeData[i] === announcementData.franchise[i]){
