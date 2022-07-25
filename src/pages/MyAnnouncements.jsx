@@ -83,16 +83,32 @@ const MyAnnouncements = () => {
                 <div className="head">Description :</div>
               </Col>
               <Col xl={10} lg={9}>
-                <div className="cont"><p> {data.meta_description}</p></div>
+                {/* <div className="cont"><p> {data.meta_description}</p></div> */}
+                <div
+                    dangerouslySetInnerHTML={{
+                    __html: data.meta_description
+                      ? data.meta_description
+                       : null,
+                      }}
+                   />
               </Col>
             </Row>
             <Row>
               <Col md={4}>
                 <div className="video-col">
-                  <a href="/" className="vid-col">
-                    <img src="../img/video-pic.jpg" alt="" />
-                    <span className="caption">Regarding Submission of Documents of all classes students admitted in AY 2021-22</span>
-                  </a>
+                {details.announcement_files.map((detail,index) =>(
+                  <>
+                      {detail.fileType == ".mp4" && !detail.is_deleted  ? (
+                                 <AnnouncementVideo 
+                                      data={detail}
+                                      title={`Training Video ${index + 1}`}
+                                                // duration={trainingDetails.completion_time} 
+                                        fun={handleClose}/>
+                                   ):(
+                                       null
+                                   )}
+                       </>
+                     ))}
                 </div>
               </Col>
               <Col md={8}>
