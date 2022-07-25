@@ -352,10 +352,75 @@ const EditAnnouncement = () => {
                             {errors.title}
                           </Form.Control.Feedback>
                         </Form.Group>
+
+                      
+               
                         <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
+                            {/* <div className="select-with-plus">
+                            {/* <Select
+                              placeholder="Which Franchisee?"
+                              closeMenuOnSelect={true}
+                              isMulti
+                              options={franchiseeData} 
+                              value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
+                              onChange={(selectedOptions) => {
+                                setAnnouncementCopyData((prevState) => ({
+                                  ...prevState,
+                                  franchise: [...selectedOptions.map(option => option.id + "")]
+                                }));
+                              }}
+                            /> */}
+    
+                            
+                         {/* </div>       */}
+                          {
+                            localStorage.getItem('user_role') === 'franchisor_admin' ? (
+                              <div className="select-with-plus">
 
-                            <div className="select-with-plus">
+                              <Select
+                                placeholder="Which Franchisee?"
+                                closeMenuOnSelect={true}
+                                isMulti
+                                options={franchiseeData} 
+                                value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
+                                onChange={(selectedOptions) => {
+                                  setAnnouncementCopyData((prevState) => ({
+                                    ...prevState,
+                                    franchise: [...selectedOptions.map(option => option.id + "")]
+                                  }));
+                                }}
+                              />
+                              
+                         
+                            </div>
+  
+                            ):(
+                              <div className="select-with-plus">
+                             
+                              <Select
+                                placeholder="Which Franchisee?"
+                                closeMenuOnSelect={true}
+                                options={franchiseeData}
+                                // value={franchiseeData}
+                                onChange={(e) =>{                                  
+                                  setAnnouncementCopyData((prevState) => ({
+                                    ...prevState,
+                                    franchise: e.value
+                                  }));
+                                }}
+                              />
+                              {/* { formErrors.role !== null && <span className="error">{formErrors.role}</span> } */}
+                                </div>
+
+                            )
+
+                          }
+                         
+
+
+                          {/* <div className="select-with-plus">
+
                             <Select
                               placeholder="Which Franchisee?"
                               closeMenuOnSelect={true}
@@ -369,7 +434,12 @@ const EditAnnouncement = () => {
                                 }));
                               }}
                             />
-                         </div>      
+                            
+                       
+                          </div> */}
+
+                      
+                         
                           </Form.Group>
                   </Row>
                   <div>
@@ -413,11 +483,6 @@ const EditAnnouncement = () => {
                         type="date"
                         name="start_date"
                         defaultValue={announcementCopyData&& announcementCopyData.start_date}
-                        // defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
-                        // onChange={handleAnnouncementsSettings}
-                        // onChange={(e, data) => {
-                        //   setAnnouncementFiled(e, data);
-                        // }}
                         onChange={(e) => {
                           setAnnouncementFiled(
                             e.target.name,
@@ -602,32 +667,7 @@ const EditAnnouncement = () => {
         </Modal.Footer>
       </Modal>
       }
-      <Modal
-        className="training-modal"
-        size="lg"
-        show={settingsModalPopup}
-        onHide={() => setSettingsModalPopup(false)}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <img src="../img/setting-ico.png" alt="" /> Training Settings
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h1>THis is h1</h1>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="transparent" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={() => {
-           
-            setSettingsModalPopup(false)
-          }}>
-            Save Settings
-          </Button>
-        </Modal.Footer>
-      </Modal> 
+  
    
     </>
   );
