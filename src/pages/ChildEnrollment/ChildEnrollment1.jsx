@@ -63,11 +63,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       }
     });
 
-    console.log('CHILD RESPONSE:', response);
     if(response.status === 201 && response.data.status === "success") {
       const { id: childId } = response.data.child;
-      // console.log('Child Id:', childId);
-      // CREATING PARENT AND ASSOCIATING HIM WITH THE CHILD
+
+      // SAVING CHILD ID TO LOCAL STORAGE FOR FURTHER USE
+      localStorage.setItem('enrolled_child_id', childId);
+
+      // SAVING PARENT DETAIL
       response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId}, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -99,7 +101,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    nextStep();
     // let errorChild = childFormValidator(formOneChildData);
     // let errorParent = parentFormValidator(formOneParentData);
 
@@ -108,8 +109,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     //   setParentFormErrors(errorParent);
     // } else {
     //   saveFormOneData(formOneChildData, formOneParentData);
-    //   // nextStep();
     // }
+    nextStep();
   };
 
   // FETCHING THE REQUIRED DATA FROM APIs HERE
