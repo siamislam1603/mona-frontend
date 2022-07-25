@@ -43,12 +43,14 @@ const NewUser = () => {
     businessAssets: "",
     terminationDate: "",
     telcode: '+61',
+    franchisee: ""
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
   const [cityData, setCityData] = useState([]);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [franchiseeData, setFranchiseeData] = useState(null);
   const [coordinatorData, setCoordinatorData] = useState([]);
   const [trainingCategoryData, setTrainingCategoryData] = useState([]);
   const [pdcData, setPdcData] = useState([]);
@@ -65,12 +67,6 @@ const NewUser = () => {
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
     const token = localStorage.getItem('token');
-
-    // const response = await axios.post(`${BASE_URL}/auth/signup`, {...formData, franchisee: selectedFranchisee || 'Alphabet Kids, Armidale'}, {
-    //   headers: {
-    //     "Authorization": `Bearer ${token}`
-    //   }
-    // });
 
     const response = await axios.post(`${BASE_URL}/auth/signup`, data, {
 
@@ -96,13 +92,6 @@ const NewUser = () => {
           [error.error_field]: error.error_msg
       })));
     }
-    // if (response.status === 201) {
-    //   localStorage.setItem('token', response.data.accessToken);
-    //   window.location.href = '/user-management';
-    // } else if (response.status === 201 && response.data.status === 'fail') {
-    //   console.log('MESSAGE:', response, data.msg);
-    //   setTopErrorMessage(response.data.msg);
-    // }
   };
 
   const handleChange = (event) => {
@@ -112,6 +101,7 @@ const NewUser = () => {
       [name]: value,
     }));
   };
+
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -119,56 +109,59 @@ const NewUser = () => {
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
+
   const handleSubmit = async(event) => {
     event.preventDefault();
-    let data=new FormData();
-    console.log("trainingDocuments---->",trainingDocuments);
-    let doc=[];
-    trainingDocuments?.map(async(item)=>{
-      const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+
+    const errorObj = UserFormValidation(formData);
+    if(Object.keys(errorObj).length > 0) {
+      console.log('There are errors in the code!');
+      setFormErrors(errorObj);
+    } else {
+      console.log('Erorrs removed!');
+      let data=new FormData();
+      let doc=[];
+      trainingDocuments?.map(async(item)=>{
+        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+        // doc.push(blob);
+        data.append('images', blob);
+      })
+      console.log("trainingDocuments---->123",doc);
+      const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
       // doc.push(blob);
       data.append('images', blob);
-    })
-    console.log("trainingDocuments---->123",doc);
-    const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-    // doc.push(blob);
-    data.append('images', blob);
-    
-    Object.keys(formData)?.map((item,index) => {
-      data.append(item,Object.values(formData)[index]);
-    })
-    
-    // data.append("images", doc);
-    data.append("franchisee",selectedFranchisee || 'Alphabet Kids, Armidale')
-    let errorObject = UserFormValidation(formData);
+      
+      Object.keys(formData)?.map((item,index) => {
+        data.append(item,Object.values(formData)[index]);
+      })
+      
+      // data.append("images", doc);
+      let errorObject = UserFormValidation(formData);
 
-    if(Object.keys(errorObject).length > 0) {
-        console.log('THERE ARE STILL ERRORS', errorObject);
-        setFormErrors(errorObject);
-    } else {
-        console.log('CREATING USER!');
-        setCreateUserModal(true);
-        setLoader(true)
-        createUser(data);
+      if(Object.keys(errorObject).length > 0) {
+          console.log('THERE ARE STILL ERRORS', errorObject);
+          setFormErrors(errorObject);
+      } else {
+          console.log('CREATING USER!');
+          setCreateUserModal(true);
+          setLoader(true)
+          createUser(data);
+      }
+      
+      createUser(data);
     }
-    
-    createUser(data);
   };
 
-  const fetchCoordinatorData = async () => {
-    if (selectedFranchisee) {
-      let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(data => data.charAt(0).toLowerCase() + data.slice(1)).join("_");
-      
-      const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/${franchisee_alias}/coordinator`);
-
-      if(response.status === 200 && response.data.status === "success") {
-        let { coordinators } = response.data;
-        setCoordinatorData(coordinators.map(coordinator => ({
-          id: coordinator.id,
-          value: coordinator.fullname,
-          label: coordinator.fullname
-        })));
-      }
+  const fetchCoordinatorData = async (franchisee_id) => {
+    console.log('FETCHING COORDINATOR DATA');
+    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
+    if(response.status === 200 && response.data.status === "success") {
+      let { coordinators } = response.data;
+      setCoordinatorData(coordinators.map(coordinator => ({
+        id: coordinator.id,
+        value: coordinator.fullname,
+        label: coordinator.fullname
+      })));
     }
   }
 
@@ -288,6 +281,25 @@ const NewUser = () => {
     }
   };
 
+  const fetchFranchiseeList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { franchiseeList } = response.data;
+
+      setFranchiseeData(franchiseeList.map(franchisee => ({
+        id: franchisee.id,
+        value: franchisee.franchisee_alias,
+        label: franchisee.franchisee_name
+      })));  
+    }
+  }
+
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
@@ -295,16 +307,23 @@ const NewUser = () => {
     fetchTrainingCategories();
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
+    fetchFranchiseeList();
   }, []);
 
   useEffect(() => {
-    fetchCoordinatorData();
-  }, [selectedFranchisee])
+    fetchCoordinatorData(formData.franchisee)
+  }, [formData.franchisee]);
 
-  formData && console.log('FORM DATA:', formData);
-  // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
-  // croppedImage && console.log('CROPPED IMAGE:', croppedImage);
-  // formErrors && console.log('FORM ERRORS:', formErrors);
+  useEffect(() => { 
+    let franchisee_id = localStorage.getItem('franchisee_id');
+    setFormData(prevState => ({
+      ...prevState,
+      franchisee: franchisee_id,
+      franchiseeObj: franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id)) 
+    }));
+  }, [localStorage.getItem('user_role') === 'franchisee_admin', franchiseeData]);
+
+  formData && console.log('FORM ERRORS:', formData);
 
   return (
     <>
@@ -329,10 +348,8 @@ const NewUser = () => {
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
                           setPopupVisible={setPopupVisible}
+                          fetchedPhoto={""}
                         />
-                        <span className="error">
-                          {!formData.file && formErrors.file}
-                        </span>
 
                         {
                           popupVisible && 
@@ -345,22 +362,22 @@ const NewUser = () => {
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Full Name</Form.Label>
+                        <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Email Address</Form.Label>
                             <Form.Control
-                              type="text"
-                              name="fullname"
-                              placeholder="Enter Full Name"
-                              value={formData?.fullName}
+                              type="email"
+                              name="email"
+                              placeholder="Enter Your Email ID"
+                              value={formData.email ?? ''}
                               onChange={(e) => {
                                 handleChange(e);
                                 setFormErrors(prevState => ({
                                   ...prevState,
-                                  fullname: null
+                                  email: null
                                 }));
                               }}
                             />
-                            { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
+                            { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -382,6 +399,24 @@ const NewUser = () => {
                               }}
                             />
                             { formErrors.role !== null && <span className="error">{formErrors.role}</span> }
+                          </Form.Group>
+
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Full Name</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="fullname"
+                              placeholder="Enter Full Name"
+                              value={formData?.fullName}
+                              onChange={(e) => {
+                                handleChange(e);
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  fullname: null
+                                }));
+                              }}
+                            />
+                            { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
@@ -449,24 +484,6 @@ const NewUser = () => {
                             />
                             { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
                           </Form.Group>
-                          
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Email Address</Form.Label>
-                            <Form.Control
-                              type="email"
-                              name="email"
-                              placeholder="Enter Your Email ID"
-                              value={formData.email ?? ''}
-                              onChange={(e) => {
-                                handleChange(e);
-                                setFormErrors(prevState => ({
-                                  ...prevState,
-                                  email: null
-                                }));
-                              }}
-                            />
-                            { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
-                          </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Contact Number</Form.Label>
@@ -531,7 +548,44 @@ const NewUser = () => {
                               }}
                             />
                           </Form.Group>
-                          
+                            
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>Select Franchisee</Form.Label>
+                            {
+                              localStorage.getItem('user_role') === 'franchisor_admin' && 
+                              <Select
+                                placeholder="Which Franchisee?"
+                                closeMenuOnSelect={true}
+                                options={franchiseeData}
+                                onChange={(e) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    franchisee: e.id,
+                                  }));
+
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    franchiseeObj: e
+                                  }))
+
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    franchisee: null
+                                  }));
+                                }}
+                              />
+                            }
+                            {
+                              localStorage.getItem('user_role') === 'franchisee_admin' && 
+                              <Select
+                                placeholder={formData?.franchiseeObj[0].label || "Which Franchisee?"}
+                                closeMenuOnSelect={true}
+                                hideSelectedOptions={true}
+                              />
+                            }
+                            { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
+                          </Form.Group>
+
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Primary Co-ordinator</Form.Label>
                             <Select

@@ -16,8 +16,6 @@ const NewFranchisees = () => {
         abn: "",
         city: "",
         state: "",
-        franchisee_admin_email: "",
-        franchisee_admin: "",
         franchisee_number: "",
         acn: "",
         address: "",
@@ -26,7 +24,6 @@ const NewFranchisees = () => {
     });
     const [australianStatesData, setAustralianStatesData] = useState();
     const [cityData, setCityData] = useState([]);
-    const [franchiseeAdminData, setFranchiseeAdminData] = useState();
     const [selectedFranchisee, setSelectedFranchisee] = useState();
     const [topErrorMessage, setTopErrorMessage] = useState(null);
     const [loader, setLoader] = useState(false);
@@ -90,21 +87,6 @@ const NewFranchisees = () => {
         }
     };
 
-    // FETCHES FRANCHISEE ADMINS FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-    const fetchFranchiseeAdmins = async () => {
-        const response = await axios.get(`${BASE_URL}/role/franchisee-admin-list`);
-        if (response.status === 200 && response.data.status === "success") {
-        const { franchiseeAdminList } = response.data;
-        setFranchiseeAdminData(
-            franchiseeAdminList.map((dt) => ({
-                id: dt.id,
-                value: dt.fullname,
-                label: dt.fullname,
-            }))
-        );
-        }
-    };
-
     const handleFranchiseeDataSubmission = event => {
         event.preventDefault();
 
@@ -129,10 +111,12 @@ const NewFranchisees = () => {
         }));
     } 
 
+    const handleCancel = () => {
+        window.location.href="/all-franchisees";
+    }
     useEffect(() => {
         fetchAustralianStates();
         fetchCities();
-        fetchFranchiseeAdmins();
     }, []);
 
     franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
@@ -153,7 +137,7 @@ const NewFranchisees = () => {
                                 <div className="entry-container">
                                     <div className="user-management-sec">
                                         <header className="title-head">
-                                            <h1 className="title-lg">All Franchises</h1>
+                                            <h1 className="title-lg">Add Franchisee</h1>
                                         </header>
                                     </div>
                                 </div>
@@ -248,10 +232,11 @@ const NewFranchisees = () => {
                                                 { formErrors.contact !== null && <span className="error">{formErrors.contact}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            {/* <Form.Group className="mb-3" controlId="formBasicPassword">
                                                 <Form.Label>Franchisee Admin’s Email</Form.Label>
                                                 <Form.Control 
                                                     name="franchisee_admin_email"
+                                                    value={franchiseeData?.franchisee_admin_email}
                                                     type="text" 
                                                     placeholder="andy.smith@specialdaycare.com"
                                                     onChange={(e) => {
@@ -262,7 +247,7 @@ const NewFranchisees = () => {
                                                         }));
                                                     }} />
                                                 { formErrors.franchisee_admin_email !== null && <span className="error">{formErrors.franchisee_admin_email}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
                                         </Col>
 
                                         <Col sm={6} md={6} lg={6}>
@@ -329,8 +314,34 @@ const NewFranchisees = () => {
                                                     }} />
                                                 { formErrors.postcode !== null && <span className="error">{formErrors.postcode}</span> }
                                             </Form.Group>
+                                            
+                                            {/* <Form.Group className="mb-3">
+                                                <Form.Label>Select Franchisee:</Form.Label>
+                                                <Select
+                                                placeholder="Select Franchisee"
+                                                closeMenuOnSelect={true}
+                                                // options={franchiseeCollection}
+                                                onChange={(e) => {
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        franchisee_admin: e.id,
+                                                    }));
 
-                                            <Form.Group className="mb-3">
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        franchisee_object: e
+                                                    }));
+
+                                                    setFormErrors(prevState => ({
+                                                        ...prevState,
+                                                        franchisee_admin: null
+                                                    }));   
+                                                }}
+                                                />
+                                                { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
+                                            </Form.Group> */}
+
+                                            {/* <Form.Group className="mb-3">
                                                 <Form.Label>Franchisee Admin</Form.Label>
                                                 <Select
                                                 placeholder="Select Franchisee Admin"
@@ -342,6 +353,11 @@ const NewFranchisees = () => {
                                                         franchisee_admin: e.id,
                                                     }));
 
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        franchisee_object: e
+                                                    }));
+
                                                     setFormErrors(prevState => ({
                                                         ...prevState,
                                                         franchisee_admin: null
@@ -349,12 +365,17 @@ const NewFranchisees = () => {
                                                 }}
                                                 />
                                                 { formErrors.franchisee_admin !== null && <span className="error">{formErrors.franchisee_admin}</span> }
-                                            </Form.Group>
+                                            </Form.Group> */}
                                         </Col>
 
                                         <div className="d-flex justify-content-center my-5">
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }}>Cancel</Button>
+                                                <Button 
+                                                    variant="link btn btn-light btn-md m-2" 
+                                                    style={{ backgroundColor: '#efefef' }}
+                                                    onClick={() => handleCancel()}>
+                                                Cancel
+                                                </Button>
                                                 <Button type="submit">Save Details</Button>
                                             </Form.Group>
                                         </div>

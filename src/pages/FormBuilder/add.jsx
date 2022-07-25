@@ -1,29 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import LeftNavbar from "../../components/LeftNavbar";
-import TopHeader from "../../components/TopHeader";
-import { BASE_URL } from "../../components/App";
-import { createFormValidation } from "../../helpers/validation";
-import { useLocation,useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import {
+  Accordion,
+  Button,
+  Col,
+  Container,
+  Form,
+  Row,
+  Table,
+} from 'react-bootstrap';
+import LeftNavbar from '../../components/LeftNavbar';
+import TopHeader from '../../components/TopHeader';
+import { BASE_URL } from '../../components/App';
+import { createFormValidation } from '../../helpers/validation';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function AddFormBuilder(props) {
-  
   const [formData, setFormData] = useState([]);
-  const [form, setForm] = useState({ form_template_select: "Yes" });
+  const [form, setForm] = useState({ form_template_select: 'Yes' });
+  const [formCategory,setFormCategory]=useState([]);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if(location?.state?.id)
-    {
+    if (location?.state?.id) {
       getParticularFormData();
     }
     getFormData();
+    getFormCategory();
   }, []);
+  const getFormCategory=()=>{
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/category`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {setFormCategory(result?.result)})
+      .catch((error) => console.log('error', error));
+  }
   const setField = (field, value) => {
     setForm({ ...form, [field]: value });
-    console.log("form---->", form);
+    console.log('form---->', form);
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -38,39 +57,43 @@ function AddFormBuilder(props) {
       setErrors(newErrors);
     } else {
       var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
+      let data={...form};
+      data["created_by"]=localStorage.getItem("user_id");
+      myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/form/add`, {
-        method: "post",
-        body: JSON.stringify(form),
+        method: 'post',
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
         .then((res) => {
-          navigate('/form/field/add',{state:{form_name: form?.form_name}});
+          navigate('/form/setting', {
+            state: { form_name: form?.form_name },
+          });
         });
     }
   };
   const getParticularFormData = () => {
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
     };
 
     fetch(`${BASE_URL}/form/${location?.state?.id}`, requestOptions)
       .then((response) => response.json())
       .then((result) => setForm(result?.result))
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   const getFormData = () => {
     var requestOptions = {
-      method: "GET",
-      redirect: "follow",
+      method: 'GET',
+      redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/form?search=`, requestOptions)
+    fetch(`${BASE_URL}/form/list`, requestOptions)
       .then((response) => response.json())
       .then((result) => setFormData(result?.result))
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
   };
   return (
     <>
@@ -84,9 +107,18 @@ function AddFormBuilder(props) {
               <div className="sec-column">
                 <TopHeader />
                 <Row>
-                  <div className="forms-managment-left new-form-title">
-                    <h6>New Form</h6>
-                  </div>
+                <Col sm={8}>
+                    <div className="mynewForm-heading">
+                      <Button
+                        onClick={() => {
+                          navigate('/form/add');
+                        }}
+                      >
+                        <img src="../../img/back-arrow.svg" />
+                      </Button>
+                      <h4 className="mynewForm">My New Form</h4>
+                    </div>
+                  </Col>
                 </Row>
                 <Form>
                   <Row>
@@ -101,10 +133,10 @@ function AddFormBuilder(props) {
                             setField(e.target.name, e.target.value);
                           }}
                           isInvalid={!!errors.form_name}
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors.form_name}
-                          </Form.Control.Feedback>
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.form_name}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                     <Col md={6} className="mt-3 mt-md-0">
@@ -115,22 +147,31 @@ function AddFormBuilder(props) {
                           onChange={(e) => {
                             setField(e.target.name, e.target.value.trim());
                           }}
-                          isInvalid={!!errors.form_type} 
+                          isInvalid={!!errors.form_type}
                         >
                           <option value="">Select Form Type</option>
-                          <option value="single_submission" selected={form?.form_type==="single_submission"}>
+                          <option
+                            value="single_submission"
+                            selected={form?.form_type === 'single_submission'}
+                          >
                             One time fill and submit
                           </option>
-                          <option value="multi_submission" selected={form?.form_type==="multi_submission"}>
+                          <option
+                            value="multi_submission"
+                            selected={form?.form_type === 'multi_submission'}
+                          >
                             Multiple time fill and submit
                           </option>
-                          <option value="editable" selected={form?.form_type==="editable"}>
+                          <option
+                            value="editable"
+                            selected={form?.form_type === 'editable'}
+                          >
                             One time fill and Edit
                           </option>
                         </Form.Select>
                         <Form.Control.Feedback type="invalid">
-                            {errors.form_type}
-                          </Form.Control.Feedback>
+                          {errors.form_type}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                     <Col sm={12} className="mt-3 mb-3">
@@ -145,11 +186,11 @@ function AddFormBuilder(props) {
                           onChange={(e) => {
                             setField(e.target.name, e.target.value);
                           }}
-                          isInvalid={!!errors.form_description} 
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors.form_description}
-                          </Form.Control.Feedback>
+                          isInvalid={!!errors.form_description}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.form_description}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -165,7 +206,10 @@ function AddFormBuilder(props) {
                                 value="Yes"
                                 name="form_template_select"
                                 id="yes"
-                                checked={form?.form_template_select === "Yes" || form?.form_template_select === true}
+                                checked={
+                                  form?.form_template_select === 'Yes' ||
+                                  form?.form_template_select === true
+                                }
                                 onClick={(e) => {
                                   setField(e.target.name, e.target.value);
                                 }}
@@ -184,7 +228,10 @@ function AddFormBuilder(props) {
                                 onClick={(e) => {
                                   setField(e.target.name, e.target.value);
                                 }}
-                                checked={form?.form_template_select === "No" || form?.form_template_select === false}
+                                checked={
+                                  form?.form_template_select === 'No' ||
+                                  form?.form_template_select === false
+                                }
                               />
                               <span className="radio-round"></span>
                               <p>No, I want to create a new form</p>
@@ -193,31 +240,593 @@ function AddFormBuilder(props) {
                         </div>
                       </Form.Group>
                     </Col>
-                    {form?.form_template_select === "Yes" ? (
-                      <Col md={6}  className="mt-3 mt-md-0">
+                    {form?.form_template_select === 'Yes' ? (
+                      <Col md={6} className="mt-3 mt-md-0">
                         <Form.Group>
                           <Form.Label>Select Previous Form</Form.Label>
-                          <Form.Select name="previous_form" isInvalid={!!errors.previous_form}>
+                          <Form.Select
+                            name="previous_form"
+                            isInvalid={!!errors.previous_form}
+                          >
                             <option value="1">Select Previous Form</option>
                             {formData?.map((item) => {
                               return (
-                                <option value={item.form_name} selected={form?.previous_form===item.form_name}>{item.form_name}</option>
+                                <option
+                                  value={item.form_name}
+                                  selected={
+                                    form?.previous_form === item.form_name
+                                  }
+                                >
+                                  {item.form_name}
+                                </option>
                               );
                             })}
                           </Form.Select>
                           <Form.Control.Feedback type="invalid">
-                          {errors.previous_form}
+                            {errors.previous_form}
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                     ) : null}
+                    <Col md={6} className="mt-3 mt-md-0">
+                      <Form.Group>
+                        <Form.Label>Select Category</Form.Label>
+                        <Form.Select
+                          name="category_id"
+                          isInvalid={!!errors.category_id}
+                          onChange={(e)=>{
+                            setField(e.target.name, e.target.value);
+                          }}
+                        >
+                          <option value="">Select Category</option>
+                          {formCategory?.map((item)=>{
+                            return (
+                              <option value={item.id} selected={
+                                form?.category_id === item.id
+                              }>{item.category}</option>
+                            )
+                          })}
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.category_id}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                    {/* <Col md={12} className="mt-3 mt-md-0">
+                      <div className="form_setting">
+                        <Accordion defaultActiveKey="0">
+                          <Accordion.Item eventKey="0">
+                            <Accordion.Header>
+                              <div className="form_setting_title">
+                                <img src="../../img/carbon_settings.svg" />
+                                <h3>Form Settings</h3>
+                              </div>
+                            </Accordion.Header>
+                            <Accordion.Body>
+                              <div className="form_setting_fields">
+                                <Row>
+                                  <Col lg={3} sm={6}>
+                                    <Form.Group className="form_fields_box">
+                                      <Form.Label>Start Date</Form.Label>
+                                      <Form.Control
+                                        type="date"
+                                        name="start_date"
+                                        // value={formSettingData?.start_date}
+                                        // onChange={(e) => {
+                                        //   setFormSettingFields(
+                                        //     e.target.name,
+                                        //     e.target.value
+                                        //   );
+                                        // }}
+                                        // isInvalid={!!formSettingError.start_date}
+                                      />
+                                      <img
+                                        className="form_fields_icon"
+                                        src="../../img/calendar_icons.png"
+                                      />
+                                      <Form.Control.Feedback type="invalid">
+                                         {formSettingError.start_date} 
+                                      </Form.Control.Feedback>
+                                    </Form.Group>
+                                  </Col>
+                                  <Col lg={3} sm={6} className="mt-3 mt-sm-0">
+                                    <Form.Group className="form_fields_box">
+                                      <Form.Label>Start Time</Form.Label>
+                                      <Form.Control
+                                        type="time"
+                                        name="start_time"
+                                        // value={formSettingData?.start_time}
+                                        // onChange={(e) => {
+                                        //   setFormSettingFields(
+                                        //     e.target.name,
+                                        //     e.target.value
+                                        //   );
+                                        // }}
+                                        // isInvalid={!!formSettingError.start_time}
+                                      />
+                                      <img
+                                        className="form_fields_icon"
+                                        src="../../img/clock-circle-icon.png"
+                                      />
+                                      <Form.Control.Feedback type="invalid">
+                                       {formSettingError.start_time} 
+                                      </Form.Control.Feedback>
+                                    </Form.Group>
+                                  </Col>
+                                  <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                                    <Form.Group className="form_fields_box">
+                                      <Form.Label>End Date</Form.Label>
+                                      <Form.Control
+                                        type="date"
+                                        name="end_date"
+                                        // value={formSettingData?.end_date}
+                                        // onChange={(e) => {
+                                        //   setFormSettingFields(
+                                        //     e.target.name,
+                                        //     e.target.value
+                                        //   );
+                                        // }}
+                                        // isInvalid={!!formSettingError.end_date}
+                                      />
+                                      <img
+                                        className="form_fields_icon"
+                                        src="../../img/calendar_icons.png"
+                                      />
+                                      <Form.Control.Feedback type="invalid">
+                                       {formSettingError.end_date} 
+                                      </Form.Control.Feedback>
+                                    </Form.Group>
+                                  </Col>
+                                  <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                                    <Form.Group className="form_fields_box">
+                                      <Form.Label>End Time</Form.Label>
+                                      <Form.Control
+                                        type="time"
+                                        name="end_time"
+                                        // value={formSettingData?.end_time}
+                                        // onChange={(e) => {
+                                        //   setFormSettingFields(
+                                        //     e.target.name,
+                                        //     e.target.value
+                                        //   );
+                                        // }}
+                                        // isInvalid={!!formSettingError.end_time}
+                                      />
+                                      <img
+                                        className="form_fields_icon"
+                                        src="../../img/clock-circle-icon.png"
+                                      />
+                                      <Form.Control.Feedback type="invalid">
+                                       {formSettingError.end_time} 
+                                      </Form.Control.Feedback>
+                                    </Form.Group>
+                                  </Col>
+                                </Row>
+                              </div>
+                              <div className="applicable_section">
+                                <Row>
+                                  <Col md={4}>
+                                    <Form.Group>
+                                      <Form.Label className="form_label_title">
+                                        Applicable to:
+                                      </Form.Label>
+                                      <div className="new-form-radio">
+                                        <div className="new-form-radio-box">
+                                          <label for="user_role">
+                                            <input
+                                              type="radio"
+                                              value="user_role"
+                                              name="applicable"
+                                              id="user_role"
+                                              // onChange={(e) => {
+                                              //   setFormSettingFields(
+                                              //     e.target.name,
+                                              //     e.target.value
+                                              //   );
+                                              // }}
+                                              // checked={
+                                              //   formSettingData?.applicable_to_franchisee ===
+                                              //     true ||
+                                              //   formSettingData?.applicable_to_franchisee ===
+                                              //     'Yes'
+                                              // }
+                                            />
+                                            <span className="radio-round"></span>
+                                            <p>User Roles</p>
+                                          </label>
+                                        </div>
+                                        <div className="new-form-radio-box">
+                                          <label for="specific_user">
+                                            <input
+                                              type="radio"
+                                              value="specific_user"
+                                              name="applicable"
+                                              id="specific_user"
+                                              // onChange={(e) => {
+                                              //   setFormSettingFields(
+                                              //     e.target.name,
+                                              //     e.target.value
+                                              //   );
+                                              // }}
+                                              // checked={
+                                              //   formSettingData?.applicable_to_franchisee ===
+                                              //     false ||
+                                              //   formSettingData?.applicable_to_franchisee ===
+                                              //     'No'
+                                              // }
+                                            />
+                                            <span className="radio-round"></span>
+                                            <p>Specific Users</p>
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </Form.Group>
+                                    <div className="sharing_section">
+                                      <div className="sharing">
+                                        <div className="sharing-title">
+                                          <p>Enable Sharing</p>
+                                        </div>
+                                        <div className="toogle-swich">
+                                          <input
+                                            className="switch"
+                                            name="required"
+                                            type="checkbox"
+                                            // checked={form[index]?.required}
+                                            // onChange={(e) => {
+                                            //   setField(
+                                            //     e.target.name,
+                                            //     e.target.checked,
+                                            //     index
+                                            //   );
+                                            // }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="sharing">
+                                        <div className="sharing-title">
+                                          <p>Enable Editing</p>
+                                        </div>
+                                        <div className="toogle-swich">
+                                          <input
+                                            className="switch"
+                                            name="required"
+                                            type="checkbox"
+                                            // checked={form[index]?.required}
+                                            // onChange={(e) => {
+                                            //   setField(
+                                            //     e.target.name,
+                                            //     e.target.checked,
+                                            //     index
+                                            //   );
+                                            // }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="sharing">
+                                        <div className="sharing-title">
+                                          <p>Stop Form Submissions</p>
+                                        </div>
+                                        <div className="toogle-swich">
+                                          <input
+                                            className="switch"
+                                            name="required"
+                                            type="checkbox"
+                                            // checked={form[index]?.required}
+                                            // onChange={(e) => {
+                                            //   setField(
+                                            //     e.target.name,
+                                            //     e.target.checked,
+                                            //     index
+                                            //   );
+                                            // }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="sharing">
+                                        <div className="sharing-title">
+                                          <p>For Training Module</p>
+                                        </div>
+                                        <div className="toogle-swich">
+                                          <input
+                                            className="switch"
+                                            name="required"
+                                            type="checkbox"
+                                            // checked={form[index]?.required}
+                                            // onChange={(e) => {
+                                            //   setField(
+                                            //     e.target.name,
+                                            //     e.target.checked,
+                                            //     index
+                                            //   );
+                                            // }}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
 
+                                    <Col md={12} className="mt-3 mt-md-0">
+                                      <div className="submissions_section">
+                                        <Form.Group>
+                                          <Form.Label>
+                                            Select folder to save submissions
+                                          </Form.Label>
+                                          <Form.Select
+                                            name="previous_form"
+                                            isInvalid={!!errors.previous_form}
+                                          >
+                                            <option value="1">
+                                              Select folder to save submissions
+                                            </option>
+                                            {formData?.map((item) => {
+                                              return (
+                                                <option
+                                                  value={item.form_name}
+                                                  selected={
+                                                    form?.previous_form ===
+                                                    item.form_name
+                                                  }
+                                                >
+                                                  {item.form_name}
+                                                </option>
+                                              );
+                                            })}
+                                          </Form.Select>
+                                          <Form.Control.Feedback type="invalid">
+                                            {errors.previous_form}
+                                          </Form.Control.Feedback>
+                                        </Form.Group>
+                                      </div>
+                                    </Col>
+                                  </Col>
+                                  <Col md={8}>
+                                    <section className="user_role_section">
+                                      <Form.Label className="form_label_title">
+                                        Select User Roles
+                                      </Form.Label>
+
+                                      <div className="user_role_table">
+                                        <Table bordered>
+                                          <thead className="table_title">
+                                            <tr>
+                                              <th>User Type</th>
+                                              <th>Targeted Users</th>
+                                              <th>Fill Access Users</th>
+                                              <th>Response Visibility</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td className="border_left_box">
+                                                Franchisor Admin
+                                              </td>
+                                              <td className="input_checkbox">
+                                                {' '}
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="border_right_box input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Franchisee admin </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Coordinator</td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Educator</td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Parent/Guardian</td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                            </tr>
+                                            <tr className="child_table_row">
+                                              <td>
+                                                <ul>
+                                                  <li className="child_tag">
+                                                    Child
+                                                  </li>
+                                                </ul>
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                              <td className="input_checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  name="vehicle1"
+                                                  value="Bike"
+                                                />
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </Table>
+                                      </div>
+                                      <div className='signatories_section'>
+                                        <Row>
+                                        <Col md={3}>
+                                        <div className="sharing">
+                                        <div className="sharing-title">
+                                          <p>Signatories</p>
+                                        </div>
+                                        <div className="toogle-swich">
+                                          <input
+                                            className="switch"
+                                            name="required"
+                                            type="checkbox"
+                                            // checked={form[index]?.required}
+                                            // onChange={(e) => {
+                                            //   setField(
+                                            //     e.target.name,
+                                            //     e.target.checked,
+                                            //     index
+                                            //   );
+                                            // }}
+                                          />
+                                        </div>
+                                      </div>
+
+                                        </Col>
+                                        <Col md={8}>
+
+                                        <div className='footer_modal footer_user-roles-box'>
+                                          <div className='footer_modal_checkbox'>
+                                          <label class="container">Co-ordinators<input type="checkbox" name="shared_role" id="coordinator"/>
+                                            <span class="checkmark">
+                                              </span>
+                                              </label>
+                                              <label class="container">Co-ordinators<input type="checkbox" name="shared_role" id="coordinator"/>
+                                            <span class="checkmark">
+                                              </span>
+                                              </label>
+                                              <label class="container">Co-ordinators<input type="checkbox" name="shared_role" id="coordinator"/>
+                                            <span class="checkmark">
+                                              </span>
+                                              </label>
+
+                                          </div>
+                                          <div className='footer_modal_checkbox'>
+                                          <label class="container">Co-ordinators<input type="checkbox" name="shared_role" id="coordinator"/>
+                                            <span class="checkmark">
+                                              </span>
+                                              </label>
+                                              <label class="container">Co-ordinators<input type="checkbox" name="shared_role" id="coordinator"/>
+                                            <span class="checkmark">
+                                              </span>
+                                              </label>
+
+                                          </div>
+
+                                            </div>
+                                        </Col>
+
+                                        </Row>
+
+                                      </div>
+                                    </section>
+                                  </Col>
+                                </Row>
+                              </div>
+                            </Accordion.Body>
+                          </Accordion.Item>
+                        </Accordion>
+                      </div>
+                    </Col> */}
                     <Col sm={12}>
                       <div className="mt-5 mb-5 d-flex justify-content-center">
                         <Button
                           className="theme-light"
                           onClick={() => {
-                            navigate("/form");
+                            navigate('/form');
                           }}
                         >
                           Cancel

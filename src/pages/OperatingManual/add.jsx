@@ -548,6 +548,27 @@ const AddOperatingManual = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label className="formlabel">Position in the tree-structure</Form.Label>
+                          <Form.Control
+                            type="number"
+                            name="order"
+                            value={operatingManualData?.order}
+                            placeholder="Enter Position"
+                            onChange={(e) => {
+                              setOperatingManualField(
+                                e.target.name,
+                                e.target.value
+                              );
+                            }}
+                            isInvalid={!!errors.order}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.order}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
                     </Row>
                     <Row>
                       <Col sm={12}>
@@ -729,7 +750,9 @@ const AddOperatingManual = () => {
                   <Row>
                     <Col sm={12}>
                       <div className="bottom_button">
-                        {/* <Button className="preview">Preview</Button> */}
+                        <Button className="preview" onClick={()=>{
+                          navigate("/operatingmanual");
+                        }}>Cancel</Button>
                         <Button className="saveForm" onClick={onSubmit}>
                           Save
                         </Button>
@@ -1014,7 +1037,7 @@ const AddOperatingManual = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="form-settings-content">
-            <Row className="mt-4">
+            <Row>
               <Col md={12}>
                 <Form.Group>
                   <Form.Label>Category Name</Form.Label>

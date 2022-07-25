@@ -1,7 +1,15 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
-import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Table,
+} from 'react-bootstrap';
 import LeftNavbar from '../../../components/LeftNavbar';
 import TopHeader from '../../../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
@@ -275,9 +283,8 @@ const AddFormField = (props) => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    alert('Hello');
     const newErrors = createFormFieldValidation(form);
-    console.log('newErrors--onSubmit--->', newErrors);
+    console.log('form--->', form);
     let error_flag = false;
     newErrors.map((item) => {
       if (Object.values(item)[0]) {
@@ -425,383 +432,404 @@ const AddFormField = (props) => {
                 <Form>
                   {form?.map((item, index) => {
                     return (
-                      <div className="my-new-formsection">
-                        <Row>
-                          {index === 0 ? (
-                            <Col sm={12}>
-                              <Form.Label className="formlabel">
-                                Label {index + 1}
-                              </Form.Label>
-                            </Col>
-                          ) : (
-                            <>
-                              <Col xs={6}>
+                      <>
+                        <div className="my-new-formsection">
+                          <Row>
+                            {index === 0 ? (
+                              <Col sm={12}>
                                 <Form.Label className="formlabel">
                                   Label {index + 1}
                                 </Form.Label>
                               </Col>
-                              <Col xs={6}>
-                                <div className="remove-button">
-                                  <Button
-                                    variant="link"
-                                    onClick={() => {
-                                      counter++;
-                                      setCount(counter);
-                                      let data = form;
-                                      if (data[index]?.id) {
-                                        deleteFormField(data[index]?.id);
-                                      }
-                                      data.splice(index, 1);
-                                      setForm(data);
-                                    }}
-                                  >
-                                    <img src="../../img/removeIcon.svg" />{' '}
-                                    Remove
-                                  </Button>
-                                </div>
-                              </Col>
-                            </>
-                          )}
-                        </Row>
-                        <div className="label-one">
-                          <Row>
-                            <Col sm={6}>
-                              <div className="my-form-input">
-                                <Form.Control
-                                  type="text"
-                                  name="field_label"
-                                  value={form[index]?.field_label}
-                                  onChange={(e) => {
-                                    setField(
-                                      e.target.name,
-                                      e.target.value,
-                                      index
-                                    );
-                                  }}
-                                  placeholder="Some text here for the label"
-                                  isInvalid={!!errors[index]?.field_label}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  {errors[index]?.field_label}
-                                </Form.Control.Feedback>
-                                <div className="input-img">
-                                  <img src="../../img/input-img.svg" />
-                                </div>
-                              </div>
-                            </Col>
-                            <Col sm={6}>
-                              <div className="text-answer-div default-arrow-select">
-                                <Form.Select
-                                  name="field_type"
-                                  onChange={(e) => {
-                                    setField(
-                                      e.target.name,
-                                      e.target.value,
-                                      index
-                                    );
-                                  }}
-                                >
-                                  <option
-                                    value="text"
-                                    selected={
-                                      form[index]?.field_type === 'text'
-                                    }
-                                  >
-                                    Text Answer
-                                  </option>
-                                  <option
-                                    value="radio"
-                                    selected={
-                                      form[index]?.field_type === 'radio'
-                                    }
-                                  >
-                                    Multiple Choice
-                                  </option>
-                                  <option
-                                    value="checkbox"
-                                    selected={
-                                      form[index]?.field_type === 'checkbox'
-                                    }
-                                  >
-                                    Checkboxes
-                                  </option>
-                                  <option
-                                    value="date"
-                                    selected={
-                                      form[index]?.field_type === 'date'
-                                    }
-                                  >
-                                    Date
-                                  </option>
-                                  <option
-                                    value="image_upload"
-                                    selected={
-                                      form[index]?.field_type === 'image_upload'
-                                    }
-                                  >
-                                    Image Upload
-                                  </option>
-                                  <option
-                                    value="document_attachment"
-                                    selected={
-                                      form[index]?.field_type ===
-                                      'document_attachment'
-                                    }
-                                  >
-                                    Document Attachment
-                                  </option>
-                                  <option
-                                    value="signature"
-                                    selected={
-                                      form[index]?.field_type === 'signature'
-                                    }
-                                  >
-                                    Signature
-                                  </option>
-                                  <option
-                                    value="instruction_text"
-                                    selected={
-                                      form[index]?.field_type ===
-                                      'instruction_text'
-                                    }
-                                  >
-                                    Instruction Text
-                                  </option>
-                                  <option
-                                    value="headings"
-                                    selected={
-                                      form[index]?.field_type === 'headings'
-                                    }
-                                  >
-                                    Headings
-                                  </option>
-                                  <option
-                                    value="dropdown_selection"
-                                    selected={
-                                      form[index]?.field_type ===
-                                      'dropdown_selection'
-                                    }
-                                  >
-                                    Drop down selection
-                                  </option>
-                                </Form.Select>
-                                <div className="input-text-img">
-                                  <img
-                                    src={
-                                      form[index]?.field_type === 'text'
-                                        ? '../../img/input-text-icon.svg'
-                                        : form[index]?.field_type === 'radio'
-                                        ? '../../img/multiple-choice-icon.svg'
-                                        : form[index]?.field_type === 'checkbox'
-                                        ? '../../img/check_boxIcon.svg'
-                                        : '../../img/input-text-icon.svg'
-                                    }
-                                  />
-                                </div>
-                              </div>
-                            </Col>
-                            {form[index]?.field_type === 'dropdown_selection' ||
-                            form[index]?.field_type === 'radio' ||
-                            form[index]?.field_type === 'checkbox' ? (
+                            ) : (
                               <>
-                                {form[index]?.option?.map(
-                                  (item, inner_index) => {
-                                    return (
-                                      <Col sm={6}>
-                                        {console.log(
-                                          'item---->',
-                                          item[Object.keys(item)[0]]
-                                        )}
-                                        <div className="my-form-input">
-                                          <Form.Control
-                                            type="text"
-                                            name="option"
-                                            value={Object.keys(item)[0]}
-                                            onChange={(e) => {
-                                              setField(
-                                                e.target.name,
-                                                e.target.value,
-                                                index,
-                                                inner_index
-                                              );
-                                            }}
-                                            placeholder={
-                                              'Option ' + (inner_index + 1)
-                                            }
-                                            isInvalid={
-                                              errors[index]?.option
-                                                ? !!errors[index]?.option[
-                                                    inner_index
-                                                  ]
-                                                : null
-                                            }
-                                          />
-                                          <Form.Control.Feedback type="invalid">
-                                            {errors[index]?.option
-                                              ? errors[index]?.option[
-                                                  inner_index
-                                                ]
-                                              : ''}
-                                          </Form.Control.Feedback>
-                                          <div className="delete-icon">
-                                            <img
-                                              src="../../img/removeIcon.svg"
-                                              onClick={() => {
-                                                const tempArr = form;
-                                                const tempObj = tempArr[index];
-                                                if (
-                                                  tempObj['option'].length > 2
-                                                ) {
-                                                  counter++;
-                                                  setCount(counter);
-                                                  tempObj['option'].splice(
-                                                    inner_index,
-                                                    1
-                                                  );
-                                                  tempArr[index] = tempObj;
-                                                  setForm(tempArr);
-                                                }
-                                              }}
-                                            />
-                                          </div>
-                                        </div>
-                                      </Col>
-                                    );
-                                  }
-                                )}
-                              </>
-                            ) : null}
-                          </Row>
-                        </div>
-
-                        <div className="apply-section">
-                          <Row>
-                            <Col md={6}>
-                              <div className="apply-condition">
-                                {form[index]?.field_type ===
-                                  'dropdown_selection' ||
-                                form[index]?.field_type === 'radio' ||
-                                form[index]?.field_type === 'checkbox' ? (
-                                  <>
+                                <Col xs={6}>
+                                  <Form.Label className="formlabel">
+                                    Label {index + 1}
+                                  </Form.Label>
+                                </Col>
+                                <Col xs={6}>
+                                  <div className="remove-button">
                                     <Button
+                                      variant="link"
                                       onClick={() => {
                                         counter++;
                                         setCount(counter);
-                                        const tempArr = form;
-                                        const tempObj = tempArr[index];
-                                        tempObj['option'].push({ '': '' });
-                                        tempArr[index] = tempObj;
-                                        setForm(tempArr);
-                                      }}
-                                    >
-                                      <FontAwesomeIcon icon={faPlus} /> Add
-                                      Option
-                                    </Button>
-                                    <Button
-                                      onClick={() => {
-                                        let fillOptionCounter = 0;
-                                        setIndex(index);
-                                        const tempArr = form;
-                                        const tempObj = tempArr[index];
-                                        const tempOption = tempObj['option'];
-
-                                        tempOption.map((item) => {
-                                          if (!(Object.keys(item)[0] === '')) {
-                                            fillOptionCounter++;
-                                          }
-                                        });
-                                        if (
-                                          tempOption.length ===
-                                          fillOptionCounter
-                                        ) {
-                                          setConditionFlag(!conditionFlag);
-
-                                          tempOption.map((item, index) => {
-                                            if (
-                                              Object.keys(item)[0] ===
-                                              Object.values(item)[0]
-                                            ) {
-                                              item[Object.keys(item)[0]] = {
-                                                field_type: 'text',
-                                                option: [
-                                                  { '': '' },
-                                                  { '': '' },
-                                                ],
-                                              };
-                                            }
-                                          });
-                                        } else {
-                                          alert('Please Fill Option First');
+                                        let data = [...form];
+                                        if (data[index]?.id) {
+                                          deleteFormField(data[index]?.id);
                                         }
-
-                                        tempArr[index]['option'] = tempOption;
-
-                                        setForm(tempArr);
+                                        data.splice(index, 1);
+                                        setForm(data);
                                       }}
                                     >
-                                      Apply Condition
+                                      <img src="../../img/removeIcon.svg" />{' '}
+                                      Remove
                                     </Button>
-                                  </>
-                                ) : null}
-                              </div>
-                            </Col>
-                            <Col md={6}>
-                              <div className="add-group-t-button">
-                                <div className="add-g">
-                                  <Button
-                                    onClick={() => {
-                                      setGroupFlag(!groupFlag);
-                                      setCreateSectionFlag(false);
-                                      setIndex(index);
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faPlus} />
-                                    Add to Group
-                                  </Button>
-                                </div>
-                                <div className="required">
-                                  <p>Required</p>
-                                </div>
-                                <div className="toogle-swich">
-                                  <input
-                                    className="switch"
-                                    name="required"
-                                    type="checkbox"
-                                    checked={form[index]?.required}
+                                  </div>
+                                </Col>
+                              </>
+                            )}
+                          </Row>
+                          <div className="label-one">
+                            <Row>
+                              <Col sm={6}>
+                                <div className="my-form-input">
+                                  <Form.Control
+                                    type="text"
+                                    name="field_label"
+                                    value={form[index]?.field_label}
                                     onChange={(e) => {
                                       setField(
                                         e.target.name,
-                                        e.target.checked,
+                                        e.target.value,
                                         index
                                       );
                                     }}
+                                    placeholder="Some text here for the label"
+                                    isInvalid={!!errors[index]?.field_label}
                                   />
+                                  <Form.Control.Feedback type="invalid">
+                                    {errors[index]?.field_label}
+                                  </Form.Control.Feedback>
+                                  <div className="input-img">
+                                    <img src="../../img/input-img.svg" />
+                                  </div>
                                 </div>
-                              </div>
-                            </Col>
-                          </Row>
+                              </Col>
+                              <Col sm={6}>
+                                <div className="text-answer-div default-arrow-select">
+                                  <Form.Select
+                                    name="field_type"
+                                    onChange={(e) => {
+                                      setField(
+                                        e.target.name,
+                                        e.target.value,
+                                        index
+                                      );
+                                    }}
+                                  >
+                                    <option
+                                      value="text"
+                                      selected={
+                                        form[index]?.field_type === 'text'
+                                      }
+                                    >
+                                      Text Answer
+                                    </option>
+                                    <option
+                                      value="radio"
+                                      selected={
+                                        form[index]?.field_type === 'radio'
+                                      }
+                                    >
+                                      Multiple Choice
+                                    </option>
+                                    <option
+                                      value="checkbox"
+                                      selected={
+                                        form[index]?.field_type === 'checkbox'
+                                      }
+                                    >
+                                      Checkboxes
+                                    </option>
+                                    <option
+                                      value="date"
+                                      selected={
+                                        form[index]?.field_type === 'date'
+                                      }
+                                    >
+                                      Date
+                                    </option>
+                                    <option
+                                      value="image_upload"
+                                      selected={
+                                        form[index]?.field_type ===
+                                        'image_upload'
+                                      }
+                                    >
+                                      Image Upload
+                                    </option>
+                                    <option
+                                      value="document_attachment"
+                                      selected={
+                                        form[index]?.field_type ===
+                                        'document_attachment'
+                                      }
+                                    >
+                                      Document Attachment
+                                    </option>
+                                    <option
+                                      value="signature"
+                                      selected={
+                                        form[index]?.field_type === 'signature'
+                                      }
+                                    >
+                                      Signature
+                                    </option>
+                                    <option
+                                      value="instruction_text"
+                                      selected={
+                                        form[index]?.field_type ===
+                                        'instruction_text'
+                                      }
+                                    >
+                                      Instruction Text
+                                    </option>
+                                    <option
+                                      value="headings"
+                                      selected={
+                                        form[index]?.field_type === 'headings'
+                                      }
+                                    >
+                                      Headings
+                                    </option>
+                                    <option
+                                      value="dropdown_selection"
+                                      selected={
+                                        form[index]?.field_type ===
+                                        'dropdown_selection'
+                                      }
+                                    >
+                                      Drop down selection
+                                    </option>
+                                  </Form.Select>
+                                  <div className="input-text-img">
+                                    <img
+                                      src={
+                                        form[index]?.field_type === 'text'
+                                          ? '../../img/input-text-icon.svg'
+                                          : form[index]?.field_type === 'radio'
+                                          ? '../../img/multiple-choice-icon.svg'
+                                          : form[index]?.field_type ===
+                                            'checkbox'
+                                          ? '../../img/check_boxIcon.svg'
+                                          : '../../img/input-text-icon.svg'
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              </Col>
+                              {form[index]?.field_type ===
+                                'dropdown_selection' ||
+                              form[index]?.field_type === 'radio' ||
+                              form[index]?.field_type === 'checkbox' ? (
+                                <>
+                                  {form[index]?.option?.map(
+                                    (item, inner_index) => {
+                                      return (
+                                        <Col sm={6}>
+                                          {console.log(
+                                            'item---->',
+                                            item[Object.keys(item)[0]]
+                                          )}
+                                          <div className="my-form-input">
+                                            <Form.Control
+                                              type="text"
+                                              name="option"
+                                              value={Object.keys(item)[0]}
+                                              onChange={(e) => {
+                                                setField(
+                                                  e.target.name,
+                                                  e.target.value,
+                                                  index,
+                                                  inner_index
+                                                );
+                                              }}
+                                              placeholder={
+                                                'Option ' + (inner_index + 1)
+                                              }
+                                              isInvalid={
+                                                errors[index]?.option
+                                                  ? !!errors[index]?.option[
+                                                      inner_index
+                                                    ]
+                                                  : null
+                                              }
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                              {errors[index]?.option
+                                                ? errors[index]?.option[
+                                                    inner_index
+                                                  ]
+                                                : ''}
+                                            </Form.Control.Feedback>
+                                            <div className="delete-icon">
+                                              <img
+                                                src="../../img/removeIcon.svg"
+                                                onClick={() => {
+                                                  const tempArr = form;
+                                                  const tempObj =
+                                                    tempArr[index];
+                                                  if (
+                                                    tempObj['option'].length > 2
+                                                  ) {
+                                                    counter++;
+                                                    setCount(counter);
+                                                    tempObj['option'].splice(
+                                                      inner_index,
+                                                      1
+                                                    );
+                                                    tempArr[index] = tempObj;
+                                                    setForm(tempArr);
+                                                  }
+                                                }}
+                                              />
+                                            </div>
+                                          </div>
+                                        </Col>
+                                      );
+                                    }
+                                  )}
+                                </>
+                              ) : null}
+                            </Row>
+                          </div>
+
+                          <div className="apply-section">
+                            <Row>
+                              <Col md={6}>
+                                <div className="apply-condition">
+                                  {form[index]?.field_type ===
+                                    'dropdown_selection' ||
+                                  form[index]?.field_type === 'radio' ||
+                                  form[index]?.field_type === 'checkbox' ? (
+                                    <>
+                                      <Button
+                                        onClick={() => {
+                                          counter++;
+                                          setCount(counter);
+                                          const tempArr = form;
+                                          const tempObj = tempArr[index];
+                                          tempObj['option'].push({ '': '' });
+                                          tempArr[index] = tempObj;
+                                          setForm(tempArr);
+                                        }}
+                                      >
+                                        <FontAwesomeIcon icon={faPlus} /> Add
+                                        Option
+                                      </Button>
+                                      <Button
+                                        onClick={() => {
+                                          let fillOptionCounter = 0;
+                                          setIndex(index);
+                                          const tempArr = form;
+                                          const tempObj = tempArr[index];
+                                          const tempOption = tempObj['option'];
+
+                                          tempOption.map((item) => {
+                                            if (
+                                              !(Object.keys(item)[0] === '')
+                                            ) {
+                                              fillOptionCounter++;
+                                            }
+                                          });
+                                          if (
+                                            tempOption.length ===
+                                            fillOptionCounter
+                                          ) {
+                                            setConditionFlag(!conditionFlag);
+
+                                            tempOption.map((item, index) => {
+                                              if (
+                                                Object.keys(item)[0] ===
+                                                Object.values(item)[0]
+                                              ) {
+                                                item[Object.keys(item)[0]] = {
+                                                  field_type: 'text',
+                                                  option: [
+                                                    { '': '' },
+                                                    { '': '' },
+                                                  ],
+                                                };
+                                              }
+                                            });
+                                          } else {
+                                            alert('Please Fill Option First');
+                                          }
+
+                                          tempArr[index]['option'] = tempOption;
+
+                                          setForm(tempArr);
+                                        }}
+                                      >
+                                        Apply Condition
+                                      </Button>
+                                    </>
+                                  ) : null}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="add-group-t-button">
+                                  <div className="add-g">
+                                    <Button
+                                      onClick={() => {
+                                        setGroupFlag(!groupFlag);
+                                        setCreateSectionFlag(false);
+                                        setIndex(index);
+                                      }}
+                                    >
+                                      <FontAwesomeIcon icon={faPlus} />
+                                      Add to Group
+                                    </Button>
+                                  </div>
+                                  <div className="required">
+                                    <p>Required</p>
+                                  </div>
+                                  <div className="toogle-swich">
+                                    <input
+                                      className="switch"
+                                      name="required"
+                                      type="checkbox"
+                                      checked={form[index]?.required}
+                                      onChange={(e) => {
+                                        setField(
+                                          e.target.name,
+                                          e.target.checked,
+                                          index
+                                        );
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              </Col>
+                            </Row>
+                          </div>
                         </div>
-                      </div>
+                        <div className="add-q">
+                          <Button
+                            variant="link"
+                            onClick={() => {
+                              let data = [...form];
+                              data.splice(index + 1, 0, {
+                                field_type: 'text',
+                                field_label: '',
+                              });
+                              // for(let i=index;i<data.length;i++)
+                              // {
+                              //   data[i]=temp;
+                              //   temp=data[i+1];
+                              // }
+                              // data.push(temp);
+                              console.log(
+                                'Hello--->',
+                                data,
+                                'index',
+                                index + 1
+                              );
+                              // data.push({ field_type: 'text' });
+                              setForm(data);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faPlus} /> Add Field
+                          </Button>
+                        </div>
+                      </>
                     );
                   })}
 
                   <Row>
                     <Col sm={12}>
-                      <div className="add-q">
-                        <Button
-                          variant="link"
-                          onClick={() => {
-                            let data = form;
-                            console.log('data----?', data);
-                            counter++;
-                            setCount(counter);
-                            data.push({ field_type: 'text' });
-                            setForm(data);
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faPlus} /> Add Question
-                        </Button>
-                      </div>
                       <div className="button mb-5">
                         <Button className="preview">Preview</Button>
                         <Button className="saveForm" onClick={onSubmit}>
@@ -1037,21 +1065,22 @@ const AddFormField = (props) => {
                                                 <div
                                                   className="delete-icon modal-remove-icon"
                                                   onClick={() => {
-                                                    counter++;
-                                                    setCount(counter);
+                                                    const tempArr = [...form];
+                                                    const tempObj = {
+                                                      ...tempArr[Index],
+                                                    };
 
-                                                    const tempArr = form;
+                                                    const tempOption = {
+                                                      ...tempObj['option'],
+                                                    };
 
-                                                    const tempObj =
-                                                      tempArr[Index];
-
-                                                    const tempOption =
-                                                      tempObj['option'];
-
-                                                    const keyOfOption =
-                                                      tempOption[index];
+                                                    const keyOfOption = {
+                                                      ...tempOption[index],
+                                                    };
                                                     if (
-                                                      keyOfOption.length > 2
+                                                      keyOfOption[
+                                                        Object.keys(item)[0]
+                                                      ].option.length > 2
                                                     ) {
                                                       keyOfOption[
                                                         Object.keys(item)[0]
@@ -1059,13 +1088,7 @@ const AddFormField = (props) => {
                                                         inner_index,
                                                         1
                                                       );
-                                                      tempOption[index] =
-                                                        keyOfOption;
-                                                      tempArr[Index]['option'] =
-                                                        tempOption;
                                                       setForm(tempArr);
-                                                      counter++;
-                                                      setCount(counter);
                                                     }
                                                   }}
                                                 >
@@ -1139,6 +1162,7 @@ const AddFormField = (props) => {
 
                   <div className="select-section-modal">
                     <Modal
+                      className="select_group_model"
                       show={groupFlag}
                       onHide={() => {
                         setGroupFlag(false);
@@ -1161,33 +1185,100 @@ const AddFormField = (props) => {
                           <div className="modal-two-check">
                             {section?.map((item) => {
                               return (
-                                <label className="container">
-                                  {item}
-                                  <input
-                                    type="radio"
-                                    id={item}
-                                    value={item}
-                                    name="section_name"
-                                    checked={
-                                      groupModelData[Index]?.section_name ===
-                                      item.toLowerCase().split(' ').join('_')
-                                    }
-                                    onChange={(e) => {
-                                      counter++;
-                                      setCount(counter);
-                                      e.target.value = e.target.value
-                                        .toLocaleLowerCase()
-                                        .split(' ')
-                                        .join('_');
-                                      const tempArr = groupModelData;
-                                      const tempObj = tempArr[Index];
-                                      tempObj[e.target.name] = e.target.value;
-                                      tempArr[Index] = tempObj;
-                                      setGroupModelData(tempArr);
-                                    }}
-                                  />
-                                  <span className="checkmark"></span>
-                                </label>
+                                <>
+                                  <label className="container">
+                                    {item}
+                                    <input
+                                      type="radio"
+                                      id={item}
+                                      value={item}
+                                      name="section_name"
+                                      checked={
+                                        groupModelData[Index]?.section_name ===
+                                        item.toLowerCase().split(' ').join('_')
+                                      }
+                                      onChange={(e) => {
+                                        e.target.value = e.target.value
+                                          .toLocaleLowerCase()
+                                          .split(' ')
+                                          .join('_');
+                                        const tempArr = [...groupModelData];
+                                        const tempObj = tempArr[Index];
+                                        tempObj[e.target.name] = e.target.value;
+                                        tempArr[Index] = tempObj;
+                                        setGroupModelData(tempArr);
+                                      }}
+                                    />
+                                    <span className="checkmark"></span>
+                                  </label>
+                                  {groupModelData[Index]?.section_name===item.toLowerCase().split(' ').join('_') && <div className="sub_check_box">
+                                    <h2>Applicable to:</h2>
+                                    <div className="sub_check_box_list">
+                                      <div className="modal_check_box">
+                                        <div className="modal-two-check">
+                                          <label class="container">
+                                            Franchisor Admin
+                                            <input
+                                              type="checkbox"
+                                              id="abc"
+                                              name="section_name"
+                                              value="abc"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                        <div className="modal-two-check">
+                                          <label class="container">
+                                            Franchisee Admin
+                                            <input
+                                              type="checkbox"
+                                              id="abc"
+                                              name="section_name"
+                                              value="abc"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                        <div className="modal-two-check">
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              id="abc"
+                                              name="section_name"
+                                              value="abc"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                        <div className="modal-two-check">
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              id="abc"
+                                              name="section_name"
+                                              value="abc"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                        <div className="modal-two-check">
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              id="abc"
+                                              name="section_name"
+                                              value="abc"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>}
+                                </>
                               );
                             })}
                           </div>
@@ -1270,7 +1361,654 @@ const AddFormField = (props) => {
                       </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <div className="form-settings-content">
+                      <div className="form_setting_fields">
+                        <Row>
+                          <Col lg={3} sm={6}>
+                            <Form.Group className="form_fields_box">
+                              <Form.Label>Start Date</Form.Label>
+                              <Form.Control
+                                type="date"
+                                name="start_date"
+                                // value={formSettingData?.start_date}
+                                // onChange={(e) => {
+                                //   setFormSettingFields(
+                                //     e.target.name,
+                                //     e.target.value
+                                //   );
+                                // }}
+                                // isInvalid={!!formSettingError.start_date}
+                              />
+                              <img
+                                className="form_fields_icon"
+                                src="../../img/calendar_icons.png"
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {/* {formSettingError.start_date} */}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3} sm={6} className="mt-3 mt-sm-0">
+                            <Form.Group className="form_fields_box">
+                              <Form.Label>Start Time</Form.Label>
+                              <Form.Control
+                                type="time"
+                                name="start_time"
+                                // value={formSettingData?.start_time}
+                                // onChange={(e) => {
+                                //   setFormSettingFields(
+                                //     e.target.name,
+                                //     e.target.value
+                                //   );
+                                // }}
+                                // isInvalid={!!formSettingError.start_time}
+                              />
+                              <img
+                                className="form_fields_icon"
+                                src="../../img/clock-circle-icon.png"
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {/* {formSettingError.start_time} */}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                            <Form.Group className="form_fields_box">
+                              <Form.Label>End Date</Form.Label>
+                              <Form.Control
+                                type="date"
+                                name="end_date"
+                                // value={formSettingData?.end_date}
+                                // onChange={(e) => {
+                                //   setFormSettingFields(
+                                //     e.target.name,
+                                //     e.target.value
+                                //   );
+                                // }}
+                                // isInvalid={!!formSettingError.end_date}
+                              />
+                              <img
+                                className="form_fields_icon"
+                                src="../../img/calendar_icons.png"
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {/* {formSettingError.end_date} */}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                          <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                            <Form.Group className="form_fields_box">
+                              <Form.Label>End Time</Form.Label>
+                              <Form.Control
+                                type="time"
+                                name="end_time"
+                                // value={formSettingData?.end_time}
+                                // onChange={(e) => {
+                                //   setFormSettingFields(
+                                //     e.target.name,
+                                //     e.target.value
+                                //   );
+                                // }}
+                                // isInvalid={!!formSettingError.end_time}
+                              />
+                              <img
+                                className="form_fields_icon"
+                                src="../../img/clock-circle-icon.png"
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {/* {formSettingError.end_time} */}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                      </div>
+                      <div className="applicable_section">
+                        <Row>
+                          <Col md={4}>
+                            <Form.Group>
+                              <Form.Label className="form_label_title">
+                                Applicable to:
+                              </Form.Label>
+                              <div className="new-form-radio">
+                                <div className="new-form-radio-box">
+                                  <label for="user_role">
+                                    <input
+                                      type="radio"
+                                      value="user_role"
+                                      name="applicable"
+                                      id="user_role"
+                                      // onChange={(e) => {
+                                      //   setFormSettingFields(
+                                      //     e.target.name,
+                                      //     e.target.value
+                                      //   );
+                                      // }}
+                                      // checked={
+                                      //   formSettingData?.applicable_to_franchisee ===
+                                      //     true ||
+                                      //   formSettingData?.applicable_to_franchisee ===
+                                      //     'Yes'
+                                      // }
+                                    />
+                                    <span className="radio-round"></span>
+                                    <p>User Roles</p>
+                                  </label>
+                                </div>
+                                <div className="new-form-radio-box">
+                                  <label for="specific_user">
+                                    <input
+                                      type="radio"
+                                      value="specific_user"
+                                      name="applicable"
+                                      id="specific_user"
+                                      // onChange={(e) => {
+                                      //   setFormSettingFields(
+                                      //     e.target.name,
+                                      //     e.target.value
+                                      //   );
+                                      // }}
+                                      // checked={
+                                      //   formSettingData?.applicable_to_franchisee ===
+                                      //     false ||
+                                      //   formSettingData?.applicable_to_franchisee ===
+                                      //     'No'
+                                      // }
+                                    />
+                                    <span className="radio-round"></span>
+                                    <p>Specific Users</p>
+                                  </label>
+                                </div>
+                              </div>
+                            </Form.Group>
+                            <div className="sharing_section">
+                              <div className="sharing">
+                                <div className="sharing-title">
+                                  <p>Enable Sharing</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    className="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    // checked={form[index]?.required}
+                                    // onChange={(e) => {
+                                    //   setField(
+                                    //     e.target.name,
+                                    //     e.target.checked,
+                                    //     index
+                                    //   );
+                                    // }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="sharing">
+                                <div className="sharing-title">
+                                  <p>Enable Editing</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    className="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    // checked={form[index]?.required}
+                                    // onChange={(e) => {
+                                    //   setField(
+                                    //     e.target.name,
+                                    //     e.target.checked,
+                                    //     index
+                                    //   );
+                                    // }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="sharing">
+                                <div className="sharing-title">
+                                  <p>Stop Form Submissions</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    className="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    // checked={form[index]?.required}
+                                    // onChange={(e) => {
+                                    //   setField(
+                                    //     e.target.name,
+                                    //     e.target.checked,
+                                    //     index
+                                    //   );
+                                    // }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="sharing">
+                                <div className="sharing-title">
+                                  <p>For Training Module</p>
+                                </div>
+                                <div className="toogle-swich">
+                                  <input
+                                    className="switch"
+                                    name="required"
+                                    type="checkbox"
+                                    // checked={form[index]?.required}
+                                    // onChange={(e) => {
+                                    //   setField(
+                                    //     e.target.name,
+                                    //     e.target.checked,
+                                    //     index
+                                    //   );
+                                    // }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <Col md={12} className="mt-3 mt-md-0">
+                              <div className="submissions_section">
+                                <Form.Group>
+                                  <Form.Label>
+                                    Select folder to save submissions
+                                  </Form.Label>
+                                  <Form.Select
+                                    name="previous_form"
+                                    isInvalid={!!errors.previous_form}
+                                  >
+                                    <option value="1">
+                                      Select folder to save submissions
+                                    </option>
+                                    {/* {formData?.map((item) => {
+                                              return (
+                                                <option
+                                                  value={item.form_name}
+                                                  selected={
+                                                    form?.previous_form ===
+                                                    item.form_name
+                                                  }
+                                                >
+                                                  {item.form_name}
+                                                </option>
+                                              );
+                                            })} */}
+                                  </Form.Select>
+                                  <Form.Control.Feedback type="invalid">
+                                    {errors.previous_form}
+                                  </Form.Control.Feedback>
+                                </Form.Group>
+                              </div>
+                            </Col>
+                          </Col>
+                          <Col md={8}>
+                            <section className="user_role_section">
+                              <Form.Label className="form_label_title">
+                                Select User Roles
+                              </Form.Label>
+
+                              <div className="user_role_table">
+                                <Table bordered>
+                                  <thead className="table_title">
+                                    <tr>
+                                      <th>User Type</th>
+                                      <th>Targeted Users</th>
+                                      <th>Fill Access Users</th>
+                                      <th>Response Visibility</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td className="border_left_box">
+                                        Franchisor Admin
+                                      </td>
+                                      <td className="footer_modal ">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            className="input_checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Franchisee admin </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Coordinator</td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Educator</td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Parent/Guardian</td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                    <tr className="child_table_row">
+                                      <td>
+                                        <ul>
+                                          <li className="child_tag">Child</li>
+                                        </ul>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                      <td className="footer_modal">
+                                        <label class="container">
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </Table>
+                              </div>
+                              <div className="signatories_section">
+                                <Row>
+                                  <Col md={3}>
+                                    <div className="sharing">
+                                      <div className="sharing-title">
+                                        <p>Signatories</p>
+                                      </div>
+                                      <div className="toogle-swich">
+                                        <input
+                                          className="switch"
+                                          name="required"
+                                          type="checkbox"
+                                          // checked={form[index]?.required}
+                                          // onChange={(e) => {
+                                          //   setField(
+                                          //     e.target.name,
+                                          //     e.target.checked,
+                                          //     index
+                                          //   );
+                                          // }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </Col>
+                                  <Col md={8}>
+                                    <div className="footer_modal footer_user-roles-box">
+                                      <div className="footer_modal_checkbox">
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </div>
+                                      <div className="footer_modal_checkbox">
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                        <label class="container">
+                                          Co-ordinators
+                                          <input
+                                            type="checkbox"
+                                            name="shared_role"
+                                            id="coordinator"
+                                          />
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </div>
+                              <div className="Visible_section">
+                                <Form.Label className="form_label_title">
+                                  Form Visible To
+                                </Form.Label>
+                                <Col md={12}>
+                                  <Row>
+                                    <div className="footer_modal footer_user-roles-box">
+                                      <div className="footer_modal_checkbox">
+                                        <div className="main_checkbox">
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                        <div className="main_checkbox_second">
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                          <label class="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="shared_role"
+                                              id="coordinator"
+                                            />
+                                            <span class="checkmark"></span>
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </Row>
+                                </Col>
+
+                                <Row></Row>
+                              </div>
+                            </section>
+                          </Col>
+                        </Row>
+                      </div>
+                      {/* <div className="form-settings-content">
                         <Row>
                           <Col lg={3} sm={6}>
                             <Form.Group>
@@ -1510,7 +2248,7 @@ const AddFormField = (props) => {
                             </Col>
                           ) : null}
                         </Row>
-                      </div>
+                      </div> */}
                     </Modal.Body>
                     <Modal.Footer className="justify-content-center">
                       <Button className="back">Cancel</Button>

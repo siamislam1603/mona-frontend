@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, setCroppedImage }) {
+export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto="" }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -19,7 +19,7 @@ export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, 
     maxFiles: 1,
     multiple: false,
     accept: {
-      'image/png': ['.png', '.jpg', '.jpeg'],
+      'image/*': ['.png', '.jpg', '.jpeg'],
     },
   });
 
@@ -75,7 +75,7 @@ export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, 
                   </Link>
                 </span>
               </div>
-            )) : <img src="../img/upload.jpg" alt="" />
+            )) : <img src={fetchedPhoto || "../img/upload.jpg"} alt="" />
           }
         </div>
         <span className="text-center infotxt">Upload profile image for this user here</span>

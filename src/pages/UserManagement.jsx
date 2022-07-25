@@ -140,7 +140,6 @@ const UserManagement = () => {
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
-        console.log('CELL:', cell);
         return (
           <>
             <div className="user-list">
@@ -229,7 +228,7 @@ const UserManagement = () => {
       console.log('USERS:', users);
       let tempData = users.map((dt) => ({
   
-        name: `${BASE_URL}/${dt.profile_photo}, ${dt.fullname}, ${dt.role
+        name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}`,
@@ -239,9 +238,11 @@ const UserManagement = () => {
         is_deleted: dt.is_deleted,
         userID: dt.id,
       }));
+      
       tempData = tempData.filter((data) => data.is_deleted === 0);
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee",tempData)
       setUserData(tempData);
+
       let temp = tempData;
       let csv_data = [];
       temp.map((item,index) => {
