@@ -8,8 +8,11 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import AnnouncementVideo from "./AnnouncementVideo";
 
 const MyAnnouncements = () => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
   const [myAnnouncement,setmyAnnouncement] = useState([]);
   // const {id} = useParams
   const myAnnouncementData = async() =>{
@@ -42,6 +45,13 @@ const MyAnnouncements = () => {
   }
   const userName = localStorage.getItem("user_name");
   const userROle = localStorage.getItem("user_role")
+  const getRelatedFileName = (str) => {
+    let arr = str.split("/");
+    let fileName = arr[arr.length - 1].split("_")[0];
+    let ext =arr[arr.length-1].split(".")[1]
+    let name = fileName.concat(".",ext)
+    return name;
+  }
   useEffect(() =>{
     myAnnouncementData()
   },[])
@@ -96,7 +106,7 @@ const MyAnnouncements = () => {
             <Row>
               <Col md={4}>
                 <div className="video-col">
-                {details.announcement_files.map((detail,index) =>(
+                {data.announcement_files.map((detail,index) =>(
                   <>
                       {detail.fileType == ".mp4" && !detail.is_deleted  ? (
                                  <AnnouncementVideo 
@@ -124,10 +134,14 @@ const MyAnnouncements = () => {
                 <div className="head">Related Files :</div>
                 <div className="cont">
                   <div className="related-files">
-                    <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                    <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                    <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                    <div className="item"><a href=""><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
+                  {data.announcement_files.map((detail,index) =>(
+                      <>
+                        {detail.fileType !== ".mp4" && !detail.is_deleted ?(
+                            <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
+                              <p>{getRelatedFileName(detail.file)}</p>
+                             <small>Added Today</small></span></a></div>
+                              ):(null)} </>
+                        ))}
                   </div>
                 </div>
               </Col>
