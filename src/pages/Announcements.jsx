@@ -31,6 +31,7 @@ const Announcements =  () => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
+
   const [filterData, setFilterData] = useState({
     category_id: null,
     search: ""

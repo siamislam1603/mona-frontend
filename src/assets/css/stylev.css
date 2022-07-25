@@ -2223,8 +2223,7 @@ hr {
 .form_setting_fields input[type="time"]::-webkit-inner-spin-button,
 .form_setting_fields input[type="date"]::-webkit-calendar-picker-indicator,
 .form_setting_fields input[type="time"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
+    opacity: 0;
 }
 
 .form_fields_box {
@@ -2235,8 +2234,14 @@ hr {
     position: absolute;
     right: 5%;
     top: 50%;
+    pointer-events: none;
 }
-
+.applicable_section_card {
+    background: rgb(144 144 144 / 10%);
+    border-radius: 15px;
+    padding: 12px 30px 30px;
+    margin-top: 30px;
+}
 .sharing-title p {
     font-style: normal;
     font-weight: 400;
@@ -2263,7 +2268,6 @@ hr {
     align-items: center;
     color: #455D58;
     padding-top: 17px;
-    padding-bottom: 17px;
 }
 
 .user_role_table {
@@ -2275,7 +2279,6 @@ label.form_label_title.form-label {
 }
 
 .form-label{
-    color: var(--black) !important;
     font-weight: 500 !important;
     font-size: 14px !important;
     line-height: 22px !important;
@@ -2326,9 +2329,10 @@ thead.table_title th {
     margin: 0;
     padding: 0;
     padding-top: 17px;
-    padding-left: 16px;
+    padding-left: 0;
     padding-bottom: 17px;
     background: #455D59;
+    text-align: center;
 }
 
 .description_wrp .table>tbody,
@@ -2341,7 +2345,15 @@ tr {
 
 thead.table_title tr th:first-child {
     border-top-left-radius: 8px;
+    padding-left: 16px;
+    text-align: left;
 }
+.user_role_table tr td {
+    padding: 12px 11px !important;
+    font-size: 14px;
+    color: #333333;
+}
+
 
 thead.table_title tr th:last-child {
     border-top-right-radius: 8px;
@@ -2359,15 +2371,15 @@ tbody tr {
     background-color: #fff;
 }
 
-tbody tr td.border_left_box {
+/* tbody tr td.border_left_box {
     border-top-left-radius: 10px;
     display: block;
-}
+} */
 
-tbody tr td.border_right_box {
+/* tbody tr td.border_right_box {
     border-top-right-radius: 10px;
     display: block;
-}
+} */
 
 td.input_checkbox {
     text-align: center;
@@ -2741,4 +2753,71 @@ li.child_tag {
 
 .uploadfile {
     cursor: pointer;
+}
+
+.user_role_table tr td {
+    padding: 12px 11px !important;
+    font-size: 14px;
+    vertical-align: middle;
+    color: #333333;
+    line-height: 0;
+}
+.table-checkbox span {
+    height: 26px;
+    width: 26px;
+    background-color: #F7F7F8;
+    border: 1px solid #42424263;
+    font-size: 18px;
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 4px;
+    flex: 0 0 26px;
+    position: relative;
+}
+.table-checkbox input {
+    display: none;
+}
+.table-checkbox input {
+    display: none;
+}
+.table-checkbox input:checked + span:before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 5.5px;
+    width: 8px;
+    height: 12px;
+    border: solid #AA0061;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+.signatories-toggle {
+    justify-content: flex-start !important;
+    margin-bottom: 20px;
+}
+
+.signatories-toggle .sharing-title {
+    margin-right: 10px;
+}
+
+
+.checkbox-card .container {
+    width: auto !important;
+    margin: 0 40px 0 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.checkbox-card .user-roles-box {
+    flex-wrap: wrap;
+}
+
+.checkbox-card .container .checkmark {
+    top: 3px;
+}
+
+.checkbox-card {
+    background: rgb(217 217 217 / 40%);
+    padding: 16px 19px;
+    border-radius: 10px;
 }

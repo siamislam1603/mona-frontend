@@ -24,7 +24,10 @@ let token = searchParams.get("token")
 let userID = searchParams.get("user")
 
 const setField = (field, value) => {
-    setPasswords({ ...passwords, [field]: value });
+    console.log("The field and value",field,value)
+  // .replace(/\s/g, '')
+    setPasswords({ ...passwords, [field]: value
+  })
     console.log("form---->", passwords);
     if (!!errors[field]) {
       setErrors({

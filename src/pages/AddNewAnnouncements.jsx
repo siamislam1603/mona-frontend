@@ -230,14 +230,14 @@ const createAnnouncement = async (data) => {
       }
     }); 
   }
-  if (!announcementData.coverImage) {
-    setError(prevError => {
-        return {
-      ...prevError,
-      coverImage: "Required CoverImage"
-    }
-  }); 
-}
+//   if (!announcementData.coverImage) {
+//     setError(prevError => {
+//         return {
+//       ...prevError,
+//       coverImage: "Required CoverImage"
+//     }
+//   }); 
+// }
   };
 
   useEffect(() => {
@@ -274,8 +274,8 @@ const createAnnouncement = async (data) => {
     },[])
 
    
-    franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
-
+    
+console.log(franchiseeData);
   return (
     <>
     {console.log("The annno",announcementData)}
@@ -312,28 +312,50 @@ const createAnnouncement = async (data) => {
                             <Form.Label>Select Franchisee</Form.Label>
 
                             {
-                              localStorage.getItem('user_role') === 'franchisee_admin' ?
-                              <div className="select-with-plus">
-                                <Select
-                                  placeholder="Which Franchisee?"
-                                  closeMenuOnSelect={false}
-                                  isMulti
-                                  isDisabled={true}
-                                  value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
-                                  options={franchiseeData} 
-                                  onChange={handleAnnouncementFranchisee}
-                                />
-                              </div>
-                              : <div className="select-with-plus">
-                              <Select
-                                placeholder="Which Franchisee?"
-                                closeMenuOnSelect={false}
-                                isMulti
-                                options={franchiseeData} 
-                                onChange={handleAnnouncementFranchisee}
-                              />
+
+                            localStorage.getItem('user_role') === 'franchisee_admin' ?
+
+                            <div className="select-with-plus">
+
+                            <Select
+
+                            placeholder="Which Franchisee?"
+
+                            closeMenuOnSelect={false}
+
+                            isMulti
+
+                            isDisabled={true}
+
+                            value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
+
+                            options={franchiseeData}
+
+                            onChange={handleAnnouncementFranchisee}
+
+                            />
+
                             </div>
-                            }
+
+                          : <div className="select-with-plus">
+
+                          <Select
+
+                            placeholder="Which Franchisee?"
+
+                            closeMenuOnSelect={false}
+
+                            isMulti
+
+                            options={franchiseeData}
+
+                            onChange={handleAnnouncementFranchisee}
+
+                            />
+
+                            </div>
+
+                          }
                             
                           </Form.Group>
                           </Row>
@@ -363,11 +385,33 @@ const createAnnouncement = async (data) => {
                         </Form.Group>
                       </Col>
                     </Row>
+                    <Row>
+                    <Col lg={3} sm={6}>
+                <Form.Group>
+                  <Form.Label>Schedule Date</Form.Label>
+                  <Form.Control  
+                        type="date"
+                        name="start_date"
+                        onChange={handleAnnouncementData}
+                      />
+                </Form.Group>
+              </Col>
+              <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                <Form.Group>
+                  <Form.Label>Schedule Time</Form.Label>
+                  <Form.Control 
+                    type="time"
+                    name="start_time"
+                    onChange={handleAnnouncementData}
+                  />
+                </Form.Group>
+              </Col>
+                    </Row>
                   <div className="my-new-formsection">
                     <Row>
                       <Col sm={6}>
                         <Form.Group>
-                          <Form.Label>Upload Related Image :</Form.Label>
+                          <Form.Label> Cover Image :</Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
                           />
@@ -386,7 +430,7 @@ const createAnnouncement = async (data) => {
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
-                  <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                  {/* <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                   <Form.Group>
                   <Form.Label>Schedule Date</Form.Label>
                   <Form.Control 
@@ -405,7 +449,7 @@ const createAnnouncement = async (data) => {
                   onChange={handleAnnouncementData}
                   />
                 </Form.Group>
-              </Col>
+              </Col> */}
                       <Col md={12}>
                         <div className="cta text-center mt-5 mb-5">
                           <Button variant="outline" className="me-3" type="submit">Preview</Button>

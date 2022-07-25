@@ -41,6 +41,7 @@ import ChangePassword from "../pages/ChangePassword"
 import EditUser from '../pages/EditUser';
 import EditFranchisees from '../pages/EditFranchisees';
 import ResetPassword from "../pages/ResetPassword"
+import FormSetting from '../pages/FormBuilder/formSetting';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -100,10 +101,8 @@ const Main = () => {
         <Route
           path="/reset-password"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
+            
               <ResetPassword />
-            </Protected> 
           }
         />
 
@@ -288,7 +287,15 @@ const Main = () => {
             </Protected>
           }
         />
-
+        <Route
+        path='/form/setting'
+        element={
+          <Protected isLoggedIn={isLoggedIn}>
+            <SignIn />
+            <FormSetting />
+          </Protected>
+        }
+        />
         <Route
           path="/form/add"
           element={
@@ -390,7 +397,7 @@ const Main = () => {
         />
 
       <Route
-          path="/my-announcements/:id"
+          path="/my-announcements"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

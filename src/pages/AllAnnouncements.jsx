@@ -28,7 +28,7 @@ const handleClose = () => setShow(false);
       "Authorization": "Bearer " + token
     }
   });
-  console.log(response);
+  console.log("The data",response);
   
   if(response.status === 200 && response.data.status === "success") {
       setAnnouncementDetail(response.data.createdAnnouncement);
@@ -42,6 +42,20 @@ const formatMetaDescription = (str) => {
     return newFile;
 }
 
+const deleteAnnouncement = async (id) =>{
+  const token = localStorage.getItem('token');
+  const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  }); 
+  console.log("The response after delete",response)
+  if(response.status === 200){
+      console.log("Delete succussfully")
+      AllAnnouncementData()
+  }
+
+}
 const getRelatedFileName = (str) => {
   let arr = str.split("/");
   let fileName = arr[arr.length - 1].split("_")[0];
@@ -53,7 +67,7 @@ useEffect(() => {
   AllAnnouncementData()
 }, [])
 
-console.log("The annoumce detial",announcementDetails,theRelatedFiles)
+console.log("The annoumce detial",announcementDetails)
   return (
     
     <div className="announcement-accordion">
@@ -78,8 +92,8 @@ console.log("The annoumce detial",announcementDetails,theRelatedFiles)
                                     <img src="../img/dot-ico.svg" alt=""/>
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    <Dropdown.Item href={`/edit-announcement/${details.id}`}>Edit</Dropdown.Item>
+                                    <Dropdown.Item onClick={() =>deleteAnnouncement(details.id)}>Delete</Dropdown.Item>
                                   </Dropdown.Menu>
                                 </Dropdown>
                               </div>
@@ -145,7 +159,7 @@ console.log("The annoumce detial",announcementDetails,theRelatedFiles)
                                   <div className="related-files">
                                     {details.announcement_files.map((detail,index) =>(
                                            <>
-                                           {detail.fileType !== ".mp4" ?(
+                                           {detail.fileType !== ".mp4" && !detail.is_deleted ?(
                                              <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
                                               <p>{getRelatedFileName(detail.file)}</p>
                                               <small>

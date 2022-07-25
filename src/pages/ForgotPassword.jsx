@@ -38,6 +38,7 @@ const ForgotPassword = () => {
           setTopMessage("Email sent Please check your email Address")
           console.log("The success")
       }
+      
       } catch (error) {
         console.log("The error",)
         setTopErrorMessage(error.response.data.msg);
@@ -46,6 +47,7 @@ const ForgotPassword = () => {
     const handleSubmit = (e) =>{
       e.preventDefault();
       let errObj = validateResetPassword(fields);
+      console.log("The handle Submit")
       if(Object.keys(errObj).length>0){
         setFormErrors(errObj)
       }

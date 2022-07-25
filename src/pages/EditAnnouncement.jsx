@@ -5,8 +5,9 @@ import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
 import MyEditor from './CKEditor';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
+
+import moment from 'moment';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -18,6 +19,7 @@ import Select from 'react-select';
 
 import DropAllFile from "../components/DragDropMultiple";
 import DropOneFile from '../components/DragDrop';
+import DropVideo from '../components/DragDropVideo';
 import {EditAnnouncementValidation} from '../helpers/validation';
 import axios from 'axios';
 import DropAllRelatedFile from '../components/DragDropMultipleRelatedFiles';
@@ -30,39 +32,28 @@ const EditAnnouncement = () => {
     related_files: [],
   });
   const [errors, setErrors] = useState({});
-  const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
-  const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
-  const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
+ 
   const [relatedFiles, setRelatedFiles] = useState([]);
-  const [imageUrl,setImageUrl]=useState("");
-  const [videoUrl,setVideoUrl]=useState("");
-  const [videoThumbnailUrl,setVideoThumbnailUrl]=useState("");
-  const [formSettingFlag, setFormSettingFlag] = useState(false);
-  const [formSettingError, setFormSettingError] = useState({});
-  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
-  const [user, setUser] = useState([]);
-  const [selectedUser, setSelectedUser] = useState([]);
+  
+  const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
+  
   const [userRole, setUserRole] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [categoryModalFlag, setCategoryModalFlag] = useState(false);
-  const [categoryData, setCategoryData] = useState({});
-  const [categoryError, setCategoryError] = useState({});
-  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
+ 
+  const [fetchedCoverImage, setFetchedCoverImage] = useState();
+  const [fileDeleteResponse, setFileDeleteResponse] = useState();
 
    const [createTrainingModal, setCreateTrainingModal] = useState(false);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
-  // const [relatedFiles,setRealtedFiles]=useState([])
-  const [allowSubmit, setAllowSubmit] = useState(false);
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
 
   const [theRelatedFiles,setTheRelatedFiles] = useState([])
-  const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
+  const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
   
 
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
+  const [theVideo,setTheVideo] = useState({})
   const [loader, setLoader] = useState(false);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState(null);
@@ -81,7 +72,12 @@ const EditAnnouncement = () => {
   };
   const handleAnnouncementsSettings = (event) => {
     const { name, value } = event.target;
-    
+    if (!!errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null,
+      });
+    }
     setOperatingManualData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -94,7 +90,7 @@ const EditAnnouncement = () => {
   const onSubmit = (e) => {
     e.preventDefault();
  
-    const newErrors = EditAnnouncementValidation(operatingManualData,coverImage);
+    const newErrors = EditAnnouncementValidation(operatingManualData,coverImage,announcementData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } 
@@ -107,7 +103,7 @@ const EditAnnouncement = () => {
          for(let [ key, values ] of Object.entries(operatingManualData)) {
            data.append(`${key}`, values)
           }
-          videoTutorialFiles.forEach((file, index) => {
+          theVideo.forEach((file, index) => {
             data.append(`images`, file);
           });
           relatedFiles.forEach((file, index) => {
@@ -119,8 +115,28 @@ const EditAnnouncement = () => {
       }
     }
   };
+  const deleteAnnouncemetFile =  async (fileId) =>{
+    console.log(`The delete file with id : ${fileId}`)
+    let token = localStorage.getItem('token')
+    const deleteResponse = await axios.delete(`${BASE_URL}/announcement/?fileId=${fileId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    console.log("The Delete reponse",deleteResponse.status)
+    if(deleteResponse.status === 200){
+      console.log("Related file deleted")
+      setFileDeleteResponse(deleteResponse)
+    copyFetchedData();
+
+    }
+    // console.log("The deleted File",deleteResponse)
+  }
   const UpdateAnnouncement = async(data) =>{
-  
+   
+    // data.append("")
+    const theres = await  axios.post('https://httpbin.org/anything', data);
+        console.log("THE RESPONSE",theres)
     console.log("Updating Annoucement")
    const token = localStorage.getItem('token');
     
@@ -133,32 +149,56 @@ const EditAnnouncement = () => {
      if(response.status === 200 && response.data.status === "success"){
         const id = announcementData.id;
         console.log("The id",id)
-        let data = new FormData()
-        data.append('id',id);
-        data.append('image', coverImage[0]);
-
-        let imgSaveResponse = await axios.post(
-          `${BASE_URL}/training/coverImg?title=announcement`, data, {
+       
+        // const theres = await  axios.post('https://httpbin.org/anything', data);
+        // console.log("THE RESPONSE",theres)
+        // console.log("THE COVER IMAGE TYPE",typeof coverImage)
+        if(typeof coverImage === "string"){
+          console.log("The String type")
+          let imageFile = await axios.put(`${BASE_URL}/announcement/createdAnnouncement/${id}`,{
+            coverImage: coverImage
+          },{
             headers: {
               "Authorization": "Bearer " + token
             }
+          })
+          if(imageFile.status === 200){
+            console.log("Announcement update successfully ")
+            window.location.href="/announcements";    
+
+             
           }
-        );
-        console.log("The image",imgSaveResponse);
-        if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {            
-          console.log('SUCCESS RESPONSE!');
-          setLoader(false)
-          localStorage.setItem('success_msg', 'Announcement Created Successfully!');
-          localStorage.setItem('active_tab', '/created-announcement');
-          window.location.href="/announcements";    
         }
         else{
-              console.log('ERROR RESPONSE!');
-              setTopErrorMessage("unable to save cover image!");
-              setTimeout(() => {
-              setTopErrorMessage(null);
-            }, 3000)
+          console.log("The Object Type")
+          let data = new FormData()
+          data.append('id',id);
+          data.append('image', coverImage[0]);
+          let imgSaveResponse = await axios.post(
+            `${BASE_URL}/training/coverImg?title=announcement`, data, {
+              headers: {
+                "Authorization": "Bearer " + token
+              }
+            }
+          );
+          console.log("The image",imgSaveResponse);
+          if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {            
+            console.log('SUCCESS RESPONSE!');
+            setLoader(false)
+            localStorage.setItem('success_msg', 'Announcement Created Successfully!');
+            localStorage.setItem('active_tab', '/created-announcement');
+            window.location.href="/announcements";    
+          }
+          else{
+                console.log('ERROR RESPONSE!');
+                setTopErrorMessage("unable to save cover image!");
+                setTimeout(() => {
+                setTopErrorMessage(null);
+              }, 3000)
+          }
         }
+     
+      
       
      }
      else if(response.status === 200 && response.data.status === "fail") {
@@ -204,11 +244,58 @@ const EditAnnouncement = () => {
        "Authorization": "Bearer " + token
      }
     })
-    console.log("The detalis",response)
+
     if(response.status === 200) {
       setAnnouncementData(response.data.data.all_announcements)
     }
  } 
+ const selectedfranhise = () =>{
+  if(franchiseeData){
+    console.log("Inside selectFranhi",franchiseeData)
+  let size = franchiseeData.length
+  console.log("INSIDE INSDEI",announcementData.franchise[0])
+  // console.log("The SeletedFranhise", franchiseeData.length)
+    for(let i=0;i<size;i++){
+       if(franchiseeData[i] === announcementData.franchise[i]){
+        console.log("The Rohan data",announcementData.franchise[i])
+       }
+    }
+  }
+ }
+ const copyFetchedData = () =>{
+  setAnnouncementData(prevState =>({
+    ...prevState,
+    title: announcementData?.title,
+    meta_description: announcementData?.meta_description,
+    start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
+    start_time: moment(announcementData?.scheduled_date).format('HH:mm'),
+    
+  }))
+  console.log("The setAnnoucementdata inside cop",)
+  setAnnouncementsSettings(prevState =>({
+    ...prevState,
+    start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
+      start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
+    // start_date :announcementData&& announcementData?.scheduled_date.split("T")[0],
+    // start_time: announcementData&& announcementData?.scheduled_date.split("T")[1].split(".")[0]
+  }))
+  setCoverImage(announcementData?.coverImage)
+  setFetchedCoverImage(announcementData?.coverImage)
+  setFetchedVideoTutorialFiles(announcementData?.announcement_files?.filter(file => file.fileType === ".mp4"));
+  setFetchedRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4'));
+   
+  console.log("FETCHED DATA COPIED",fetchedCoverImage)
+ }
+ const getRelatedFileName = (str) => {
+  let arr = str.split("/");
+  let fileName = arr[arr.length - 1].split("_")[0];
+  let ext =arr[arr.length-1].split(".")[1]
+  let name = fileName.concat(".",ext)
+  return name;
+}
+ useEffect(() => {
+  copyFetchedData();
+}, [franchiseeData]);
  useEffect(() =>{
   AnnouncementDetails();
   const role = localStorage.getItem("user_role")
@@ -218,21 +305,28 @@ const EditAnnouncement = () => {
     fetchFranchiseeList();
   }, []);
   useEffect(() =>{
+  selectedfranhise()
+  },[franchiseeData])
+  useEffect(() =>{
     setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
 
   },[announcementData])
+  useEffect(() =>{
+    setOperatingManualData(announcementData)
+  },[announcementData])
 
-
-
-
-
-
-
-
+  useEffect(() =>{
+    copyFetchedData();
+},[fileDeleteResponse])
+ 
+// console.log("The time",announcementData.scheduled_date.split("T")[1])
+// console.log("The Image settig",coverImage,typeof coverImage)
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
+  console.log("The COPY DATA",announcementData )
   return (
     <>
-      {console.log('selectedFranchiseeId--->', selectedFranchiseeId)}
+      {console.log('Annoucement--->', announcementData)}
+      {console.log("The franhciess",franchiseeData)}
       {console.log('operating manual--->', operatingManualData)}
       <div id="main">
         <section className="mainsection ">
@@ -277,9 +371,10 @@ const EditAnnouncement = () => {
                             <div className="select-with-plus">
                             <Select
                               placeholder="Which Franchisee?"
-                              closeMenuOnSelect={false}
+                              closeMenuOnSelect={true}
                               isMulti
                               options={franchiseeData} 
+                              value={franchiseeData && franchiseeData.filter(c => announcementData.franchise?.includes(c.id + ""))}
                               onChange={(selectedOptions) => {
                                 setOperatingManualData((prevState) => ({
                                   ...prevState,
@@ -309,9 +404,7 @@ const EditAnnouncement = () => {
                               }}
 
                             /> */}
-                         
-                           
-                          
+                        
                             <MyEditor
                               errors={errors}
                               name ="meta_description"
@@ -332,9 +425,12 @@ const EditAnnouncement = () => {
                   <Form.Control  
                         type="date"
                         name="start_date"
+                        defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_date}
+                        // defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
                         onChange={handleAnnouncementsSettings}
                       />
                 </Form.Group>
+                {errors.start_date && <p className="form-errors">{errors.start_date}</p>}
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
@@ -342,9 +438,13 @@ const EditAnnouncement = () => {
                   <Form.Control 
                     type="time"
                     name="start_time"
+                    defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_time}
                     onChange={handleAnnouncementsSettings}
                   />
                 </Form.Group>
+                
+                {errors.start_time && <p className="form-errors">{errors.start_time}</p>}
+
               </Col>
                     </Row>
                     <div className="my-new-formsection">
@@ -356,26 +456,31 @@ const EditAnnouncement = () => {
                           </Form.Label>
                           
                            <DropOneFile onSave={setCoverImage} 
-                           isInvalid = {!!errors.coverImage}
-                            image = {announcementData.coverImage}
+                            isInvalid = {!!errors.coverImage}
+                            setFetchedCoverImage={setFetchedCoverImage}
                           
                           />
+                            {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
+
                            <span  className="error">
                             {errors.coverImage}
                            </span>
-
+                           
 
                           {/* <p className="form-errors">{errors.cover_image}</p> */}
                         </Form.Group>
-                      </Col>
+                       </Col>
+
+  
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
                             Upload Reference Video Here :
                           </Form.Label>
-                          <DropAllFile onSave={setVideoTutorialFiles}
+                          {/* <DropOneFile onSave={setVideoTutorialFiles}
 
-                           />
+                           /> */}
+                       <DropVideo onSave={setTheVideo}/>
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
@@ -388,9 +493,47 @@ const EditAnnouncement = () => {
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
                           <DropAllFile onSave={setRelatedFiles}
-                            Files={theRelatedFiles}
-
+                            // Files={theRelatedFiles}
                           />
+                              {/* {
+                                fetchedRelatedFiles &&
+                                fetchedRelatedFiles.map((file, index) => {
+                                  return (
+                                    // <div className="file-container">
+                                    //   {/* <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} /> */}
+                                    {/* //   <p className="file-text">{`${getRelatedFileName(file.file)}`}</p>
+                                    //   <img 
+                                    //     onClick={() => deleteAnnouncemetFile(file.id)}
+                                    //     className="file-remove" 
+                                    //     src="../img/removeIcon.svg" 
+                                    //     alt="" />
+                                    // </div>
+                                    <div>
+                                       <h1>{file.id}</h1>
+                                      </div>
+                                  )
+                                })
+                              } */}
+                            {/* </div> */} 
+                        
+                          <div className="media-container">
+
+                          {fetchedRelatedFiles &&fetchedRelatedFiles.map((file) => (
+                            !file.is_deleted
+                              ? (
+                                <div className="file-container">
+                                {/* <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} /> */}
+                                <p className="file-text">{`${getRelatedFileName(file.file)}`}</p>
+                                <img 
+                                  onClick={() => deleteAnnouncemetFile(file.id)}
+                                  className="file-remove" 
+                                  src="../img/removeIcon.svg" 
+                                  alt="" />
+                              </div>
+                              )
+                              : null
+                          ))}
+                        </div>
                         </Form.Group>
                       </Col>
                   </div>

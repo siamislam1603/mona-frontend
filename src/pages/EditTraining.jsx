@@ -342,7 +342,7 @@ const EditTraining = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+ 
     console.log('Delete response:', deleteResponse);
     setFileDeleteResponse(deleteResponse);
     // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
