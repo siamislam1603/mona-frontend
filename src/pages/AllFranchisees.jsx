@@ -97,38 +97,59 @@ const AllFranchisees = () => {
 
     const fetchFranchisees = async () => {
         let token = localStorage.getItem('token')
-
-        let api_url = `${BASE_URL}/role/franchisee/users`;
-        if (search) {
-            api_url = `${BASE_URL}/role/franchisee/users?search=${search}`;
-          }
-
-        const response = await axios.get(api_url, {
-            headers: {
-                "Authorization": `Bearer ${token}` 
+        let role = localStorage.getItem('user_role')
+        let id = localStorage.getItem('franchisee_id')
+        console.log(role);
+        console.log("role");
+        console.log(id);
+        console.log("id");
+        let api_url = '';
+        if(role == "franchisor_admin"){
+            api_url = `${BASE_URL}/role/franchisee/users`;
+            if (search) {
+                api_url = `${BASE_URL}/role/franchisee/users?search=${search}`;
+              }
             }
-        });
-        if(response.status === 200 && response.data.status === "success") {
-            const { franchisees } = response.data;
-            let temp = franchisees.map(franchisee => ({
-                franchisee: {
-                    id: franchisee.id,
-                    name: franchisee.franchisee_name,
-                    location: franchisee.city + ", " + franchisee.state,
-                    educators: 
-                        franchisee.users.filter(user => user.role === 'educator').length,
-                    children: 
-                        franchisee.users.filter(user => user.role === 'child').length,
-                    isDeleted:franchisee.isDeleted  
-                },
-            }));
-            console.log("The tempdata",temp)
-            // temp = temp.filter((data) => data.isDeleted === 0);
-            let tempData = temp.filter((data) =>data.franchisee.isDeleted === null || data.franchisee.isDeleted === 0);
-            setFranchiseeData(tempData)
-            console.log("The tempdata",tempData)
+        else{
+            api_url = `${BASE_URL}/role/franchisee/${id}`;
+            if (search) {
+                api_url = `${BASE_URL}/role/franchisee/${id}?search=${search}`;
+              }
 
         }
+    
+            const response = await axios.get(api_url, {
+                headers: {
+                    "Authorization": `Bearer ${token}` 
+                }
+            });
+            console.log(response.data);
+            if(response.status === 200 && response.data.status === "success") {
+                console.log(response.data);//undefined
+                console.log("response");
+                const { franchisees } = response.data;
+                console.log(franchisees);
+                console.log("franchisees");
+                let temp = franchisees.map(franchisee => ({
+                    franchisee: {
+                        id: franchisee.id,
+                        name: franchisee.franchisee_name,
+                        location: franchisee.city + ", " + franchisee.state,
+                        educators: 
+                            franchisee.users.filter(user => user.role === 'educator').length,
+                        children: 
+                            franchisee.users.filter(user => user.role === 'child').length,
+                        isDeleted:franchisee.isDeleted  
+                    },
+                }));
+                console.log("The tempdata",temp)
+                // temp = temp.filter((data) => data.isDeleted === 0);
+                let tempData = temp.filter((data) =>data.franchisee.isDeleted === null || data.franchisee.isDeleted === 0);
+                setFranchiseeData(tempData)
+                console.log("The tempdata",tempData)
+    
+            }
+      
     };
 
     useEffect(() => {
