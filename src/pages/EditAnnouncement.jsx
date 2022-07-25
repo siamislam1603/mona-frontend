@@ -9,11 +9,6 @@ import { useParams } from 'react-router-dom';
 
 import moment from 'moment';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  createCategoryValidation,
-  createOperatingManualValidation,
-} from '../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
@@ -22,15 +17,12 @@ import DropOneFile from '../components/DragDrop';
 import DropVideo from '../components/DragDropVideo';
 import {EditAnnouncementValidation} from '../helpers/validation';
 import axios from 'axios';
-import DropAllRelatedFile from '../components/DragDropMultipleRelatedFiles';
-let selectedUserId = '';
-let upperRoleUser = '';
+
 const EditAnnouncement = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [operatingManualData, setOperatingManualData] = useState({
-    related_files: [],
-  });
+
+  // const [announcementChangeData, setAnnoucementChangedata] = useState({
+  //   related_files: [],
+  // });
   const [errors, setErrors] = useState({});
  
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -38,7 +30,6 @@ const EditAnnouncement = () => {
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
   
   const [userRole, setUserRole] = useState([]);
-  const [copyAnnouncementData,setCopyAnnouncementData] = useState({})
  
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [fileDeleteResponse, setFileDeleteResponse] = useState();
@@ -46,12 +37,14 @@ const EditAnnouncement = () => {
    const [createTrainingModal, setCreateTrainingModal] = useState(false);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+  
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
 
   const [theRelatedFiles,setTheRelatedFiles] = useState([])
   const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
   
-
+  //Copy Announcement Data
+  const [announcementCopyData,setAnnouncementCopyData] = useState({})
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
   const [theVideo,setTheVideo] = useState({})
@@ -63,7 +56,7 @@ const EditAnnouncement = () => {
   const { id } = useParams();
 
   const setOperatingManualField = (field, value) => {
-    setOperatingManualData({ ...operatingManualData, [field]: value });
+    setAnnouncementCopyData({ ...announcementCopyData, [field]: value });
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -79,29 +72,29 @@ const EditAnnouncement = () => {
         [name]: null,
       });
     }
-    setOperatingManualData((prevState) => ({
+    setAnnouncementData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-    setAnnouncementsSettings((operatingManualData) =>({
-      ...operatingManualData,
+    setAnnouncementsSettings((announcementChangeData) =>({
+      ...announcementChangeData,
       [name]:value
     }))
   };
   const onSubmit = (e) => {
     e.preventDefault();
  
-    const newErrors = EditAnnouncementValidation(operatingManualData,coverImage,announcementData);
+    const newErrors = EditAnnouncementValidation(announcementData,coverImage,announcementData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } 
     else{
       setErrors({})
-      if(operatingManualData && coverImage) {
-         console.log("After submit the buton",operatingManualData)
+      if(announcementData && coverImage) {
+         console.log("After submit the buton",announcementData)
          let data = new FormData();
       
-         for(let [ key, values ] of Object.entries(operatingManualData)) {
+         for(let [ key, values ] of Object.entries(announcementData)) {
            data.append(`${key}`, values)
           }
           theVideo.forEach((file, index) => {
@@ -134,7 +127,6 @@ const EditAnnouncement = () => {
     // console.log("The deleted File",deleteResponse)
   }
   const UpdateAnnouncement = async(data) =>{
-   
     // data.append("")
     const theres = await  axios.post('https://httpbin.org/anything', data);
         console.log("THE RESPONSE",theres)
@@ -264,7 +256,7 @@ const EditAnnouncement = () => {
   }
  }
  const copyFetchedData = () =>{
-  setCopyAnnouncementData(prevState =>({
+  setAnnouncementCopyData(prevState =>({
     ...prevState,
     title: announcementData?.title,
     meta_description: announcementData?.meta_description,
@@ -296,7 +288,7 @@ const EditAnnouncement = () => {
 }
  useEffect(() => {
   copyFetchedData();
-}, [announcementData]);
+}, [franchiseeData]);
  useEffect(() =>{
   AnnouncementDetails();
   const role = localStorage.getItem("user_role")
@@ -313,7 +305,7 @@ const EditAnnouncement = () => {
 
   },[announcementData])
   useEffect(() =>{
-    setOperatingManualData(announcementData)
+    setAnnouncementData(announcementData)
   },[announcementData])
 
   useEffect(() =>{
@@ -323,12 +315,12 @@ const EditAnnouncement = () => {
 // console.log("The time",announcementData.scheduled_date.split("T")[1])
 // console.log("The Image settig",coverImage,typeof coverImage)
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
-  console.log("The COPY DATA",copyAnnouncementData )
+  console.log("The COPY DATA",announcementCopyData )
   return (
     <>
-      {console.log('Annoucement--->', announcementData)}
+      {/* {console.log('Annoucement--->', announcementData)}
       {console.log("The franhciess",franchiseeData)}
-      {console.log('operating manual--->', operatingManualData)}
+      {console.log('operating manual--->', announcementChangeData)} */}
       <div id="main">
         <section className="mainsection ">
           <Container>
@@ -349,10 +341,10 @@ const EditAnnouncement = () => {
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                             type="text" 
-                            name="title"
-                            // value={operatingManualData?.title}
+                            name="title" 
+                            // value={announcementChangeData?.title}
                             // value={announcementData.title || ""}
-                            defaultValue={copyAnnouncementData.title}
+                            defaultValue={announcementCopyData.title}
                             placeholder="Enter Title"
                             onChange={(e) => {
                               setOperatingManualField(
@@ -360,6 +352,7 @@ const EditAnnouncement = () => {
                                 e.target.value
                               );
                             }}
+                         
                             isInvalid={!!errors.title}
                             />
                           <Form.Control.Feedback type="invalid">
@@ -377,7 +370,7 @@ const EditAnnouncement = () => {
                               options={franchiseeData} 
                               value={franchiseeData && franchiseeData.filter(c => announcementData.franchise?.includes(c.id + ""))}
                               onChange={(selectedOptions) => {
-                                setOperatingManualData((prevState) => ({
+                                setAnnouncementData((prevState) => ({
                                   ...prevState,
                                   franchise: [...selectedOptions.map(option => option.id + "")]
                                 }));
@@ -396,7 +389,7 @@ const EditAnnouncement = () => {
                           {/* <MyEditor
                               data={announcementData.meta_description} 
                               name ="meta_description"
-                              operatingManual={{ ...operatingManualData }}
+                              operatingManual={{ ...announcementChangeData }}
                               errors={errors}
                               handleChange={(e,data) => {
                                 setOperatingManualField(
@@ -409,7 +402,7 @@ const EditAnnouncement = () => {
                             <MyEditor
                               errors={errors}
                               name ="meta_description"
-                              data={copyAnnouncementData.meta_description} 
+                              data={announcementData.meta_description} 
 
                               handleChange={(e, data) => {
                                 setOperatingManualField(e, data);
@@ -426,7 +419,7 @@ const EditAnnouncement = () => {
                   <Form.Control  
                         type="date"
                         name="start_date"
-                        defaultValue={copyAnnouncementData&& copyAnnouncementData.start_date}
+                        defaultValue={announcementCopyData&& announcementCopyData.start_date}
                         // defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
                         onChange={handleAnnouncementsSettings}
                       />
@@ -439,7 +432,7 @@ const EditAnnouncement = () => {
                   <Form.Control 
                     type="time"
                     name="start_time"
-                    defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_time}
+                    defaultValue={announcementCopyData&& announcementCopyData.start_time}
                     onChange={handleAnnouncementsSettings}
                   />
                 </Form.Group>
