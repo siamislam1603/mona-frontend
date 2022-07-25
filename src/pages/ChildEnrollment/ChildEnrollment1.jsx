@@ -7,7 +7,7 @@ import Select from 'react-select';
 import { BASE_URL } from "../../components/App";
 import { childFormValidator, parentFormValidator  } from "../../helpers/enrollmentValidation";
 
-let step = 1;
+let step = 2;
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // STATE TO HANDLE CHILD DATA
@@ -101,16 +101,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    // let errorChild = childFormValidator(formOneChildData);
-    // let errorParent = parentFormValidator(formOneParentData);
+    let errorChild = childFormValidator(formOneChildData);
+    let errorParent = parentFormValidator(formOneParentData);
 
-    // if(Object.keys(errorChild).length > 0 || Object.keys(errorParent).length > 0) {
-    //   setChildFormErrors(errorChild);
-    //   setParentFormErrors(errorParent);
-    // } else {
-    //   saveFormOneData(formOneChildData, formOneParentData);
-    // }
-    nextStep();
+    if(Object.keys(errorChild).length > 0 || Object.keys(errorParent).length > 0) {
+      setChildFormErrors(errorChild);
+      setParentFormErrors(errorParent);
+    } else {
+      saveFormOneData(formOneChildData, formOneParentData);
+    }
+    // nextStep();
   };
 
   // FETCHING THE REQUIRED DATA FROM APIs HERE

@@ -15,6 +15,9 @@ import StepTen from "./ChildEnrollment/ChildEnrollment10";
 import StepEleven from "./ChildEnrollment/ChildEnrollment11";
 import StepTwelve from "./ChildEnrollment/ChildEnrollment12";
 import StepThirteen from "./ChildEnrollment/ChildEnrollment13";
+import { useEffect } from "react";
+import axios from 'axios';
+import { BASE_URL } from "../components/App";
 
 function ChildEnrollment() {
   const [selectedFranchisee, setSelectedFranchisee] = useState();
@@ -38,6 +41,27 @@ function ChildEnrollment() {
     const {value } = e.target;
 
   }
+
+  const updateStepFromDatabase = async () => {
+    let childId = localStorage.getItem('enrolled_child_id');
+    let token = localStorage.getItem('token');
+
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${childId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    console.log('RESPONSE:', response);
+    if(response.status === 200 && response.data.status === "success") {
+      let { form_step } = response.data.child;
+      setstep(form_step);
+    }
+  };
+
+  useEffect(() => {
+    updateStepFromDatabase();
+  }, []);
 
   console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   // eslint-disable-next-line default-case
