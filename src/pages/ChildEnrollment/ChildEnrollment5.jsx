@@ -4,6 +4,8 @@ import { BASE_URL } from "../../components/App";
 import axios from 'axios';
 import { childDailyRoutineValidation } from '../../helpers/validation';
 
+let step = 6;
+
 const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
   const [childDailyRoutineData, setChildDailyRoutineData] = useState({
@@ -56,7 +58,17 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
         console.log('CHILD UPDATION RESPONSE:', response);
         if(response.status === 201 && response.data.status === "success") {
-          nextStep();
+          
+          // UPDATING THE STEP VALUE INSIDE CHILD TABLE
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {form_step: step}, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          });
+
+          if(response.status === 201 && response.data.status === "success") {
+            nextStep();
+          }
         }
       }
     } catch (error) {

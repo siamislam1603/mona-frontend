@@ -6,14 +6,11 @@ import LeftNavbar from '../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
 import MyEditor from './CKEditor';
 import { useParams } from 'react-router-dom';
+import * as ReactBootstrap from 'react-bootstrap';
+
 
 import moment from 'moment';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  createCategoryValidation,
-  createOperatingManualValidation,
-} from '../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
@@ -22,15 +19,12 @@ import DropOneFile from '../components/DragDrop';
 import DropVideo from '../components/DragDropVideo';
 import {EditAnnouncementValidation} from '../helpers/validation';
 import axios from 'axios';
-import DropAllRelatedFile from '../components/DragDropMultipleRelatedFiles';
-let selectedUserId = '';
-let upperRoleUser = '';
+
 const EditAnnouncement = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [operatingManualData, setOperatingManualData] = useState({
-    related_files: [],
-  });
+
+  // const [announcementChangeData, setAnnoucementChangedata] = useState({
+  //   related_files: [],
+  // });
   const [errors, setErrors] = useState({});
  
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -38,19 +32,25 @@ const EditAnnouncement = () => {
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
   
   const [userRole, setUserRole] = useState([]);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+
+  const [theMessage,setTheMessage] = useState("")
  
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
-  const [fileDeleteResponse, setFileDeleteResponse] = useState();
+  const [fileDeleteResponse, setFileDeleteResponse] = useState(false);
 
-   const [createTrainingModal, setCreateTrainingModal] = useState(false);
+   const [updateAnnouncement, setUpdateAnnouncement] = useState(false);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+  
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
 
   const [theRelatedFiles,setTheRelatedFiles] = useState([])
   const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
   
-
+  //Copy Announcement Data
+  const [announcementCopyData,setAnnouncementCopyData] = useState({})
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
   const [theVideo,setTheVideo] = useState({})
@@ -61,8 +61,8 @@ const EditAnnouncement = () => {
 
   const { id } = useParams();
 
-  const setOperatingManualField = (field, value) => {
-    setOperatingManualData({ ...operatingManualData, [field]: value });
+  const setAnnouncementFiled = (field, value) => {
+    setAnnouncementCopyData({ ...announcementCopyData, [field]: value });
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -78,29 +78,29 @@ const EditAnnouncement = () => {
         [name]: null,
       });
     }
-    setOperatingManualData((prevState) => ({
+    setAnnouncementCopyData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-    setAnnouncementsSettings((operatingManualData) =>({
-      ...operatingManualData,
+    setAnnouncementsSettings((announcementChangeData) =>({
+      ...announcementChangeData,
       [name]:value
     }))
   };
   const onSubmit = (e) => {
     e.preventDefault();
  
-    const newErrors = EditAnnouncementValidation(operatingManualData,coverImage,announcementData);
+    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } 
     else{
       setErrors({})
-      if(operatingManualData && coverImage) {
-         console.log("After submit the buton",operatingManualData)
+      if(announcementCopyData && coverImage) {
+         console.log("After submit the buton",announcementCopyData)
          let data = new FormData();
       
-         for(let [ key, values ] of Object.entries(operatingManualData)) {
+         for(let [ key, values ] of Object.entries(announcementCopyData)) {
            data.append(`${key}`, values)
           }
           theVideo.forEach((file, index) => {
@@ -109,7 +109,7 @@ const EditAnnouncement = () => {
           relatedFiles.forEach((file, index) => {
             data.append(`images`, file);
           });
-          setCreateTrainingModal(true);
+          setUpdateAnnouncement(true);
           setLoader(true)
           UpdateAnnouncement(data)
       }
@@ -123,22 +123,21 @@ const EditAnnouncement = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The Delete reponse",deleteResponse.status)
+    console.log("The Delete reponse",deleteResponse)
     if(deleteResponse.status === 200){
       console.log("Related file deleted")
-      setFileDeleteResponse(deleteResponse)
-    copyFetchedData();
+      setFileDeleteResponse(!fileDeleteResponse)
 
     }
     // console.log("The deleted File",deleteResponse)
   }
   const UpdateAnnouncement = async(data) =>{
-   
     // data.append("")
     const theres = await  axios.post('https://httpbin.org/anything', data);
         console.log("THE RESPONSE",theres)
     console.log("Updating Annoucement")
    const token = localStorage.getItem('token');
+   setTheMessage("Uploading The Documents")
     
       const response = await axios.put(`${BASE_URL}/announcement/${id}`, data,{ 
       headers: {
@@ -154,6 +153,8 @@ const EditAnnouncement = () => {
         // console.log("THE RESPONSE",theres)
         // console.log("THE COVER IMAGE TYPE",typeof coverImage)
         if(typeof coverImage === "string"){
+          setTheMessage("Uploading The Images and Videos")
+
           console.log("The String type")
           let imageFile = await axios.put(`${BASE_URL}/announcement/createdAnnouncement/${id}`,{
             coverImage: coverImage
@@ -174,6 +175,8 @@ const EditAnnouncement = () => {
           let data = new FormData()
           data.append('id',id);
           data.append('image', coverImage[0]);
+          setTheMessage("Uploading Cover image")
+
           let imgSaveResponse = await axios.post(
             `${BASE_URL}/training/coverImg?title=announcement`, data, {
               headers: {
@@ -184,6 +187,8 @@ const EditAnnouncement = () => {
           console.log("The image",imgSaveResponse);
           if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {            
             console.log('SUCCESS RESPONSE!');
+             setTheMessage(" ")
+
             setLoader(false)
             localStorage.setItem('success_msg', 'Announcement Created Successfully!');
             localStorage.setItem('active_tab', '/created-announcement');
@@ -208,7 +213,7 @@ const EditAnnouncement = () => {
       console.log("Annoncement Already exit",msg)
       setTopErrorMessage(msg);
       setLoader(false);
-      setCreateTrainingModal(false);
+      setUpdateAnnouncement(false);
       setTimeout(() => {
         setTopErrorMessage(null);
       }, 3000)
@@ -249,29 +254,15 @@ const EditAnnouncement = () => {
       setAnnouncementData(response.data.data.all_announcements)
     }
  } 
- const selectedfranhise = () =>{
-  if(franchiseeData){
-    console.log("Inside selectFranhi",franchiseeData)
-  let size = franchiseeData.length
-  // console.log("INSIDE INSDEI",announcementData.franchise[0])
-  // console.log("The SeletedFranhise", franchiseeData.length)
-    for(let i=0;i<size;i++){
-       if(franchiseeData[i] === announcementData.franchise[i]){
-        console.log("The Rohan data",announcementData.franchise[i])
-       }
-    }
-  }
- }
  const copyFetchedData = () =>{
-  setAnnouncementData(prevState =>({
+  setAnnouncementCopyData(prevState =>({
     ...prevState,
     title: announcementData?.title,
     meta_description: announcementData?.meta_description,
     start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
     start_time: moment(announcementData?.scheduled_date).format('HH:mm'),
-    
+    franchise: announcementData.franchise
   }))
-  console.log("The setAnnoucementdata inside cop",)
   setAnnouncementsSettings(prevState =>({
     ...prevState,
     start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
@@ -284,7 +275,6 @@ const EditAnnouncement = () => {
   setFetchedVideoTutorialFiles(announcementData?.announcement_files?.filter(file => file.fileType === ".mp4"));
   setFetchedRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4'));
    
-  console.log("FETCHED DATA COPIED",fetchedCoverImage)
  }
  const getRelatedFileName = (str) => {
   let arr = str.split("/");
@@ -295,39 +285,31 @@ const EditAnnouncement = () => {
 }
  useEffect(() => {
   copyFetchedData();
-}, [franchiseeData]);
+}, [announcementData]);
  useEffect(() =>{
   AnnouncementDetails();
-  const role = localStorage.getItem("user_role")
-  setUserRole(role)       
+  // const role = localStorage.getItem("user_role")
+  // setUserRole(role)       
   },[])
   useEffect(() => {
     fetchFranchiseeList();
   }, []);
-  useEffect(() =>{
-  selectedfranhise()
-  },[franchiseeData])
-  useEffect(() =>{
-    setTheRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.is_deleted === false))
-
-  },[announcementData])
-  useEffect(() =>{
-    setOperatingManualData(announcementData)
-  },[announcementData])
 
   useEffect(() =>{
     copyFetchedData();
+    AnnouncementDetails()
 },[fileDeleteResponse])
  
 // console.log("The time",announcementData.scheduled_date.split("T")[1])
 // console.log("The Image settig",coverImage,typeof coverImage)
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
-  console.log("The COPY DATA",announcementData )
+  console.log("The COPY DATA",announcementCopyData )
+  console.log("THE VIDEO DATA",fetchedVideoTutorialFiles)
   return (
     <>
-      {console.log('Annoucement--->', announcementData)}
+      {/* {console.log('Annoucement--->', announcementData)}
       {console.log("The franhciess",franchiseeData)}
-      {console.log('operating manual--->', operatingManualData)}
+      {console.log('operating manual--->', announcementChangeData)} */}
       <div id="main">
         <section className="mainsection ">
           <Container>
@@ -344,45 +326,119 @@ const EditAnnouncement = () => {
                     <h1 className="title-lg">Edit Announcement</h1>
                   </header>
                 </div>
+                {/* <button onClick={()=>setSettingsModalPopup(true)}>
+                  The button 
+                </button> */}
                 <Form.Group className="col-md-6 mb-3" >
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                             type="text" 
                             name="title" 
-                            // value={operatingManualData?.title}
+                            // value={announcementChangeData?.title}
                             // value={announcementData.title || ""}
-                            defaultValue={announcementData.title}
+                            defaultValue={announcementCopyData.title}
                             placeholder="Enter Title"
                             onChange={(e) => {
-                              setOperatingManualField(
+                              setAnnouncementFiled(
                                 e.target.name,
                                 e.target.value
                               );
                             }}
+                         
                             isInvalid={!!errors.title}
                             />
                           <Form.Control.Feedback type="invalid">
                             {errors.title}
                           </Form.Control.Feedback>
                         </Form.Group>
+
+                      
+               
                         <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
+                            {/* <div className="select-with-plus">
+                            {/* <Select
+                              placeholder="Which Franchisee?"
+                              closeMenuOnSelect={true}
+                              isMulti
+                              options={franchiseeData} 
+                              value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
+                              onChange={(selectedOptions) => {
+                                setAnnouncementCopyData((prevState) => ({
+                                  ...prevState,
+                                  franchise: [...selectedOptions.map(option => option.id + "")]
+                                }));
+                              }}
+                            /> */}
+    
+                            
+                         {/* </div>       */}
+                          {
+                            localStorage.getItem('user_role') === 'franchisor_admin' ? (
+                              <div className="select-with-plus">
 
-                            <div className="select-with-plus">
+                              <Select
+                                placeholder="Which Franchisee?"
+                                closeMenuOnSelect={true}
+                                isMulti
+                                options={franchiseeData} 
+                                value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
+                                onChange={(selectedOptions) => {
+                                  setAnnouncementCopyData((prevState) => ({
+                                    ...prevState,
+                                    franchise: [...selectedOptions.map(option => option.id + "")]
+                                  }));
+                                }}
+                              />
+                              
+                         
+                            </div>
+  
+                            ):(
+                              <div className="select-with-plus">
+                             
+                              <Select
+                                placeholder="Which Franchisee?"
+                                closeMenuOnSelect={true}
+                                options={franchiseeData}
+                                // value={franchiseeData}
+                                onChange={(e) =>{                                  
+                                  setAnnouncementCopyData((prevState) => ({
+                                    ...prevState,
+                                    franchise: e.value
+                                  }));
+                                }}
+                              />
+                              {/* { formErrors.role !== null && <span className="error">{formErrors.role}</span> } */}
+                                </div>
+
+                            )
+
+                          }
+                         
+
+
+                          {/* <div className="select-with-plus">
+
                             <Select
                               placeholder="Which Franchisee?"
                               closeMenuOnSelect={true}
                               isMulti
                               options={franchiseeData} 
-                              value={franchiseeData && franchiseeData.filter(c => announcementData.franchise?.includes(c.id + ""))}
+                              value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
                               onChange={(selectedOptions) => {
-                                setOperatingManualData((prevState) => ({
+                                setAnnouncementCopyData((prevState) => ({
                                   ...prevState,
                                   franchise: [...selectedOptions.map(option => option.id + "")]
                                 }));
                               }}
                             />
-                         </div>      
+                            
+                       
+                          </div> */}
+
+                      
+                         
                           </Form.Group>
                   </Row>
                   <div>
@@ -395,10 +451,10 @@ const EditAnnouncement = () => {
                           {/* <MyEditor
                               data={announcementData.meta_description} 
                               name ="meta_description"
-                              operatingManual={{ ...operatingManualData }}
+                              operatingManual={{ ...announcementChangeData }}
                               errors={errors}
                               handleChange={(e,data) => {
-                                setOperatingManualField(
+                                setAnnouncementFiled(
                                  e,data
                                 );
                               }}
@@ -411,7 +467,7 @@ const EditAnnouncement = () => {
                               data={announcementData.meta_description} 
 
                               handleChange={(e, data) => {
-                                setOperatingManualField(e, data);
+                                setAnnouncementFiled(e, data);
                               }}
                             />
                            {errors.meta_description && <p className="form-errors">{errors.meta_description}</p>}
@@ -425,9 +481,13 @@ const EditAnnouncement = () => {
                   <Form.Control  
                         type="date"
                         name="start_date"
-                        defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_date}
-                        // defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
-                        onChange={handleAnnouncementsSettings}
+                        defaultValue={announcementCopyData&& announcementCopyData.start_date}
+                        onChange={(e) => {
+                          setAnnouncementFiled(
+                            e.target.name,
+                            e.target.value
+                          );
+                        }}
                       />
                 </Form.Group>
                 {errors.start_date && <p className="form-errors">{errors.start_date}</p>}
@@ -438,7 +498,7 @@ const EditAnnouncement = () => {
                   <Form.Control 
                     type="time"
                     name="start_time"
-                    defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_time}
+                    defaultValue={announcementCopyData&& announcementCopyData.start_time}
                     onChange={handleAnnouncementsSettings}
                   />
                 </Form.Group>
@@ -484,6 +544,29 @@ const EditAnnouncement = () => {
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
+                          <div className="media-container">
+                              {
+                                fetchedVideoTutorialFiles &&
+                                fetchedVideoTutorialFiles.map((video, index) => (
+                                  !video.is_deleted
+                                  ?(
+                                  
+                                      <div className="file-container">
+                                        <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
+                                        <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
+                                        <img 
+                                          onClick={() => deleteAnnouncemetFile(video.id)}
+                                          className="file-remove" 
+                                          src="../img/removeIcon.svg" 
+                                          alt="" />
+                                      </div>
+                                    
+                                  ):(null)
+
+                               
+                                ))
+                              }
+                            </div>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -556,6 +639,34 @@ const EditAnnouncement = () => {
           </Container>
         </section>
       </div>
+      {
+        updateAnnouncement && 
+        <Modal
+        show={updateAnnouncement}
+        onHide={() => setUpdateAnnouncement(false)}>
+        <Modal.Header>
+          <Modal.Title>
+            Updating Announcement
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div className="create-training-modal" style={{ textAlign: 'center' }}>
+            <p>This may take some time.</p>
+            <p>{theMessage}</p>
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        {
+          loader === true && <div>
+            <ReactBootstrap.Spinner animation="border" />
+          </div>
+        }
+        </Modal.Footer>
+      </Modal>
+      }
+  
    
     </>
   );
