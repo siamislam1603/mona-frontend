@@ -38,6 +38,7 @@ const EditAnnouncement = () => {
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
   
   const [userRole, setUserRole] = useState([]);
+  const [copyAnnouncementData,setCopyAnnouncementData] = useState({})
  
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [fileDeleteResponse, setFileDeleteResponse] = useState();
@@ -263,7 +264,7 @@ const EditAnnouncement = () => {
   }
  }
  const copyFetchedData = () =>{
-  setAnnouncementData(prevState =>({
+  setCopyAnnouncementData(prevState =>({
     ...prevState,
     title: announcementData?.title,
     meta_description: announcementData?.meta_description,
@@ -295,7 +296,7 @@ const EditAnnouncement = () => {
 }
  useEffect(() => {
   copyFetchedData();
-}, [franchiseeData]);
+}, [announcementData]);
  useEffect(() =>{
   AnnouncementDetails();
   const role = localStorage.getItem("user_role")
@@ -322,7 +323,7 @@ const EditAnnouncement = () => {
 // console.log("The time",announcementData.scheduled_date.split("T")[1])
 // console.log("The Image settig",coverImage,typeof coverImage)
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
-  console.log("The COPY DATA",announcementData )
+  console.log("The COPY DATA",copyAnnouncementData )
   return (
     <>
       {console.log('Annoucement--->', announcementData)}
@@ -348,10 +349,10 @@ const EditAnnouncement = () => {
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                             type="text" 
-                            name="title" 
+                            name="title"
                             // value={operatingManualData?.title}
                             // value={announcementData.title || ""}
-                            defaultValue={announcementData.title}
+                            defaultValue={copyAnnouncementData.title}
                             placeholder="Enter Title"
                             onChange={(e) => {
                               setOperatingManualField(
@@ -408,7 +409,7 @@ const EditAnnouncement = () => {
                             <MyEditor
                               errors={errors}
                               name ="meta_description"
-                              data={announcementData.meta_description} 
+                              data={copyAnnouncementData.meta_description} 
 
                               handleChange={(e, data) => {
                                 setOperatingManualField(e, data);
@@ -425,7 +426,7 @@ const EditAnnouncement = () => {
                   <Form.Control  
                         type="date"
                         name="start_date"
-                        defaultValue={AnnouncementsSettings&& AnnouncementsSettings.start_date}
+                        defaultValue={copyAnnouncementData&& copyAnnouncementData.start_date}
                         // defaultValue={ announcementData &&announcementData.scheduled_date.split("T")[0]}
                         onChange={handleAnnouncementsSettings}
                       />
