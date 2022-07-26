@@ -103,7 +103,9 @@ export const createFormValidation = (form) => {
     form_description,
     form_template_select,
     previous_form,
+    category_id
   } = form;
+  
   if (!form_name || form_name === '')
     newErrors.form_name = 'Form Title is Required';
   if (!form_type || form_type === '')
@@ -113,6 +115,9 @@ export const createFormValidation = (form) => {
   if (form_template_select === 'Yes')
     if (!previous_form || previous_form === '')
       newErrors.previous_form = 'Previous Form is Required';
+  if(!category_id || category_id==='')
+  newErrors.category_id = 'Category is Required';
+
   return newErrors;
 };
 export const createOperatingManualValidation = (form) => {
@@ -121,34 +126,42 @@ export const createOperatingManualValidation = (form) => {
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
+  if (order<0)
+    newErrors.order= "Value must be greater than 0";
+  if (order===0 || order==="0")
+    newErrors.order= "Value must be greater than 0";
   if (!order || order === '')
     newErrors.order = 'Position is Required';
+  
   
   return newErrors;
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form) =>{
+export const AddNewAnnouncementValidation = (form,coverImage) =>{
   let newErrors = {};
   console.log("The form validat", form)
-  let { announcement_title,announcement_description,cover_image} = form;
-  console.log("The tile valdiation", announcement_title)
-  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
-  if (!cover_image || cover_image === '')newErrors.cover_image = 'Cover image is Required';
-  if(!announcement_description || announcement_description === ' ') newErrors.announcement_description="Description is Required"
+  let { title,meta_description} = form;
+  console.log("The tile valdiation", title)
+  if(!title || title === ' ') newErrors.title="Announcement Title is Required"
+  if (!coverImage)newErrors.coverImage = 'Cover image is Required';
+  if(!meta_description || meta_description === ' ') newErrors.meta_description="Announcement Description is Required"
   
   return newErrors;
 
 }
-export const EditAnnouncementValidation = (form) =>{
+export const EditAnnouncementValidation = (form,coverImage,Data)=>{
   let newErrors = {};
   console.log("The form validat", form)
-  let { announcement_title,meta_description,cover_image} = form;
-  console.log("The tile valdiation", announcement_title)
-  if(!announcement_title || announcement_title === ' ') newErrors.announcement_title="Title is Required"
-  if (!cover_image || cover_image === '')newErrors.cover_image = 'Cover image is Required';
-  if(!meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
-  
+  // console.log("The DATA VALIDATION",newData)
+  let { title,meta_description,start_date,start_time} = form;
+ 
+  console.log("All valiatiion",title,start_date,meta_description)
+  if(!title || title === ' ') newErrors.title="Title is Required"
+  if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
+  if( !meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
+  if(start_date === " " &&!start_date || start_date === ' ') newErrors.start_date="Start Date Required"
+  if(start_time === " "&& !start_time || start_time === ' ') newErrors.start_time="Start Time Required"
   return newErrors;
 }
 export const ChildRegisterFormValidation = (form) => {
@@ -274,12 +287,10 @@ export const FranchiseeFormValidation = (formObj) => {
     abn,
     city,
     state,
-    franchisee_admin_email,
-    franchisee_admin,
     franchisee_number,
     acn,
-    address,
     postcode,
+    address,
     contact,
   } = formObj;
 
@@ -297,14 +308,6 @@ export const FranchiseeFormValidation = (formObj) => {
 
   if(!state) {
     errors.state = "State is required!";
-  }
-
-  if(!franchisee_admin_email) {
-    errors.franchisee_admin_email = "Franchisee Admin's email is required!";
-  }
-
-  if(!franchisee_admin) {
-    errors.franchisee_admin = "please select Franchisee admin";
   }
 
   if(!franchisee_number) {
@@ -374,3 +377,76 @@ export const UserFormValidation = (formObj) => {
 
   return errors;
 };
+
+export const personValidation = (personValidationForm) => {
+  let errors = {};
+  let {
+    name,
+    address,
+    telephone,
+    relationship_to_the_child
+  } = personValidationForm;
+
+  if(!name)
+    errors.name = "Name is required!";
+
+  if(!address)
+    errors.address = "Address is required!";
+
+  if(!telephone)
+    errors.telephone = "Telephone number is required!";
+  
+  if(!relationship_to_the_child)
+    errors.relationship_to_the_child = "Specify their relationship to the child!";
+
+  return errors;
+}
+
+
+export const childDailyRoutineValidation = (childDailyRoutineForm) => {
+  let errors = {};
+  let {
+    sleep_time,
+    bottle_time,
+    toileting,
+    routines,
+    likes_dislikes,
+    comforter,
+    religion,
+    dietary_requirement,
+    allergy,
+    comment,
+  } = childDailyRoutineForm;
+
+  if(!sleep_time)
+    errors.sleep_time = "sleep time is required!";
+
+  if(!bottle_time)
+    errors.bottle_time = "bottle time is required!";
+
+  if(!toileting)
+    errors.toileting = "toilet time is required!";
+
+  if(!routines)
+    errors.routines = "routine is required!";
+
+  if(!likes_dislikes)
+    errors.likes_dislikes = "specify the likes or dislikes!";
+
+  if(!comforter)
+    errors.comforter = "comforter is required!";
+
+  if(!religion)
+    errors.religion = "religion is reuqired!";
+
+  if(!dietary_requirement)
+    errors.dietary_requirement = "specify the dietary requirements!";
+
+  if(!allergy)
+    errors.allergy = "mention the alergies, if any!";
+
+  if(!comment)
+    errors.comment = "provide a comment!";
+  
+  return errors;
+}

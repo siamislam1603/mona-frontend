@@ -6,6 +6,11 @@ import { Link } from 'react-router-dom';
 import { Progress } from 'react-sweet-progress';
 import "react-sweet-progress/lib/style.css";
 import BootstrapTable from "react-bootstrap-table-next";
+import axios from 'axios';
+import { BASE_URL } from '../components/App';
+
+
+
 
 const products1 = [
   {
@@ -66,6 +71,35 @@ const columns1 = [
 ];
 
 const FranchisorDashboard = () => {
+  const [count, setcount] = React.useState(null);
+  const [state, setstate] = React.useState();
+  const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+
+  console.log("alsoidjh", latest_announcement[0].scheduled_date)
+  const announcement = () => {
+    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
+    axios.get(countUrl).then((response) => {
+      setlatest_announcement(response.data.data.all_announcements);
+    }).catch((e) => {
+      console.log("Error", e);
+    })
+  }
+  const count_Api = () => {
+    const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count`;
+    axios.get(countUrl).then((response) => {
+      setcount(response.data);
+    }).catch((e) => {
+      console.log(e);
+    })
+  }
+
+
+  React.useEffect(() => {
+    count_Api();
+    announcement();
+  }, []);
+
+  if (!count) return null;
   return (
     <>
       <div id="main">
@@ -121,6 +155,7 @@ const FranchisorDashboard = () => {
                         <div className="record-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h2 className="title-sm mb-0"><strong>Record of Audits</strong></h2>
+
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="audit-form">
@@ -232,42 +267,42 @@ const FranchisorDashboard = () => {
                               <a href="/" className="item">
                                 <span className="name">Total Franchises</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.totalFranchisees}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.totalChildren}</span>
                               </a>
                             </div>
                             {/* <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.totalLocations}</span>
                               </a>
                             </div> */}
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Users yet to log in</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{count.usersYetToLogin}</span>
                               </a>
                             </div>
                           </div>
@@ -275,21 +310,22 @@ const FranchisorDashboard = () => {
                         <div className="announcements-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
+
                             <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                <div className="name">{latest_announcement[0].title}<span className="date">{latest_announcement[0].scheduled_date}</span></div>
+                              </a>
+                            </div>
+                            {/* <div className="listing">
                               <a href="/" className="item">
                                 <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                 <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
                               </a>
-                            </div>
-                            <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                         {/*<div className="ads text-center pb-5">

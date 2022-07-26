@@ -1,19 +1,26 @@
 import React, { useState,useEffect } from "react";
 import { Button, Container, Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
-import LeftNavbar from "../components/LeftNavbar";
-import TopHeader from "../components/TopHeader";
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
 import axios from "axios";
-import { NavLink } from "react-router-dom";
+// import VideoPop from "../components/VideoPop";
+import AnnouncementVideo from "./AnnouncementVideo";
+import MyEditor from "./CKEditor";
+
 
 const AllAnnouncements = () => {
+  const [operatingManualData, setOperatingManualData] = useState({
+    related_files: [],
+  });
 const userName = localStorage.getItem("user_name");
-const userROle = localStorage.getItem("user_role")
+const userROle = localStorage.getItem("user_role");
+const [topMessage,setTopMessage] = useState(null);
+const [theRelatedFiles,setTheRelatedFiles] = useState([])
 const [announcementDetails,setAnnouncementDetail] = useState([])
 const [announcementFiles,setAnnouncementFiles] = useState([])
-
+const [videoFile, setVideoFile] = useState("https://embed.api.video/vod/vi38jFGbfBrkIlcrHXWLszG");
+const [show, setShow] = useState(false);
+const handleClose = () => setShow(false);
+ 
   const AllAnnouncementData = async () =>{
     console.log("Announcement detial API")
   const token = localStorage.getItem('token');
@@ -22,16 +29,66 @@ const [announcementFiles,setAnnouncementFiles] = useState([])
       "Authorization": "Bearer " + token
     }
   });
+  console.log("The data",response);
+  
   if(response.status === 200 && response.data.status === "success") {
-      setAnnouncementDetail(response.data.data.all_announcements);
+      setAnnouncementDetail(response.data.createdAnnouncement);
   }
+}
+
+
+const formatMetaDescription = (str) => {
+    let newFile = str.replace(/<p>/g, '');
+    newFile = newFile.split('</p>')[0];
+    return newFile;
+} 
+const deleteAlert = (id) =>{
+  if(window.confirm('Are you sure you want to delete?')){
+     deleteAnnouncement(id);
+  }
+}
+
+const deleteAnnouncement = async (id) =>{
+  const token = localStorage.getItem('token');
+  const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  }); 
+  console.log("The response after delete",response)
+  if(response.status === 200){
+      setTopMessage("Delete successfully")
+      AllAnnouncementData()
+      setTimeout(() => {
+        setTopMessage(null)
+      }, 2000);
+  }
+
+}
+const getRelatedFileName = (str) => {
+  let arr = str.split("/");
+  let fileName = arr[arr.length - 1].split("_")[0];
+  let ext =arr[arr.length-1].split(".")[1]
+  let name = fileName.concat(".",ext)
+  return name;
 }
 useEffect(() => {
   AllAnnouncementData()
 }, [])
+
 console.log("The annoumce detial",announcementDetails)
   return (
+    
     <div className="announcement-accordion">
+       
+                  {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+
+                        {/* <MyEditor
+                              operatingManual={{ ...operatingManualData }} 
+                             
+                            /> */}
+      {/* <iframe title="video file" className="embed-responsive-item" src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
+
                     <Accordion defaultActiveKey="0">
                       {
                         announcementDetails.map((details,index) => (
@@ -42,8 +99,15 @@ console.log("The annoumce detial",announcementDetails)
                               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
                               <div className="title-xxs">{details.title}<small><span>{userROle}:</span>{userName}</small></div>
                               <div className="date">
-                                 <div className="date">
-                                  <a href={`/edit-announcement/${details.id}`}><img src="../img/editPen.png" alt=""/></a></div>
+                                 <Dropdown>
+                                  <Dropdown.Toggle id="extrabtn" className="ctaact">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href={`/edit-announcement/${details.id}`}>Edit</Dropdown.Item>
+                                    <Dropdown.Item onClick={() =>deleteAlert(details.id)}>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
                               </div>
                             </div>
                           </Accordion.Header>
@@ -53,16 +117,41 @@ console.log("The annoumce detial",announcementDetails)
                                 <div className="head">Description :</div>
                               </Col>
                               <Col xl={10} lg={9}>
-                                <div className="cont"><p> {details.meta_description}</p></div>
+                                  <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: details.meta_description
+                                      ? details.meta_description
+                                      : null,
+                                  }}
+                                  />
+                                {/* <div className="cont"> {details.meta_description}</div> */}
                               </Col>
                             </Row>
                             <Row>
                               <Col md={4}>
                                 <div className="video-col">
-                                  <a href="/" className="vid-col">
+                                  {/* <a href="/" className="vid-col">
                                     <img src="../img/video-pic.jpg" alt="" />
                                     <span className="caption">Regarding Submission of Documents of all classes students admitted in AY 2021-22</span>
-                                  </a>
+                                  </a> */}
+                                  {/* <iframe  src="https://embed.api.video/vod/vi38jFGbfBrkIlcrHXWLszG">
+                                  </iframe> */}
+                                  
+                                  {details.announcement_files.map((detail,index) =>(
+                                           <>
+                                           {detail.fileType == ".mp4" && !detail.is_deleted  ? (
+                                              <AnnouncementVideo 
+                                                data={detail}
+                                                title={`Training Video ${index + 1}`}
+                                                // duration={trainingDetails.completion_time} 
+                                                fun={handleClose}/>
+                                             ):(
+                                            null
+                                           )}
+
+                                           </>
+                                    ))}
+
                                 </div>
                               </Col>
                               <Col md={8}>
@@ -80,10 +169,23 @@ console.log("The annoumce detial",announcementDetails)
                                 <div className="head">Related Files :</div>
                                 <div className="cont">
                                   <div className="related-files">
+                                    {details.announcement_files.map((detail,index) =>(
+                                           <>
+                                           {detail.fileType !== ".mp4" && !detail.is_deleted ?(
+                                             <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
+                                              <p>{getRelatedFileName(detail.file)}</p>
+                                              <small>
+                                              Added Today
+                                              </small></span></a></div>
+                                           ):(
+                                            null
+                                           )}
+
+                                           </>
+                                    ))}
+                                    {/* <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
                                     <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                    <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                    <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                    <div className="item"><a href=""><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
+                                    <div className="item"><a href=""><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div> */}
                                   </div>
                                 </div>
                               </Col>

@@ -4,6 +4,8 @@ import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
+import axios from 'axios';
+import { BASE_URL } from '../components/App';
 
 const products = [
   {
@@ -117,6 +119,24 @@ const columns1 = [
 ];
 
 const FranchiseeDashboard = () => {
+  const [countUser, setcountUser] = React.useState(null);
+  const [latest_announcement, setlatest_announcement] = React.useState(null);
+  console.log(latest_announcement, "latest_announcement")
+  const count_User_Api = () => {
+    const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
+    axios.get(countUrl).then((response) => {
+      setcountUser(response.data);
+    }).catch((e) => {
+      console.log("Error", e);
+    })
+  }
+
+  console.log(countUser, "lksjgydtadHUJISKiaudygquISOIWUAYTDGH")
+  React.useEffect(() => {
+    count_User_Api();
+  }, []);
+
+  if (!countUser) return null;
   return (
     <>
       <div id="main">
@@ -265,28 +285,28 @@ const FranchiseeDashboard = () => {
                               <a href="/" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{countUser.totalUsers}</span>
                               </a>
                             </div>
                             {/* <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{countUser.totalLocations}</span>
                               </a>
                             </div> */}
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{countUser.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
-                                <span className="num">04</span>
+                                <span className="num">{countUser.auditForms}</span>
                               </a>
                             </div>
                           </div>
@@ -307,7 +327,7 @@ const FranchiseeDashboard = () => {
                         <div className="announcements-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
                             <div className="listing">

@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
 import ChildEnrollment from '../pages/ChildEnrollment';
+import ChildEnrollment1 from '../pages/ChildEnrollment/ChildEnrollment1';
+import ChildEnrollment2 from '../pages/ChildEnrollment/ChildEnrollment2';
+import ChildEnrollment3 from '../pages/ChildEnrollment/ChildEnrollment3';
+import ChildEnrollment4 from '../pages/ChildEnrollment/ChildEnrollment4';
+import ChildEnrollment5 from '../pages/ChildEnrollment/ChildEnrollment5';
+import ChildEnrollment6 from '../pages/ChildEnrollment/ChildEnrollment6';
+import ChildEnrollment7 from '../pages/ChildEnrollment/ChildEnrollment7';
+import ChildEnrollment8 from '../pages/ChildEnrollment/ChildEnrollment8';
 import SignIn from '../pages/SignIn';
 import ForgotPassword from '../pages/ForgotPassword';
 import UserManagement from '../pages/UserManagement';
@@ -40,7 +48,8 @@ import EditAnnouncement from '../pages/EditAnnouncement';
 import ChangePassword from "../pages/ChangePassword"
 import EditUser from '../pages/EditUser';
 import EditFranchisees from '../pages/EditFranchisees';
-
+import ResetPassword from "../pages/ResetPassword"
+import FormSetting from '../pages/FormBuilder/formSetting';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -77,12 +86,83 @@ const Main = () => {
             </Protected>
           }
         />
+        
         <Route
-          path="/child-enrollment"
+          path="/child-enrollment/1"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <ChildEnrollment />
+              <ChildEnrollment1 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/2"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment2 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/3"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment3 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/4"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment4 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/5"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment5 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/6"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment6 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/7"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment7 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/8"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment8 />
             </Protected>
           }
         />
@@ -97,12 +177,19 @@ const Main = () => {
             </Protected>
           }
         />
+        <Route
+          path="/reset-password"
+          element={
+            
+              <ResetPassword />
+          }
+        />
 
         <Route
           path="/add-permissions"
           element={
             <Protected isLoggedIn={isLoggedIn}>
-              <ForgotPassword />
+              {/* <ForgotPassword /> */}
               <AddPermissions />
             </Protected>
           }
@@ -279,7 +366,15 @@ const Main = () => {
             </Protected>
           }
         />
-
+        <Route
+        path='/form/setting'
+        element={
+          <Protected isLoggedIn={isLoggedIn}>
+            <SignIn />
+            <FormSetting />
+          </Protected>
+        }
+        />
         <Route
           path="/form/add"
           element={
@@ -381,7 +476,7 @@ const Main = () => {
         />
 
       <Route
-          path="/my-announcements/:id"
+          path="/my-announcements"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -454,11 +549,10 @@ const Main = () => {
         <Route
           path="/change-password"
           element={
-            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
               <ChangePassword />
-            ) : (
-              <Navigate to="/" />
-            )
+            </Protected>
           }
         />
 
