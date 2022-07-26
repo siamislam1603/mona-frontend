@@ -530,9 +530,9 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .repositorydrag .uploadfile { border: 2px dashed var(--gray); border-radius: 16px; height: 150px; display: flex; align-items: center; justify-content: center; }
 
-.announcement-accordion .accordion-item { border-radius: 16px!important; overflow: hidden!important; margin-bottom: 1rem; }
+.announcement-accordion .accordion-item { margin-bottom: 1rem; }
 .announcement-accordion .accordion-item .accordion-button { border-top-left-radius: 0; border-top-right-radius: 0; }
-.announcement-accordion .accordion-button { background-color: var(--gray) !important; color: var(--primary) !important; }
+.announcement-accordion .accordion-button { border-radius: 0; background-color: var(--gray) !important; color: var(--primary) !important; }
 .announcement-accordion .accordion-button:not(.collapsed) { background-color: var(--yellow) !important; }
 .announcement-accordion .head-title { display:flex; align-items: center; flex:0 0 100%;  }
 .announcement-accordion .head-title .ico { display:flex; flex: 0 0 61px; margin-right: 1rem; align-items: center; justify-content: space-between; }
@@ -635,7 +635,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .forms-managment-right { margin-left: 0; width: 100%; margin-top: 20px; }
 .forms-content-section .row>div { width: 50%; flex: 0 0 50%; }
 .selectdropdown .dropdown .btn-primary,
-.selectdropdown .dropdown .btn-primary:active { min-width: auto !important; adding-right: 30px !important; }
+.selectdropdown .dropdown .btn-primary:active { padding-right: 30px !important; }
 }
 @media only screen and (max-width: 1199px) {
 .forms-managment-right { flex-wrap: wrap; }

@@ -155,13 +155,13 @@ export const EditAnnouncementValidation = (form,coverImage,Data)=>{
   console.log("The form validat", form)
   // console.log("The DATA VALIDATION",newData)
   let { title,meta_description,start_date,start_time} = form;
-  
+ 
   console.log("All valiatiion",title,start_date,meta_description)
   if(!title || title === ' ') newErrors.title="Title is Required"
   if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
   if( !meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
-  // if(newData.start_date === " " &&!start_date || start_date === ' ') newErrors.start_date="Start Date Required"
-  // if(newData.start_time === " "&& !start_time || start_time === ' ') newErrors.start_time="Start Time Required"
+  if(start_date === " " &&!start_date || start_date === ' ') newErrors.start_date="Start Date Required"
+  if(start_time === " "&& !start_time || start_time === ' ') newErrors.start_time="Start Time Required"
   return newErrors;
 }
 export const ChildRegisterFormValidation = (form) => {
@@ -377,3 +377,76 @@ export const UserFormValidation = (formObj) => {
 
   return errors;
 };
+
+export const personValidation = (personValidationForm) => {
+  let errors = {};
+  let {
+    name,
+    address,
+    telephone,
+    relationship_to_the_child
+  } = personValidationForm;
+
+  if(!name)
+    errors.name = "Name is required!";
+
+  if(!address)
+    errors.address = "Address is required!";
+
+  if(!telephone)
+    errors.telephone = "Telephone number is required!";
+  
+  if(!relationship_to_the_child)
+    errors.relationship_to_the_child = "Specify their relationship to the child!";
+
+  return errors;
+}
+
+
+export const childDailyRoutineValidation = (childDailyRoutineForm) => {
+  let errors = {};
+  let {
+    sleep_time,
+    bottle_time,
+    toileting,
+    routines,
+    likes_dislikes,
+    comforter,
+    religion,
+    dietary_requirement,
+    allergy,
+    comment,
+  } = childDailyRoutineForm;
+
+  if(!sleep_time)
+    errors.sleep_time = "sleep time is required!";
+
+  if(!bottle_time)
+    errors.bottle_time = "bottle time is required!";
+
+  if(!toileting)
+    errors.toileting = "toilet time is required!";
+
+  if(!routines)
+    errors.routines = "routine is required!";
+
+  if(!likes_dislikes)
+    errors.likes_dislikes = "specify the likes or dislikes!";
+
+  if(!comforter)
+    errors.comforter = "comforter is required!";
+
+  if(!religion)
+    errors.religion = "religion is reuqired!";
+
+  if(!dietary_requirement)
+    errors.dietary_requirement = "specify the dietary requirements!";
+
+  if(!allergy)
+    errors.allergy = "mention the alergies, if any!";
+
+  if(!comment)
+    errors.comment = "provide a comment!";
+  
+  return errors;
+}

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Button, Col, Row, Form, Table } from "react-bootstrap";
 import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
 
+let step = 3;
+
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   const [healthInformation, setHealthInformation] = useState({
@@ -9,11 +11,31 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     telephone: "",
     medical_service_address: "",
     maternal_and_child_health_centre: "",
-    has_health_record: false
   });
 
   // ERROR HANDLING STATES
   const [healthInfoFormErrors, setHealthInfoFormErrors] = useState(null);
+  const [childImmunisationRecord, setChildImmunisationRecord] = useState({
+    hepatitis_b: [],
+    diptheria: [],
+    haemophilus: [],
+    inactivated_poliomyelitis: [],
+    pneumococcal_conjugate: [],
+    rotavirus: [],
+    measules: [],
+    meningococcal_c: [],
+    varicella: [],
+  });
+  const [childDetails, setChildDetails] = useState({
+    has_health_record: false,
+    has_been_immunized: false,
+    has_court_orders: false,
+    changes_described: ""
+  });
+
+  // FUNCTIONS
+  const saveFormTwoData = async () => {
+  };
 
   const submitFormData = (e) => {
     e.preventDefault();
@@ -22,11 +44,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     if(Object.keys(errors).length > 0) {
       setHealthInfoFormErrors(errors);
     } else {
-
+      saveFormTwoData();
     }
     // nextStep();
   };
 
+
+  // childImmunisationRecord && console.log('IMMUNISATION RECORD:', childImmunisationRecord);
+  childDetails && console.log('CHILD DETAILS:', childDetails);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -39,47 +64,78 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Group className="mb-3">
                     <Form.Label>Are there any court orders relating to the powers, duties, responsibilities or authorities of any person in relation to the child or access to the child?</Form.Label>
                     <div className="btn-radio inline-col">
-                      <Form.Check type="radio" name="powers" id="yesd" className="ps-0" label="Yes" />
-                      <Form.Check type="radio" name="powers" id="nod" label="No" />
+                      <Form.Check 
+                        type="radio" 
+                        name="powers" 
+                        id="yesd" 
+                        className="ps-0" 
+                        label="Yes"
+                        onChange={() => setChildDetails(prevState => ({
+                          ...prevState,
+                          has_court_orders: true
+                        }))} />
+                      <Form.Check 
+                        type="radio" 
+                        name="powers" 
+                        id="nod" 
+                        defaultChecked
+                        label="No"
+                        onChange={() => setChildDetails(prevState => ({
+                          ...prevState,
+                          has_court_orders: false,
+                          changes_described: ""
+                        }))} />
                     </div>
                     <Form.Text className="text-muted">
                       if ‘Yes’ please provide to the service for sighting.
                     </Form.Text>
                   </Form.Group>
                 </Col>
-                <Col md={12}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Please describe these changes and provide the contact details of any person given these powers: </Form.Label>
-                    <Form.Control as="textarea" rows={3} />
-                  </Form.Group>
-                </Col>
-                <Col md={12}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>
-                      Please note:
-                    </Form.Label>
-                    <p>1.	Bring the original court order/s for staff to see and a copy to attach to this enrolment form;
-                    </p>
-                    <p>2. If these orders:
-                      <p>a)	change the powers of a parent/guardian to:
-                      </p>
-                      <ul>
-                        <li>authorise the taking of the child outside the service by a staff member of the service;
-                        </li>
-                        <li>in the case of a family day care service, the taking of the child outside the family day educator’s residence or family day care venue by a
-                          family day educator,
-                        </li>
-                        <li>consent to the medical treatment of the child;
-                        </li>
-                        <li>request or permit the administration of medication to the child;
-                        </li>
-                        <li>collect the child from the service or family day care, AND/OR
-                        </li>
-                      </ul>
-                      <p>b)	give these powers to someone else</p>
-                    </p>
-                  </Form.Group>
-                </Col>
+                {
+                  childDetails.has_court_orders &&
+                  <>
+                    <Col md={12}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Please describe these changes and provide the contact details of any person given these powers: </Form.Label>
+                        <Form.Control 
+                          as="textarea" 
+                          rows={3}
+                          name="changes_described"
+                          onChange={(e) => setChildDetails(prevState => ({
+                            ...prevState,
+                            [e.target.name]: e.target.value
+                          }))} />
+                      </Form.Group>
+                    </Col>
+                    <Col md={12}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>
+                          Please note:
+                        </Form.Label>
+                        <p>1.	Bring the original court order/s for staff to see and a copy to attach to this enrolment form;
+                        </p>
+                        <p>2. If these orders:
+                          <p>a)	change the powers of a parent/guardian to:
+                          </p>
+                          <ul>
+                            <li>authorise the taking of the child outside the service by a staff member of the service;
+                            </li>
+                            <li>in the case of a family day care service, the taking of the child outside the family day educator’s residence or family day care venue by a
+                              family day educator,
+                            </li>
+                            <li>consent to the medical treatment of the child;
+                            </li>
+                            <li>request or permit the administration of medication to the child;
+                            </li>
+                            <li>collect the child from the service or family day care, AND/OR
+                            </li>
+                          </ul>
+                          <p>b)	give these powers to someone else</p>
+                        </p>
+                      </Form.Group>
+                    </Col>
+                  </>
+                }
               </Row>
             </div>
             {/* <ChildEnrollment3 /> */}
@@ -197,7 +253,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           id="yes" 
                           className="ps-0" 
                           label="Yes"
-                          onChange={() => setHealthInformation(prevState => ({
+                          onChange={() => setChildDetails(prevState => ({
                             ...prevState,
                             has_health_record: true
                           }))} />
@@ -207,7 +263,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           id="no" 
                           label="No"
                           defaultChecked
-                          onChange={() => setHealthInformation(prevState => ({
+                          onChange={() => setChildDetails(prevState => ({
                             ...prevState,
                             has_health_record: false
                           }))} />
@@ -255,7 +311,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                 </Row>
               </div>
 
-              <h2 className="title-xs mt-4 mb-4">Child’s immunization record R 162 (F)</h2>
+              <h2 className="title-xs mt-4 mb-4">Child's immunization record R 162 (F)</h2>
 
               <div className="grayback">
                 <Row>
@@ -263,8 +319,26 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Group className="mb-3">
                       <Form.Label>Has the child been immunized?</Form.Label>
                       <div className="btn-radio inline-col">
-                        <Form.Check type="radio" name="immunized" id="yesi" className="ps-0" label="Yes" />
-                        <Form.Check type="radio" name="immunized" id="noi" label="No" />
+                        <Form.Check 
+                          type="radio" 
+                          name="immunized" 
+                          id="yesi"
+                          className="ps-0" 
+                          label="Yes"
+                          onChange={() => setChildDetails(prevState => ({
+                            ...prevState,
+                            has_been_immunized: true
+                          }))} />
+                        <Form.Check 
+                          type="radio" 
+                          name="immunized" 
+                          id="noi" 
+                          label="No"
+                          defaultChecked
+                          onChange={() => setChildDetails(prevState => ({
+                            ...prevState,
+                            has_been_immunized: false
+                          }))} />
                       </div>
                       <Form.Text className="text-muted">
                         if ‘Yes’ please provide the details.
@@ -283,521 +357,1282 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         <div className="enrollment-form-sec">
           <Form onSubmit={submitFormData}>
             <div className="enrollment-form-column">
-              <h2 className="title-xs mb-4">Information about the child</h2>
+            { 
+              childDetails.has_been_immunized &&
+              <>
+                <h2 className="title-xs mb-4">Information about the child</h2>
 
-              <div className="grayback">
-                <p>A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
-              </div>
+                <div className="grayback">
+                  <p>A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
+                </div>
 
-              {/* <h2 className="title-xs mt-4 mb-4">Court orders relating to the child</h2> */}
+                {/* <h2 className="title-xs mt-4 mb-4">Court orders relating to the child</h2> */}
 
-              {/* <div className="grayback">
-                <ol>
-                  <li>Bring the original court order/s for staff to see and a copy to attach to this enrolment form;</li>
-                  <li>If these orders:<br />
-                    a)	change the powers of a parent/guardian to: <br />
-                    • authorise the taking of the child outside the service by a staff member of the service; <br />
-                    • in the case of a family day care service, the taking of the child outside the family day educator&rsquo;s residence or family day care venue by a family day educator, <br />
-                    • consent to the medical treatment of the child; <br />
-                    • request or permit the administration of medication to the child; <br />
-                    • collect the child from the service or family day care, AND/OR <br />
-                    b)	give these powers to someone else</li>
-                </ol>
-              </div> */}
+                {/* <div className="grayback">
+                  <ol>
+                    <li>Bring the original court order/s for staff to see and a copy to attach to this enrolment form;</li>
+                    <li>If these orders:<br />
+                      a)	change the powers of a parent/guardian to: <br />
+                      • authorise the taking of the child outside the service by a staff member of the service; <br />
+                      • in the case of a family day care service, the taking of the child outside the family day educator&rsquo;s residence or family day care venue by a family day educator, <br />
+                      • consent to the medical treatment of the child; <br />
+                      • request or permit the administration of medication to the child; <br />
+                      • collect the child from the service or family day care, AND/OR <br />
+                      b)	give these powers to someone else</li>
+                  </ol>
+                </div> */}
 
-              <h2 className="title-xs mt-4 mb-4">Child’s Immunisation Record</h2>
+                <h2 className="title-xs mt-4 mb-4">Child’s Immunisation Record</h2>
 
-              <div className="grayback">
-                <Table responsive="md" className="text-left">
-                  <thead>
-                    <tr>
-                      <th align="left">Immunisation <br /><small>(Valid from March 2008)</small></th>
-                      <th align="center">Birth</th>
-                      <th align="center">2 Months</th>
-                      <th align="center">4 Months</th>
-                      <th align="center">6 Months</th>
-                      <th align="center">12 Months</th>
-                      <th align="center">18 Months</th>
-                      <th align="center">4 Years</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td align="left">Hepatitis B</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="b1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="b2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="b3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="b4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="b5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="b6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="b7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="left">Diphtheria, tetanus and acellular pertussis (DTPa)</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="d1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="d2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="d3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="d4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="d5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="d6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="d7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="left">Haemophilus influenza (Type B)</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="h1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="h2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="h3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="h4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="h5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="h6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="h7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="left">Inactivated poliomyelitis (IPV)</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="p1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="p2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="p3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="p4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="p5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="p6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="p7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="left">Pneumococcal Conjugate (7vPVC)</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="c1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="c2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="c3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="c4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="c5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="c6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="c7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="left">Rotavirus</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="r1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="r2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="r3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="r4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="r5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="r6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="r7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="left">Measules, mumps an rubella (MMR)</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="m1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="m2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="m3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="m4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="m5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="m6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="m7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="left">Meningococcal C</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="me1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="me2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="me3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="me4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="me5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="me6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="me7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="left">Varicella (VZC)</td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="v1" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="v2" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="v3" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="v4" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="v5" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="v6" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                      <td align="center">
-                        <Form.Group>
-                          <div className="btn-checkbox">
-                            <Form.Check type="checkbox" id="v7" label="&nbsp;" />
-                          </div>
-                        </Form.Group>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="8">
-                        Additional immunizations for Aboriginals and Torres Strait Islander Children (If required)
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </div>
+                <div className="grayback">
+                  <Table responsive="md" className="text-left">
+                    <thead>
+                      <tr>
+                        <th align="left">Immunisation <br /><small>(Valid from March 2008)</small></th>
+                        <th align="center">Birth</th>
+                        <th align="center">2 Months</th>
+                        <th align="center">4 Months</th>
+                        <th align="center">6 Months</th>
+                        <th align="center">12 Months</th>
+                        <th align="center">18 Months</th>
+                        <th align="center">4 Years</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td align="left">Hepatitis B</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                name="hepatitis_b" 
+                                type="checkbox"
+                                val="1" 
+                                id="hepatitis_b1" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="hepatitis_b"
+                                type="checkbox" 
+                                id="hepatitis_b2" 
+                                val="2"
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="hepatitis_b"
+                                type="checkbox" 
+                                id="hepatitis_b3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="hepatitis_b"
+                                type="checkbox" 
+                                id="hepatitis_b4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="hepatitis_b"
+                                type="checkbox" 
+                                id="hepatitis_b5"
+                                val="5" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="hepatitis_b"
+                                type="checkbox" 
+                                id="hepatitis_b6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="hepatitis_b"
+                                type="checkbox" 
+                                id="hepatitis_b7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td align="left">Diphtheria, tetanus and acellular pertussis (DTPa)</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                name="diptheria" 
+                                type="checkbox" 
+                                id="diptheria1" 
+                                val="1"
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="diptheria"
+                                type="checkbox" 
+                                id="diptheria2"
+                                val="2" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                name="diptheria" 
+                                type="checkbox" 
+                                id="diptheria3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                name="diptheria" 
+                                type="checkbox" 
+                                id="diptheria4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                name="diptheria"
+                                type="checkbox" 
+                                id="diptheria5" 
+                                val="5"
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                name="diptheria" 
+                                type="checkbox" 
+                                id="diptheria6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="diptheria"
+                                type="checkbox" 
+                                id="diptheria7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td align="left">Haemophilus influenza (Type B)</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check 
+                                name="haemophilus"
+                                type="checkbox" 
+                                id="haemophilus1"
+                                val="1" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="haemophilus"
+                                type="checkbox" 
+                                id="haemophilus2"
+                                val="2" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="haemophilus"
+                                type="checkbox" 
+                                id="haemophilus3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="haemophilus"
+                                type="checkbox" 
+                                id="haemophilus4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="haemophilus"
+                                type="checkbox" 
+                                id="haemophilus5"
+                                val="5" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="haemophilus"
+                                type="checkbox" 
+                                id="haemophilus6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="haemophilus"
+                                type="checkbox" 
+                                id="haemophilus7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td align="left">Inactivated poliomyelitis (IPV)</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="inactivated_poliomyelitis"
+                                type="checkbox" 
+                                id="inactivated_poliomyelitis1"
+                                val="1" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="inactivated_poliomyelitis"
+                                type="checkbox" 
+                                id="inactivated_poliomyelitis2"
+                                val="2" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="inactivated_poliomyelitis"
+                                type="checkbox" 
+                                id="inactivated_poliomyelitis3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="inactivated_poliomyelitis"
+                                type="checkbox" 
+                                id="inactivated_poliomyelitis4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="inactivated_poliomyelitis"
+                                type="checkbox" 
+                                id="inactivated_poliomyelitis5"
+                                val="5" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="inactivated_poliomyelitis"
+                                type="checkbox" 
+                                id="inactivated_poliomyelitis6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="inactivated_poliomyelitis"
+                                type="checkbox" 
+                                id="inactivated_poliomyelitis7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td align="left">Pneumococcal Conjugate (7vPVC)</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="pneumococcal_conjugate"
+                                type="checkbox" 
+                                id="pneumococcal_conjugate1"
+                                val="1" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="pneumococcal_conjugate"
+                                type="checkbox" 
+                                id="pneumococcal_conjugate2"
+                                val="2" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="pneumococcal_conjugate"
+                                type="checkbox" 
+                                id="pneumococcal_conjugate3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="pneumococcal_conjugate"
+                                type="checkbox" 
+                                id="pneumococcal_conjugate4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="pneumococcal_conjugate"
+                                type="checkbox" 
+                                id="pneumococcal_conjugate5"
+                                val="5" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="pneumococcal_conjugate"
+                                type="checkbox" 
+                                id="pneumococcal_conjugate6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="pneumococcal_conjugate"
+                                type="checkbox" 
+                                id="pneumococcal_conjugate7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td align="left">Rotavirus</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="rotavirus"
+                                type="checkbox" 
+                                id="rotavirus1"
+                                val="1" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="rotavirus"
+                                type="checkbox" 
+                                id="rotavirus2"
+                                val="2" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="rotavirus"
+                                type="checkbox" 
+                                id="rotavirus3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="rotavirus"
+                                type="checkbox" 
+                                id="rotavirus4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="rotavirus"
+                                type="checkbox" 
+                                id="rotavirus5"
+                                val="5" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="rotavirus"
+                                type="checkbox" 
+                                id="rotavirus6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="rotavirus"
+                                type="checkbox" 
+                                id="rotavirus7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td align="left">Measules, mumps an rubella (MMR)</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="measules"
+                                type="checkbox" 
+                                id="measules1"
+                                val="1" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="measules"
+                                type="checkbox" 
+                                id="measules2"
+                                val="2" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="measules"
+                                type="checkbox" 
+                                id="measules3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="measules"
+                                type="checkbox" 
+                                id="measules4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="measules"
+                                type="checkbox" 
+                                id="measules5"
+                                val="5" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="measules"
+                                type="checkbox" 
+                                id="measules6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="measules"
+                                type="checkbox" 
+                                id="measules7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td align="left">Meningococcal C</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="meningococcal_c"
+                                type="checkbox" 
+                                id="meningococcal_c1"
+                                val="1" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="meningococcal_c"
+                                type="checkbox" 
+                                id="meningococcal_c2"
+                                val="2" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="meningococcal_c"
+                                type="checkbox" 
+                                id="meningococcal_c3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="meningococcal_c"
+                                type="checkbox" 
+                                id="meningococcal_c4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="meningococcal_c"
+                                type="checkbox" 
+                                id="meningococcal_c5"
+                                val="5" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="meningococcal_c"
+                                type="checkbox" 
+                                id="meningococcal_c6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="meningococcal_c"
+                                type="checkbox" 
+                                id="meningococcal_c7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                    
+                      <tr>
+                        <td align="left">Varicella (VZC)</td>
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="varicella"
+                                type="checkbox" 
+                                id="varicella1"
+                                val="1" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="varicella"
+                                type="checkbox" 
+                                id="varicella2"
+                                val="2" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="varicella"
+                                type="checkbox" 
+                                id="varicella3"
+                                val="3" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="varicella"
+                                type="checkbox" 
+                                id="varicella4"
+                                val="4" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="varicella"
+                                type="checkbox" 
+                                id="varicella5"
+                                val="5" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="varicella"
+                                type="checkbox" 
+                                id="varicella6"
+                                val="6" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                        
+                        <td align="center">
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                            <Form.Check 
+                                name="varicella"
+                                type="checkbox" 
+                                id="varicella7"
+                                val="7" 
+                                label="&nbsp;"
+                                onChange={(e) => {
+                                  setChildImmunisationRecord(prevState => ({
+                                    ...prevState,
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                  }));
+                                }} />
+                            </div>
+                          </Form.Group>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td colspan="8">
+                          Additional immunizations for Aboriginals and Torres Strait Islander Children (If required)
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
+              </>
+            }
 
               {/* <h3 className="title-xs mt-4 mb-4">Please tick the type of care you require</h3>
 
@@ -826,7 +1661,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               <div className="enrollment-form-sec">
                 <Form onSubmit={submitFormData}>
                   <div className="enrollment-form-column">
-                    <h2 className="title-xs mb-4">Chid’s Medical Information</h2>
+                    <h2 className="title-xs mb-4">Child's Medical Information</h2>
 
                     <div className="grayback">
                       <div className="single-col">
