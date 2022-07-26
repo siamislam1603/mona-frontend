@@ -68,7 +68,7 @@ function AddFormBuilder(props) {
         .then((res) => res.json())
         .then((res) => {
           navigate('/form/setting', {
-            state: { form_name: form?.form_name },
+            state: { id: form?.id },
           });
         });
     }
@@ -111,7 +111,7 @@ function AddFormBuilder(props) {
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
-                          navigate('/form/add');
+                          navigate('/form');
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
