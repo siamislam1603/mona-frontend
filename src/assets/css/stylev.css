@@ -2826,3 +2826,43 @@ li.child_tag {
 .dropdown-item{
     padding: 0.01rem 1rem !important;
 }
+
+
+
+
+
+
+.previewTitle{
+    display:'flex';
+    align-items: center;
+    justify-content: space-between;
+}
+
+.previewTitle > div{
+    width:auto
+}
+.userBox *{
+    margin:0;
+}
+.userBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 300px;
+    background: #C4C4C426;
+    padding: 8px 15px;
+    border-radius: 4px;
+}
+.userBox > div{
+    display:flex;
+    align-items: center;
+}
+
+.userBox .user-role{
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 19px;
+    color: rgba(51, 51, 51, 0.5);
+}
