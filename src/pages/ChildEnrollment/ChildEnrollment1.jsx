@@ -71,7 +71,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       localStorage.setItem('enrolled_child_id', childId);
 
       // SAVING PARENT DETAIL
-      response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId}, {
+      let user_id = localStorage.getItem('user_id');
+      response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId, user_parent_id: user_id}, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -81,7 +82,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       if(response.status === 201 && response.data.status === "success") {
         let { parent } = response.data;
         localStorage.setItem('enrolled_parent_id', parent.id);
-        nextStep();
+
+        // HIDING THE DIALOG BOX FROM DASHBOARD
+        let user_id = localStorage.getItem('user_id');
+        response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
+
+        if(response.status === 201 && response.data.status === "success") {
+          nextStep();
+        }
       }
     }
   };
