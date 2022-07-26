@@ -24,9 +24,6 @@ const SignIn = () => {
   const verifyUser = async (data) => {
     const res = await axios.post(`${BASE_URL}/auth/login`, data);
 
-
-
-
     if (res.status === 200 && res.data.status === 'success') {
 
 
@@ -36,7 +33,6 @@ const SignIn = () => {
       localStorage.setItem('user_name', res.data.user.name);
       localStorage.setItem('email', res.data.user.email);
       localStorage.setItem('franchisee_id', res.data.user.franchisee_id);
-
 
       let token = res.data.accessToken;
       const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
@@ -49,26 +45,34 @@ const SignIn = () => {
         let { permissionsObject } = response.data;
         
         console.log('PERMISSIONS OBJECT:', permissionsObject)
-        // setPermissionList(permissionsObject.filter(permission => permission.controller.show_in_menu === true));
-        // let active_menu_list = permissionsObject.filter(permission => permission.controller.show_in_menu === true)
-
         localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
       }
 
+      console.log('ROLE:', res.data.user.role);
+      console.log('IS LOGGED IN?', res.data.user.isLoggedIn);
 
-      if (res.data.user.role === 'franchisor_admin')
-      {
+      if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/franchisor-dashboard';
         localStorage.setItem('selectedFranchisee',"All")
-      }
-      else if (res.data.user.role === 'coordinator')
+      } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 0) {
+        window.location.href = '/change-password';
+      } else if (res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/coordinator-dashboard';
-      else if (res.data.user.role === 'franchisee_admin')
+      } else if(res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 0) {
+        window.location.href = '/change-password';
+      } else if (res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/franchisee-dashboard';
-      else if (res.data.user.role === 'educator')
+      } else if(res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 0) {
+        window.location.href = '/change-password';
+      } else if (res.data.user.role === 'educator' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/educator-dashboard';
-      else if (res.data.user.role === 'guardian')
+      } else if(res.data.user.role === 'educator' && res.data.user.isLoggedIn === 0) {
+        window.location.href="/change-password";
+      } else if (res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/parents-dashboard';
+      } else if(res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 0) {
+        window.location.href="/change-password";
+      }
     } else if (res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);
     }

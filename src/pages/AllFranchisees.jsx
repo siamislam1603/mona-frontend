@@ -51,10 +51,11 @@ const AllFranchisees = () => {
         user: '',
         location: [],
     });
-    const [search,setSearch]=useState('');
+    const [search, setSearch] = useState('');
 
     const [franchiseeData, setFranchiseeData] = useState();
     const [topSuccessMessage, setTopSuccessMessage] = useState();
+    const [deleteResponseMessage, setDeleteResponseMessage] = useState(null);
 
     const handleCancelFilter = () => {
         setFilter({});
@@ -67,38 +68,80 @@ const AllFranchisees = () => {
     // const onFilter = debounce(() => {
     //     fetchUserDetails();
     //   }, 200);
+    const deleteAlert = (id) =>{
+        if(window.confirm('Are you sure you want to delete?')){
+            deleteFranchisees(id);
+        }
+    }
+    const deleteFranchisees = async(id) =>{
+        console.log("The id",id)
+        let response = await axios.patch(`${BASE_URL}/role/franchisee/delete/${id}`,{
+            isDeleted:1
+        }, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+        if(response.status === 200 && response.data.status==="success" ){
+            setDeleteResponseMessage("Franchisee Delete")
+            fetchFranchisees()
+
+        }
+      
+        else{
+            console.log("The error res",response)
+        }
+       
+    }
 
 
     const fetchFranchisees = async () => {
         let token = localStorage.getItem('token')
+        let role = localStorage.getItem('user_role')
+        let id = localStorage.getItem('franchisee_id')
+        console.log(role);
+        console.log("role");
+        console.log(id);
+        console.log("id");
+        let api_url = '';
+        if(role === "franchisor_admin") {
+            api_url = `${BASE_URL}/role/franchisee/users`;
+            if (search) {
+                api_url = `${BASE_URL}/role/franchisee/users?search=${search}`;
+              }
+        } else{
+            api_url = `${BASE_URL}/role/franchisee/${id}`;
+            if (search) {
+                api_url = `${BASE_URL}/role/franchisee/${id}?search=${search}`;
+            }
 
-        let api_url = `${BASE_URL}/role/franchisee/users`;
-        if (search) {
-            api_url = `${BASE_URL}/role/franchisee/users?search=${search}`;
-          }
-
+        }
+    
         const response = await axios.get(api_url, {
             headers: {
                 "Authorization": `Bearer ${token}` 
             }
         });
 
-
-
+        console.log('SERVER RESPONSE:', response);
         if(response.status === 200 && response.data.status === "success") {
             const { franchisees } = response.data;
-            setFranchiseeData(franchisees.map(franchisee => ({
-                franchisee: {
-                    id: franchisee.id,
-                    name: franchisee.franchisee_name,
-                    location: franchisee.city + ", " + franchisee.state,
-                    educators: 
-                        franchisee.users.filter(user => user.role === 'educator').length,
-                    children: 
-                        franchisee.users.filter(user => user.role === 'child').length
-                },
-            })));
+            console.log('FRANCHISEE LIST:', franchisees);
+            let temp = franchisees.map(franchisee => ({
+                id: franchisee.id,
+                name: franchisee.franchisee_name,
+                location: franchisee.city + ", " + franchisee.state,
+                educators: 
+                    franchisee.users.filter(user => user.role === 'educator').length,
+                children: 
+                    franchisee.users.filter(user => user.role === 'child').length,
+                isDeleted:franchisee.isDeleted 
+            }));
+            // temp = temp.filter((data) => data.isDeleted === 0);
+            let tempData = temp.filter((data) => data.franchisee.isDeleted === null || data.franchisee.isDeleted === 0);
+            setFranchiseeData(tempData)
         }
+      
     };
 
     useEffect(() => {
@@ -120,6 +163,11 @@ const AllFranchisees = () => {
         fetchFranchisees();
         console.log("searched datata",search)
     }, [search]);
+    useEffect(() =>{
+        setTimeout(() => {
+            setDeleteResponseMessage(null)
+        }, 3000);
+    },[deleteResponseMessage])
     
     return (
         <div>
@@ -136,6 +184,9 @@ const AllFranchisees = () => {
                                     <div className="user-management-sec">
                                     {
                                         topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                                    } 
+                                     {
+                                        deleteResponseMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{deleteResponseMessage}</p>
                                     } 
                                         <>
                                             <header className="title-head">
@@ -300,21 +351,38 @@ const AllFranchisees = () => {
                                                 </div>
                                             </header>
                                             <Row>
+                                                {console.log("checking franchise", franchiseeData)    }
                                                 {
+
                                                     franchiseeData && franchiseeData.map(data => {
                                                         return (
-                                                            <Col key={data.franchisee.id} sm={6} md={4} className="my-2">
+                                                            <Col key={data.id} sm={6} md={4} className="my-2">
                                                                 <Card className="text-center Card_design">
                                                                     <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                                        <div className="edit-ico"><a href={`/edit-franchisees/${data.franchisee.id}`}><img src="../img/edit-ico.png" alt="" /></a></div>
+                                                                        {/* <div className="edit-ico"><a href={`/edit-franchisees/${data.id}`}><img src="../img/edit-ico.png" alt="" /></a></div> */}
+                                                                        
+                                                                        
                                                                         <img src={CardImg} alt="" width="65px" />
                                                                         <div className="p-1">
                                                                             <Card.Title className="mb-0 Text_design"
-                                                                            >{data.franchisee.name}</Card.Title>
+                                                                            >{data.name}</Card.Title>
                                                                             <Card.Text id="Down_Text">
-                                                                                {data.franchisee.location}
+                                                                                {data.location}
                                                                             </Card.Text>
                                                                         </div>
+                                                                        <div className="cta-col">
+                                                                            <Dropdown>
+                                                                                <Dropdown.Toggle variant="transparent" id="ctacol">
+                                                                                <img src="../img/dot-ico.svg" alt="" />
+                                                                                </Dropdown.Toggle>
+                                                                                <Dropdown.Menu>
+                                                                                <Dropdown.Item onClick={() =>{
+                                                                                    deleteAlert(data.id)
+                                                                                }}>Delete</Dropdown.Item>
+                                                                                <Dropdown.Item href={`/edit-franchisees/${data.id}`}>Edit</Dropdown.Item>
+                                                                                </Dropdown.Menu>
+                                                                            </Dropdown>
+                                                                            </div>
                                                                         {/*<div style={{ paddingLeft: "2rem" }}>
                                                                              <b><AiOutlineArrowRight className="Arrow_icon" /></b> 
                                                                         </div>*/}
@@ -323,11 +391,11 @@ const AllFranchisees = () => {
                                                                         <div className="d-flex justify-content-around">
                                                                             <div className="d-flex justify-content-between align-items-center">
                                                                                 <p className="mb-0 px-2 Footer_text">Educators</p>
-                                                                                <p className="mb-0 px-2 Footer_textTow">{data.franchisee.educators < 10 ? `0${data.franchisee.educators}` : data.franchisee.educators}</p>
+                                                                                <p className="mb-0 px-2 Footer_textTow">{data.educators < 10 ? `0${data.educators}` : data.educators}</p>
                                                                             </div>
                                                                             <div className="d-flex justify-content-between align-items-center">
                                                                                 <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                                <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>{data.franchisee.children < 10 ? `0${data.franchisee.children}` : data.franchisee.children}</p>
+                                                                                <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>{data.children < 10 ? `0${data.children}` : data.children}</p>
                                                                             </div>
                                                                         </div>
                                                                     </Card.Footer>

@@ -33,6 +33,23 @@ const timeqty = [
   },
 ];
 
+// HELPER FUNCTION FOR TRAINING SETTINGS VALIDATION
+const validateTrainingSettings = (trainingSettings) => {
+  let errors = {};
+  let {
+    start_date,
+    start_time
+  } = trainingSettings;
+
+  if(!start_date)
+    errors.start_date = "Choose a start date!";
+
+  if(!start_time)
+    errors.start_time = "Choose a start time!";
+
+  return errors;
+}
+
 const AddNewTraining = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -55,7 +72,7 @@ const AddNewTraining = () => {
     category_id: "",
     time_required_to_complete: "" 
   });
-  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [], is_applicable_to_all: false, assigned_franchisee: [], assigned_users: [] });
+  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [], is_applicable_to_all: false, assigned_franchisee: [], assigned_users: [], start_date: "", start_time: "" });
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -64,6 +81,7 @@ const AddNewTraining = () => {
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
+  const [trainingSettingErrors, setTrainingSettingErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
 
   // FETCHING FRANCHISEE LIST
@@ -239,14 +257,16 @@ const AddNewTraining = () => {
     // window.scrollTo(0, 0);
     
     let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles); 
-
+    console.log(errorObj);
     if(Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
       setErrors({});
-      if(Object.keys(trainingSettings).length === 4) {
+      // if(Object.keys(trainingSettings).length === 0) {
+      //   setSettingsModalPopup(true);
+      // }
+      if(!allowSubmit)
         setSettingsModalPopup(true);
-      }
 
       if(settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
         let data = new FormData();
@@ -290,8 +310,9 @@ const AddNewTraining = () => {
   }, [trainingSettings.assigned_franchisee.length > 0]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  // trainingData && console.log('TRAINING DATA:', trainingData);
-
+  trainingData && console.log('TRAINING DATA:', trainingData);
+  // videoTutorialFiles && console.log('VIDEO TUTORIAL FILE:', videoTutorialFiles);
+  settingsModalPopup && console.log('Setting Modal Popul', settingsModalPopup);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -323,9 +344,15 @@ const AddNewTraining = () => {
                           <Form.Control
                             type="text"
                             name="title"
-                            onChange={handleTrainingData}
+                            onChange={(e) => {
+                              handleTrainingData(e);
+                              setErrors(prevState => ({
+                                ...prevState,
+                                title: null
+                              }));
+                            }}
                           />
-                          { errors.title && <span className="error">{errors.title}</span> }
+                          { errors.title !== null && <span className="error">{errors.title}</span> }
                         </Form.Group>
                       </Col>
 
@@ -336,12 +363,17 @@ const AddNewTraining = () => {
                             closeMenuOnSelect={true}
                             components={animatedComponents}
                             options={trainingCategory}
-                            onChange={(event) =>
+                            onChange={(event) => {
                               setTrainingData((prevState) => ({
                                 ...prevState,
                                 category_id: event.id,
-                              }))
-                            }
+                              }));
+
+                              setErrors(prevState => ({
+                                ...prevState,
+                                category_id: null
+                              }));
+                            }}
                           />
                           { errors.category_id && <span className="error">{errors.category_id}</span> }
                         </Form.Group>
@@ -354,9 +386,15 @@ const AddNewTraining = () => {
                             as="textarea"
                             name="description"
                             rows={3}
-                            onChange={handleTrainingData}
+                            onChange={(e) => {
+                              handleTrainingData(e);
+                              setErrors(prevState => ({
+                                ...prevState,
+                                description: null
+                              }));
+                            }}
                           />
-                          { errors.description && <span className="error">{errors.description}</span> }
+                          { errors.description !== null && <span className="error">{errors.description}</span> }
                         </Form.Group>
                       </Col>
 
@@ -367,7 +405,13 @@ const AddNewTraining = () => {
                             as="textarea"
                             name="meta_description"
                             rows={3}
-                            onChange={handleTrainingData}
+                            onChange={(e) => {
+                              handleTrainingData(e);
+                              setErrors(prevState => ({
+                                ...prevState,
+                                meta_description: null
+                              }));
+                            }}
                           />
                           { errors.meta_description && <span className="error">{errors.meta_description}</span> }
                         </Form.Group>
@@ -380,12 +424,17 @@ const AddNewTraining = () => {
                             <Form.Control
                               style={{ flex: 6 }}
                               type="number"
-                              onChange={(event) =>
+                              onChange={(event) => {
                                 setTrainingData((prevState) => ({
                                   ...prevState,
                                   time_required_to_complete: parseInt(event.target.value),
-                                }))
-                              }
+                                }));
+
+                                setErrors(prevState => ({
+                                  ...prevState,
+                                  time_required_to_complete: null
+                                }));
+                              }}
                             />
                             <Select
                               style={{ flex: 3 }}
@@ -404,7 +453,7 @@ const AddNewTraining = () => {
                               }
                             />
                           </div>
-                          { errors.time_required_to_complete && <span className="error">{errors.time_required_to_complete}</span> }
+                          { errors.time_required_to_complete !== null && <span className="error">{errors.time_required_to_complete}</span> }
                         </Form.Group>
                         {/* <Form.Control.Feedback type="invalid">
                             {errors.select_hour}
@@ -418,9 +467,10 @@ const AddNewTraining = () => {
                           <Form.Label>Upload Cover Image :</Form.Label>
                           <DropOneFile
                             onSave={setCoverImage}
+                            setErrors={setErrors}
                             // setTrainingData={setTraining}
                           />
-                        { errors.coverImage && <span className="error mt-2">{errors.coverImage}</span> } 
+                        { errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span> } 
                         </Form.Group>
                       </Col>
 
@@ -488,8 +538,15 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="date"
                     name="start_date"
-                    onChange={handleTrainingSettings}
+                    onChange={(e) => {
+                      handleTrainingSettings(e);
+                      setTrainingSettingErrors(prevState => ({
+                        ...prevState,
+                        start_date: null
+                      })); 
+                    }}
                   />
+                  { trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span> }
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-sm-0">
@@ -498,8 +555,15 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="time"
                     name="start_time"
-                    onChange={handleTrainingSettings}
+                    onChange={(e) => {
+                      handleTrainingSettings(e);
+                      setTrainingSettingErrors(prevState => ({
+                        ...prevState,
+                        start_time: null
+                      }));
+                    }}
                   />
+                  { trainingSettingErrors.start_time !== null && <span className="error">{trainingSettingErrors.start_time}</span> }
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -508,7 +572,13 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="date"
                     name="end_date"
-                    onChange={handleTrainingSettings}
+                    onChange={(e) => {
+                      handleTrainingSettings(e);
+                      setTrainingSettingErrors(prevState => ({
+                        ...prevState,
+                        start_time: null
+                      }));
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -767,8 +837,14 @@ const AddNewTraining = () => {
             Cancel
           </Button>
           <Button variant="primary" onClick={() => {
-            setAllowSubmit(true);
-            setSettingsModalPopup(false)
+            let settingErrors = validateTrainingSettings(trainingSettings);
+            if(Object.keys(settingErrors).length > 0) {
+              setTrainingSettingErrors(settingErrors);
+            } else {
+              console.log('CLOSING POPUP');
+              setAllowSubmit(true);
+              setSettingsModalPopup(false);
+            }
           }}>
             Save Settings
           </Button>

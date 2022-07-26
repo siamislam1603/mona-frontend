@@ -4,16 +4,16 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import DragDropCrop from '../components/DragDropCrop';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { Link } from 'react-router-dom';
-import Signature from './InputFields/Signature';
+import UserSignature from './InputFields/UserSignature';
 import moment from 'moment';
 import DragDropSingle from '../components/DragDropSingle';
+import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
@@ -59,8 +59,15 @@ const EditUser = () => {
   // DIALOG STATES
   const [showConsentDialog, setShowConsentDialog] = useState(false);
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [showUserAgreementDialog, setShowUserAgreementDialog] = useState(false);
   const [signatureImage, setSignatureImage] = useState(null);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [signatureUploaded, setSignatureUploaded] = useState(false);
+  const [loader, setLoader] = useState(false);
+  const [createUserModal, setCreateUserModal] = useState(false);
+
+  // ERROR HANDLING
+  const [errors, setErrors] = useState({});
 
   // FETCHES THE DATA OF USER FOR EDITING
   const fetchEditUserData = async () => {
@@ -70,7 +77,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    console.log("The reponse", response)
     if(response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
       setEditUserData(user);
@@ -79,6 +86,7 @@ const EditUser = () => {
 
   const copyDataToState = () => {
     setFormData(prevState => ({
+      id: editUserData?.id,
       fullname: editUserData?.fullname,
 
       role: editUserData?.role,
@@ -96,23 +104,24 @@ const EditUser = () => {
       trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories?.includes(category.id + "")),
 
       professionalDevCategories: editUserData?.professional_development_categories?.map(d => parseInt(d)),
-      professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories.includes(user.id + "")),
+      professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories?.includes(user.id + "")),
 
       coordinator: editUserData?.coordinator,
 
       businessAssets: editUserData?.business_assets?.map(d => parseInt(d)),
-      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets.includes(user.id + '')),
+      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets?.includes(user.id + '')),
       
       terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD'),
-      termination_reach_me: false
+      termination_reach_me: editUserData?.termination_reach_me,
+      user_signature: editUserData?.user_signature,
+      termination_date: editUserData?.termination_date
     }));
+    setCroppedImage(editUserData?.profile_photo);
   }
 
   // CREATES NEW USER INSIDE THE DATABASE
   const updateUserDetails = async (data) => {
     const token = localStorage.getItem('token');
-    // const response = await axios.post(`https://httpbin.org/anything`, data);
-    // console.log('RESPONSE:', response);
     const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, data, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -120,8 +129,33 @@ const EditUser = () => {
     });
     
     if (response.status === 200 && response.data.status === 'success') {
-      localStorage.setItem('success_msg', 'User updated successfully!');
-      window.location.href = '/user-management';
+      console.log('USER EDITED SUCCESSFULLY!');
+      if(signatureImage) {
+        let data = new FormData();
+        const blob = await fetch(signatureImage).then((res) => res.blob());
+        console.log('BLOB:', blob);
+        data.append('image', blob);
+        let signatureImageResponse = await axios.put(`${BASE_URL}/auth/${response.data.userId}`, data, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
+          setCreateUserModal(false);
+          setLoader(false)
+          localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
+          window.location.href = '/user-management';
+          setSignatureUploaded(true);
+        } else if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "fail") {
+          setTopErrorMessage(signatureImageResponse.data.msg);
+        }
+      }
+
+      if(signatureUploaded !== true) {
+        localStorage.setItem('success_msg', 'User updated successfully!');
+        window.location.href = '/user-management';
+      }
     } else if (response.status === 200 && response.data.status === 'fail') {
       setTopErrorMessage(response.data.msg);
     }
@@ -146,21 +180,31 @@ const EditUser = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let data=new FormData();
+    let data = new FormData();
     trainingDocuments?.map(async(item)=>{
       const blob=await fetch(await toBase64(item)).then((res) => res.blob());
       data.append('images', blob);
     })
 
-    const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-    data.append('images', blob);
+    let blob;
+    if(typeof croppedImage === "object") {
+      console.log('Image Type: Object');
+      blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+      data.append('images', blob);
+    } else {
+      console.log('Image Type: String');
+      blob = croppedImage
+      data.append('profile_photo', blob);
+    }
     
     Object.keys(formData)?.map((item,index) => {
       data.append(item,Object.values(formData)[index]);
-    })
+    });
 
     trainingDocuments.map(doc => data.append('images', doc));
 
+    setCreateUserModal(true);
+    setLoader(true)
     updateUserDetails(data);
   };
 
@@ -287,7 +331,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    console.log("The franchisee data",response)
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 
@@ -347,13 +391,13 @@ const EditUser = () => {
   // }, [selectedFranchisee]);
 
   useEffect(() => {
-    console.log('Fetching cooordinator data');
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
-  formData && console.log('FRANCHISEE ID:', formData);
-  signatureImage && console.log('Signature Image:', signatureImage);
-  croppedImage && console.log('Cropped Image:', croppedImage);
+  editUserData && console.log('EDIT USER DATA:', editUserData);
+  formData && console.log('FORM DATA:', formData);
+  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
+
   return (
     <>
       <div id="main">
@@ -557,6 +601,8 @@ const EditUser = () => {
                               placeholder={"Which Franchisee?"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
+                              // isMulti
+                              value={formData?.franchiseeObj || franchiseeData?.filter(data => parseInt(data.id) === parseInt(formData?.franchisee_id))}
                               onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -583,13 +629,19 @@ const EditUser = () => {
                               isDisabled={formData.role !== 'educator'}
                               placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
                               closeMenuOnSelect={true}
+                              value={formData?.coordinatorObj || coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
                               options={coordinatorData}
-                              onChange={(e) =>
+                              onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   coordinator: e.id,
+                                }));
+
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  coordinatorObj: e
                                 }))
-                              }
+                              }}
                             />
                           </Form.Group>
 
@@ -621,11 +673,30 @@ const EditUser = () => {
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
                               type="date"
+                              disabled={true}
                               name="terminationDate"
                               value={formData.terminationDate}
                               onChange={handleChange}
                             />
-                            <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
+                            {
+                              (formData.termination_reach_me === false  || formData.termination_reach_me === null) &&
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
+                              <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
+                            }
+                            {
+                              formData.termination_reach_me === true &&
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
+                              <div>
+                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
+                                <img style={{ width: "100px", height: "auto" }}src={`${formData.user_signature}`} alt="" />
+                              </div>
+                              }
+                              {
+                                (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') && formData?.termination_reach_me === true && 
+                                <div>
+                                  <p style={{ fontSize: "14px", marginTop: '10px' }}>Consent Form: <strong style={{ color: '#C2488D', cursor: 'pointer' }} onClick={() => setShowUserAgreementDialog(true)}>Click Here!</strong></p>
+                                </div>
+                              }
                           </Form.Group>
 
                           <Col md={12}>
@@ -648,6 +719,44 @@ const EditUser = () => {
               </div>
             </div>
           </Container>
+          {
+            <Modal
+              size="lg"
+              show={showUserAgreementDialog}
+              onHide={() => setShowUserAgreementDialog(false)}>
+              <Modal.Header>
+                <Modal.Title>Termination Agreement</Modal.Title>
+              </Modal.Header>
+
+              <Modal.Body>
+                <Row>
+                  <p><strong>To whom it may concern,</strong></p>
+                  
+                  <div className="mt-2">
+                    <p style={{ fontSize: "16px" }}>I hereby formally provide notice of my intention to terminate my arrangement with Mona.</p>
+                    <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of <strong style={{ color: '#C2488D' }}>{moment(formData.termination_date).format('DD/MM/YYYY')}</strong>.</p>
+                  </div>
+
+                  <p></p>
+
+                  <p class="form-check-label" for="flexCheckDefault">
+                    I am happy to be reached if you have any questions.
+                  </p>
+
+                  <img style={{ width: '200px', height: 'auto' }} src={formData.user_signature} alt="consented user signature" />
+                </Row>
+              </Modal.Body>
+
+              <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
+              <div class="text-center">
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => setShowUserAgreementDialog(false)}>Close</button>
+              </div>
+              </Modal.Footer>
+            </Modal>
+          }
           {
             <Modal
               size="lg"
@@ -722,7 +831,7 @@ const EditUser = () => {
 
               <Modal.Body>
                 <Row>
-                  <Signature
+                  <UserSignature
                     field_label="Signature:"
                     onChange={setSignatureImage} />
                 </Row>
@@ -738,6 +847,33 @@ const EditUser = () => {
               </Modal.Footer>
             </Modal>
           }
+          {
+                createUserModal && 
+                <Modal
+                show={createUserModal}
+                onHide={() => setCreateUserModal(false)}>
+                    <Modal.Header>
+                        <Modal.Title>
+                        Creating User
+                        </Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <div className="create-training-modal" style={{ textAlign: 'center' }}>
+                        <p>User details are being updated!</p>
+                        <p>Please Wait...</p>
+                        </div>
+                    </Modal.Body>
+
+                    <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    {
+                        loader === true && <div>
+                        <ReactBootstrap.Spinner animation="border" />
+                        </div>
+                    }
+                    </Modal.Footer>
+                </Modal>
+            }
         </section>
       </div>
     </>

@@ -8,27 +8,54 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import AnnouncementVideo from "./AnnouncementVideo";
 
 const MyAnnouncements = () => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
   const [myAnnouncement,setmyAnnouncement] = useState([]);
-  const {id} = useParams
+  // const {id} = useParams
   const myAnnouncementData = async() =>{
     let token = localStorage.getItem('token')
-    let userid= localStorage.getItem("user_id")
-    const response = await axios.get(`${BASE_URL}/announcement/myAnnouncement/${userid}`, {
+    let id= localStorage.getItem("user_id")
+    console.log("sending response");
+    const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
      })
      if(response.status === 200) {
-        setmyAnnouncement(response.data.createdAnnouncement)
+        setmyAnnouncement(response.data.data.all_announcements)
      }
+  }
+  const deleteAnnouncement = async (id) =>{
+    const token = localStorage.getItem('token');
+    const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }); 
+    console.log("The response after delete",response)
+    if(response.status === 200){
+        console.log("Delete succussfully")
+        myAnnouncementData()
+
+    }
+  
   }
   const userName = localStorage.getItem("user_name");
   const userROle = localStorage.getItem("user_role")
+  const getRelatedFileName = (str) => {
+    let arr = str.split("/");
+    let fileName = arr[arr.length - 1].split("_")[0];
+    let ext =arr[arr.length-1].split(".")[1]
+    let name = fileName.concat(".",ext)
+    return name;
+  }
   useEffect(() =>{
     myAnnouncementData()
   },[])
+ 
   return (
     <div className="announcement-accordion">
         <h1> My Announecment</h1>
@@ -47,9 +74,17 @@ const MyAnnouncements = () => {
                         <img src="../img/dot-ico.svg" alt=""/>
                       </NavLink>
                    </Dropdown.Toggle> */}
-                 <div className="date">
-                  <a href={`/edit-announcement/${data.id}`}><img src="../img/editPen.png" alt=""/></a></div>
-              </div>
+                     <Dropdown>
+                                  <Dropdown.Toggle id="extrabtn" className="ctaact">
+                                    <img src="../img/dot-ico.svg" alt=""/>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>
+                                    <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                
+            </div>
             </div>
           </Accordion.Header>
           <Accordion.Body>
@@ -58,16 +93,32 @@ const MyAnnouncements = () => {
                 <div className="head">Description :</div>
               </Col>
               <Col xl={10} lg={9}>
-                <div className="cont"><p> {data.meta_description}</p></div>
+                {/* <div className="cont"><p> {data.meta_description}</p></div> */}
+                <div
+                    dangerouslySetInnerHTML={{
+                    __html: data.meta_description
+                      ? data.meta_description
+                       : null,
+                      }}
+                   />
               </Col>
             </Row>
             <Row>
               <Col md={4}>
                 <div className="video-col">
-                  <a href="/" className="vid-col">
-                    <img src="../img/video-pic.jpg" alt="" />
-                    <span className="caption">Regarding Submission of Documents of all classes students admitted in AY 2021-22</span>
-                  </a>
+                {data.announcement_files.map((detail,index) =>(
+                  <>
+                      {detail.fileType == ".mp4" && !detail.is_deleted  ? (
+                                 <AnnouncementVideo 
+                                      data={detail}
+                                      title={`Training Video ${index + 1}`}
+                                                // duration={trainingDetails.completion_time} 
+                                        fun={handleClose}/>
+                                   ):(
+                                       null
+                                   )}
+                       </>
+                     ))}
                 </div>
               </Col>
               <Col md={8}>
@@ -83,10 +134,14 @@ const MyAnnouncements = () => {
                 <div className="head">Related Files :</div>
                 <div className="cont">
                   <div className="related-files">
-                    <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                    <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                    <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                    <div className="item"><a href=""><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
+                  {data.announcement_files.map((detail,index) =>(
+                      <>
+                        {detail.fileType !== ".mp4" && !detail.is_deleted ?(
+                            <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
+                              <p>{getRelatedFileName(detail.file)}</p>
+                             <small>Added Today</small></span></a></div>
+                              ):(null)} </>
+                        ))}
                   </div>
                 </div>
               </Col>

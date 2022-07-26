@@ -5,35 +5,57 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import WelcomeMsg from "../components/WelcomeMsg";
 import validateResetPassword from "../helpers/validateResetPassword";
 import { Link } from 'react-router-dom';
+import axios from "axios";
+import { BASE_URL } from "../components/App";
 
 const ForgotPassword = () => {
   const initialFields = {
     email:''
   }
-  const [topErrorMessage, setTopErrorMessage] = useState('');
+  const [topErrorMessage, setTopErrorMessage] = useState(null);
+  const [topMessage,setTopMessage] = useState(null);
   const [fields, setFields] = useState(initialFields);
   const { email} = fields;
   const [formErrors, setFormErrors] = useState([]);
 
-  function ValidateEmail(mail) 
-      {
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test())
-        {
-          return (true)
-        }
-          alert("You have entered an invalid email address!")
-          return (false)
-      }
     const handleChange = (e) =>{
       const {name,value} = e.target;
       setFields({
         ...fields,
         [name]:value
       })
+      setFormErrors(prevState => ({
+        ...prevState,
+        validemail:null
+    }));
+    }
+
+    const sendLink =  async() =>{
+      try {
+        let response = await axios.get(`${BASE_URL}/auth/forgotPassword/${email}`)
+        console.log("The response",response)
+       if(response.status === 200){
+          setTopMessage("Email sent Please check your email Address")
+          console.log("The success")
+      }
+      
+      } catch (error) {
+        console.log("The error",)
+        setTopErrorMessage(error.response.data.msg);
+      }
     }
     const handleSubmit = (e) =>{
       e.preventDefault();
-      setFormErrors(validateResetPassword(fields));
+      let errObj = validateResetPassword(fields);
+      console.log("The handle Submit")
+      if(Object.keys(errObj).length>0){
+        setFormErrors(errObj)
+      }
+      else{
+        setTopMessage(null)
+        setTopErrorMessage(null)
+        sendLink()
+      }
     }  
   return (
     <>
@@ -49,6 +71,9 @@ const ForgotPassword = () => {
                   <p> Forgot Password</p>
                 </div>
                 
+                  {topMessage && <p className="alert alert-success">{topMessage}</p>} 
+                  {topErrorMessage && <p className="alert alert-danger">{topErrorMessage}</p>}
+                
                 <Form className="login_form">
                   <Form.Group className="mb-4 form-group" controlId="formBasicEmail">
                     <Form.Label>Email Address</Form.Label>
@@ -58,7 +83,8 @@ const ForgotPassword = () => {
                       placeholder="Enter email"
                       onChange={handleChange}
                       name="email"
-                      value={email}
+                      value={email?.email} 
+
                     />
                      <span className="error">
                       {!fields.email && formErrors.email}

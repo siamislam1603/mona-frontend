@@ -1,11 +1,53 @@
-import React, { useState } from "react";
-import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Col, Container, Row, Dropdown, Modal } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
+import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from "../components/App";
 
 
 const ParentsDashboard = () => {
+  
+  const [userDetails, setUserDetails] = useState(null);
+  const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(true);
+
+  const fetchUserDetails = async (userId) => {
+    let token = await localStorage.getItem('token');
+    let response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { user } = response.data;
+      setUserDetails(user);
+    }
+  };
+
+  const moveToChildEnrollmentForm = async () => {
+    let user_id = localStorage.getItem('user_id');
+
+    let response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
+
+    if(response.status === 201 && response.data.status === "success") {
+      window.location.href="/child-enrollment";
+    }
+  }
+
+  useEffect(() => {
+    let user_role = localStorage.getItem('user_role');
+    let user_id = localStorage.getItem('user_id');
+    
+    if(user_role === 'guardian')
+      fetchUserDetails(user_id);
+  }, []);
+
+  useEffect(() => {
+    setChildEnrollMessageDialog(true);
+  }, [userDetails]);
+  
   return (
     <>
       <div id="main">
@@ -312,6 +354,35 @@ const ParentsDashboard = () => {
           </Container>
         </section>
       </div>
+      {
+        childEnrollMessageDialog &&
+        <Modal
+          
+          show={childEnrollMessageDialog}>
+          <Modal.Header>
+            <Modal.Title>Welcome {userDetails?.fullname.split(" ")[0]}</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
+            <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrollment Form</strong> to enrol your</p>
+            <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
+            <p style={{ marginTop: "-5px" }}><strong>Child Enrollment Form.</strong></p>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <button style={{ 
+              padding: ".7rem 1.4rem", 
+              fontWeight: '500', 
+              fontSize: '.8rem',
+              color: "#fff",
+              backgroundColor: '#3E5D58',
+              border: "none",
+              borderRadius: "5px"  
+            }} onClick={() => moveToChildEnrollmentForm()}>Child Enrollment Form</button>
+          </Modal.Footer>
+        </Modal>
+      }
     </>
   );
 };

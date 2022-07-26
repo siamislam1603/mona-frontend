@@ -24,6 +24,7 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { verifyPermission } from '../../helpers/roleBasedAccess';
+import { saveAs } from 'file-saver';
 
 let upperRoleUser = '';
 let selectedUserId = '';
@@ -32,7 +33,7 @@ const OperatingManual = () => {
   const [Index, setIndex] = useState(0);
   const [innerIndex, setInnerIndex] = useState(0);
   const [operatingManualdata, setOperatingManualdata] = useState([]);
-  const [singleOperatingManual,setSingleOperatingManual]=useState({});
+  const [singleOperatingManual, setSingleOperatingManual] = useState({});
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [show, setShow] = useState(false);
   let [videoUrl, setVideoUrl] = useState('');
@@ -47,14 +48,15 @@ const OperatingManual = () => {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [userRole, setUserRole] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  const [selectedFranchiseeId,setSelectedFranchiseeId]=useState(null);
+  const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
     getCategory();
-    console.log('user_id---->', operatingManualdata[Index]?.operating_manuals[
-      innerIndex
-    ]?.created_by);
+    console.log(
+      'user_id---->',
+      operatingManualdata[Index]?.operating_manuals[innerIndex]?.created_by
+    );
   }, []);
   useEffect(() => {
     getUser();
@@ -99,36 +101,30 @@ const OperatingManual = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
-    let api_url="";
-    console.log("selectedFranchisee--->",selectedFranchisee);
-    if(selectedFranchisee)
-    {
-      if(selectedFranchisee==="All")
-        api_url=`${BASE_URL}/auth/users`;
+    let api_url = '';
+    console.log('selectedFranchisee--->', selectedFranchisee);
+    if (selectedFranchisee) {
+      if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
       else
-        api_url=`${BASE_URL}/user-group/users/franchisee/${selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_")}`;
+        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee
+          .split(',')[0]
+          .split(' ')
+          .map((d) => d.charAt(0).toLowerCase() + d.slice(1))
+          .join('_')}`;
+    } else {
+      api_url = `${BASE_URL}/auth/users`;
     }
-    else
-    {
-      api_url=`${BASE_URL}/auth/users`;
-    }
-      
-      
+
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         result?.data?.map((item) => {
           item['status'] = false;
         });
-        if(selectedFranchisee)
-        {
-          if(selectedFranchisee==="All")
-            setUser(result?.data);
-          else
-           setUser(result?.users);
-        }
-        else
-          setUser(result?.data);
+        if (selectedFranchisee) {
+          if (selectedFranchisee === 'All') setUser(result?.data);
+          else setUser(result?.users);
+        } else setUser(result?.data);
       })
       .catch((error) => console.log('error', error));
   };
@@ -187,43 +183,48 @@ const OperatingManual = () => {
       redirect: 'follow',
     };
     await fetch(
-      `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}&franchisee_id=${localStorage.getItem("f_id")}`,
+      `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}&franchisee_id=${localStorage.getItem(
+        'f_id'
+      )}`,
       requestOptions
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log(
-          'response--->',
-          response?.result
-        );
+        console.log('response--->', response?.result);
         setSingleOperatingManual(response?.result);
         let data = formSettingData;
-        data['applicable_to_all'] = response?.result?.permission?.accessible_to_all;
-        data['accessible_to_role'] = response?.result?.permission?.accessible_to_role;
+        data['applicable_to_all'] =
+          response?.result?.permission?.accessible_to_all;
+        data['accessible_to_role'] =
+          response?.result?.permission?.accessible_to_role;
         let users = [];
         setSelectedUser(users);
-        let role="";
+        let role = '';
         selectedUserId = '';
-        data['shared_role']="";
+        data['shared_role'] = '';
 
         // if (response?.result?.permission?.accessible_to_role === 0) {
-          
-          console.log("user----->",user);
-          user.map((item) => {
-            if (response?.result?.permission?.shared_with.includes(item.id.toString())) {
-              users.push(item);
-              selectedUserId += item.id + ',';
-            }
-          });
-          setSelectedUser(users);
+
+        console.log('user----->', user);
+        user.map((item) => {
+          if (
+            response?.result?.permission?.shared_with.includes(
+              item.id.toString()
+            )
+          ) {
+            users.push(item);
+            selectedUserId += item.id + ',';
+          }
+        });
+        setSelectedUser(users);
         // }
         // else
         // {
-          
-          response?.result?.permission?.shared_role.map((item)=>{
-            role+=item+",";
-          })
-          data['shared_role'] = role;
+
+        response?.result?.permission?.shared_role.map((item) => {
+          role += item + ',';
+        });
+        data['shared_role'] = role;
         // }
         setFormSettingData(data);
       })
@@ -256,7 +257,7 @@ const OperatingManual = () => {
   };
   const deleteOperatingManual = () => {
     var requestOptions = {
-      method: 'DELETE', 
+      method: 'DELETE',
       redirect: 'follow',
     };
 
@@ -288,7 +289,9 @@ const OperatingManual = () => {
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
-      )}&id=${localStorage.getItem('user_id')}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
+      )}&id=${localStorage.getItem(
+        'user_id'
+      )}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
       setCategoryFilter('reset');
     }
 
@@ -323,7 +326,7 @@ const OperatingManual = () => {
     e.preventDefault();
     let data = singleOperatingManual;
     if (!data?.id) {
-      console.log("data----->",data);
+      console.log('data----->', data);
       alert('Please save first operating manual information');
     } else {
       console.log(
@@ -331,30 +334,31 @@ const OperatingManual = () => {
         formSettingData.shared_role
       );
 
-      if (
-        formSettingData.shared_role==="" &&
-        selectedUserId === ""
-      ) {
+      if (formSettingData.shared_role === '' && selectedUserId === '') {
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
         // if (formSettingData.accessible_to_role === 1) {
-          data['shared_role'] = formSettingData.shared_role ? formSettingData.shared_role.slice(0, -1) : null;
-          // data['shared_with'] = null;
-          data['accessible_to_role'] = null;
-          data['accessible_to_all'] = false;
+        data['shared_role'] = formSettingData.shared_role
+          ? formSettingData.shared_role.slice(0, -1)
+          : null;
+        // data['shared_with'] = null;
+        data['accessible_to_role'] = null;
+        data['accessible_to_all'] = false;
         // } else {
-          data['shared_with'] = selectedUserId ? selectedUserId.slice(0, -1) : null;
-          // data['shared_role'] = null;
-          // data['accessible_to_role'] = formSettingData.accessible_to_role;
-          // data['accessible_to_all'] = false;
+        data['shared_with'] = selectedUserId
+          ? selectedUserId.slice(0, -1)
+          : null;
+        // data['shared_role'] = null;
+        // data['accessible_to_role'] = formSettingData.accessible_to_role;
+        // data['accessible_to_all'] = false;
         // }
       }
       // data['created_by'] = localStorage.getItem('user_id');
-      data['shared_by']=localStorage.getItem('user_id');
+      data['shared_by'] = localStorage.getItem('user_id');
       upperRoleUser = getUpperRoleUser();
       data['upper_role'] = upperRoleUser;
-      data['franchisee_id']=selectedFranchiseeId;
+      data['franchisee_id'] = selectedFranchiseeId;
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -382,21 +386,26 @@ const OperatingManual = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-              <TopHeader 
-                    selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={(name,id)=>{setSelectedFranchisee(name);setSelectedFranchiseeId(id);localStorage.setItem("f_id",id);
-                      if(operatingManualdata[Index]
-                        ?.operating_manuals[innerIndex]?.id && operatingManualdata[Index]
-                        ?.category_name)
-                        {
-                          getOneOperatingManual(
-                            operatingManualdata[Index]
-                              ?.operating_manuals[innerIndex]?.id,
-                            operatingManualdata[Index]
-                              ?.category_name
-                          );
-                        }
-                      }} />
+                <TopHeader
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={(name, id) => {
+                    setSelectedFranchisee(name);
+                    setSelectedFranchiseeId(id);
+                    localStorage.setItem('f_id', id);
+                    if (
+                      operatingManualdata[Index]?.operating_manuals[innerIndex]
+                        ?.id &&
+                      operatingManualdata[Index]?.category_name
+                    ) {
+                      getOneOperatingManual(
+                        operatingManualdata[Index]?.operating_manuals[
+                          innerIndex
+                        ]?.id,
+                        operatingManualdata[Index]?.category_name
+                      );
+                    }
+                  }}
+                />
                 <Row>
                   <Col sm={4}>
                     <div className="tree_wrp">
@@ -413,15 +422,16 @@ const OperatingManual = () => {
                             }}
                           />
                         </div>
-                        {
-                          verifyPermission("operating_manual", "add") && <Button
-                          className="add_operating_button"
-                          onClick={() => {
-                            navigate('/operatingmanual/add');
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faPlus} />
-                        </Button>}
+                        {verifyPermission('operating_manual', 'add') && (
+                          <Button
+                            className="add_operating_button"
+                            onClick={() => {
+                              navigate('/operatingmanual/add');
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faPlus} />
+                          </Button>
+                        )}
                         <div className="forms-toogle">
                           <div class="custom-menu-dots">
                             <Dropdown>
@@ -534,62 +544,76 @@ const OperatingManual = () => {
                         Manual
                       </Button> */}
                       <div className="forms-toogle">
+                        {console.log(
+                          'hello--->',
+                          operatingManualdata[Index]?.operating_manuals[
+                            innerIndex
+                          ]?.created_by,
+                          '--------',
+                          parseInt(localStorage.getItem('user_id'))
+                        )}
+                        {console.log(
+                          'Hello2--->',
+                          operatingManualdata[Index]?.operating_manuals[
+                            innerIndex
+                          ]?.upper_role
+                        )}
                         <div class="custom-menu-dots">
                           {(operatingManualdata[Index]?.operating_manuals[
                             innerIndex
-                          ]?.created_by === parseInt(localStorage.getItem('user_id')) ||
+                          ]?.created_by ===
+                            parseInt(localStorage.getItem('user_id')) ||
                             operatingManualdata[Index]?.operating_manuals[
                               innerIndex
                             ]?.upper_role.includes(
-                              localStorage.getItem('user_role'))
-                            ) && (
-                              <Dropdown>
-                                <Dropdown.Toggle id="dropdown-basic">
-                                  <FontAwesomeIcon icon={faEllipsisVertical} />
-                                </Dropdown.Toggle>
+                              localStorage.getItem('user_role')
+                            )) && (
+                            <Dropdown>
+                              <Dropdown.Toggle id="dropdown-basic">
+                                <FontAwesomeIcon icon={faEllipsisVertical} />
+                              </Dropdown.Toggle>
 
-                                <Dropdown.Menu>
-                                  <Dropdown.Item
-                                    href=""
-                                    onClick={() => {
-                                      navigate('/operatingmanual/add', {
-                                        state: {
-                                          id: operatingManualdata[Index]
-                                            ?.operating_manuals[innerIndex]?.id,
-                                          category_name:
-                                            operatingManualdata[Index]
-                                              ?.category_name,
-                                        },
-                                      });
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faPen} /> Edit
-                                  </Dropdown.Item>
-                                  <Dropdown.Item
-                                    href=""
-                                    onClick={() => {
-                                      deleteOperatingManual();
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faRemove} /> Remove
-                                  </Dropdown.Item>
-                                  <Dropdown.Item
-                                    href=""
-                                    onClick={() => {
-                                      setFormSettingFlag(true);
-                                      getOneOperatingManual(
-                                        operatingManualdata[Index]
+                              <Dropdown.Menu>
+                                <Dropdown.Item
+                                  href=""
+                                  onClick={() => {
+                                    navigate('/operatingmanual/add', {
+                                      state: {
+                                        id: operatingManualdata[Index]
                                           ?.operating_manuals[innerIndex]?.id,
-                                        operatingManualdata[Index]
-                                          ?.category_name
-                                      );
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faUsers} /> Sharing
-                                  </Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            )}
+                                        category_name:
+                                          operatingManualdata[Index]
+                                            ?.category_name,
+                                      },
+                                    });
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faPen} /> Edit
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                  href=""
+                                  onClick={() => {
+                                    deleteOperatingManual();
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faRemove} /> Remove
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                  href=""
+                                  onClick={() => {
+                                    setFormSettingFlag(true);
+                                    getOneOperatingManual(
+                                      operatingManualdata[Index]
+                                        ?.operating_manuals[innerIndex]?.id,
+                                      operatingManualdata[Index]?.category_name
+                                    );
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faUsers} /> Sharing
+                                </Dropdown.Item>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -614,40 +638,40 @@ const OperatingManual = () => {
                                   {console.log('inner_item----->', inner_item)}
                                   <PdfComponent {...inner_item} />
                                   <Row>
-                                    {inner_item.reference_video && <Col sm={7}>
-                                      <div className="reference_wrp">
-                                        <h1>Reference Videos</h1>
-                                        <div className="reference_videos">
-                                          <Button
-                                            className="vidico"
-                                            variant="transparent"
-                                            onClick={() => {
-                                              setVideoUrl(
-                                                inner_item.reference_video
-                                                  ? inner_item.reference_video
-                                                  : 'https://player.vimeo.com/video/718118183?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1'
-                                              );
-                                              handleShow();
-                                            }}
-                                          >
-                                            <img
-                                              src={
-                                                inner_item.video_thumbnail
-                                                  ? inner_item.video_thumbnail
-                                                  : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
-                                              }
-                                              alt=""
-                                            />
-                                          </Button>
-                                          <div className="video_title">
-                                            <h6>
-                                              Video 1
-                                            </h6>
+                                    {inner_item.reference_video && (
+                                      <Col sm={7}>
+                                        <div className="reference_wrp">
+                                          <h1>Reference Videos</h1>
+                                          <div className="reference_videos">
+                                            <Button
+                                              className="vidico"
+                                              variant="transparent"
+                                              onClick={() => {
+                                                setVideoUrl(
+                                                  inner_item.reference_video
+                                                    ? inner_item.reference_video
+                                                    : 'https://player.vimeo.com/video/718118183?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1'
+                                                );
+                                                handleShow();
+                                              }}
+                                            >
+                                              <img
+                                                src={
+                                                  inner_item.video_thumbnail
+                                                    ? inner_item.video_thumbnail
+                                                    : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
+                                                }
+                                                alt=""
+                                              />
+                                            </Button>
+                                            <div className="video_title">
+                                              <h6>Video 1</h6>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    </Col>}
-                                    {inner_item.related_files.length!==0 ? (
+                                      </Col>
+                                    )}
+                                    {inner_item.related_files.length !== 0 ? (
                                       <Col sm={5}>
                                         <div className="related_files">
                                           <h1>Related Files</h1>
@@ -660,7 +684,22 @@ const OperatingManual = () => {
                                                     file_item
                                                   )}
 
-                                                  <div className="forms-content" onClick={()=>{window.open(file_item.url)}}>
+                                                  <button
+                                                    className="forms-content create-other"
+                                                    onClick={(e) => {
+                                                      e.preventDefault();
+                                                      saveAs(
+                                                        'data:text/plain;charset=utf-8, ' +
+                                                          encodeURIComponent(
+                                                            file_item.url
+                                                          ),
+                                                        file_item.name
+                                                      );
+                                                      // window.open(
+                                                      //   file_item.url
+                                                      // );
+                                                    }}
+                                                  >
                                                     <div className="content-icon-section">
                                                       <img
                                                         src={
@@ -681,7 +720,7 @@ const OperatingManual = () => {
                                                         ).format('DD/MM/YYYY')}
                                                       </h4>
                                                     </div>
-                                                  </div>
+                                                  </button>
                                                 </>
                                               );
                                             }
@@ -711,9 +750,7 @@ const OperatingManual = () => {
         onHide={handleClose}
       >
         <Modal.Header closeButton>
-          <h2>
-            Video 1
-          </h2>
+          <h2>Video 1</h2>
         </Modal.Header>
         <Modal.Body>
           <div className="embed-responsive embed-responsive-16by9">
@@ -797,177 +834,176 @@ const OperatingManual = () => {
               </Col> */}
               <Col lg={12} md={12}>
                 {/* {formSettingData.accessible_to_role === 1 ? ( */}
-                  <Form.Group>
-                    <Form.Label>Select User Roles</Form.Label>
-                    <div className="modal-two-check user-roles-box">
-                      <label className="container">
-                        Co-ordinators
-                        <input
-                          type="checkbox"
-                          name="shared_role"
-                          id="coordinator"
-                          onClick={(e) => {
-                            let data = { ...formSettingData };
+                <Form.Group>
+                  <Form.Label>Select User Roles</Form.Label>
+                  <div className="modal-two-check user-roles-box">
+                    <label className="container">
+                      Co-ordinators
+                      <input
+                        type="checkbox"
+                        name="shared_role"
+                        id="coordinator"
+                        onClick={(e) => {
+                          let data = { ...formSettingData };
+                          if (
+                            !data['shared_role']
+                              .toString()
+                              .includes(e.target.id)
+                          ) {
+                            data['shared_role'] += e.target.id + ',';
+                          } else {
+                            data['shared_role'] = data['shared_role'].replace(
+                              e.target.id + ',',
+                              ''
+                            );
+                            if (data['shared_role'].includes('all')) {
+                              data['shared_role'] = data['shared_role'].replace(
+                                'all,',
+                                ''
+                              );
+                            }
+                          }
+                          setFormSettingData(data);
+                        }}
+                        checked={formSettingData?.shared_role
+                          ?.toString()
+                          .includes('coordinator')}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
+                    <label className="container">
+                      Educators
+                      <input
+                        type="checkbox"
+                        name="shared_role"
+                        id="educator"
+                        onClick={(e) => {
+                          let data = { ...formSettingData };
+                          if (
+                            !data['shared_role']
+                              .toString()
+                              .includes(e.target.id)
+                          ) {
+                            data['shared_role'] += e.target.id + ',';
+                          } else {
+                            data['shared_role'] = data['shared_role'].replace(
+                              e.target.id + ',',
+                              ''
+                            );
+                            if (data['shared_role'].includes('all')) {
+                              data['shared_role'] = data['shared_role'].replace(
+                                'all,',
+                                ''
+                              );
+                            }
+                          }
+                          setFormSettingData(data);
+                        }}
+                        checked={formSettingData?.shared_role
+                          ?.toString()
+                          .includes('educator')}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
+                    <label className="container">
+                      Parents
+                      <input
+                        type="checkbox"
+                        name="shared_role"
+                        id="parent"
+                        onClick={(e) => {
+                          let data = { ...formSettingData };
+                          if (
+                            !data['shared_role']
+                              .toString()
+                              .includes(e.target.id)
+                          ) {
+                            data['shared_role'] += e.target.id + ',';
+                          } else {
+                            data['shared_role'] = data['shared_role'].replace(
+                              e.target.id + ',',
+                              ''
+                            );
+                            if (data['shared_role'].includes('all')) {
+                              data['shared_role'] = data['shared_role'].replace(
+                                'all,',
+                                ''
+                              );
+                            }
+                          }
+                          setFormSettingData(data);
+                        }}
+                        checked={formSettingData?.shared_role?.includes(
+                          'parent'
+                        )}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
+                    <label className="container">
+                      All Roles
+                      <input
+                        type="checkbox"
+                        name="shared_role"
+                        id="all_roles"
+                        onClick={(e) => {
+                          let data = { ...formSettingData };
+                          console.log('e.target.checked', e.target.checked);
+                          if (e.target.checked === true) {
+                            if (
+                              !data['shared_role'].toString().includes('parent')
+                            ) {
+                              data['shared_role'] += 'parent,';
+                            }
                             if (
                               !data['shared_role']
                                 .toString()
-                                .includes(e.target.id)
+                                .includes('educator')
                             ) {
-                              data['shared_role'] += e.target.id + ',';
-                            } else {
-                              data['shared_role'] = data['shared_role'].replace(
-                                e.target.id + ',',
-                                ''
-                              );
-                              if (data['shared_role'].includes('all')) {
-                                data['shared_role'] = data[
-                                  'shared_role'
-                                ].replace('all,', '');
-                              }
+                              data['shared_role'] += 'educator,';
                             }
-                            setFormSettingData(data);
-                          }}
-                          checked={formSettingData?.shared_role
-                            ?.toString()
-                            .includes('coordinator')}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                      <label className="container">
-                        Educators
-                        <input
-                          type="checkbox"
-                          name="shared_role"
-                          id="educator"
-                          onClick={(e) => {
-                            let data = { ...formSettingData };
                             if (
                               !data['shared_role']
                                 .toString()
-                                .includes(e.target.id)
+                                .includes('coordinator')
                             ) {
-                              data['shared_role'] += e.target.id + ',';
-                            } else {
-                              data['shared_role'] = data['shared_role'].replace(
-                                e.target.id + ',',
-                                ''
-                              );
-                              if (data['shared_role'].includes('all')) {
-                                data['shared_role'] = data[
-                                  'shared_role'
-                                ].replace('all,', '');
-                              }
+                              data['shared_role'] += 'coordinator,';
                             }
-                            setFormSettingData(data);
-                          }}
-                          checked={formSettingData?.shared_role
-                            ?.toString()
-                            .includes('educator')}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                      <label className="container">
-                        Parents
-                        <input
-                          type="checkbox"
-                          name="shared_role"
-                          id="parent"
-                          onClick={(e) => {
-                            let data = { ...formSettingData };
                             if (
-                              !data['shared_role']
-                                .toString()
-                                .includes(e.target.id)
+                              !data['shared_role'].toString().includes('all')
                             ) {
-                              data['shared_role'] += e.target.id + ',';
-                            } else {
-                              data['shared_role'] = data['shared_role'].replace(
-                                e.target.id + ',',
-                                ''
-                              );
-                              if (data['shared_role'].includes('all')) {
-                                data['shared_role'] = data[
-                                  'shared_role'
-                                ].replace('all,', '');
-                              }
+                              data['shared_role'] += 'all,';
                             }
                             setFormSettingData(data);
-                          }}
-                          checked={formSettingData?.shared_role?.includes(
-                            'parent'
-                          )}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                      <label className="container">
-                        All Roles
-                        <input
-                          type="checkbox"
-                          name="shared_role"
-                          id="all_roles"
-                          onClick={(e) => {
-                            let data = { ...formSettingData };
-                            console.log('e.target.checked', e.target.checked);
-                            if (e.target.checked === true) {
-                              if (
-                                !data['shared_role']
-                                  .toString()
-                                  .includes('parent')
-                              ) {
-                                data['shared_role'] += 'parent,';
-                              }
-                              if (
-                                !data['shared_role']
-                                  .toString()
-                                  .includes('educator')
-                              ) {
-                                data['shared_role'] += 'educator,';
-                              }
-                              if (
-                                !data['shared_role']
-                                  .toString()
-                                  .includes('coordinator')
-                              ) {
-                                data['shared_role'] += 'coordinator,';
-                              }
-                              if (
-                                !data['shared_role'].toString().includes('all')
-                              ) {
-                                data['shared_role'] += 'all,';
-                              }
-                              setFormSettingData(data);
-                            } else {
-                              data['shared_role'] = '';
-                              setFormSettingData(data);
-                            }
-                          }}
-                          checked={formSettingData?.shared_role?.includes(
-                            'all'
-                          )}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                    </div>
-                  </Form.Group>
+                          } else {
+                            data['shared_role'] = '';
+                            setFormSettingData(data);
+                          }
+                        }}
+                        checked={formSettingData?.shared_role?.includes('all')}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
+                  </div>
+                </Form.Group>
                 {/* ) : null} */}
                 {/* {formSettingData.accessible_to_role === 0 ? ( */}
-                  <Form.Group>
-                    <Form.Label>Select User</Form.Label>
-                    <div className="select-with-plus">
-                      <Multiselect
-                        displayValue="email"
-                        className="multiselect-box default-arrow-select"
-                        // placeholder="Select Franchisee"
-                        selectedValues={selectedUser}
-                        // onKeyPressFn={function noRefCheck() {}}
-                        onRemove={onRemoveUser}
-                        // onSearch={function noRefCheck() {}}
-                        onSelect={onSelectUser}
-                        options={user}
-                      />
-                    </div>
-                    <p className="error">{errors.franchisee}</p>
-                  </Form.Group>
+                <Form.Group>
+                  <Form.Label>Select User</Form.Label>
+                  <div className="select-with-plus">
+                    <Multiselect
+                      displayValue="email"
+                      className="multiselect-box default-arrow-select"
+                      // placeholder="Select Franchisee"
+                      selectedValues={selectedUser}
+                      // onKeyPressFn={function noRefCheck() {}}
+                      onRemove={onRemoveUser}
+                      // onSearch={function noRefCheck() {}}
+                      onSelect={onSelectUser}
+                      options={user}
+                    />
+                  </div>
+                  <p className="error">{errors.franchisee}</p>
+                </Form.Group>
                 {/* ) : null} */}
               </Col>
             </Row>
