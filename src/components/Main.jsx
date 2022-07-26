@@ -50,6 +50,7 @@ import EditUser from '../pages/EditUser';
 import EditFranchisees from '../pages/EditFranchisees';
 import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
+import Preview from '../pages/FormBuilder/Preview';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -354,6 +355,15 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <DynamicForm />
+            </Protected>
+          }
+        />
+        <Route
+          path="/form/preview/:name"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Preview />
             </Protected>
           }
         />
