@@ -60,7 +60,7 @@ function ChildEnrollment() {
   };
 
   useEffect(() => {
-    updateStepFromDatabase();
+    // updateStepFromDatabase();
   }, []);
 
   console.log('SELECTED FRANCHISEE:', selectedFranchisee);

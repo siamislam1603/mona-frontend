@@ -45,6 +45,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [ethnicityData, setEthnicityData] = useState(null);
   const [languageData, setLanguageData] = useState(null);
   const [countryData, setCountryData] = useState(null);
+  // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
 
   // ERROR HANDLING STATE
   const [childFormErrors, setChildFormErrors] = useState(null);
@@ -78,6 +79,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       console.log('PARENT RESPONSE:', response);
       if(response.status === 201 && response.data.status === "success") {
+        let { parent } = response.data;
+        localStorage.setItem('enrolled_parent_id', parent.id);
         nextStep();
       }
     }
@@ -162,6 +165,47 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   };
 
+  // const fetchParentUserDetails = async (email) => {
+  //   const response = await axios.get(`${BASE_URL}/contacts/${email}`);
+  //   if(response.status === 200) {
+  //     let { data } = response.data;
+  //     console.log('DATA:', data);
+  //     setParentUserDetailFromEngagebay(data);
+  //   }
+  // };
+
+  const fetchParentUserDetails = async () => {
+    let token = localStorage.getItem('token');
+    let userId = localStorage.getItem('user_id');
+
+    let response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { user } = response.data;
+      setFormOneParentData(prevState => ({
+        ...prevState,
+        id: user.id,
+        family_name: user.fullname,
+        given_name: user.fullname,
+        email: user.email,
+        address_as_per_child: user.address,
+        telephone: user.phone,
+      }));
+    }
+  };
+
+  // const copyDataToParentState = () => {
+  //   setFormOneParentData(prevState => ({
+  //     ...prevState,
+  //     family_name: parentUserDetailFromEngagebay?.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" "),
+  //     given_name: parentUserDetailFromEngagebay?.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" "),
+  //   }));
+  // }
+
   useEffect(() => {
     fetchOccupationData();
     fetchEthnicityData();
@@ -169,6 +213,20 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     fetchCountryData();
   }, []);
 
+  // useEffect(() => {
+  //   copyDataToParentState();
+  // }, [parentUserDetailFromEngagebay]);
+
+  // useEffect(() => {
+  //   fetchParentUserDetails(formOneParentData.email);
+  // }, [formOneParentData.email]);
+
+  useEffect(() => {
+    fetchParentUserDetails();
+  }, [])
+
+  // parentUserDetailFromEngagebay && console.log('ENGAGEBAY DETAIL:', parentUserDetailFromEngagebay);
+  formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
   return (
     <>
       <div className="enrollment-form-sec my-5">
@@ -607,7 +665,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 <h2 className="title-xs mb-3">Information about the child’s parents or guardians</h2>
                 <div className="grayback">
                   <Row>
-                    <Col md={6}>
+                    <Col md={12}>
                       <div className="parent_fields">
                         <Form.Group className="mb-3">
                           <div className="btn-radio inline-col">
@@ -640,7 +698,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             type="text" 
                             placeholder="Family Name"
                             name="family_name"
-                            value={formOneParentData.family_name || ""}
+                            value={formOneParentData.family_name ||  ""}
                             onChange={(e) => {
                               handleParentData(e);
                               setParentFormErrors(prevState => ({
@@ -712,6 +770,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             type="tel" 
                             placeholder="+3375005467"
                             name="telephone"
+                            value={formOneParentData.telephone || ""}
                             onChange={(e) => {
                               handleParentData(e);
                               setParentFormErrors(prevState => ({
@@ -728,8 +787,9 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Control 
                             type="email" 
                             placeholder="Email Address"
+                            value={formOneParentData.email || ""}
                             name="email"
-                            onChange={(e) => {
+                            onBlur={(e) => {
                               handleParentData(e);
                               setParentFormErrors(prevState => ({
                                 ...prevState,
@@ -848,80 +908,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             }}
                           />
                           { parentFormErrors?.occupation !== null && <span className="error">{parentFormErrors?.occupation}</span> }
-                        </Form.Group>
-
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className="parent_fields">
-                        <Form.Group className="mb-3">
-                          <div className="btn-radio inline-col">
-                            <Form.Check type="radio" name="information2" id="parent2" className="ps-0" label="Parent" />
-                            <Form.Check type="radio" name="information2" id="guardian2" label="Guardian" defaultChecked />
-                          </div>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Family Name</Form.Label>
-                          <Form.Control type="text" placeholder="Family Name" />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Given Name</Form.Label>
-                          <Form.Control type="text" placeholder="Given Name" />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Date Of Birth</Form.Label>
-                          <Form.Control type="date" placeholder="" name="dob" />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Address As Per Child</Form.Label>
-                          <Form.Control as="textarea" rows={3} placeholder="Address As Per Child" />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Telephone</Form.Label>
-                          <Form.Control type="tel" placeholder="+3375005467" />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Email Address</Form.Label>
-                          <Form.Control type="email" placeholder="Email Address" />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <div className="btn-radio inline-col">
-                            <Form.Label>Child live with this parent/guardian?</Form.Label>
-                            <Form.Check type="radio" name="live1" id="Yesp" label="Yes" defaultChecked />
-                            <Form.Check type="radio" name="live1" id="nop" label="No" />
-                          </div>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Place Of Birth</Form.Label>
-                          <Select
-                            placeholder="Select"
-                            closeMenuOnSelect={true}
-                            options={countryData}
-                          />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Ethnicity</Form.Label>
-                          <Select
-                            placeholder="Select"
-                            closeMenuOnSelect={true}
-                            options={ethnicityData}
-                          />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Primary Language</Form.Label>
-                          <Select
-                            placeholder="Select"
-                            closeMenuOnSelect={true}
-                            options={languageData}
-                          />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Occupation</Form.Label>
-                          <Select
-                            placeholder="Select"
-                            closeMenuOnSelect={true}
-                            options={occupationData}
-                          />
                         </Form.Group>
 
                       </div>

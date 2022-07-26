@@ -400,7 +400,7 @@ const AddFormField = (props) => {
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
-                          navigate('/form/add');
+                          navigate('/form/setting',{id: location?.state?.id});
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
@@ -831,7 +831,7 @@ const AddFormField = (props) => {
                   <Row>
                     <Col sm={12}>
                       <div className="button mb-5">
-                        <Button className="preview">Preview</Button>
+                        <Button className="preview" onClick={()=>{navigate(`/form/dynamic/${location?.state?.form_name}`)}}>Preview</Button>
                         <Button className="saveForm" onClick={onSubmit}>
                           Save Form
                         </Button>

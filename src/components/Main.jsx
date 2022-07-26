@@ -427,6 +427,16 @@ const Main = () => {
         />
 
         <Route
+          path="/training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Training />
+            </Protected>
+          }
+        />
+
+        <Route
           path="/new-training"
           element={
             <Protected isLoggedIn={isLoggedIn}>
