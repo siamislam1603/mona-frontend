@@ -46,7 +46,11 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
       let childId = localStorage.getItem('enrolled_child_id');
       let token = localStorage.getItem('token');
 
-      let response = await axios.post(`${BASE_URL}/enrollment/daily-routine`, { ...childDailyRoutineData, childId })
+      let response = await axios.post(`${BASE_URL}/enrollment/daily-routine`, { ...childDailyRoutineData, childId }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
 
       console.log('DAILY ROUTINE RESPONSE:', response);
       if(response.status === 201 && response.data.status === "success") {
@@ -78,7 +82,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    
+    // nextStep();
     let childDailyRoutineErrorObj = childDailyRoutineValidation(childDailyRoutineData);
     if(Object.keys(childDailyRoutineErrorObj).length > 0) {
       setChildDailyRoutineError(childDailyRoutineErrorObj);
