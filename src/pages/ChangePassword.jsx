@@ -17,6 +17,8 @@ const ChangePassword = () => {
   const [hide, setHide] = useState(true);
   const [secHide, setSecHide] = useState(true);
   const [ThreHide, setThreHide] = useState(true);
+  const [check, setCheck] = useState(null);
+
 
 
   // LOG MESSAGES
@@ -24,6 +26,9 @@ const ChangePassword = () => {
   const [errors, setErrors] = useState({});
   const [topMessage, setTopMessage] = useState(null);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
+  const [attempts,setAttempts] = useState(0);
+  const [attemptError,setAttemptError] = useState(null)
+
 
 
   
@@ -99,7 +104,10 @@ const ChangePassword = () => {
       console.log("The error", error)
         if( error.response.status ==404 && error.response.data.msg === "password incorrect!"){
             setTopErrorMessage("Old passsword is incorrect")
-        }
+            setAttempts(attempts+ 1)
+            console.log("The attemps",attempts)
+            localStorage.setItem("attempts",attempts)  
+          }
         setTimeout(() => {
           setTopErrorMessage(null)
       }, 3000);
@@ -133,9 +141,20 @@ const ChangePassword = () => {
 
   const onSubmit = event =>{
     event.preventDefault()
+    let count =  localStorage.getItem("attempts") 
+    console.log("The coount",count)
+    if(count>1){
+      console.log("Please logut and retry")
+      setAttemptError("You consume 3 attempts logout and retry or forgot password")
+      setTimeout(() => {
+        setAttemptError(null)
+    }, 3000);
+      return
+    }
     let errObj = PasswordValidation(passwords)
     if(Object.keys(errObj).length>0){
-        setErrors(errObj)
+    //  console.log("The Error object",errObj.oldpassword)
+      setErrors(errObj)  
     }
     else{
         setErrors({})
@@ -147,6 +166,7 @@ const ChangePassword = () => {
     fetchUserRoles();
     fetchFranchiseeList();
   }, []);
+
 //   useEffect(() => {
 //     fetchFranchiseeUsers(trainingSettings.assigned_franchisee[0]);
 //   }, [trainingSettings.assigned_franchisee.length > 0]);
@@ -154,11 +174,20 @@ const ChangePassword = () => {
 //   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 //   trainingData && console.log('TRAINING DATA:', trainingData);
 // console.log("All password", passwords)
+// const [count, setCount] = useState(0);
 
+
+
+  // Get the previous value (was passed into hook on last render)
+  
+const attempt = localStorage.getItem("attempts")
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
+      {attemptError && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{attemptError}</p>} 
+ 
     <div id="main">
       <section className="mainsection">
+     
         <Container>
           <div className="admin-wrapper">
             <aside className="app-sidebar">
@@ -177,6 +206,7 @@ const ChangePassword = () => {
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}                 
                 <div className="change-pass-sec">
+                 {}
                   <Row>
                   {/* <Col md={12} className="mb-3">
                         <Form.Group>
