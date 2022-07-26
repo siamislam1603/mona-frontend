@@ -13,7 +13,7 @@ const ParentsDashboard = () => {
   const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(true);
 
   const fetchUserDetails = async (userId) => {
-    let token = await localStorage.getItem('token');
+    let token = localStorage.getItem('token');
     let response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -46,7 +46,7 @@ const ParentsDashboard = () => {
 
   useEffect(() => {
     setChildEnrollMessageDialog(true);
-  }, [userDetails]);
+  }, [userDetails.isChildEnrolled]);
   
   return (
     <>

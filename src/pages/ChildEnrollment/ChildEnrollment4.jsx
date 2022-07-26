@@ -102,19 +102,35 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
       let childId = localStorage.getItem('enrolled_child_id');
       let token = localStorage.getItem('token');
       // SAVING EMERGENCY CONTACT
-      let response = await axios.post(`${BASE_URL}/enrollment/emergency-contact`, {...emergencyContactData, childId})
+      let response = await axios.post(`${BASE_URL}/enrollment/emergency-contact`, {...emergencyContactData, childId}, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
 
       if(response.status === 201 && response.data.status === "success") {
         // SAVING AUTHORIZED NOMINEE
-        response = await axios.post(`${BASE_URL}/enrollment/authorized-nominee`, {...authorizedNomineeData, childId});
+        response = await axios.post(`${BASE_URL}/enrollment/authorized-nominee`, {...authorizedNomineeData, childId}, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
 
         if(response.status === 201 && response.data.status === "success") {
           // SAVING AUTHORIZED PERSON
-          response = await axios.post(`${BASE_URL}/enrollment/authorized-person`, {...authorizedPersonData, childId})
+          response = await axios.post(`${BASE_URL}/enrollment/authorized-person`, {...authorizedPersonData, childId}, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          })
 
           if(response.status === 201 && response.data.status === "success") {
            // SAVING OTHER AUTHORIZED PERSON
-            response = await axios.post(`${BASE_URL}/enrollment/other-authorized-person`, {...otherAuthorizedPersonData, childId});
+            response = await axios.post(`${BASE_URL}/enrollment/other-authorized-person`, {...otherAuthorizedPersonData, childId}, {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              }
+            });
 
             if(response.status === 201 && response.data.status === "success") {
               
