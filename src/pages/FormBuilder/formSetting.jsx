@@ -15,44 +15,280 @@ import { createFormValidation } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Multiselect from 'multiselect-react-dropdown';
 
+let selectedFillAccessUserId = '';
+let selectedFillAccessUser = [];
+let selectedFormVisibleUserId = '';
+let selectedFormVisibleUser = [];
+let selectedSignatoriesUserId = '';
+let selectedSignatoriesUser = [];
+let selectedTargetUserId = '';
+let selectedTargetUser = [];
+let selectedResponseVisibilityUserId = '';
+let selectedResponseVisibilityUser = [];
+let counter = 0;
 function FormSetting(props) {
-  const [form, setForm] = useState({ applicable: 'user_role' });
+  const [form, setForm] = useState({
+    accessible_to_role: '1',
+    form_visible_to: '',
+    signatories_role: '',
+    target_user: '',
+    fill_access_users: '',
+    response_visibility: '',
+    for_training: false,
+  });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  let targetUsers = '';
-  let fillAccessUsers = '';
-  let responseVisibility = '';
-  let formVisibility = '';
+  const [count, setCount] = useState(0);
   const setFields = (field, value) => {
     setForm({ ...form, [field]: value });
   };
+
   useEffect(() => {
     getUser();
   }, [selectedFranchisee]);
-  let selectedUserId = '';
-  function onSelectUser(optionsList, selectedItem) {
-    console.log('selected_item---->2', selectedItem);
-    selectedUserId += selectedItem.id + ',';
-    selectedUser.push({
+  useEffect(() => {
+    getParticularFormData();
+  }, [user]);
+  const getParticularFormData = () => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/${location?.state?.id}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        let oldResult = result?.result;
+        if (
+          form?.accessible_to_role === '1' ||
+          form?.accessible_to_role === true
+        ) {
+          let formVisibility = oldResult?.form_visible_to
+            ? oldResult?.form_visible_to.toString() + ','
+            : '';
+          let fillAccess = oldResult?.fill_access_users
+            ? oldResult?.fill_access_users.toString() + ','
+            : '';
+          let responseVisibility = oldResult?.response_visibility
+            ? oldResult?.response_visibility.toString() + ','
+            : '';
+          let signatoriesRole = oldResult?.signatories_role
+            ? oldResult?.signatories_role.toString() + ','
+            : '';
+          let targetUser = oldResult?.target_user
+            ? oldResult?.target_user.toString() + ','
+            : '';
+          let {
+            form_visible_to,
+            fill_access_users,
+            response_visibility,
+            signatories_role,
+            target_users,
+            ...newResult
+          } = oldResult;
+          newResult.form_visible_to = formVisibility;
+          newResult.fill_access_users = fillAccess;
+          newResult.response_visibility = responseVisibility;
+          newResult.signatories_role = signatoriesRole;
+          newResult.target_user = targetUser;
+          setForm(newResult);
+        }
+        if (
+          form?.accessible_to_role === '0' ||
+          form?.accessible_to_role === false
+        ) {
+          selectedFormVisibleUserId = '';
+          selectedFormVisibleUser = [];
+          selectedFillAccessUserId = '';
+          selectedFillAccessUser = [];
+          selectedSignatoriesUserId = '';
+          selectedSignatoriesUser = [];
+          selectedTargetUserId = '';
+          selectedTargetUser = [];
+          selectedResponseVisibilityUserId = '';
+          selectedResponseVisibilityUser = [];
+          user.map((item) => {
+            if (oldResult?.form_visible_to) {
+              if (oldResult?.form_visible_to.includes(item.id.toString())) {
+                console.log('user_els--->', item);
+                selectedFormVisibleUser.push({
+                  id: item.id,
+                  email: item.email,
+                });
+                selectedFormVisibleUserId += item.id + ',';
+              }
+            }
+            if (oldResult?.fill_access_users) {
+              if (oldResult?.fill_access_users.includes(item.id.toString())) {
+                console.log('user_els--->', item);
+                selectedFillAccessUser.push({ id: item.id, email: item.email });
+                selectedFillAccessUserId += item.id + ',';
+              }
+            }
+            if (oldResult?.signatories_role) {
+              if (oldResult?.signatories_role.includes(item.id.toString())) {
+                console.log('user_els--->', item);
+                selectedSignatoriesUser.push({
+                  id: item.id,
+                  email: item.email,
+                });
+                selectedSignatoriesUserId += item.id + ',';
+              }
+            }
+            if (oldResult?.response_visibility) {
+              if (oldResult?.response_visibility.includes(item.id.toString())) {
+                console.log('user_els--->', item);
+                selectedResponseVisibilityUser.push({
+                  id: item.id,
+                  email: item.email,
+                });
+                selectedResponseVisibilityUserId += item.id + ',';
+              }
+            }
+            if (oldResult?.target_user) {
+              if (oldResult?.target_user.includes(item.id.toString())) {
+                console.log('user_els--->', item);
+                selectedTargetUser.push({ id: item.id, email: item.email });
+                selectedTargetUserId += item.id + ',';
+              }
+            }
+          });
+          counter++;
+          setCount(counter);
+        }
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const setCheckBoxField = (name, value, checked) => {
+    let data = { ...form };
+    if (checked) {
+      data[name] += value + ',';
+    } else {
+      data[name] = data[name].replace(value + ',', '');
+    }
+    setForm(data);
+  };
+
+  function onFillAccessSelectUser(optionsList, selectedItem) {
+    selectedFillAccessUserId += selectedItem.id + ',';
+    selectedFillAccessUser.push({
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log('selectedUser---->', selectedUser);
+    console.log('selectedFillAccessUserId---->', selectedFillAccessUserId);
   }
-  function onRemoveUser(selectedList, removedItem) {
-    selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-    const index = selectedUser.findIndex((object) => {
+  function onFillAccessRemoveUser(selectedList, removedItem) {
+    selectedFillAccessUserId = selectedFillAccessUserId.replace(
+      removedItem.id + ',',
+      ''
+    );
+    const index = selectedFillAccessUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
-    selectedUser.splice(index, 1);
+    selectedFillAccessUser.splice(index, 1);
     {
-      console.log('selectedUser---->', selectedUser);
+      console.log('selectedFillAccessUserId---->', selectedFillAccessUserId);
     }
   }
+
+  function onTargetSelectUser(optionsList, selectedItem) {
+    selectedTargetUserId += selectedItem.id + ',';
+    selectedTargetUser.push({
+      id: selectedItem.id,
+      email: selectedItem.email,
+    });
+    console.log('selectedFillAccessUserId---->', selectedTargetUserId);
+  }
+  function onTargetRemoveUser(selectedList, removedItem) {
+    selectedTargetUserId = selectedTargetUserId.replace(
+      removedItem.id + ',',
+      ''
+    );
+    const index = selectedFillAccessUser.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedTargetUser.splice(index, 1);
+    {
+      console.log('selectedFillAccessUserId---->', selectedTargetUserId);
+    }
+  }
+
+  function onResponseVisibilitySelectUser(optionsList, selectedItem) {
+    selectedResponseVisibilityUserId += selectedItem.id + ',';
+    selectedResponseVisibilityUser.push({
+      id: selectedItem.id,
+      email: selectedItem.email,
+    });
+    console.log(
+      'selectedFillAccessUserId---->',
+      selectedResponseVisibilityUserId
+    );
+  }
+  function onResponseVisibilityRemoveUser(selectedList, removedItem) {
+    selectedResponseVisibilityUserId = selectedResponseVisibilityUserId.replace(
+      removedItem.id + ',',
+      ''
+    );
+    const index = selectedFillAccessUser.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedResponseVisibilityUser.splice(index, 1);
+    {
+      console.log(
+        'selectedFillAccessUserId---->',
+        selectedResponseVisibilityUserId
+      );
+    }
+  }
+
+  function onSignatorieselectUser(optionsList, selectedItem) {
+    selectedSignatoriesUserId += selectedItem.id + ',';
+    selectedSignatoriesUser.push({
+      id: selectedItem.id,
+      email: selectedItem.email,
+    });
+    console.log('selectedFillAccessUserId---->', selectedSignatoriesUserId);
+  }
+  function onSignatoriesRemoveUser(selectedList, removedItem) {
+    selectedSignatoriesUserId = selectedSignatoriesUserId.replace(
+      removedItem.id + ',',
+      ''
+    );
+    const index = selectedFillAccessUser.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedSignatoriesUser.splice(index, 1);
+    {
+      console.log('selectedFillAccessUserId---->', selectedSignatoriesUserId);
+    }
+  }
+
+  function onFormVisibleSelectUser(optionsList, selectedItem) {
+    selectedFormVisibleUserId += selectedItem.id + ',';
+    selectedFormVisibleUser.push({
+      id: selectedItem.id,
+      email: selectedItem.email,
+    });
+    console.log('selectedFillAccessUserId---->', selectedFormVisibleUserId);
+  }
+  function onFormVisibleRemoveUser(selectedList, removedItem) {
+    selectedFormVisibleUserId = selectedFormVisibleUserId.replace(
+      removedItem.id + ',',
+      ''
+    );
+    const index = selectedFillAccessUser.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedFormVisibleUser.splice(index, 1);
+    {
+      console.log('selectedFillAccessUserId---->', selectedFormVisibleUserId);
+    }
+  }
+
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append(
@@ -92,13 +328,67 @@ function FormSetting(props) {
       })
       .catch((error) => console.log('error', error));
   };
+  const onSubmit = (e) => {
+    e.preventDefault();
+    // const newErrors = createFormValidation(form);
+    // if (Object.keys(newErrors).length > 0) {
+    //   setErrors(newErrors);
+    // } else {
+    var myHeaders = new Headers();
+    let data = { ...form };
+    if (data.accessible_to_role === '1' || data.accessible_to_role === true) {
+      data['form_visible_to'] = form.form_visible_to
+        ? form.form_visible_to.slice(0, -1)
+        : null;
+      data['signatories_role'] = form.signatories_role
+        ? form.signatories_role.slice(0, -1)
+        : null;
+      data['target_user'] = form.target_user
+        ? form.target_user.slice(0, -1)
+        : null;
+      data['fill_access_users'] = form.fill_access_users
+        ? form.fill_access_users.slice(0, -1)
+        : null;
+      data['response_visibility'] = form.response_visibility
+        ? form.response_visibility.slice(0, -1)
+        : null;
+    }
+    if (data.accessible_to_role === '0' || data.accessible_to_role === false) {
+      data['form_visible_to'] = selectedFormVisibleUserId
+        ? selectedFormVisibleUserId.slice(0, -1)
+        : null;
+      data['signatories_role'] = selectedSignatoriesUserId
+        ? selectedSignatoriesUserId.slice(0, -1)
+        : null;
+      data['target_user'] = selectedTargetUserId
+        ? selectedTargetUserId.slice(0, -1)
+        : null;
+      data['fill_access_users'] = selectedFillAccessUserId
+        ? selectedFillAccessUserId.slice(0, -1)
+        : null;
+      data['response_visibility'] = selectedResponseVisibilityUserId
+        ? selectedResponseVisibilityUserId.slice(0, -1)
+        : null;
+    }
+
+    data['id'] = location?.state?.id;
+    myHeaders.append('Content-Type', 'application/json');
+    fetch(`${BASE_URL}/form/add`, {
+      method: 'post',
+      body: JSON.stringify(data),
+      headers: myHeaders,
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        navigate('/form/field/add', {
+          state: { id: location?.state?.id, form_name: form?.form_name },
+        });
+      });
+    // }
+  };
   return (
     <>
       {console.log('form', form)}
-      {console.log('targetUsers', targetUsers)}
-      {console.log('fill access', fillAccessUsers)}
-      {console.log('response visibility', responseVisibility)}
-      {console.log('form visibility', formVisibility)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -232,8 +522,8 @@ function FormSetting(props) {
                                       <label for="user_role">
                                         <input
                                           type="radio"
-                                          value="user_role"
-                                          name="applicable"
+                                          value={1}
+                                          name="accessible_to_role"
                                           id="user_role"
                                           onChange={(e) => {
                                             setFields(
@@ -242,14 +532,9 @@ function FormSetting(props) {
                                             );
                                           }}
                                           checked={
-                                            form?.applicable === 'user_role'
+                                            form?.accessible_to_role === '1' ||
+                                            form?.accessible_to_role === true
                                           }
-                                          // checked={
-                                          //   formSettingData?.applicable_to_franchisee ===
-                                          //     true ||
-                                          //   formSettingData?.applicable_to_franchisee ===
-                                          //     'Yes'
-                                          // }
                                         />
                                         <span className="radio-round"></span>
                                         <p>User Roles</p>
@@ -259,8 +544,8 @@ function FormSetting(props) {
                                       <label for="specific_user">
                                         <input
                                           type="radio"
-                                          value="specific_user"
-                                          name="applicable"
+                                          value={0}
+                                          name="accessible_to_role"
                                           id="specific_user"
                                           onChange={(e) => {
                                             setFields(
@@ -269,14 +554,9 @@ function FormSetting(props) {
                                             );
                                           }}
                                           checked={
-                                            form?.applicable === 'specific_user'
+                                            form?.accessible_to_role === '0' ||
+                                            form?.accessible_to_role === false
                                           }
-                                          // checked={
-                                          //   formSettingData?.applicable_to_franchisee ===
-                                          //     false ||
-                                          //   formSettingData?.applicable_to_franchisee ===
-                                          //     'No'
-                                          // }
                                         />
                                         <span className="radio-round"></span>
                                         <p>Specific Users</p>
@@ -286,7 +566,8 @@ function FormSetting(props) {
                                 </Form.Group>
                               </Col>
                             </Row>
-                            {form.applicable === 'user_role' ? (
+                            {form.accessible_to_role === '1' ||
+                            form?.accessible_to_role === true ? (
                               <>
                                 <Row>
                                   <Col md={12}>
@@ -316,21 +597,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="target_user"
                                                     value="franchisor_admin"
+                                                    checked={form?.target_user?.includes(
+                                                      'franchisor_admin'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        targetUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        targetUsers =
-                                                          targetUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'targetUsers---->',
-                                                        targetUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -343,21 +617,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="franchisor_admin"
+                                                    checked={form?.fill_access_users?.includes(
+                                                      'franchisor_admin'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        fillAccessUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        fillAccessUsers =
-                                                          fillAccessUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'fillAccessUsers---->',
-                                                        fillAccessUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -370,21 +637,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="response_visibility"
                                                     value="franchisor_admin"
+                                                    checked={form?.response_visibility?.includes(
+                                                      'franchisor_admin'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        responseVisibility +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        responseVisibility =
-                                                          responseVisibility.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'responseVisibility---->',
-                                                        responseVisibility
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -400,21 +660,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="target_user"
                                                     value="franchisee_admin"
+                                                    checked={form?.target_user?.includes(
+                                                      'franchisee_admin'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        targetUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        targetUsers =
-                                                          targetUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'targetUsers---->',
-                                                        targetUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -427,21 +680,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="franchisee_admin"
+                                                    checked={form?.fill_access_users?.includes(
+                                                      'franchisee_admin'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        fillAccessUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        fillAccessUsers =
-                                                          fillAccessUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'fillAccessUsers---->',
-                                                        fillAccessUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -454,21 +700,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="response_visibility"
                                                     value="franchisee_admin"
+                                                    checked={form?.response_visibility?.includes(
+                                                      'franchisee_admin'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        responseVisibility +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        responseVisibility =
-                                                          responseVisibility.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'responseVisibility---->',
-                                                        responseVisibility
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -484,21 +723,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="target_user"
                                                     value="coordinator"
+                                                    checked={form?.target_user?.includes(
+                                                      'coordinator'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        targetUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        targetUsers =
-                                                          targetUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'targetUsers---->',
-                                                        targetUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -511,21 +743,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="coordinator"
+                                                    checked={form?.fill_access_users?.includes(
+                                                      'coordinator'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        fillAccessUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        fillAccessUsers =
-                                                          fillAccessUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'fillAccessUsers---->',
-                                                        fillAccessUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -538,21 +763,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="response_visibility"
                                                     value="coordinator"
+                                                    checked={form?.response_visibility?.includes(
+                                                      'coordinator'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        responseVisibility +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        responseVisibility =
-                                                          responseVisibility.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'responseVisibility---->',
-                                                        responseVisibility
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -568,21 +786,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="target_user"
                                                     value="educator"
+                                                    checked={form?.target_user?.includes(
+                                                      'educator'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        targetUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        targetUsers =
-                                                          targetUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'targetUsers---->',
-                                                        targetUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -595,21 +806,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="educator"
+                                                    checked={form?.fill_access_users?.includes(
+                                                      'educator'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        fillAccessUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        fillAccessUsers =
-                                                          fillAccessUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'fillAccessUsers---->',
-                                                        fillAccessUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -622,21 +826,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="response_visibility"
                                                     value="educator"
+                                                    checked={form?.response_visibility?.includes(
+                                                      'educator'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        responseVisibility +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        responseVisibility =
-                                                          responseVisibility.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'responseVisibility---->',
-                                                        responseVisibility
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -652,21 +849,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="target_user"
                                                     value="parent"
+                                                    checked={form?.target_user?.includes(
+                                                      'parent'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        targetUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        targetUsers =
-                                                          targetUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'targetUsers---->',
-                                                        targetUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -679,21 +869,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="parent"
+                                                    checked={form?.fill_access_users?.includes(
+                                                      'parent'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        fillAccessUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        fillAccessUsers =
-                                                          fillAccessUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'fillAccessUsers---->',
-                                                        fillAccessUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -706,21 +889,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="response_visibility"
                                                     value="parent"
+                                                    checked={form?.response_visibility?.includes(
+                                                      'parent'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        responseVisibility +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        responseVisibility =
-                                                          responseVisibility.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'responseVisibility---->',
-                                                        responseVisibility
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -742,21 +918,14 @@ function FormSetting(props) {
                                                     type="checkbox"
                                                     name="target_user"
                                                     value="child"
+                                                    checked={form?.target_user?.includes(
+                                                      'child'
+                                                    )}
                                                     onChange={(e) => {
-                                                      if (e.target.checked) {
-                                                        targetUsers +=
-                                                          e.target.value + ',';
-                                                      } else {
-                                                        targetUsers =
-                                                          targetUsers.replace(
-                                                            e.target.value +
-                                                              ',',
-                                                            ''
-                                                          );
-                                                      }
-                                                      console.log(
-                                                        'targetUsers---->',
-                                                        targetUsers
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked
                                                       );
                                                     }}
                                                   />
@@ -784,71 +953,122 @@ function FormSetting(props) {
                                         <div className="toogle-swich">
                                           <input
                                             className="switch"
-                                            name="required"
+                                            name="signatories"
                                             type="checkbox"
-                                            // checked={form[index]?.required}
-                                            // onChange={(e) => {
-                                            //   setField(
-                                            //     e.target.name,
-                                            //     e.target.checked,
-                                            //     index
-                                            //   );
-                                            // }}
+                                            checked={form?.signatories}
+                                            onChange={(e) => {
+                                              setFields(
+                                                e.target.name,
+                                                e.target.checked
+                                              );
+                                            }}
                                           />
                                         </div>
                                       </div>
                                     </div>
                                   </Col>
                                   <Col md={12}>
-                                    <div className="checkbox-card">
-                                      <div className="modal-two-check user-roles-box">
-                                        <label className="container">
-                                          Franchisor Admin
-                                          <input
-                                            type="checkbox"
-                                            name="shared_role"
-                                            id=""
-                                          />
-                                          <span className="checkmark"></span>
-                                        </label>
-                                        <label className="container">
-                                          Franchisee Admin
-                                          <input
-                                            type="checkbox"
-                                            name="shared_role"
-                                            id=""
-                                          />
-                                          <span className="checkmark"></span>
-                                        </label>
-                                        <label className="container">
-                                          Co-ordinators
-                                          <input
-                                            type="checkbox"
-                                            name="shared_role"
-                                            id=""
-                                          />
-                                          <span className="checkmark"></span>
-                                        </label>
-                                        <label className="container">
-                                          Educators
-                                          <input
-                                            type="checkbox"
-                                            name="shared_role"
-                                            id=""
-                                          />
-                                          <span className="checkmark"></span>
-                                        </label>
-                                        <label className="container">
-                                          Parent/Guardian
-                                          <input
-                                            type="checkbox"
-                                            name="shared_role"
-                                            id=""
-                                          />
-                                          <span className="checkmark"></span>
-                                        </label>
+                                    {form?.signatories && (
+                                      <div className="checkbox-card">
+                                        <div className="modal-two-check user-roles-box">
+                                          <label className="container">
+                                            Franchisor Admin
+                                            <input
+                                              type="checkbox"
+                                              name="signatories_role"
+                                              value="franchisor_admin"
+                                              checked={form?.signatories_role?.includes(
+                                                'franchisor_admin'
+                                              )}
+                                              onChange={(e) => {
+                                                setCheckBoxField(
+                                                  e.target.name,
+                                                  e.target.value,
+                                                  e.target.checked
+                                                );
+                                              }}
+                                            />
+                                            <span className="checkmark"></span>
+                                          </label>
+                                          <label className="container">
+                                            Franchisee Admin
+                                            <input
+                                              type="checkbox"
+                                              name="signatories_role"
+                                              value="franchisee_admin"
+                                              checked={form?.signatories_role?.includes(
+                                                'franchisee_admin'
+                                              )}
+                                              onChange={(e) => {
+                                                setCheckBoxField(
+                                                  e.target.name,
+                                                  e.target.value,
+                                                  e.target.checked
+                                                );
+                                              }}
+                                            />
+                                            <span className="checkmark"></span>
+                                          </label>
+                                          <label className="container">
+                                            Co-ordinators
+                                            <input
+                                              type="checkbox"
+                                              name="signatories_role"
+                                              value="coordinator"
+                                              checked={form?.signatories_role?.includes(
+                                                'coordinator'
+                                              )}
+                                              onChange={(e) => {
+                                                setCheckBoxField(
+                                                  e.target.name,
+                                                  e.target.value,
+                                                  e.target.checked
+                                                );
+                                              }}
+                                            />
+                                            <span className="checkmark"></span>
+                                          </label>
+                                          <label className="container">
+                                            Educators
+                                            <input
+                                              type="checkbox"
+                                              name="signatories_role"
+                                              value="educator"
+                                              checked={form?.signatories_role?.includes(
+                                                'educator'
+                                              )}
+                                              onChange={(e) => {
+                                                setCheckBoxField(
+                                                  e.target.name,
+                                                  e.target.value,
+                                                  e.target.checked
+                                                );
+                                              }}
+                                            />
+                                            <span className="checkmark"></span>
+                                          </label>
+                                          <label className="container">
+                                            Parent/Guardian
+                                            <input
+                                              type="checkbox"
+                                              name="signatories_role"
+                                              value="parent"
+                                              checked={form?.signatories_role?.includes(
+                                                'parent'
+                                              )}
+                                              onChange={(e) => {
+                                                setCheckBoxField(
+                                                  e.target.name,
+                                                  e.target.value,
+                                                  e.target.checked
+                                                );
+                                              }}
+                                            />
+                                            <span className="checkmark"></span>
+                                          </label>
+                                        </div>
                                       </div>
-                                    </div>
+                                    )}
                                     <label class="form_label_title form-label mt-3 pb-1">
                                       Form Visible To
                                     </label>
@@ -860,20 +1080,14 @@ function FormSetting(props) {
                                             type="checkbox"
                                             name="form_visible_to"
                                             value="franchisor_admin"
+                                            checked={form?.form_visible_to?.includes(
+                                              'franchisor_admin'
+                                            )}
                                             onChange={(e) => {
-                                              if (e.target.checked) {
-                                                formVisibility +=
-                                                  e.target.value + ',';
-                                              } else {
-                                                formVisibility =
-                                                formVisibility.replace(
-                                                    e.target.value + ',',
-                                                    ''
-                                                  );
-                                              }
-                                              console.log(
-                                                'formVisibility---->',
-                                                formVisibility
+                                              setCheckBoxField(
+                                                e.target.name,
+                                                e.target.value,
+                                                e.target.checked
                                               );
                                             }}
                                           />
@@ -885,20 +1099,14 @@ function FormSetting(props) {
                                             type="checkbox"
                                             name="form_visible_to"
                                             value="franchisee_admin"
+                                            checked={form?.form_visible_to?.includes(
+                                              'franchisee_admin'
+                                            )}
                                             onChange={(e) => {
-                                              if (e.target.checked) {
-                                                formVisibility +=
-                                                  e.target.value + ',';
-                                              } else {
-                                                formVisibility =
-                                                formVisibility.replace(
-                                                    e.target.value + ',',
-                                                    ''
-                                                  );
-                                              }
-                                              console.log(
-                                                'formVisibility---->',
-                                                formVisibility
+                                              setCheckBoxField(
+                                                e.target.name,
+                                                e.target.value,
+                                                e.target.checked
                                               );
                                             }}
                                           />
@@ -910,20 +1118,14 @@ function FormSetting(props) {
                                             type="checkbox"
                                             name="form_visible_to"
                                             value="coordinator"
+                                            checked={form?.form_visible_to?.includes(
+                                              'coordinator'
+                                            )}
                                             onChange={(e) => {
-                                              if (e.target.checked) {
-                                                formVisibility +=
-                                                  e.target.value + ',';
-                                              } else {
-                                                formVisibility =
-                                                formVisibility.replace(
-                                                    e.target.value + ',',
-                                                    ''
-                                                  );
-                                              }
-                                              console.log(
-                                                'formVisibility---->',
-                                                formVisibility
+                                              setCheckBoxField(
+                                                e.target.name,
+                                                e.target.value,
+                                                e.target.checked
                                               );
                                             }}
                                           />
@@ -935,20 +1137,14 @@ function FormSetting(props) {
                                             type="checkbox"
                                             name="form_visible_to"
                                             value="educator"
+                                            checked={form?.form_visible_to?.includes(
+                                              'educator'
+                                            )}
                                             onChange={(e) => {
-                                              if (e.target.checked) {
-                                                formVisibility +=
-                                                  e.target.value + ',';
-                                              } else {
-                                                formVisibility =
-                                                formVisibility.replace(
-                                                    e.target.value + ',',
-                                                    ''
-                                                  );
-                                              }
-                                              console.log(
-                                                'formVisibility---->',
-                                                formVisibility
+                                              setCheckBoxField(
+                                                e.target.name,
+                                                e.target.value,
+                                                e.target.checked
                                               );
                                             }}
                                           />
@@ -960,23 +1156,16 @@ function FormSetting(props) {
                                             type="checkbox"
                                             name="form_visible_to"
                                             value="parent"
+                                            checked={form?.form_visible_to?.includes(
+                                              'parent'
+                                            )}
                                             onChange={(e) => {
-                                              if (e.target.checked) {
-                                                formVisibility +=
-                                                  e.target.value + ',';
-                                              } else {
-                                                formVisibility =
-                                                formVisibility.replace(
-                                                    e.target.value + ',',
-                                                    ''
-                                                  );
-                                              }
-                                              console.log(
-                                                'formVisibility---->',
-                                                formVisibility
+                                              setCheckBoxField(
+                                                e.target.name,
+                                                e.target.value,
+                                                e.target.checked
                                               );
                                             }}
-                                            
                                           />
                                           <span className="checkmark"></span>
                                         </label>
@@ -998,11 +1187,11 @@ function FormSetting(props) {
                                           displayValue="email"
                                           className="multiselect-box default-arrow-select"
                                           // placeholder="Select Franchisee"
-                                          selectedValues={selectedUser}
+                                          selectedValues={selectedTargetUser}
                                           // onKeyPressFn={function noRefCheck() {}}
-                                          onRemove={onRemoveUser}
+                                          onRemove={onTargetRemoveUser}
                                           // onSearch={function noRefCheck() {}}
-                                          onSelect={onSelectUser}
+                                          onSelect={onTargetSelectUser}
                                           options={user}
                                         />
                                       </div>
@@ -1023,11 +1212,13 @@ function FormSetting(props) {
                                           displayValue="email"
                                           className="multiselect-box default-arrow-select"
                                           // placeholder="Select Franchisee"
-                                          selectedValues={selectedUser}
+                                          selectedValues={
+                                            selectedFillAccessUser
+                                          }
                                           // onKeyPressFn={function noRefCheck() {}}
-                                          onRemove={onRemoveUser}
+                                          onRemove={onFillAccessRemoveUser}
                                           // onSearch={function noRefCheck() {}}
-                                          onSelect={onSelectUser}
+                                          onSelect={onFillAccessSelectUser}
                                           options={user}
                                         />
                                       </div>
@@ -1048,11 +1239,17 @@ function FormSetting(props) {
                                           displayValue="email"
                                           className="multiselect-box default-arrow-select"
                                           // placeholder="Select Franchisee"
-                                          selectedValues={selectedUser}
+                                          selectedValues={
+                                            selectedResponseVisibilityUser
+                                          }
                                           // onKeyPressFn={function noRefCheck() {}}
-                                          onRemove={onRemoveUser}
+                                          onRemove={
+                                            onResponseVisibilityRemoveUser
+                                          }
                                           // onSearch={function noRefCheck() {}}
-                                          onSelect={onSelectUser}
+                                          onSelect={
+                                            onResponseVisibilitySelectUser
+                                          }
                                           options={user}
                                         />
                                       </div>
@@ -1083,47 +1280,54 @@ function FormSetting(props) {
                                         <div className="toogle-swich">
                                           <input
                                             className="switch"
-                                            name="required"
+                                            name="signatories"
                                             type="checkbox"
-                                            // checked={form[index]?.required}
-                                            // onChange={(e) => {
-                                            //   setField(
-                                            //     e.target.name,
-                                            //     e.target.checked,
-                                            //     index
-                                            //   );
-                                            // }}
+                                            checked={form.signatories}
+                                            onChange={(e) => {
+                                              setFields(
+                                                e.target.name,
+                                                e.target.checked
+                                              );
+                                            }}
                                           />
                                         </div>
                                       </div>
                                     </div>
                                   </Col>
                                 </Row>
-                                <Row>
-                                  <Col md={12}>
-                                    <Form.Group>
-                                      <Form.Label>
-                                        Select Signatories
-                                      </Form.Label>
-                                      <div className="select-with-plus">
-                                        <Multiselect
-                                          displayValue="email"
-                                          className="multiselect-box default-arrow-select"
-                                          // placeholder="Select Franchisee"
-                                          selectedValues={selectedUser}
-                                          // onKeyPressFn={function noRefCheck() {}}
-                                          onRemove={onRemoveUser}
-                                          // onSearch={function noRefCheck() {}}
-                                          onSelect={onSelectUser}
-                                          options={user}
-                                        />
-                                      </div>
-                                      <p className="error">
-                                        {errors.franchisee}
-                                      </p>
-                                    </Form.Group>
-                                  </Col>
-                                </Row>
+                                {form.signatories && (
+                                  <Row>
+                                    <Col md={12}>
+                                      <Form.Group>
+                                        <Form.Label>
+                                          Select Signatories
+                                        </Form.Label>
+                                        <div className="select-with-plus">
+                                          <Multiselect
+                                            displayValue="email"
+                                            className="multiselect-box default-arrow-select"
+                                            // placeholder="Select Franchisee"
+                                            selectedValues={
+                                              selectedSignatoriesUser
+                                            }
+                                            // onKeyPressFn={function noRefCheck() {}}
+                                            onRemove={onSignatoriesRemoveUser}
+                                            // onSearch={function noRefCheck() {}}
+                                            onSelect={onSignatorieselectUser}
+                                            options={user}
+                                          />
+                                        </div>
+                                        <p className="error">
+                                          {errors.franchisee}
+                                        </p>
+                                      </Form.Group>
+                                    </Col>
+                                  </Row>
+                                )}
+                                {console.log(
+                                  'selectedFormVisibleUser---->',
+                                  selectedFormVisibleUser
+                                )}
                                 <Row>
                                   <Col md={12}>
                                     <Form.Group>
@@ -1133,11 +1337,13 @@ function FormSetting(props) {
                                           displayValue="email"
                                           className="multiselect-box default-arrow-select"
                                           // placeholder="Select Franchisee"
-                                          selectedValues={selectedUser}
+                                          selectedValues={
+                                            selectedFormVisibleUser
+                                          }
                                           // onKeyPressFn={function noRefCheck() {}}
-                                          onRemove={onRemoveUser}
+                                          onRemove={onFormVisibleRemoveUser}
                                           // onSearch={function noRefCheck() {}}
-                                          onSelect={onSelectUser}
+                                          onSelect={onFormVisibleSelectUser}
                                           options={user}
                                         />
                                       </div>
@@ -1161,16 +1367,12 @@ function FormSetting(props) {
                             <div className="toogle-swich ps-5">
                               <input
                                 className="switch"
-                                name="required"
+                                name="for_training"
                                 type="checkbox"
-                                // checked={form[index]?.required}
-                                // onChange={(e) => {
-                                //   setField(
-                                //     e.target.name,
-                                //     e.target.checked,
-                                //     index
-                                //   );
-                                // }}
+                                checked={form.for_training}
+                                onChange={(e) => {
+                                  setFields(e.target.name, e.target.checked);
+                                }}
                               />
                             </div>
                           </div>
@@ -1182,12 +1384,16 @@ function FormSetting(props) {
                         <Button
                           className="theme-light"
                           onClick={() => {
-                            navigate('/form/add');
+                            navigate('/form/add', {
+                              state: { id: location?.state?.id },
+                            });
                           }}
                         >
                           Cancel
                         </Button>
-                        <Button className="primary">Save Settings</Button>
+                        <Button className="primary" onClick={onSubmit}>
+                          Save Settings
+                        </Button>
                       </div>
                     </Col>
                   </Row>
