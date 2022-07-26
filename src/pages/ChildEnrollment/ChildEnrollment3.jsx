@@ -1,12 +1,29 @@
 import React, { useState } from "react";
 import { Button, Col, Row, Form, Table } from "react-bootstrap";
+import axios from 'axios';
+import { BASE_URL } from "../../components/App";
 
 let step = 4;
 
 const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
+  
+  const saveFormThreeData = async () => {
+    let childId = localStorage.getItem('enrolled_child_id')
+    let token = localStorage.getItem('token');
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: step }, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+      nextStep();
+    }
+  };
+
   const submitFormData = (e) => {
     e.preventDefault();
-    nextStep();
+    saveFormThreeData();
   };
 
   return (

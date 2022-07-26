@@ -576,7 +576,7 @@ const NewUser = () => {
                               />
                             }
                             {
-                              localStorage.getItem('user_role') === 'franchisee_admin' && 
+                              (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') && 
                               <Select
                                 placeholder={formData?.franchiseeObj[0].label || "Which Franchisee?"}
                                 closeMenuOnSelect={true}

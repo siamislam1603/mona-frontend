@@ -98,7 +98,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
             });
 
             if(response.status === 201 && response.data.status === "success") {
-              nextStep();
+              response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: step }, {
+                headers: {
+                  "Authorization": `Bearer ${token}`
+                }
+              });
+
+              if(response.status === 201 && response.data.status === "success") {
+                nextStep();
+              }
             }
           }
         }
