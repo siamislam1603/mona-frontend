@@ -78,6 +78,7 @@ const AddNewTraining = () => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
+  const [allFranchisee, setAllFranchisee] = useState(false);
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
