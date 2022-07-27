@@ -3,10 +3,22 @@ import { Button, Col, Row, Form, Table } from "react-bootstrap";
 import axios from 'axios';
 import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
 import { BASE_URL } from "../../components/App";
+import { useEffect } from "react";
+import { faListSquares } from "@fortawesome/free-solid-svg-icons";
 
 let nextstep = 3;
 let step = 2;
-
+let disease_name = [
+  "hepatitis_b",
+  "diptheria",
+  "haemophilus",
+  "inactivated_poliomyelitis",
+  "pneumococcal_conjugate",
+  "rotavirus",
+  "measules",
+  "meningococcal_c",
+  "varicella"
+];
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   const [healthInformation, setHealthInformation] = useState({
@@ -51,6 +63,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     details_of_restrictions: ""
   });
   const [parentMedicationPermission, setParentMedicationPermission] = useState(false);
+  const [formStepData, setFormStepData] = useState(null);
+  const [idList, setIdList] = useState({
+    health_information_id: null,
+    medical_information_id: null,
+    immunisation_record_id: null
+  })
+
+  // UPDATEING FORM TWO DATA
+  const updateFormTwoData = async () => {
+
+  };
 
   // FUNCTIONS
   const saveFormTwoData = async () => {
@@ -64,7 +87,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     if(response.status === 201 && response.data.status === "success") {
-
       // SENDING MEDICAL INFORMATION REQUEST
       response = await axios.post(`${BASE_URL}/enrollment/medical-information`, { ...childMedicalInformation, childId }, {
         headers: {
@@ -117,6 +139,86 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     }
   };
 
+  const fetchChildDataAndPopulate = async () => {
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let token = localStorage.getItem('token');
+
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === 'success') {
+      let { child } = response.data;
+      console.log('CHILD DATA:', child);
+
+      // POPULATING CHILD HEALTH INFORMATION STATE
+      let  { child_health_information: healthInfo } = child;
+      setHealthInformation(prevState => ({
+        ...prevState,
+        medical_service: healthInfo.medical_service,
+        telephone: healthInfo.telephone,
+        medical_service_address: healthInfo.medical_service_address,
+        maternal_and_child_health_centre: healthInfo.maternal_and_child_health_centre,
+      }));
+      setIdList(prevState => ({
+        ...prevState,
+        health_information_id: healthInfo.id
+      }));
+
+      // SETTING CHILD DETAILS
+      setChildDetails(prevState => ({
+        ...prevState,
+        has_health_record: child.has_health_record,
+        has_been_immunized: child.has_been_immunized,
+        has_court_orders: child.has_court_orders,
+        changes_described: child.changes_described
+      }));
+      
+      // SETTING CHILD IMMUNISATION RECORD
+      let { child_immunisation_record: irecord } = child;
+      for(let [key, value] of Object.entries(irecord)) {
+        if(disease_name.includes(key + "")){
+          setChildImmunisationRecord(prevState => ({
+            ...prevState,
+            [key]: value
+          }));
+        }
+      }
+      setIdList(prevState => ({
+        ...prevState,
+        immunisation_record_id: irecord.id
+      }));
+
+      // SETTING CHILD MEDICAL INFORMATION
+      let { child_medical_information: medinfo } = child;
+      setChildMedicalInformation(prevState => ({
+        ...prevState,
+        has_special_needs: medinfo.has_special_needs,
+        special_need_details: medinfo.special_need_details,
+        inclusion_support_form_of_special_needs: medinfo.inclusion_support_form_of_special_nee,
+        has_sensitivity: medinfo.has_sensitivity,
+        details_of_allergies: medinfo.details_of_allergies,
+        inclusion_support_form_of_allergies: medinfo.inclusion_support_form_of_allergies,
+        has_autoinjeciton_device: medinfo.has_autoinjeciton_device,
+        has_anaphylaxis_medical_plan_been_provided: medinfo.has_anaphylaxis_medical_plan_been_pro,
+        risk_management_plan_completed: medinfo.risk_management_plan_completed,
+        any_other_medical_condition: medinfo.any_other_medical_condition,
+        detail_of_other_condition: medinfo.detail_of_other_condition,
+        has_dietary_restrictions: medinfo.has_dietary_restrictions,
+        details_of_restrictions: medinfo.details_of_restrictions,
+      }));
+      setIdList(prevState => ({
+        ...prevState,
+        medical_information_id: medinfo.id
+      }));
+
+      setParentMedicationPermission(child.parents[0].i_give_medication_permission);
+      setFormStepData(child.form_step);
+    }
+  };
+
   const submitFormData = (e) => {
     e.preventDefault();
     
@@ -124,17 +226,29 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     if(Object.keys(errors).length > 0) {
       setHealthInfoFormErrors(errors);
     } else {
-      saveFormTwoData();
+      if(formStepData > step) {
+        // console.log('UPDATING THE EXISTING DATA!');
+        updateFormTwoData();
+      } else {
+        // console.log('CREATING NEW DATA!')
+        saveFormTwoData();
+      }
     }
     // nextStep();
   };
 
+  useEffect(() => {
+    console.log('FETCHING CHILD DATA AND POPULATE!');
+    fetchChildDataAndPopulate();
+  }, [localStorage.getItem('enrolled_child_id') !== null]);
 
-  healthInformation && console.log('HEALTH INFORMATION:', healthInformation);
-  childImmunisationRecord && console.log('IMMUNISATION RECORD:', childImmunisationRecord);
-  childDetails && console.log('CHILD DETAILS:', childDetails);
-  childMedicalInformation && console.log('CHILD MEDICAL INFORMATION:', childMedicalInformation);
-  parentMedicationPermission && console.log('HAS MY CONSENT:', parentMedicationPermission);
+  formStepData && console.log('FORM STEP:', formStepData);
+  // healthInformation && console.log('HEALTH INFORMATION:', healthInformation);
+  // childImmunisationRecord && console.log('IMMUNISATION RECORD LATEST:', childImmunisationRecord);
+  // childDetails && console.log('CHILD DETAILS:', childDetails);
+  // childMedicalInformation && console.log('CHILD MEDICAL INFORMATION:', childMedicalInformation);
+  // parentMedicationPermission && console.log('HAS MY CONSENT:', parentMedicationPermission);
+  // idList && console.log('ID LIST:', idList);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -153,6 +267,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         id="yesd" 
                         className="ps-0" 
                         label="Yes"
+                        checked={childDetails?.has_court_orders === true}
                         onChange={() => setChildDetails(prevState => ({
                           ...prevState,
                           has_court_orders: true
@@ -162,6 +277,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         name="powers" 
                         id="nod" 
                         defaultChecked
+                        checked={childDetails?.has_court_orders === false}
                         label="No"
                         onChange={() => setChildDetails(prevState => ({
                           ...prevState,
@@ -183,6 +299,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <Form.Control 
                           as="textarea" 
                           rows={3}
+                          value={childDetails?.changes_described || ""}
                           name="changes_described"
                           onChange={(e) => setChildDetails(prevState => ({
                             ...prevState,
@@ -231,7 +348,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         <div className="enrollment-form-sec">
           <Form onSubmit={submitFormData}>
             <div className="enrollment-form-column">
-              <h2 className="title-xs mb-4">Child’s health information R 162 (b)</h2>
+              <h2 className="title-xs mb-4">Child's health information R 162 (b)</h2>
               <div className="grayback">
                 <Row>
                   <Col md={6}>
@@ -240,7 +357,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control 
                         type="text"
                         name="medical_service"
-                        value={healthInformation.medical_service || ""}
+                        value={healthInformation?.medical_service || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
@@ -263,7 +380,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control 
                         type="tel"
                         name="telephone"
-                        value={healthInformation.telephone || ""}
+                        value={healthInformation?.telephone || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                           ...prevState,
@@ -286,7 +403,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control 
                         type="text"
                         name="medical_service_address"
-                        value={healthInformation.medical_service_address || ""}
+                        value={healthInformation?.medical_service_address || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
@@ -334,7 +451,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           type="radio" 
                           name="health" 
                           id="yes" 
-                          className="ps-0" 
+                          className="ps-0"
+                          checked={childDetails?.has_health_record === true} 
                           label="Yes"
                           onChange={() => setChildDetails(prevState => ({
                             ...prevState,
@@ -345,6 +463,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           name="health" 
                           id="no" 
                           label="No"
+                          checked={childDetails?.has_health_record === false} 
                           defaultChecked
                           onChange={() => setChildDetails(prevState => ({
                             ...prevState,
@@ -406,6 +525,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           type="radio" 
                           name="immunized" 
                           id="yesi"
+                          checked={childDetails?.has_been_immunized === true} 
                           className="ps-0" 
                           label="Yes"
                           onChange={() => setChildDetails(prevState => ({
@@ -417,6 +537,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           name="immunized" 
                           id="noi" 
                           label="No"
+                          checked={childDetails?.has_been_immunized === false}
                           defaultChecked
                           onChange={() => setChildDetails(prevState => ({
                             ...prevState,
@@ -491,6 +612,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="hepatitis_b" 
                                 type="checkbox"
                                 val="1" 
+                                checked={childImmunisationRecord?.hepatitis_b.includes("1")}
                                 id="hepatitis_b1" 
                                 label="&nbsp;"
                                 onChange={(e) => {
@@ -511,6 +633,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="hepatitis_b2" 
                                 val="2"
+                                checked={childImmunisationRecord?.hepatitis_b.includes("2")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -530,6 +653,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="hepatitis_b3"
                                 val="3" 
+                                checked={childImmunisationRecord?.hepatitis_b.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -549,6 +673,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="hepatitis_b4"
                                 val="4" 
+                                checked={childImmunisationRecord?.hepatitis_b.includes("4")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -568,6 +693,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="hepatitis_b5"
                                 val="5" 
+                                checked={childImmunisationRecord?.hepatitis_b.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -588,6 +714,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 id="hepatitis_b6"
                                 val="6" 
                                 label="&nbsp;"
+                                checked={childImmunisationRecord?.hepatitis_b.includes("6")}
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
@@ -606,6 +733,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="hepatitis_b7"
                                 val="7" 
+                                checked={childImmunisationRecord?.hepatitis_b.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -628,6 +756,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="diptheria1" 
                                 val="1"
+                                checked={childImmunisationRecord?.diptheria.includes("1")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -646,6 +775,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="diptheria"
                                 type="checkbox" 
                                 id="diptheria2"
+                                checked={childImmunisationRecord?.diptheria.includes("2")}
                                 val="2" 
                                 label="&nbsp;"
                                 onChange={(e) => {
@@ -666,6 +796,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="diptheria3"
                                 val="3" 
+                                checked={childImmunisationRecord?.diptheria.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -685,6 +816,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="diptheria4"
                                 val="4" 
+                                checked={childImmunisationRecord?.diptheria.includes("4")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -704,6 +836,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="diptheria5" 
                                 val="5"
+                                checked={childImmunisationRecord?.diptheria.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -723,6 +856,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="diptheria6"
                                 val="6" 
+                                checked={childImmunisationRecord?.diptheria.includes("6")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -742,6 +876,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="diptheria7"
                                 val="7" 
+                                checked={childImmunisationRecord?.diptheria.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -764,6 +899,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="haemophilus1"
                                 val="1" 
+                                checked={childImmunisationRecord?.haemophilus.includes("1")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -783,6 +919,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="haemophilus2"
                                 val="2" 
+                                checked={childImmunisationRecord?.haemophilus.includes("2")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -802,6 +939,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="haemophilus3"
                                 val="3" 
+                                checked={childImmunisationRecord?.haemophilus.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -821,6 +959,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="haemophilus4"
                                 val="4" 
+                                checked={childImmunisationRecord?.haemophilus.includes("4")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -840,6 +979,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="haemophilus5"
                                 val="5" 
+                                checked={childImmunisationRecord?.haemophilus.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -859,6 +999,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="haemophilus6"
                                 val="6" 
+                                checked={childImmunisationRecord?.haemophilus.includes("6")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -878,6 +1019,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="haemophilus7"
                                 val="7" 
+                                checked={childImmunisationRecord?.haemophilus.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -900,6 +1042,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="inactivated_poliomyelitis1"
                                 val="1" 
+                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -919,6 +1062,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="inactivated_poliomyelitis2"
                                 val="2" 
+                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("2")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -938,6 +1082,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="inactivated_poliomyelitis3"
                                 val="3" 
+                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -957,6 +1102,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="inactivated_poliomyelitis4"
                                 val="4" 
+                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("4")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -976,6 +1122,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="inactivated_poliomyelitis5"
                                 val="5" 
+                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -995,6 +1142,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="inactivated_poliomyelitis6"
                                 val="6" 
+                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("6")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1014,6 +1162,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 type="checkbox" 
                                 id="inactivated_poliomyelitis7"
                                 val="7" 
+                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1035,7 +1184,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="pneumococcal_conjugate"
                                 type="checkbox" 
                                 id="pneumococcal_conjugate1"
-                                val="1" 
+                                val="1"  
+                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("1")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1054,7 +1204,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="pneumococcal_conjugate"
                                 type="checkbox" 
                                 id="pneumococcal_conjugate2"
-                                val="2" 
+                                val="2"   
+                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("2")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1073,7 +1224,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="pneumococcal_conjugate"
                                 type="checkbox" 
                                 id="pneumococcal_conjugate3"
-                                val="3" 
+                                val="3"   
+                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1092,7 +1244,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="pneumococcal_conjugate"
                                 type="checkbox" 
                                 id="pneumococcal_conjugate4"
-                                val="4" 
+                                val="4"   
+                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("4")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1111,7 +1264,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="pneumococcal_conjugate"
                                 type="checkbox" 
                                 id="pneumococcal_conjugate5"
-                                val="5" 
+                                val="5"   
+                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1130,7 +1284,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="pneumococcal_conjugate"
                                 type="checkbox" 
                                 id="pneumococcal_conjugate6"
-                                val="6" 
+                                val="6"   
+                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("6")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1149,7 +1304,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="pneumococcal_conjugate"
                                 type="checkbox" 
                                 id="pneumococcal_conjugate7"
-                                val="7" 
+                                val="7"   
+                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1171,7 +1327,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="rotavirus"
                                 type="checkbox" 
                                 id="rotavirus1"
-                                val="1" 
+                                val="1"   
+                                checked={childImmunisationRecord?.rotavirus.includes("1")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1190,7 +1347,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="rotavirus"
                                 type="checkbox" 
                                 id="rotavirus2"
-                                val="2" 
+                                val="2"   
+                                checked={childImmunisationRecord?.rotavirus.includes("2")} 
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1209,7 +1367,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="rotavirus"
                                 type="checkbox" 
                                 id="rotavirus3"
-                                val="3" 
+                                val="3"    
+                                checked={childImmunisationRecord?.rotavirus.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1228,7 +1387,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="rotavirus"
                                 type="checkbox" 
                                 id="rotavirus4"
-                                val="4" 
+                                val="4"    
+                                checked={childImmunisationRecord?.rotavirus.includes("4")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1247,7 +1407,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="rotavirus"
                                 type="checkbox" 
                                 id="rotavirus5"
-                                val="5" 
+                                val="5"    
+                                checked={childImmunisationRecord?.rotavirus.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1266,7 +1427,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="rotavirus"
                                 type="checkbox" 
                                 id="rotavirus6"
-                                val="6" 
+                                val="6"    
+                                checked={childImmunisationRecord?.rotavirus.includes("6")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1285,7 +1447,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="rotavirus"
                                 type="checkbox" 
                                 id="rotavirus7"
-                                val="7" 
+                                val="7"    
+                                checked={childImmunisationRecord?.rotavirus.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1307,7 +1470,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="measules"
                                 type="checkbox" 
                                 id="measules1"
-                                val="1" 
+                                val="1"     
+                                checked={childImmunisationRecord?.measules.includes("1")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1326,7 +1490,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="measules"
                                 type="checkbox" 
                                 id="measules2"
-                                val="2" 
+                                val="2"      
+                                checked={childImmunisationRecord?.measules.includes("2")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1345,7 +1510,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="measules"
                                 type="checkbox" 
                                 id="measules3"
-                                val="3" 
+                                val="3"      
+                                checked={childImmunisationRecord?.measules.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1364,7 +1530,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="measules"
                                 type="checkbox" 
                                 id="measules4"
-                                val="4" 
+                                val="4"      
+                                checked={childImmunisationRecord?.measules.includes("4")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1383,7 +1550,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="measules"
                                 type="checkbox" 
                                 id="measules5"
-                                val="5" 
+                                val="5"      
+                                checked={childImmunisationRecord?.measules.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1402,7 +1570,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="measules"
                                 type="checkbox" 
                                 id="measules6"
-                                val="6" 
+                                val="6"      
+                                checked={childImmunisationRecord?.measules.includes("6")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1421,7 +1590,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="measules"
                                 type="checkbox" 
                                 id="measules7"
-                                val="7" 
+                                val="7"      
+                                checked={childImmunisationRecord?.measules.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1443,7 +1613,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="meningococcal_c"
                                 type="checkbox" 
                                 id="meningococcal_c1"
-                                val="1" 
+                                val="1"     
+                                checked={childImmunisationRecord?.meningococcal_c.includes("1")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1462,7 +1633,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="meningococcal_c"
                                 type="checkbox" 
                                 id="meningococcal_c2"
-                                val="2" 
+                                val="2"     
+                                checked={childImmunisationRecord?.meningococcal_c.includes("2")} 
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1481,7 +1653,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="meningococcal_c"
                                 type="checkbox" 
                                 id="meningococcal_c3"
-                                val="3" 
+                                val="3"      
+                                checked={childImmunisationRecord?.meningococcal_c.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1500,7 +1673,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="meningococcal_c"
                                 type="checkbox" 
                                 id="meningococcal_c4"
-                                val="4" 
+                                val="4"     
+                                checked={childImmunisationRecord?.meningococcal_c.includes("4")} 
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1519,7 +1693,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="meningococcal_c"
                                 type="checkbox" 
                                 id="meningococcal_c5"
-                                val="5" 
+                                val="5"      
+                                checked={childImmunisationRecord?.meningococcal_c.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1538,7 +1713,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="meningococcal_c"
                                 type="checkbox" 
                                 id="meningococcal_c6"
-                                val="6" 
+                                val="6"      
+                                checked={childImmunisationRecord?.meningococcal_c.includes("6")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1557,7 +1733,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="meningococcal_c"
                                 type="checkbox" 
                                 id="meningococcal_c7"
-                                val="7" 
+                                val="7"      
+                                checked={childImmunisationRecord?.meningococcal_c.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1579,7 +1756,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="varicella"
                                 type="checkbox" 
                                 id="varicella1"
-                                val="1" 
+                                val="1"       
+                                checked={childImmunisationRecord?.varicella.includes("1")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1598,7 +1776,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="varicella"
                                 type="checkbox" 
                                 id="varicella2"
-                                val="2" 
+                                val="2"        
+                                checked={childImmunisationRecord?.varicella.includes("2")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1617,7 +1796,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="varicella"
                                 type="checkbox" 
                                 id="varicella3"
-                                val="3" 
+                                val="3"        
+                                checked={childImmunisationRecord?.varicella.includes("3")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1636,7 +1816,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="varicella"
                                 type="checkbox" 
                                 id="varicella4"
-                                val="4" 
+                                val="4"        
+                                checked={childImmunisationRecord?.varicella.includes("4")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1655,7 +1836,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="varicella"
                                 type="checkbox" 
                                 id="varicella5"
-                                val="5" 
+                                val="5"        
+                                checked={childImmunisationRecord?.varicella.includes("5")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1674,7 +1856,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="varicella"
                                 type="checkbox" 
                                 id="varicella6"
-                                val="6" 
+                                val="6"        
+                                checked={childImmunisationRecord?.varicella.includes("6")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1693,7 +1876,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="varicella"
                                 type="checkbox" 
                                 id="varicella7"
-                                val="7" 
+                                val="7"        
+                                checked={childImmunisationRecord?.varicella.includes("7")}
                                 label="&nbsp;"
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
@@ -1756,6 +1940,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="photo" 
                               id="yesp" 
                               label="Yes"
+                              checked={childMedicalInformation?.has_special_needs === true}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 has_special_needs: true
@@ -1765,6 +1950,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="photo" 
                               id="nop"
                               defaultChecked 
+                              checked={childMedicalInformation?.has_special_needs === false}
                               label="No"
                               onChange={() => {
                                   setChildMedicalInformation(prevState => ({
@@ -1790,6 +1976,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="special_need_details" 
                               as="textarea" 
                               rows={3}
+                              value={childMedicalInformation?.special_need_details}
                               onChange={(e) => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 [e.target.name]: e.target.value
@@ -1804,6 +1991,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   name="support" 
                                   id="yesss" 
                                   label="Yes"
+                                  checked={childMedicalInformation?.inclusion_support_form_of_special_needs === true}
                                   onChange={() => setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     inclusion_support_form_of_special_needs: true
@@ -1813,6 +2001,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   name="support" 
                                   id="noss" 
                                   label="No"
+                                  checked={childMedicalInformation?.inclusion_support_form_of_special_needs === false}
                                   defaultChecked
                                   onChange={() => setChildMedicalInformation(prevState => ({
                                     ...prevState,
@@ -1833,6 +2022,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="senstivity" 
                               id="yesa" 
                               label="Yes"
+                              checked={childMedicalInformation?.has_sensitivity === true}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                   ...prevState,
                                   has_sensitivity: true
@@ -1843,6 +2033,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="senstivity" 
                               id="noa" 
                               label="No"
+                              checked={childMedicalInformation?.has_sensitivity === false}
                               defaultChecked
                               onChange={() => {
                                 setChildMedicalInformation(prevState => ({
@@ -1863,6 +2054,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control 
                               name="details_of_allergies"
                               as="textarea" 
+                              value={childMedicalInformation?.details_of_allergies || ""}
                               rows={3}
                               onChange={(e) => setChildMedicalInformation(prevState => ({
                                 ...prevState,
@@ -1878,15 +2070,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   name="applicable" 
                                   id="yesdd" 
                                   label="Yes"
+                                  checked={childMedicalInformation?.inclusion_support_form_of_allergies === true}
                                   onChange={() => setChildMedicalInformation(prevState => ({
                                     ...prevState,
-                                    inclusion_support_form_of_allergies: false
+                                    inclusion_support_form_of_allergies: true
                                   }))} />
                                 <Form.Check 
                                   type="radio" 
                                   name="applicable" 
                                   id="nodd" 
                                   label="No"
+                                  checked={childMedicalInformation?.inclusion_support_form_of_allergies === false}
                                   defaultChecked
                                   onChange={() => setChildMedicalInformation(prevState => ({
                                     ...prevState,
@@ -1907,6 +2101,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="injection" 
                               id="yesin" 
                               label="Yes"
+                              checked={childMedicalInformation?.has_autoinjeciton_device === true}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 has_autoinjection_device: true
@@ -1916,6 +2111,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="injection" 
                               id="noin" 
                               label="No"
+                              checked={childMedicalInformation?.has_autoinjeciton_device === false || childMedicalInformation?.has_autoinjeciton_device === null}
                               defaultChecked
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
@@ -1936,6 +2132,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="service" 
                                 id="yesm" 
                                 label="Yes"
+                                checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === true}
                                 onChange={() => setChildMedicalInformation(prevState => ({
                                   ...prevState,
                                   has_anaphylaxis_medical_plan_been_provided: true
@@ -1945,6 +2142,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 name="service" 
                                 id="nom" 
                                 label="No"
+                                checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === false}
                                 defaultChecked
                                 onChange={() => setChildMedicalInformation(prevState => ({
                                   ...prevState,
@@ -1963,6 +2161,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="management" 
                               id="yese" 
                               label="Yes"
+                              checked={childMedicalInformation?.risk_management_plan_completed === true}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 risk_management_plan_completed: true
@@ -1973,9 +2172,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               id="noe" 
                               defaultChecked
                               label="No"
+                              checked={childMedicalInformation?.risk_management_plan_completed === false || childMedicalInformation?.risk_management_plan_completed === null}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
-                                risk_management_plan_completed: true
+                                risk_management_plan_completed: false
                               }))} />
                           </div>
                         </Form.Group>
@@ -1990,6 +2190,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="conditions" 
                               id="yest" 
                               label="Yes"
+                              checked={childMedicalInformation?.any_other_medical_condition === true}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 any_other_medical_condition: true
@@ -1999,6 +2200,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="conditions" 
                               id="not" 
                               label="No"
+                              checked={childMedicalInformation?.any_other_medical_condition === false}
                               defaultChecked
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
@@ -2016,6 +2218,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             name="detail_of_other_condition" 
                             as="textarea" 
                             rows={3}
+                            value={childMedicalInformation?.detail_of_other_condition || ""}
                             onChange={(e) => setChildMedicalInformation(prevState => ({
                               ...prevState,
                               [e.target.name]: e.target.value
@@ -2031,6 +2234,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="dietary" 
                               id="yesh" 
                               label="Yes"
+                              checked={childMedicalInformation?.has_dietary_restrictions === true}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 has_dietary_restrictions: true
@@ -2040,6 +2244,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="dietary" 
                               id="noh" 
                               label="No"
+                              checked={childMedicalInformation?.has_dietary_restrictions === false}
                               defaultChecked
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
@@ -2057,6 +2262,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             name="details_of_restrictions"
                             as="textarea" 
                             rows={3}
+                            value={childMedicalInformation?.details_of_restrictions || ""}
                             onChange={(e) => setChildMedicalInformation(prevState => ({
                               ...prevState,
                               [e.target.name]: e.target.value
