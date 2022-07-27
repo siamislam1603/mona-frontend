@@ -91,7 +91,7 @@ hr{border-color:#c9c8c8;margin:3rem 0;}
 .row > [class*='col-'].floating-label.float-select .float-label{left:15px;}
 .row > [class*='col-'].floating-label.float-select .float-label.ml-3{left:0;}
 input:-webkit-autofill{-webkit-animation-name:autofill;-webkit-animation-fill-mode:both;}
-.btn{border-radius:10px;font-weight:400;padding:5px 1.5rem;line-height:38px;transition-duration:0.4s;min-width:155px;}
+.btn{border-radius:10px;font-weight:400;padding:5px 1.5rem;line-height:38px;transition-duration:0.4s;min-width:155px; white-space: nowrap;}
 .btn-group-lg > .btn,.btn-lg{padding:0.5rem 1rem;font-size:20px;line-height:1.5;}
 .btn-lg{padding:15px 30px;}
 .btn-sm{padding:0 1rem;line-height:40px;}
@@ -318,6 +318,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .user-management-sec .table tr { position: relative; }
 .user-management-sec .table tr:before { position: absolute; top:50%; transform: translateY(-50%); left:0; width: 100%; height:85%; box-shadow: 0 0 10px 0 rgba(0,0,0,.1); content: ''; background-color: var(--white); border-radius: 12px; z-index: -1; }
 .user-management-sec .table thead tr:before { opacity: 0; }
+.user-management-sec .table tr td .btn-outline-danger { min-width: inherit; white-space: nowrap; padding: 5px 15px; line-height: 30px; }
 .user-management-sec .table tr td:first-child { width: 5%; }
 .user-management-sec .table tr td:nth-child(2n) { width: 30%; }
 .user-management-sec .table tr td:nth-child(3n) { width: 30%; }
@@ -753,6 +754,13 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .responses-collapse .accordion-body { padding: 20px; }
 .content-wrap-title { font-size: 16px; }
 .responses-content-answer p { font-size: 14px; }
+.topheader { padding-left: 0; display: block; }
+.topheader .lpanel { display: block; }
+.topheader .rpanel { position: absolute; top:15px; right:15px; z-index:5; }
+.selectdropdown .dropdown .btn-primary, .selectdropdown .dropdown .btn-primary:active { min-width: 100%; }
+.topheader .rpanel .user-sec .dropdown .user-name { display: none; }
+.topheader .rpanel .user-sec .dropdown .btn-primary { padding-right: 22px; }
+.sec-column { padding: 95px 0 0 0 !important; }
 }
 @media only screen and (max-width: 575px) {
 .forms-filter button { margin-right: 15px; }
