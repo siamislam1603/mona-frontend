@@ -78,6 +78,7 @@ const AddNewTraining = () => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
+  const [allFranchisee, setAllFranchisee] = useState(false);
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
@@ -190,17 +191,31 @@ const AddNewTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
-    console.log('RESPONSE:', response);
-    if(response.status === 200 && Object.keys(response.data).length > 1) {
-      const { users } = response.data;
-      setFetchedFranchiseeUsers([
-        ...users?.map((data) => ({
-          id: data.id,
-          cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: data.fullname
-        })),
-      ]);
+    if(allFranchisee === false) {
+      const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
+      console.log('RESPONSE:', response);
+      if(response.status === 200 && Object.keys(response.data).length > 1) {
+        const { users } = response.data;
+        setFetchedFranchiseeUsers([
+          ...users?.map((data) => ({
+            id: data.id,
+            cat: data.fullname.toLowerCase().split(" ").join("_"),
+            key: data.fullname
+          })),
+        ]);
+      }
+    } else {
+      const response = await axios.get(`${BASE_URL}/user-group/users`);
+      if(response.status === 200 && response.data.status === "success") {
+        const { allUser } = response.data;
+        setFetchedFranchiseeUsers([
+          ...allUser?.map((data) => ({
+            id: data.id,
+            cat: data.fullname.toLowerCase().split(" ").join("_"),
+            key: data.fullname
+          })),
+        ]);
+      }
     }
   };
 
@@ -306,13 +321,14 @@ const AddNewTraining = () => {
   // }, [selectedFranchisee]);
 
   useEffect(() => {
-    fetchFranchiseeUsers(trainingSettings.assigned_franchisee[0]);
-  }, [trainingSettings.assigned_franchisee.length > 0]);
+    fetchFranchiseeUsers(trainingSettings?.assigned_franchisee[0]);
+  }, [trainingSettings?.assigned_franchisee.length > 0]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  // videoTutorialFiles && console.log('VIDEO TUTORIAL FILE:', videoTutorialFiles);
-  settingsModalPopup && console.log('Setting Modal Popul', settingsModalPopup);
+  // trainingData && console.log('TRAINING DATA:', trainingData);
+  // // videoTutorialFiles && console.log('VIDEO TUTORIAL FILE:', videoTutorialFiles);
+  // settingsModalPopup && console.log('Setting Modal Popul', settingsModalPopup);
+  fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -611,7 +627,8 @@ const AddNewTraining = () => {
                               ...prevState,
                               assigned_franchisee: ['all']
                             }));
-                            setSendToAllFranchisee('all')
+                            setSendToAllFranchisee('all');
+                            setAllFranchisee(true);
                           }}
                         />
                         <span className="radio-round"></span>
@@ -630,7 +647,8 @@ const AddNewTraining = () => {
                               ...prevState,
                               assigned_franchisee: []
                             }));
-                            setSendToAllFranchisee('none')
+                            setSendToAllFranchisee('none');
+                            setAllFranchisee(false);
                           }}
                         />
                         <span className="radio-round"></span>

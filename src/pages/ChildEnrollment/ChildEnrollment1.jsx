@@ -45,7 +45,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [ethnicityData, setEthnicityData] = useState(null);
   const [languageData, setLanguageData] = useState(null);
   const [countryData, setCountryData] = useState(null);
-  const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
+  // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
 
   // ERROR HANDLING STATE
   const [childFormErrors, setChildFormErrors] = useState(null);
@@ -71,7 +71,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       localStorage.setItem('enrolled_child_id', childId);
 
       // SAVING PARENT DETAIL
-      response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId}, {
+      let user_id = localStorage.getItem('user_id');
+      response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId, user_parent_id: user_id}, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -79,7 +80,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       console.log('PARENT RESPONSE:', response);
       if(response.status === 201 && response.data.status === "success") {
-        nextStep();
+        let { parent } = response.data;
+        localStorage.setItem('enrolled_parent_id', parent.id);
+
+        // HIDING THE DIALOG BOX FROM DASHBOARD
+        let user_id = localStorage.getItem('user_id');
+        response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
+
+        if(response.status === 201 && response.data.status === "success") {
+          nextStep();
+        }
       }
     }
   };
@@ -163,22 +173,46 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   };
 
-  const fetchParentUserDetails = async (email) => {
-    const response = await axios.get(`${BASE_URL}/contacts/${email}`);
-    if(response.status === 200) {
-      let { data } = response.data;
-      console.log('DATA:', data);
-      setParentUserDetailFromEngagebay(data);
+  // const fetchParentUserDetails = async (email) => {
+  //   const response = await axios.get(`${BASE_URL}/contacts/${email}`);
+  //   if(response.status === 200) {
+  //     let { data } = response.data;
+  //     console.log('DATA:', data);
+  //     setParentUserDetailFromEngagebay(data);
+  //   }
+  // };
+
+  const fetchParentUserDetails = async () => {
+    let token = localStorage.getItem('token');
+    let userId = localStorage.getItem('user_id');
+
+    let response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { user } = response.data;
+      setFormOneParentData(prevState => ({
+        ...prevState,
+        id: user.id,
+        family_name: user.fullname,
+        given_name: user.fullname,
+        email: user.email,
+        address_as_per_child: user.address,
+        telephone: user.phone,
+      }));
     }
   };
 
-  const copyDataToParentState = () => {
-    setFormOneParentData(prevState => ({
-      ...prevState,
-      family_name: parentUserDetailFromEngagebay?.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" "),
-      given_name: parentUserDetailFromEngagebay?.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" "),
-    }));
-  }
+  // const copyDataToParentState = () => {
+  //   setFormOneParentData(prevState => ({
+  //     ...prevState,
+  //     family_name: parentUserDetailFromEngagebay?.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" "),
+  //     given_name: parentUserDetailFromEngagebay?.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" "),
+  //   }));
+  // }
 
   useEffect(() => {
     fetchOccupationData();
@@ -187,16 +221,20 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     fetchCountryData();
   }, []);
 
-  useEffect(() => {
-    copyDataToParentState();
-  }, [parentUserDetailFromEngagebay]);
+  // useEffect(() => {
+  //   copyDataToParentState();
+  // }, [parentUserDetailFromEngagebay]);
+
+  // useEffect(() => {
+  //   fetchParentUserDetails(formOneParentData.email);
+  // }, [formOneParentData.email]);
 
   useEffect(() => {
-    fetchParentUserDetails(formOneParentData.email);
-  }, [formOneParentData.email]);
+    fetchParentUserDetails();
+  }, [])
 
-  parentUserDetailFromEngagebay && console.log('ENGAGEBAY DETAIL:', parentUserDetailFromEngagebay);
-
+  // parentUserDetailFromEngagebay && console.log('ENGAGEBAY DETAIL:', parentUserDetailFromEngagebay);
+  formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
   return (
     <>
       <div className="enrollment-form-sec my-5">
@@ -740,6 +778,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             type="tel" 
                             placeholder="+3375005467"
                             name="telephone"
+                            value={formOneParentData.telephone || ""}
                             onChange={(e) => {
                               handleParentData(e);
                               setParentFormErrors(prevState => ({
@@ -756,6 +795,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Control 
                             type="email" 
                             placeholder="Email Address"
+                            value={formOneParentData.email || ""}
                             name="email"
                             onBlur={(e) => {
                               handleParentData(e);
