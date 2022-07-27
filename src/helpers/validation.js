@@ -142,12 +142,14 @@ export const AddNewAnnouncementValidation = (form,coverImage) =>{
   console.log("The form validation",form)
   let newErrors = {};
   console.log("The form validat", form)
-  let { title,meta_description,start_date} = form;
-  console.log("The tile valdiation", title)
+  let { title, meta_description, start_date, start_time} = form;
+  console.log("The tile valdiation", start_date)
   if(!title || title === ' ') newErrors.title="Announcement Title is Required"
   if (!coverImage)newErrors.coverImage = 'Cover image is Required';
-  // if(!meta_description || meta_description === ' ') newErrors.meta_description="Announcement Description is Required"
-  if(start_date === " "|| !start_date) newErrors.start_date = "Start date requred"
+  if(start_date === " " &&!start_date || start_date === ' ') newErrors.start_date="Start Date Required"
+  if(start_time === " "&& !start_time || start_time === ' ') newErrors.start_time="Start Time Required"
+  if(!meta_description || meta_description === ' ') newErrors.meta_description="Announcement Description is Required"
+  
   return newErrors;
 
 }
