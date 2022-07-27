@@ -714,6 +714,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .custom_content:before { background-size: contain; }
 .sec-column { padding: 20px; }
 .extra-btn { justify-content: space-between; }
+.user-management-sec .my-2.col-lg-4.col-md-6 { flex: 0 0 auto; width: 50%; }
 }
 @media only screen and (max-width: 991px) {
 .logo-column { position: absolute; top: 11px; left: 40px; width: 85px; }
