@@ -4,7 +4,8 @@ import { BASE_URL } from "../../components/App";
 import axios from 'axios';
 import { childDailyRoutineValidation } from '../../helpers/validation';
 
-let step = 6;
+let nextstep = 6;
+let step = 5;
 
 const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
@@ -46,11 +47,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
       let childId = localStorage.getItem('enrolled_child_id');
       let token = localStorage.getItem('token');
 
-      let response = await axios.post(`${BASE_URL}/enrollment/daily-routine`, { ...childDailyRoutineData, childId }, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      })
+      let response = await axios.post(`${BASE_URL}/enrollment/daily-routine`, { ...childDailyRoutineData, childId })
 
       console.log('DAILY ROUTINE RESPONSE:', response);
       if(response.status === 201 && response.data.status === "success") {
@@ -64,7 +61,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
         if(response.status === 201 && response.data.status === "success") {
           
           // UPDATING THE STEP VALUE INSIDE CHILD TABLE
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {form_step: step}, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {form_step: nextstep}, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
@@ -82,7 +79,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    // nextStep();
+    
     let childDailyRoutineErrorObj = childDailyRoutineValidation(childDailyRoutineData);
     if(Object.keys(childDailyRoutineErrorObj).length > 0) {
       setChildDailyRoutineError(childDailyRoutineErrorObj);
