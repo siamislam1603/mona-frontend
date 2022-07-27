@@ -120,8 +120,19 @@ const columns1 = [
 
 const FranchiseeDashboard = () => {
   const [countUser, setcountUser] = React.useState(null);
-  const [latest_announcement, setlatest_announcement] = React.useState(null);
-  console.log(latest_announcement, "latest_announcement")
+
+  const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+
+  const announcement = () => {
+    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
+    axios.get(countUrl).then((response) => {
+      setlatest_announcement(response.data.data.all_announcements);
+    }).catch((e) => {
+      console.log("Error", e);
+    })
+  }
+
+  console.log(latest_announcement[0], "latest_announcement")
   const count_User_Api = () => {
     const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
     axios.get(countUrl).then((response) => {
@@ -134,6 +145,7 @@ const FranchiseeDashboard = () => {
   console.log(countUser, "lksjgydtadHUJISKiaudygquISOIWUAYTDGH")
   React.useEffect(() => {
     count_User_Api();
+    announcement();
   }, []);
 
   if (!countUser) return null;
@@ -330,18 +342,22 @@ const FranchiseeDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-                            <div className="listing">
+                            {latest_announcement.map((data) => {
+                              return (
+                                <div className="listing">
+                                  <a href="/" className="item">
+                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                    <div className="name">{data.title}<span className="date">{data.scheduled_date}</span></div>
+                                  </a>
+                                </div>
+                              );
+                            })}
+                            {/* <div className="listing">
                               <a href="/" className="item">
                                 <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                 <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
                               </a>
-                            </div>
-                            <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       </aside>

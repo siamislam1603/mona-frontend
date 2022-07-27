@@ -249,12 +249,11 @@ const EditAnnouncement = () => {
        "Authorization": "Bearer " + token
      }
     })
-
+    console.log("The reponse after edit ",response.data)
     if(response.status === 200) {
       setAnnouncementData(response.data.data.all_announcements)
     }
  } 
-
  const copyFetchedData = () =>{
   setAnnouncementCopyData(prevState =>({
     ...prevState,
