@@ -20,20 +20,30 @@ const [announcementFiles,setAnnouncementFiles] = useState([])
 const [videoFile, setVideoFile] = useState("https://embed.api.video/vod/vi38jFGbfBrkIlcrHXWLszG");
 const [show, setShow] = useState(false);
 const handleClose = () => setShow(false);
+const [theDelete,setTheDelete] = useState("");
  
   const AllAnnouncementData = async () =>{
-    console.log("Announcement detial API")
-  const token = localStorage.getItem('token');
-  const response = await axios.get(`${BASE_URL}/announcement`, {
-    headers: {
-      "Authorization": "Bearer " + token
+    try {
+      console.log("Announcement detial API")
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/announcement`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      console.log("The data",response);
+      
+      if(response.status === 200 && response.data.status === "success") {
+          setAnnouncementDetail(response.data.createdAnnouncement);
+      }
+    } catch (error) {
+        if(error.response.status === 404){
+          console.log("The code is 404")
+          setAnnouncementDetail([])
+        }
+
     }
-  });
-  console.log("The data",response);
   
-  if(response.status === 200 && response.data.status === "success") {
-      setAnnouncementDetail(response.data.createdAnnouncement);
-  }
 }
 
 
@@ -49,8 +59,9 @@ const deleteAlert = (id) =>{
 }
 
 const deleteAnnouncement = async (id) =>{
-  const token = localStorage.getItem('token');
-  const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
     headers: {
       "Authorization": "Bearer " + token
     }
@@ -59,10 +70,15 @@ const deleteAnnouncement = async (id) =>{
   if(response.status === 200){
       setTopMessage("Delete successfully")
       AllAnnouncementData()
+    
       setTimeout(() => {
         setTopMessage(null)
       }, 2000);
   }
+  } catch (error) {
+    console.log("The error",error)
+  }
+  
 
 }
 const getRelatedFileName = (str) => {
@@ -91,13 +107,22 @@ console.log("The annoumce detial",announcementDetails)
 
                     <Accordion defaultActiveKey="0">
                       {
-                        announcementDetails.map((details,index) => (
+                        announcementDetails && announcementDetails.map((details,index) => (
                          <div key={index}>
                         <Accordion.Item eventKey={index} >
                           <Accordion.Header>
                             <div className="head-title">
                               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                              <div className="title-xxs">{details.title}<small><span>{userROle}:</span>{userName}</small></div>
+                              <div className="title-xxs">{details.title}<small><span> {
+                              localStorage.getItem('user_role')
+                                  ? localStorage
+                                    .getItem('user_role')
+                                     .split('_')
+                                     .map(
+                                      (data) =>
+                                       data.charAt(0).toUpperCase() + data.slice(1)
+                                      ).join(' ')
+                          : ''}:</span>{userName}</small></div>
                               <div className="date">
                                  <Dropdown>
                                   <Dropdown.Toggle id="extrabtn" className="ctaact">
@@ -137,7 +162,7 @@ console.log("The annoumce detial",announcementDetails)
                                   {/* <iframe  src="https://embed.api.video/vod/vi38jFGbfBrkIlcrHXWLszG">
                                   </iframe> */}
                                   
-                                  {details.announcement_files.map((detail,index) =>(
+                                  {   details.announcement_files?.map((detail,index) =>(
                                            <>
                                            {detail.fileType == ".mp4" && !detail.is_deleted  ? (
                                               <AnnouncementVideo 

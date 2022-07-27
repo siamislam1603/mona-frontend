@@ -69,7 +69,7 @@ const Announcements =  () => {
                                   />
                           </label>
                         </div>
-                        <Dropdown className="filtercol me-3">
+                        {/* <Dropdown className="filtercol me-3">
                           <Dropdown.Toggle id="extrabtn" variant="btn-outline">
                             <i className="filter-ico"></i> Add Filters
                           </Dropdown.Toggle>
@@ -117,7 +117,7 @@ const Announcements =  () => {
                               <Button variant="primary" type="submit">Apply</Button>
                             </footer>
                           </Dropdown.Menu>
-                        </Dropdown>
+                        </Dropdown> */}
                         <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
                         <Dropdown>
                           <Dropdown.Toggle id="extrabtn" className="ctaact">

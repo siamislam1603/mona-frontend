@@ -178,6 +178,13 @@ const createAnnouncement = async (data) => {
         ...prevState,
         [name]: value,
       })); 
+      if (!!error[name]) {
+        setError({
+          ...error,
+          [name]: null,
+        });
+      }
+
     };
 
 
@@ -186,7 +193,7 @@ const createAnnouncement = async (data) => {
 
     const handleDataSubmit = event => {
       event.preventDefault();
-      console.log("The annoucement ",announcementData)
+      console.log("The annoucement after submit ",announcementData)
       let errorObj = AddNewAnnouncementValidation(announcementData, coverImage);
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
@@ -217,22 +224,22 @@ const createAnnouncement = async (data) => {
        
      
     // }
-    if (!announcementData.title) {
-      setError(prevError => {
-          return { 
-              ...prevError, 
-              title: "Required Title" 
-            }
-      }); 
-    }
-    if (!announcementData.meta_description) {
-      setError(prevError => {
-          return {
-        ...prevError,
-        meta_description: "Description must be at least ten characters long"
-      }
-    }); 
-  }
+    // if (!announcementData.title) {
+    //   setError(prevError => {
+    //       return { 
+    //           ...prevError, 
+    //           title: "Required Title" 
+    //         }
+    //   }); 
+    // }
+  //   if (!announcementData.meta_description) {
+  //     setError(prevError => {
+  //         return {
+  //       ...prevError,
+  //       // meta_description: "Description must be at least ten characters long"
+  //     }
+  //   }); 
+  // }
 //   if (!announcementData.coverImage) {
 //     setError(prevError => {
 //         return {
@@ -277,11 +284,11 @@ const createAnnouncement = async (data) => {
     },[])
 
    
+    console.log("The annno",announcementData)
     
 console.log(franchiseeData);
   return (
     <>
-    {console.log("The annno",announcementData)}
 
       <div id="main">
         <section className="mainsection ">
@@ -363,7 +370,8 @@ console.log(franchiseeData);
                         <MyEditor
                               errors={error}
                               name ="meta_description"
-                              data={announcementData.meta_description} 
+                              // data={announcementData.meta_description} 
+                             
 
                               handleChange={(e, data) => {
                                 announcementDescription(e, data);
