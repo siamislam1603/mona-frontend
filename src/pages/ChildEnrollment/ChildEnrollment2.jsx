@@ -4,7 +4,9 @@ import axios from 'axios';
 import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
 import { BASE_URL } from "../../components/App";
 
-let step = 3;
+let nextstep = 3;
+let step = 2;
+
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   const [healthInformation, setHealthInformation] = useState({
@@ -98,7 +100,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
             });
 
             if(response.status === 201 && response.data.status === "success") {
-              response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: step }, {
+              response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: nextstep }, {
                 headers: {
                   "Authorization": `Bearer ${token}`
                 }
@@ -2087,7 +2089,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               </Form.Group>
             </div>
             <div className="cta text-center mt-5 mb-5">
-              <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
+              <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
               <Button variant="primary" type="submit">Next</Button>
             </div>
           </Form>

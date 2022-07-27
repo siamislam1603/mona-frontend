@@ -55,6 +55,7 @@ function ChildEnrollment() {
     if(response.status === 200 && response.data.status === "success") {
       let {childData} = response.data;
       localStorage.setItem('enrolled_child_id', childData[0].id);
+      // localStorage.setItem('isChildEnrolled', childData[0].)
       let form_step = childData[0].form_step;
       setstep(form_step);
     } else {
