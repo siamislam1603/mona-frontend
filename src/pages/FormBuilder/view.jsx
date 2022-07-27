@@ -32,7 +32,7 @@ function ViewFormBuilder(props) {
   const [MeFormData, setMeFormData] = useState([]);
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
-  let hrFlag=false;
+  let hrFlag = false;
   useEffect(() => {
     getFormData('');
   }, []);
@@ -42,7 +42,14 @@ function ViewFormBuilder(props) {
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/form?search=${search}`, requestOptions)
+    fetch(
+      `${BASE_URL}/form?search=${search}&id=${localStorage.getItem(
+        'user_id'
+      )}&role=${localStorage.getItem(
+        'user_role'
+      )}&franchisee_id=${localStorage.getItem('franchisee_id')}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result) => {
         setFormData(result?.result);
@@ -176,12 +183,124 @@ function ViewFormBuilder(props) {
                                 </Row>
                                 <Row>
                                   {item?.forms?.map((inner_item) => {
-                                    return inner_item.end_date && (
-                                      <>
-                                      {hrFlag=true}
-                                      <Col lg={4}>
+                                    return (
+                                      inner_item.end_date && (
+                                        <>
+                                          {(hrFlag = true)}
+                                          <Col lg={4}>
+                                            <div className="forms-content create-other">
+                                              <div
+                                                className="content-icon-section"
+                                                onClick={() => {
+                                                  navigate(
+                                                    `/form/dynamic/${inner_item.form_name}`
+                                                  );
+                                                }}
+                                              >
+                                                <img
+                                                  src={
+                                                    item.category ===
+                                                    'Parent Forms'
+                                                      ? '../img/survey_icon.png'
+                                                      : item.category ===
+                                                        'Talent Management'
+                                                      ? '../img/blue_survey.png'
+                                                      : item.category ===
+                                                        'Child Care Forms'
+                                                      ? '../img/green_survey.png'
+                                                      : item.category ===
+                                                        'Business Operations'
+                                                      ? '../img/dark_green_survey.png'
+                                                      : item.category ===
+                                                        'Customer Service'
+                                                      ? '../img/gray_survey.png'
+                                                      : item.category ===
+                                                        'Governance & Compliance'
+                                                      ? '../img/pink_survey.png'
+                                                      : item.category ===
+                                                        'General'
+                                                      ? '../img/orange_survey.png'
+                                                      : '../img/survey_icon.png'
+                                                  }
+                                                />
+                                              </div>
+                                              <div
+                                                className="content-title-section"
+                                                onClick={() => {
+                                                  navigate(
+                                                    `/form/dynamic/${inner_item.form_name}`
+                                                  );
+                                                }}
+                                              >
+                                                <h6>{inner_item.form_name}</h6>
+                                                <h4 className="due_date">
+                                                  Due on:{' '}
+                                                  {moment(
+                                                    inner_item.end_date
+                                                  ).format('DD/MM/YYYY')}
+                                                </h4>
+                                              </div>
+                                              <div className="content-toogle">
+                                                <Dropdown>
+                                                  <Dropdown.Toggle id="dropdown-basic1">
+                                                    <FontAwesomeIcon
+                                                      icon={faEllipsisVertical}
+                                                    />
+                                                  </Dropdown.Toggle>
+
+                                                  <Dropdown.Menu>
+                                                    <Dropdown.Item
+                                                      onClick={() => {
+                                                        navigate('/form/add', {
+                                                          state: {
+                                                            id: inner_item.id,
+                                                          },
+                                                        });
+                                                      }}
+                                                    >
+                                                      <FontAwesomeIcon
+                                                        icon={faPen}
+                                                      />{' '}
+                                                      Edit
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item href="#/action-2">
+                                                      <FontAwesomeIcon
+                                                        icon={faRemove}
+                                                      />{' '}
+                                                      Remove
+                                                    </Dropdown.Item>
+                                                  </Dropdown.Menu>
+                                                </Dropdown>
+                                              </div>
+                                            </div>
+                                          </Col>
+                                        </>
+                                      )
+                                    );
+                                  })}
+                                </Row>
+                                {hrFlag && <hr className="date-line"></hr>}
+                                <Row>
+                                  {item?.forms?.map((inner_item) => {
+                                    return (
+                                      inner_item.end_date === null && (
+                                        <Col lg={4}>
+                                          {(hrFlag = false)}
+                                          {console.log(
+                                            'inner_item?.end_date---->ELSE',
+                                            inner_item?.end_date,
+                                            '------',
+                                            inner_item
+                                          )}
                                           <div className="forms-content create-other">
-                                            <div className="content-icon-section">
+                                            <div
+                                              className="content-icon-section"
+                                              onClick={() => {
+                                                navigate(
+                                                  `/form/dynamic/${inner_item.form_name}`
+                                                );
+                                              }}
+                                            >
                                               <img
                                                 src={
                                                   item.category ===
@@ -209,12 +328,19 @@ function ViewFormBuilder(props) {
                                                 }
                                               />
                                             </div>
-                                            <div className="content-title-section">
+                                            <div
+                                              className="content-title-section"
+                                              onClick={() => {
+                                                navigate(
+                                                  `/form/dynamic/${inner_item.form_name}`
+                                                );
+                                              }}
+                                            >
                                               <h6>{inner_item.form_name}</h6>
-                                              <h4 className='due_date'>
-                                                Due on:{' '}
+                                              <h4>
+                                                Created on:{' '}
                                                 {moment(
-                                                  inner_item.end_date
+                                                  inner_item.createdAt
                                                 ).format('DD/MM/YYYY')}
                                               </h4>
                                             </div>
@@ -252,91 +378,10 @@ function ViewFormBuilder(props) {
                                             </div>
                                           </div>
                                         </Col>
-                                        
-                                      </>
-                                    )})}
-                                </Row>
-                                {hrFlag && <hr className="date-line"></hr>}
-                                <Row>
-                                    {item?.forms?.map((inner_item) => {
-                                      return inner_item.end_date===null && (
-                                      <Col lg={4}>
-                                        {hrFlag=false}
-                                        {console.log("inner_item?.end_date---->ELSE",inner_item?.end_date,"------",inner_item)}
-                                        <div className="forms-content create-other">
-                                          <div className="content-icon-section">
-                                            <img
-                                              src={
-                                                item.category === 'Parent Forms'
-                                                  ? '../img/survey_icon.png'
-                                                  : item.category ===
-                                                    'Talent Management'
-                                                  ? '../img/blue_survey.png'
-                                                  : item.category ===
-                                                    'Child Care Forms'
-                                                  ? '../img/green_survey.png'
-                                                  : item.category ===
-                                                    'Business Operations'
-                                                  ? '../img/dark_green_survey.png'
-                                                  : item.category ===
-                                                    'Customer Service'
-                                                  ? '../img/gray_survey.png'
-                                                  : item.category ===
-                                                    'Governance & Compliance'
-                                                  ? '../img/pink_survey.png'
-                                                  : item.category === 'General'
-                                                  ? '../img/orange_survey.png'
-                                                  : '../img/survey_icon.png'
-                                              }
-                                            />
-                                          </div>
-                                          <div className="content-title-section">
-                                            <h6>{inner_item.form_name}</h6>
-                                            <h4>
-                                              Created on:{' '}
-                                              {moment(
-                                                inner_item.createdAt
-                                              ).format('DD/MM/YYYY')}
-                                            </h4>
-                                          </div>
-                                          <div className="content-toogle">
-                                            <Dropdown>
-                                              <Dropdown.Toggle id="dropdown-basic1">
-                                                <FontAwesomeIcon
-                                                  icon={faEllipsisVertical}
-                                                />
-                                              </Dropdown.Toggle>
-
-                                              <Dropdown.Menu>
-                                                <Dropdown.Item
-                                                  onClick={() => {
-                                                    navigate('/form/add', {
-                                                      state: {
-                                                        id: inner_item.id,
-                                                      },
-                                                    });
-                                                  }}
-                                                >
-                                                  <FontAwesomeIcon
-                                                    icon={faPen}
-                                                  />{' '}
-                                                  Edit
-                                                </Dropdown.Item>
-                                                <Dropdown.Item href="#/action-2">
-                                                  <FontAwesomeIcon
-                                                    icon={faRemove}
-                                                  />{' '}
-                                                  Remove
-                                                </Dropdown.Item>
-                                              </Dropdown.Menu>
-                                            </Dropdown>
-                                          </div>
-                                        </div>
-                                      </Col>
+                                      )
                                     );
                                   })}
                                 </Row>
-                                
                               </>
                             );
                           })}
