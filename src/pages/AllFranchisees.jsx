@@ -357,7 +357,7 @@ const AllFranchisees = () => {
 
                                                     franchiseeData && franchiseeData.map(data => {
                                                         return (
-                                                            <Col key={data.id} sm={6} md={4} className="my-2">
+                                                            <Col key={data.id} md={6} lg={4} className="my-2">
                                                                 <Card className="text-center Card_design">
                                                                     <Card.Body className="d-flex flex-row bd-highlight align-items-center">
                                                                         {/* <div className="edit-ico"><a href={`/edit-franchisees/${data.id}`}><img src="../img/edit-ico.png" alt="" /></a></div> */}

@@ -34,7 +34,7 @@ const Children = () => {
     const init = async() => {
         // Set Parents Franchisee
         const franchiseeId = location.state.franchisee_id
-          setFranchiseId(franchiseeId)
+        setFranchiseId(franchiseeId)
         
         // Children List
         let response =await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
@@ -42,9 +42,9 @@ const Children = () => {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           });
-          if (response.status === 200) {
+
+          if (response.status === 200 && response.data.status === "success") {
             const { parentData } = response.data;
-            console.log(parentData,"users")
             setChildrenList(parentData.children)
           }
           
