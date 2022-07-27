@@ -48,6 +48,7 @@ function FormSetting(props) {
   };
 
   useEffect(() => {
+    console.log("location?.state?.id---->",location?.state?.id);
     getUser();
   }, [selectedFranchisee]);
   useEffect(() => {
@@ -408,7 +409,7 @@ function FormSetting(props) {
                     <div className="mynewForm-heading  mb-0">
                       <Button
                         onClick={() => {
-                          navigate('/form/add');
+                          navigate('/form/add',{state:{id:location?.state?.id}});
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />

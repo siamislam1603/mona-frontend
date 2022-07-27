@@ -23,6 +23,7 @@ function AddFormBuilder(props) {
   const location = useLocation();
 
   useEffect(() => {
+    console.log("location?.state?.id--->",location?.state?.id);
     if (location?.state?.id) {
       getParticularFormData();
     }
@@ -68,7 +69,7 @@ function AddFormBuilder(props) {
         .then((res) => res.json())
         .then((res) => {
           navigate('/form/setting', {
-            state: { id: form?.id },
+            state: { id: form?.id,form_name:form?.form_name },
           });
         });
     }
