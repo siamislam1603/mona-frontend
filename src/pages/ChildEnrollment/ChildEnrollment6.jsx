@@ -5,7 +5,8 @@ import { BASE_URL } from '../../components/App';
 
 
 
-let step = 7;
+let nextstep = 7;
+let step = 6;
 
 // const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 //   const submitFormData = (e) => {

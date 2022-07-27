@@ -47,41 +47,43 @@ const AddFormField = (props) => {
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
   useEffect(() => {
+    console.log("location?.state?.id---->",location?.state?.id);
+    console.log("location?.state?.form_name--->",location?.state?.form_name);
     if (location?.state?.form_name) {
       getFormField();
       getFormData();
       getUserRoleAndFranchiseeData();
     }
   }, []);
-  function onSelectFranchisee(optionsList, selectedItem) {
-    console.log('selected_item---->2', selectedItem);
-    selectedFranchisee.push({
-      id: selectedItem.id,
-      role_label: selectedItem.registered_name,
-    });
-    console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
-  }
-  function onRemoveFranchisee(selectedList, removedItem) {
-    const index = selectedFranchisee.findIndex((object) => {
-      return object.id === removedItem.id;
-    });
-    selectedFranchisee.splice(index, 1);
-  }
+  // function onSelectFranchisee(optionsList, selectedItem) {
+  //   console.log('selected_item---->2', selectedItem);
+  //   selectedFranchisee.push({
+  //     id: selectedItem.id,
+  //     role_label: selectedItem.registered_name,
+  //   });
+  //   console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
+  // }
+  // function onRemoveFranchisee(selectedList, removedItem) {
+  //   const index = selectedFranchisee.findIndex((object) => {
+  //     return object.id === removedItem.id;
+  //   });
+  //   selectedFranchisee.splice(index, 1);
+  // }
 
-  function onSelectUserRole(optionsList, selectedItem) {
-    console.log('selected_item---->2', selectedItem);
-    selectedUserRole.push({
-      id: selectedItem.id,
-      role_label: selectedItem.role_label,
-    });
-    console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
-  }
-  function onRemoveUserRole(selectedList, removedItem) {
-    const index = selectedUserRole.findIndex((object) => {
-      return object.id === removedItem.id;
-    });
-    selectedUserRole.splice(index, 1);
-  }
+  // function onSelectUserRole(optionsList, selectedItem) {
+  //   console.log('selected_item---->2', selectedItem);
+  //   selectedUserRole.push({
+  //     id: selectedItem.id,
+  //     role_label: selectedItem.role_label,
+  //   });
+  //   console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
+  // }
+  // function onRemoveUserRole(selectedList, removedItem) {
+  //   const index = selectedUserRole.findIndex((object) => {
+  //     return object.id === removedItem.id;
+  //   });
+  //   selectedUserRole.splice(index, 1);
+  // }
   const getUserRoleAndFranchiseeData = () => {
     var requestOptions = {
       method: 'GET',
@@ -400,7 +402,7 @@ const AddFormField = (props) => {
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
-                          navigate('/form/add');
+                          navigate('/form/setting',{state:{id: location?.state?.id,form_name: location?.state?.form_name}});
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
@@ -831,7 +833,7 @@ const AddFormField = (props) => {
                   <Row>
                     <Col sm={12}>
                       <div className="button mb-5">
-                        <Button className="preview">Preview</Button>
+                        <Button className="preview" onClick={()=>{navigate(`/form/preview/${location?.state?.form_name}`,{state:{id: location?.state?.id,form_name:location?.state?.form_name}})}}>Preview</Button>
                         <Button className="saveForm" onClick={onSubmit}>
                           Save Form
                         </Button>
