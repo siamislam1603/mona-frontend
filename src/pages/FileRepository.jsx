@@ -8,6 +8,7 @@ import {
   Row,
   Col,
 } from 'react-bootstrap';
+import axios from "axios";
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
@@ -72,6 +73,8 @@ const FileRepository = () => {
   const [userRole, setUserRole] = useState([]);
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [loaderFlag, setLoaderFlag] = useState(false);
+
+
   const [columns, setColumns] = useState([
     {
       dataField: 'repository_files',
@@ -85,7 +88,7 @@ const FileRepository = () => {
                 <img src={cell[0].} alt="" />
               </span> */}
               <span className="user-name">
-                {cell[0].fileName+"."+cell[0].fileType.split("/")[1]}
+                {cell[0].fileName + "." + cell[0].fileType.split("/")[1]}
                 {/* <small>{cell[2]}</small> */}
               </span>
             </div>
@@ -150,18 +153,50 @@ const FileRepository = () => {
       },
     },
   ]);
+
+
+
+
   const [tabFlag, setTabFlag] = useState(true);
   const [fileRepoData, setFileRepoData] = useState([]);
   const [sharedWithMeFileRepoData, setSharedWithMeFileRepoData] = useState([]);
   const [errors, setErrors] = useState({});
+  const [post, setPost] = React.useState();
+
+
+
+  const GetData = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'Authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    await fetch(`${BASE_URL}/fileRepo/2`, requestOptions)
+      .then((res) => res.json())
+      .then((json) => {
+        var Item = json.filesData
+        console.log(Item, "Item")
+        setPost({ Item });
+      })
+    console.log(post, "This is me ")
+  }
 
   useEffect(() => {
-    getUserRoleAndFranchiseeData();
-    getMyAddedFileRepoData();
-    getFilesSharedWithMeData();
-    getFileCategory();
+    GetData();
+    // getUserRoleAndFranchiseeData();
+    // getMyAddedFileRepoData();
+    // getFilesSharedWithMeData();
+    // getFileCategory();
     getUser();
   }, []);
+
+
+  // if (!post) return null;
   const getFileCategory = () => {
     var myHeaders = new Headers();
     myHeaders.append(
@@ -175,11 +210,13 @@ const FileRepository = () => {
       headers: myHeaders,
     };
 
-    fetch(`${BASE_URL}/api/file-category`, requestOptions)
-      .then((response) => response.json())
+    fetch(`${BASE_URL}/fileRepo/2`, requestOptions)
+
       .then((result) => setCategory(result?.result))
       .catch((error) => console.log('error', error));
   };
+
+
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append(
@@ -216,6 +253,8 @@ const FileRepository = () => {
       });
     }
   };
+
+
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -238,11 +277,16 @@ const FileRepository = () => {
       selectedFranchiseeId += item.id + ',';
     });
     setLoaderFlag(true);
+
     var myHeaders = new Headers();
+
     myHeaders.append(
-      'authorization',
+      'Authorization',
       'Bearer ' + localStorage.getItem('token')
     );
+    console.log(localStorage, "localStorage");
+
+
     const file = formSettingData.setting_files[0];
     console.log('file------->', file);
     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
@@ -267,42 +311,42 @@ const FileRepository = () => {
         true
       );
     } else {
-    if (formSettingData.accessible_to_role === 1) {
-      formdata.append(
-        'sharedRole',
-        formSettingData.shared_role.slice(0, -1)
-      );
-      formdata.append(
-        'sharedWith',
-        null
-      );
-      formdata.append(
-        'accessibleToRole',
-        formSettingData.accessible_to_role
-      );
-      formdata.append(
-        'accessibleToAll',
-        false
-      );
-    } else {
-      formdata.append(
-        'sharedRole',
-        null
-      );
-      formdata.append(
-        'sharedWith',
-        selectedUserId.slice(0, -1)
-      );
-      formdata.append(
-        'accessibleToRole',
-        formSettingData.accessible_to_role
-      );
-      formdata.append(
-        'accessibleToAll',
-        false
-      );
+      if (formSettingData.accessible_to_role === 1) {
+        formdata.append(
+          'sharedRole',
+          formSettingData.shared_role.slice(0, -1)
+        );
+        formdata.append(
+          'sharedWith',
+          null
+        );
+        formdata.append(
+          'accessibleToRole',
+          formSettingData.accessible_to_role
+        );
+        formdata.append(
+          'accessibleToAll',
+          false
+        );
+      } else {
+        formdata.append(
+          'sharedRole',
+          null
+        );
+        formdata.append(
+          'sharedWith',
+          selectedUserId.slice(0, -1)
+        );
+        formdata.append(
+          'accessibleToRole',
+          formSettingData.accessible_to_role
+        );
+        formdata.append(
+          'accessibleToAll',
+          false
+        );
+      }
     }
-  }
 
     var requestOptions = {
       method: 'POST',
@@ -311,8 +355,10 @@ const FileRepository = () => {
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/uploads/`, requestOptions)
-      .then((response) => response.json())
+    fetch(`${BASE_URL}/fileRepo/`, requestOptions)
+      .then((response) => {
+        response.json()
+      })
       .then((result) => {
         if (result) {
           setLoaderFlag(false);
@@ -320,10 +366,12 @@ const FileRepository = () => {
         }
       })
       .catch((error) => console.log('error', error));
-    // }
+
   };
+
   const getFilesSharedWithMeData = () => {
     var myHeaders = new Headers();
+
     myHeaders.append(
       'authorization',
       'Bearer ' + localStorage.getItem('token')
@@ -365,6 +413,8 @@ const FileRepository = () => {
       })
       .catch((error) => console.log('error', error));
   };
+
+
   const getMyAddedFileRepoData = () => {
     var myHeaders = new Headers();
     myHeaders.append(
@@ -409,13 +459,14 @@ const FileRepository = () => {
       })
       .catch((error) => console.log('error', error));
   };
+
   const getUserRoleAndFranchiseeData = () => {
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/api/user-role`, requestOptions)
+    fetch(`${BASE_URL}/fileRepo/`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         setUserRole(res?.userRoleList);
@@ -423,6 +474,7 @@ const FileRepository = () => {
       })
       .catch((error) => console.log('error', error));
   };
+
   function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
     selectedUserId += selectedItem.id + ',';
@@ -442,6 +494,8 @@ const FileRepository = () => {
       console.log('selectedUser---->', selectedUser);
     }
   }
+
+
   function onSelect(index) {
     let data = [...user];
     if (data[index]['status'] === true) {
@@ -459,6 +513,7 @@ const FileRepository = () => {
     }
     setUser(data);
   }
+
   return (
     <>
       {console.log('hello----->', formSettingData)}
@@ -471,7 +526,7 @@ const FileRepository = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader />
-                {console.log("sharedWithMeFileRepoData------>",sharedWithMeFileRepoData)}
+                {console.log("sharedWithMeFileRepoData------>", sharedWithMeFileRepoData)}
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
                     <ToolkitProvider
@@ -479,7 +534,7 @@ const FileRepository = () => {
                       data={
                         tabFlag === false
                           ? fileRepoData
-                          : 
+                          :
                           sharedWithMeFileRepoData
                       }
                       columns={columns}
