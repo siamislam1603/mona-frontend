@@ -138,7 +138,8 @@ const AllFranchisees = () => {
                 isDeleted:franchisee.isDeleted 
             }));
             // temp = temp.filter((data) => data.isDeleted === 0);
-            let tempData = temp.filter((data) => data.franchisee.isDeleted === null || data.franchisee.isDeleted === 0);
+            console.log("franchise data  franchise datafranchise datafranchise datafranchise data", temp)
+            let tempData = temp.filter((data) => data.isDeleted === null || data.isDeleted === 0);
             setFranchiseeData(tempData)
         }
       
