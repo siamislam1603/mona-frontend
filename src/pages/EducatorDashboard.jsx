@@ -10,7 +10,7 @@ import "react-sweet-progress/lib/style.css";
 const products = [
   {
     id: 1,
-    name: "../img/user.png, James Smith",
+    name: "../img/user.png, Jones Smith",
     specialneed: "Yes",
   },
   {
@@ -20,12 +20,12 @@ const products = [
   },
   {
     id: 3,
-    name: "../img/user.png, James Smith",
+    name: "../img/user.png, Andraw Smith",
     specialneed: "No",
   },
   {
     id: 4,
-    name: "../img/user.png, James Smith",
+    name: "../img/user.png, Helan Smith",
     specialneed: "Yes",
   },
 ];

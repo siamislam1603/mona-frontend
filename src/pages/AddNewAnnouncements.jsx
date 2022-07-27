@@ -172,6 +172,7 @@ const createAnnouncement = async (data) => {
     };
 
     const announcementDescription = (field, value) => {
+      // console.log("The field and value in addnewannoucement",field,value)
       setAnnouncementData({ ...announcementData, [field]: value });
       if (!!error[field]) {
         setError({
@@ -183,11 +184,18 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
-      console.log("The name and value",name,value)
+      // console.log("The name and value",name,value)
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
       })); 
+      if (!!error[name]) {
+        setError({
+          ...error,
+          [name]: null,
+        });
+      }
+
     };
 
 
@@ -196,7 +204,7 @@ const createAnnouncement = async (data) => {
 
     const handleDataSubmit = event => {
       event.preventDefault();
-      console.log("The annoucement ",announcementData)
+      console.log("The annoucement after submit ",announcementData)
       let errorObj = AddNewAnnouncementValidation(announcementData, coverImage);
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
@@ -224,42 +232,26 @@ const createAnnouncement = async (data) => {
         console.log("The data",data)
        }
       }
+      console.log("The datad adndsjkvnskdja ")
        
      
     // }
-    if (!announcementData.title) {
-      setError(prevError => {
-          return { 
-              ...prevError, 
-              title: "Required Title" 
-            }
-      }); 
-    }
-    if (!announcementData.meta_description) {
-      setError(prevError => {
-          return {
-        ...prevError,
-        meta_description: "Description must be at least ten characters long"
-      }
-    }); 
-  }
-//   if (!announcementData.start_date) {
-//     setError(prevError => {
-//         return {
-//       ...prevError,
-//       start_date: "Start Date required"
-//     }
-//   }); 
-// }
-
-// if (!announcementData.start_time) {
-//   setError(prevError => {
-//       return {
-//     ...prevError,
-//     start_time: "start Time required"
-//   }
-// }); 
-// }
+    // if (!announcementData.title) {
+    //   setError(prevError => {
+    //       return { 
+    //           ...prevError, 
+    //           title: "Required Title" 
+    //         }
+    //   }); 
+    // }
+  //   if (!announcementData.meta_description) {
+  //     setError(prevError => {
+  //         return {
+  //       ...prevError,
+  //       // meta_description: "Description must be at least ten characters long"
+  //     }
+  //   }); 
+  // }
 //   if (!announcementData.coverImage) {
 //     setError(prevError => {
 //         return {
@@ -304,12 +296,12 @@ const createAnnouncement = async (data) => {
     },[])
 
    
-coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
+// coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
 // console.log(franchiseeData);
   return (
+    
     <>
-    {console.log("The annno",announcementData)}
-
+     
       <div id="main">
         <section className="mainsection ">
           <Container>
@@ -390,7 +382,8 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                         <MyEditor
                               errors={error}
                               name ="meta_description"
-                              data={announcementData.meta_description} 
+                              // data={announcementData.meta_description} 
+                             
 
                               handleChange={(e, data) => {
                                 announcementDescription(e, data);
@@ -419,6 +412,8 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                         onChange={handleAnnouncementData}
                       />
                 </Form.Group>
+                {error.start_date && <p className="form-errors">{error.start_date}</p>}
+
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
@@ -427,8 +422,11 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                     type="time"
                     name="start_time"
                     onChange={handleAnnouncementData}
+                    onInvalid={!!error.start_time}
                   />
                 </Form.Group>
+                {error.start_time && <p className="form-errors">{error.start_time}</p>}
+
               </Col>
                     </Row>
                   <div className="my-new-formsection">
