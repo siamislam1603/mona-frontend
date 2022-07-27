@@ -50,6 +50,8 @@ import EditUser from '../pages/EditUser';
 import EditFranchisees from '../pages/EditFranchisees';
 import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
+import Children from '../pages/Children';
+import Preview from '../pages/FormBuilder/Preview';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -358,6 +360,15 @@ const Main = () => {
           }
         />
         <Route
+          path="/form/preview/:name"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Preview />
+            </Protected>
+          }
+        />
+        <Route
           path="/form/field/add"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -411,6 +422,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AddUserRole />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Training />
             </Protected>
           }
         />
@@ -559,6 +580,15 @@ const Main = () => {
         {/* <Route path="/not-found" component={NotFound } />
         <Redirect from="/" to="/not-found" /> */}
 
+        <Route
+          path="/children/:id"
+          element={
+          <Protected isLoggedIn={isLoggedIn}>
+            <SignIn />
+            <Children />
+          </Protected>
+          }
+        />
 
       </Routes>
       

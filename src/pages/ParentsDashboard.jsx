@@ -10,10 +10,10 @@ import { BASE_URL } from "../components/App";
 const ParentsDashboard = () => {
   
   const [userDetails, setUserDetails] = useState(null);
-  const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(true);
+  const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(false);
 
   const fetchUserDetails = async (userId) => {
-    let token = await localStorage.getItem('token');
+    let token = localStorage.getItem('token');
     let response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -26,14 +26,8 @@ const ParentsDashboard = () => {
     }
   };
 
-  const moveToChildEnrollmentForm = async () => {
-    let user_id = localStorage.getItem('user_id');
-
-    let response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
-
-    if(response.status === 201 && response.data.status === "success") {
-      window.location.href="/child-enrollment";
-    }
+  const moveToChildEnrollmentForm = () => {
+    window.location.href="/child-enrollment";
   }
 
   useEffect(() => {
@@ -45,8 +39,10 @@ const ParentsDashboard = () => {
   }, []);
 
   useEffect(() => {
-    setChildEnrollMessageDialog(true);
-  }, [userDetails]);
+    if(userDetails?.isChildEnrolled === 0) {
+      setChildEnrollMessageDialog(true);
+    }
+  }, [userDetails?.isChildEnrolled]);
   
   return (
     <>

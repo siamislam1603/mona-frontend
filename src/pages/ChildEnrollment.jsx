@@ -43,24 +43,28 @@ function ChildEnrollment() {
   }
 
   const updateStepFromDatabase = async () => {
-    let childId = localStorage.getItem('enrolled_child_id');
+    let parentId = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${childId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/parent/child/${parentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
-    console.log('RESPONSE:', response);
     if(response.status === 200 && response.data.status === "success") {
-      let { form_step } = response.data.child;
+      let {childData} = response.data;
+      localStorage.setItem('enrolled_child_id', childData[0].id);
+      // localStorage.setItem('isChildEnrolled', childData[0].)
+      let form_step = childData[0].form_step;
       setstep(form_step);
+    } else {
+      setstep(1);
     }
   };
 
   useEffect(() => {
-    // updateStepFromDatabase();
+    updateStepFromDatabase();
   }, []);
 
   console.log('SELECTED FRANCHISEE:', selectedFranchisee);

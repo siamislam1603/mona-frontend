@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Col, Row, Form, Table } from "react-bootstrap";
 
-let step = 8;
+let nextstep = 8;
+let step = 7;
 
 const ChildEnrollment7 = ({ nextStep, handleFormData, prevStep }) => {
   const submitFormData = (e) => {
