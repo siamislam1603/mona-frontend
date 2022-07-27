@@ -4,6 +4,9 @@ import { BASE_URL } from "../../components/App";
 import axios from 'axios';
 import { personValidation } from "../../helpers/validation";
 
+let nextstep = 5;
+let step = 4;
+
 const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   // REQUIRED STATES
@@ -76,45 +79,72 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    // let emergencyContactErrorObj = personValidation(emergencyContactData);
-    // let authorizedNomineeErrorObj = personValidation(authorizedNomineeData);
-    // let authorizedPersonErrorObj = personValidation(authorizedPersonData);
-    // let otherAuthorizedPersonErrorObj = personValidation(otherAuthorizedPersonData);
+    let emergencyContactErrorObj = personValidation(emergencyContactData);
+    let authorizedNomineeErrorObj = personValidation(authorizedNomineeData);
+    let authorizedPersonErrorObj = personValidation(authorizedPersonData);
+    let otherAuthorizedPersonErrorObj = personValidation(otherAuthorizedPersonData);
 
-    // if(Object.keys(emergencyContactErrorObj).length > 0 ||
-    //    Object.keys(authorizedNomineeErrorObj).length > 0 ||
-    //    Object.keys(authorizedPersonErrorObj).length > 0 ||
-    //    Object.keys(otherAuthorizedPersonErrorObj).length > 0) {
-    //     setEmergencyContactError(emergencyContactErrorObj);
-    //     setAuthorizedNomineeError(authorizedNomineeErrorObj);
-    //     setAuthorizedPersonError(authorizedPersonErrorObj);
-    //     setOtherAuthorizedPersonError(otherAuthorizedPersonErrorObj);
-    // } else {
-    //   saveFormFourData(); 
-    // }
-    nextStep();
+    if(Object.keys(emergencyContactErrorObj).length > 0 ||
+       Object.keys(authorizedNomineeErrorObj).length > 0 ||
+       Object.keys(authorizedPersonErrorObj).length > 0 ||
+       Object.keys(otherAuthorizedPersonErrorObj).length > 0) {
+        setEmergencyContactError(emergencyContactErrorObj);
+        setAuthorizedNomineeError(authorizedNomineeErrorObj);
+        setAuthorizedPersonError(authorizedPersonErrorObj);
+        setOtherAuthorizedPersonError(otherAuthorizedPersonErrorObj);
+    } else {
+      saveFormFourData(); 
+    }
+    // nextStep();
   };
 
   const saveFormFourData = async () => {
     try {
       let childId = localStorage.getItem('enrolled_child_id');
+      let token = localStorage.getItem('token');
       // SAVING EMERGENCY CONTACT
-      let response = await axios.post(`${BASE_URL}/enrollment/emergency-contact`, {...emergencyContactData, childId})
+      let response = await axios.post(`${BASE_URL}/enrollment/emergency-contact`, {...emergencyContactData, childId}, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
 
       if(response.status === 201 && response.data.status === "success") {
         // SAVING AUTHORIZED NOMINEE
-        response = await axios.post(`${BASE_URL}/enrollment/authorized-nominee`, {...authorizedNomineeData, childId});
+        response = await axios.post(`${BASE_URL}/enrollment/authorized-nominee`, {...authorizedNomineeData, childId}, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
 
         if(response.status === 201 && response.data.status === "success") {
           // SAVING AUTHORIZED PERSON
-          response = await axios.post(`${BASE_URL}/enrollment/authorized-person`, {...authorizedPersonData, childId})
+          response = await axios.post(`${BASE_URL}/enrollment/authorized-person`, {...authorizedPersonData, childId}, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          })
 
           if(response.status === 201 && response.data.status === "success") {
            // SAVING OTHER AUTHORIZED PERSON
-            response = await axios.post(`${BASE_URL}/enrollment/other-authorized-person`, {...otherAuthorizedPersonData, childId});
+            response = await axios.post(`${BASE_URL}/enrollment/other-authorized-person`, {...otherAuthorizedPersonData, childId}, {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              }
+            });
 
             if(response.status === 201 && response.data.status === "success") {
-              nextStep();
+              
+              // UPDATING THE STEP VALUE INSIDE CHILD TABLE
+              response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {form_step: nextstep}, {
+                headers: {
+                  "Authorization": `Bearer ${token}`
+                }
+              });
+
+              if(response.status === 201 && response.data.status === "success") {
+                nextStep();
+              }
             }
           }
         }
@@ -497,7 +527,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
             <Button variant="primary" type="submit">Next</Button>
           </div> */}
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
+            <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
             <Button variant="primary" type="submit">Next</Button>
           </div>
         </Form>

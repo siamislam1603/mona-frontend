@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
 import ChildEnrollment from '../pages/ChildEnrollment';
+import ChildEnrollment1 from '../pages/ChildEnrollment/ChildEnrollment1';
+import ChildEnrollment2 from '../pages/ChildEnrollment/ChildEnrollment2';
+import ChildEnrollment3 from '../pages/ChildEnrollment/ChildEnrollment3';
+import ChildEnrollment4 from '../pages/ChildEnrollment/ChildEnrollment4';
+import ChildEnrollment5 from '../pages/ChildEnrollment/ChildEnrollment5';
+import ChildEnrollment6 from '../pages/ChildEnrollment/ChildEnrollment6';
+import ChildEnrollment7 from '../pages/ChildEnrollment/ChildEnrollment7';
+import ChildEnrollment8 from '../pages/ChildEnrollment/ChildEnrollment8';
 import SignIn from '../pages/SignIn';
 import ForgotPassword from '../pages/ForgotPassword';
 import UserManagement from '../pages/UserManagement';
@@ -42,6 +50,8 @@ import EditUser from '../pages/EditUser';
 import EditFranchisees from '../pages/EditFranchisees';
 import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
+import Children from '../pages/Children';
+import Preview from '../pages/FormBuilder/Preview';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -78,12 +88,83 @@ const Main = () => {
             </Protected>
           }
         />
+        
         <Route
-          path="/child-enrollment"
+          path="/child-enrollment/1"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <ChildEnrollment />
+              <ChildEnrollment1 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/2"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment2 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/3"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment3 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/4"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment4 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/5"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment5 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/6"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment6 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/7"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment7 />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment/8"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment8 />
             </Protected>
           }
         />
@@ -279,6 +360,15 @@ const Main = () => {
           }
         />
         <Route
+          path="/form/preview/:name"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Preview />
+            </Protected>
+          }
+        />
+        <Route
           path="/form/field/add"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -332,6 +422,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <AddUserRole />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/training"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Training />
             </Protected>
           }
         />
@@ -480,6 +580,15 @@ const Main = () => {
         {/* <Route path="/not-found" component={NotFound } />
         <Redirect from="/" to="/not-found" /> */}
 
+        <Route
+          path="/children/:id"
+          element={
+          <Protected isLoggedIn={isLoggedIn}>
+            <SignIn />
+            <Children />
+          </Protected>
+          }
+        />
 
       </Routes>
       

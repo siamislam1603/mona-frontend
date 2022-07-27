@@ -679,7 +679,7 @@ const EditUser = () => {
                               onChange={handleChange}
                             />
                             {
-                              formData.termination_reach_me === false &&
+                              (formData.termination_reach_me === false  || formData.termination_reach_me === null) &&
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
                               <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
                             }
@@ -687,7 +687,7 @@ const EditUser = () => {
                               formData.termination_reach_me === true &&
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
                               <div>
-                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData.termination_date).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
+                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
                                 <img style={{ width: "100px", height: "auto" }}src={`${formData.user_signature}`} alt="" />
                               </div>
                               }
