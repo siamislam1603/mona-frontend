@@ -4,15 +4,19 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 // import VideoPop from "../components/VideoPop";
 import AnnouncementVideo from "./AnnouncementVideo";
+import { debounce } from 'lodash';
+
 import MyEditor from "./CKEditor";
 
 
-const AllAnnouncements = () => {
+const AllAnnouncements = (props) => {
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
   });
 const userName = localStorage.getItem("user_name");
 const userROle = localStorage.getItem("user_role");
+const [search,setSearch]=useState('');
+
 const [topMessage,setTopMessage] = useState(null);
 const [theRelatedFiles,setTheRelatedFiles] = useState([])
 const [announcementDetails,setAnnouncementDetail] = useState([])
@@ -21,6 +25,7 @@ const [videoFile, setVideoFile] = useState("https://embed.api.video/vod/vi38jFGb
 const [show, setShow] = useState(false);
 const handleClose = () => setShow(false);
 const [theDelete,setTheDelete] = useState("");
+const [searchData,setSearchData] = useState(props.search)
  
   const AllAnnouncementData = async () =>{
     try {
@@ -34,7 +39,7 @@ const [theDelete,setTheDelete] = useState("");
       console.log("The data",response);
       
       if(response.status === 200 && response.data.status === "success") {
-          setAnnouncementDetail(response.data.createdAnnouncement);
+          setAnnouncementDetail(response.data.searchedData);
       }
     } catch (error) {
         if(error.response.status === 404){
@@ -45,6 +50,7 @@ const [theDelete,setTheDelete] = useState("");
     }
   
 }
+console.log("The props",props.search)
 
 
 const formatMetaDescription = (str) => {
@@ -78,9 +84,66 @@ const deleteAnnouncement = async (id) =>{
   } catch (error) {
     console.log("The error",error)
   }
-  
-
 }
+const onFilter = debounce(() => {
+  fetchUserDetails();
+}, 200);
+const fetchUserDetails = async () => {
+  let api_url = '';
+  const userId = localStorage.getItem("user_id")
+  if (search) {
+    api_url = `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
+  }
+
+  let response = await axios.get(api_url, {
+    headers: {
+      authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+  console.log("The reponse of serach")
+  if (response.status === 200) {
+    // const { users } = response.data;
+    // console.log('USERS:', users);
+    // let tempData = users.map((dt) => ({
+
+    //   name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
+    //     .split('_')
+    //     .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+    //     .join(' ')}`,
+    //   email: dt.email,
+    //   number: dt.phone.slice(1),
+    //   location: dt.city,
+    //   is_deleted: dt.is_deleted,
+    //   userID: dt.id,
+    //   roleDetail: dt.role+ "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id
+    // }));
+    
+    // tempData = tempData.filter((data) => data.is_deleted === 0);
+    // console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee",tempData)
+    // setUserData(tempData);
+
+    // let temp = tempData;
+    // let csv_data = [];
+    // temp.map((item,index) => {
+    //   // item['Name'] = item['name'];
+    //   // item['Email'] = item['email'];
+    //   // item['Phone Number'] = item['number'];
+    //   // item['Location'] = item['location'];
+    //   // delete item['name'];
+    //   // delete item['email'];
+    //   // delete item['number'];
+    //   // delete item['location'];
+      
+    //   delete item.is_deleted;
+    //   // delete item.user_id;
+    //   csv_data.push(item);
+    //   let data={...csv_data[index]};
+    //   data["name"]=data.name.split(",")[1];
+    //   csv_data[index]=data;
+    // });
+    // setCsvData(csv_data);
+  }
+};
 const getRelatedFileName = (str) => {
   let arr = str.split("/");
   let fileName = arr[arr.length - 1].split("_")[0];
@@ -91,8 +154,26 @@ const getRelatedFileName = (str) => {
 useEffect(() => {
   AllAnnouncementData()
 }, [])
+useEffect(() =>{
+  // if(searchData<0){
+      // console.log("The seach in all announcement")
+  // }
+  console.log("The seach in all announcement")
+  setSearchData(props.search)
+  
 
-console.log("The annoumce detial",announcementDetails)
+},[props.search]) 
+useEffect(() =>{
+  if(searchData.length>0){
+    setAnnouncementDetail(searchData)
+  }
+  else{
+    AllAnnouncementData()
+  }
+},[searchData])
+ announcementDetails.filter(c => console.log("The related files",c.announcement_files))
+
+console.log("The annoumce all ",announcementDetails)
   return (
     
     <div className="announcement-accordion">
@@ -191,6 +272,8 @@ console.log("The annoumce detial",announcementDetails)
           
                                   </div>
                                 </div>
+                                
+                                {/* <h1>{details.announcement_files.filter(c => c.fileType !== ".mp4")}</h1> */}
                                 <div className="head">Related Files :</div>
                                 <div className="cont">
                                   <div className="related-files">

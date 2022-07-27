@@ -172,6 +172,7 @@ const createAnnouncement = async (data) => {
     };
 
     const announcementDescription = (field, value) => {
+      // console.log("The field and value in addnewannoucement",field,value)
       setAnnouncementData({ ...announcementData, [field]: value });
       if (!!error[field]) {
         setError({
@@ -183,7 +184,7 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
-      console.log("The name and value",name,value)
+      // console.log("The name and value",name,value)
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
@@ -231,6 +232,7 @@ const createAnnouncement = async (data) => {
         console.log("The data",data)
        }
       }
+      console.log("The datad adndsjkvnskdja ")
        
      
     // }
@@ -294,11 +296,12 @@ const createAnnouncement = async (data) => {
     },[])
 
    
-coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
+// coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
 // console.log(franchiseeData);
   return (
+    
     <>
-
+     
       <div id="main">
         <section className="mainsection ">
           <Container>
@@ -409,6 +412,8 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                         onChange={handleAnnouncementData}
                       />
                 </Form.Group>
+                {error.start_date && <p className="form-errors">{error.start_date}</p>}
+
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
@@ -417,8 +422,11 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                     type="time"
                     name="start_time"
                     onChange={handleAnnouncementData}
+                    onInvalid={!!error.start_time}
                   />
                 </Form.Group>
+                {error.start_time && <p className="form-errors">{error.start_time}</p>}
+
               </Col>
                     </Row>
                   <div className="my-new-formsection">

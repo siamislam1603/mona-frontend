@@ -8,6 +8,9 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import AllAnnouncements from "./AllAnnouncements";
 import MyAnnouncements from "./MyAnnouncements";
+import { debounce } from 'lodash';
+
+
 
 
 const animatedComponents = makeAnimated();
@@ -25,7 +28,9 @@ const training = [
 const Announcements =  () => {
   const [announcementDetails,setAnnouncementDetail] = useState("")
   const [tabLinkPath, setTabLinkPath] = useState("/all-announcements");
-
+  const [search,setSearch]=useState('');
+  const [searchData,setSearchData] = useState([])
+  
  
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
@@ -36,6 +41,71 @@ const Announcements =  () => {
     category_id: null,
     search: ""
   });
+  const onFilter = debounce(() => {
+    fetchUserDetails();
+  }, 200);
+  const fetchUserDetails = async () => {
+    console.log("The search detials inaise 1")
+    let api_url = '';
+    const userId = localStorage.getItem("user_id")
+    if (search) {
+      api_url =  `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
+    }
+    console.log("The api_url",api_url)
+  
+    let response = await axios.get(api_url, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    console.log("The reponse of serach",response.data.data.searchedData)
+    if(response.status ===200 && response.data.data.searchedData<0){
+      setSearchData([])
+    }
+    if (response.status === 200) {
+        setSearchData(response.data.data.searchedData)
+      // const { users } = response.data;
+      // console.log('USERS:', users);
+      // let tempData = users.map((dt) => ({
+  
+      //   name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
+      //     .split('_')
+      //     .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+      //     .join(' ')}`,
+      //   email: dt.email,
+      //   number: dt.phone.slice(1),
+      //   location: dt.city,
+      //   is_deleted: dt.is_deleted,
+      //   userID: dt.id,
+      //   roleDetail: dt.role+ "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id
+      // }));
+      
+      // tempData = tempData.filter((data) => data.is_deleted === 0);
+      // console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee",tempData)
+      // setUserData(tempData);
+  
+      // let temp = tempData;
+      // let csv_data = [];
+      // temp.map((item,index) => {
+      //   // item['Name'] = item['name'];
+      //   // item['Email'] = item['email'];
+      //   // item['Phone Number'] = item['number'];
+      //   // item['Location'] = item['location'];
+      //   // delete item['name'];
+      //   // delete item['email'];
+      //   // delete item['number'];
+      //   // delete item['location'];
+        
+      //   delete item.is_deleted;
+      //   // delete item.user_id;
+      //   csv_data.push(item);
+      //   let data={...csv_data[index]};
+      //   data["name"]=data.name.split(",")[1];
+      //   csv_data[index]=data;
+      // });
+      // setCsvData(csv_data);
+    }
+  };
 
 
   return (
@@ -61,11 +131,15 @@ const Announcements =  () => {
                                   type="text" 
                                   className="form-control" 
                                   placeholder="Search"
-                                  value={filterData.search}
-                                  onChange={e => setFilterData(prevState => ({
-                                     ...prevState,
-                                   search: e.target.value
-                              }))} 
+                                  value={search}
+                              //     onChange={e => setFilterData(prevState => ({
+                              //        ...prevState,
+                              //      search: e.target.value
+                              // }))} 
+                              onChange={(e) => {
+                                setSearch(e.target.value);
+                                onFilter();
+                              }}
                                   />
                           </label>
                         </div>
@@ -292,9 +366,9 @@ const Announcements =  () => {
 
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements/>}
+                      && <AllAnnouncements search = {searchData}/>}
                     {tabLinkPath === "/my-announcements" 
-                      && <MyAnnouncements
+                      && <MyAnnouncements search = {searchData}
                              />}
                 
                   </div>
