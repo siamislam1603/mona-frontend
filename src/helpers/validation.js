@@ -248,18 +248,27 @@ export const PasswordValidation = (form) => {
     new_password,
     confirm_password
   } = form;
+
   if (!oldpassword) {
     errors.oldpassword = 'Old password is required!';
   }
   if(!new_password){
     errors.new_password = 'New Password is required'
   }
+  if(new_password && new_password.length<5){
+    errors.new_password="Minimum length 5"
+  }
+  
   if(!confirm_password){
     errors.confirm_password = 'Confirm password'
   }
   if(new_password && confirm_password && new_password !== confirm_password ){
       errors.new_password = "New password and Confirm password need to be same"
       errors.confirm_password = "New password and Confirm password need to be same"
+  }
+  if(oldpassword && new_password && oldpassword === new_password){
+    errors.new_password = "Old and New Password need to be different"
+    errors.oldpassword = "Old and New Password need to be different"
   }
   
 

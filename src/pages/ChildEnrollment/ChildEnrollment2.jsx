@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { Button, Col, Row, Form, Table } from "react-bootstrap";
+import axios from 'axios';
 import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
+import { BASE_URL } from "../../components/App";
 
-let step = 3;
+let nextstep = 3;
+let step = 2;
 
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
@@ -32,9 +35,86 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     has_court_orders: false,
     changes_described: ""
   });
+  const [childMedicalInformation, setChildMedicalInformation] = useState({
+    has_special_needs: false,
+    special_need_details: "",
+    inclusion_support_form_of_special_needs: false,
+    has_sensitivity: false,
+    details_of_allergies: "",
+    inclusion_support_form_of_allergies: false,
+    has_autoinjection_device: false,
+    has_anaphylaxis_medical_plan_been_provided: false,
+    risk_maagement_plan_completed: false,
+    any_other_medical_condition: false,
+    detail_of_other_condition: "",
+    has_dietary_restrictions: false,
+    details_of_restrictions: ""
+  });
+  const [parentMedicationPermission, setParentMedicationPermission] = useState(false);
 
   // FUNCTIONS
   const saveFormTwoData = async () => {
+    let childId = localStorage.getItem('enrolled_child_id');
+    let token = localStorage.getItem('token');
+    // SENDING HEALTH INFORMATION REQUEST
+    let response = await axios.post(`${BASE_URL}/enrollment/health-information`, {...healthInformation, childId}, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+
+      // SENDING MEDICAL INFORMATION REQUEST
+      response = await axios.post(`${BASE_URL}/enrollment/medical-information`, { ...childMedicalInformation, childId }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if(response.status === 201 && response.data.status === "success") {
+
+        // SENDING IMMUNIZATION RECORD REQUEST  
+        response = await axios.post(`${BASE_URL}/enrollment/immunisation-record`, {...childImmunisationRecord, childId}, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+  
+        if(response.status === 201 && response.data.status === "success") {
+
+          // UPDATING CHILD DETAILS
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...childDetails}, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          });
+          
+          // UPDATING PARENT PERMISSION
+          if(response.status === 201 && response.data.status === "success") {
+            let parentId = localStorage.getItem('enrolled_parent_id');
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {i_give_medication_permission: parentMedicationPermission}, {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              }
+            });
+
+            if(response.status === 201 && response.data.status === "success") {
+              response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: nextstep }, {
+                headers: {
+                  "Authorization": `Bearer ${token}`
+                }
+              });
+
+              if(response.status === 201 && response.data.status === "success") {
+                nextStep();
+              }
+            }
+          }
+        }
+      }
+
+    }
   };
 
   const submitFormData = (e) => {
@@ -50,8 +130,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   };
 
 
-  // childImmunisationRecord && console.log('IMMUNISATION RECORD:', childImmunisationRecord);
+  healthInformation && console.log('HEALTH INFORMATION:', healthInformation);
+  childImmunisationRecord && console.log('IMMUNISATION RECORD:', childImmunisationRecord);
   childDetails && console.log('CHILD DETAILS:', childDetails);
+  childMedicalInformation && console.log('CHILD MEDICAL INFORMATION:', childMedicalInformation);
+  parentMedicationPermission && console.log('HAS MY CONSENT:', parentMedicationPermission);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -1668,73 +1751,232 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <p>Does your child have any special needs?</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="photo" id="yesp" label="Yes" />
-                            <Form.Check type="radio" name="photo" id="nop" label="No" />
+                            <Form.Check 
+                              type="radio" 
+                              name="photo" 
+                              id="yesp" 
+                              label="Yes"
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                has_special_needs: true
+                              }))} />
+                            <Form.Check 
+                              type="radio" 
+                              name="photo" 
+                              id="nop"
+                              defaultChecked 
+                              label="No"
+                              onChange={() => {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    has_special_needs: false,
+                                    special_need_details: "",
+                                    inclusion_support_form_of_special_needs: false
+                                  }));
+                              }} />
                           </div>
                         </Form.Group>
                       </div>
+
                       <Form.Text className="text-muted mb-3 d-block">
                         if ‘Yes’ please provide details of any special needs,
                       </Form.Text>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Details of any special needs, early intervention service and any management procedure to be followed with respect to the special need.</Form.Label>
-                        <Form.Control as="textarea" rows={3} />
-                      </Form.Group>
-                      <div className="single-col mb-3">
-                        <p>Inclusion Support Form (If applicable)</p>
-                        <Form.Group className="ms-auto">
-                          <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="support" id="yess" label="Yes" />
-                            <Form.Check type="radio" name="support" id="nos" label="No" />
+                      {
+                        childMedicalInformation.has_special_needs &&
+                        <>
+                          <Form.Group className="mb-3">
+                            <Form.Label>Details of any special needs, early intervention service and any management procedure to be followed with respect to the special need.</Form.Label>
+                            <Form.Control
+                              name="special_need_details" 
+                              as="textarea" 
+                              rows={3}
+                              onChange={(e) => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                [e.target.name]: e.target.value
+                              }))} />
+                          </Form.Group>
+                          <div className="single-col mb-3">
+                            <p>Inclusion Support Form (If applicable)</p>
+                            <Form.Group className="ms-auto">
+                              <div className="btn-radio inline-col mb-0">
+                                <Form.Check 
+                                  type="radio" 
+                                  name="support" 
+                                  id="yesss" 
+                                  label="Yes"
+                                  onChange={() => setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    inclusion_support_form_of_special_needs: true
+                                  }))} />
+                                <Form.Check 
+                                  type="radio" 
+                                  name="support" 
+                                  id="noss" 
+                                  label="No"
+                                  defaultChecked
+                                  onChange={() => setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    inclusion_support_form_of_special_needs: false
+                                  }))} />
+                              </div>
+                            </Form.Group>
                           </div>
-                        </Form.Group>
-                      </div>
+                        </>
+                      }
+
                       <div className="single-col mb-3">
                         <p>Does Your Child have any senstivity</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="senstivity" id="yesa" label="Yes" />
-                            <Form.Check type="radio" name="senstivity" id="noa" label="No" />
+                            <Form.Check 
+                              type="radio" 
+                              name="senstivity" 
+                              id="yesa" 
+                              label="Yes"
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_sensitivity: true
+                                }))
+                              } />
+                            <Form.Check 
+                              type="radio" 
+                              name="senstivity" 
+                              id="noa" 
+                              label="No"
+                              defaultChecked
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_sensitivity: false,
+                                  details_of_allergies: "",
+                                  inclusion_support_form_of_allergies: false
+                                }));
+                            }} />
                           </div>
                         </Form.Group>
                       </div>
-                      <Form.Group className="mb-3">
-                        <Form.Label>If yes, please provide details of any allergies and any management procedure to be followed with respect to the allergy</Form.Label>
-                        <Form.Control as="textarea" rows={3} />
-                      </Form.Group>
-                      <div className="single-col mb-3">
-                        <p>Inclusion Support Form (If applicable)</p>
-                        <Form.Group className="ms-auto">
-                          <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="applicable" id="yesd" label="Yes" />
-                            <Form.Check type="radio" name="applicable" id="nod" label="No" />
+                      {
+                        childMedicalInformation.has_sensitivity &&
+                        <>
+                          <Form.Group className="mb-3">
+                            <Form.Label>If yes, please provide details of any allergies and any management procedure to be followed with respect to the allergy</Form.Label>
+                            <Form.Control 
+                              name="details_of_allergies"
+                              as="textarea" 
+                              rows={3}
+                              onChange={(e) => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                [e.target.name]: e.target.value
+                              }))} />
+                          </Form.Group>
+                          <div className="single-col mb-3">
+                            <p>Inclusion Support Form (If applicable)</p>
+                            <Form.Group className="ms-auto">
+                              <div className="btn-radio inline-col mb-0">
+                                <Form.Check 
+                                  type="radio" 
+                                  name="applicable" 
+                                  id="yesdd" 
+                                  label="Yes"
+                                  onChange={() => setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    inclusion_support_form_of_allergies: false
+                                  }))} />
+                                <Form.Check 
+                                  type="radio" 
+                                  name="applicable" 
+                                  id="nodd" 
+                                  label="No"
+                                  defaultChecked
+                                  onChange={() => setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    inclusion_support_form_of_allergies: false
+                                  }))} />
+                              </div>
+                            </Form.Group>
                           </div>
-                        </Form.Group>
-                      </div>
+                        </>
+                      }
+
                       <div className="single-col mb-3">
                         <p>Does your child have an auto injection device (e.g. EpiPen®)?</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="injection" id="yesi" label="Yes" />
-                            <Form.Check type="radio" name="injection" id="noi" label="No" />
+                            <Form.Check 
+                              type="radio" 
+                              name="injection" 
+                              id="yesin" 
+                              label="Yes"
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                has_autoinjection_device: true
+                              }))} />
+                            <Form.Check 
+                              type="radio" 
+                              name="injection" 
+                              id="noin" 
+                              label="No"
+                              defaultChecked
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                has_autoinjection_device: false,
+                                has_anaphylaxis_medical_plan_been_provided: false
+                              }))} />
                           </div>
                         </Form.Group>
                       </div>
-                      <div className="single-col mb-3">
-                        <p>If yes, has the anaphylaxis medical management plan been provided to the service</p>
-                        <Form.Group className="ms-auto">
-                          <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="service" id="yesm" label="Yes" />
-                            <Form.Check type="radio" name="service" id="nom" label="No" />
-                          </div>
-                        </Form.Group>
-                      </div>
+                      {
+                        childMedicalInformation.has_autoinjection_device &&
+                        <div className="single-col mb-3">
+                          <p>If yes, has the anaphylaxis medical management plan been provided to the service</p>
+                          <Form.Group className="ms-auto">
+                            <div className="btn-radio inline-col mb-0">
+                              <Form.Check 
+                                type="radio" 
+                                name="service" 
+                                id="yesm" 
+                                label="Yes"
+                                onChange={() => setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_anaphylaxis_medical_plan_been_provided: true
+                                }))} />
+                              <Form.Check 
+                                type="radio" 
+                                name="service" 
+                                id="nom" 
+                                label="No"
+                                defaultChecked
+                                onChange={() => setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_anaphylaxis_medical_plan_been_provided: false
+                                }))} />
+                            </div>
+                          </Form.Group>
+                        </div>
+                      }
                       <div className="single-col mb-3">
                         <p>Has a risk management plan been completed by the service in consultation with you</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="management" id="yese" label="Yes" />
-                            <Form.Check type="radio" name="management" id="noe" label="No" />
+                            <Form.Check 
+                              type="radio" 
+                              name="management" 
+                              id="yese" 
+                              label="Yes"
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                risk_management_plan_completed: true
+                              }))} />
+                            <Form.Check 
+                              type="radio" 
+                              name="management" 
+                              id="noe" 
+                              defaultChecked
+                              label="No"
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                risk_management_plan_completed: true
+                              }))} />
                           </div>
                         </Form.Group>
                       </div>
@@ -1743,28 +1985,84 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <p>Does your child have any other medical conditions? (e.g. asthma, epilepsy, and diabetes, etc. that are relevant to the care of your child)</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="conditions" id="yest" label="Yes" />
-                            <Form.Check type="radio" name="conditions" id="not" label="No" />
+                            <Form.Check 
+                              type="radio" 
+                              name="conditions" 
+                              id="yest" 
+                              label="Yes"
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                any_other_medical_condition: true
+                              }))} />
+                            <Form.Check 
+                              type="radio" 
+                              name="conditions" 
+                              id="not" 
+                              label="No"
+                              defaultChecked
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                any_other_medical_condition: false,
+                                detail_of_other_condition: ""
+                              }))} />
                           </div>
                         </Form.Group>
                       </div>
-                      <Form.Group className="mb-3">
-                        <Form.Label>*If yes please provide details of any medical condition and any management procedure to be followed with respect to the medical condition</Form.Label>
-                        <Form.Control as="textarea" rows={3} />
-                      </Form.Group>
+                      {
+                        childMedicalInformation.any_other_medical_condition &&
+                        <Form.Group className="mb-3">
+                          <Form.Label>*If yes please provide details of any medical condition and any management procedure to be followed with respect to the medical condition</Form.Label>
+                          <Form.Control
+                            name="detail_of_other_condition" 
+                            as="textarea" 
+                            rows={3}
+                            onChange={(e) => setChildMedicalInformation(prevState => ({
+                              ...prevState,
+                              [e.target.name]: e.target.value
+                            }))} />
+                        </Form.Group>
+                      }
                       <div className="single-col mb-3">
                         <p>Does the child have any dietary restrictions?</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check type="radio" name="dietary" id="yesh" label="Yes" />
-                            <Form.Check type="radio" name="dietary" id="noh" label="No" />
+                            <Form.Check 
+                              type="radio" 
+                              name="dietary" 
+                              id="yesh" 
+                              label="Yes"
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                has_dietary_restrictions: true
+                              }))} />
+                            <Form.Check 
+                              type="radio" 
+                              name="dietary" 
+                              id="noh" 
+                              label="No"
+                              defaultChecked
+                              onChange={() => setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                has_dietary_restrictions: false,
+                                details_of_restrictions: ""
+                              }))} />
                           </div>
                         </Form.Group>
                       </div>
-                      <Form.Group className="mb-3">
-                        <Form.Label>If yes, the following restrictions apply: </Form.Label>
-                        <Form.Control as="textarea" rows={3} />
-                      </Form.Group>
+                      {
+                        childMedicalInformation.has_dietary_restrictions &&
+                        <Form.Group className="mb-3">
+                          <Form.Label>If yes, the following restrictions apply: </Form.Label>
+                          <Form.Control 
+                            name="details_of_restrictions"
+                            as="textarea" 
+                            rows={3}
+                            onChange={(e) => setChildMedicalInformation(prevState => ({
+                              ...prevState,
+                              [e.target.name]: e.target.value
+                            }))} />
+                        </Form.Group>
+                      }
                     </div>
 
                   </div>
@@ -1781,12 +2079,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               <p>I give consent for the educator, assistant, approved provider, nominated supervisor & coordinator to administer prescribed Medication when needed. I understand that unless all the information required on the medication form is not completed or signed the medication will not be given to my child.  I understand my educator will contact me immediately if medication such as Panadol is required.</p>
               <Form.Group className="mb-3">
                 <div className="btn-checkbox">
-                  <Form.Check type="checkbox" id="accept" label="I have read and accept all the above points." />
+                  <Form.Check 
+                    type="checkbox" 
+                    id="accept" 
+                    checked={parentMedicationPermission}
+                    label="I have read and accept all the above points."
+                    onChange={() => setParentMedicationPermission(!parentMedicationPermission)} />
                 </div>
               </Form.Group>
             </div>
             <div className="cta text-center mt-5 mb-5">
-              <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
+              <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
               <Button variant="primary" type="submit">Next</Button>
             </div>
           </Form>

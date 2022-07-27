@@ -51,7 +51,7 @@ const AllFranchisees = () => {
         user: '',
         location: [],
     });
-    const [search,setSearch]=useState('');
+    const [search, setSearch] = useState('');
 
     const [franchiseeData, setFranchiseeData] = useState();
     const [topSuccessMessage, setTopSuccessMessage] = useState();
@@ -104,51 +104,44 @@ const AllFranchisees = () => {
         console.log(id);
         console.log("id");
         let api_url = '';
-        if(role == "franchisor_admin"){
+        if(role === "franchisor_admin") {
             api_url = `${BASE_URL}/role/franchisee/users`;
             if (search) {
                 api_url = `${BASE_URL}/role/franchisee/users?search=${search}`;
               }
-            }
-        else{
+        } else{
             api_url = `${BASE_URL}/role/franchisee/${id}`;
             if (search) {
                 api_url = `${BASE_URL}/role/franchisee/${id}?search=${search}`;
-              }
+            }
 
         }
     
-            const response = await axios.get(api_url, {
-                headers: {
-                    "Authorization": `Bearer ${token}` 
-                }
-            });
-            console.log(response.data);
-            if(response.status === 200 && response.data.status === "success") {
-                console.log(response.data);//undefined
-                console.log("response");
-                const { franchisees } = response.data;
-                console.log(franchisees);
-                console.log("franchisees");
-                let temp = franchisees.map(franchisee => ({
-                    franchisee: {
-                        id: franchisee.id,
-                        name: franchisee.franchisee_name,
-                        location: franchisee.city + ", " + franchisee.state,
-                        educators: 
-                            franchisee.users.filter(user => user.role === 'educator').length,
-                        children: 
-                            franchisee.users.filter(user => user.role === 'child').length,
-                        isDeleted:franchisee.isDeleted  
-                    },
-                }));
-                console.log("The tempdata",temp)
-                // temp = temp.filter((data) => data.isDeleted === 0);
-                let tempData = temp.filter((data) =>data.franchisee.isDeleted === null || data.franchisee.isDeleted === 0);
-                setFranchiseeData(tempData)
-                console.log("The tempdata",tempData)
-    
+        const response = await axios.get(api_url, {
+            headers: {
+                "Authorization": `Bearer ${token}` 
             }
+        });
+
+        console.log('SERVER RESPONSE:', response);
+        if(response.status === 200 && response.data.status === "success") {
+            const { franchisees } = response.data;
+            console.log('FRANCHISEE LIST:', franchisees);
+            let temp = franchisees.map(franchisee => ({
+                id: franchisee.id,
+                name: franchisee.franchisee_name,
+                location: franchisee.city + ", " + franchisee.state,
+                educators: 
+                    franchisee.users.filter(user => user.role === 'educator').length,
+                children: 
+                    franchisee.users.filter(user => user.role === 'child').length,
+                isDeleted:franchisee.isDeleted 
+            }));
+            // temp = temp.filter((data) => data.isDeleted === 0);
+            console.log("franchise data  franchise datafranchise datafranchise datafranchise data", temp)
+            let tempData = temp.filter((data) => data.isDeleted === null || data.isDeleted === 0);
+            setFranchiseeData(tempData)
+        }
       
     };
 
@@ -364,18 +357,18 @@ const AllFranchisees = () => {
 
                                                     franchiseeData && franchiseeData.map(data => {
                                                         return (
-                                                            <Col key={data.franchisee.id} sm={6} md={4} className="my-2">
+                                                            <Col key={data.id} sm={6} md={4} className="my-2">
                                                                 <Card className="text-center Card_design">
                                                                     <Card.Body className="d-flex flex-row bd-highlight align-items-center">
-                                                                        {/* <div className="edit-ico"><a href={`/edit-franchisees/${data.franchisee.id}`}><img src="../img/edit-ico.png" alt="" /></a></div> */}
+                                                                        {/* <div className="edit-ico"><a href={`/edit-franchisees/${data.id}`}><img src="../img/edit-ico.png" alt="" /></a></div> */}
                                                                         
                                                                         
                                                                         <img src={CardImg} alt="" width="65px" />
                                                                         <div className="p-1">
                                                                             <Card.Title className="mb-0 Text_design"
-                                                                            >{data.franchisee.name}</Card.Title>
+                                                                            >{data.name}</Card.Title>
                                                                             <Card.Text id="Down_Text">
-                                                                                {data.franchisee.location}
+                                                                                {data.location}
                                                                             </Card.Text>
                                                                         </div>
                                                                         <div className="cta-col">
@@ -385,9 +378,9 @@ const AllFranchisees = () => {
                                                                                 </Dropdown.Toggle>
                                                                                 <Dropdown.Menu>
                                                                                 <Dropdown.Item onClick={() =>{
-                                                                                    deleteAlert(data.franchisee.id)
+                                                                                    deleteAlert(data.id)
                                                                                 }}>Delete</Dropdown.Item>
-                                                                                <Dropdown.Item href={`/edit-franchisees/${data.franchisee.id}`}>Edit</Dropdown.Item>
+                                                                                <Dropdown.Item href={`/edit-franchisees/${data.id}`}>Edit</Dropdown.Item>
                                                                                 </Dropdown.Menu>
                                                                             </Dropdown>
                                                                             </div>
@@ -399,11 +392,11 @@ const AllFranchisees = () => {
                                                                         <div className="d-flex justify-content-around">
                                                                             <div className="d-flex justify-content-between align-items-center">
                                                                                 <p className="mb-0 px-2 Footer_text">Educators</p>
-                                                                                <p className="mb-0 px-2 Footer_textTow">{data.franchisee.educators < 10 ? `0${data.franchisee.educators}` : data.franchisee.educators}</p>
+                                                                                <p className="mb-0 px-2 Footer_textTow">{data.educators < 10 ? `0${data.educators}` : data.educators}</p>
                                                                             </div>
                                                                             <div className="d-flex justify-content-between align-items-center">
                                                                                 <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                                <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>{data.franchisee.children < 10 ? `0${data.franchisee.children}` : data.franchisee.children}</p>
+                                                                                <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>{data.children < 10 ? `0${data.children}` : data.children}</p>
                                                                             </div>
                                                                         </div>
                                                                     </Card.Footer>

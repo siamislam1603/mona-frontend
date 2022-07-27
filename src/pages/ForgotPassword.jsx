@@ -38,10 +38,10 @@ const ForgotPassword = () => {
           setTopMessage("Email sent Please check your email Address")
           console.log("The success")
       }
-      
+      // console.log("The response",repos)
       } catch (error) {
-        console.log("The error",)
-        setTopErrorMessage(error.response.data.msg);
+        console.log("The error",error)
+        setTopErrorMessage("User does not exist");
       }
     }
     const handleSubmit = (e) =>{
