@@ -31,7 +31,7 @@ const [announcementData, setAnnouncementData] = useState({
 });
 
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
-  const [coverImage, setCoverImage] = useState({});
+  const [coverImage, setCoverImage] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [error, setError] = useState({user_roles: []});
@@ -68,50 +68,60 @@ const createAnnouncement = async (data) => {
   console.log(response);
   console.log("jjjjjjjjjjjjjjjjjjjj");
 
-  if(response.status === 201 && response.data.status === "success") {
+  if(response.status === 201 && response.data.status === "success" && coverImage.length > 0) {
+    console.log(typeof(coverImage));
+
     console.log("datasaved");
+    console.log(response.data);
         let { id } = response.data.announcement;
     
         let data = new FormData();
         data.append('id', id);
         data.append('image', coverImage[0]);
-    
-        let imgSaveResponse = await axios.post(
-          `${BASE_URL}/training/coverImg?title=announcement`, data, {
-            headers: {
-              "Authorization": "Bearer " + token
+
+          let imgSaveResponse = await axios.post(
+            `${BASE_URL}/training/coverImg?title=announcement`, data, {
+              headers: {
+                "Authorization": "Bearer " + token
+              }
             }
-          }
-        );
-        console.log(imgSaveResponse);
-    
-      if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
-            
-        console.log('SUCCESS RESPONSE!');
-        setLoader(false)
-        localStorage.setItem('success_msg', 'Announcement Created Successfully!');
-        localStorage.setItem('active_tab', '/created-announcement');
-        window.location.href="/announcements";
+          );
+          console.log(imgSaveResponse);
       
-      } else {
-    
-        console.log('ERROR RESPONSE!');
-        setTopErrorMessage("unable to save cover image!");
-        setTimeout(() => {
-          setTopErrorMessage(null);
-        }, 3000)
+        if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+              
+          console.log('SUCCESS RESPONSE!');
+          setLoader(false)
+          localStorage.setItem('success_msg', 'Announcement Created Successfully!');
+          localStorage.setItem('active_tab', '/created-announcement');
+          window.location.href="/announcements";
+        
+        } else {
       
-      }
+          console.log('ERROR RESPONSE!');
+          setTopErrorMessage("unable to save cover image!");
+          setTimeout(() => {
+            setTopErrorMessage(null);
+          }, 3000)
+        
+        }
+      
+
+        
+    
+       
     } 
-    else if(response.status === 200 && response.data.status === "fail") {
-      console.log('ERROR RESPONSE!');
-      const { msg } = response.data;
-      console.log("Annoncement Already exit",msg)
-      setTopErrorMessage(msg);
-      setTimeout(() => {
-        setTopErrorMessage(null);
-      }, 3000)
-    }
+
+    // else if(response.status === 200 && response.data.status === "fail") {
+    //   console.log('ERROR RESPONSE!');
+    //   const { msg } = response.data;
+    //   console.log("Annoncement Already exit",msg)
+    //   setTopErrorMessage(msg);
+    //   setTimeout(() => {
+    //     setTopErrorMessage(null);
+    //   }, 3000)
+    // }
+    window.location.href="/announcements";
     };  
 
     const fetchFranchiseeUsers = async (franchisee_name) => {
@@ -233,6 +243,23 @@ const createAnnouncement = async (data) => {
       }
     }); 
   }
+//   if (!announcementData.start_date) {
+//     setError(prevError => {
+//         return {
+//       ...prevError,
+//       start_date: "Start Date required"
+//     }
+//   }); 
+// }
+
+// if (!announcementData.start_time) {
+//   setError(prevError => {
+//       return {
+//     ...prevError,
+//     start_time: "start Time required"
+//   }
+// }); 
+// }
 //   if (!announcementData.coverImage) {
 //     setError(prevError => {
 //         return {
@@ -277,8 +304,8 @@ const createAnnouncement = async (data) => {
     },[])
 
    
-    
-console.log(franchiseeData);
+coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
+// console.log(franchiseeData);
   return (
     <>
     {console.log("The annno",announcementData)}
