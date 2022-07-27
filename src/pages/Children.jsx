@@ -37,14 +37,15 @@ const Children = () => {
           setFranchiseId(franchiseeId)
         
         // Children List
-        let response =await  axios.get(`${BASE_URL}/role/children/${params.id}`, {
+        let response =await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           });
           if (response.status === 200) {
-            const { users } = response.data;
-            setChildrenList(users)
+            const { parentData } = response.data;
+            console.log(parentData,"users")
+            setChildrenList(parentData.children)
           }
           
         //   Educators list
@@ -95,24 +96,25 @@ const Children = () => {
         },
     };
     const selectRow = {
-
         mode: 'checkbox',
         onSelect: (row, isSelect, rowIndex, e) => {
-            if (DeleteId.includes(row.userID)) {
-                let Index;
-                DeleteId.map((item, index) => {
-                    if (item === row.userID) {
-                        Index = index;
-                    }
-                })
-                DeleteId.splice(Index, 1);
-            }
-            else {
-                DeleteId.push(row.userID);
-            }
+            // if (DeleteId.includes(row.userID)) {
+            //     let Index;
+            //     DeleteId.map((item, index) => {
+            //         if (item === row.userID) {
+            //             Index = index;
+            //         }
+            //     })
+            //     DeleteId.splice(Index, 1);
+            // }
+            // else {
+            //     DeleteId.push(row.userID);
+            // }
 
+            console.log("hello")
         },
         onSelectAll: (isSelect, rows, e) => {
+            console.log("helo")
             if (isSelect) {
                 userData.map((item) => {
                     DeleteId.push(item.userID);
@@ -131,9 +133,9 @@ const Children = () => {
 
     const productsTow = childrenList.map((child)=>({
         id: child.id,
-        name: child.name,
-        Location : child.location,
-        Educator: child.educatorDetails
+        name: child.fullname,
+        Location : child.home_address,
+        Educator: child.users
     }))
 
     const   PColumns = [
@@ -186,9 +188,9 @@ const Children = () => {
                 return (
                     <>
                         <div className="cta-col">
-                            <Button className="Enrolment_Button">
-                                Review Enrolment
-                            </Button>
+                            <button className="Enrolment_Button btn btn-outline-secondary" style={{"fontSize":"0.8rem","fontWeight":"8  00"}}>
+                                View Enrolment
+                            </button>
                         </div>
                     </>
                 );
@@ -256,7 +258,7 @@ const Children = () => {
                                             </h1>
                                         </header>
                                         <BootstrapTable
-                                            keyField="name"
+                                            keyField="id"
                                             rowEvents={rowEvents}
                                             selectRow={selectRow}
                                             data={productsTow}
