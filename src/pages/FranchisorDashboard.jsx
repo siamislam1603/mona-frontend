@@ -314,12 +314,16 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="column-list announcements-list">
 
-                            <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">{latest_announcement[0].title}<span className="date">{latest_announcement[0].scheduled_date}</span></div>
-                              </a>
-                            </div>
+                            {latest_announcement.map((data) => {
+                              return (
+                                <div className="listing">
+                                  <a href="/" className="item">
+                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                    <div className="name">{data.title}<span className="date">{data.scheduled_date}</span></div>
+                                  </a>
+                                </div>
+                              );
+                            })}
                             {/* <div className="listing">
                               <a href="/" className="item">
                                 <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>

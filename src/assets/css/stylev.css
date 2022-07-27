@@ -2823,7 +2823,7 @@ li.child_tag {
     padding: 16px 19px;
     border-radius: 10px;
 }
-.dropdown-item{
+.custom-menu-dots .dropdown-item{
     padding: 0.01rem 1rem !important;
 }
 
