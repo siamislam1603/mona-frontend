@@ -8,59 +8,59 @@ let nextstep = 4;
 let step = 3;
 
 const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
-  
-  const [hasEmergencyContact, setHasEmergencyContact] = useState(false);
+  const [activeHouts, setActiveHours] = useState({});
+  // const [hasEmergencyContact, setHasEmergencyContact] = useState(false);
 
-  const saveFormThreeData = async () => {
-    let childId = localStorage.getItem('enrolled_child_id')
-    let token = localStorage.getItem('token');
-    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: nextstep }, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+  // const saveFormThreeData = async () => {
+  //   let childId = localStorage.getItem('enrolled_child_id')
+  //   let token = localStorage.getItem('token');
+  //   let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: nextstep }, {
+  //     headers: {
+  //       "Authorization": `Bearer ${token}`
+  //     }
+  //   });
 
-    if(response.status === 201 && response.data.status === "success") {
-      nextStep();
-    }
-  };
+  //   if(response.status === 201 && response.data.status === "success") {
+  //     nextStep();
+  //   }
+  // };
 
-  const updateFormThreeData = async () => {
-    nextStep();
-  }
+  // const updateFormThreeData = async () => {
+  //   nextStep();
+  // }
 
-  const fetchChildDetailsAndPopulate = async () => {
-    let enrolledChildId = localStorage.getItem('enrolled_child_id');
-    let token = localStorage.getItem('token');
+  // const fetchChildDetailsAndPopulate = async () => {
+  //   let enrolledChildId = localStorage.getItem('enrolled_child_id');
+  //   let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+  //   let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+  //     headers: {
+  //       "Authorization": `Bearer ${token}`
+  //     }
+  //   });
 
-    if(response.status === 200 && response.data.status === 'success') {
-      let { child } = response.data;
+  //   if(response.status === 200 && response.data.status === 'success') {
+  //     let { child } = response.data;
 
-      if(child?.emergency_contacts) {
-        setHasEmergencyContact(true);
-      } 
-    }
-  };
+  //     if(child?.emergency_contacts) {
+  //       setHasEmergencyContact(true);
+  //     } 
+  //   }
+  // };
 
   const submitFormData = (e) => {
     e.preventDefault();
 
-    if(hasEmergencyContact) {
-      updateFormThreeData()  
-    } else {
-      saveFormThreeData();
-    }
+    // if(hasEmergencyContact) {
+    //   updateFormThreeData()  
+    // } else {
+    //   saveFormThreeData();
+    // }
   };
 
-  useEffect(() => {
-    fetchChildDetailsAndPopulate();
-  }, [])
+  // useEffect(() => {
+  //   fetchChildDetailsAndPopulate();
+  // }, [])
 
   return (
     <>
@@ -77,10 +77,8 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                 <thead>
                   <tr>
                     <th>WEEKDAYS</th>
-                    <th>AM</th>
-                    <th>AM</th>
-                    <th>PM</th>
-                    <th>PM</th>
+                    <th>FROM</th>
+                    <th>TO</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -88,37 +86,20 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                     <td>Monday</td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                           />
                       </Form.Group>
                     </td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time" />
                       </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td>Tuesday</td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
                     <td>
                       <Form.Group>
                         <Form.Control type="time" />
@@ -142,29 +123,9 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <Form.Control type="time" />
                       </Form.Group>
                     </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
                   </tr>
                   <tr>
                     <td>Thursday</td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
                     <td>
                       <Form.Group>
                         <Form.Control type="time" />
@@ -188,16 +149,6 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <Form.Control type="time" />
                       </Form.Group>
                     </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
                   </tr>
                   <tr>
                     <td>Saturday</td>
@@ -211,29 +162,9 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <Form.Control type="time" />
                       </Form.Group>
                     </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
                   </tr>
                   <tr>
                     <td>Sunday</td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control type="time" />
-                      </Form.Group>
-                    </td>
                     <td>
                       <Form.Group>
                         <Form.Control type="time" />
