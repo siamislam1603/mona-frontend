@@ -2866,3 +2866,11 @@ li.child_tag {
     line-height: 19px;
     color: rgba(51, 51, 51, 0.5);
 }
+
+.setting_model_body .row {
+    margin-top: -23px !important;
+}
+.setting_model_body .mt-5.mb-5.d-flex.justify-content-center {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
