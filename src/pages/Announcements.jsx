@@ -28,7 +28,7 @@ const training = [
 const Announcements =  () => {
   const [announcementDetails,setAnnouncementDetail] = useState("")
   const [tabLinkPath, setTabLinkPath] = useState("/all-announcements");
-  const [search,setSearch]=useState("");
+  // const [search,setSearch]=useState("");
   const [searchData,setSearchData] = useState([])
   const[searchword,setSearchWord] = useState(""); 
   
@@ -39,19 +39,23 @@ const Announcements =  () => {
     setTabLinkPath(path);
   }
 
-  const [filterData, setFilterData] = useState({
-    category_id: null,
-    search: ""
-  });
+
   // const onFilter = debounce(() => {
   //   fetchUserDetails();
   // }, 200);
+  let search = " "
   const fetchSearchData = async(e) =>{
     try {
       let api_url = '';
       const userId = localStorage.getItem("user_id")
-      let search1 = e.target.value;
-      setSearch(search1)
+       search = e.target.value;
+       if(!search){
+        search = " "
+       } 
+       
+       console.log('SEARCH:', search);
+
+     
       if (search) {   
          api_url =   `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
        }
@@ -105,7 +109,6 @@ const Announcements =  () => {
   // useEffect(() =>(
   //   setSearchWord(search)
   // ),[fetchUserDetails])
-  search && console.log('SEARCH:', search);
   return (
     <>
       <div id="main">
