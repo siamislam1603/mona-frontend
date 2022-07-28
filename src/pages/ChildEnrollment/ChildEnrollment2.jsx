@@ -56,7 +56,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     inclusion_support_form_of_allergies: false,
     has_autoinjection_device: false,
     has_anaphylaxis_medical_plan_been_provided: false,
-    risk_maagement_plan_completed: false,
+    risk_management_plan_completed: false,
     any_other_medical_condition: false,
     detail_of_other_condition: "",
     has_dietary_restrictions: false,
@@ -72,7 +72,53 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   // UPDATEING FORM TWO DATA
   const updateFormTwoData = async () => {
+    let childId = localStorage.getItem('enrolled_child_id');
+    let token = localStorage.getItem('token');
+    // SENDING HEALTH INFORMATION REQUEST
+    let response = await axios.patch(`${BASE_URL}/enrollment/health-information/${idList.health_information_id}`, {...healthInformation }, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
 
+    if(response.status === 201 && response.data.status === "success") {
+      response = await axios.patch(`${BASE_URL}/enrollment/medical-information/${idList.medical_information_id}`, { ...childMedicalInformation }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if(response.status === 201 && response.data.status === "success") {
+        response = await axios.patch(`${BASE_URL}/enrollment/immunisation-record/${idList.immunisation_record_id}`, {...childImmunisationRecord}, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if(response.status === 201 && response.data.status === "success") {
+
+          // UPDATING CHILD DETAILS
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...childDetails}, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          });
+
+          if(response.status === 201 && response.data.status === "success") {
+            let parentId = localStorage.getItem('enrolled_parent_id');
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {i_give_medication_permission: parentMedicationPermission}, {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              }
+            });
+
+            if(response.status === 201 && response.data.status === "success") {
+              nextStep();
+            }
+          }
+        }
+      }
+    }
   };
 
   // FUNCTIONS
@@ -149,73 +195,80 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
+    console.log('RESPONSE:', response);
+
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
+      localStorage.setItem('enrolled_parent_id', child.parents[0].id);
       console.log('CHILD DATA:', child);
 
+      if(child.form_step > step) {
       // POPULATING CHILD HEALTH INFORMATION STATE
-      let  { child_health_information: healthInfo } = child;
-      setHealthInformation(prevState => ({
-        ...prevState,
-        medical_service: healthInfo.medical_service,
-        telephone: healthInfo.telephone,
-        medical_service_address: healthInfo.medical_service_address,
-        maternal_and_child_health_centre: healthInfo.maternal_and_child_health_centre,
-      }));
-      setIdList(prevState => ({
-        ...prevState,
-        health_information_id: healthInfo.id
-      }));
+        let  { child_health_information: healthInfo } = child;
+        setHealthInformation(prevState => ({
+          ...prevState,
+          medical_service: healthInfo.medical_service,
+          telephone: healthInfo.telephone,
+          medical_service_address: healthInfo.medical_service_address,
+          maternal_and_child_health_centre: healthInfo.maternal_and_child_health_centre,
+        }));
+        setIdList(prevState => ({
+          ...prevState,
+          health_information_id: healthInfo.id
+        }));
 
-      // SETTING CHILD DETAILS
-      setChildDetails(prevState => ({
-        ...prevState,
-        has_health_record: child.has_health_record,
-        has_been_immunized: child.has_been_immunized,
-        has_court_orders: child.has_court_orders,
-        changes_described: child.changes_described
-      }));
-      
-      // SETTING CHILD IMMUNISATION RECORD
-      let { child_immunisation_record: irecord } = child;
-      for(let [key, value] of Object.entries(irecord)) {
-        if(disease_name.includes(key + "")){
-          setChildImmunisationRecord(prevState => ({
-            ...prevState,
-            [key]: value
-          }));
+        // SETTING CHILD DETAILS
+        setChildDetails(prevState => ({
+          ...prevState,
+          has_health_record: child.has_health_record,
+          has_been_immunized: child.has_been_immunized,
+          has_court_orders: child.has_court_orders,
+          changes_described: child.changes_described
+        }));
+        
+        // SETTING CHILD IMMUNISATION RECORD
+        let { child_immunisation_record: irecord } = child;
+        for(let [key, value] of Object.entries(irecord)) {
+          if(disease_name.includes(key + "")){
+            setChildImmunisationRecord(prevState => ({
+              ...prevState,
+              [key]: value
+            }));
+          }
         }
-      }
-      setIdList(prevState => ({
-        ...prevState,
-        immunisation_record_id: irecord.id
-      }));
+        setIdList(prevState => ({
+          ...prevState,
+          immunisation_record_id: irecord.id
+        }));
 
-      // SETTING CHILD MEDICAL INFORMATION
-      let { child_medical_information: medinfo } = child;
-      setChildMedicalInformation(prevState => ({
-        ...prevState,
-        has_special_needs: medinfo.has_special_needs,
-        special_need_details: medinfo.special_need_details,
-        inclusion_support_form_of_special_needs: medinfo.inclusion_support_form_of_special_nee,
-        has_sensitivity: medinfo.has_sensitivity,
-        details_of_allergies: medinfo.details_of_allergies,
-        inclusion_support_form_of_allergies: medinfo.inclusion_support_form_of_allergies,
-        has_autoinjeciton_device: medinfo.has_autoinjeciton_device,
-        has_anaphylaxis_medical_plan_been_provided: medinfo.has_anaphylaxis_medical_plan_been_pro,
-        risk_management_plan_completed: medinfo.risk_management_plan_completed,
-        any_other_medical_condition: medinfo.any_other_medical_condition,
-        detail_of_other_condition: medinfo.detail_of_other_condition,
-        has_dietary_restrictions: medinfo.has_dietary_restrictions,
-        details_of_restrictions: medinfo.details_of_restrictions,
-      }));
-      setIdList(prevState => ({
-        ...prevState,
-        medical_information_id: medinfo.id
-      }));
+        // SETTING CHILD MEDICAL INFORMATION
+        let { child_medical_information: medinfo } = child;
+        setChildMedicalInformation(prevState => ({
+          ...prevState,
+          has_special_needs: medinfo.has_special_needs,
+          special_need_details: medinfo.special_need_details,
+          inclusion_support_form_of_special_needs: medinfo.inclusion_support_form_of_special_nee,
+          has_sensitivity: medinfo.has_sensitivity,
+          details_of_allergies: medinfo.details_of_allergies,
+          inclusion_support_form_of_allergies: medinfo.inclusion_support_form_of_allergies,
+          has_autoinjeciton_device: medinfo.has_autoinjeciton_device,
+          has_anaphylaxis_medical_plan_been_provided: medinfo.has_anaphylaxis_medical_plan_been_pro,
+          risk_management_plan_completed: medinfo.risk_management_plan_completed,
+          any_other_medical_condition: medinfo.any_other_medical_condition,
+          detail_of_other_condition: medinfo.detail_of_other_condition,
+          has_dietary_restrictions: medinfo.has_dietary_restrictions,
+          details_of_restrictions: medinfo.details_of_restrictions,
+        }));
+        setIdList(prevState => ({
+          ...prevState,
+          medical_information_id: medinfo.id
+        }));
 
-      setParentMedicationPermission(child.parents[0].i_give_medication_permission);
-      setFormStepData(child.form_step);
+        setParentMedicationPermission(child.parents[0].i_give_medication_permission);
+        setFormStepData(child.form_step);
+      } 
+
+
     }
   };
 
@@ -226,11 +279,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     if(Object.keys(errors).length > 0) {
       setHealthInfoFormErrors(errors);
     } else {
-      if(formStepData > step) {
-        // console.log('UPDATING THE EXISTING DATA!');
+      if(formStepData && formStepData > step) {
+        console.log('UPDATING THE EXISTING DATA!');
         updateFormTwoData();
       } else {
-        // console.log('CREATING NEW DATA!')
+        console.log('CREATING NEW DATA!')
         saveFormTwoData();
       }
     }
@@ -242,9 +295,9 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
 
-  formStepData && console.log('FORM STEP:', formStepData);
+  // formStepData && console.log('FORM STEP:', formStepData);
   // healthInformation && console.log('HEALTH INFORMATION:', healthInformation);
-  // childImmunisationRecord && console.log('IMMUNISATION RECORD LATEST:', childImmunisationRecord);
+  childImmunisationRecord && console.log('IMMUNISATION RECORD LATEST:', childImmunisationRecord);
   // childDetails && console.log('CHILD DETAILS:', childDetails);
   // childMedicalInformation && console.log('CHILD MEDICAL INFORMATION:', childMedicalInformation);
   // parentMedicationPermission && console.log('HAS MY CONSENT:', parentMedicationPermission);
@@ -618,7 +671,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -638,7 +691,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -658,7 +711,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -678,7 +731,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -698,7 +751,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -718,7 +771,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -738,7 +791,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.hepatitis_b] : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
+                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -761,7 +814,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -781,7 +834,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -801,7 +854,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -821,7 +874,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -841,7 +894,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -861,7 +914,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -881,7 +934,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.diptheria] : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
+                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -904,7 +957,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -924,7 +977,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -944,7 +997,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -964,7 +1017,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -984,7 +1037,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1004,7 +1057,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1024,7 +1077,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.haemophilus] : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
+                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1047,7 +1100,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1067,7 +1120,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1087,7 +1140,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1107,7 +1160,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1127,7 +1180,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1147,7 +1200,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1167,7 +1220,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.inactivated_poliomyelitis] : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
+                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1190,7 +1243,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1210,7 +1263,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1230,7 +1283,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1250,7 +1303,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1270,7 +1323,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1290,7 +1343,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1310,7 +1363,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.pneumococcal_conjugate] : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
+                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1333,7 +1386,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1353,7 +1406,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1373,7 +1426,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1393,7 +1446,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1413,7 +1466,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1433,7 +1486,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1453,7 +1506,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.rotavirus] : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
+                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1476,7 +1529,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1496,7 +1549,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1516,7 +1569,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1536,7 +1589,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1556,7 +1609,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1576,7 +1629,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1596,7 +1649,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.measules] : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
+                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1619,7 +1672,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1639,7 +1692,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1659,7 +1712,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1679,7 +1732,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1699,7 +1752,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1719,7 +1772,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1739,7 +1792,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.meningococcal_c] : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
+                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1762,7 +1815,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1782,7 +1835,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1802,7 +1855,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1822,7 +1875,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1842,7 +1895,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1862,7 +1915,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -1882,7 +1935,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 onChange={(e) => {
                                   setChildImmunisationRecord(prevState => ({
                                     ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? [...childImmunisationRecord?.varicella] : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
+                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
                                 }} />
                             </div>
@@ -2101,7 +2154,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="injection" 
                               id="yesin" 
                               label="Yes"
-                              checked={childMedicalInformation?.has_autoinjeciton_device === true}
+                              checked={childMedicalInformation?.has_autoinjection_device === true}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 has_autoinjection_device: true
@@ -2111,7 +2164,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="injection" 
                               id="noin" 
                               label="No"
-                              checked={childMedicalInformation?.has_autoinjeciton_device === false || childMedicalInformation?.has_autoinjeciton_device === null}
+                              checked={childMedicalInformation?.has_autoinjection_device === false || childMedicalInformation?.has_autoinjection_device === null}
                               defaultChecked
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,

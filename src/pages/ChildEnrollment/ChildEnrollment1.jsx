@@ -268,6 +268,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneParentData(prevState => ({
         ...prevState,
+        family_name: child.parents[0].family_name,
+        given_name: child.parents[0].given_name,
         relation_type: child.parents[0].relation_type,
         dob: child.parents[0].dob,
         child_live_with_this_parent: child.parents[0].child_live_with_this_parent,
@@ -291,11 +293,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   useEffect(() => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
     fetchChildDataAndPopulate();
-  }, [localStorage.getItem('enrolled_child_id') !== null]);
+  }, [localStorage.getItem('enrolled_child_id')]);
 
   useEffect(() => {
-    fetchParentUserDetails();
-  }, [])
+    console.log('FETCHING PARENT DATA AND POPULATE');
+    fetchParentUserDetails(); 
+  }, [localStorage.getItem('enrolled_child_id') === null])
 
   formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
