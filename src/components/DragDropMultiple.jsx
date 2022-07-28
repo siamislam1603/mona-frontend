@@ -17,6 +17,12 @@ export default function DropAllFile({ onSave,Files,setErrors }) {
     onDrop,
     maxFiles: 5,
     multiple: true,
+    // accept:'.doc, .pdf, , .png, .jpg',
+    accept: {
+      'image/*': ['.png', '.jpg', '.jpeg','.pdf','.doc','.txt','.wpd'],
+    },
+
+
   });
 
   const handleFileDelete = (file) => {

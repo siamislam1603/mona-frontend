@@ -12,7 +12,7 @@ import {AddNewAnnouncementValidation} from "../helpers/validation"
 import Select from 'react-select';
 import MyEditor from './CKEditor';
 import * as ReactBootstrap from 'react-bootstrap';
-
+import DropVideo from '../components/DragDropVideo';
 import { useLocation, useNavigate } from 'react-router-dom';
 const AddNewAnnouncements = () => {
 
@@ -29,7 +29,7 @@ const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
   user_roles: []
 });
-
+const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
@@ -67,6 +67,10 @@ const createAnnouncement = async (data) => {
   );
   console.log(response);
   console.log("jjjjjjjjjjjjjjjjjjjj");
+  if(response.status === 200 && response.data.status === "fail"){
+    setAddnewAnnouncement(false)
+    setTitleError("Title already exit")
+  }
 
   if(response.status === 201 && response.data.status === "success" && coverImage.length > 0) {
     console.log(typeof(coverImage));
@@ -112,6 +116,11 @@ const createAnnouncement = async (data) => {
        
     } 
 
+    else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
+    window.location.href="/announcements";
+        
+    }
+
     // else if(response.status === 200 && response.data.status === "fail") {
     //   console.log('ERROR RESPONSE!');
     //   const { msg } = response.data;
@@ -121,7 +130,7 @@ const createAnnouncement = async (data) => {
     //     setTopErrorMessage(null);
     //   }, 3000)
     // }
-    window.location.href="/announcements";
+    // window.location.href="/announcements";
     };  
 
     const fetchFranchiseeUsers = async (franchisee_name) => {
@@ -172,6 +181,7 @@ const createAnnouncement = async (data) => {
     };
 
     const announcementDescription = (field, value) => {
+      // console.log("The field and value in addnewannoucement",field,value)
       setAnnouncementData({ ...announcementData, [field]: value });
       if (!!error[field]) {
         setError({
@@ -183,11 +193,18 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
-      console.log("The name and value",name,value)
+      // console.log("The name and value",name,value)
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
       })); 
+      if (!!error[name]) {
+        setError({
+          ...error,
+          [name]: null,
+        });
+      }
+
     };
 
 
@@ -196,7 +213,7 @@ const createAnnouncement = async (data) => {
 
     const handleDataSubmit = event => {
       event.preventDefault();
-      console.log("The annoucement ",announcementData)
+      console.log("The annoucement after submit ",announcementData)
       let errorObj = AddNewAnnouncementValidation(announcementData, coverImage);
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
@@ -224,42 +241,26 @@ const createAnnouncement = async (data) => {
         console.log("The data",data)
        }
       }
+      console.log("The datad adndsjkvnskdja ")
        
      
     // }
-    if (!announcementData.title) {
-      setError(prevError => {
-          return { 
-              ...prevError, 
-              title: "Required Title" 
-            }
-      }); 
-    }
-    if (!announcementData.meta_description) {
-      setError(prevError => {
-          return {
-        ...prevError,
-        meta_description: "Description must be at least ten characters long"
-      }
-    }); 
-  }
-//   if (!announcementData.start_date) {
-//     setError(prevError => {
-//         return {
-//       ...prevError,
-//       start_date: "Start Date required"
-//     }
-//   }); 
-// }
-
-// if (!announcementData.start_time) {
-//   setError(prevError => {
-//       return {
-//     ...prevError,
-//     start_time: "start Time required"
-//   }
-// }); 
-// }
+    // if (!announcementData.title) {
+    //   setError(prevError => {
+    //       return { 
+    //           ...prevError, 
+    //           title: "Required Title" 
+    //         }
+    //   }); 
+    // }
+  //   if (!announcementData.meta_description) {
+  //     setError(prevError => {
+  //         return {
+  //       ...prevError,
+  //       // meta_description: "Description must be at least ten characters long"
+  //     }
+  //   }); 
+  // }
 //   if (!announcementData.coverImage) {
 //     setError(prevError => {
 //         return {
@@ -304,12 +305,12 @@ const createAnnouncement = async (data) => {
     },[])
 
    
-coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
+// coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
 // console.log(franchiseeData);
   return (
+    
     <>
-    {console.log("The annno",announcementData)}
-
+     
       <div id="main">
         <section className="mainsection ">
           <Container>
@@ -337,6 +338,8 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                           <Form.Control.Feedback type="invalid">
                             {error.title}
                           </Form.Control.Feedback>
+                          {titleError && <div className="error">{titleError}</div>} 
+                         
                         </Form.Group>
                       <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
@@ -390,7 +393,8 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                         <MyEditor
                               errors={error}
                               name ="meta_description"
-                              data={announcementData.meta_description} 
+                              // data={announcementData.meta_description} 
+                             
 
                               handleChange={(e, data) => {
                                 announcementDescription(e, data);
@@ -419,6 +423,8 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                         onChange={handleAnnouncementData}
                       />
                 </Form.Group>
+                {error.start_date && <p className="form-errors">{error.start_date}</p>}
+
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
@@ -427,8 +433,11 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                     type="time"
                     name="start_time"
                     onChange={handleAnnouncementData}
+                    onInvalid={!!error.start_time}
                   />
                 </Form.Group>
+                {error.start_time && <p className="form-errors">{error.start_time}</p>}
+
               </Col>
                     </Row>
                   <div className="my-new-formsection">
@@ -445,7 +454,7 @@ coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <DropAllFile onSave={setVideoTutorialFiles} />
+                          <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
