@@ -266,7 +266,6 @@ const EditAnnouncement = () => {
       setAnnouncementData(response.data.data.all_announcements)
     }
  } 
-
  const copyFetchedData = () =>{
   setAnnouncementCopyData(prevState =>({
     ...prevState,

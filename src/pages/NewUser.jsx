@@ -183,7 +183,8 @@ const NewUser = () => {
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');
-    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
+    const response = 
+      await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
     if(response.status === 200 && response.data.status === "success") {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
@@ -343,12 +344,12 @@ const NewUser = () => {
   }, [formData.franchisee]);
 
   useEffect(() => { 
-    if(localStorage.getItem('user_role') === 'franchisee_admin') {
+    if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') {
       let franchisee_id = localStorage.getItem('franchisee_id');
       setFormData(prevState => ({
         ...prevState,
         franchisee: franchisee_id,
-        franchiseeObj: franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id)) 
+        franchiseeObj: {...franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id))[0]} 
       }));
     }
   }, [franchiseeData]);
@@ -612,7 +613,7 @@ const NewUser = () => {
                             {
                               (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') && 
                               <Select
-                                placeholder={formData?.franchiseeObj[0]?.label || "Which Franchisee?"}
+                                placeholder={formData?.franchiseeObj?.label || "Which Franchisee?"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}
