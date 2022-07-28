@@ -131,7 +131,7 @@ const FranchiseeDashboard = () => {
         "Authorization": `Bearer ${token}`
       }
     }).then((response) => {
-      setlatest_announcement(response.data.data.all_announcements);
+      setlatest_announcement(response.data.recentAnnouncement);
     }).catch((e) => {
       console.log("Error", e);
     })
@@ -382,7 +382,7 @@ const FranchiseeDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{data.title}<span className="date">{data.scheduled_date}</span></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
                                   </a>
                                 </div>
                               );
