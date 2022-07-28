@@ -36,7 +36,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     );
     if (response.status === 200) {
       const { franchisee } = response.data;
-      setSelectedFranchisee(franchisee.franchisee_name ? franchisee.franchisee_name==="All" ? "" : franchisee.franchisee_name : "", franchisee.id);
+      setSelectedFranchisee(franchisee.franchisee_name ? franchisee.franchisee_name === "All" ? "" : franchisee.franchisee_name : "", franchisee.id);
       setFranchiseeList(
         [franchisee].map((data) => ({
           id: data.id,
@@ -102,7 +102,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                   'No Data Available'}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {localStorage.getItem("user_role")==="franchisor_admin" ? <React.Fragment key="">
+                {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
                   <Dropdown.Item eventKey="All">
                     <span className="loction-pic">
                       <img alt="" id="user-pic" src="/img/user.png" />
@@ -153,25 +153,25 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                     <span className="user-name">
                       {localStorage.getItem('user_name')
                         ? localStorage
-                            .getItem('user_name')
-                            .split(' ')
-                            .map(
-                              (data) =>
-                                data.charAt(0).toUpperCase() + data.slice(1)
-                            )
-                            .join(' ')
+                          .getItem('user_name')
+                          .split(' ')
+                          .map(
+                            (data) =>
+                              data.charAt(0).toUpperCase() + data.slice(1)
+                          )
+                          .join(' ')
                         : ''}
 
                       <small>
                         {localStorage.getItem('user_role')
                           ? localStorage
-                              .getItem('user_role')
-                              .split('_')
-                              .map(
-                                (data) =>
-                                  data.charAt(0).toUpperCase() + data.slice(1)
-                              )
-                              .join(' ')
+                            .getItem('user_role')
+                            .split('_')
+                            .map(
+                              (data) =>
+                                data.charAt(0).toUpperCase() + data.slice(1)
+                            )
+                            .join(' ')
                           : ''}
                       </small>
                     </span>
@@ -179,15 +179,15 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                   <Dropdown.Menu style={{ zIndex: '2000' }}>
                     {permissionList
                       ? permissionList.map((top_menu) => {
-                          return (
-                            <Dropdown.Item
-                              key={top_menu.id}
-                              href={top_menu.controller.menu_link}
-                            >
-                              {top_menu.controller.controller_label}
-                            </Dropdown.Item>
-                          );
-                        })
+                        return (
+                          <Dropdown.Item
+                            key={top_menu.id}
+                            href={top_menu.controller.menu_link}
+                          >
+                            {top_menu.controller.controller_label}
+                          </Dropdown.Item>
+                        );
+                      })
                       : null}
 
                     {/* <Dropdown.Item href="#">All Franchisee</Dropdown.Item>
