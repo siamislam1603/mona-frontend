@@ -3,10 +3,11 @@ import { Button, Col, Row, Table, Form } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from 'axios';
 import { personValidation } from "../../helpers/validation";
+import { useEffect } from "react";
 
 let nextstep = 5;
 let step = 4;
-
+let fields = ["name", "telephone", "address", "relationship_to_the_child"];
 const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   // REQUIRED STATES
@@ -36,6 +37,13 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     address: "",
     telephone: "",
     relationship_to_the_child: ""
+  });
+  const [formStepData, setFormStepData] = useState(null);
+  const [idList, setIdList] = useState({
+    emergency_contact_id: null,
+    authorized_nominee_id: null,
+    auuhtorized_person_id: null,
+    other_authorized_person_id: null
   });
 
   // ERROR HANDLING STATES
@@ -77,6 +85,50 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     }));
   }
 
+
+  // UPDATING THE FORM FOUR DATA
+  const updateFormFourData = async () => {
+    try {
+      let token = localStorage.getItem('token');
+      let response = await axios.patch(`${BASE_URL}/enrollment/emergency-contact/${idList.emergency_contact_id}`, {...emergencyContactData}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if(response.status === 201 && response.data.status === "success") {
+        response = await axios.patch(`${BASE_URL}/enrollment/authorized-nominee/${idList.authorized_nominee_id}`, {...authorizedNomineeData}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if(response.status === 201 && response.data.status === "success") {
+          response = await axios.patch(`${BASE_URL}/enrollment/authorized-person/${idList.auuhtorized_person_id}`, {...authorizedPersonData}, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+  
+          if(response.status === 201 && response.data.status === "success") {
+            response = await axios.patch(`${BASE_URL}/enrollment/other-authorized-person/${idList.other_authorized_person_id}`, {...otherAuthorizedPersonData}, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+    
+            if(response.status === 201 && response.data.status === "success") {
+              nextStep();
+            }
+          }
+        }
+      }
+    } catch(error) {
+      console.log(`ERROR: ${error.message}`);
+    }
+  }
+
+  // SAVING THE FORM FOUR DATA
   const submitFormData = (e) => {
     e.preventDefault();
     let emergencyContactErrorObj = personValidation(emergencyContactData);
@@ -93,7 +145,14 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
         setAuthorizedPersonError(authorizedPersonErrorObj);
         setOtherAuthorizedPersonError(otherAuthorizedPersonErrorObj);
     } else {
-      saveFormFourData(); 
+
+      if(formStepData >= step) {
+        // console.log('UPDATING THE EXISTING DATA!');
+        updateFormFourData();
+      } else {
+        // console.log('CREATING NEW DATA!');
+        saveFormFourData();
+      }
     }
     // nextStep();
   };
@@ -154,10 +213,89 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     }
   }
 
-  emergencyContactData && console.log('EMEGENCY CONTACT:', emergencyContactData);
-  authorizedNomineeData && console.log('AUTHORIZED NOMINEE DATA:', authorizedNomineeData);
-  authorizedPersonData && console.log('AUTHORIZED PERSON DATA:', authorizedPersonData);
-  otherAuthorizedPersonData && console.log('OTHER AUTHORIZED PERSON DATA:', otherAuthorizedPersonData);
+  // FETCHING ENROLLMENT DATA AND AUTO-POPULATING THE FIELDS
+  const fetchChildDataAndPopulate = async () => {
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let token = localStorage.getItem('token');
+
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    console.log('RESPONSE:', response);
+
+    if(response.status === 200 && response.data.status === 'success') {
+      let { child } = response.data;
+      localStorage.setItem('enrolled_parent_id', child.parents[0].id);
+      console.log('CHILD DATA:', child);
+
+      if(child.form_step >= step) {
+        
+        // POPULATING EMERGENCY CONTACT DATA
+        setEmergencyContactData(prevState => ({
+          ...prevState,
+          name: child.emergency_contacts[0].name,
+          address: child.emergency_contacts[0].address,
+          telephone: child.emergency_contacts[0].telephone,
+          relationship_to_the_child: child.emergency_contacts[0].relationship_to_the_child
+        }));
+        setIdList(prevState => ({
+          ...prevState,
+          emergency_contact_id: child.emergency_contacts[0].id
+        }));
+
+        // POPULATING AUTHORIZED NOMINEE DATA
+        setAuthorizedNomineeData(prevState => ({
+          ...prevState,
+          name: child.authorized_nominees[0].name,
+          address: child.authorized_nominees[0].address,
+          telephone: child.authorized_nominees[0].telephone,
+          relationship_to_the_child: child.authorized_nominees[0].relationship_to_the_child
+        }));
+        setIdList(prevState => ({
+          ...prevState,
+          authorized_nominee_id: child.authorized_nominees[0].id
+        }));
+
+        // POPULATING AUTHORIZED PERSON DATA
+        setAuthorizedPersonData(prevState => ({
+          ...prevState,
+          name: child.authorized_people[0].name,
+          address: child.authorized_people[0].address,
+          telephone: child.authorized_people[0].telephone,
+          relationship_to_the_child: child.authorized_people[0].relationship_to_the_child
+        }));
+        setIdList(prevState => ({
+          ...prevState,
+          auuhtorized_person_id: child.authorized_people[0].id
+        }));
+
+        // POPULATING OTHER AUTHORIZED PERSON DATA
+         setOtherAuthorizedPersonData(prevState => ({
+          ...prevState,
+          name: child.other_authorized_people[0].name,
+          address: child.other_authorized_people[0].address,
+          telephone: child.other_authorized_people[0].telephone,
+          relationship_to_the_child: child.other_authorized_people[0].relationship_to_the_child
+        }));
+        setIdList(prevState => ({
+          ...prevState,
+          other_authorized_person_id: child.other_authorized_people[0].id
+        }));
+        
+        setFormStepData(child.form_step);
+      } 
+
+    }
+  };
+
+
+  useEffect(() => {
+    console.log('FETCHING CHILD DATA AND POPULATE!');
+    fetchChildDataAndPopulate();
+  }, [localStorage.getItem('enrolled_child_id') !== null]);
 
   return (
     <>
@@ -175,6 +313,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="name" 
                       type="text"
+                      value={emergencyContactData?.name || ""}
                       onChange={(e) => {
                         handleEmergencyContact(e);
                         setEmergencyContactError(prevState => ({
@@ -190,6 +329,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="address" 
                       as="textarea" 
+                      value={emergencyContactData?.address || ""}
                       rows={3}
                       onChange={(e) => {
                         handleEmergencyContact(e);
@@ -205,6 +345,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control 
                       name="telephone"
+                      value={emergencyContactData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
                         handleEmergencyContact(e);
@@ -220,6 +361,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="relationship_to_the_child" 
                       type="text"
+                      value={emergencyContactData?.relationship_to_the_child || ""}
                       onChange={(e) => {
                         handleEmergencyContact(e);
                         setEmergencyContactError(prevState => ({
@@ -263,6 +405,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="name" 
                       type="text"
+                      value={authorizedNomineeData?.name || ""}
                       onChange={(e) => {
                         handleAuthorizedNominee(e);
                         setAuthorizedNomineeError(prevState => ({
@@ -278,6 +421,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="address" 
                       as="textarea" 
+                      value={authorizedNomineeData?.address || ""}
                       rows={3}
                       onChange={(e) => {
                         handleAuthorizedNominee(e);
@@ -294,6 +438,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control 
                       name="telephone"
                       type="tel"
+                      value={authorizedNomineeData?.telephone || ""}
                       onChange={(e) => {
                         handleAuthorizedNominee(e);
                         setAuthorizedNomineeError(prevState => ({
@@ -309,6 +454,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="relationship_to_the_child" 
                       type="text"
+                      value={authorizedNomineeData?.relationship_to_the_child || ""}
                       onChange={(e) => {
                         handleAuthorizedNominee(e);
                         setAuthorizedNomineeError(prevState => ({
@@ -354,6 +500,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="name" 
                       type="text"
+                      value={authorizedPersonData?.name || ""}
                       onChange={(e) => {
                         handleAuthorizedPerson(e);
                         setAuthorizedPersonError(prevState => ({
@@ -369,6 +516,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="address" 
                       as="textarea" 
+                      value={authorizedPersonData?.address || ""}
                       rows={3}
                       onChange={(e) => {
                         handleAuthorizedPerson(e);
@@ -384,6 +532,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control 
                       name="telephone"
+                      value={authorizedPersonData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
                         handleAuthorizedPerson(e);
@@ -400,6 +549,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="relationship_to_the_child" 
                       type="text"
+                      value={authorizedPersonData?.relationship_to_the_child || ""}
                       onChange={(e) => {
                         handleAuthorizedPerson(e);
                         setAuthorizedPersonError(prevState => ({
@@ -443,6 +593,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="name" 
                       type="text"
+                      value={otherAuthorizedPersonData?.name || ""}
                       onChange={(e) => {
                         handleOtherAuthorizedPerson(e);
                         setOtherAuthorizedPersonError(prevState => ({
@@ -458,6 +609,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="address" 
                       as="textarea" 
+                      value={otherAuthorizedPersonData?.address || ""}
                       rows={3}
                       onChange={(e) => {
                         handleOtherAuthorizedPerson(e);
@@ -473,6 +625,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control 
                       name="telephone"
+                      value={otherAuthorizedPersonData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
                         handleOtherAuthorizedPerson(e);
@@ -487,7 +640,8 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Group className="mb-3">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control
-                      name="relationship_to_the_child" 
+                      name="relationship_to_the_child"
+                      value={otherAuthorizedPersonData?.relationship_to_the_child || ""} 
                       type="text"
                       onChange={(e) => {
                         handleOtherAuthorizedPerson(e);
