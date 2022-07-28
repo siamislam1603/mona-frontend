@@ -1265,7 +1265,7 @@ button:focus {
     /* identical to box height */
     text-transform: uppercase;
     white-space: nowrap;
-    width: 228px;
+    width: 210px;
     vertical-align: sub;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1282,7 +1282,10 @@ button:focus {
 .tree li.branch>a.tree-title {
     color: #AA0061;
 }
-
+.title_active img{
+    width:15px;
+    height:15px
+}
 .branch>ul li {
     font-family: 'Noto Sans';
     font-style: normal;
@@ -1361,8 +1364,7 @@ li.branch:before {
 li.branch {
     position: relative;
     margin: 15px 0;
-
-    text-transform: uppercase;
+    text-transform: capitalize;
 }
 
 .branch>ul li {
@@ -1393,7 +1395,7 @@ li.branch {
     background-color: #f7f7f7;
     padding: 40px 34px;
     height: 100%;
-    margin-left: -48px;
+    margin-left: -40px;
     min-height: 600px;
 }
 
@@ -1401,14 +1403,14 @@ li.branch {
     display: flex;
     gap: 20px;
     justify-content: end;
-    margin: 40px 0;
+    margin-bottom: 10px;
 }
 
 .create_model_bar {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 40px 0;
+    padding-top: 40px;
 }
 
 .create_model_bar button {
@@ -2152,7 +2154,7 @@ hr {
 .user-search {
     position: absolute;
     top: 20%;
-    left: 3.5%;
+    left: 11px;
 }
 
 .searchBox {
@@ -2820,4 +2822,47 @@ li.child_tag {
     background: rgb(217 217 217 / 40%);
     padding: 16px 19px;
     border-radius: 10px;
+}
+.custom-menu-dots .dropdown-item{
+    padding: 0.01rem 1rem !important;
+}
+
+
+
+
+
+
+.previewTitle{
+    display:'flex';
+    align-items: center;
+    justify-content: space-between;
+}
+
+.previewTitle > div{
+    width:auto
+}
+.userBox *{
+    margin:0;
+}
+.userBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 300px;
+    background: #C4C4C426;
+    padding: 8px 15px;
+    border-radius: 4px;
+}
+.userBox > div{
+    display:flex;
+    align-items: center;
+}
+
+.userBox .user-role{
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 19px;
+    color: rgba(51, 51, 51, 0.5);
 }

@@ -102,6 +102,35 @@ const NewUser = () => {
     }));
   };
 
+  const getEngagebayDetail = async (event) => {
+    const { name, value } = event.target;
+  if(value){
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/contacts/${value}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      console.log('RESPONSE:', response);
+
+      if(response.status == 200) {
+      
+        const {data} = response.data;
+        setFormData(prevState => ({
+          ...prevState,
+          fullname: data?.fullname,
+          phone: data?.fullname,
+        }));
+
+      }
+    }
+
+  };
+
+  
+
+
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -154,7 +183,8 @@ const NewUser = () => {
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');
-    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
+    const response = 
+      await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
     if(response.status === 200 && response.data.status === "success") {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
@@ -291,7 +321,6 @@ const NewUser = () => {
 
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
-
       setFranchiseeData(franchiseeList.map(franchisee => ({
         id: franchisee.id,
         value: franchisee.franchisee_alias,
@@ -315,15 +344,18 @@ const NewUser = () => {
   }, [formData.franchisee]);
 
   useEffect(() => { 
-    let franchisee_id = localStorage.getItem('franchisee_id');
-    setFormData(prevState => ({
-      ...prevState,
-      franchisee: franchisee_id,
-      franchiseeObj: franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id)) 
-    }));
-  }, [localStorage.getItem('user_role') === 'franchisee_admin', franchiseeData]);
+    if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') {
+      let franchisee_id = localStorage.getItem('franchisee_id');
+      setFormData(prevState => ({
+        ...prevState,
+        franchisee: franchisee_id,
+        franchiseeObj: {...franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id))[0]} 
+      }));
+    }
+  }, [franchiseeData]);
 
   formData && console.log('FORM ERRORS:', formData);
+  franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
 
   return (
     <>
@@ -376,6 +408,9 @@ const NewUser = () => {
                                   email: null
                                 }));
                               }}
+                              onBlur={(e) => {
+                                getEngagebayDetail(e);
+                              }}
                             />
                             { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
                           </Form.Group>
@@ -407,7 +442,7 @@ const NewUser = () => {
                               type="text"
                               name="fullname"
                               placeholder="Enter Full Name"
-                              value={formData?.fullName}
+                              value={formData?.fullname}
                               onChange={(e) => {
                                 handleChange(e);
                                 setFormErrors(prevState => ({
@@ -576,9 +611,10 @@ const NewUser = () => {
                               />
                             }
                             {
-                              localStorage.getItem('user_role') === 'franchisee_admin' && 
+                              (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') && 
                               <Select
-                                placeholder={formData?.franchiseeObj[0].label || "Which Franchisee?"}
+                                placeholder={formData?.franchiseeObj?.label || "Which Franchisee?"}
+                                isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}
                               />

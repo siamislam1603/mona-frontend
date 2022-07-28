@@ -18,17 +18,49 @@ function AddFormBuilder(props) {
   const [formData, setFormData] = useState([]);
   const [form, setForm] = useState({ form_template_select: 'Yes' });
   const [formCategory,setFormCategory]=useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const [errors, setErrors] = useState({});
+  const [userRole, setUserRole] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
+    console.log("location?.state?.id--->",location?.state?.id);
     if (location?.state?.id) {
       getParticularFormData();
     }
     getFormData();
     getFormCategory();
+    getUserRoleData();
   }, []);
+  const getUpperRoleUser = () => {
+    let upper_role = '';
+    let flag = false;
+    userRole?.map((item) => {
+      if (item.role_name !== localStorage.getItem('user_role')) {
+        if (!flag) upper_role += item.role_name + ',';
+      } else {
+        flag = true;
+      }
+    });
+    return upper_role.slice(0, -1);
+  };
+  const getUserRoleData = () => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/api/user-role`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        console.log('res---->', res);
+        // console.log('response0-------->1', localStorage.getItem('user_role'));
+        setUserRole(res?.userRoleList);
+      })
+      .catch((error) => console.log('error', error));
+  };
   const getFormCategory=()=>{
     var requestOptions = {
       method: 'GET',
@@ -59,6 +91,7 @@ function AddFormBuilder(props) {
       var myHeaders = new Headers();
       let data={...form};
       data["created_by"]=localStorage.getItem("user_id");
+      data["upper_role"]=getUpperRoleUser();
       myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/form/add`, {
         method: 'post',
@@ -68,7 +101,7 @@ function AddFormBuilder(props) {
         .then((res) => res.json())
         .then((res) => {
           navigate('/form/setting', {
-            state: { form_name: form?.form_name },
+            state: { id: res?.result?.id,form_name:res?.result?.form_name },
           });
         });
     }
@@ -79,7 +112,7 @@ function AddFormBuilder(props) {
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/form/${location?.state?.id}`, requestOptions)
+    fetch(`${BASE_URL}/form/one?id=${location?.state?.id}&franchisee_id=${localStorage.getItem('f_id')}`, requestOptions)
       .then((response) => response.json())
       .then((result) => setForm(result?.result))
       .catch((error) => console.log('error', error));
@@ -105,13 +138,20 @@ function AddFormBuilder(props) {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+              <TopHeader
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={(name, id) => {
+                    setSelectedFranchisee(name);
+                    setSelectedFranchiseeId(id);
+                    localStorage.setItem('f_id', id);
+                  }}
+                />
                 <Row>
                 <Col sm={8}>
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
-                          navigate('/form/add');
+                          navigate('/form');
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />

@@ -249,7 +249,7 @@ const EditAnnouncement = () => {
        "Authorization": "Bearer " + token
      }
     })
-
+    console.log("The reponse after edit ",response.data)
     if(response.status === 200) {
       setAnnouncementData(response.data.data.all_announcements)
     }
@@ -260,7 +260,7 @@ const EditAnnouncement = () => {
     title: announcementData?.title,
     meta_description: announcementData?.meta_description,
     start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
-    start_time: moment(announcementData?.scheduled_date).format('HH:mm'),
+    start_time: moment(announcementData?.scheduled_date).utc().format('HH:mm'),
     franchise: announcementData.franchise
   }))
   setAnnouncementsSettings(prevState =>({
@@ -305,6 +305,11 @@ const EditAnnouncement = () => {
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   console.log("The COPY DATA",announcementCopyData )
   console.log("THE VIDEO DATA",fetchedVideoTutorialFiles)
+  console.log("ANNOUNCEMENT DATA",announcementData)
+  const dateToFormat = '1976-04-19T12:59-0500';
+  // start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
+
+ console.log("The format time",moment("2022-07-29T11:17:00.000Z").utc().format('HH:mm:ss'))
   return (
     <>
       {/* {console.log('Annoucement--->', announcementData)}
@@ -624,8 +629,8 @@ const EditAnnouncement = () => {
                   <Row>
                   <Row>
                     <Col sm={12}>
-                      <div className="bottom_button">
-                        <Button className="preview">Preview</Button>
+                      <div className="bottom_button">   
+                        <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>
                         <Button className="saveForm" onClick={onSubmit}>
                           Save
                         </Button>

@@ -139,12 +139,15 @@ export const createOperatingManualValidation = (form) => {
 //Validation for edit annoutment
 
 export const AddNewAnnouncementValidation = (form,coverImage) =>{
+  console.log("The form validation",form)
   let newErrors = {};
   console.log("The form validat", form)
-  let { title,meta_description} = form;
-  console.log("The tile valdiation", title)
+  let { title, meta_description, start_date, start_time} = form;
+  console.log("The tile valdiation", start_date)
   if(!title || title === ' ') newErrors.title="Announcement Title is Required"
   if (!coverImage)newErrors.coverImage = 'Cover image is Required';
+  if(!start_date || start_date === "undefined") newErrors.start_date="Start Date Required"
+  if(!start_time || start_time === "undefined") newErrors.start_time="Start Time Required"
   if(!meta_description || meta_description === ' ') newErrors.meta_description="Announcement Description is Required"
   
   return newErrors;
@@ -248,18 +251,27 @@ export const PasswordValidation = (form) => {
     new_password,
     confirm_password
   } = form;
+
   if (!oldpassword) {
     errors.oldpassword = 'Old password is required!';
   }
   if(!new_password){
     errors.new_password = 'New Password is required'
   }
+  if(new_password && new_password.length<5){
+    errors.new_password="Minimum length 5"
+  }
+  
   if(!confirm_password){
     errors.confirm_password = 'Confirm password'
   }
   if(new_password && confirm_password && new_password !== confirm_password ){
       errors.new_password = "New password and Confirm password need to be same"
       errors.confirm_password = "New password and Confirm password need to be same"
+  }
+  if(oldpassword && new_password && oldpassword === new_password){
+    errors.new_password = "Old and New Password need to be different"
+    errors.oldpassword = "Old and New Password need to be different"
   }
   
 

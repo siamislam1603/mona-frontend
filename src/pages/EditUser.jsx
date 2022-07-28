@@ -679,7 +679,7 @@ const EditUser = () => {
                               onChange={handleChange}
                             />
                             {
-                              (formData.termination_reach_me === false || formData.termination_reach_me === null) &&
+                              (formData.termination_reach_me === false  || formData.termination_reach_me === null) &&
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
                               <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
                             }

@@ -1,13 +1,66 @@
 import React, { useState } from "react";
 import { Button, Col, Row, Form, Table } from "react-bootstrap";
+import axios from 'axios';
+import { BASE_URL } from "../../components/App";
+import { useEffect } from "react";
 
-let step = 4;
+let nextstep = 4;
+let step = 3;
 
 const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
+  
+  const [hasEmergencyContact, setHasEmergencyContact] = useState(false);
+
+  const saveFormThreeData = async () => {
+    let childId = localStorage.getItem('enrolled_child_id')
+    let token = localStorage.getItem('token');
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: nextstep }, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+      nextStep();
+    }
+  };
+
+  const updateFormThreeData = async () => {
+    nextStep();
+  }
+
+  const fetchChildDetailsAndPopulate = async () => {
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let token = localStorage.getItem('token');
+
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === 'success') {
+      let { child } = response.data;
+
+      if(child?.emergency_contacts) {
+        setHasEmergencyContact(true);
+      } 
+    }
+  };
+
   const submitFormData = (e) => {
     e.preventDefault();
-    nextStep();
+
+    if(hasEmergencyContact) {
+      updateFormThreeData()  
+    } else {
+      saveFormThreeData();
+    }
   };
+
+  useEffect(() => {
+    fetchChildDetailsAndPopulate();
+  }, [])
 
   return (
     <>
@@ -309,7 +362,7 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
 
           </div>
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
+            <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
             <Button variant="primary" type="submit">Next</Button>
           </div>
         </Form>
