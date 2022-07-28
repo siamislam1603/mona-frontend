@@ -51,6 +51,7 @@ import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
 import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
+import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -74,6 +75,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <UserManagement />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/child-enrollment-init/:parentId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollmentInitiation />
             </Protected>
           }
         />
