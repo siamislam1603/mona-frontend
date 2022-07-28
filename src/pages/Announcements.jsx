@@ -31,9 +31,9 @@ const Announcements =  () => {
   // const [search,setSearch]=useState("");
   const [searchData,setSearchData] = useState([])
   const[searchword,setSearchWord] = useState(""); 
-  
-  
- 
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+  const [franchiseeData,setFranchiseeData]=useState('');
+   
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -52,10 +52,7 @@ const Announcements =  () => {
        if(!search){
         search = " "
        } 
-       
        console.log('SEARCH:', search);
-
-     
       if (search) {   
          api_url =   `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
        }
@@ -78,37 +75,45 @@ const Announcements =  () => {
     //  console.log("The api_url",api_url)
   };
   const fetchUserDetails = async () => {
-    // console.log("The search detials inaise 1",search)
-    // let seac = search
-    // console.log("The seach variable",search)
-    let api_url = '';
-    const userId = localStorage.getItem("user_id")
+    try {
+      let api_url = '';
+    
+    let franchiseeFormat = selectedFranchisee
+      .split(',')[0]
+      .split(' ')
+      .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
+      .join('_')
+      .toLowerCase();
 
-    if (search.searchTerm) {
-     console.log("The search word",search)
-      
-      api_url =  `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search.searchTerm}`;
+    if(selectedFranchisee){
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}`
     }
-    console.log("The api_url",api_url)
-  
+
     let response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    console.log("The reponse of serach",response.data.data.searchedData)
-    if(response.status ===200 && response.data.data.searchedData<1){
+      if(response.status === 200 && response.data.status === "success"){
+          console.log("The response",response)
+          setFranchiseeData(response.data)
 
-      setSearchData([null])
-      console.log("The searchData is null",searchData)
+      }     
+    } catch (error) {
+       if(error.response.status === 404){
+        console.log("The error",error)
+        setFranchiseeData(error.response.data)
+        
+       }
     }
-    if (response.status === 200) {
-        setSearchData(response.data.data.searchedData)
-    }
+  
   };
-  // useEffect(() =>(
-  //   setSearchWord(search)
-  // ),[fetchUserDetails])
+  
+  useEffect(() =>{
+    if(selectedFranchisee){
+      fetchUserDetails()
+    }
+  },[selectedFranchisee])
   return (
     <>
       <div id="main">
@@ -119,7 +124,10 @@ const Announcements =  () => {
                 <LeftNavbar/>
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+              <TopHeader
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={setSelectedFranchisee}
+                />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Announcements</h1>
@@ -152,9 +160,9 @@ const Announcements =  () => {
 
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements search = {searchData} searchValue={search}/>}
+                      && <AllAnnouncements search = {searchData} searchValue={search} franchisee ={franchiseeData}/>}
                     {tabLinkPath === "/my-announcements" 
-                      && <MyAnnouncements search = {searchData} searchValue={search}
+                      && <MyAnnouncements search = {searchData} searchValue={search} franchisee ={franchiseeData}
                              />}
                 
                   </div>
