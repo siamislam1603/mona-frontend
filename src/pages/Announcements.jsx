@@ -154,7 +154,7 @@ const Announcements =  () => {
                     {tabLinkPath === "/all-announcements" 
                       && <AllAnnouncements search = {searchData} searchValue={search}/>}
                     {tabLinkPath === "/my-announcements" 
-                      && <MyAnnouncements search = {searchData}
+                      && <MyAnnouncements search = {searchData} searchValue={search}
                              />}
                 
                   </div>
