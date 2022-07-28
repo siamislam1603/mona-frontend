@@ -31,7 +31,7 @@ function FormResponse(props) {
     };
 
     fetch(
-      `${BASE_URL}/form/response?form_id=1`,
+      `${BASE_URL}/form/response?form_id=${location?.state?.id ? location?.state?.id : 1}`,
       requestOptions
     )
       .then((response) => response.json())

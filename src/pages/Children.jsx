@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Container, Dropdown, } from 'react-bootstrap';
-import Modal from 'react-bootstrap/Modal';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -11,6 +10,9 @@ import EducatorAssignPopup from '../components/EducatorAssignPopup';
 import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
 const Children = () => {
+    let { id: parentId } = useParams();
+    console.log('parent id:', parentId);
+
     useEffect(()=>{
         init()                         
     },[])
@@ -244,8 +246,6 @@ const Children = () => {
 
     const viewEnrollmentForm = async (e) => {
         e.preventDefault();
-        // localStorage.removeItem('enrolled_parent_id');
-        // localStorage.removeItem('enrolled_child_id');
         window.location.href=`/child-enrollment/${childrenList[0].id}/${params.id}`;
     };
 
@@ -267,11 +267,31 @@ const Children = () => {
                                 />
                                 <div className="entry-container">
                                     <div className="user-management-sec">
-                                        <header className="title-head">
+                                        <header className="title-head" style={{
+                                            display: "flex",
+                                            justifyContent: 'space-between'
+                                        }}>
                                             <h1 className="title-lg">
                                                 <Link to="/user-management"> </Link>
                                                 Children
                                             </h1>
+
+                                            <Link
+                                                to={`/child-enrollment-init/${parentId}`}
+                                                style={{
+                                                backgroundColor: '#455C58',
+                                                padding: ".8rem 2.5rem",
+                                                fontSize: "1rem",
+                                                color: '#fff',
+                                                fontWeight: '400',
+                                                letterSpacing: '.7px',
+                                                borderRadius: '5px',
+                                                border: 'none',
+                                                display: 'inline-block',
+                                                cursor: 'pointer'
+                                            }}>
+                                                Add Child
+                                            </Link>
                                         </header>
                                         <BootstrapTable
                                             keyField="id"
