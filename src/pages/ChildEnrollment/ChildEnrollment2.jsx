@@ -56,7 +56,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     inclusion_support_form_of_allergies: false,
     has_autoinjection_device: false,
     has_anaphylaxis_medical_plan_been_provided: false,
-    risk_maagement_plan_completed: false,
+    risk_management_plan_completed: false,
     any_other_medical_condition: false,
     detail_of_other_condition: "",
     has_dietary_restrictions: false,
@@ -279,11 +279,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     if(Object.keys(errors).length > 0) {
       setHealthInfoFormErrors(errors);
     } else {
-      if(formStepData > step) {
-        // console.log('UPDATING THE EXISTING DATA!');
+      if(formStepData && formStepData > step) {
+        console.log('UPDATING THE EXISTING DATA!');
         updateFormTwoData();
       } else {
-        // console.log('CREATING NEW DATA!')
+        console.log('CREATING NEW DATA!')
         saveFormTwoData();
       }
     }
@@ -2154,7 +2154,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="injection" 
                               id="yesin" 
                               label="Yes"
-                              checked={childMedicalInformation?.has_autoinjeciton_device === true}
+                              checked={childMedicalInformation?.has_autoinjection_device === true}
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 has_autoinjection_device: true
@@ -2164,7 +2164,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               name="injection" 
                               id="noin" 
                               label="No"
-                              checked={childMedicalInformation?.has_autoinjeciton_device === false || childMedicalInformation?.has_autoinjeciton_device === null}
+                              checked={childMedicalInformation?.has_autoinjection_device === false || childMedicalInformation?.has_autoinjection_device === null}
                               defaultChecked
                               onChange={() => setChildMedicalInformation(prevState => ({
                                 ...prevState,

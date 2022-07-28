@@ -9,7 +9,6 @@ import ChildEnrollment4 from '../pages/ChildEnrollment/ChildEnrollment4';
 import ChildEnrollment5 from '../pages/ChildEnrollment/ChildEnrollment5';
 import ChildEnrollment6 from '../pages/ChildEnrollment/ChildEnrollment6';
 import ChildEnrollment7 from '../pages/ChildEnrollment/ChildEnrollment7';
-import ChildEnrollment8 from '../pages/ChildEnrollment/ChildEnrollment8';
 import SignIn from '../pages/SignIn';
 import ForgotPassword from '../pages/ForgotPassword';
 import UserManagement from '../pages/UserManagement';
@@ -88,6 +87,16 @@ const Main = () => {
             </Protected>
           }
         />
+
+        <Route
+          path="/child-enrollment/:childId/:parentId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment />
+            </Protected>
+          }
+        />
         
         <Route
           path="/child-enrollment/1"
@@ -158,17 +167,6 @@ const Main = () => {
             </Protected>
           }
         />
-        
-        <Route
-          path="/child-enrollment/8"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildEnrollment8 />
-            </Protected>
-          }
-        />
-
     
         <Route
           path="/forgot-password"

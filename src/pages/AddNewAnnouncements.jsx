@@ -12,7 +12,7 @@ import {AddNewAnnouncementValidation} from "../helpers/validation"
 import Select from 'react-select';
 import MyEditor from './CKEditor';
 import * as ReactBootstrap from 'react-bootstrap';
-
+import DropVideo from '../components/DragDropVideo';
 import { useLocation, useNavigate } from 'react-router-dom';
 const AddNewAnnouncements = () => {
 
@@ -29,7 +29,7 @@ const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
   user_roles: []
 });
-
+const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
@@ -67,6 +67,10 @@ const createAnnouncement = async (data) => {
   );
   console.log(response);
   console.log("jjjjjjjjjjjjjjjjjjjj");
+  if(response.status === 200 && response.data.status === "fail"){
+    setAddnewAnnouncement(false)
+    setTitleError("Title already exit")
+  }
 
   if(response.status === 201 && response.data.status === "success" && coverImage.length > 0) {
     console.log(typeof(coverImage));
@@ -112,6 +116,11 @@ const createAnnouncement = async (data) => {
        
     } 
 
+    else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
+    window.location.href="/announcements";
+        
+    }
+
     // else if(response.status === 200 && response.data.status === "fail") {
     //   console.log('ERROR RESPONSE!');
     //   const { msg } = response.data;
@@ -121,7 +130,7 @@ const createAnnouncement = async (data) => {
     //     setTopErrorMessage(null);
     //   }, 3000)
     // }
-    window.location.href="/announcements";
+    // window.location.href="/announcements";
     };  
 
     const fetchFranchiseeUsers = async (franchisee_name) => {
@@ -329,6 +338,8 @@ const createAnnouncement = async (data) => {
                           <Form.Control.Feedback type="invalid">
                             {error.title}
                           </Form.Control.Feedback>
+                          {titleError && <div className="error">{titleError}</div>} 
+                         
                         </Form.Group>
                       <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
@@ -443,7 +454,7 @@ const createAnnouncement = async (data) => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <DropAllFile onSave={setVideoTutorialFiles} />
+                          <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">

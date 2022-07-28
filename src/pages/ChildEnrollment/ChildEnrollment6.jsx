@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
+import { useEffect } from "react";
 
 
 
@@ -98,6 +99,11 @@ let step = 6;
   //   setConcentData();
   //   setSubmitted(false);
   // }
+
+  useEffect(() => {
+    let childId = localStorage.getItem('enrolled_parent_id');
+    window.location.href=`http://localhost:5000/children/${childId}`;
+  }, []);
   return (
     <>
       <div className="enrollment-form-sec">
