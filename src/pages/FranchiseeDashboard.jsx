@@ -140,6 +140,7 @@ const FranchiseeDashboard = () => {
   console.log(latest_announcement[0], "latest_announcement")
   const count_User_Api = () => {
     let token = localStorage.getItem('token');
+
     const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
     axios.get(countUrl, {
       headers: {
