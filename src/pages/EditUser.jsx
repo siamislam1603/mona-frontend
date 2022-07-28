@@ -162,6 +162,7 @@ const EditUser = () => {
   };
 
   const handleChange = (event) => {
+    event.preventDefault();
     const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -210,12 +211,7 @@ const EditUser = () => {
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCountryData = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/country-data`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/api/country-data`);
     if (response.status === 200) {
       const { countryDataList } = response.data;
       setCountryData(
@@ -229,12 +225,7 @@ const EditUser = () => {
 
   // FETCHES USER ROLES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchUserRoleData = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/user-role`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/api/user-role`);
     if (response.status === 200) {
       const { userRoleList } = response.data;
       setUserRoleData(
@@ -267,15 +258,8 @@ const EditUser = () => {
   };
 
   const fetchTrainingCategories = async () => {
-    let token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`,
-      {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      }
-    );
+      `${BASE_URL}/training/get-training-categories`);
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
       setTrainingCategoryData([
@@ -289,12 +273,7 @@ const EditUser = () => {
   };
 
   const fetchProfessionalDevelopementCategories = async () => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
     
     if(response.status === 200 && response.data.status === "success") {
       const { pdcList } = response.data;
@@ -308,11 +287,7 @@ const EditUser = () => {
 
   const fetchBuinessAssets = async () => {
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
     
     if(response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
