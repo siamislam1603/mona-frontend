@@ -119,24 +119,57 @@ const columns1 = [
 ];
 
 const FranchiseeDashboard = () => {
-  const [countUser, setcountUser] = React.useState(null);
-  const [latest_announcement, setlatest_announcement] = React.useState(null);
-  console.log(latest_announcement, "latest_announcement")
-  const count_User_Api = () => {
-    const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
-    axios.get(countUrl).then((response) => {
-      setcountUser(response.data);
+  const [count, setcount] = React.useState(null);
+  const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+
+  const announcement = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+
+    await axios(`${BASE_URL}/dashboard/franchisor/latest-announcement`, requestOptions).then((response) => {
+      setlatest_announcement(response.data.data.all_announcements);
+      console.log(response)
     }).catch((e) => {
       console.log("Error", e);
     })
   }
 
-  console.log(countUser, "lksjgydtadHUJISKiaudygquISOIWUAYTDGH")
-  React.useEffect(() => {
-    count_User_Api();
-  }, []);
 
-  if (!countUser) return null;
+  const count_Api = async () => {
+    const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    await axios(countUrl, requestOptions).then((response) => {
+      setcount(response.data);
+    }).catch((e) => {
+      console.log(e);
+    })
+    console.log(count, ":lksjdgcasjhgjhjchvs")
+  }
+
+  React.useEffect(() => {
+    announcement();
+    count_Api();
+  }, []);
+  if (!count) return null;
   return (
     <>
       <div id="main">
@@ -285,28 +318,28 @@ const FranchiseeDashboard = () => {
                               <a href="/" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.totalUsers}</span>
+                                <span className="num">{count.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.totalLocations}</span>
+                                <span className="num">{count.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.newEnrollments}</span>
+                                <span className="num">{count.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.auditForms}</span>
+                                <span className="num">{count.auditForms}</span>
                               </a>
                             </div>
                           </div>
@@ -330,18 +363,16 @@ const FranchiseeDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-                            <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div>
-                            <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div>
+                            {latest_announcement.map((data) => {
+                              return (
+                                <div className="listing">
+                                  <a href="/" className="item">
+                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
+                                  </a>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       </aside>

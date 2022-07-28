@@ -27,6 +27,7 @@ import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import { createFileRepoValidation } from '../helpers/validation';
 import moment from 'moment';
+
 let selectedUserId = '';
 const { SearchBar } = Search;
 const { ExportCSVButton } = CSVExport;
@@ -77,60 +78,53 @@ const FileRepository = () => {
 
   const [columns, setColumns] = useState([
     {
-      dataField: 'repository_files',
+      dataField: 'name',
       text: 'Name',
       sort: true,
       formatter: (cell) => {
+        cell = cell.split(',');
         return (
           <>
             <div className="user-list">
-              {/* <span className="user-pic">
-                <img src={cell[0].} alt="" />
-              </span> */}
+              <span>
+                <img src="../img/gfolder-ico.png" className="me-2" alt="" />
+              </span>
               <span className="user-name">
-                {cell[0].fileName + "." + cell[0].fileType.split("/")[1]}
-                {/* <small>{cell[2]}</small> */}
+                {cell[0]}
+                <small>{cell[1]}</small>
               </span>
             </div>
           </>
         );
       },
     },
+    // {
+    //   dataField: 'creatorName',
+    //   text: 'Name',
+    //   sort: true,
+    // },
     {
-      dataField: 'repository_files',
+      dataField: 'createdAt',
       text: 'Created on',
       sort: true,
-      formatter: (cell) => {
-        return (
-          <>
-            <div className="user-list">
-              {/* <span className="user-pic">
-                <img src={cell[0]} alt="" />
-              </span> */}
-              <span className="user-name">
-                {cell[0].createdAt.split("T")[0]}
-                {/* <small>{cell[2]}</small> */}
-              </span>
-            </div>
-          </>
-        );
-      },
     },
     {
-      dataField: 'repository_files',
+      dataField: 'creatorName',
       text: 'Created by',
       sort: true,
       formatter: (cell) => {
+        cell = cell.split(',');
         return (
           <>
             <div className="user-list">
               <span className="user-name">
-                {cell[0].creatorName} <small className='text-capitalize'>{cell[0].creatorRole.split("_").join(" ")}</small>
+                {cell[0]}
+                <small>{cell[1]}</small>
               </span>
             </div>
           </>
         );
-      },
+      }
     },
     {
       dataField: 'repository_files',
@@ -143,15 +137,72 @@ const FileRepository = () => {
                 <Dropdown.Toggle variant="transparent" id="ctacol">
                   <img src="../img/dot-ico.svg" alt="" />
                 </Dropdown.Toggle>
-                {/* <Dropdown.Menu>
+                <Dropdown.Menu>
                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-                </Dropdown.Menu> */}
+                </Dropdown.Menu>
               </Dropdown>
             </div>
           </>
         );
       },
     },
+
+    // {
+    //   dataField: 'repository_files',
+    //   text: 'Created on',
+    //   sort: true,
+    //   formatter: (cell) => {
+    //     return (
+    //       <>
+    //         <div className="user-list">
+    //           {/* <span className="user-pic">
+    //             <img src={cell[0]} alt="" />
+    //           </span> */}
+    //           <span className="user-name">
+    //             {cell[0].createdAt.split("T")[0]}
+    //             {/* <small>{cell[2]}</small> */}
+    //           </span>
+    //         </div>
+    //       </>
+    //     );
+    //   },
+    // },
+    // {
+    //   dataField: 'repository_files',
+    //   text: 'Created by',
+    //   sort: true,
+    //   formatter: (cell) => {
+    //     return (
+    //       <>
+    //         <div className="user-list">
+    //           <span className="user-name">
+    //             {cell[0].creatorName} <small className='text-capitalize'>{cell[0].creatorRole.split("_").join(" ")}</small>
+    //           </span>
+    //         </div>
+    //       </>
+    //     );
+    //   },
+    // },
+    // {
+    //   dataField: 'repository_files',
+    //   text: '',
+    //   formatter: (cell) => {
+    //     return (
+    //       <>
+    //         <div className="cta-col">
+    //           <Dropdown>
+    //             <Dropdown.Toggle variant="transparent" id="ctacol">
+    //               <img src="../img/dot-ico.svg" alt="" />
+    //             </Dropdown.Toggle>
+    //             {/* <Dropdown.Menu>
+    //               <Dropdown.Item href="#">Delete</Dropdown.Item>
+    //             </Dropdown.Menu> */}
+    //           </Dropdown>
+    //         </div>
+    //       </>
+    //     );
+    //   },
+    // },
   ]);
 
 
@@ -161,40 +212,50 @@ const FileRepository = () => {
   const [fileRepoData, setFileRepoData] = useState([]);
   const [sharedWithMeFileRepoData, setSharedWithMeFileRepoData] = useState([]);
   const [errors, setErrors] = useState({});
-  const [post, setPost] = React.useState();
+  const [post, setPost] = React.useState([]);
 
 
+  const [userData, setUserData] = useState([]);
+  userData && console.log('USER DATA:', userData.map(data => data));
 
   const GetData = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    await fetch(`${BASE_URL}/fileRepo/2`, requestOptions)
-      .then((res) => res.json())
-      .then((json) => {
-        var Item = json.filesData
-        console.log(Item, "Item")
-        setPost({ Item });
-      })
-    console.log(post, "This is me ")
+    let response = await axios.get(`${BASE_URL}/fileRepo/2`, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
+    // .then((response) => {
+    //   setPost(response.data.searchedData)
+    //   console.log(post,)
+    // })
+    console.log(response, "response")
+    if (response.status === 200) {
+      const users = response.data.searchedData;
+      console.log(users, "success")
+
+      let tempData = users.map((dt) => ({
+        name: `${dt.fileType}, ${dt.fileName}`,
+        createdAt: dt.createdAt,
+        userID: dt.id,
+        creatorName: dt.creatorName + "," + dt.creatorRole
+      }));
+
+      // tempData = tempData.filter((data) => data.is_deleted === 0);
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
+      setUserData(tempData);
+
+      let temp = tempData;
+    }
   }
 
   useEffect(() => {
     GetData();
     // getUserRoleAndFranchiseeData();
-    // getMyAddedFileRepoData();
-    // getFilesSharedWithMeData();
-    // getFileCategory();
+    getMyAddedFileRepoData();
+    getFilesSharedWithMeData();
+    getFileCategory();
     getUser();
   }, []);
-
 
   // if (!post) return null;
   const getFileCategory = () => {
@@ -211,7 +272,6 @@ const FileRepository = () => {
     };
 
     fetch(`${BASE_URL}/fileRepo/2`, requestOptions)
-
       .then((result) => setCategory(result?.result))
       .catch((error) => console.log('error', error));
   };
@@ -262,6 +322,7 @@ const FileRepository = () => {
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
+
   const onSubmit = async (e) => {
     e.preventDefault();
     // const newErrors = createFileRepoValidation(
@@ -358,6 +419,12 @@ const FileRepository = () => {
     fetch(`${BASE_URL}/fileRepo/`, requestOptions)
       .then((response) => {
         response.json()
+        console.log(response.statusText, "+++++++++++")
+        if (response.statusText === "Created") {
+          setLoaderFlag(false);
+          setShow(false);
+          this.props.history.push(`/file-repository`);
+        }
       })
       .then((result) => {
         if (result) {
@@ -366,8 +433,24 @@ const FileRepository = () => {
         }
       })
       .catch((error) => console.log('error', error));
-
   };
+
+
+  // await axios({
+  //   method: "post",
+  //   url: `${BASE_URL}/Enquiry`,
+  //   data: bodyFormData,
+  //   headers: OTHER_HEADER,
+  // }).then((res) => {
+  //   if (res?.data?.success) {
+  //     localStorage.setItem("non_housing_thank_you_flag", true);
+  //     this.props.history.push(`//file-repository`);
+  //   } else {
+  //     alert("Something went wrong!");
+  //   }
+  // }).catch((e) => {
+  //   console.log(e, "lksjhgdatgdhjk")
+  // })
 
   const getFilesSharedWithMeData = () => {
     var myHeaders = new Headers();
@@ -513,7 +596,7 @@ const FileRepository = () => {
     }
     setUser(data);
   }
-
+  post && console.log("post Data", '++++++++++++++++++++++++++++++:', post.map(data => data));
   return (
     <>
       {console.log('hello----->', formSettingData)}
@@ -530,13 +613,8 @@ const FileRepository = () => {
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
                     <ToolkitProvider
-                      keyField="id"
-                      data={
-                        tabFlag === false
-                          ? fileRepoData
-                          :
-                          sharedWithMeFileRepoData
-                      }
+                      keyField="name"
+                      data={userData}
                       columns={columns}
                       search
                     >

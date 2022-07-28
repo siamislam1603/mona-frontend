@@ -11,6 +11,8 @@ import { useParams } from 'react-router-dom';
 import {AddNewAnnouncementValidation} from "../helpers/validation" 
 import Select from 'react-select';
 import MyEditor from './CKEditor';
+import * as ReactBootstrap from 'react-bootstrap';
+
 import { useLocation, useNavigate } from 'react-router-dom';
 const AddNewAnnouncements = () => {
 
@@ -22,6 +24,7 @@ const handleSaveAndClose = () => setShow(false);
 // CUSTOM STATES
 const location = useLocation();
 const [loader, setLoader] = useState(false);
+const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
 const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
   user_roles: []
@@ -205,7 +208,7 @@ const createAnnouncement = async (data) => {
           relatedFiles.forEach((file, index) => {
             data.append(`images`, file);
           });
-  
+          setAddnewAnnouncement(true)
           setLoader(true);
         createAnnouncement(data);
         console.log("The data",data)
@@ -340,17 +343,11 @@ console.log(franchiseeData);
                           : <div className="select-with-plus">
 
                           <Select
-
                             placeholder="Which Franchisee?"
-
                             closeMenuOnSelect={false}
-
                             isMulti
-
                             options={franchiseeData}
-
                             onChange={handleAnnouncementFranchisee}
-
                             />
 
                             </div>
@@ -470,6 +467,33 @@ console.log(franchiseeData);
           </Container>
         </section>
       </div>
+      {
+        addNewAnnouncement && 
+        <Modal
+        show={addNewAnnouncement}
+        onHide={() => setAddnewAnnouncement(false)}>
+        <Modal.Header>
+          <Modal.Title>
+            Adding Announcement
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div className="create-training-modal" style={{ textAlign: 'center' }}>
+            <p>This may take some time.</p>
+            <p>please wait....</p>
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        {
+          loader === true && <div>
+            <ReactBootstrap.Spinner animation="border" />
+          </div>
+        }
+        </Modal.Footer>
+      </Modal>
+      }
     </>
   );
 };

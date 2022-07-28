@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
+import axios from 'axios';
+import { BASE_URL } from "../../components/App";
+
+let nextstep = 7;
+let step = 6;
 
 const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
+
   const submitFormData = (e) => {
     e.preventDefault();
     nextStep();
@@ -80,7 +86,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
             </Row>
           </div>
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
+            <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
             <Button variant="primary" type="submit">Next</Button>
           </div>
         </Form>

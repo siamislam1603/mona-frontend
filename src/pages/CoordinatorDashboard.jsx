@@ -65,14 +65,27 @@ const columns = [
 
 const CoordinatorDashboard = () => {
   const [count, setcount] = React.useState();
+
+
   const count_Api = () => {
     const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
-    axios.get(countUrl).then((response) => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    axios(countUrl, requestOptions).then((response) => {
       setcount(response.data);
     }).catch((e) => {
       console.log(e);
     })
   }
+
   console.log(count)
   React.useEffect(() => {
     count_Api();

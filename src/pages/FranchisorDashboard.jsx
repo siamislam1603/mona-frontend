@@ -75,22 +75,49 @@ const FranchisorDashboard = () => {
   const [state, setstate] = React.useState();
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
-  console.log("alsoidjh", latest_announcement[0].scheduled_date)
-  const announcement = () => {
-    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
-    axios.get(countUrl).then((response) => {
+  const announcement = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+
+    await axios(`${BASE_URL}/dashboard/franchisor/latest-announcement`, requestOptions).then((response) => {
       setlatest_announcement(response.data.data.all_announcements);
+      console.log(response)
     }).catch((e) => {
       console.log("Error", e);
     })
   }
-  const count_Api = () => {
+
+
+  const count_Api = async () => {
     const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count`;
-    axios.get(countUrl).then((response) => {
+    var myHeaders = new Headers();
+
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    await axios(countUrl, requestOptions).then((response) => {
       setcount(response.data);
+      console.log(count)
     }).catch((e) => {
       console.log(e);
     })
+
   }
 
 
@@ -313,19 +340,16 @@ const FranchisorDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-
-                            <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">{latest_announcement[0].title}<span className="date">{latest_announcement[0].scheduled_date}</span></div>
-                              </a>
-                            </div>
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+                            {latest_announcement.map((data) => {
+                              return (
+                                <div className="listing">
+                                  <a href="/" className="item">
+                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
+                                  </a>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                         {/*<div className="ads text-center pb-5">

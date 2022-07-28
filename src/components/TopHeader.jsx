@@ -56,6 +56,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
       localStorage.removeItem('menu_list');
       localStorage.removeItem('active_tab');
       localStorage.removeItem('selectedFranchisee');
+      localStorage.removeItem("attempts")  
       window.location.href = '/';
     }
   };

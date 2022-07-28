@@ -162,6 +162,28 @@ const UserManagement = () => {
       sort: true,
     },
     {
+      dataField: 'roleDetail',
+      text: '',
+      formatter: (cell) => {
+        cell = cell.split(',');
+        return (
+          <>
+            {
+              cell[0] == "guardian" ? (
+                cell[1] == 1 ? (
+                  <button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
+                    View Children
+                  </button>
+                ) : <button className='btn btn-outline-danger' onClick={() => navigate('/child-enrollment')}>
+                  New Children
+                </button>
+              ) : ""
+            }
+          </>
+        );
+      },
+    },
+    {
       dataField: 'action',
       text: '',
       formatter: (cell) => {
@@ -230,6 +252,7 @@ const UserManagement = () => {
         location: dt.city,
         is_deleted: dt.is_deleted,
         userID: dt.id,
+        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id
       }));
 
       tempData = tempData.filter((data) => data.is_deleted === 0);

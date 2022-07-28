@@ -12,7 +12,8 @@ const AllAnnouncements = () => {
     related_files: [],
   });
 const userName = localStorage.getItem("user_name");
-const userROle = localStorage.getItem("user_role")
+const userROle = localStorage.getItem("user_role");
+const [topMessage,setTopMessage] = useState(null);
 const [theRelatedFiles,setTheRelatedFiles] = useState([])
 const [announcementDetails,setAnnouncementDetail] = useState([])
 const [announcementFiles,setAnnouncementFiles] = useState([])
@@ -40,6 +41,11 @@ const formatMetaDescription = (str) => {
     let newFile = str.replace(/<p>/g, '');
     newFile = newFile.split('</p>')[0];
     return newFile;
+} 
+const deleteAlert = (id) =>{
+  if(window.confirm('Are you sure you want to delete?')){
+     deleteAnnouncement(id);
+  }
 }
 
 const deleteAnnouncement = async (id) =>{
@@ -51,8 +57,11 @@ const deleteAnnouncement = async (id) =>{
   }); 
   console.log("The response after delete",response)
   if(response.status === 200){
-      console.log("Delete succussfully")
+      setTopMessage("Delete successfully")
       AllAnnouncementData()
+      setTimeout(() => {
+        setTopMessage(null)
+      }, 2000);
   }
 
 }
@@ -71,6 +80,9 @@ console.log("The annoumce detial",announcementDetails)
   return (
     
     <div className="announcement-accordion">
+       
+                  {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+
                         {/* <MyEditor
                               operatingManual={{ ...operatingManualData }} 
                              
@@ -93,7 +105,7 @@ console.log("The annoumce detial",announcementDetails)
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
                                     <Dropdown.Item href={`/edit-announcement/${details.id}`}>Edit</Dropdown.Item>
-                                    <Dropdown.Item onClick={() =>deleteAnnouncement(details.id)}>Delete</Dropdown.Item>
+                                    <Dropdown.Item onClick={() =>deleteAlert(details.id)}>Delete</Dropdown.Item>
                                   </Dropdown.Menu>
                                 </Dropdown>
                               </div>
@@ -127,7 +139,7 @@ console.log("The annoumce detial",announcementDetails)
                                   
                                   {details.announcement_files.map((detail,index) =>(
                                            <>
-                                           {detail.fileType == ".mp4" ?(
+                                           {detail.fileType == ".mp4" && !detail.is_deleted  ? (
                                               <AnnouncementVideo 
                                                 data={detail}
                                                 title={`Training Video ${index + 1}`}
