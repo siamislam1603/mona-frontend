@@ -193,15 +193,6 @@ const Announcements =  () => {
                           </Dropdown.Menu>
                         </Dropdown> */}
                         <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
-                        <Dropdown>
-                          <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt=""/>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#">Export All</Dropdown.Item>
-                            <Dropdown.Item href="#">Delete All</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
                       </div>
                     </div>
                   </header>

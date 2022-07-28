@@ -394,10 +394,10 @@ const EditUser = () => {
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
-  editUserData && console.log('EDIT USER DATA:', editUserData);
-  formData && console.log('FORM DATA:', formData);
-  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-
+  // editUserData && console.log('EDIT USER DATA:', editUserData);
+  // formData && console.log('FORM DATA:', formData);
+  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
+  signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
   return (
     <>
       <div id="main">
