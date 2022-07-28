@@ -11,7 +11,6 @@ import {
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
 import { BASE_URL } from '../../components/App';
-import { createFormValidation } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Multiselect from 'multiselect-react-dropdown';
 
@@ -42,13 +41,14 @@ function FormSetting(props) {
   const [user, setUser] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const [count, setCount] = useState(0);
   const setFields = (field, value) => {
     setForm({ ...form, [field]: value });
   };
 
   useEffect(() => {
-    console.log("location?.state?.id---->",location?.state?.id);
+    console.log('location?.state?.id---->', location?.state?.id);
     getUser();
   }, [selectedFranchisee]);
   useEffect(() => {
@@ -60,28 +60,28 @@ function FormSetting(props) {
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/form/${location?.state?.id}`, requestOptions)
+    fetch(`${BASE_URL}/form/one?id=${location?.state?.id}&franchisee_id=${localStorage.getItem('f_id')}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         let oldResult = result?.result;
         if (
-          form?.accessible_to_role === '1' ||
-          form?.accessible_to_role === true
+          oldResult?.permission?.accessible_to_role === '1' ||
+          oldResult?.permission?.accessible_to_role === true
         ) {
-          let formVisibility = oldResult?.form_visible_to
-            ? oldResult?.form_visible_to.toString() + ','
+          let formVisibility = oldResult?.permission?.form_visible_to
+            ? oldResult?.permission?.form_visible_to.toString() + ','
             : '';
-          let fillAccess = oldResult?.fill_access_users
-            ? oldResult?.fill_access_users.toString() + ','
+          let fillAccess = oldResult?.permission?.fill_access_users
+            ? oldResult?.permission?.fill_access_users.toString() + ','
             : '';
-          let responseVisibility = oldResult?.response_visibility
-            ? oldResult?.response_visibility.toString() + ','
+          let responseVisibility = oldResult?.permission?.response_visibility
+            ? oldResult?.permission?.response_visibility.toString() + ','
             : '';
-          let signatoriesRole = oldResult?.signatories_role
-            ? oldResult?.signatories_role.toString() + ','
+          let signatoriesRole = oldResult?.permission?.signatories_role
+            ? oldResult?.permission?.signatories_role.toString() + ','
             : '';
-          let targetUser = oldResult?.target_user
-            ? oldResult?.target_user.toString() + ','
+          let targetUser = oldResult?.permission?.target_user
+            ? oldResult?.permission?.target_user.toString() + ','
             : '';
           let {
             form_visible_to,
@@ -91,6 +91,8 @@ function FormSetting(props) {
             target_users,
             ...newResult
           } = oldResult;
+          newResult.accessible_to_role= oldResult?.permission?.accessible_to_role;
+          newResult.signatories= oldResult?.permission?.signatories;
           newResult.form_visible_to = formVisibility;
           newResult.fill_access_users = fillAccess;
           newResult.response_visibility = responseVisibility;
@@ -98,9 +100,9 @@ function FormSetting(props) {
           newResult.target_user = targetUser;
           setForm(newResult);
         }
-        if (
-          form?.accessible_to_role === '0' ||
-          form?.accessible_to_role === false
+        else if (
+          oldResult?.permission?.accessible_to_role === '0' ||
+          oldResult?.permission?.accessible_to_role === false
         ) {
           selectedFormVisibleUserId = '';
           selectedFormVisibleUser = [];
@@ -113,8 +115,8 @@ function FormSetting(props) {
           selectedResponseVisibilityUserId = '';
           selectedResponseVisibilityUser = [];
           user.map((item) => {
-            if (oldResult?.form_visible_to) {
-              if (oldResult?.form_visible_to.includes(item.id.toString())) {
+            if (oldResult?.permission?.form_visible_to) {
+              if (oldResult?.permission?.form_visible_to.includes(item.id.toString())) {
                 console.log('user_els--->', item);
                 selectedFormVisibleUser.push({
                   id: item.id,
@@ -123,15 +125,15 @@ function FormSetting(props) {
                 selectedFormVisibleUserId += item.id + ',';
               }
             }
-            if (oldResult?.fill_access_users) {
-              if (oldResult?.fill_access_users.includes(item.id.toString())) {
+            if (oldResult?.permission?.fill_access_users) {
+              if (oldResult?.permission?.fill_access_users.includes(item.id.toString())) {
                 console.log('user_els--->', item);
                 selectedFillAccessUser.push({ id: item.id, email: item.email });
                 selectedFillAccessUserId += item.id + ',';
               }
             }
-            if (oldResult?.signatories_role) {
-              if (oldResult?.signatories_role.includes(item.id.toString())) {
+            if (oldResult?.permission?.signatories_role) {
+              if (oldResult?.permission?.signatories_role.includes(item.id.toString())) {
                 console.log('user_els--->', item);
                 selectedSignatoriesUser.push({
                   id: item.id,
@@ -140,8 +142,8 @@ function FormSetting(props) {
                 selectedSignatoriesUserId += item.id + ',';
               }
             }
-            if (oldResult?.response_visibility) {
-              if (oldResult?.response_visibility.includes(item.id.toString())) {
+            if (oldResult?.permission?.response_visibility) {
+              if (oldResult?.permission?.response_visibility.includes(item.id.toString())) {
                 console.log('user_els--->', item);
                 selectedResponseVisibilityUser.push({
                   id: item.id,
@@ -150,16 +152,28 @@ function FormSetting(props) {
                 selectedResponseVisibilityUserId += item.id + ',';
               }
             }
-            if (oldResult?.target_user) {
-              if (oldResult?.target_user.includes(item.id.toString())) {
+            if (oldResult?.permission?.target_user) {
+              if (oldResult?.permission?.target_user.includes(item.id.toString())) {
                 console.log('user_els--->', item);
                 selectedTargetUser.push({ id: item.id, email: item.email });
                 selectedTargetUserId += item.id + ',';
               }
             }
           });
+          oldResult.accessible_to_role= oldResult?.permission?.accessible_to_role;
+          oldResult.signatories= oldResult?.permission?.signatories;
+          setForm(oldResult);
           counter++;
           setCount(counter);
+        }
+        else
+        {
+          oldResult.form_visible_to='';
+          oldResult.signatories_role='';
+          oldResult.target_user='';
+          oldResult.fill_access_users='';
+          oldResult.response_visibility='';
+          setForm(oldResult);
         }
       })
       .catch((error) => console.log('error', error));
@@ -167,6 +181,7 @@ function FormSetting(props) {
   const setCheckBoxField = (name, value, checked) => {
     let data = { ...form };
     if (checked) {
+      data[name]=data[name].replace('undefined', '');
       data[name] += value + ',';
     } else {
       data[name] = data[name].replace(value + ',', '');
@@ -371,7 +386,9 @@ function FormSetting(props) {
         ? selectedResponseVisibilityUserId.slice(0, -1)
         : null;
     }
-
+    data['franchisee_id']=selectedFranchiseeId;
+    data['permission_update']=true;
+    data['shared_by']=localStorage.getItem('user_id');
     data['id'] = location?.state?.id;
     myHeaders.append('Content-Type', 'application/json');
     fetch(`${BASE_URL}/form/add`, {
@@ -402,6 +419,8 @@ function FormSetting(props) {
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(name, id) => {
                     setSelectedFranchisee(name);
+                    setSelectedFranchiseeId(id);
+                    localStorage.setItem('f_id', id);
                   }}
                 />
                 <Row>
@@ -409,7 +428,9 @@ function FormSetting(props) {
                     <div className="mynewForm-heading  mb-0">
                       <Button
                         onClick={() => {
-                          navigate('/form/add',{state:{id:location?.state?.id}});
+                          navigate('/form/add', {
+                            state: { id: location?.state?.id },
+                          });
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />

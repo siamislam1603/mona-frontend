@@ -75,43 +75,29 @@ const FranchisorDashboard = () => {
   const [state, setstate] = React.useState();
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
-  const announcement = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-
-    await axios(`${BASE_URL}/dashboard/franchisor/latest-announcement`, requestOptions).then((response) => {
+  console.log("alsoidjh", latest_announcement[0].scheduled_date)
+  const announcement = () => {
+    let token = localStorage.getItem('token');
+    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
       setlatest_announcement(response.data.data.all_announcements);
       console.log(response)
     }).catch((e) => {
       console.log("Error", e);
     })
   }
-
-
-  const count_Api = async () => {
+  const count_Api = () => {
+    let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count`;
-    var myHeaders = new Headers();
-
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    await axios(countUrl, requestOptions).then((response) => {
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
       setcount(response.data);
       console.log(count)
     }).catch((e) => {
@@ -345,11 +331,17 @@ const FranchisorDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
+                                    <div className="name">{data.title}<span className="date">{data.scheduled_date}</span></div>
                                   </a>
                                 </div>
                               );
                             })}
+                            {/* <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
+                            </div> */}
                           </div>
                         </div>
                         {/*<div className="ads text-center pb-5">

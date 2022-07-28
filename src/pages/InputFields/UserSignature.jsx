@@ -31,7 +31,7 @@ const UserSignature = (props) => {
         />
         <div>
           <button onClick={clear} style={{ padding: "12px 35px", marginRight: "10px" }}>Clear</button>
-          <button onClick={trim} style={{ padding: "12px 35px" }}>Trim</button>
+          <button onClick={trim} style={{ padding: "12px 35px" }}>OK</button>
         </div>
       </Form.Group>
     </Col>

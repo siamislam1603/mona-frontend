@@ -78,10 +78,16 @@ const NewUser = () => {
     console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
+      let { data } = response.data;
       setLoader(false);
       setCreateUserModal(false);
       localStorage.setItem('success_msg', 'User created successfully!');
-      window.location.href="/user-management";
+
+      if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+        window.location.href=`/children/${data.id}`;
+      } else {
+        window.location.href="/user-management";
+      }
 
     } else if(response.status === 200 && response.data.status === "fail") {
       setLoader(false);
@@ -183,7 +189,8 @@ const NewUser = () => {
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');
-    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
+    const response = 
+      await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
     if(response.status === 200 && response.data.status === "success") {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
@@ -253,15 +260,8 @@ const NewUser = () => {
   };
 
   const fetchTrainingCategories = async () => {
-    let token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`,
-      {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      }
-    );
+      `${BASE_URL}/training/get-training-categories`);
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
       setTrainingCategoryData([
@@ -275,12 +275,7 @@ const NewUser = () => {
   };
 
   const fetchProfessionalDevelopementCategories = async () => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
     
     if(response.status === 200 && response.data.status === "success") {
       const { pdcList } = response.data;
@@ -293,12 +288,7 @@ const NewUser = () => {
   }; 
 
   const fetchBuinessAssets = async () => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
     
     if(response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
@@ -343,12 +333,12 @@ const NewUser = () => {
   }, [formData.franchisee]);
 
   useEffect(() => { 
-    if(localStorage.getItem('user_role') === 'franchisee_admin') {
+    if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') {
       let franchisee_id = localStorage.getItem('franchisee_id');
       setFormData(prevState => ({
         ...prevState,
         franchisee: franchisee_id,
-        franchiseeObj: franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id)) 
+        franchiseeObj: {...franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id))[0]} 
       }));
     }
   }, [franchiseeData]);
@@ -612,7 +602,7 @@ const NewUser = () => {
                             {
                               (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') && 
                               <Select
-                                placeholder={formData?.franchiseeObj[0]?.label || "Which Franchisee?"}
+                                placeholder={formData?.franchiseeObj?.label || "Which Franchisee?"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}

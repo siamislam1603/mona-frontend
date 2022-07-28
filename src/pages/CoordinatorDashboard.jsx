@@ -68,18 +68,16 @@ const CoordinatorDashboard = () => {
 
 
   const count_Api = () => {
-    const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    axios(countUrl, requestOptions).then((response) => {
+  const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
+  let token = localStorage.getItem('token');
+
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
+
+
       setcount(response.data);
     }).catch((e) => {
       console.log(e);

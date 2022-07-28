@@ -119,30 +119,44 @@ const columns1 = [
 ];
 
 const FranchiseeDashboard = () => {
-  const [count, setcount] = React.useState(null);
+  const [countUser, setcountUser] = React.useState(null);
+
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
-  const announcement = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-
-    await axios(`${BASE_URL}/dashboard/franchisor/latest-announcement`, requestOptions).then((response) => {
+  const announcement = () => {
+    let token = localStorage.getItem('token');
+    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
       setlatest_announcement(response.data.data.all_announcements);
-      console.log(response)
     }).catch((e) => {
       console.log("Error", e);
     })
   }
 
+  console.log(latest_announcement[0], "latest_announcement")
+  const count_User_Api = () => {
+    let token = localStorage.getItem('token');
+    const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
+      setcountUser(response.data);
+    }).catch((e) => {
+      console.log("Error", e);
+    })
+  }
+
+  console.log(countUser, "lksjgydtadHUJISKiaudygquISOIWUAYTDGH")
+  React.useEffect(() => {
+    count_User_Api();
+    announcement();
+  }, []);
 
   const count_Api = async () => {
     const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
@@ -158,18 +172,18 @@ const FranchiseeDashboard = () => {
       headers: myHeaders,
     };
     await axios(countUrl, requestOptions).then((response) => {
-      setcount(response.data);
+      setcountUser(response.data);
     }).catch((e) => {
       console.log(e);
     })
-    console.log(count, ":lksjdgcasjhgjhjchvs")
+    console.log(countUser, ":lksjdgcasjhgjhjchvs")
   }
 
   React.useEffect(() => {
     announcement();
     count_Api();
   }, []);
-  if (!count) return null;
+  if (!countUser) return null;
   return (
     <>
       <div id="main">
@@ -318,28 +332,28 @@ const FranchiseeDashboard = () => {
                               <a href="/" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.totalUsers}</span>
+                                <span className="num">{countUser.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.totalLocations}</span>
+                                <span className="num">{countUser.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.newEnrollments}</span>
+                                <span className="num">{countUser.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.auditForms}</span>
+                                <span className="num">{countUser.auditForms}</span>
                               </a>
                             </div>
                           </div>
@@ -368,11 +382,17 @@ const FranchiseeDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
+                                    <div className="name">{data.title}<span className="date">{data.scheduled_date}</span></div>
                                   </a>
                                 </div>
                               );
                             })}
+                            {/* <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
+                            </div> */}
                           </div>
                         </div>
                       </aside>

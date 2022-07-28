@@ -9,7 +9,6 @@ import ChildEnrollment4 from '../pages/ChildEnrollment/ChildEnrollment4';
 import ChildEnrollment5 from '../pages/ChildEnrollment/ChildEnrollment5';
 import ChildEnrollment6 from '../pages/ChildEnrollment/ChildEnrollment6';
 import ChildEnrollment7 from '../pages/ChildEnrollment/ChildEnrollment7';
-import ChildEnrollment8 from '../pages/ChildEnrollment/ChildEnrollment8';
 import SignIn from '../pages/SignIn';
 import ForgotPassword from '../pages/ForgotPassword';
 import UserManagement from '../pages/UserManagement';
@@ -52,6 +51,7 @@ import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
 import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
+import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -80,6 +80,16 @@ const Main = () => {
         />
 
         <Route
+          path="/child-enrollment-init/:parentId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollmentInitiation />
+            </Protected>
+          }
+        />
+
+        <Route
           path="/child-enrollment"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -89,6 +99,16 @@ const Main = () => {
           }
         />
 
+        <Route
+          path="/child-enrollment/:childId/:parentId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment />
+            </Protected>
+          }
+        />
+        
         <Route
           path="/child-enrollment/1"
           element={
@@ -158,18 +178,7 @@ const Main = () => {
             </Protected>
           }
         />
-
-        <Route
-          path="/child-enrollment/8"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildEnrollment8 />
-            </Protected>
-          }
-        />
-
-
+    
         <Route
           path="/forgot-password"
           element={

@@ -12,7 +12,7 @@ import {AddNewAnnouncementValidation} from "../helpers/validation"
 import Select from 'react-select';
 import MyEditor from './CKEditor';
 import * as ReactBootstrap from 'react-bootstrap';
-
+import DropVideo from '../components/DragDropVideo';
 import { useLocation, useNavigate } from 'react-router-dom';
 const AddNewAnnouncements = () => {
 
@@ -29,9 +29,9 @@ const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
   user_roles: []
 });
-
+const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
-  const [coverImage, setCoverImage] = useState({});
+  const [coverImage, setCoverImage] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [error, setError] = useState({user_roles: []});
@@ -67,51 +67,70 @@ const createAnnouncement = async (data) => {
   );
   console.log(response);
   console.log("jjjjjjjjjjjjjjjjjjjj");
+  if(response.status === 200 && response.data.status === "fail"){
+    setAddnewAnnouncement(false)
+    setTitleError("Title already exit")
+  }
 
-  if(response.status === 201 && response.data.status === "success") {
+  if(response.status === 201 && response.data.status === "success" && coverImage.length > 0) {
+    console.log(typeof(coverImage));
+
     console.log("datasaved");
+    console.log(response.data);
         let { id } = response.data.announcement;
     
         let data = new FormData();
         data.append('id', id);
         data.append('image', coverImage[0]);
-    
-        let imgSaveResponse = await axios.post(
-          `${BASE_URL}/training/coverImg?title=announcement`, data, {
-            headers: {
-              "Authorization": "Bearer " + token
+
+          let imgSaveResponse = await axios.post(
+            `${BASE_URL}/training/coverImg?title=announcement`, data, {
+              headers: {
+                "Authorization": "Bearer " + token
+              }
             }
-          }
-        );
-        console.log(imgSaveResponse);
-    
-      if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
-            
-        console.log('SUCCESS RESPONSE!');
-        setLoader(false)
-        localStorage.setItem('success_msg', 'Announcement Created Successfully!');
-        localStorage.setItem('active_tab', '/created-announcement');
-        window.location.href="/announcements";
+          );
+          console.log(imgSaveResponse);
       
-      } else {
-    
-        console.log('ERROR RESPONSE!');
-        setTopErrorMessage("unable to save cover image!");
-        setTimeout(() => {
-          setTopErrorMessage(null);
-        }, 3000)
+        if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+              
+          console.log('SUCCESS RESPONSE!');
+          setLoader(false)
+          localStorage.setItem('success_msg', 'Announcement Created Successfully!');
+          localStorage.setItem('active_tab', '/created-announcement');
+          window.location.href="/announcements";
+        
+        } else {
       
-      }
+          console.log('ERROR RESPONSE!');
+          setTopErrorMessage("unable to save cover image!");
+          setTimeout(() => {
+            setTopErrorMessage(null);
+          }, 3000)
+        
+        }
+      
+
+        
+    
+       
     } 
-    else if(response.status === 200 && response.data.status === "fail") {
-      console.log('ERROR RESPONSE!');
-      const { msg } = response.data;
-      console.log("Annoncement Already exit",msg)
-      setTopErrorMessage(msg);
-      setTimeout(() => {
-        setTopErrorMessage(null);
-      }, 3000)
+
+    else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
+    window.location.href="/announcements";
+        
     }
+
+    // else if(response.status === 200 && response.data.status === "fail") {
+    //   console.log('ERROR RESPONSE!');
+    //   const { msg } = response.data;
+    //   console.log("Annoncement Already exit",msg)
+    //   setTopErrorMessage(msg);
+    //   setTimeout(() => {
+    //     setTopErrorMessage(null);
+    //   }, 3000)
+    // }
+    // window.location.href="/announcements";
     };  
 
     const fetchFranchiseeUsers = async (franchisee_name) => {
@@ -162,6 +181,7 @@ const createAnnouncement = async (data) => {
     };
 
     const announcementDescription = (field, value) => {
+      // console.log("The field and value in addnewannoucement",field,value)
       setAnnouncementData({ ...announcementData, [field]: value });
       if (!!error[field]) {
         setError({
@@ -173,11 +193,18 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
-      console.log("The name and value",name,value)
+      // console.log("The name and value",name,value)
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
       })); 
+      if (!!error[name]) {
+        setError({
+          ...error,
+          [name]: null,
+        });
+      }
+
     };
 
 
@@ -186,7 +213,7 @@ const createAnnouncement = async (data) => {
 
     const handleDataSubmit = event => {
       event.preventDefault();
-      console.log("The annoucement ",announcementData)
+      console.log("The annoucement after submit ",announcementData)
       let errorObj = AddNewAnnouncementValidation(announcementData, coverImage);
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
@@ -214,25 +241,26 @@ const createAnnouncement = async (data) => {
         console.log("The data",data)
        }
       }
+      console.log("The datad adndsjkvnskdja ")
        
      
     // }
-    if (!announcementData.title) {
-      setError(prevError => {
-          return { 
-              ...prevError, 
-              title: "Required Title" 
-            }
-      }); 
-    }
-    if (!announcementData.meta_description) {
-      setError(prevError => {
-          return {
-        ...prevError,
-        meta_description: "Description must be at least ten characters long"
-      }
-    }); 
-  }
+    // if (!announcementData.title) {
+    //   setError(prevError => {
+    //       return { 
+    //           ...prevError, 
+    //           title: "Required Title" 
+    //         }
+    //   }); 
+    // }
+  //   if (!announcementData.meta_description) {
+  //     setError(prevError => {
+  //         return {
+  //       ...prevError,
+  //       // meta_description: "Description must be at least ten characters long"
+  //     }
+  //   }); 
+  // }
 //   if (!announcementData.coverImage) {
 //     setError(prevError => {
 //         return {
@@ -277,12 +305,12 @@ const createAnnouncement = async (data) => {
     },[])
 
    
-    
-console.log(franchiseeData);
+// coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
+// console.log(franchiseeData);
   return (
+    
     <>
-    {console.log("The annno",announcementData)}
-
+     
       <div id="main">
         <section className="mainsection ">
           <Container>
@@ -310,6 +338,8 @@ console.log(franchiseeData);
                           <Form.Control.Feedback type="invalid">
                             {error.title}
                           </Form.Control.Feedback>
+                          {titleError && <div className="error">{titleError}</div>} 
+                         
                         </Form.Group>
                       <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
@@ -363,7 +393,8 @@ console.log(franchiseeData);
                         <MyEditor
                               errors={error}
                               name ="meta_description"
-                              data={announcementData.meta_description} 
+                              // data={announcementData.meta_description} 
+                             
 
                               handleChange={(e, data) => {
                                 announcementDescription(e, data);
@@ -392,6 +423,8 @@ console.log(franchiseeData);
                         onChange={handleAnnouncementData}
                       />
                 </Form.Group>
+                {error.start_date && <p className="form-errors">{error.start_date}</p>}
+
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
                 <Form.Group>
@@ -400,8 +433,11 @@ console.log(franchiseeData);
                     type="time"
                     name="start_time"
                     onChange={handleAnnouncementData}
+                    onInvalid={!!error.start_time}
                   />
                 </Form.Group>
+                {error.start_time && <p className="form-errors">{error.start_time}</p>}
+
               </Col>
                     </Row>
                   <div className="my-new-formsection">
@@ -418,7 +454,7 @@ console.log(franchiseeData);
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <DropAllFile onSave={setVideoTutorialFiles} />
+                          <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">

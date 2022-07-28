@@ -8,6 +8,9 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import AllAnnouncements from "./AllAnnouncements";
 import MyAnnouncements from "./MyAnnouncements";
+import { debounce } from 'lodash';
+
+
 
 
 const animatedComponents = makeAnimated();
@@ -25,19 +28,87 @@ const training = [
 const Announcements =  () => {
   const [announcementDetails,setAnnouncementDetail] = useState("")
   const [tabLinkPath, setTabLinkPath] = useState("/all-announcements");
-
+  // const [search,setSearch]=useState("");
+  const [searchData,setSearchData] = useState([])
+  const[searchword,setSearchWord] = useState(""); 
+  
+  
  
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
 
-  const [filterData, setFilterData] = useState({
-    category_id: null,
-    search: ""
-  });
 
+  // const onFilter = debounce(() => {
+  //   fetchUserDetails();
+  // }, 200);
+  let search = " "
+  const fetchSearchData = async(e) =>{
+    try {
+      let api_url = '';
+      const userId = localStorage.getItem("user_id")
+       search = e.target.value;
+       if(!search){
+        search = " "
+       } 
+       
+       console.log('SEARCH:', search);
 
+     
+      if (search) {   
+         api_url =   `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
+       }
+       console.log("The api Url", api_url)
+  
+       let response = await axios.get(api_url, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      console.log("The reponse of serach",response.data.data.searchedData)
+      setSearchData(response.data.data.searchedData)
+    } catch (error) {
+      console.log("The error in search APi",error)
+    }
+  }
+  const handleSearchOnChange =(e) => {
+    e.preventDefault();
+    fetchSearchData(e)
+    //  console.log("The api_url",api_url)
+  };
+  const fetchUserDetails = async () => {
+    // console.log("The search detials inaise 1",search)
+    // let seac = search
+    // console.log("The seach variable",search)
+    let api_url = '';
+    const userId = localStorage.getItem("user_id")
+
+    if (search.searchTerm) {
+     console.log("The search word",search)
+      
+      api_url =  `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search.searchTerm}`;
+    }
+    console.log("The api_url",api_url)
+  
+    let response = await axios.get(api_url, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    console.log("The reponse of serach",response.data.data.searchedData)
+    if(response.status ===200 && response.data.data.searchedData<1){
+
+      setSearchData([null])
+      console.log("The searchData is null",searchData)
+    }
+    if (response.status === 200) {
+        setSearchData(response.data.data.searchedData)
+    }
+  };
+  // useEffect(() =>(
+  //   setSearchWord(search)
+  // ),[fetchUserDetails])
   return (
     <>
       <div id="main">
@@ -61,73 +132,12 @@ const Announcements =  () => {
                                   type="text" 
                                   className="form-control" 
                                   placeholder="Search"
-                                  value={filterData.search}
-                                  onChange={e => setFilterData(prevState => ({
-                                     ...prevState,
-                                   search: e.target.value
-                              }))} 
+                                 onChange={handleSearchOnChange}
                                   />
                           </label>
                         </div>
-                        <Dropdown className="filtercol me-3">
-                          <Dropdown.Toggle id="extrabtn" variant="btn-outline">
-                            <i className="filter-ico"></i> Add Filters
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <header>Filter by:</header>
-                            <div className="custom-radio btn-radio mb-2">
-                              <label>Users:</label>
-                              <Form.Group>
-                                <Form.Check
-                                  inline
-                                  label='Admin'
-                                  value='Admin'
-                                  name="users"
-                                  type="radio"
-                                  id='one'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Co-ordinator'
-                                  value='Co-ordinator'
-                                  name="users"
-                                  type="radio"
-                                  id='two'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Educator'
-                                  value='Educator'
-                                  name="users"
-                                  type="radio"
-                                  id='three'
-                                />
-                                <Form.Check
-                                  inline
-                                  label='Parent/Guardian'
-                                  value='Parent-Guardian'
-                                  name="users"
-                                  type="radio"
-                                  id='four'
-                                />
-                              </Form.Group>
-                            </div>
-                            <footer>
-                              <Button variant="transparent" type="submit">Cancel</Button>
-                              <Button variant="primary" type="submit">Apply</Button>
-                            </footer>
-                          </Dropdown.Menu>
-                        </Dropdown>
+                        
                         <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
-                        <Dropdown>
-                          <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt=""/>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#">Export All</Dropdown.Item>
-                            <Dropdown.Item href="#">Delete All</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
                       </div>
                     </div>
                   </header>
@@ -138,163 +148,13 @@ const Announcements =  () => {
                   
                     </ul>
                   </div>
-                  {/* <div className="announcement-accordion">
-                    <Accordion defaultActiveKey="0">
-                      <Accordion.Item eventKey="0">
-                        <Accordion.Header>
-                          <div className="head-title">
-                            <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                            <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <small><span>Educator:</span> Smile Daycare</small></div>
-                            <div className="date"><a href=""><img src="../img/edit-ico.png" alt=""/></a></div>
-                          </div>
-                        </Accordion.Header>
-                        <Accordion.Body>
-                          <Row className="mb-4">
-                            <Col xl={2} lg={3}>
-                              <div className="head">Description :</div>
-                            </Col>
-                            <Col xl={10} lg={9}>
-                              <div className="cont"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Id tincidunt est, et pellentesque gravida urna. Laoreet at eget et et dui, nisi. Id convallis aliquet ut nunc quam ultricies nulla nunc, maecenas. Volutpat eu suspendisse tristique auctor vitae in. Placerat tristique elit, consectetur egestas volutpat, mi. Est adipiscing tempor amet, enim, sed faucibus cras nunc morbi.</p></div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col md={4}>
-                              <div className="video-col">
-                                <a href="/" className="vid-col">
-                                  <img src="../img/video-pic.jpg" alt="" />
-                                  <span className="caption">Regarding Submission of Documents of all classes students admitted in AY 2021-22</span>
-                                </a>
-                              </div>
-                            </Col>
-                            <Col md={8}>
-                              <div className="head">Related Images :</div>
-                              <div className="cont">
-                                <div className="related-images">
-                                  <div className="item"><a href="/"><img src="../img/related-pic1.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic2.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic3.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic4.png" alt=""/></a></div>
-                                </div>
-                              </div>
-                              <div className="head">Related Files :</div>
-                              <div className="cont">
-                                <div className="related-files">
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href=""><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                </div>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Accordion.Body>
-                      </Accordion.Item>
-                      <Accordion.Item eventKey="1">
-                        <Accordion.Header>
-                          <div className="head-title">
-                            <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                            <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2020-21 <small><span>Educator:</span> Smile Daycare</small></div>
-                            <div className="date">Sent on: <br/>05/15/2022</div>
-                          </div>
-                        </Accordion.Header>
-                        <Accordion.Body>
-                          <Row className="mb-4">
-                            <Col xl={2} lg={3}>
-                              <div className="head">Description :</div>
-                            </Col>
-                            <Col xl={10} lg={9}>
-                              <div className="cont"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Id tincidunt est, et pellentesque gravida urna. Laoreet at eget et et dui, nisi. Id convallis aliquet ut nunc quam ultricies nulla nunc, maecenas. Volutpat eu suspendisse tristique auctor vitae in. Placerat tristique elit, consectetur egestas volutpat, mi. Est adipiscing tempor amet, enim, sed faucibus cras nunc morbi.</p></div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col md={4}>
-                              <div className="video-col">
-                                <a href="/" className="vid-col">
-                                  <img src="../img/video-pic.jpg" alt="" />
-                                  <span className="caption">Regarding Submission of Documents of all classes students admitted in AY 2021-22</span>
-                                </a>
-                              </div>
-                            </Col>
-                            <Col md={8}>
-                              <div className="head">Related Images :</div>
-                              <div className="cont">
-                                <div className="related-images">
-                                  <div className="item"><a href="/"><img src="../img/related-pic1.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic2.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic3.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic4.png" alt=""/></a></div>
-                                </div>
-                              </div>
-                              <div className="head">Related Files :</div>
-                              <div className="cont">
-                                <div className="related-files">
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href=""><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                </div>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Accordion.Body>
-                      </Accordion.Item>
-                      <Accordion.Item eventKey="2">
-                        <Accordion.Header>
-                          <div className="head-title">
-                            <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                            <div className="title-xxs">Regarding Submission of Documents of all classes students admitted in AY 2019-20 <small><span>Educator:</span> Smile Daycare</small></div>
-                            <div className="date">Sent on: <br/>05/15/2022</div>
-                          </div>
-                        </Accordion.Header>
-                        <Accordion.Body>
-                          <Row className="mb-4">
-                            <Col xl={2} lg={3}>
-                              <div className="head">Description :</div>
-                            </Col>
-                            <Col xl={10} lg={9}>
-                              <div className="cont"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Id tincidunt est, et pellentesque gravida urna. Laoreet at eget et et dui, nisi. Id convallis aliquet ut nunc quam ultricies nulla nunc, maecenas. Volutpat eu suspendisse tristique auctor vitae in. Placerat tristique elit, consectetur egestas volutpat, mi. Est adipiscing tempor amet, enim, sed faucibus cras nunc morbi.</p></div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col md={4}>
-                              <div className="video-col">
-                                <a href="/" className="vid-col">
-                                  <img src="../img/video-pic.jpg" alt="" />
-                                  <span className="caption">Regarding Submission of Documents of all classes students admitted in AY 2021-22</span>
-                                </a>
-                              </div>
-                            </Col>
-                            <Col md={8}>
-                              <div className="head">Related Images :</div>
-                              <div className="cont">
-                                <div className="related-images">
-                                  <div className="item"><a href="/"><img src="../img/related-pic1.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic2.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic3.png" alt=""/></a></div>
-                                  <div className="item"><a href="/"><img src="../img/related-pic4.png" alt=""/></a></div>
-                                </div>
-                              </div>
-                              <div className="head">Related Files :</div>
-                              <div className="cont">
-                                <div className="related-files">
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href="/"><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                  <div className="item"><a href=""><img src="../img/abstract-ico.png" alt=""/> <span className="name">Abstract.doc <small>Added Today</small></span></a></div>
-                                </div>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Accordion.Body>
-                      </Accordion.Item>
-                    </Accordion>
-                  </div> */}
+                 
 
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements/>}
+                      && <AllAnnouncements search = {searchData} searchValue={search}/>}
                     {tabLinkPath === "/my-announcements" 
-                      && <MyAnnouncements
+                      && <MyAnnouncements search = {searchData} searchValue={search}
                              />}
                 
                   </div>
