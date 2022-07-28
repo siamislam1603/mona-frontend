@@ -124,8 +124,13 @@ const FranchiseeDashboard = () => {
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
   const announcement = () => {
+    let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
-    axios.get(countUrl).then((response) => {
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
       setlatest_announcement(response.data.data.all_announcements);
     }).catch((e) => {
       console.log("Error", e);
@@ -134,8 +139,13 @@ const FranchiseeDashboard = () => {
 
   console.log(latest_announcement[0], "latest_announcement")
   const count_User_Api = () => {
+    let token = localStorage.getItem('token');
     const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
-    axios.get(countUrl).then((response) => {
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
       setcountUser(response.data);
     }).catch((e) => {
       console.log("Error", e);

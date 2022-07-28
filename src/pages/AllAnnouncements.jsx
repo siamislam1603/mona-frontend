@@ -171,7 +171,7 @@ useEffect(() =>{
     AllAnnouncementData()
   }
 },[searchData])
- announcementDetails.filter(c => console.log("The related files",c.announcement_files))
+ announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
 console.log("The annoumce all ",announcementDetails)
   return (
@@ -261,24 +261,35 @@ console.log("The annoumce all ",announcementDetails)
                                 </div>
                               </Col>
                               <Col md={8}>
-                                <div className="head">Related Images :</div>
+                                {details &&details.coverImage && <div className="head">Related Images :</div>}
                                 <div className="cont">
                                   <div className="related-images">
   
 
-                                    <div className="item">
-                                      <a href="/"><img src={details.coverImage} alt=""/></a>
-                                    </div>
+                                    {details && details.coverImage &&
+                                      <div className="item">
+                                        <a href="/"><img src={details.coverImage} alt=""/></a>
+                                      </div>
+                                    }
           
                                   </div>
                                 </div>
-                                
-                                {/* <h1>{details.announcement_files.filter(c => c.fileType !== ".mp4")}</h1> */}
-                                <div className="head">Related Files :</div>
-                                <div className="cont">
+                                {/* {details.announcement_files.map((detail,index) =>(
+                                      
+                                      
+                                      //  for(let i =0 ; i<detail.length<i++){
+
+                                      //  }
+
+                                    
+                               ))} */}
+                               {details.announcement_files.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+                                  <div className="cont">
                                   <div className="related-files">
                                     {details.announcement_files.map((detail,index) =>(
+                                      
                                            <>
+                                            
                                            {detail.fileType !== ".mp4" && !detail.is_deleted ?(
                                              <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
                                               <p>{getRelatedFileName(detail.file)}</p>
