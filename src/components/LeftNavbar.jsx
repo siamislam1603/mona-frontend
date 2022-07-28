@@ -40,7 +40,7 @@ const LeftNavbar = () => {
           <img src="/img/logo-ico.png" alt="" />
         </Navbar.Brand>
       </div>
-      <Navbar expand="lg">
+      <Navbar expand="xl">
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
