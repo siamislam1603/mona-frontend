@@ -336,13 +336,13 @@ const FranchiseeDashboard = () => {
                                 <span className="num">{countUser.totalUsers}</span>
                               </a>
                             </div>
-                            {/* <div className="listing">
+                            <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
                               </a>
-                            </div> */}
+                            </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">New Enrollments</span>

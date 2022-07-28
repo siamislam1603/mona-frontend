@@ -298,13 +298,13 @@ const FranchisorDashboard = () => {
                                 <span className="num">{count.totalChildren}</span>
                               </a>
                             </div>
-                            {/* <div className="listing">
+                            <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalLocations}</span>
                               </a>
-                            </div> */}
+                            </div>
                             <div className="listing">
                               <a href="/" className="item">
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
