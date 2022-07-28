@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from 'axios';
@@ -32,6 +32,8 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
   // ERROR HANDLING STATE
   const [childDailyRoutineError, setChildDailyRoutineError] = useState(null);
+  const [formStepData, setFormStepData] = useState(null);
+  const [dailyRoutineId, setDailyRoutineId] = useState(null);
 
   const handleDailyRoutineData = (event) => {
     const { name, value } = event.target;
@@ -41,13 +43,46 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
     }));
   };
 
-  const handleFormFiveData = async () => {
+  // UPDATING FORM FIVE DATA
+  const updateFormFiveData = async () => {
+    try {
+      let childId = localStorage.getItem('enrolled_child_id');
+      let token = localStorage.getItem('token');
+      let response = await axios.patch(`${BASE_URL}/enrollment/daily-routine/${dailyRoutineId}`, { ...childDailyRoutineData }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if(response.status === 201 && response.data.status === "success") {
+        response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, agreement, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if(response.status === 201 && response.data.status === "success") {
+          nextStep();
+        }
+      }
+
+    } catch(error) {
+      console.log('ERROR: UNABLE TO UPDATE FORM FIVE!');
+    }
+  };
+
+  // SAVING FORM FIVE DATA
+  const saveFormFiveData = async () => {
     
     try {
       let childId = localStorage.getItem('enrolled_child_id');
       let token = localStorage.getItem('token');
 
-      let response = await axios.post(`${BASE_URL}/enrollment/daily-routine`, { ...childDailyRoutineData, childId })
+      let response = await axios.post(`${BASE_URL}/enrollment/daily-routine`, { ...childDailyRoutineData, childId }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
 
       console.log('DAILY ROUTINE RESPONSE:', response);
       if(response.status === 201 && response.data.status === "success") {
@@ -84,13 +119,84 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
     if(Object.keys(childDailyRoutineErrorObj).length > 0) {
       setChildDailyRoutineError(childDailyRoutineErrorObj);
     } else {
-      console.log('HANDLING FORM FIVE DATA');
-      handleFormFiveData();
+      if(formStepData >= step) {
+        updateFormFiveData();
+      } else {
+        saveFormFiveData();
+      }
     }
   };
 
-  childDailyRoutineData && console.log('DAILY ROUTINE DATA:', childDailyRoutineData);
+  const fetchAndPopulateDailyRoutineState = async () => {
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/enrollment/daily-routine/${dailyRoutineId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
 
+    if(response.status === 200 && response.data.status === "success") {
+      let { dailyRoutine } = response.data;
+      setChildDailyRoutineData(prevState => ({
+        ...prevState,
+        sleep_time: dailyRoutine.sleep_time,
+        bottle_time: dailyRoutine.bottle_time,
+        toileting: dailyRoutine.toileting,
+        routines: dailyRoutine.routines,
+        likes_dislikes: dailyRoutine.likes_dislikes,
+        comforter: dailyRoutine.comforter,
+        religion: dailyRoutine.religion,
+        dietary_requirement: dailyRoutine.dietary_requirement,
+        allergy: dailyRoutine.allergy,
+        comment: dailyRoutine.comment,
+      }));
+    }
+  };
+
+  const fetchChildDataAndPopulate = async () => {
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let token = localStorage.getItem('token');
+
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === 'success') {
+      let { child } = response.data;
+      localStorage.setItem('enrolled_parent_id', child.parents[0].id);
+      console.log('CHILD DATA:', child);
+
+      if(child.form_step > step) {
+        // POPULATING AGREEMENT STATE WITH DATA
+        setAgreement(prevState => ({
+          ...prevState,
+          photo_taken: child.photo_taken,
+          dress_child: child.dress_child,
+          remind_child: child.remind_child,
+          provide_child: child.provide_child,
+          give_permission_for_sunscreen: child.give_permission_for_sunscreen,
+          assist_child: child.assist_child
+        }));
+
+        setDailyRoutineId(child.daily_routine);
+        setFormStepData(child.form_step);
+      } 
+
+    }
+  };
+
+  useEffect(() => {
+    fetchAndPopulateDailyRoutineState();
+  }, [dailyRoutineId !== null]);
+
+  useEffect(() => {
+    console.log('FETCHING CHILD DATA AND POPULATE!');
+    fetchChildDataAndPopulate();
+  }, [localStorage.getItem('enrolled_child_id') !== null]);
+
+  childDailyRoutineData && console.log('DAILY ROUTINE:', childDailyRoutineData);
   return (
     <>
       <div className="enrollment-form-sec mt-5">
@@ -107,6 +213,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                       type="radio" 
                       name="photo" 
                       id="yesp" 
+                      checked={agreement?.photo_taken === true}
                       defaultChecked
                       label="Yes"
                       onChange={() => setAgreement(prevState => ({
@@ -118,9 +225,10 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                       name="photo" 
                       id="nop" 
                       label="No"
+                      checked={agreement?.photo_taken === false}
                       onChange={() => setAgreement(prevState => ({
                         ...prevState,
-                        photo_taken: true
+                        photo_taken: false
                       }))} />
                   </div>
                 </Form.Group>
@@ -138,6 +246,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="sleep_time"
+                      value={childDailyRoutineData?.sleep_time || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -154,6 +263,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Label>Bottle TIme/Breast Feeding Arrangements</Form.Label>
                     <Form.Control 
                       type="text"
+                      value={childDailyRoutineData?.bottle_time || ""}
                       name="bottle_time"
                       onChange={(e) => {
                         handleDailyRoutineData(e);
@@ -172,6 +282,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="toileting"
+                      value={childDailyRoutineData?.toileting || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -189,6 +300,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="routines"
+                      value={childDailyRoutineData?.routines || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -206,6 +318,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="likes_dislikes"
+                      value={childDailyRoutineData?.likes_dislikes || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -223,6 +336,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="comforter"
+                      value={childDailyRoutineData?.comforter || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -240,6 +354,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="religion"
+                      value={childDailyRoutineData?.religion || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -257,6 +372,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="dietary_requirement"
+                      value={childDailyRoutineData?.dietary_requirement || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -274,6 +390,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="allergy"
+                      value={childDailyRoutineData?.allergy || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -291,6 +408,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     <Form.Control 
                       type="text"
                       name="comment"
+                      value={childDailyRoutineData?.comment || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
                         setChildDailyRoutineError(prevState => ({
@@ -317,7 +435,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                   <Form.Check 
                     type="checkbox" 
                     id="dress"
-                    checked={agreement.dress_child || false} 
+                    checked={agreement?.dress_child || false} 
                     label="Dress my child in cool clothing that covers as much skin as possible e.g. tops that cover the shoulders, arms and chest, has higher necklines or collars, and long shorts and skirts. I understand that singlet tops or shoestring dresses do not provide adequate sun protection and are best layered with a shirt or t-shirt."
                     onChange={() => setAgreement(prevState => ({
                       ...prevState,
@@ -330,7 +448,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                   <Form.Check 
                     type="checkbox" 
                     id="remind" 
-                    checked={agreement.remind_child || false} 
+                    checked={agreement?.remind_child || false} 
                     label="Remind my child to bring and wear a sun-protective hat that shades the face, neck and ears (e.g. wide-brimmed, bucket or legionnaire hat). I understand that baseball / peak style caps do not provide adequate sun protection and are not appropriate for outdoor play."
                     onChange={() => setAgreement(prevState => ({
                       ...prevState,
@@ -343,7 +461,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                   <Form.Check 
                     type="checkbox" 
                     id="provide" 
-                    checked={agreement.provide_child || false} 
+                    checked={agreement?.provide_child || false} 
                     label="Provide my child with appropriate close-fitting wrap-around sunglasses labelled AS:1067 to help protect their eyes."
                     onChange={() => setAgreement(prevState => ({
                       ...prevState,
@@ -356,7 +474,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                   <Form.Check 
                     type="checkbox" 
                     id="permission" 
-                    checked={agreement.give_permission_for_sunscreen || false} 
+                    checked={agreement?.give_permission_for_sunscreen || false} 
                     label="Give permission for educWators/staff to apply SPF30 (or higher) broad-spectrum, water-resistant sunscreen supplied by the service to all exposed parts of my child’s skin including their face, neck, ears, arms and legs."
                     onChange={() => setAgreement(prevState => ({
                       ...prevState,
@@ -378,7 +496,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                   <Form.Check 
                     type="checkbox" 
                     id="educators" 
-                    checked={agreement.assist_child || false} 
+                    checked={agreement?.assist_child || false} 
                     label="To give permission for educators/staff to assist my child to develop independent, self-help skills by applying SPF30 (or higher) broad-spectrum, water-resistant sunscreen to all exposed parts of their own skin including their face, neck, ears, arms and legs. (Recommended from ages three and above) "
                     onChange={() => setAgreement(prevState => ({
                       ...prevState,
