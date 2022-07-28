@@ -16,88 +16,69 @@ let step = 6;
 
   const ChildEnrollment6 = ({prevStep}) => {
 
-  const [concentData, setConcentData] = useState({ 
-    give_consent_to_the_educator: "",
-    to_provide_care_and_education_to_my_child: "",
-    i: "",
-    signature: "",
-    date: "",
-  });
+    const [concentData, setConcentData] = useState({ 
+      give_consent_to_the_educator: "",
+      to_provide_care_and_education_to_my_child: "",
+      i: "",
+      signature: "",
+      date: "",
+    });
+  
+    const [submitted, setSubmitted] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [topErrorMessage, setTopErrorMessage] = useState(null);
+    const [loader, setLoader] = useState(false);
 
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState({user_roles: []});
-
-
-
-  const createConcentForm = async (data) => {
-    const token = localStorage.getItem('token');
-    const response = await axios.post(
-      `${BASE_URL}/concent/addConcent`, data, {
+    const createConcentForm = async (data) => {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${BASE_URL}/concent/addConcent`, data, {
         headers: {
           "Authorization": "Bearer " + token
         }
-      }
-    );
-    console.log(response);
-    console.log("jjjjjjjjjjjjjjjjjjjj");
-  
-    if(response.status === 200 && response.data.status === "success") {
-      console.log("datasaved");
-    }
-  }
-
-  // const handleInputChange = event => {
-  //   const {name, value} = event.target;
-  //   setConcentData({...concentData, [name]:value});
-  // }
-
-  const handleInputChange = (field, value) => {
-    setConcentData({ ...concentData, [field]: value });
-    if (!!error[field]) {
-      setError({
-        ...error,
-        [field]: null,
       });
+      if(response.status === 201 && response.data.status === "success") {
+        setLoader(false)
+          localStorage.setItem('success_msg', 'Concent Form Created Successfully!');
+          localStorage.setItem('active_tab', '/child-enrollment/6');
+          window.location.href="/child-enrollment";
+      }else if(response.status === 200 && response.data.status === "fail") {
+        const { msg } = response.data;
+        setTopErrorMessage(msg);
+        setLoader(false);
+        setTimeout(() => {
+          setTopErrorMessage(null);
+        }, 3000)
+      } 
+
+    }
+  
+
+  const handleConcentData = (event) => {
+    const {name, value} = event.target;
+    setConcentData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    if(!!errors[name]){
+      setErrors({
+        ...errors,
+        [name]: null,
+      })
     }
   };
 
   const handleDataSubmit = event => {
     event.preventDefault();
-      if(concentData) {
-        let data = new FormData();
-  
-        for(let [ key, values ] of Object.entries(concentData)) {
-          data.append(`${key}`, values)
-        }
-      createConcentForm(data);
-      console.log("The data",data)
+    if(concentData) {
+      let data = new FormData();
+      for(let [ key, values ] of Object.entries(concentData)) {
+        data.append(`${key}`, values)
       }
+      window.scrollTo(0, 0);
+        setLoader(true);
+        createConcentForm(data);
     }
-      
-
-
-    // var data = {
-    //   give_consent_to_the_educator: concentData.give_consent_to_the_educator,
-    //   to_provide_care_and_education_to_my_child: concentData.to_provide_care_and_education_to_my_child,
-    //   i: concentData.i,
-    //   signature: concentData.signature,
-    //   dob: concentData.dob,
-    // };
-      
-      // const response = await axios.post(
-      //   `${BASE_URL}/concent/addConcent`, data, {
-      //     headers: {
-      //       "Authorization": "Bearer " + token
-      //     }
-      //   }
-      // );
-  //     setSubmitted(true);
-  //     console.log(response.data);
-  // }
-  // const newConcent = () => {
-  //   setConcentData();
-  //   setSubmitted(false);
-  // }
+  }
   return (
     <>
       <div className="enrollment-form-sec">
@@ -135,36 +116,34 @@ let step = 6;
               <Form.Control
                             type="text"
                             name="give_consent_to_the_educator"
-                            // value={concentData.give_consent_to_the_educator}
-                            onChange={ handleInputChange
-                              // (e) => {
-                              // handleInputChange(e);
-                              // setErrors(prevState => ({
-                              //   ...prevState,
-                              //   give_consent_to_the_educator: null
-                              // }));
-                            // }
+                            onChange={
+                              (e) => {
+                              handleConcentData(e);
+                              setErrors(prevState => ({
+                                ...prevState,
+                                give_consent_to_the_educator: null
+                              }));
+                            }
                           }
                           />
-                          { error.give_consent_to_the_educator !== null && <span className="error">{error.give_consent_to_the_educator}</span> }
+                          { errors.give_consent_to_the_educator !== null && <span className="error">{errors.give_consent_to_the_educator}</span> }
             </Form.Group>
             <Form.Group className="mb-3 single-field">
               <Form.Label>to provide care and education to my child.; and nominated assistant/s</Form.Label>
               <Form.Control
                             type="text"
                             name="to_provide_care_and_education_to_my_child"
-                            // value={concentData.to_provide_care_and_education_to_my_child}
-                            onChange={ handleInputChange
-                              // (e) => {
-                              // handleConcentData(e);
-                            //   setErrors(prevState => ({
-                            //     ...prevState,
-                            //     to_provide_care_and_education_to_my_child: null
-                            //   }));
-                            // }
+                            onChange={ 
+                              (e) => {
+                              handleConcentData(e);
+                              setErrors(prevState => ({
+                                ...prevState,
+                                to_provide_care_and_education_to_my_child: null
+                              }));
+                            }
                           }
                           />
-                           { error.to_provide_care_and_education_to_my_child !== null && <span className="error">{error.to_provide_care_and_education_to_my_child}</span> }
+                           { errors.to_provide_care_and_education_to_my_child !== null && <span className="error">{errors.to_provide_care_and_education_to_my_child}</span> }
             </Form.Group>
             <p>to support the educator in transporting my child to and from regular outings or excursion, providing care while educator has an appointment for the period of less than 4 hours, or in an emergency where the educator needs medical attention. Assistant may also provide support to the educator while the educator is providing care for my child.</p>
           </div>
@@ -183,18 +162,17 @@ let step = 6;
               <Form.Control
                             type="text"
                             name="i"
-                            // value={concentData.i}
-                            onChange={ handleInputChange
-                            //   (e) => {
-                            //   handleConcentData(e);
-                            //   setErrors(prevState => ({
-                            //     ...prevState,
-                            //     i: null
-                            //   }));
-                            // }
+                            onChange={
+                              (e) => {
+                              handleConcentData(e);
+                              setErrors(prevState => ({
+                                ...prevState,
+                                i: null
+                              }));
+                            }
                           }
                           />
-                          { error.i !== null && <span className="error">{error.i}</span> }
+                          { errors.i !== null && <span className="error">{errors.i}</span> }
             </Form.Group>
             <p>a person with full authority of the child referred to in this enrolmet form; <br />Declare that the information in this enrolment form is true and correct and undertake to immediately inform the children service in the event of any change to this information;</p>
             <Row>
@@ -204,36 +182,34 @@ let step = 6;
                   <Form.Control
                             type="text"
                             name="signature"
-                            // value={concentData.signature}
-                            onChange={ handleInputChange
-                            //   (e) => {
-                            //   handleConcentData(e);
-                            //   setErrors(prevState => ({
-                            //     ...prevState,
-                            //     signature: null
-                            //   }));
-                            // }
+                            onChange={
+                              (e) => {
+                              handleConcentData(e);
+                              setErrors(prevState => ({
+                                ...prevState,
+                                signature: null
+                              }));
+                            }
                           }
                           />
-                          { error.signature !== null && <span className="error">{error.signature}</span> }
+                          { errors.signature !== null && <span className="error">{errors.signature}</span> }
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Date</Form.Label>
                   <Form.Control type="date" placeholder="" name="dob"
-                  // value={concentData.dob} 
-                  onChange={ handleInputChange
-                  //   (e) => {
-                  //   handleConcentData(e);
-                  //   setErrors(prevState => ({
-                  //     ...prevState,
-                  //     dob: null
-                  //   }));
-                  // }
+                  onChange={ 
+                    (e) => {
+                    handleConcentData(e);
+                    setErrors(prevState => ({
+                      ...prevState,
+                      dob: null
+                    }));
+                  }
                 }
                   />
-                  { error.dob !== null && <span className="error">{error.dob}</span> }
+                  { errors.dob !== null && <span className="error">{errors.dob}</span> }
                 </Form.Group>
               </Col>
             </Row>
