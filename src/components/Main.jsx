@@ -87,6 +87,16 @@ const Main = () => {
             </Protected>
           }
         />
+
+        <Route
+          path="/child-enrollment/:childId/:parentId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollment />
+            </Protected>
+          }
+        />
         
         <Route
           path="/child-enrollment/1"

@@ -169,7 +169,7 @@ const Children = () => {
                 console.log(cell,"cell")
                 return (
                     <>
-                        {cell[0].length == 0 ?
+                        {cell[0].length === 0 ?
                             <div className="user-list">
                                 <Button variant="outline-primary" onClick={()=>handleShow(cell[1])} style={{ backgroundColor: "#3e5d58", color: "white" }}>
                                     Add Educator
@@ -207,9 +207,11 @@ const Children = () => {
                 return (
                     <>
                         <div className="cta-col">
-                            <button className="Enrolment_Button btn btn-outline-secondary" style={{"fontSize":"0.8rem","fontWeight":"800"}}>
-                                View Enrolment
-                            </button>
+                            <a 
+                                className="Enrolment_Button btn btn-outline-secondary" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                onClick={(e) => viewEnrollmentForm(e)}>
+                                View Enrollment
+                            </a>
                         </div>
                     </>
                 );
@@ -239,6 +241,15 @@ const Children = () => {
             },
         },
     ];
+
+    const viewEnrollmentForm = async (e) => {
+        e.preventDefault();
+        // localStorage.removeItem('enrolled_parent_id');
+        // localStorage.removeItem('enrolled_child_id');
+        window.location.href=`/child-enrollment/${childrenList[0].id}/${params.id}`;
+    };
+
+    childrenList && console.log('CHILDREN LIST:', childrenList);
 
     return (
         <>
