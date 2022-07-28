@@ -131,7 +131,7 @@ const FranchiseeDashboard = () => {
         "Authorization": `Bearer ${token}`
       }
     }).then((response) => {
-      setlatest_announcement(response.data.data.all_announcements);
+      setlatest_announcement(response.data.recentAnnouncement);
     }).catch((e) => {
       console.log("Error", e);
     })
@@ -140,6 +140,7 @@ const FranchiseeDashboard = () => {
   console.log(latest_announcement[0], "latest_announcement")
   const count_User_Api = () => {
     let token = localStorage.getItem('token');
+
     const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
     axios.get(countUrl, {
       headers: {
@@ -158,6 +159,31 @@ const FranchiseeDashboard = () => {
     announcement();
   }, []);
 
+  const count_Api = async () => {
+    const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    await axios(countUrl, requestOptions).then((response) => {
+      setcountUser(response.data);
+    }).catch((e) => {
+      console.log(e);
+    })
+    console.log(countUser, ":lksjdgcasjhgjhjchvs")
+  }
+
+  React.useEffect(() => {
+    announcement();
+    count_Api();
+  }, []);
   if (!countUser) return null;
   return (
     <>
@@ -357,7 +383,7 @@ const FranchiseeDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{data.title}<span className="date">{data.scheduled_date}</span></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
                                   </a>
                                 </div>
                               );

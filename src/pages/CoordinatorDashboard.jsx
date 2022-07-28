@@ -65,6 +65,8 @@ const columns = [
 
 const CoordinatorDashboard = () => {
   const [count, setcount] = React.useState();
+
+
   const count_Api = () => {
   const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
   let token = localStorage.getItem('token');
@@ -81,6 +83,7 @@ const CoordinatorDashboard = () => {
       console.log(e);
     })
   }
+
   console.log(count)
   React.useEffect(() => {
     count_Api();

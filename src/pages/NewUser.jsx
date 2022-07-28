@@ -487,7 +487,7 @@ const NewUser = () => {
                             <Form.Control
                               type="tel"
                               name="postalCode"
-                              maxlength="4"
+                              maxLength="4"
                               placeholder="Your Postal Code"
                               value={formData.postalCode ?? ''}
                               onChange={(e) => {
