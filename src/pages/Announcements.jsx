@@ -54,8 +54,10 @@ const Announcements =  () => {
        } 
        console.log('SEARCH:', search);
       if (search) {   
-         api_url =   `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
-       }
+        //  api_url =   `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
+        // api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search}`
+        
+      }
        console.log("The api Url", api_url)
   
        let response = await axios.get(api_url, {
@@ -71,22 +73,29 @@ const Announcements =  () => {
   }
   const handleSearchOnChange =(e) => {
     e.preventDefault();
-    fetchSearchData(e)
-    //  console.log("The api_url",api_url)
+    // fetchSearchData(e)
+      fetchUserDetails(e)    //  console.log("The api_url",api_url)
   };
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = async (e) => {
     try {
       let api_url = '';
-    
+      if(e){
+        search = e.target.value;
+      }
+       if(!search){
+        search = " "
+       } 
     let franchiseeFormat = selectedFranchisee
       .split(',')[0]
       .split(' ')
       .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
       .join('_')
       .toLowerCase();
-
+    if(!franchiseeFormat){
+      franchiseeData = "all"
+    }
     if(selectedFranchisee){
-       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}`
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search}`
     }
 
     let response = await axios.get(api_url, {
@@ -100,11 +109,11 @@ const Announcements =  () => {
 
       }     
     } catch (error) {
-       if(error.response.status === 404){
-        console.log("The error",error)
-        setFranchiseeData(error.response.data)
-        
-       }
+      //  if(error.response.status === 404){
+      //   console.log("The error",error)
+      //   setFranchiseeData(error.response.data)
+      //  }
+      console.log("The error",error)
     }
   
   };
@@ -160,9 +169,9 @@ const Announcements =  () => {
 
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements search = {searchData} searchValue={search} franchisee ={franchiseeData}/>}
+                      && <AllAnnouncements  searchValue={search} franchisee ={franchiseeData}/>}
                     {tabLinkPath === "/my-announcements" 
-                      && <MyAnnouncements search = {searchData} searchValue={search} franchisee ={franchiseeData}
+                      && <MyAnnouncements  searchValue={search} franchisee ={franchiseeData}
                              />}
                 
                   </div>
