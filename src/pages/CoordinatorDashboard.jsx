@@ -66,8 +66,16 @@ const columns = [
 const CoordinatorDashboard = () => {
   const [count, setcount] = React.useState();
   const count_Api = () => {
-    const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
-    axios.get(countUrl).then((response) => {
+  const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
+  let token = localStorage.getItem('token');
+
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
+
+
       setcount(response.data);
     }).catch((e) => {
       console.log(e);
