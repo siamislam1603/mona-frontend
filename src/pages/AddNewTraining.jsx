@@ -284,30 +284,37 @@ const AddNewTraining = () => {
         setSettingsModalPopup(true);
 
       if(settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
-        let data = new FormData();
-
-        for(let [key, values] of Object.entries(trainingSettings)) {
-          data.append(`${key}`, values);
-        }
-
-        for(let [ key, values ] of Object.entries(trainingData)) {
-          data.append(`${key}`, values)
-        }
-
-        videoTutorialFiles.forEach((file, index) => {
-          data.append(`images`, file);
-        });
-
-        relatedFiles.forEach((file, index) => {
-          data.append(`images`, file);
-        });
+        console.log('Submitting Finally!');
         
-        window.scrollTo(0, 0);
-        setCreateTrainingModal(true);
-        setLoader(true);
-        createTraining(data);
+        // let data = new FormData();
+
+        // for(let [key, values] of Object.entries(trainingSettings)) {
+        //   data.append(`${key}`, values);
+        // }
+
+        // for(let [ key, values ] of Object.entries(trainingData)) {
+        //   data.append(`${key}`, values)
+        // }
+
+        // videoTutorialFiles.forEach((file, index) => {
+        //   data.append(`images`, file);
+        // });
+
+        // relatedFiles.forEach((file, index) => {
+        //   data.append(`images`, file);
+        // });
+        
+        // window.scrollTo(0, 0);
+        // setCreateTrainingModal(true);
+        // setLoader(true);
+        // createTraining(data);
       }
     }
+  };
+
+  const handleTrainingCancel = () => {
+    localStorage.setItem('active_tab', '/created-training');
+    window.location.href="/training";
   };
 
   useEffect(() => {
@@ -325,10 +332,10 @@ const AddNewTraining = () => {
   }, [trainingSettings?.assigned_franchisee.length > 0]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  // trainingData && console.log('TRAINING DATA:', trainingData);
+  trainingData && console.log('TRAINING DATA:', trainingData);
   // // videoTutorialFiles && console.log('VIDEO TUTORIAL FILE:', videoTutorialFiles);
   // settingsModalPopup && console.log('Setting Modal Popul', settingsModalPopup);
-  fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
+  // fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -513,8 +520,9 @@ const AddNewTraining = () => {
                             variant="outline"
                             className="me-3"
                             type="submit"
+                            onClick={handleTrainingCancel}
                           >
-                            Preview
+                            Cancel
                           </Button>
                           <Button
                             variant="primary"
