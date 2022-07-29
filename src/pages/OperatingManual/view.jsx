@@ -1010,7 +1010,7 @@ const OperatingManual = () => {
           </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button className="back">Cancel</Button>
+          <Button className="back" onClick={()=>{setFormSettingFlag(false)}}>Cancel</Button>
           <Button className="done" onClick={onModelSubmit}>
             Save Settings
           </Button>
