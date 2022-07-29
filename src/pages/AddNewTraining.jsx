@@ -136,7 +136,7 @@ const AddNewTraining = () => {
 
       let token = localStorage.getItem('token');
       let user_id = localStorage.getItem('user_id')
-      const shareResponse = await axios.post(`${BASE_URL}/share/${id}?titlePage=""`, {
+      const shareResponse = await axios.post(`${BASE_URL}/share/${id}?titlePage=`, {
         assigned_franchisee: trainingSettings.assigned_franchisee,
         assigned_users: trainingSettings.assigned_users,
         user_roles: trainingSettings.user_roles,
