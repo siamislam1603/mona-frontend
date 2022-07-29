@@ -648,9 +648,7 @@ const AddOperatingManual = () => {
                             <Button
                               variant="link"
                               onClick={() => {
-                                let data = { ...operatingManualData };
-                                delete data['cover_image'];
-                                setOperatingManualData(data);
+                                setImageUrl("");
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -710,10 +708,8 @@ const AddOperatingManual = () => {
                               variant="link"
                               className="remove_bin"
                               onClick={() => {
-                                let data = { ...operatingManualData };
-                                delete data['reference_video'];
-                                delete data['video_thumbnail'];
-                                setOperatingManualData(data);
+                                setVideoUrl("");
+                                setVideoThumbnailUrl("");
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
