@@ -11,6 +11,11 @@ let nextstep = 2;
 let step = 1;
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
+  let enrolledParentId = localStorage.getItem('enrolled_parent_id');
+  enrolledParentId = enrolledParentId === null;
+
+  let enrolledChildId = localStorage.getItem('enrolled_child_id');
+  enrolledChildId = enrolledChildId === true;
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
@@ -293,15 +298,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   useEffect(() => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
     fetchChildDataAndPopulate();
-  }, [localStorage.getItem('enrolled_child_id')]);
+  }, [enrolledChildId]);
 
   useEffect(() => {
     console.log('FETCHING PARENT DATA AND POPULATE');
     fetchParentUserDetails(); 
-  }, [localStorage.getItem('enrolled_child_id') === null])
+  }, [])
 
-  formStepData && console.log('You\'re on step:', formStepData);
+  // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
+  console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
       <div className="enrollment-form-sec my-5">
