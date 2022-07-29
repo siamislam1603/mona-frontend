@@ -30,6 +30,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     }
   };
 
+
   const fetchAndPopulateFranchiseeDetails = async () => {
     const response = await axios.get(
       `${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`

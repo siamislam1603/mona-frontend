@@ -80,17 +80,30 @@ const MyAnnouncements = (props) => {
       myAnnouncementData()
       console.log("The search value is not found",props.searchValue)
     }
+    else if(props.franchisee.searchData){
+      console.log("The search value have something",props.searchValue)
+      // setAnnouncementDetail(props.search)
+      setmyAnnouncement(props.franchisee.searchData)
+    }
     else{
       console.log("The search value have something",props.searchValue)
       setmyAnnouncement(props.search)
     }
   },[props.search])
+  useEffect(() =>{
+    if(props.franchisee.status === 404){
+      console.log("Don't have fanrhise")
+    }
+    setmyAnnouncement(props.franchisee.searchedData)
+    console.log("The frnahise under all announcement",props.franchisee)
+    
+},[props.franchisee])
  
   return (
     <div className="announcement-accordion">
         <h1> My Announcement</h1>
     <Accordion defaultActiveKey="0">
-      {
+      { myAnnouncement &&
        myAnnouncement.length !== 0 ? (
         myAnnouncement.map((data,index) => (
           <Accordion.Item eventKey={index} key={index}>

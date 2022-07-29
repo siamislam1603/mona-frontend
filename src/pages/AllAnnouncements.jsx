@@ -30,12 +30,13 @@ const [searchData,setSearchData] = useState()
     try {
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/announcement`, {
+      let franhiseAlias = "all"
+      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
-      // console.log("The data",response);
+      console.log("The data",response);
       
       if(response.status === 200 && response.data.status === "success") {
           setAnnouncementDetail(response.data.searchedData);
@@ -62,6 +63,7 @@ const deleteAlert = (id) =>{
      deleteAnnouncement(id);
   }
 }
+
 
 const deleteAnnouncement = async (id) =>{
   try {
@@ -120,14 +122,27 @@ useEffect(() =>{
     AllAnnouncementData()
     console.log("The search value is not found",props.searchValue)
   }
-  else{
+  else if(props.franchisee.searchData){
     console.log("The search value have something",props.searchValue)
+    // setAnnouncementDetail(props.search)
+    setAnnouncementDetail(props.franchisee.searchData)
+  }
+  else {
     setAnnouncementDetail(props.search)
   }
 },[props.search])
+ useEffect(() =>{
+    if(props.franchisee.status === 404){
+      console.log("Don't have fanrhise")
+    }
+    setAnnouncementDetail(props.franchisee.searchedData)
+    console.log("The frnahise under all announcement",props.franchisee)
+    
+},[props.franchisee])
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
-console.log("The annoumce all ",announcementDetails)
+console.log("The franhise",props.franchisee)
+// console.log("The annoumce all ",announcementDetails)
   // console.log("The seach in all announcement", props.search,props.searchValue)
 
   return (
@@ -143,7 +158,7 @@ console.log("The annoumce all ",announcementDetails)
       {/* <iframe title="video file" className="embed-responsive-item" src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
 
                     <Accordion defaultActiveKey="0">
-                      {
+                      { announcementDetails &&
                         announcementDetails.length !==0 ? (
                           announcementDetails.map((details,index) => (
                             <div key={index}>
