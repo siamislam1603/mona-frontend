@@ -31,12 +31,12 @@ const [searchData,setSearchData] = useState()
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
       let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}`, {
+      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&search=&offset=&limit=`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
-      console.log("The data",response);
+      console.log("The All Announcement",response);
       
       if(response.status === 200 && response.data.status === "success") {
           setAnnouncementDetail(response.data.searchedData);
@@ -52,12 +52,6 @@ const [searchData,setSearchData] = useState()
 }
 // console.log("The props",props.search)
 
-
-const formatMetaDescription = (str) => {
-    let newFile = str.replace(/<p>/g, '');
-    newFile = newFile.split('</p>')[0];
-    return newFile;
-} 
 const deleteAlert = (id) =>{
   if(window.confirm('Are you sure you want to delete?')){
      deleteAnnouncement(id);
@@ -112,6 +106,7 @@ const getAddedTime = (str) =>{
 }
 useEffect(() => {
   AllAnnouncementData()
+  console.log("The")
 }, [])
 useEffect(() =>{
   console.log("The props.ssearch state change")
@@ -150,13 +145,6 @@ console.log("The franhise",props.franchisee)
     <div className="announcement-accordion">
        
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
-
-                        {/* <MyEditor
-                              operatingManual={{ ...operatingManualData }} 
-                             
-                            /> */}
-      {/* <iframe title="video file" className="embed-responsive-item" src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
-
                     <Accordion defaultActiveKey="0">
                       { announcementDetails &&
                         announcementDetails.length !==0 ? (

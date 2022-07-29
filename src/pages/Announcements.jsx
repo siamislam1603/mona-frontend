@@ -31,9 +31,10 @@ const Announcements =  () => {
   // const [search,setSearch]=useState("");
   const [searchData,setSearchData] = useState([])
   const[searchword,setSearchWord] = useState(""); 
-  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+  const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [franchiseeData,setFranchiseeData]=useState('');
-   
+  const [offset,setOffSet] = useState(0)
+  const [loadMoreData,setLoadMoreData]= useState([])
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -44,73 +45,75 @@ const Announcements =  () => {
   //   fetchUserDetails();
   // }, 200);
   let search = " "
-  const fetchSearchData = async(e) =>{
-    try {
-      let api_url = '';
-      const userId = localStorage.getItem("user_id")
-       search = e.target.value;
-       if(!search){
-        search = " "
-       } 
-       console.log('SEARCH:', search);
-      if (search) {   
-        //  api_url =   `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
-        // api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search}`
-        
-      }
-       console.log("The api Url", api_url)
-  
-       let response = await axios.get(api_url, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      console.log("The reponse of serach",response.data.data.searchedData)
-      setSearchData(response.data.data.searchedData)
-    } catch (error) {
-      console.log("The error in search APi",error)
-    }
-  }
+
   const handleSearchOnChange =(e) => {
     e.preventDefault();
     // fetchSearchData(e)
       fetchUserDetails(e)    //  console.log("The api_url",api_url)
   };
+  const loadMore = async (e) =>{
+    e.preventDefault()
+    setOffSet(prevstate => prevstate+10);
+    let api_url = '';
+    api_url = `${BASE_URL}/announcement/?franchiseeAlias=all&search=${search === " " ? "":search}&offset=${offset}&limit=10`
+    console.log("The load more button click")
+    const response = await axios.get(api_url, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    let newre = response.data.searchedData
+    console.log("The new data",newre)
+    console.log("Load more button reponse",response)
+    setLoadMoreData((prev)=> ([
+    ...prev,
+    ...newre
+    ]));
+
+    // fetchUserDetails(e)
+  }
   const fetchUserDetails = async (e) => {
     try {
       let api_url = '';
       if(e){
         search = e.target.value;
+        
       }
-       if(!search){
-        search = " "
-       } 
-    let franchiseeFormat = selectedFranchisee
+      let franchiseeFormat 
+      franchiseeFormat = selectedFranchisee&& selectedFranchisee
       .split(',')[0]
       .split(' ')
       .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
       .join('_')
       .toLowerCase();
-    if(!franchiseeFormat){
-      franchiseeData = "all"
+      // console.log("The franhiseFormat",franchiseeFormat)
+    if(!franchiseeFormat || franchiseeFormat === "undefined"){
+      // console.log("The if elese",franchiseeFormat)
+      franchiseeFormat = "all"
     }
+    let offst =0;
+    let limit =10
     if(selectedFranchisee){
-       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search}`
+
+      // console.log("The franhsie Format",search)
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=${offset}&limit=${limit}`
     }
 
-    let response = await axios.get(api_url, {
+    console.log("The api url",api_url)
+    const response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
+    // console.log("The data after franchees select",response)
+
       if(response.status === 200 && response.data.status === "success"){
-          console.log("The response",response)
           setFranchiseeData(response.data)
 
       }     
     } catch (error) {
       //  if(error.response.status === 404){
-      //   console.log("The error",error)
+      //   // console.log("The error",error)
       //   setFranchiseeData(error.response.data)
       //  }
       console.log("The error",error)
@@ -120,9 +123,18 @@ const Announcements =  () => {
   
   useEffect(() =>{
     if(selectedFranchisee){
+      console.log("The franchise user cahnge")
       fetchUserDetails()
     }
   },[selectedFranchisee])
+  useEffect(() =>{
+    // setSelectedFranchisee("all")
+    // setSelectedFranchisee(selectedFranchisee)
+    // selectedFranchisee(selectedFranchisee)
+    // console.log("The selected Franhsie".setSelectedFranchisee,selectedFranchisee)
+  },[])
+  // console.log("The selectd franhise ",selectedFranchisee)
+  console.log("The Load More data" ,loadMoreData)
   return (
     <>
       <div id="main">
@@ -175,6 +187,9 @@ const Announcements =  () => {
                              />}
                 
                   </div>
+                    
+                  <button onClick={loadMore} type="button" class="btn btn-primary">Load More</button>
+                
                 </div>
               </div>
             </div>
