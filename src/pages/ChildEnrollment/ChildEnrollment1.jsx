@@ -10,6 +10,14 @@ import { childFormValidator, parentFormValidator  } from "../../helpers/enrollme
 let nextstep = 2;
 let step = 1;
 
+let countryData = [
+  {
+    id: 1,
+    value: "Australia",
+    label: "Australia"
+  }
+]
+
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
@@ -45,7 +53,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [occupationData, setOccupationData] = useState(null);
   const [ethnicityData, setEthnicityData] = useState(null);
   const [languageData, setLanguageData] = useState(null);
-  const [countryData, setCountryData] = useState(null);
+  // const [countryData, setCountryData] = useState(null);
   const [formStepData, setFormStepData] = useState(null);
 
   // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
@@ -201,17 +209,17 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   };
 
-  const fetchCountryData = async () => {
-    let response = await axios.get(`${BASE_URL}/api/country-data`);
+  // const fetchCountryData = async () => {
+  //   let response = await axios.get(`${BASE_URL}/api/country-data`);
 
-    if(response.status === 200 && response.data.status === "success") {
-      setCountryData(response.data.countryDataList.map(data => ({
-        id: data.id,
-        value: data.name,
-        label: data.name
-      })));
-    }
-  };
+  //   if(response.status === 200 && response.data.status === "success") {
+  //     setCountryData(response.data.countryDataList.map(data => ({
+  //       id: data.id,
+  //       value: data.name,
+  //       label: data.name
+  //     })));
+  //   }
+  // };
 
   const fetchParentUserDetails = async () => {
     let token = localStorage.getItem('token');
@@ -287,7 +295,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     fetchOccupationData();
     fetchEthnicityData();
     fetchLanguageData();
-    fetchCountryData();
+    // fetchCountryData();
   }, []);
 
   useEffect(() => {
@@ -298,10 +306,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   useEffect(() => {
     console.log('FETCHING PARENT DATA AND POPULATE');
     fetchParentUserDetails(); 
-  }, [localStorage.getItem('enrolled_child_id') === null])
+  }, [])
 
-  formStepData && console.log('You\'re on step:', formStepData);
+  // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
+  console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
       <div className="enrollment-form-sec my-5">

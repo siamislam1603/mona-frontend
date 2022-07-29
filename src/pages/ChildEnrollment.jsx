@@ -12,8 +12,10 @@ import StepSeven from "./ChildEnrollment/ChildEnrollment7";
 import { useEffect } from "react";
 import axios from 'axios';
 import { BASE_URL } from "../components/App";
+import { useParams } from 'react-router-dom';
 
 function ChildEnrollment() {
+  let { childId, parentId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   //state for steps
@@ -61,6 +63,9 @@ function ChildEnrollment() {
     updateStepFromDatabase();
   }, []);
 
+  console.log('PARENT ID:', parentId);
+  console.log('CHILD ID:', childId);
+
   console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   // eslint-disable-next-line default-case
   switch (step) {
@@ -74,9 +79,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader
+                  {/* <TopHeader
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
+                    setSelectedFranchisee={setSelectedFranchisee} /> */}
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>

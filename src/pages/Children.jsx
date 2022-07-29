@@ -7,8 +7,6 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
-import EducatorAssignPopup from '../components/EducatorAssignPopup';
-import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
 const Children = () => {
     useEffect(()=>{
@@ -17,19 +15,9 @@ const Children = () => {
 
     // Modal start
     const [show, setShow] = useState(false);
-    const handleClose = () => {setShow(false)};
-    const handleShow = (id) => {
-        localStorage.setItem("SelectedChild",id)
-        setShow(true)};
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     // Modal ENd
-
-     //co parent Modal start
-     const [coparentShow, setCpShow] = useState(false);
-     const handleCpClose = () => {setCpShow(false)};
-     const handleCpShow = (id) => {
-         localStorage.setItem("SelectedChild",id)
-         setCpShow(true)};
-     // Modal ENd
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -39,14 +27,14 @@ const Children = () => {
     const [deleteResponse, setDeleteResponse] = useState(null);
     const [childrenList, setChildrenList] = useState([]);
     const [franchiseId, setFranchiseId] = useState(null);
+    const [selectedEducatorIds, setSelectedEducatorIds] = useState([]);
+    const [selectedEducators,setSelectedEducators] = useState([]);
     const [educators, setEducators] = useState([]); 
-    const [parents, setParents] = useState([]); 
-    const [selectedChild , setSelectedChild] = useState("")
     
     const init = async() => {
         // Set Parents Franchisee
         const franchiseeId = location.state.franchisee_id
-        setFranchiseId(franchiseeId)
+          setFranchiseId(franchiseeId)
         
         // Children List
         let response =await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
@@ -54,32 +42,22 @@ const Children = () => {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           });
-
-          if (response.status === 200 && response.data.status === "success") {
+          if (response.status === 200) {
             const { parentData } = response.data;
+            console.log(parentData,"users")
             setChildrenList(parentData.children)
           }
           
-        // Educators list
-        let eduResponse = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/educator`, {
+        //   Educators list
+        let eduResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/educator`, {
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           });
           if (eduResponse.status === 200) {
             const {coordinators} = eduResponse.data;
+            console.log(coordinators,"coordinatorrr")
             setEducators(coordinators)
-          }
-
-         //Parents list
-         let parentResponse = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/guardian`, {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          if (parentResponse.status === 200) {
-            const {coordinators} = parentResponse.data;
-            setParents(coordinators)
           }
     }
     
@@ -113,32 +91,30 @@ const Children = () => {
                 navigate(`/edit-user/${row.userID}`);
             }
             if (e.target.text === 'Add Educator'){
-                setSelectedChild(row.id)
-                handleShow(row.id)
-            }
-
-            if(e.target.text === 'Add Co-Parent'){
-                handleCpShow(row.id)
+                handleShow()
             }
         },
     };
     const selectRow = {
         mode: 'checkbox',
         onSelect: (row, isSelect, rowIndex, e) => {
-            if (DeleteId.includes(row.userID)) {
-                let Index;
-                DeleteId.map((item, index) => {
-                    if (item === row.userID) {
-                        Index = index;
-                    }
-                })
-                DeleteId.splice(Index, 1);
-            }
-            else {
-                DeleteId.push(row.userID);
-            }
+            // if (DeleteId.includes(row.userID)) {
+            //     let Index;
+            //     DeleteId.map((item, index) => {
+            //         if (item === row.userID) {
+            //             Index = index;
+            //         }
+            //     })
+            //     DeleteId.splice(Index, 1);
+            // }
+            // else {
+            //     DeleteId.push(row.userID);
+            // }
+
+            console.log("hello")
         },
         onSelectAll: (isSelect, rows, e) => {
+            console.log("helo")
             if (isSelect) {
                 userData.map((item) => {
                     DeleteId.push(item.userID);
@@ -149,12 +125,17 @@ const Children = () => {
             }
         }
     };
+    const products = educators.map((educator)=>({
+        id: educator.id,
+        name: educator.fullname + "," + (educator.profile_photo ? educator.profile_photo : "../img/user.png"),
+        Location: educator.city
+    }))
 
     const productsTow = childrenList.map((child)=>({
         id: child.id,
         name: child.fullname,
         Location : child.home_address,
-        Educator: [child.users,child.id]
+        Educator: child.users
     }))
 
     const   PColumns = [
@@ -166,16 +147,16 @@ const Children = () => {
             dataField: 'Educator',
             text: 'Educator',
             formatter: (cell) => {
-                console.log(cell,"cell")
+                console.log(cell,"celll")
                 return (
                     <>
-                        {cell[0].length == 0 ?
+                        {cell.length == 0 ?
                             <div className="user-list">
-                                <Button variant="outline-primary" onClick={()=>handleShow(cell[1])} style={{ backgroundColor: "#3e5d58", color: "white" }}>
+                                <Button variant="outline-primary" onClick={handleShow} style={{ backgroundColor: "#3e5d58", color: "white" }}>
                                     Add Educator
                                 </Button>
                             </div> :
-                            (cell[0] || []).map((item)=>{
+                            (cell || []).map((item)=>{
                                return (
                                 <div>
                                     <div className="user-list mt-3">
@@ -207,7 +188,7 @@ const Children = () => {
                 return (
                     <>
                         <div className="cta-col">
-                            <button className="Enrolment_Button btn btn-outline-secondary" style={{"fontSize":"0.8rem","fontWeight":"800"}}>
+                            <button className="Enrolment_Button btn btn-outline-secondary" style={{"fontSize":"0.8rem","fontWeight":"8  00"}}>
                                 View Enrolment
                             </button>
                         </div>
@@ -230,7 +211,6 @@ const Children = () => {
                                     <Dropdown.Item href="#">Delete</Dropdown.Item>
                                     <Dropdown.Item href="#">Edit</Dropdown.Item>
                                     <Dropdown.Item href="#">Add Educator</Dropdown.Item>
-                                    <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>
@@ -238,6 +218,21 @@ const Children = () => {
                 );
             },
         },
+    ];
+    const PopColumns = [
+        {
+            dataField: 'name',
+            text: 'Name',
+            formatter: (cell) => {
+                cell = cell.split(",");
+                return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]}</span></div></>)
+            },
+        },
+        {
+            dataField: 'Location',
+            text: 'Location',
+
+        }
     ];
 
     return (
@@ -276,8 +271,48 @@ const Children = () => {
                     </Container>
                 </section>
             </div>
-        {show ? <EducatorAssignPopup show={show} handleClose={()=>handleClose()} educators={educators}/> : ""}
-        {coparentShow ? <CoparentAssignPopup parents={parents} show={coparentShow} handleClose={()=>handleCpClose()}/> : ""}
+            <Modal size="lg" show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Select Educator</Modal.Title>
+                    <Button variant="outline-secondary" onClick={handleClose} style={{ position: 'absolute', right: '80px' }}>
+                        Add New
+                    </Button>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="data-search me-3">
+                        <label for="search-bar" className="search-label">
+                            <input
+                                id="search-bar"
+                                type="text"
+                                className="form-control"
+                                placeholder="Search"
+                            // value={search}
+                            // onChange={(e) => {
+                            //     setSearch(e.target.value);
+                            // }}
+
+                            />
+                        </label>
+                    </div>
+                    <div className="column-table user-management-sec user_management_sec">
+                        <BootstrapTable
+                            keyField="name"
+                            rowEvents={rowEvents}
+                            selectRow={selectRow}
+                            data={products}
+                            columns={PopColumns}
+                        />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className="justify-content-md-center">
+                    <Button variant="transparent" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleClose}>
+                        Add
+                    </Button>
+                </Modal.Footer>
+            </Modal >
         </>
     );
 };
