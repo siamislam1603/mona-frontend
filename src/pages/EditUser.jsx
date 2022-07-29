@@ -365,7 +365,8 @@ const EditUser = () => {
     }
   }
 
-  const handleSignatureDialog = () => {
+  const handleSignatureDialog = (data) => {
+    setSignatureImage(data);
     if(signatureImage) {
       setShowSignatureDialog(false);
     }
@@ -833,16 +834,17 @@ const EditUser = () => {
                 <Row>
                   <UserSignature
                     field_label="Signature:"
+                    handleSignatureDialog={handleSignatureDialog}
                     onChange={setSignatureImage} />
                 </Row>
               </Modal.Body>
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
               <div class="text-center">
-                <button 
+                {/* <button 
                   type="button" 
                   className="btn btn-primary" 
-                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => handleSignatureDialog()}>Submit</button>
+                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => handleSignatureDialog()}>Submit</button> */}
               </div>
               </Modal.Footer>
             </Modal>

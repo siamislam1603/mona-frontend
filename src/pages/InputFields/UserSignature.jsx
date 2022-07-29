@@ -11,8 +11,10 @@ const UserSignature = (props) => {
   };
   const trim = (e) => {
     e.preventDefault();
-    console.log(controls.field_name,"-------->",sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
-    props.onChange(sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
+    // console.log(controls.field_name,"-------->",sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
+    // console.log("sdfasdfsdfsdf", sigPad.current;
+    // props.onChange(sigPad.current);
+    props.handleSignatureDialog(sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
   };
   return (
     <Col sm={6}>
@@ -31,7 +33,7 @@ const UserSignature = (props) => {
         />
         <div>
           <button onClick={clear} style={{ padding: "12px 35px", marginRight: "10px" }}>Clear</button>
-          <button onClick={trim} style={{ padding: "12px 35px" }}>Trim</button>
+          <button onClick={trim} style={{ padding: "12px 35px" }}>Submit</button>
         </div>
       </Form.Group>
     </Col>
