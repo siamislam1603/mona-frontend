@@ -48,15 +48,14 @@ const Announcements =  () => {
 
   const handleSearchOnChange =(e) => {
     e.preventDefault();
-    // fetchSearchData(e)
-      fetchUserDetails(e)    //  console.log("The api_url",api_url)
+    fetchUserDetails(e)    //  console.log("The api_url",api_url)
   };
   const loadMore = async (e) =>{
-    e.preventDefault()
+    try {
     setOffSet(prevstate => prevstate+10);
     let api_url = '';
     api_url = `${BASE_URL}/announcement/?franchiseeAlias=all&search=${search === " " ? "":search}&offset=${offset}&limit=10`
-    console.log("The load more button click")
+    console.log("The load more button click",api_url)
     const response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -69,16 +68,20 @@ const Announcements =  () => {
     ...prev,
     ...newre
     ]));
+    } catch (error) {
+      console.log("The error insdie load More",error)
+    }
 
     // fetchUserDetails(e)
   }
   const fetchUserDetails = async (e) => {
+    // e.preventDefault()
     try {
       let api_url = '';
       if(e){
         search = e.target.value;
-        
       }
+      console.log("The search value", search)
       let franchiseeFormat 
       franchiseeFormat = selectedFranchisee&& selectedFranchisee
       .split(',')[0]
@@ -96,7 +99,7 @@ const Announcements =  () => {
     if(selectedFranchisee){
 
       // console.log("The franhsie Format",search)
-       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=${offset}&limit=${limit}`
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=${offst}&limit=${limit}`
     }
 
     console.log("The api url",api_url)
@@ -116,7 +119,7 @@ const Announcements =  () => {
       //   // console.log("The error",error)
       //   setFranchiseeData(error.response.data)
       //  }
-      console.log("The error",error)
+      console.log("The error inside franhsie",error)
     }
   
   };
@@ -128,6 +131,8 @@ const Announcements =  () => {
     }
   },[selectedFranchisee])
   useEffect(() =>{
+    loadMore()
+    console.log("The load more inside useEffe")
     // setSelectedFranchisee("all")
     // setSelectedFranchisee(selectedFranchisee)
     // selectedFranchisee(selectedFranchisee)
@@ -181,7 +186,7 @@ const Announcements =  () => {
 
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements  searchValue={search} franchisee ={franchiseeData}/>}
+                      && <AllAnnouncements  searchValue={search} franchisee ={franchiseeData} loadData={loadMoreData}/>}
                     {tabLinkPath === "/my-announcements" 
                       && <MyAnnouncements  searchValue={search} franchisee ={franchiseeData}
                              />}

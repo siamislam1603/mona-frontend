@@ -134,9 +134,16 @@ useEffect(() =>{
     console.log("The frnahise under all announcement",props.franchisee)
     
 },[props.franchisee])
+
+useEffect(() =>{
+  if(props.loadData.length>0){
+    setAnnouncementDetail(props.loadData)
+  }
+},[props.loadData])
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
-console.log("The franhise",props.franchisee)
+// console.log("The franhise",props.franchisee)
+  console.log(" THE LOAD MORE DATA inside All ANnoncements",props.loadData)
 // console.log("The annoumce all ",announcementDetails)
   // console.log("The seach in all announcement", props.search,props.searchValue)
 
