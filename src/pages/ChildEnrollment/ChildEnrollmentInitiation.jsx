@@ -54,9 +54,9 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     });
 
     if(response.status === 201 && response.data.status === "success") {
-
+      let { child } = response.data;
       // SAVING PARENT DETAIL
-      response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: parentId}, {
+      response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: parentId, childId: child.id}, {
         headers: {
           "Authorization": `Bearer ${token}`
         }

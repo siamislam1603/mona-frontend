@@ -298,10 +298,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   useEffect(() => {
     console.log('FETCHING PARENT DATA AND POPULATE');
     fetchParentUserDetails(); 
-  }, [localStorage.getItem('enrolled_child_id') === null])
+  }, [])
 
-  formStepData && console.log('You\'re on step:', formStepData);
+  // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
+  console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
       <div className="enrollment-form-sec my-5">
