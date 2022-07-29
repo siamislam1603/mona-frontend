@@ -125,8 +125,8 @@ const FranchiseeDashboard = () => {
 
   const announcement = () => {
     const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
-    axios.get(countUrl).then((response) => {
-      setlatest_announcement(response.data.data.all_announcements);
+    axios.get(countUrl, { headers: { "Authorization": `Bearer ${localStorage.getItem('token')}` } }).then((response) => {
+      setlatest_announcement(response.data.recentAnnouncement);
     }).catch((e) => {
       console.log("Error", e);
     })
@@ -135,7 +135,7 @@ const FranchiseeDashboard = () => {
   console.log(latest_announcement[0], "latest_announcement")
   const count_User_Api = () => {
     const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
-    axios.get(countUrl).then((response) => {
+    axios.get(countUrl,  { headers: { "Authorization": `Bearer ${localStorage.getItem('token')}` } }).then((response) => {
       setcountUser(response.data);
     }).catch((e) => {
       console.log("Error", e);
