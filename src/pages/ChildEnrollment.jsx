@@ -9,17 +9,13 @@ import StepFour from "./ChildEnrollment/ChildEnrollment4";
 import StepFive from "./ChildEnrollment/ChildEnrollment5";
 import StepSix from "./ChildEnrollment/ChildEnrollment6";
 import StepSeven from "./ChildEnrollment/ChildEnrollment7";
-import StepEight from "./ChildEnrollment/ChildEnrollment8";
-import StepNine from "./ChildEnrollment/ChildEnrollment9";
-import StepTen from "./ChildEnrollment/ChildEnrollment10";
-import StepEleven from "./ChildEnrollment/ChildEnrollment11";
-import StepTwelve from "./ChildEnrollment/ChildEnrollment12";
-import StepThirteen from "./ChildEnrollment/ChildEnrollment13";
 import { useEffect } from "react";
 import axios from 'axios';
 import { BASE_URL } from "../components/App";
+import { useParams } from 'react-router-dom';
 
 function ChildEnrollment() {
+  let { childId, parentId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   //state for steps
@@ -66,6 +62,9 @@ function ChildEnrollment() {
   useEffect(() => {
     updateStepFromDatabase();
   }, []);
+
+  console.log('PARENT ID:', parentId);
+  console.log('CHILD ID:', childId);
 
   console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   // eslint-disable-next-line default-case
@@ -248,7 +247,7 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader
+                  <TopHeader 
                     selectedFranchisee={selectedFranchisee}
                     setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
@@ -257,174 +256,6 @@ function ChildEnrollment() {
                     </header>
                     <div className="enrollment-form-sec">
                       <StepSeven nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </section>
-        </div>
-      );
-      
-    case 8:
-      return (
-        <div id="main">
-          <section className="mainsection">
-            <Container>
-              <div className="admin-wrapper">
-                <aside className="app-sidebar">
-                  <LeftNavbar/>
-                </aside>
-                <div className="sec-column">
-                  <TopHeader 
-                    selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
-                  <div className="entry-container">
-                    <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
-                    </header>
-                    <div className="enrollment-form-sec">
-                      <StepEight nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </section>
-        </div>
-      );
-      
-    case 9:
-      return (
-        <div id="main">
-          <section className="mainsection">
-            <Container>
-              <div className="admin-wrapper">
-                <aside className="app-sidebar">
-                  <LeftNavbar/>
-                </aside>
-                <div className="sec-column">
-                  <TopHeader 
-                    selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
-                  <div className="entry-container">
-                    <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
-                    </header>
-                    <div className="enrollment-form-sec">
-                      <StepNine nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </section>
-        </div>
-      );
-      
-    case 10:
-      return (
-        <div id="main">
-          <section className="mainsection">
-            <Container>
-              <div className="admin-wrapper">
-                <aside className="app-sidebar">
-                  <LeftNavbar/>
-                </aside>
-                <div className="sec-column">
-                  <TopHeader
-                    selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
-                  <div className="entry-container">
-                    <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
-                    </header>
-                    <div className="enrollment-form-sec">
-                      <StepTen nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </section>
-        </div>
-      );
-      
-    case 11:
-      return (
-        <div id="main">
-          <section className="mainsection">
-            <Container>
-              <div className="admin-wrapper">
-                <aside className="app-sidebar">
-                  <LeftNavbar/>
-                </aside>
-                <div className="sec-column">
-                  <TopHeader
-                    selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
-                  <div className="entry-container">
-                    <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
-                    </header>
-                    <div className="enrollment-form-sec">
-                      <StepEleven nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </section>
-        </div>
-      );
-      
-    case 12:
-      return (
-        <div id="main">
-          <section className="mainsection">
-            <Container>
-              <div className="admin-wrapper">
-                <aside className="app-sidebar">
-                  <LeftNavbar/>
-                </aside>
-                <div className="sec-column">
-                  <TopHeader
-                    selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
-                  <div className="entry-container">
-                    <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
-                    </header>
-                    <div className="enrollment-form-sec">
-                      <StepTwelve nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </section>
-        </div>
-      );
-      
-    case 13:
-      return (
-        <div id="main">
-          <section className="mainsection">
-            <Container>
-              <div className="admin-wrapper">
-                <aside className="app-sidebar">
-                  <LeftNavbar/>
-                </aside>
-                <div className="sec-column">
-                  <TopHeader
-                    selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
-                  <div className="entry-container">
-                    <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
-                    </header>
-                    <div className="enrollment-form-sec">
-                      <StepThirteen prevStep={prevStep} handleFormData={handleInputData} />
                     </div>
                   </div>
                 </div>

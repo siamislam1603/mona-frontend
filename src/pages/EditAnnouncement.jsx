@@ -133,92 +133,104 @@ const EditAnnouncement = () => {
   }
   const UpdateAnnouncement = async(data) =>{
     // data.append("")
-    const theres = await  axios.post('https://httpbin.org/anything', data);
-        console.log("THE RESPONSE",theres)
-    console.log("Updating Annoucement")
-   const token = localStorage.getItem('token');
-   setTheMessage("Uploading The Documents")
-    
-      const response = await axios.put(`${BASE_URL}/announcement/${id}`, data,{ 
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-     });
-     console.log("The response",response)
-     if(response.status === 200 && response.data.status === "success"){
-        const id = announcementData.id;
-        console.log("The id",id)
-       
-        // const theres = await  axios.post('https://httpbin.org/anything', data);
+    // const theres = await  axios.post('https://httpbin.org/anything', data);
         // console.log("THE RESPONSE",theres)
-        // console.log("THE COVER IMAGE TYPE",typeof coverImage)
-        if(typeof coverImage === "string"){
-          setTheMessage("Uploading The Images and Videos")
-
-          console.log("The String type")
-          let imageFile = await axios.put(`${BASE_URL}/announcement/createdAnnouncement/${id}`,{
-            coverImage: coverImage
-          },{
+        try {
+          console.log("Updating Annoucement")
+          const token = localStorage.getItem('token');
+          setTheMessage("Uploading The Documents")
+          
+            const response = await axios.put(`${BASE_URL}/announcement/${id}`, data,{ 
             headers: {
               "Authorization": "Bearer " + token
             }
-          })
-          if(imageFile.status === 200){
-            console.log("Announcement update successfully ")
-            window.location.href="/announcements";    
-
+           });
+           console.log("The response",response)
+           if(response.status === 200 && response.data.status === "success"){
+              const id = announcementData.id;
+              console.log("The id",id)
              
-          }
-        }
-        else{
-          console.log("The Object Type")
-          let data = new FormData()
-          data.append('id',id);
-          data.append('image', coverImage[0]);
-          setTheMessage("Uploading Cover image")
-
-          let imgSaveResponse = await axios.post(
-            `${BASE_URL}/training/coverImg?title=announcement`, data, {
-              headers: {
-                "Authorization": "Bearer " + token
+              // const theres = await  axios.post('https://httpbin.org/anything', data);
+              // console.log("THE RESPONSE",theres)
+              // console.log("THE COVER IMAGE TYPE",typeof coverImage)
+              if(typeof coverImage === "string"){
+                setTheMessage("Uploading The Images and Videos")
+      
+                console.log("The String type")
+                let imageFile = await axios.put(`${BASE_URL}/announcement/createdAnnouncement/${id}`,{
+                  coverImage: coverImage
+                },{
+                  headers: {
+                    "Authorization": "Bearer " + token
+                  }
+                })
+                if(imageFile.status === 200){
+                  console.log("Announcement update successfully ")
+                  window.location.href="/announcements";    
+      
+                   
+                }
               }
-            }
-          );
-          console.log("The image",imgSaveResponse);
-          if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {            
-            console.log('SUCCESS RESPONSE!');
-             setTheMessage(" ")
-
-            setLoader(false)
-            localStorage.setItem('success_msg', 'Announcement Created Successfully!');
-            localStorage.setItem('active_tab', '/created-announcement');
-            window.location.href="/announcements";    
-          }
-          else{
-                console.log('ERROR RESPONSE!');
-                setTopErrorMessage("unable to save cover image!");
-                setTimeout(() => {
-                setTopErrorMessage(null);
-              }, 3000)
+              else{
+                console.log("The Object Type")
+                let data = new FormData()
+                data.append('id',id);
+                data.append('image', coverImage[0]);
+                setTheMessage("Uploading Cover image")
+      
+                let imgSaveResponse = await axios.post(
+                  `${BASE_URL}/training/coverImg?title=announcement`, data, {
+                    headers: {
+                      "Authorization": "Bearer " + token
+                    }
+                  }
+                );
+                console.log("The image",imgSaveResponse);
+                if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {            
+                  console.log('SUCCESS RESPONSE!');
+                   setTheMessage(" ")
+      
+                  setLoader(false)
+                  localStorage.setItem('success_msg', 'Announcement Created Successfully!');
+                  localStorage.setItem('active_tab', '/created-announcement');
+                  window.location.href="/announcements";    
+                }
+                else{
+                      console.log('ERROR RESPONSE!');
+                      setTopErrorMessage("unable to save cover image!");
+                      setTimeout(() => {
+                      setTopErrorMessage(null);
+                    }, 3000)
+                }
+              }
+           }
+        } catch (error) {
+          // if(response.status === 200 && response.data.status === "fail") {
+          //   console.log('ERROR RESPONSE!');
+          //   const { msg } = response.data;
+          
+          //   console.log("Annoncement Already exit",msg)
+          //   setTopErrorMessage(msg);
+          //   setLoader(false);
+          //   setUpdateAnnouncement(false);
+          //   setTimeout(() => {
+          //     setTopErrorMessage(null);
+          //   }, 3000)
+          // }
+          // console.log("The error",error)
+          if(error.response.status === 403 && error.response.data.status === "fail"){
+            console.log('ERROR RESPONSE!', error);
+          
+            console.log("Annoncement Already exit",)
+            setUpdateAnnouncement(false)
+            setTopErrorMessage("Announcement Already exit");
+            // setLoader(false);
+            // setUpdateAnnouncement(false);
+            setTimeout(() => {
+              setTopErrorMessage(null);
+            }, 3000)
           }
         }
-     
-      
-      
-     }
-     else if(response.status === 200 && response.data.status === "fail") {
-      console.log('ERROR RESPONSE!');
-      const { msg } = response.data;
-    
-      console.log("Annoncement Already exit",msg)
-      setTopErrorMessage(msg);
-      setLoader(false);
-      setUpdateAnnouncement(false);
-      setTimeout(() => {
-        setTopErrorMessage(null);
-      }, 3000)
-    }
-  
   }
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
@@ -316,6 +328,9 @@ const EditAnnouncement = () => {
       {console.log("The franhciess",franchiseeData)}
       {console.log('operating manual--->', announcementChangeData)} */}
       <div id="main">
+      {/* {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}  */}
+
+
         <section className="mainsection ">
           <Container>
             <div className="admin-wrapper">
@@ -331,6 +346,8 @@ const EditAnnouncement = () => {
                     <h1 className="title-lg">Edit Announcement</h1>
                   </header>
                 </div>
+                {/* {topErrorMessage && <p className="alert alert-success">{topErrorMessage}</p>}  */}
+
                 {/* <button onClick={()=>setSettingsModalPopup(true)}>
                   The button 
                 </button> */}
@@ -355,6 +372,8 @@ const EditAnnouncement = () => {
                           <Form.Control.Feedback type="invalid">
                             {errors.title}
                           </Form.Control.Feedback>
+                          {topErrorMessage && <div className="error">{topErrorMessage}</div>} 
+
                         </Form.Group>
 
                       

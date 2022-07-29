@@ -231,7 +231,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
       localStorage.setItem('enrolled_parent_id', child.parents[0].id);
       console.log('CHILD DATA:', child);
 
-      if(child.form_step >= step) {
+      if(child.form_step > step) {
         
         // POPULATING EMERGENCY CONTACT DATA
         setEmergencyContactData(prevState => ({
