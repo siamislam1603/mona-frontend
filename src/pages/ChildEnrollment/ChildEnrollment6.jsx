@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
+import { useParams } from "react-router-dom";
+import Select from 'react-select';
 
 
 
@@ -28,6 +30,7 @@ let step = 6;
     const [errors, setErrors] = useState({});
     const [topErrorMessage, setTopErrorMessage] = useState(null);
     const [loader, setLoader] = useState(false);
+    const [educatorData, setEducatorData] = useState(null);
 
     const createConcentForm = async (data) => {
       const token = localStorage.getItem('token');
@@ -51,6 +54,47 @@ let step = 6;
       } 
 
     }
+    
+    // let {id} = useParams();
+    // console.log(id);
+    const fetchEducatorList = async () => {
+      const token = localStorage.getItem('token');
+      console.log("ppppppppppppppppppp");
+      const response = await axios.get(`${BASE_URL}/enrollment/child/educators/18`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      console.log(response);
+      if(response.status === 200 && response.data.status === "success") {
+        console.log(response);
+        let {ChildData} = response.data;
+        console.log(ChildData);
+        setEducatorData(ChildData.map(educator => ({
+          id: educator.id,
+          users: {
+            fullname: educator.fullname,
+            // profile_photo: educator.profile_photo,
+            // city: educator.city,
+            // franchisee_id: educator.franchisee_id
+          }
+        })));  
+      }
+  
+
+    }
+
+    useEffect(() => {
+      fetchEducatorList();
+    }, []);
+
+    const handleConcentEducator = (event) => {
+      setConcentData((prevState) => ({
+        ...prevState,
+        give_consent_to_the_educator: [...event.map(option => option.id + "")]
+      }));
+    };
+
   
 
   const handleConcentData = (event) => {
@@ -113,20 +157,27 @@ let step = 6;
           <div className="grayback">
             <Form.Group className="mb-3 single-field">
               <Form.Label>Give consent to the educator</Form.Label>
-              <Form.Control
-                            type="text"
-                            name="give_consent_to_the_educator"
-                            onChange={
-                              (e) => {
-                              handleConcentData(e);
-                              setErrors(prevState => ({
-                                ...prevState,
-                                give_consent_to_the_educator: null
-                              }));
-                            }
-                          }
-                          />
-                          { errors.give_consent_to_the_educator !== null && <span className="error">{errors.give_consent_to_the_educator}</span> }
+              {
+
+
+
+ <div className="select-with-plus">
+
+<Select
+placeholder="Which Franchisee?"
+closeMenuOnSelect={false}
+isMulti
+options={educatorData}
+onChange={handleConcentEducator}
+/>
+
+</div>
+
+}
+
+              
+
+            
             </Form.Group>
             <Form.Group className="mb-3 single-field">
               <Form.Label>to provide care and education to my child.; and nominated assistant/s</Form.Label>

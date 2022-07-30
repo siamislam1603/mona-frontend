@@ -26,7 +26,7 @@ const MyAnnouncements = () => {
      })
      console.log("The repsonse mY anncounce,",response)
      if(response.status === 200) {
-        setmyAnnouncement(response.data.data.searchedData)
+        setmyAnnouncement(response.data.data.all_announcements)
      }
   }
   const deleteAnnouncement = async (id) =>{

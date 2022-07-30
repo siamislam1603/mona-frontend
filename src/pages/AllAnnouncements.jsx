@@ -25,7 +25,7 @@ const [videoFile, setVideoFile] = useState("https://embed.api.video/vod/vi38jFGb
 const [show, setShow] = useState(false);
 const handleClose = () => setShow(false);
 const [theDelete,setTheDelete] = useState("");
-const [searchData,setSearchData] = useState(props.search)
+// const [searchData,setSearchData] = useState(props.search)
  
   const AllAnnouncementData = async () =>{
     try {
@@ -39,7 +39,8 @@ const [searchData,setSearchData] = useState(props.search)
       console.log("The data",response);
       
       if(response.status === 200 && response.data.status === "success") {
-          setAnnouncementDetail(response.data.searchedData);
+        console.log(response);
+          setAnnouncementDetail(response.data.createdAnnouncement);
       }
     } catch (error) {
         if(error.response.status === 404){
@@ -50,7 +51,7 @@ const [searchData,setSearchData] = useState(props.search)
     }
   
 }
-console.log("The props",props.search)
+// console.log("The props",props.search)
 
 
 const formatMetaDescription = (str) => {
@@ -154,26 +155,26 @@ const getRelatedFileName = (str) => {
 useEffect(() => {
   AllAnnouncementData()
 }, [])
-useEffect(() =>{
+// useEffect(() =>{
   // if(searchData<0){
       // console.log("The seach in all announcement")
   // }
-  console.log("The seach in all announcement")
-  setSearchData(props.search)
+  // console.log("The seach in all announcement")
+  // setSearchData(props.search)
   
 
-},[props.search]) 
-useEffect(() =>{
-  if(searchData.length>0){
-    setAnnouncementDetail(searchData)
-  }
-  else{
-    AllAnnouncementData()
-  }
-},[searchData])
- announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
+// },[props.search]) 
+// useEffect(() =>{
+//   if(searchData.length>0){
+//     setAnnouncementDetail(searchData)
+//   }
+//   else{
+//     AllAnnouncementData()
+//   }
+// },[searchData])
+//  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
-console.log("The annoumce all ",announcementDetails)
+// console.log("The annoumce all ",announcementDetails)
   return (
     
     <div className="announcement-accordion">
