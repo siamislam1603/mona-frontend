@@ -36,6 +36,8 @@ const Announcements =  () => {
   const [offset,setOffSet] = useState(0)
   const [page,setPage]= useState(0);
   const [loadMoreData,setLoadMoreData]= useState([])
+  const [theCount,setCount]= useState(null)
+
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -47,6 +49,7 @@ const Announcements =  () => {
   // }, 200);
   let search = " "
   let loadError = " "
+  let count =""
 
   const handleSearchOnChange =(e) => {
     e.preventDefault();
@@ -71,14 +74,15 @@ const Announcements =  () => {
     console.log("The loadmore franhsie fomrat",franchiseeFormat)
     let api_url = '';
     api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=${page}&limit=5`
-    console.log("The load more button click",api_url)
+ 
     const response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
     let newre = response.data.result.searchedData
-    console.log("The new data",newre)
+    setCount(response.data.result.count)
+    console.log("The new data",count)
     console.log("The response")
     
     console.log("Load more button reponse",response)
@@ -218,7 +222,13 @@ const Announcements =  () => {
                 
                   </div>
                   {/* {franchiseeData && franchiseeData.searchedData.length} */}
-                  <button onClick={loadMore} type="button" class="btn btn-primary">Load More</button>
+                  {loadMoreData&& loadMoreData.length ===theCount ? (
+                    null
+                  ):(
+                    <button onClick={loadMore} type="button" class="btn btn-primary">Load More</button>
+
+                  ) }
+            
                 
                 </div>
               </div>
