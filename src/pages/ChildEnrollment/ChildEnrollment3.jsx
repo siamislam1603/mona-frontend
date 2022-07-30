@@ -8,7 +8,8 @@ let nextstep = 4;
 let step = 3;
 
 const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
-  const [activeHouts, setActiveHours] = useState({});
+  const [agreedBookingHours, setAgreedBookingHours] = useState({});
+  const [agreedHolidayHours, setAgreedHolidayHours] = useState({});
   // const [hasEmergencyContact, setHasEmergencyContact] = useState(false);
 
   // const saveFormThreeData = async () => {
@@ -62,6 +63,7 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
   //   fetchChildDetailsAndPopulate();
   // }, [])
 
+  agreedBookingHours && console.log('Agreed Hours:', agreedBookingHours);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -88,13 +90,20 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Group>
                         <Form.Control 
                           type="time"
-                           />
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            monday: {...agreedBookingHours?.monday, from: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                     <td>
                       <Form.Group>
                         <Form.Control 
-                          type="time" />
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            monday: {...agreedBookingHours?.monday, to: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                   </tr>
@@ -102,12 +111,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                     <td>Tuesday</td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            tuesday: {...agreedBookingHours?.tuesday, from: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            tuesday: {...agreedBookingHours?.tuesday, to: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                   </tr>
@@ -115,12 +134,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                     <td>Wednesday</td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            wednesday: {...agreedBookingHours?.wednesday, from: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            wednesday: {...agreedBookingHours?.wednesday, to: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                   </tr>
@@ -128,12 +157,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                     <td>Thursday</td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            thursday: {...agreedBookingHours?.thursday, from: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            thursday: {...agreedBookingHours?.thursday, to: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                   </tr>
@@ -141,12 +180,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                     <td>Friday</td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            friday: {...agreedBookingHours?.friday, from: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            friday: {...agreedBookingHours?.friday, to: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                   </tr>
@@ -154,12 +203,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                     <td>Saturday</td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            saturday: {...agreedBookingHours?.saturday, from: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            saturday: {...agreedBookingHours?.saturday, to: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                   </tr>
@@ -167,12 +226,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                     <td>Sunday</td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            sunday: {...agreedBookingHours?.sunday, from: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                     <td>
                       <Form.Group>
-                        <Form.Control type="time" />
+                        <Form.Control 
+                          type="time"
+                          onChange={(e) => setAgreedBookingHours(prevState => ({
+                            ...prevState,
+                            sunday: {...agreedBookingHours?.sunday, to: e.target.value}
+                          }))} />
                       </Form.Group>
                     </td>
                   </tr>
@@ -198,12 +267,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <td>Monday</td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, from: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, to: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                       </tr>
@@ -211,12 +290,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <td>Tuesday</td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, from: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, to: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                       </tr>
@@ -224,12 +313,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <td>Wednesday</td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, from: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, to: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                       </tr>
@@ -237,12 +336,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <td>Thursday</td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, from: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, to: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                       </tr>
@@ -250,12 +359,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <td>Friday</td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, from: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, to: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                       </tr>
@@ -263,12 +382,22 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                         <td>Saturday</td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, from: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                         <td>
                           <Form.Group>
-                            <Form.Control type="time" />
+                            <Form.Control 
+                              type="time"
+                              onChange={(e) => setAgreedHolidayHours(prevState => ({
+                                ...prevState,
+                                monday: {...agreedHolidayHours?.monday, to: e.target.value}
+                              }))} />
                           </Form.Group>
                         </td>
                       </tr>

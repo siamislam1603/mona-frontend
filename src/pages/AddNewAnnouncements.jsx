@@ -163,8 +163,9 @@ const createAnnouncement = async (data) => {
   
         setFranchiseeData(franchiseeList.map(franchisee => ({
           id: franchisee.id,
-          value: franchisee.franchisee_alias,
-          label: franchisee.franchisee_name
+          value: franchisee.franchisee_name,
+          label: franchisee.franchisee_name,
+          city: franchisee.franchisee_city
         })));  
       }
     }

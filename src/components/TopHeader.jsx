@@ -19,7 +19,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
         Authorization: 'Bearer ' + token,
       },
     });
-    if (response.status === 200) {
+    if (response.status === 200 && response.data.status === "success") {
       const { franchiseeList: franchiseeData } = response.data;
       setFranchiseeList([
         ...franchiseeData.map((data) => ({
@@ -91,6 +91,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     savePermissionInState();
   }, []);
 
+  franchiseeList && console.log('FRANCHISEE LIST:', franchiseeList);
   return (
     <>
       <div className="topheader">
