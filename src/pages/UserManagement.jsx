@@ -213,16 +213,16 @@ const UserManagement = () => {
     let api_url = '';
 
     if (search) {
-      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?search=${search}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}`;
     }
     if (filter) {
-      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?filter=${filter}`;
     }
     if (search && filter) {
-      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?search=${search}&filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}&filter=${filter}`;
     }
     if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}`;
     }
 
 
