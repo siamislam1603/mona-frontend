@@ -85,7 +85,6 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
               </aside>
               <div className="sec-column">
                 <TopHeader
-                  selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">

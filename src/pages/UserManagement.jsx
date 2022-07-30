@@ -39,7 +39,7 @@ let DeleteId = [];
 const UserManagement = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState('All');
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id') || 'All');
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
@@ -213,16 +213,16 @@ const UserManagement = () => {
     let api_url = '';
 
     if (search) {
-      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?search=${search}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}`;
     }
     if (filter) {
-      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?filter=${filter}`;
     }
     if (search && filter) {
-      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?search=${search}&filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}&filter=${filter}`;
     }
     if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}`;
     }
 
 

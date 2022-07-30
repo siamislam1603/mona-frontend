@@ -33,11 +33,11 @@ const Children = () => {
     
     const init = async() => {
         // Set Parents Franchisee
-        const franchiseeId = location.state.franchisee_id
-          setFranchiseId(franchiseeId)
+        const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id');
+          setFranchiseId(franchiseeId);
         
         // Children List
-        let response =await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
+        let response = await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -131,7 +131,7 @@ const Children = () => {
         Location: educator.city
     }))
 
-    const productsTow = childrenList.map((child)=>({
+    const productsTow = childrenList?.map((child)=>({
         id: child.id,
         name: child.fullname,
         Location : child.home_address,
@@ -246,16 +246,32 @@ const Children = () => {
                             </aside>
                             <div className="sec-column">
                                 <TopHeader
-                                    selectedFranchisee={selectedFranchisee}
                                     setSelectedFranchisee={setSelectedFranchisee}
                                 />
                                 <div className="entry-container">
                                     <div className="user-management-sec">
-                                        <header className="title-head">
+                                        <header className="title-head"
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center"
+                                            }}>
                                             <h1 className="title-lg">
                                                 <Link to="/user-management"> </Link>
                                                 Children
                                             </h1>
+
+                                            <Link 
+                                                to={`/child-enrollment-init/${params.id}`}
+                                                style={{
+                                                    backgroundColor: "#455C58",
+                                                    color: "#fff",
+                                                    padding: ".9rem 2.3rem",
+                                                    fontWeight: 500,
+                                                    borderRadius: "5px"
+                                                }}>
+                                                Add Child
+                                            </Link>
                                         </header>
                                         <BootstrapTable
                                             keyField="id"
