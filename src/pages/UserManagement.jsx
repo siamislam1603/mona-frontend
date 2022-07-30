@@ -39,7 +39,7 @@ let DeleteId = [];
 const UserManagement = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+  const [selectedFranchisee, setSelectedFranchisee] = useState('All');
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
@@ -212,23 +212,17 @@ const UserManagement = () => {
   const fetchUserDetails = async () => {
     let api_url = '';
 
-    let franchiseeFormat = selectedFranchisee
-      .split(',')[0]
-      .split(' ')
-      .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
-      .join('_')
-      .toLowerCase();
     if (search) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?search=${search}`;
+      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?search=${search}`;
     }
     if (filter) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?filter=${filter}`;
     }
     if (search && filter) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?search=${search}&filter=${filter}`;
+      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}?search=${search}&filter=${filter}`;
     }
     if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}`;
+      api_url = `${BASE_URL}/role/user-data/${selectedFranchisee}`;
     }
 
 
@@ -330,7 +324,6 @@ const UserManagement = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader
-                  selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
                 <div className="entry-container">
