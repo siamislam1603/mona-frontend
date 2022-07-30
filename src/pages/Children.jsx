@@ -7,6 +7,8 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
+import EducatorAssignPopup from '../components/EducatorAssignPopup';
+import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
 const Children = () => {
     useEffect(()=>{
@@ -17,6 +19,12 @@ const Children = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    // Modal ENd
+
+ // Modal start
+    const [cpShow, setCpShow] = useState(false);
+    const handleCpClose = () => setCpShow(false);
+    const handleCpShow = () => setCpShow(true);
     // Modal ENd
 
     const navigate = useNavigate();
@@ -30,6 +38,7 @@ const Children = () => {
     const [selectedEducatorIds, setSelectedEducatorIds] = useState([]);
     const [selectedEducators,setSelectedEducators] = useState([]);
     const [educators, setEducators] = useState([]); 
+    const [parents, setParents] = useState([]);
     
     const init = async() => {
         // Set Parents Franchisee
@@ -58,6 +67,18 @@ const Children = () => {
             const {coordinators} = eduResponse.data;
             console.log(coordinators,"coordinatorrr")
             setEducators(coordinators)
+          }
+
+        //   Parents list
+        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/guardian`, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+          if (CpResponse.status === 200) {
+            const {coordinators} = CpResponse.data;
+            console.log(coordinators,"coordinatorrr")
+            setParents(coordinators)
           }
     }
     
@@ -92,6 +113,9 @@ const Children = () => {
             }
             if (e.target.text === 'Add Educator'){
                 handleShow()
+            }
+            if (e.target.text === 'Add Co-Parent'){
+                handleCpShow()
             }
         },
     };
@@ -211,6 +235,7 @@ const Children = () => {
                                     <Dropdown.Item href="#">Delete</Dropdown.Item>
                                     <Dropdown.Item href="#">Edit</Dropdown.Item>
                                     <Dropdown.Item href="#">Add Educator</Dropdown.Item>
+                                    <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>
@@ -271,7 +296,7 @@ const Children = () => {
                     </Container>
                 </section>
             </div>
-            <Modal size="lg" show={show} onHide={handleClose}>
+            {/* <Modal size="lg" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Select Educator</Modal.Title>
                     <Button variant="outline-secondary" onClick={handleClose} style={{ position: 'absolute', right: '80px' }}>
@@ -312,7 +337,9 @@ const Children = () => {
                         Add
                     </Button>
                 </Modal.Footer>
-            </Modal >
+            </Modal > */}
+            {show ? <EducatorAssignPopup educators={educators} handleClose={()=>handleClose()} show={show}/> : ""}
+            {cpShow ? <CoparentAssignPopup parents={parents} handleClose={()=>handleCpClose()} show={cpShow}/> : ""}
         </>
     );
 };
