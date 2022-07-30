@@ -12,7 +12,6 @@ import { BASE_URL } from "../../components/App";
 const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let { parentId } = useParams();
 
-  const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
     dob: "",
@@ -63,7 +62,14 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       });
 
       if(response.status === 201 && response.data.status === "success") {
-        window.location.href = `/children/${parentId}`;
+        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${child.id}`, { educatorIds: [formOneChildData.educator] }, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }     
+        }); 
+        if(response.status === 201 && response.data.status === "success") {
+          window.location.href = `/children/${parentId}`;
+        }
       }
     }
   }
@@ -84,8 +90,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                 <LeftNavbar/>
               </aside>
               <div className="sec-column">
-                <TopHeader
-                  setSelectedFranchisee={setSelectedFranchisee} />
+                <TopHeader />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Child Enrollment Initiation Form</h1>

@@ -3,7 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { BASE_URL } from './App';
 
-const TopHeader = ({ setSelectedFranchisee }) => {
+let temp = () => {}
+
+const TopHeader = ({ setSelectedFranchisee = temp }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
   const [franchiseeId, setFranchiseeId] = useState(null);
   const [permissionList, setPermissionList] = useState();
