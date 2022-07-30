@@ -1487,6 +1487,7 @@ span.module_dot {
 .reference_videos .vidico {
     position: relative;
     height: 329px;
+    width: 100%;
 }
 
 .reference_videos .vidico:before {

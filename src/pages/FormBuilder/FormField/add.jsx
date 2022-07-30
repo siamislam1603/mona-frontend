@@ -49,8 +49,8 @@ const AddFormField = (props) => {
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
   useEffect(() => {
     setFormSettingFlag(false);
-    console.log("location?.state?.id---->",location?.state?.id);
-    console.log("location?.state?.form_name--->",location?.state?.form_name);
+    console.log('location?.state?.id---->', location?.state?.id);
+    console.log('location?.state?.form_name--->', location?.state?.form_name);
     if (location?.state?.form_name) {
       getFormField();
       getFormData();
@@ -213,8 +213,15 @@ const AddFormField = (props) => {
               }
             }
           });
+
           setSection(sectionData);
           if (!conditionFlag && !groupFlag) {
+            if (res?.form_permission?.signatories === true) {
+              res?.result?.push({
+                field_label: 'Signature',
+                field_type: 'signature',
+              });
+            }
             setForm(res?.result);
             // setConditionModelData(res?.result);
             setGroupModelData(res?.result);
@@ -222,6 +229,61 @@ const AddFormField = (props) => {
             setGroupModelData(res?.result);
           } else {
             // setConditionModelData(res?.result);
+          }
+        } else {
+          console.log("res?.form?.previous_form---->",res?.form?.previous_form);
+          if (res?.form?.previous_form !== '') {
+            fetch(
+              `${BASE_URL}/field?form_name=${res?.form?.previous_form}`,
+              requestOptions
+            )
+              .then((response) => response.json())
+              .then((result) => {
+                if (result?.result.length > 0) {
+                  let sectionData = [];
+                  result?.result?.map((item) => {
+                    delete item.id;
+                    if (item.option) {
+                      item.option = JSON.parse(item.option);
+                    }
+                    if (item?.section_name) {
+                      if (
+                        !sectionData.includes(
+                          item?.section_name.split('_').join(' ')
+                        )
+                      ) {
+                        sectionData.push(
+                          item?.section_name.split('_').join(' ')
+                        );
+                      }
+                    }
+                  });
+                  setSection(sectionData);
+                  if (!conditionFlag && !groupFlag) {
+                    if (res?.form_permission?.signatories === true) {
+                      result?.result?.push({
+                        field_label: 'Signature',
+                        field_type: 'signature',
+                      });
+                    }
+                    setForm(result?.result);
+                    // setConditionModelData(res?.result);
+                    setGroupModelData(result?.result);
+                  } else if (groupFlag) {
+                    setGroupModelData(result?.result);
+                  }
+                }
+              });
+          } else if (res?.form_permission?.signatories === true) {
+            setForm([
+              { field_type: 'text' },
+              { field_type: 'radio', option: [{ '': '' }, { '': '' }] },
+              { field_type: 'checkbox', option: [{ '': '' }, { '': '' }] },
+              {
+                field_label: 'Signature',
+                field_type: 'signature',
+              },
+            ]);
           }
         }
       })
@@ -404,7 +466,12 @@ const AddFormField = (props) => {
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
-                          navigate('/form/setting',{state:{id: location?.state?.id,form_name: location?.state?.form_name}});
+                          navigate('/form/setting', {
+                            state: {
+                              id: location?.state?.id,
+                              form_name: location?.state?.form_name,
+                            },
+                          });
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
@@ -835,7 +902,22 @@ const AddFormField = (props) => {
                   <Row>
                     <Col sm={12}>
                       <div className="button mb-5">
-                        <Button className="preview" onClick={()=>{navigate(`/form/preview/${location?.state?.form_name}`,{state:{id: location?.state?.id,form_name:location?.state?.form_name}})}}>Preview</Button>
+                        <Button
+                          className="preview"
+                          onClick={() => {
+                            navigate(
+                              `/form/preview/${location?.state?.form_name}`,
+                              {
+                                state: {
+                                  id: location?.state?.id,
+                                  form_name: location?.state?.form_name,
+                                },
+                              }
+                            );
+                          }}
+                        >
+                          Preview
+                        </Button>
                         <Button className="saveForm" onClick={onSubmit}>
                           Save Form
                         </Button>
@@ -1215,73 +1297,76 @@ const AddFormField = (props) => {
                                     />
                                     <span className="checkmark"></span>
                                   </label>
-                                  {groupModelData[Index]?.section_name===item.toLowerCase().split(' ').join('_') && <div className="sub_check_box">
-                                    <h2>Applicable to:</h2>
-                                    <div className="sub_check_box_list">
-                                      <div className="modal_check_box">
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Franchisor Admin
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
-                                        </div>
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Franchisee Admin
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
-                                        </div>
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Co-ordinators
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
-                                        </div>
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Co-ordinators
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
-                                        </div>
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Co-ordinators
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
+                                  {groupModelData[Index]?.section_name ===
+                                    item.toLowerCase().split(' ').join('_') && (
+                                    <div className="sub_check_box">
+                                      <h2>Applicable to:</h2>
+                                      <div className="sub_check_box_list">
+                                        <div className="modal_check_box">
+                                          <div className="modal-two-check">
+                                            <label class="container">
+                                              Franchisor Admin
+                                              <input
+                                                type="checkbox"
+                                                id="abc"
+                                                name="section_name"
+                                                value="abc"
+                                              />
+                                              <span class="checkmark"></span>
+                                            </label>
+                                          </div>
+                                          <div className="modal-two-check">
+                                            <label class="container">
+                                              Franchisee Admin
+                                              <input
+                                                type="checkbox"
+                                                id="abc"
+                                                name="section_name"
+                                                value="abc"
+                                              />
+                                              <span class="checkmark"></span>
+                                            </label>
+                                          </div>
+                                          <div className="modal-two-check">
+                                            <label class="container">
+                                              Co-ordinators
+                                              <input
+                                                type="checkbox"
+                                                id="abc"
+                                                name="section_name"
+                                                value="abc"
+                                              />
+                                              <span class="checkmark"></span>
+                                            </label>
+                                          </div>
+                                          <div className="modal-two-check">
+                                            <label class="container">
+                                              Co-ordinators
+                                              <input
+                                                type="checkbox"
+                                                id="abc"
+                                                name="section_name"
+                                                value="abc"
+                                              />
+                                              <span class="checkmark"></span>
+                                            </label>
+                                          </div>
+                                          <div className="modal-two-check">
+                                            <label class="container">
+                                              Co-ordinators
+                                              <input
+                                                type="checkbox"
+                                                id="abc"
+                                                name="section_name"
+                                                value="abc"
+                                              />
+                                              <span class="checkmark"></span>
+                                            </label>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
-                                  </div>}
+                                  )}
                                 </>
                               );
                             })}
@@ -1365,9 +1450,13 @@ const AddFormField = (props) => {
                       </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <div className='setting_model_body'>
-                    <Setting onModelChange={()=>{setFormSettingFlag(false);}} />
-                    </div>
+                      <div className="setting_model_body">
+                        <Setting
+                          onModelChange={() => {
+                            setFormSettingFlag(false);
+                          }}
+                        />
+                      </div>
                     </Modal.Body>
                   </Modal>
                 </Form>

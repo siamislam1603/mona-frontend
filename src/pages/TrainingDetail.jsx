@@ -133,14 +133,14 @@ const TrainingDetail = () => {
                     </div>
                     <div className="othpanel">
                       <div className="extra-btn">
-                        <Dropdown>
+                        {/* <Dropdown>
                           <Dropdown.Toggle id="extrabtn" className="ctaact">
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             <Dropdown.Item href="#">Delete All</Dropdown.Item>
                           </Dropdown.Menu>
-                        </Dropdown>
+                        </Dropdown> */}
                       </div>
                     </div>
                   </header>
