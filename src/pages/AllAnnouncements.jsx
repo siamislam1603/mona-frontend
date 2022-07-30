@@ -31,15 +31,15 @@ const [searchData,setSearchData] = useState()
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
       let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&search=&offset=&limit=`, {
+      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&search=&offset=0&limit=5`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
-      console.log("The All Announcement",response);
+      console.log("The All Announcement",response.data.result);
       
       if(response.status === 200 && response.data.status === "success") {
-          setAnnouncementDetail(response.data.searchedData);
+          setAnnouncementDetail(response.data.result.searchedData);
       }
     } catch (error) {
         if(error.response.status === 404){
@@ -144,7 +144,7 @@ useEffect(() =>{
 
 // console.log("The franhise",props.franchisee)
   console.log(" THE LOAD MORE DATA inside All ANnoncements",props.loadData)
-// console.log("The annoumce all ",announcementDetails)
+console.log("The annoumce all ",announcementDetails)
   // console.log("The seach in all announcement", props.search,props.searchValue)
 
   return (

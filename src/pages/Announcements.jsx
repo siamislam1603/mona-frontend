@@ -34,6 +34,7 @@ const Announcements =  () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [franchiseeData,setFranchiseeData]=useState('');
   const [offset,setOffSet] = useState(0)
+  const [page,setPage]= useState(0);
   const [loadMoreData,setLoadMoreData]= useState([])
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
@@ -45,6 +46,7 @@ const Announcements =  () => {
   //   fetchUserDetails();
   // }, 200);
   let search = " "
+  let loadError = " "
 
   const handleSearchOnChange =(e) => {
     e.preventDefault();
@@ -52,23 +54,40 @@ const Announcements =  () => {
   };
   const loadMore = async (e) =>{
     try {
-    setOffSet(prevstate => prevstate+10);
+      console.log("The offset before",page)
+      setPage(page+5);
+    console.log("The offsetvalue after",page)
+    let franchiseeFormat 
+    franchiseeFormat = selectedFranchisee && selectedFranchisee
+    .split(',')[0]
+    .split(' ')
+    .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
+    .join('_')
+    .toLowerCase();
+    if(!franchiseeFormat || franchiseeFormat === "undefined"){
+      // console.log("The if elese",franchiseeFormat)
+      franchiseeFormat = "all"
+    }
+    console.log("The loadmore franhsie fomrat",franchiseeFormat)
     let api_url = '';
-    api_url = `${BASE_URL}/announcement/?franchiseeAlias=all&search=${search === " " ? "":search}&offset=${offset}&limit=10`
+    api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=${page}&limit=5`
     console.log("The load more button click",api_url)
     const response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    let newre = response.data.searchedData
+    let newre = response.data.result.searchedData
     console.log("The new data",newre)
+    console.log("The response")
+    
     console.log("Load more button reponse",response)
     setLoadMoreData((prev)=> ([
     ...prev,
     ...newre
     ]));
     } catch (error) {
+      loadError = error;
       console.log("The error insdie load More",error)
     }
 
@@ -81,9 +100,11 @@ const Announcements =  () => {
       if(e){
         search = e.target.value;
       }
+      // console.log("The e event",e)
+
       console.log("The search value", search)
-      let franchiseeFormat 
-      franchiseeFormat = selectedFranchisee&& selectedFranchisee
+      let franchiseeFormat ="all"
+      franchiseeFormat = selectedFranchisee && selectedFranchisee
       .split(',')[0]
       .split(' ')
       .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
@@ -96,11 +117,10 @@ const Announcements =  () => {
     }
     let offst =0;
     let limit =10
-    if(selectedFranchisee){
 
       // console.log("The franhsie Format",search)
-       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=${offst}&limit=${limit}`
-    }
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=&limit=5`
+    
 
     console.log("The api url",api_url)
     const response = await axios.get(api_url, {
@@ -111,15 +131,15 @@ const Announcements =  () => {
     // console.log("The data after franchees select",response)
 
       if(response.status === 200 && response.data.status === "success"){
-          setFranchiseeData(response.data)
+          setFranchiseeData(response.data.result)
 
       }     
     } catch (error) {
-      //  if(error.response.status === 404){
-      //   // console.log("The error",error)
-      //   setFranchiseeData(error.response.data)
-      //  }
-      console.log("The error inside franhsie",error)
+       if(error.response.status === 404){
+        console.log("The error franchise",error)
+        setFranchiseeData(error.response.data)
+       }
+      // console.log("The error inside franhsie",error)
     }
   
   };
@@ -133,13 +153,18 @@ const Announcements =  () => {
   useEffect(() =>{
     loadMore()
     console.log("The load more inside useEffe")
+    fetchUserDetails()
     // setSelectedFranchisee("all")
     // setSelectedFranchisee(selectedFranchisee)
     // selectedFranchisee(selectedFranchisee)
     // console.log("The selected Franhsie".setSelectedFranchisee,selectedFranchisee)
   },[])
+  useEffect(() =>{
+    setOffSet(10)
+  },[search,selectedFranchisee])
   // console.log("The selectd franhise ",selectedFranchisee)
   console.log("The Load More data" ,loadMoreData)
+  console.log("The frnahsie length",franchiseeData)
   return (
     <>
       <div id="main">
@@ -192,7 +217,7 @@ const Announcements =  () => {
                              />}
                 
                   </div>
-                    
+                  {/* {franchiseeData && franchiseeData.searchedData.length} */}
                   <button onClick={loadMore} type="button" class="btn btn-primary">Load More</button>
                 
                 </div>

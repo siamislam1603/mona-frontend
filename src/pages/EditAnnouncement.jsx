@@ -321,7 +321,7 @@ const EditAnnouncement = () => {
   const dateToFormat = '1976-04-19T12:59-0500';
   // start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
 
- console.log("The format time",moment("2022-07-29T11:17:00.000Z").utc().format('HH:mm:ss'))
+ 
   return (
     <>
       {/* {console.log('Annoucement--->', announcementData)}
@@ -394,9 +394,6 @@ const EditAnnouncement = () => {
                                 }));
                               }}
                             /> */}
-    
-                            
-                         {/* </div>       */}
                           {
                             localStorage.getItem('user_role') === 'franchisor_admin' ? (
                               <div className="select-with-plus">
