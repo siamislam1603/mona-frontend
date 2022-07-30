@@ -137,13 +137,13 @@ const createAnnouncement = async (data) => {
       const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
       if(response.status === 200 && Object.keys(response.data).length > 1) {
         const { users } = response.data;
-        setFetchedFranchiseeUsers([
+        setFetchedFranchiseeUsers(
           ...users?.map((data) => ({
             id: data.id,
             cat: data.fullname.toLowerCase().split(" ").join("_"),
             key: data.fullname
           })),
-        ]);
+        );
       }
     };
 
@@ -157,11 +157,12 @@ const createAnnouncement = async (data) => {
           "Authorization": `Bearer ${token}`
         }
       });
-  
+      console.log("The franhsie list",response)
       if(response.status === 200 && response.data.status === "success") {
         let { franchiseeList } = response.data;
-  
+
         setFranchiseeData(franchiseeList.map(franchisee => ({
+                   
           id: franchisee.id,
           value: franchisee.franchisee_alias,
           label: franchisee.franchisee_name
@@ -306,7 +307,7 @@ const createAnnouncement = async (data) => {
 
    
 // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-// console.log(franchiseeData);
+console.log("The franhiseData 1",franchiseeData);
   return (
     
     <>
