@@ -39,7 +39,7 @@ let DeleteId = [];
 const UserManagement = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState('All');
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id') || 'All');
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
