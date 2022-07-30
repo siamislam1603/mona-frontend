@@ -118,7 +118,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/child-enrollment/2"
           element={
@@ -128,7 +128,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/child-enrollment/3"
           element={
@@ -138,7 +138,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/child-enrollment/4"
           element={
@@ -148,7 +148,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/child-enrollment/5"
           element={
@@ -158,7 +158,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/child-enrollment/6"
           element={
@@ -168,7 +168,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/child-enrollment/7"
           element={
@@ -191,8 +191,8 @@ const Main = () => {
         <Route
           path="/reset-password"
           element={
-            
-              <ResetPassword />
+
+            <ResetPassword />
           }
         />
 
@@ -225,7 +225,7 @@ const Main = () => {
               <EditFranchisees />
             </Protected>
           }
-        />    
+        />
 
         <Route
           path="/all-franchisees"
@@ -388,13 +388,13 @@ const Main = () => {
           }
         />
         <Route
-        path='/form/setting'
-        element={
-          <Protected isLoggedIn={isLoggedIn}>
-            <SignIn />
-            <FormSetting />
-          </Protected>
-        }
+          path='/form/setting'
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FormSetting />
+            </Protected>
+          }
         />
         <Route
           path="/form/add"
@@ -506,7 +506,7 @@ const Main = () => {
           }
         />
 
-      <Route
+        <Route
           path="/my-announcements"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -567,7 +567,7 @@ const Main = () => {
             )
           }
         />
-         <Route
+        <Route
           path="/edit-announcement/:id"
           element={
             typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
@@ -593,15 +593,15 @@ const Main = () => {
         <Route
           path="/children/:id"
           element={
-          <Protected isLoggedIn={isLoggedIn}>
-            <SignIn />
-            <Children />
-          </Protected>
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Children />
+            </Protected>
           }
         />
 
       </Routes>
-      
+
     </main>
   );
 };

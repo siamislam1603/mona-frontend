@@ -162,7 +162,6 @@ const EditUser = () => {
   };
 
   const handleChange = (event) => {
-    event.preventDefault();
     const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -211,7 +210,12 @@ const EditUser = () => {
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCountryData = async () => {
-    const response = await axios.get(`${BASE_URL}/api/country-data`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/country-data`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     if (response.status === 200) {
       const { countryDataList } = response.data;
       setCountryData(
@@ -225,7 +229,12 @@ const EditUser = () => {
 
   // FETCHES USER ROLES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchUserRoleData = async () => {
-    const response = await axios.get(`${BASE_URL}/api/user-role`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/user-role`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     if (response.status === 200) {
       const { userRoleList } = response.data;
       setUserRoleData(
@@ -258,8 +267,15 @@ const EditUser = () => {
   };
 
   const fetchTrainingCategories = async () => {
+    let token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`);
+      `${BASE_URL}/training/get-training-categories`,
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
+    );
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
       setTrainingCategoryData([
@@ -273,7 +289,12 @@ const EditUser = () => {
   };
 
   const fetchProfessionalDevelopementCategories = async () => {
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     
     if(response.status === 200 && response.data.status === "success") {
       const { pdcList } = response.data;
@@ -287,7 +308,11 @@ const EditUser = () => {
 
   const fetchBuinessAssets = async () => {
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     
     if(response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
@@ -340,7 +365,8 @@ const EditUser = () => {
     }
   }
 
-  const handleSignatureDialog = () => {
+  const handleSignatureDialog = (data) => {
+    setSignatureImage(data);
     if(signatureImage) {
       setShowSignatureDialog(false);
     }
@@ -369,10 +395,10 @@ const EditUser = () => {
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
-  // editUserData && console.log('EDIT USER DATA:', editUserData);
-  // formData && console.log('FORM DATA:', formData);
-  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-  signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
+  editUserData && console.log('EDIT USER DATA:', editUserData);
+  formData && console.log('FORM DATA:', formData);
+  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
+
   return (
     <>
       <div id="main">
@@ -808,16 +834,17 @@ const EditUser = () => {
                 <Row>
                   <UserSignature
                     field_label="Signature:"
+                    handleSignatureDialog={handleSignatureDialog}
                     onChange={setSignatureImage} />
                 </Row>
               </Modal.Body>
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
               <div class="text-center">
-                <button 
+                {/* <button 
                   type="button" 
                   className="btn btn-primary" 
-                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => handleSignatureDialog()}>Submit</button>
+                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => handleSignatureDialog()}>Submit</button> */}
               </div>
               </Modal.Footer>
             </Modal>
