@@ -32,7 +32,7 @@ const [announcementData, setAnnouncementData] = useState({
 const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
-  const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
+  const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [error, setError] = useState({user_roles: []});
 

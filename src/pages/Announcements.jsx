@@ -31,12 +31,13 @@ const Announcements =  () => {
   // const [search,setSearch]=useState("");
   const [searchData,setSearchData] = useState([])
   const[searchword,setSearchWord] = useState(""); 
-  const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [selectedFranchisee, setSelectedFranchisee] = useState("All");
   const [franchiseeData,setFranchiseeData]=useState('');
   const [offset,setOffSet] = useState(0)
   const [page,setPage]= useState(0);
   const [loadMoreData,setLoadMoreData]= useState([])
   const [theCount,setCount]= useState(null)
+  const [theCommon,setTheCommon] = useState([])
 
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
@@ -73,23 +74,26 @@ const Announcements =  () => {
     }
     console.log("The loadmore franhsie fomrat",franchiseeFormat)
     let api_url = '';
-    api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=${page}&limit=5`
- 
+    api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset=${page}&limit=5`
+    console.log("Teh api url",api_url)
     const response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
+    console.log("THE REPONSE IN LOAD MORE ",response.data.result)
     let newre = response.data.result.searchedData
     setCount(response.data.result.count)
-    console.log("The new data",count)
-    console.log("The response")
+    console.log("The count",response.data.result.count)
+    // console.log("The new data",newre)
+    // console.log("The response",response) 
     
-    console.log("Load more button reponse",response)
+    // console.log("Load more button reponse",response)
     setLoadMoreData((prev)=> ([
     ...prev,
     ...newre
     ]));
+    
     } catch (error) {
       loadError = error;
       console.log("The error insdie load More",error)
@@ -119,14 +123,15 @@ const Announcements =  () => {
       // console.log("The if elese",franchiseeFormat)
       franchiseeFormat = "all"
     }
+    // console.log("The franhiseeFormat",franchiseeFormat)
     let offst =0;
     let limit =10
 
       // console.log("The franhsie Format",search)
-       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search === " " ? "":search}&offset=&limit=5`
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset=&limit=5`
     
 
-    console.log("The api url",api_url)
+    // console.log("The api url",api_url)
     const response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -137,7 +142,11 @@ const Announcements =  () => {
       if(response.status === 200 && response.data.status === "success"){
           setFranchiseeData(response.data.result)
 
-      }     
+
+      }    
+      setCount(response.data.result.count)
+
+      console.log("The franshise count",response.data.result.count)
     } catch (error) {
        if(error.response.status === 404){
         console.log("The error franchise",error)
@@ -150,14 +159,14 @@ const Announcements =  () => {
   
   useEffect(() =>{
     if(selectedFranchisee){
-      console.log("The franchise user cahnge")
+      // console.log("The franchise user cahnge")
       fetchUserDetails()
     }
   },[selectedFranchisee])
   useEffect(() =>{
     loadMore()
     console.log("The load more inside useEffe")
-    fetchUserDetails()
+    // fetchUserDetails()
     // setSelectedFranchisee("all")
     // setSelectedFranchisee(selectedFranchisee)
     // selectedFranchisee(selectedFranchisee)
@@ -167,8 +176,10 @@ const Announcements =  () => {
     setOffSet(10)
   },[search,selectedFranchisee])
   // console.log("The selectd franhise ",selectedFranchisee)
-  console.log("The Load More data" ,loadMoreData)
-  console.log("The frnahsie length",franchiseeData)
+  // console.log("The Load More data" ,loadMoreData)
+  console.log("The frnahsie Data",franchiseeData)
+  // console.log("The id",selectedFranchisee)
+  console.log("The count outside", theCount)
   return (
     <>
       <div id="main">
@@ -228,7 +239,7 @@ const Announcements =  () => {
                     <button onClick={loadMore} type="button" class="btn btn-primary">Load More</button>
 
                   ) }
-            
+                 
                 
                 </div>
               </div>

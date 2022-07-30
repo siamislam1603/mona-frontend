@@ -231,8 +231,6 @@ const UserManagement = () => {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-
-
     if (response.status === 200) {
       const { users } = response.data;
       console.log('USERS:', users);
