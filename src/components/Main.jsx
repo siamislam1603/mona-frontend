@@ -202,6 +202,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               {/* <ForgotPassword /> */}
+              <SignIn />
               <AddPermissions />
             </Protected>
           }

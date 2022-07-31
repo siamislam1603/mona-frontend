@@ -74,21 +74,25 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   }
 
   const fetchCreatedTrainings = async () => {
-    let user_id = localStorage.getItem('user_id');
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training?category_id=${filter.category_id}&search=${filter.search}`, {
-      headers: {
-        "Authorization": "Bearer " + token
+    try {
+      let user_id = localStorage.getItem('user_id');
+      let token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/training?category_id=${filter.category_id}&search=${filter.search}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+
+      if(response.status === 200 && response.data.status === "success") {
+        const { searchedData } = response.data;
+        let myTrainings = searchedData.filter(training => training.addedBy === parseInt(user_id));
+        let otherTrainings = searchedData.filter(training => training.addedBy !== parseInt(user_id));
+
+        setMyTrainingData(myTrainings);
+        setOtherTrainingData(otherTrainings);
       }
-    });
-
-    if(response.status === 200 && response.data.status === "success") {
-      const { searchedData } = response.data;
-      let myTrainings = searchedData.filter(training => training.addedBy === parseInt(user_id));
-      let otherTrainings = searchedData.filter(training => training.addedBy !== parseInt(user_id));
-
-      setMyTrainingData(myTrainings);
-      setOtherTrainingData(otherTrainings);
+    } catch(error) {
+      console.log('Erorr:', error);
     }
   };
 

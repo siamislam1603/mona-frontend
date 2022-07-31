@@ -79,9 +79,9 @@ function ChildEnrollment() {
                   <LeftNavbar/>
                 </aside>
                 <div className="sec-column">
-                  <TopHeader
+                  {/* <TopHeader
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={setSelectedFranchisee} />
+                    setSelectedFranchisee={setSelectedFranchisee} /> */}
                   <div className="entry-container">
                     <header className="title-head">
                       <h1 className="title-lg">Child Enrollment Form</h1>
