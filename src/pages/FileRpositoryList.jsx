@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Container, Dropdown, Form, Modal, Row, Col } from 'react-bootstrap';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import LeftNavbar from '../components/LeftNavbar';
@@ -8,7 +8,9 @@ import makeAnimated from 'react-select/animated';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
+import axios from "axios";
 import paginationFactory from 'react-bootstrap-table2-paginator';
 const animatedComponents = makeAnimated();
 const { SearchBar } = Search;
@@ -34,73 +36,103 @@ const FileRpositoryList = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [userData, setUserData] = useState([]);
+    const [user, setUser] = useState([]);
+    const GetFile = async () => {
+        // let response = await axios.get(`${BASE_URL}fileRepo/files-by-category/6`, {
+        //     headers: {
+        //         authorization: `Bearer ${localStorage.getItem('token')}`,
+        //     },
+        // })
+        // console.log(response, "response")
+        var myHeaders = new Headers();
+        myHeaders.append(
+            'authorization',
+            'Bearer ' + localStorage.getItem('token')
+        );
+
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow',
+            headers: myHeaders,
+        };
+        let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/6`, requestOptions)
+        response = await response.json();
+        setUser(response.result)
+
+        const users = response.result.files;
+
+        console.log(users, "success")
+
+        let tempData = users.map((dt) => ({
+            name: `${dt.fileType}`,
+            createdAt: dt.createdAt,
+            userID: dt.id,
+            creatorName: dt.creatorName + "," + dt.creatorRole
+        }));
+        // tempData = tempData.filter((data) => data.is_deleted === 0);
+        console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
+        setUserData(tempData);
+    }
+    console.log(user, "user")
+    useEffect(() => {
+        GetFile();
+    }, [])
 
     const [columns, setColumns] = useState([
         {
             dataField: 'name',
             text: 'Name',
             sort: true,
-            // formatter: (cell) => {
-            //     cell = cell.split(',');
-            //     return (
-            //         <>
-            //             <Link to="/file-repository-List" className="FileResp">
-            //                 <div className="user-list">
-            //                     <span>
-            //                         <img src="../img/gfolder-ico.png" className="me-2" alt="" />
-            //                     </span>
-            //                     <span className="user-name">
-            //                         {cell[0]}
-            //                         <small>{cell[1]}</small>
-            //                     </span>
-            //                 </div>
-            //             </Link>
-            //         </>
-            //     );
-            // },
+            formatter: (cell) => {
+                console.log()
+                return (
+                    <>
+                        <div className="user-list">
+                            <span>
+                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                            </span>
+                            <span className="user-name">
+                                {cell}
+                            </span>
+                        </div>
+
+                    </>
+                );
+            },
         },
+
         {
             dataField: 'createdAt',
             text: 'Created on',
             sort: true,
         },
+
         {
             dataField: 'creatorName',
             text: 'Created by',
             sort: true,
-            // formatter: (cell) => {
-            //     cell = cell.split(',');
-            //     return (
-            //         <>
-            //             <div className="user-list">
-            //                 <span className="user-name">
-            //                     {cell[0]}
-            //                     <small>{cell[1]}</small>
-            //                 </span>
-            //             </div>
-            //         </>
-            //     );
-            // }
+            formatter: (cell) => {
+                cell = cell.split(',');
+                return (
+                    <>
+                        <div className="user-list">
+                            <span className="user-name">
+                                {cell[0]}
+                                <small>{cell[1]}</small>
+                            </span>
+                        </div>
+                    </>
+                );
+            }
+        },
+        {
+            dataField: 'Shared',
+            text: 'Shared',
+            sort: true,
         },
         {
             dataField: 'repository_files',
             text: '',
-            // formatter: (cell) => {
-            //     return (
-            //         <>
-            //             <div className="cta-col">
-            //                 <Dropdown>
-            //                     <Dropdown.Toggle variant="transparent" id="ctacol">
-            //                         <img src="../img/dot-ico.svg" alt="" />
-            //                     </Dropdown.Toggle>
-            //                     <Dropdown.Menu>
-            //                         <Dropdown.Item href="#">Delete</Dropdown.Item>
-            //                     </Dropdown.Menu>
-            //                 </Dropdown>
-            //             </div>
-            //         </>
-            //     );
-            // },
         },
     ]);
     return (
@@ -118,7 +150,7 @@ const FileRpositoryList = () => {
                                     <div className="user-management-sec repository-sec">
                                         <ToolkitProvider
                                             keyField="name"
-                                            // data={userData}
+                                            data={userData}
                                             columns={columns}
                                             search
                                         >
@@ -132,7 +164,7 @@ const FileRpositoryList = () => {
                                                             </span>
                                                             <span className="user-name">
                                                                 Daily Use
-                                                                <small>140 files</small>
+                                                                <small>{user.count} files</small>
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">
@@ -240,11 +272,11 @@ const FileRpositoryList = () => {
                                                             </div>
                                                         </div>
                                                     </header>
-                                                    {/* <BootstrapTable
+                                                    <BootstrapTable
                                                         {...props.baseProps}
                                                         selectRow={selectRow}
                                                         pagination={paginationFactory()}
-                                                    /> */}
+                                                    />
                                                 </>
                                             )}
                                         </ToolkitProvider>

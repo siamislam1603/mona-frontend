@@ -68,6 +68,7 @@ const FileRepository = () => {
   const [user, setUser] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [category, setCategory] = useState([]);
+  console.log(category, "category")
   const [filterFlag, setFilterFlag] = useState(false);
   const [selectedAll, setSelectedAll] = useState(false);
   const handleClose = () => setShow(false);
@@ -75,7 +76,6 @@ const FileRepository = () => {
   const [userRole, setUserRole] = useState([]);
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [loaderFlag, setLoaderFlag] = useState(false);
-
 
   const [columns, setColumns] = useState([
     {
@@ -157,22 +157,18 @@ const FileRepository = () => {
   userData && console.log('USER DATA:', userData.map(data => data));
 
   const GetData = async () => {
-    let response = await axios.get(`${BASE_URL}/fileRepo/files-by-category/6`, {
+    let response = await axios.get(`${BASE_URL}/fileRepo/2`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     })
-    // .then((response) => {
-    //   setPost(response.data.searchedData)
-    //   console.log(post,)
-    // })
     console.log(response, "response")
     if (response.status === 200) {
       const users = response.data.searchedData;
       console.log(users, "success")
 
       let tempData = users.map((dt) => ({
-        name: `${dt.fileType}, ${dt.fileName}`,
+        name: `${dt.categoryId}, ${dt.fileName}`,
         createdAt: dt.createdAt,
         userID: dt.id,
         creatorName: dt.creatorName + "," + dt.creatorRole
@@ -196,20 +192,18 @@ const FileRepository = () => {
   }, []);
 
   // if (!post) return null;
-  const getFileCategory = () => {
+  const getFileCategory = async () => {
     var myHeaders = new Headers();
     myHeaders.append(
       'authorization',
       'Bearer ' + localStorage.getItem('token')
     );
-
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
       headers: myHeaders,
     };
-
-    fetch(`${BASE_URL}/fileRepo/2`, requestOptions)
+    fetch(`${BASE_URL}/fileRepo/`, requestOptions)
       .then((result) => setCategory(result?.result))
       .catch((error) => console.log('error', error));
   };
