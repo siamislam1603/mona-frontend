@@ -27,6 +27,7 @@ import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import { createFileRepoValidation } from '../helpers/validation';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 let selectedUserId = '';
 const { SearchBar } = Search;
@@ -85,24 +86,21 @@ const FileRepository = () => {
         cell = cell.split(',');
         return (
           <>
-            <div className="user-list">
-              <span>
-                <img src="../img/gfolder-ico.png" className="me-2" alt="" />
-              </span>
-              <span className="user-name">
-                {cell[0]}
-                <small>{cell[1]}</small>
-              </span>
-            </div>
+            <Link to="/file-repository-List" className="FileResp">
+              <div className="user-list">
+                <span>
+                  <img src="../img/gfolder-ico.png" className="me-2" alt="" />
+                </span>
+                <span className="user-name">
+                  {cell[0]}
+                  <small>{cell[1]}</small>
+                </span>
+              </div>
+            </Link>
           </>
         );
       },
     },
-    // {
-    //   dataField: 'creatorName',
-    //   text: 'Name',
-    //   sort: true,
-    // },
     {
       dataField: 'createdAt',
       text: 'Created on',
@@ -146,67 +144,7 @@ const FileRepository = () => {
         );
       },
     },
-
-    // {
-    //   dataField: 'repository_files',
-    //   text: 'Created on',
-    //   sort: true,
-    //   formatter: (cell) => {
-    //     return (
-    //       <>
-    //         <div className="user-list">
-    //           {/* <span className="user-pic">
-    //             <img src={cell[0]} alt="" />
-    //           </span> */}
-    //           <span className="user-name">
-    //             {cell[0].createdAt.split("T")[0]}
-    //             {/* <small>{cell[2]}</small> */}
-    //           </span>
-    //         </div>
-    //       </>
-    //     );
-    //   },
-    // },
-    // {
-    //   dataField: 'repository_files',
-    //   text: 'Created by',
-    //   sort: true,
-    //   formatter: (cell) => {
-    //     return (
-    //       <>
-    //         <div className="user-list">
-    //           <span className="user-name">
-    //             {cell[0].creatorName} <small className='text-capitalize'>{cell[0].creatorRole.split("_").join(" ")}</small>
-    //           </span>
-    //         </div>
-    //       </>
-    //     );
-    //   },
-    // },
-    // {
-    //   dataField: 'repository_files',
-    //   text: '',
-    //   formatter: (cell) => {
-    //     return (
-    //       <>
-    //         <div className="cta-col">
-    //           <Dropdown>
-    //             <Dropdown.Toggle variant="transparent" id="ctacol">
-    //               <img src="../img/dot-ico.svg" alt="" />
-    //             </Dropdown.Toggle>
-    //             {/* <Dropdown.Menu>
-    //               <Dropdown.Item href="#">Delete</Dropdown.Item>
-    //             </Dropdown.Menu> */}
-    //           </Dropdown>
-    //         </div>
-    //       </>
-    //     );
-    //   },
-    // },
   ]);
-
-
-
 
   const [tabFlag, setTabFlag] = useState(true);
   const [fileRepoData, setFileRepoData] = useState([]);
@@ -219,7 +157,7 @@ const FileRepository = () => {
   userData && console.log('USER DATA:', userData.map(data => data));
 
   const GetData = async () => {
-    let response = await axios.get(`${BASE_URL}/fileRepo/2`, {
+    let response = await axios.get(`${BASE_URL}/fileRepo/files-by-category/6`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -727,7 +665,6 @@ const FileRepository = () => {
                               </div>
                             </div>
                           </header>
-
                           <div className="training-cat mb-3">
                             <ul>
                               <li>
