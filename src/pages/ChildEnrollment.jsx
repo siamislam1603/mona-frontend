@@ -9,6 +9,7 @@ import StepFour from "./ChildEnrollment/ChildEnrollment4";
 import StepFive from "./ChildEnrollment/ChildEnrollment5";
 import StepSix from "./ChildEnrollment/ChildEnrollment6";
 import StepSeven from "./ChildEnrollment/ChildEnrollment7";
+import StepEight from "./ChildEnrollment/ChildEnrollment8";
 import { useEffect } from "react";
 import axios from 'axios';
 import { BASE_URL } from "../components/App";
@@ -42,17 +43,22 @@ function ChildEnrollment() {
     let parentId = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
 
+    console.log(`Parent ID: ${parentId}\ntoken: ${token}`);
+
     let response = await axios.get(`${BASE_URL}/enrollment/parent/child/${parentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
+    console.log('STEP DATA RESPONSE:', response);
+
     if(response.status === 200 && response.data.status === "success") {
       let {childData} = response.data;
       localStorage.setItem('enrolled_child_id', childData[0].id);
       // localStorage.setItem('isChildEnrolled', childData[0].)
-      let form_step = childData[0].form_step;
+      let form_step = childData[0].form_step || 1;
+      console.log('Setting the step to', form_step);
       setstep(form_step);
     } else {
       setstep(1);
@@ -60,6 +66,7 @@ function ChildEnrollment() {
   };
 
   useEffect(() => {
+    console.log('Updating step from Database!');
     updateStepFromDatabase();
   }, []);
 
@@ -256,6 +263,34 @@ function ChildEnrollment() {
                     </header>
                     <div className="enrollment-form-sec">
                       <StepSeven nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Container>
+          </section>
+        </div>
+      );
+
+    case 8:
+      return (
+        <div id="main">
+          <section className="mainsection">
+            <Container>
+              <div className="admin-wrapper">
+                <aside className="app-sidebar">
+                  <LeftNavbar/>
+                </aside>
+                <div className="sec-column">
+                  <TopHeader
+                    selectedFranchisee={selectedFranchisee}
+                    setSelectedFranchisee={setSelectedFranchisee} />
+                  <div className="entry-container">
+                    <header className="title-head">
+                      <h1 className="title-lg">Child Enrollment Form</h1>
+                    </header>
+                    <div className="enrollment-form-sec">
+                      <StepEight nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
                     </div>
                   </div>
                 </div>

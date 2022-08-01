@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { BASE_URL } from './App';
 
-const TopHeader = ({ setSelectedFranchisee }) => {
+let temp = () => {}
+
+const TopHeader = ({ setSelectedFranchisee = temp }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
+  const [franchiseeId, setFranchiseeId] = useState({ franchisee_name: 'All' });
   const [permissionList, setPermissionList] = useState();
 
   const savePermissionInState = async () => {
@@ -21,31 +24,42 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     });
     if (response.status === 200 && response.data.status === "success") {
       const { franchiseeList: franchiseeData } = response.data;
-      setFranchiseeList([
-        franchiseeData.map((data) => ({
+
+      let renderedData, filteredData;
+      if(localStorage.getItem('user_role') === 'franchisor_admin') {
+        renderedData = franchiseeData.map((data) => ({
           id: data.id,
           franchisee_name: `${data.franchisee_name}, ${data.city}`,
-        })),
-      ]);
-    }
+        }));
+        setFranchiseeList(renderedData);
+      } else {
+        let franchisee_id = localStorage.getItem('franchisee_id');
+        renderedData = franchiseeData.map((data) => ({
+          id: data.id,
+          franchisee_name: `${data.franchisee_name}, ${data.city}`,
+        }));
+        filteredData = renderedData.filter(d => parseInt(d.id) === parseInt(franchisee_id));
+        setFranchiseeList(filteredData);
+      }
+    } 
   };
 
 
-  const fetchAndPopulateFranchiseeDetails = async () => {
-    const response = await axios.get(
-      `${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`
-    );
-    if (response.status === 200) {
-      const { franchisee } = response.data;
-      setSelectedFranchisee(franchisee.franchisee_name ? franchisee.franchisee_name === "All" ? "" : franchisee.franchisee_name : "", franchisee.id);
-      setFranchiseeList(
-        [franchisee].map((data) => ({
-          id: data.id,
-          franchisee_name: `${data.franchisee_name}, ${data.city}`,
-        }))
-      );
-    }
-  };
+  // const fetchAndPopulateFranchiseeDetails = async () => {
+  //   const response = await axios.get(
+  //     `${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`
+  //   );
+  //   if (response.status === 200) {
+  //     const { franchisee } = response.data;
+  //     setSelectedFranchisee(franchisee.franchisee_name ? franchisee.franchisee_name === "All" ? "" : franchisee.franchisee_name : "", franchisee.id);
+  //     setFranchiseeList(
+  //       [franchisee].map((data) => ({
+  //         id: data.id,
+  //         franchisee_name: `${data.franchisee_name}, ${data.city}`,
+  //       }))
+  //     );
+  //   }
+  // };
 
   const logout = async () => {
     const response = await axios.get(`${BASE_URL}/auth/logout`);
@@ -69,29 +83,29 @@ const TopHeader = ({ setSelectedFranchisee }) => {
   };
 
   const selectFranchisee = (e) => {
-    let id;
-    franchiseeList.map((item) => {
-      if (item.franchisee_name === e) {
-        id = item.id;
-      }
-    });
-    setSelectedFranchisee(e, id);
-    localStorage.setItem('selectedFranchisee', e);
+    console.log('SELECTED FRANCHISEE:', e);
+    if(e === 'All') {
+      setFranchiseeId({franchisee_name: 'All'});
+      setSelectedFranchisee('all');
+    } else {
+      setFranchiseeId({...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0]});
+      setSelectedFranchisee(e);
+    }
   };
 
+  // useEffect(() => {
+  //   setSelectedFranchisee('All');
+  // }, [franchiseeList]);
+
   useEffect(() => {
-    if (localStorage.getItem('user_role') === 'franchisor_admin') {
-      fetchFranchiseeList();
-    } else {
-      fetchAndPopulateFranchiseeDetails();
-    }
+    fetchFranchiseeList();
   }, []);
 
   useEffect(() => {
     savePermissionInState();
   }, []);
 
-  franchiseeList && console.log('FRANCHISEE LIST:', franchiseeList);
+  franchiseeId && console.log('Franchisee id:', franchiseeId);
   return (
     <>
       <div className="topheader">
@@ -99,7 +113,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
           <div className="selectdropdown">
             <Dropdown onSelect={selectFranchisee}>
               <Dropdown.Toggle id="dropdown-basic">
-                {localStorage.getItem('selectedFranchisee') ||
+                {franchiseeId?.franchisee_name ||
                   franchiseeList[0]?.franchisee_name ||
                   'No Data Available'}
               </Dropdown.Toggle>
@@ -115,7 +129,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                 {franchiseeList.map((data) => {
                   return (
                     <React.Fragment key={data.id}>
-                      <Dropdown.Item eventKey={`${data.franchisee_name}`}>
+                      <Dropdown.Item eventKey={`${data.id}`}>
                         <span className="loction-pic">
                           <img alt="" id="user-pic" src="/img/user.png" />
                         </span>
