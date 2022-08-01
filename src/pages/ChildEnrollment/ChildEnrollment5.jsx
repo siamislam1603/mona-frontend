@@ -96,7 +96,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
         if(response.status === 201 && response.data.status === "success") {
           
           // UPDATING THE STEP VALUE INSIDE CHILD TABLE
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {form_step: step}, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {form_step: nextstep}, {
             headers: {
               "Authorization": `Bearer ${token}`
             }

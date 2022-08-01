@@ -54,7 +54,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [ethnicityData, setEthnicityData] = useState(null);
   const [languageData, setLanguageData] = useState(null);
   // const [countryData, setCountryData] = useState(null);
-  const [formStepData, setFormStepData] = useState(null);
+  const [formStepData, setFormStepData] = useState(step);
 
   // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
 
@@ -68,16 +68,26 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   // FUNCTION TO UPDATE THIS FORM DATA
   const updateFormOneData = async (childData, parentData) => {
+    console.log('UPDATING FORM ONE DATA!');
     let token = localStorage.getItem('token');
     let childId = localStorage.getItem('enrolled_child_id');
-    let parentId = localStorage.getItem('enrolled_parent_id');
+    let parentId = localStorage.getItem('user_id');
 
     // UPDATING CHILD DETAIL
-    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData }, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    let response;
+    if(formStepData > step) {
+      response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+    } else {
+      response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData, form_step:  nextstep }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+    }
 
     if(response.status === 201 && response.data.status === "success") {
       // UPDATIN PARENT DETAIL
@@ -96,44 +106,44 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   };
 
   // FUNCTION TO SAVE THIS FORM DATA
-  const saveFormOneData = async (childData, parentData) => {
-    console.log('PARENT DATA:', parentData);
-    let token = localStorage.getItem('token');
-    let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...childData, nextstep }, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+  // const saveFormOneData = async (childData, parentData) => {
+  //   console.log('PARENT DATA:', parentData);
+  //   let token = localStorage.getItem('token');
+  //   let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...childData, nextstep }, {
+  //     headers: {
+  //       "Authorization": `Bearer ${token}`
+  //     }
+  //   });
 
-    if(response.status === 201 && response.data.status === "success") {
-      const { id: childId } = response.data.child;
+  //   if(response.status === 201 && response.data.status === "success") {
+  //     const { id: childId } = response.data.child;
 
-      // SAVING CHILD ID TO LOCAL STORAGE FOR FURTHER USE
-      localStorage.setItem('enrolled_child_id', childId);
+  //     // SAVING CHILD ID TO LOCAL STORAGE FOR FURTHER USE
+  //     localStorage.setItem('enrolled_child_id', childId);
 
-      // SAVING PARENT DETAIL
-      let user_id = localStorage.getItem('user_id');
-      response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId, user_parent_id: user_id}, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
+  //     // SAVING PARENT DETAIL
+  //     let user_id = localStorage.getItem('user_id');
+  //     response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId, user_parent_id: user_id}, {
+  //       headers: {
+  //         "Authorization": `Bearer ${token}`
+  //       }
+  //     });
 
-      console.log('PARENT RESPONSE:', response);
-      if(response.status === 201 && response.data.status === "success") {
-        let { parent } = response.data;
-        localStorage.setItem('enrolled_parent_id', parent.id);
+  //     console.log('PARENT RESPONSE:', response);
+  //     if(response.status === 201 && response.data.status === "success") {
+  //       let { parent } = response.data;
+  //       localStorage.setItem('enrolled_parent_id', parent.id);
 
-        // HIDING THE DIALOG BOX FROM DASHBOARD
-        let user_id = localStorage.getItem('user_id');
-        response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
+  //       // HIDING THE DIALOG BOX FROM DASHBOARD
+  //       let user_id = localStorage.getItem('user_id');
+  //       response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
 
-        if(response.status === 201 && response.data.status === "success") {
-          nextStep();
-        }
-      }
-    }
-  };
+  //       if(response.status === 201 && response.data.status === "success") {
+  //         nextStep();
+  //       }
+  //     }
+  //   }
+  // };
 
   const handleChildData = event => {
     const { name, value } = event.target;
@@ -160,14 +170,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       setChildFormErrors(errorChild);
       setParentFormErrors(errorParent);
     } else {
-
-      if(formStepData > step) {
-        console.log('UPDATING THE EXISTING DATA!');
-        updateFormOneData(formOneChildData, formOneParentData);
-      } else {
-        console.log('CREATING NEW DATA!')
-        saveFormOneData(formOneChildData, formOneParentData);
-      }
+      updateFormOneData(formOneChildData, formOneParentData);
+      // if(formStepData > step) {
+      //   console.log('UPDATING THE EXISTING DATA!');
+      //   updateFormOneData(formOneChildData, formOneParentData);
+      // } else {
+      //   console.log('CREATING NEW DATA!')
+      //   saveFormOneData(formOneChildData, formOneParentData);
+      // }
     }
     // nextStep();
   };
@@ -222,6 +232,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // };
 
   const fetchParentUserDetails = async () => {
+    console.log('FETCHING PARENT DATA AND POPULATE');
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('user_id');
 
@@ -246,7 +257,9 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   };
 
   const fetchChildDataAndPopulate = async () => {
+    console.log('FETCHING CHILD DATA AND POPULATE!');
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    console.log('Enrolled child id:', enrolledChildId);
     let token = localStorage.getItem('token');
 
     let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
@@ -257,34 +270,39 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
+      let { parent } = response.data;
+      
 
       setFormOneChildData(prevState => ({
         ...prevState,
-        fullname: child.fullname,
-        family_name: child.family_name,
-        usually_called: child.usually_called,
-        dob: child.dob,
-        home_address: child.home_address,
-        language: child.language,
-        country_of_birth: child.country_of_birth,
-        gender: child.sex,
-        child_origin: child.child_origin,
-        development_delay: child.developmental_delay,
-        another_service: child.using_another_service,
-        school_status: child.school_status
+        fullname: child?.fullname,
+        family_name: child?.family_name,
+        usually_called: child?.usually_called,
+        dob: child?.dob,
+        home_address: child?.home_address,
+        language: child?.language,
+        country_of_birth: child?.country_of_birth,
+        gender: child?.sex,
+        child_origin: child?.child_origin,
+        development_delay: child?.developmental_delay,
+        another_service: child?.using_another_service,
+        school_status: child?.school_status
       }));
 
       setFormOneParentData(prevState => ({
         ...prevState,
-        family_name: child.parents[0].family_name,
-        given_name: child.parents[0].given_name,
-        relation_type: child.parents[0].relation_type,
-        dob: child.parents[0].dob,
-        child_live_with_this_parent: child.parents[0].child_live_with_this_parent,
-        place_of_birth: child.parents[0].place_of_birth,
-        ethnicity: child.parents[0].ethnicity,
-        primary_language: child.parents[0].primary_language,
-        occupation: child.parents[0].occupation
+        family_name: child?.parents[0].family_name || parent.fullname,
+        given_name: child?.parents[0].given_name || parent.fullname,
+        relation_type: child?.parents[0].relation_type,
+        address_as_per_child: child?.parents[0].address_as_per_child || parent.address,
+        telephone: child?.parents[0].telephone || parent.telephone,
+        email: child?.parents[0].email || parent.email,
+        dob: child?.parents[0].dob,
+        child_live_with_this_parent: child?.parents[0].child_live_with_this_parent,
+        place_of_birth: child?.parents[0].place_of_birth,
+        ethnicity: child?.parents[0].ethnicity,
+        primary_language: child?.parents[0].primary_language,
+        occupation: child?.parents[0].occupation
       }));
 
       setFormStepData(child.form_step);
@@ -299,17 +317,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   }, []);
 
   useEffect(() => {
-    console.log('FETCHING CHILD DATA AND POPULATE!');
     fetchChildDataAndPopulate();
-  }, [localStorage.getItem('enrolled_child_id')]);
+  }, []);
 
-  useEffect(() => {
-    console.log('FETCHING PARENT DATA AND POPULATE');
-    fetchParentUserDetails(); 
-  }, [])
+  // useEffect(() => {
+  //   fetchParentUserDetails(); 
+  // }, [])
 
   // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
+  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
   console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
@@ -771,6 +788,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                               id="parent1" 
                               className="ps-0" 
                               label="Parent" 
+                              checked={formOneParentData?.relation_type === "parent"}
                               defaultChecked
                               onChange={(event) => setFormOneParentData(prevState => ({
                                 ...prevState,
@@ -781,6 +799,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                               name="information1" 
                               id="guardian1" 
                               label="Guardian"
+                              checked={formOneParentData?.relation_type === "guardian"}
                               onChange={(event) => setFormOneParentData(prevState => ({
                                 ...prevState,
                                 relation_type: "guardian"
@@ -886,7 +905,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             placeholder="Email Address"
                             value={formOneParentData?.email || ""}
                             name="email"
-                            onBlur={(e) => {
+                            onChange={(e) => {
                               handleParentData(e);
                               setParentFormErrors(prevState => ({
                                 ...prevState,
