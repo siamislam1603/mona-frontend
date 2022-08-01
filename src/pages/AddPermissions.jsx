@@ -34,10 +34,10 @@ const AddPermissions = () => {
             let arr = obj[id]
             let index = arr.indexOf(value)
             let removed = arr.splice(index, 1);
+            obj[id] = [...new Set(obj[id])];
             if(arr.length == 0){
                 delete obj[id]
             }
-            obj[id] = [...new Set(obj[id])];
             setFinalObj(obj)
         }
         else{

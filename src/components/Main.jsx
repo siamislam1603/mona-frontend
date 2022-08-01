@@ -52,6 +52,7 @@ import FormSetting from '../pages/FormBuilder/formSetting';
 import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
 import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
+import FileRpositoryList from '../pages/FileRpositoryList';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -108,7 +109,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/child-enrollment/1"
           element={
@@ -178,7 +179,7 @@ const Main = () => {
             </Protected>
           }
         />
-    
+
         <Route
           path="/forgot-password"
           element={
@@ -596,6 +597,15 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <Children />
+            </Protected>
+          }
+        />
+        <Route
+          path="/file-repository-List"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FileRpositoryList />
             </Protected>
           }
         />

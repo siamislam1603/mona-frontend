@@ -11,8 +11,6 @@ function App() {
       <Main />
     </div>
   );
-
 }
-
 export default App;
 export { BASE_URL };
