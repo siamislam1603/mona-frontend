@@ -31,9 +31,14 @@ const Announcements =  () => {
   // const [search,setSearch]=useState("");
   const [searchData,setSearchData] = useState([])
   const[searchword,setSearchWord] = useState(""); 
-  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+  const [selectedFranchisee, setSelectedFranchisee] = useState("all");
   const [franchiseeData,setFranchiseeData]=useState('');
-   
+  const [offset,setOffSet] = useState(0)
+  const [page,setPage]= useState(0);
+  const [loadMoreData,setLoadMoreData]= useState([])
+  const [theCount,setCount]= useState(null)
+  const [theCommon,setTheCommon] = useState([])
+
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -44,85 +49,139 @@ const Announcements =  () => {
   //   fetchUserDetails();
   // }, 200);
   let search = " "
-  const fetchSearchData = async(e) =>{
-    try {
-      let api_url = '';
-      const userId = localStorage.getItem("user_id")
-       search = e.target.value;
-       if(!search){
-        search = " "
-       } 
-       console.log('SEARCH:', search);
-      if (search) {   
-        //  api_url =   `${BASE_URL}/announcement/createdAnnouncement/${userId}/?search=${search}`;
-        // api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search}`
-        
-      }
-       console.log("The api Url", api_url)
-  
-       let response = await axios.get(api_url, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      console.log("The reponse of serach",response.data.data.searchedData)
-      setSearchData(response.data.data.searchedData)
-    } catch (error) {
-      console.log("The error in search APi",error)
-    }
-  }
+  let loadError = " "
+  let count =""
+
   const handleSearchOnChange =(e) => {
     e.preventDefault();
-    // fetchSearchData(e)
-      fetchUserDetails(e)    //  console.log("The api_url",api_url)
+    fetchUserDetails(e)    //  console.log("The api_url",api_url)
   };
+  const loadMore = async (e) =>{
+    try {
+    setPage(page+5); 
+    let franchiseeFormat 
+    franchiseeFormat = selectedFranchisee && selectedFranchisee
+    .split(',')[0]
+    .split(' ')
+    .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
+    .join('_')
+    .toLowerCase();
+    if(!franchiseeFormat || franchiseeFormat === "undefined"){
+      // console.log("The if elese",franchiseeFormat)
+      franchiseeFormat = "all"
+    }
+    // console.log("The loadmore franhsie fomrat",franchiseeFormat)
+    let api_url = '';
+    api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset=${page}&limit=5`
+    console.log("Teh api url",api_url)
+    const response = await axios.get(api_url, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    console.log("THE REPONSE IN LOAD MORE ",response.data.result)
+    let newre = response.data.result.searchedData
+    // console.log("THE LENGTH",response.data.result.searchedData.length)
+    setCount(response.data.result.count)
+    // console.log("THE LENGTH inside Load",response.data.result.searchedData.length)
+    // console.log("The new data",newre)
+    // console.log("The response",response) 
+    
+    // console.log("Load more button reponse",response)
+    setLoadMoreData((prev)=> ([
+    ...prev,
+    ...newre
+    ])); 
+    console.log(" INSIDE LOADMORE",loadMoreData)  
+    // setTheCommon(loadMoreData.length)
+    } catch (error) {
+      loadError = error;
+      console.log("The error insdie load More",error)
+    }
+
+    // fetchUserDetails(e)
+  }
   const fetchUserDetails = async (e) => {
+    // e.preventDefault()
     try {
       let api_url = '';
       if(e){
         search = e.target.value;
       }
-       if(!search){
-        search = " "
-       } 
-    let franchiseeFormat = selectedFranchisee
+      // console.log("The e event",e)
+
+      console.log("The search value", search)
+      let franchiseeFormat ="all"
+      franchiseeFormat = selectedFranchisee && selectedFranchisee
       .split(',')[0]
       .split(' ')
       .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
       .join('_')
       .toLowerCase();
-    if(!franchiseeFormat){
-      franchiseeData = "all"
+      // console.log("The franhiseFormat",franchiseeFormat)
+    if(!franchiseeFormat || franchiseeFormat === "undefined"){
+      // console.log("The if elese",franchiseeFormat)
+      franchiseeFormat = "all"
     }
-    if(selectedFranchisee){
-       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${franchiseeFormat}&search=${search}`
-    }
+    console.log("The franhiseeFormat",selectedFranchisee)
+    let offst =0;
+    let limit =10
 
-    let response = await axios.get(api_url, {
+      // console.log("The franhsie Format",search)
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset=&limit=5`
+    
+
+    // console.log("The api url",api_url)
+    const response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-      if(response.status === 200 && response.data.status === "success"){
-          console.log("The response",response)
-          setFranchiseeData(response.data)
+    // console.log("The data after franchees select",response)
 
-      }     
+      if(response.status === 200 && response.data.status === "success"){
+          setFranchiseeData(response.data.result)
+
+
+      }    
+      setCount(response.data.result.count)
+      // setTheCommon(response.data.result.searchedData.length)
+
+      // console.log("The franshise count",response.data.result.searchedData.length)
     } catch (error) {
-      //  if(error.response.status === 404){
-      //   console.log("The error",error)
-      //   setFranchiseeData(error.response.data)
-      //  }
-      console.log("The error",error)
+       if(error.response.status === 404){
+        console.log("The error franchise",error)
+        setFranchiseeData(error.response.data)
+       }
+      // console.log("The error inside franhsie",error)
     }
   
   };
   
   useEffect(() =>{
     if(selectedFranchisee){
+      // console.log("The franchise user cahnge")
       fetchUserDetails()
     }
   },[selectedFranchisee])
+  useEffect(() =>{
+    console.log("THE LOAD MORE USEEFFECT")
+    loadMore()
+    // fetchUserDetails()
+    // setSelectedFranchisee("all")
+    // setSelectedFranchisee(selectedFranchisee)
+    // selectedFranchisee(selectedFranchisee)
+    // console.log("The selected Franhsie".setSelectedFranchisee,selectedFranchisee)
+  },[])
+  useEffect(() =>{
+    setOffSet(10)
+  },[search,selectedFranchisee])
+  // console.log("The selectd franhise ",selectedFranchisee)
+  // console.log("The Load More data" ,loadMoreData.length)
+  // console.log("The frnahsie Data",franchiseeData)
+  // console.log("The id",selectedFranchisee)
+  // console.log("The count outside", theCount)
+  // console.log("THE LENGHT COMMON",theCommon)
   return (
     <>
       <div id="main">
@@ -169,12 +228,21 @@ const Announcements =  () => {
 
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements  searchValue={search} franchisee ={franchiseeData}/>}
+                      && <AllAnnouncements  searchValue={search} franchisee ={franchiseeData} loadData={loadMoreData}/>}
                     {tabLinkPath === "/my-announcements" 
                       && <MyAnnouncements  searchValue={search} franchisee ={franchiseeData}
                              />}
                 
                   </div>
+                  {/* {franchiseeData && franchiseeData.searchedData.length} */}
+                  {theCommon && theCommon ===theCount ? (
+                    null
+                  ):(
+                    <button onClick={loadMore} type="button" class="btn btn-primary">Load More</button>
+
+                  ) }
+                 
+                
                 </div>
               </div>
             </div>
