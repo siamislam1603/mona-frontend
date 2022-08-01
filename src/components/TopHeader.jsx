@@ -31,6 +31,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
           id: data.id,
           franchisee_name: `${data.franchisee_name}, ${data.city}`,
         }));
+        renderedData.unshift({ franchisee_name: 'All' })
         setFranchiseeList(renderedData);
       } else {
         let franchisee_id = localStorage.getItem('franchisee_id');
@@ -86,16 +87,20 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
     console.log('SELECTED FRANCHISEE:', e);
     if(e === 'All') {
       setFranchiseeId({franchisee_name: 'All'});
-      setSelectedFranchisee('all');
+      setSelectedFranchisee('All');
     } else {
       setFranchiseeId({...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0]});
       setSelectedFranchisee(e);
     }
   };
 
-  // useEffect(() => {
-  //   setSelectedFranchisee('All');
-  // }, [franchiseeList]);
+  useEffect(() => {
+    if(localStorage.getItem('user_role') === 'franchisor_admin') {
+      setSelectedFranchisee('All');
+    } else {
+      setSelectedFranchisee(franchiseeList[0]?.id);
+    }
+  }, [franchiseeList]);
 
   useEffect(() => {
     fetchFranchiseeList();
