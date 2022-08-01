@@ -280,12 +280,13 @@ function AddFormBuilder(props) {
                         </div>
                       </Form.Group>
                     </Col>
-                    {form?.form_template_select === 'Yes' ? (
+                    {form?.form_template_select === 'Yes' || form?.form_template_select === true ? (
                       <Col md={6} className="mt-3 mt-md-0">
                         <Form.Group>
                           <Form.Label>Select Previous Form</Form.Label>
                           <Form.Select
                             name="previous_form"
+                            onChange={(e)=>{setField(e.target.name, e.target.value);}}
                             isInvalid={!!errors.previous_form}
                           >
                             <option value="1">Select Previous Form</option>

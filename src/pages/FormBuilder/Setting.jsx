@@ -1068,7 +1068,7 @@ function Setting(props) {
                               </div>
                             </div>
                           )}
-                          <label class="form_label_title form-label mt-3 pb-1">
+                          {/* <label class="form_label_title form-label mt-3 pb-1">
                             Form Visible To
                           </label>
                           <div className="checkbox-card">
@@ -1169,7 +1169,7 @@ function Setting(props) {
                                 <span className="checkmark"></span>
                               </label>
                             </div>
-                          </div>
+                          </div> */}
                         </Col>
                       </Row>
                     </>
@@ -1302,7 +1302,7 @@ function Setting(props) {
                         'selectedFormVisibleUser---->',
                         selectedFormVisibleUser
                       )}
-                      <Row>
+                      {/* <Row>
                         <Col md={12}>
                           <Form.Group>
                             <Form.Label>Form Visible To</Form.Label>
@@ -1322,7 +1322,7 @@ function Setting(props) {
                             <p className="error">{errors.franchisee}</p>
                           </Form.Group>
                         </Col>
-                      </Row>
+                      </Row> */}
                     </>
                   )}
                 </div>

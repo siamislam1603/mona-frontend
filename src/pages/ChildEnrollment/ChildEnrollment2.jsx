@@ -105,7 +105,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           });
 
           if(response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('enrolled_parent_id');
+            let parentId = localStorage.getItem('user_id');
+
             response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {i_give_medication_permission: parentMedicationPermission}, {
               headers: {
                 "Authorization": `Bearer ${token}`
@@ -160,7 +161,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           
           // UPDATING PARENT PERMISSION
           if(response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('enrolled_parent_id');
+            let parentId = localStorage.getItem('user_id');
             response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {i_give_medication_permission: parentMedicationPermission}, {
               headers: {
                 "Authorization": `Bearer ${token}`
