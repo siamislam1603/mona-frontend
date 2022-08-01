@@ -58,7 +58,8 @@ const Announcements =  () => {
   };
   const loadMore = async (e) =>{
     try {
-    setPage(page+5); 
+      // console.log("The")
+    setPage(page+5);  
     let franchiseeFormat 
     franchiseeFormat = selectedFranchisee && selectedFranchisee
     .split(',')[0]
@@ -88,12 +89,12 @@ const Announcements =  () => {
     // console.log("The response",response) 
     
     // console.log("Load more button reponse",response)
-    setLoadMoreData((prev)=> ([
+    await setLoadMoreData((prev)=> ([
     ...prev,
     ...newre
     ])); 
-    console.log(" INSIDE LOADMORE",loadMoreData)  
     // setTheCommon(loadMoreData.length)
+    loadMoreData.length>0 && console.log("THE LOAD MORE DATA INSIDE",loadMoreData)
     } catch (error) {
       loadError = error;
       console.log("The error insdie load More",error)
@@ -128,7 +129,7 @@ const Announcements =  () => {
     let limit =10
 
       // console.log("The franhsie Format",search)
-       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset=&limit=5`
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset${offset}=&limit=5`
     
 
     // console.log("The api url",api_url)
@@ -144,10 +145,11 @@ const Announcements =  () => {
 
 
       }    
+      
       setCount(response.data.result.count)
       // setTheCommon(response.data.result.searchedData.length)
 
-      // console.log("The franshise count",response.data.result.searchedData.length)
+      // console.log("The franshise count",response.data.result.searchedData.)
     } catch (error) {
        if(error.response.status === 404){
         console.log("The error franchise",error)
@@ -167,6 +169,7 @@ const Announcements =  () => {
   useEffect(() =>{
     console.log("THE LOAD MORE USEEFFECT")
     loadMore()
+    console.log("The Load More data" ,loadMoreData.length)
     // fetchUserDetails()
     // setSelectedFranchisee("all")
     // setSelectedFranchisee(selectedFranchisee)
@@ -176,12 +179,21 @@ const Announcements =  () => {
   useEffect(() =>{
     setOffSet(10)
   },[search,selectedFranchisee])
+  useEffect(() =>{
+    setTheCommon(loadMoreData.length)
+  },[loadMoreData])
+  useEffect(() =>{
+    setTheCommon(franchiseeData?.searchedData?.length)
+  },[franchiseeData])
   // console.log("The selectd franhise ",selectedFranchisee)
-  // console.log("The Load More data" ,loadMoreData.length)
-  // console.log("The frnahsie Data",franchiseeData)
+
+  console.log("The frnahsie Data",franchiseeData)
   // console.log("The id",selectedFranchisee)
-  // console.log("The count outside", theCount)
-  // console.log("THE LENGHT COMMON",theCommon)
+  console.log("THE PAGE", page)
+   console.log("THE COMMON LENGHT",theCommon)
+ 
+
+  // 
   return (
     <>
       <div id="main">
