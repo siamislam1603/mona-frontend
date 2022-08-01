@@ -105,7 +105,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
     savePermissionInState();
   }, []);
 
-  franchiseeId && console.log('Franchisee id:', franchiseeId);
+  franchiseeList && console.log('FRANCHISEE LIST:', franchiseeList)
   return (
     <>
       <div className="topheader">

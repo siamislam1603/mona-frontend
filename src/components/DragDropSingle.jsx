@@ -52,7 +52,7 @@ export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, 
 
   return (
     <div className="file-upload-form mt-3">
-      <div {...getRootProps({ className: 'dropzone' })}>
+      <div {...getRootProps({ className: 'dropzone' })} style={{ width: "150px" }}>
         <input {...getInputProps()} />
         <div className="picimg">
           {
