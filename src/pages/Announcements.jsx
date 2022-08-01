@@ -81,9 +81,9 @@ const Announcements =  () => {
     });
     console.log("THE REPONSE IN LOAD MORE ",response.data.result)
     let newre = response.data.result.searchedData
-    console.log("THE LENGTH",response.data.result.searchedData.length)
+    // console.log("THE LENGTH",response.data.result.searchedData.length)
     setCount(response.data.result.count)
-    console.log("THE LENGTH inside Load",response.data.result.searchedData.length)
+    // console.log("THE LENGTH inside Load",response.data.result.searchedData.length)
     // console.log("The new data",newre)
     // console.log("The response",response) 
     
@@ -93,7 +93,7 @@ const Announcements =  () => {
     ...newre
     ])); 
     console.log(" INSIDE LOADMORE",loadMoreData)  
-    setTheCommon(loadMoreData.length)
+    // setTheCommon(loadMoreData.length)
     } catch (error) {
       loadError = error;
       console.log("The error insdie load More",error)
@@ -123,7 +123,7 @@ const Announcements =  () => {
       // console.log("The if elese",franchiseeFormat)
       franchiseeFormat = "all"
     }
-    // console.log("The franhiseeFormat",franchiseeFormat)
+    console.log("The franhiseeFormat",selectedFranchisee)
     let offst =0;
     let limit =10
 
@@ -145,9 +145,9 @@ const Announcements =  () => {
 
       }    
       setCount(response.data.result.count)
-      setTheCommon(response.data.result.searchedData.length)
+      // setTheCommon(response.data.result.searchedData.length)
 
-      console.log("The franshise count",response.data.result.searchedData.length)
+      // console.log("The franshise count",response.data.result.searchedData.length)
     } catch (error) {
        if(error.response.status === 404){
         console.log("The error franchise",error)
@@ -177,7 +177,7 @@ const Announcements =  () => {
     setOffSet(10)
   },[search,selectedFranchisee])
   // console.log("The selectd franhise ",selectedFranchisee)
-  console.log("The Load More data" ,loadMoreData.length)
+  // console.log("The Load More data" ,loadMoreData.length)
   // console.log("The frnahsie Data",franchiseeData)
   // console.log("The id",selectedFranchisee)
   // console.log("The count outside", theCount)
