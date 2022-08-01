@@ -286,17 +286,20 @@ const Children = () => {
                                                 Children
                                             </h1>
 
-                                            <Link 
-                                                to={`/child-enrollment-init/${params.id}`}
-                                                style={{
-                                                    backgroundColor: "#455C58",
-                                                    color: "#fff",
-                                                    padding: ".9rem 2.3rem",
-                                                    fontWeight: 500,
-                                                    borderRadius: "5px"
-                                                }}>
-                                                Add Child
-                                            </Link>
+                                            {
+                                                localStorage.getItem('user_role') !== "guardian" &&
+                                                <Link 
+                                                    to={`/child-enrollment-init/${params.id}`}
+                                                    style={{
+                                                        backgroundColor: "#455C58",
+                                                        color: "#fff",
+                                                        padding: ".9rem 2.3rem",
+                                                        fontWeight: 500,
+                                                        borderRadius: "5px"
+                                                    }}>
+                                                    Add Child
+                                                </Link>
+                                            }
                                         </header>
                                         <BootstrapTable
                                             keyField="id"
