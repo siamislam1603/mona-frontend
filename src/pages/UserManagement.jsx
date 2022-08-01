@@ -39,7 +39,7 @@ let DeleteId = [];
 const UserManagement = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id') || 'All');
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
@@ -212,23 +212,17 @@ const UserManagement = () => {
   const fetchUserDetails = async () => {
     let api_url = '';
 
-    let franchiseeFormat = selectedFranchisee
-      .split(',')[0]
-      .split(' ')
-      .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
-      .join('_')
-      .toLowerCase();
     if (search) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?search=${search}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}`;
     }
     if (filter) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?filter=${filter}`;
     }
     if (search && filter) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?search=${search}&filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}&filter=${filter}`;
     }
     if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}`;
     }
 
 
@@ -237,8 +231,6 @@ const UserManagement = () => {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-
-
     if (response.status === 200) {
       const { users } = response.data;
       console.log('USERS:', users);
@@ -330,7 +322,6 @@ const UserManagement = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader
-                  selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
                 <div className="entry-container">

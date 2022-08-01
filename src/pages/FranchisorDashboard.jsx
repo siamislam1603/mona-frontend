@@ -73,6 +73,7 @@ const columns1 = [
 const FranchisorDashboard = () => {
   const [count, setcount] = React.useState(null);
   const [state, setstate] = React.useState();
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
   let token = localStorage.getItem('token');
@@ -114,6 +115,8 @@ const FranchisorDashboard = () => {
     announcement();
   }, []);
 
+  selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
+
   if (!count) return null;
   return (
     <>
@@ -125,7 +128,8 @@ const FranchisorDashboard = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader 
+                  setSelectedFranchisee={setSelectedFranchisee}/>
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>
