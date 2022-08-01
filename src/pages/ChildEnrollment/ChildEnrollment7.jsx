@@ -103,9 +103,21 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     updateFormSevenData();
   }
 
-  const handleSubmissionRedirection = () => {
-    let parent_id = localStorage.getItem('user_id');
-    window.location.href=`http://localhost:5000/children/${parent_id}`;
+  const handleSubmissionRedirection = async () => {
+    console.log('UPDATING THE ENROLLMENT STATE!');
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    console.log('ENROLLED CHILD ID:', enrolledChildId);
+    let token = localStorage.getItem('token');
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${enrolledChildId}`, { isChildEnrolled: 1 }, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+      let parent_id = localStorage.getItem('user_id');
+      window.location.href=`http://localhost:5000/children/${parent_id}`;
+    }
   }
       
   // useEffect(() => {
