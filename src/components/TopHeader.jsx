@@ -22,7 +22,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
     if (response.status === 200 && response.data.status === "success") {
       const { franchiseeList: franchiseeData } = response.data;
       setFranchiseeList([
-        franchiseeData.map((data) => ({
+        ...franchiseeData.map((data) => ({
           id: data.id,
           franchisee_name: `${data.franchisee_name}, ${data.city}`,
         })),
