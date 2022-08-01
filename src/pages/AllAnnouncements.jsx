@@ -40,7 +40,7 @@ const [theDelete,setTheDelete] = useState("");
       
       if(response.status === 200 && response.data.status === "success") {
         console.log(response);
-          setAnnouncementDetail(response.data.createdAnnouncement);
+          setAnnouncementDetail(response.data.searchedData);
       }
     } catch (error) {
         if(error.response.status === 404){
