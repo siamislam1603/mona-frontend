@@ -82,7 +82,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         }
       });
     } else {
-      response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData, form_step:  nextstep }, {
+      response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData, form_step:  nextstep, isChildEnrolled: 1 }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -267,7 +267,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
       let { parent } = response.data;

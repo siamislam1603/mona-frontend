@@ -62,7 +62,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       });
 
       if(response.status === 201 && response.data.status === "success") {
-        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${child.id}`, { parent_id: parentId, sendMail: true, educatorIds: formOneChildData.educator }, {
+        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${child.id}`, { educatorIds: formOneChildData.educator }, {
           headers: {
             "Authorization": `Bearer ${token}`
           }     

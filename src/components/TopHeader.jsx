@@ -7,7 +7,7 @@ let temp = () => {}
 
 const TopHeader = ({ setSelectedFranchisee = temp }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
-  const [franchiseeId, setFranchiseeId] = useState({ franchisee_name: 'All' });
+  const [franchiseeId, setFranchiseeId] = useState();
   const [permissionList, setPermissionList] = useState();
 
   const savePermissionInState = async () => {

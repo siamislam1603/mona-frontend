@@ -284,30 +284,30 @@ const AddNewTraining = () => {
         setSettingsModalPopup(true);
 
       if(settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
-        console.log('Submitting Finally!');
+        // console.log('Submitting Finally!');
         
-        // let data = new FormData();
+        let data = new FormData();
 
-        // for(let [key, values] of Object.entries(trainingSettings)) {
-        //   data.append(`${key}`, values);
-        // }
+        for(let [key, values] of Object.entries(trainingSettings)) {
+          data.append(`${key}`, values);
+        }
 
-        // for(let [ key, values ] of Object.entries(trainingData)) {
-        //   data.append(`${key}`, values)
-        // }
+        for(let [ key, values ] of Object.entries(trainingData)) {
+          data.append(`${key}`, values)
+        }
 
-        // videoTutorialFiles.forEach((file, index) => {
-        //   data.append(`images`, file);
-        // });
+        videoTutorialFiles.forEach((file, index) => {
+          data.append(`images`, file);
+        });
 
-        // relatedFiles.forEach((file, index) => {
-        //   data.append(`images`, file);
-        // });
+        relatedFiles.forEach((file, index) => {
+          data.append(`images`, file);
+        });
         
-        // window.scrollTo(0, 0);
-        // setCreateTrainingModal(true);
-        // setLoader(true);
-        // createTraining(data);
+        window.scrollTo(0, 0);
+        setCreateTrainingModal(true);
+        setLoader(true);
+        createTraining(data);
       }
     }
   };
