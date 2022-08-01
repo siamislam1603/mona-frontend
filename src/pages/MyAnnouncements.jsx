@@ -20,15 +20,16 @@ const MyAnnouncements = (props) => {
   const myAnnouncementData = async() =>{
     let token = localStorage.getItem('token')
     let id= localStorage.getItem("user_id")
-    console.log("sending response");
-    const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${id}`, {
+    // console.log("sending response");
+    let franhiseAlias = "all"
+    const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&search=&offset=0&limit=5`, {
       headers: {
         "Authorization": "Bearer " + token
       }
      })
      console.log("The repsonse mY anncounce,",response)
      if(response.status === 200) {
-        setmyAnnouncement(response.data.data.searchedData)
+        setmyAnnouncement(response.data.result.searchedData)
      }
   }
   const deleteAnnouncement = async (id) =>{
@@ -75,30 +76,35 @@ const MyAnnouncements = (props) => {
     myAnnouncementData()
   },[])
   
-  useEffect(() =>{
-    if(!props.searchValue){
-      myAnnouncementData()
-      console.log("The search value is not found",props.searchValue)
-    }
-    else if(props.franchisee.searchData){
-      console.log("The search value have something",props.searchValue)
-      // setAnnouncementDetail(props.search)
-      setmyAnnouncement(props.franchisee.searchData)
-    }
-    else{
-      console.log("The search value have something",props.searchValue)
-      setmyAnnouncement(props.search)
-    }
-  },[props.search])
-  useEffect(() =>{
-    if(props.franchisee.status === 404){
-      console.log("Don't have fanrhise")
-    }
-    setmyAnnouncement(props.franchisee.searchedData)
-    console.log("The frnahise under all announcement",props.franchisee)
+  // useEffect(() =>{
+  //   if(!props.searchValue){
+  //     myAnnouncementData()
+  //     console.log("The search value is not found",props.searchValue)
+  //   }
+  //   else if(props.franchisee.searchData){
+  //     console.log("The search value have something",props.searchValue)
+  //     // setAnnouncementDetail(props.search)
+  //     setmyAnnouncement(props.franchisee.searchData)
+  //   }
+  //   else{
+  //     console.log("The search value have something",props.searchValue)
+  //     setmyAnnouncement(props.search)
+  //   }
+  // },[props.search])
+//   useEffect(() =>{
+//     if(props.franchisee.status === 404){
+//       console.log("Don't have fanrhise")
+//     }
+//     setmyAnnouncement(props.franchisee.searchedData)
+//     console.log("The frnahise under all announcement",props.franchisee)
     
-},[props.franchisee])
- 
+// },[props.franchisee])
+// useEffect(() =>{
+//   if(props.loadData.length>0){
+//     setmyAnnouncement(props.loadData)
+//   }
+// },[props.loadData])
+//  console.log("THE MY ANNOUNCEMENT DATA",myAnnouncement)
   return (
     <div className="announcement-accordion">
         <h1> My Announcement</h1>
