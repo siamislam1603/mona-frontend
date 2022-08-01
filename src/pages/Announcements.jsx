@@ -31,7 +31,7 @@ const Announcements =  () => {
   // const [search,setSearch]=useState("");
   const [searchData,setSearchData] = useState([])
   const[searchword,setSearchWord] = useState(""); 
-  const [selectedFranchisee, setSelectedFranchisee] = useState("All");
+  const [selectedFranchisee, setSelectedFranchisee] = useState("all");
   const [franchiseeData,setFranchiseeData]=useState('');
   const [offset,setOffSet] = useState(0)
   const [page,setPage]= useState(0);
