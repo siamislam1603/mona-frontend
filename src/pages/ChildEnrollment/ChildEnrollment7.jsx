@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Row, Form } from "react-bootstrap";
+import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
 import Select from 'react-select';
@@ -25,6 +25,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     consent_date: ""
   });
   const [formStepData, setFormStepData] = useState(step);
+  const [formStatus, setFormStatus] = useState('submission');
+  const [formSubmissionSuccessDialog, setFormSubmissionSuccessDialog] = useState(false);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
@@ -84,17 +86,38 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
         });
 
         if(response.status === 201 && response.data.status === "success") {
-          nextStep();
+          // nextStep();
+
+          setFormStatus('updation');
+          setFormSubmissionSuccessDialog(true);
         }
       }
 
-      nextStep();
+      setFormStatus('submission');
+      setFormSubmissionSuccessDialog(true);
     }
   };
 
   const handleDataSubmit = event => {
     event.preventDefault();
     updateFormSevenData();
+  }
+
+  const handleSubmissionRedirection = async () => {
+    console.log('UPDATING THE ENROLLMENT STATE!');
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    console.log('ENROLLED CHILD ID:', enrolledChildId);
+    let token = localStorage.getItem('token');
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${enrolledChildId}`, { isChildEnrolled: 1 }, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+      let parent_id = localStorage.getItem('user_id');
+      window.location.href=`http://localhost:5000/children/${parent_id}`;
+    }
   }
       
   // useEffect(() => {
@@ -199,6 +222,25 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           </div>
         </Form>
       </div>
+
+      <Modal
+        show={formSubmissionSuccessDialog}>
+        {/* onHide={() => setFormSubmissionSuccessDialog(false)}> */}
+        <Modal.Header>
+          <Modal.Title className="modal-title">Congratulations!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          { formStatus === "submission"
+            ? <p className="modal-paragraph">Form Submitted Successfully.</p>
+            : <p className="modal-paragraph">Form Updated Successfully.</p>
+          }
+        </Modal.Body>
+        <Modal.Footer>
+          <button 
+            className="modal-button"
+            onClick={() => handleSubmissionRedirection()}>Okay</button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
