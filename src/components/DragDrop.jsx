@@ -66,9 +66,9 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
   },[image])
   return (
     <div className="file-upload-form mt-3">
-      <div {...getRootProps({ className: 'dropzone' })}>
+      <div {...getRootProps({ className: 'dropzone' })} style={{ width: "150px" }}>
         <input {...getInputProps()} />
-        <span className="text-center uploadfile cursor" style={{ display: 'inline-block' }}>
+        <span className="text-center uploadfile cursor">
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
           Files
         </span>

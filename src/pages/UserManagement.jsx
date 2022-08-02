@@ -39,7 +39,7 @@ let DeleteId = [];
 const UserManagement = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id') || 'All');
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
@@ -311,6 +311,7 @@ const UserManagement = () => {
 
   const csvLink = useRef();
   userData && console.log('USER DATA:', userData.map(data => data));
+  selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
   return (
     <>
       <div id="main">

@@ -39,6 +39,7 @@ const Children = () => {
     const [selectedEducators,setSelectedEducators] = useState([]);
     const [educators, setEducators] = useState([]); 
     const [parents, setParents] = useState([]);
+    const [reloadFlag, setReloadFlag] = useState(false);
     
     const init = async() => {
         // Set Parents Franchisee
@@ -81,6 +82,26 @@ const Children = () => {
             setParents(coordinators)
           }
     }
+
+    const sendInitiationMail = async (childId) => {
+        let token = localStorage.getItem('token');
+        const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${params.id}`, { childId }, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if(response.status === 201 && response.data.status === "success") {
+            // POPUP HERE
+            console.log('Invitation Mail Sent!');
+            setReloadFlag(!reloadFlag);
+
+        }
+    };
+
+    const handleEnrollmentPageRedirection = async () => {
+        window.location.href=`/child-enrollment/1`    
+    };
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
@@ -152,15 +173,17 @@ const Children = () => {
     const products = educators.map((educator)=>({
         id: educator.id,
         name: educator.fullname + "," + (educator.profile_photo ? educator.profile_photo : "../img/user.png"),
-        Location: educator.city
+        Location: educator.city,
     }))
 
     const productsTow = childrenList?.map((child)=>({
         id: child.id,
         name: child.fullname,
         Location : child.home_address,
-        Educator: child.users
-    }))
+        Educator: child.users,
+        EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated }
+    }));
+    console.log('Products:', productsTow);
 
     const   PColumns = [
         {
@@ -206,16 +229,29 @@ const Children = () => {
 
         },
         {
-            dataField: 'number',
+            dataField: 'EnrollFlag',
             text: '',
             formatter: (cell) => {
+                console.log(cell, 'ENROLLED CELL');
                 return (
-                    <>
-                        <div className="cta-col">
-                            <button className="Enrolment_Button btn btn-outline-secondary" style={{"fontSize":"0.8rem","fontWeight":"8  00"}}>
-                                View Enrolment
-                            </button>
-                        </div>
+                    <>  {
+                            cell.enrollFlag === 0 ?
+                            <div className="cta-col">
+                                <button 
+                                    className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                    disabled={cell.initiationFlag === true}
+                                    onClick={() => sendInitiationMail(cell.childId)}>
+                                    {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
+                                </button>
+                            </div>
+                            :
+                            <div className="cta-col">
+                                <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                onClick={handleEnrollmentPageRedirection(cell.childId)}>
+                                    View Enrolment
+                                </button>
+                            </div>
+                        }
                     </>
                 );
             },
@@ -260,6 +296,11 @@ const Children = () => {
         }
     ];
 
+    useEffect(() => {
+        init();
+    }, [reloadFlag]);
+
+    childrenList && console.log('Children List:', childrenList);
     return (
         <>
             <div id="main">

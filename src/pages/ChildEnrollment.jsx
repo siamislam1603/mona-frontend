@@ -16,7 +16,7 @@ import { BASE_URL } from "../components/App";
 import { useParams } from 'react-router-dom';
 
 function ChildEnrollment() {
-  let { childId, parentId } = useParams();
+  let { childId, parentId, stepId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   //state for steps
@@ -69,6 +69,10 @@ function ChildEnrollment() {
     console.log('Updating step from Database!');
     updateStepFromDatabase();
   }, []);
+
+  // useEffect(() => {
+  //   setstep(stepId);
+  // }, [stepId])
 
   console.log('PARENT ID:', parentId);
   console.log('CHILD ID:', childId);

@@ -52,7 +52,7 @@ export default function DragDropCrop({ onSave, setPopupVisible, croppedImage, se
 
   return (
     <div className="file-upload-form mt-3">
-      <div {...getRootProps({ className: 'dropzone' })}>
+      <div {...getRootProps({ className: 'dropzone' })} style={{ width: "150px" }}>
         <input {...getInputProps()} />
         <span className="text-center uploadfile">
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
