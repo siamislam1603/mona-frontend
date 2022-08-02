@@ -247,7 +247,7 @@ const Children = () => {
                             :
                             <div className="cta-col">
                                 <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-                                onClick={handleEnrollmentPageRedirection(cell.childId)}>
+                                onClick={() => handleEnrollmentPageRedirection(cell.childId)}>
                                     View Enrolment
                                 </button>
                             </div>

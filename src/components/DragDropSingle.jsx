@@ -2,7 +2,9 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto="" }) {
+const temp = () => {};
+
+export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto="", setFormErrors=temp }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -46,6 +48,10 @@ export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, 
   useEffect(() => {
     if(croppedImage) {
       setCurrentURI(croppedImage.src);
+      setFormErrors(prevState => ({
+        ...prevState,
+        profile_pic: null
+      }));
       setData([]);
     }
   }, [croppedImage]);
