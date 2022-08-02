@@ -99,7 +99,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       });
 
       if(response.status === 201 && response.data.status === "success") {
-        nextStep();
+        let user_id = localStorage.getItem('user_id');
+        response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
+
+        if(response.status === 201 && response.data.status === "success") {
+          nextStep();
+        }
       }
     }
 
