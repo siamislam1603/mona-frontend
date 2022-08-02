@@ -98,7 +98,7 @@ export default function DropAllRelatedFile({ relatedFilesData, onSave }) {
           ))}
         </Row>
       )}
-      <div className="file-upload-form mt-3">
+      <div className="file-upload-form">
         <div {...getRootProps({ className: 'dropzone' })} style={{ width: "150px" }}> 
           <input {...getInputProps()} />
           <span className="text-center uploadfile">

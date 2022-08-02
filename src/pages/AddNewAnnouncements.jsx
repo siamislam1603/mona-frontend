@@ -445,7 +445,7 @@ console.log("The franhiseData 1",franchiseeData);
                   <div className="my-new-formsection">
                     <Row>
                       <Col sm={6}>
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label> Cover Image :</Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
@@ -454,19 +454,19 @@ console.log("The franhiseData 1",franchiseeData);
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
                           <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Related Files :</Form.Label>
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
                   {/* <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                  <Form.Group>
+                  <Form.Group className="mb-3 form-group">
                   <Form.Label>Schedule Date</Form.Label>
                   <Form.Control 
                    type="date"
@@ -476,7 +476,7 @@ console.log("The franhiseData 1",franchiseeData);
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                <Form.Group>
+                <Form.Group className="mb-3 form-group">
                   <Form.Label>Schedule Time</Form.Label>
                   <Form.Control 
                   type="time"

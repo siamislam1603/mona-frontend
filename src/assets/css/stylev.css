@@ -567,7 +567,6 @@ button:focus {
     margin: 20px 0;
 }
 
-.my-new-formsection label,
 .my-new-formsection input[type=text],
 .my-new-formsection select {
     background-color: #fff !important;
