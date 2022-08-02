@@ -30,13 +30,13 @@ const [searchData,setSearchData] = useState()
     try {
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
-      let franhiseAlias = "All"
+      let franhiseAlias = "all"
       const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&search=&offset=0&limit=5`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
-      console.log("The All Announcement",response.data.result);
+      // console.log("The All Announcement",response.data.result);
       
       if(response.status === 200 && response.data.status === "success") {
           setAnnouncementDetail(response.data.result.searchedData);
@@ -106,46 +106,55 @@ const getAddedTime = (str) =>{
 }
 useEffect(() => {
   AllAnnouncementData()
-  console.log("The")
 }, [])
 useEffect(() =>{
-  console.log("The props.ssearch state change")
+  // console.log("The props.ssearch state change")
   setSearchData(props.search)
 },[props.search]) 
 useEffect(() =>{
-  if(!props.searchValue){
+  if(!props.search){
     AllAnnouncementData()
-    console.log("The search value is not found",props.searchValue)
+    // console.log("The search value is not found",props.search)
   }
-  else if(props.franchisee.searchData){
-    console.log("The search value have something",props.searchValue)
+  else if(props.allAnnouncement){
+    // console.log("The search value have something",props.search)
     // setAnnouncementDetail(props.search)
-    setAnnouncementDetail(props.franchisee.searchData)
+    setAnnouncementDetail(props.allAnnouncement)
   }
   else {
     setAnnouncementDetail(props.search)
   }
-},[props.search])
+},[search])
  useEffect(() =>{
-    if(props.franchisee.status === 404){
-      console.log("Don't have fanrhise")
+    if(props.allAnnouncement?.length>0){
+      // console.log("Don't have fanrhise")
     }
-    setAnnouncementDetail(props.franchisee.searchedData)
-    console.log("The frnahise under all announcement",props.franchisee)
+    setAnnouncementDetail(props.allAnnouncement)
+    console.log("The frnahise under all announcement",props.allAnnouncement)
     
 },[props.franchisee])
+useEffect(() =>{
+    if(props.allAnnouncement){
+      setAnnouncementDetail(props.allAnnouncement)
+    }
+},[props.allAnnouncement])
 
 useEffect(() =>{
-  if(props.loadData.length>0){
-    setAnnouncementDetail(props.loadData)
+  if(props?.loadMoreData?.length>0){
+    setAnnouncementDetail(props.loadMoreData)
+    // console.log("THE LOAD MORE DATA IS NOT EMPYU",props.loadMoreData)
   }
-},[props.loadData])
+  else{
+    // console.log("THE LOAD MORE DATA EMPY ")
+  }
+},[props.loadMoreData])
+
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
 // console.log("The franhise",props.franchisee)
-  console.log(" THE LOAD MORE DATA inside All ANnoncements",props.loadData)
-console.log("The annoumce all ",announcementDetails)
-  // console.log("The seach in all announcement", props.search,props.searchValue)
+//   console.log(" THE All  MORE DATA inside All ANnoncements",props.allAnnouncement)
+// console.log("The annoumce all ",announcementDetails)
+  // console.log("The seach in all announcement", props.search)
 
   return (
     
@@ -266,7 +275,7 @@ console.log("The annoumce all ",announcementDetails)
                            
                            ))
                         ): (
-                          <div>No data found</div>
+                          <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
                         )
                       }
                     </Accordion>

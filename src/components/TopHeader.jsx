@@ -7,7 +7,7 @@ let temp = () => {}
 
 const TopHeader = ({ setSelectedFranchisee = temp }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
-  const [franchiseeId, setFranchiseeId] = useState(null);
+  const [franchiseeId, setFranchiseeId] = useState();
   const [permissionList, setPermissionList] = useState();
 
   const savePermissionInState = async () => {
@@ -86,7 +86,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
     console.log('SELECTED FRANCHISEE:', e);
     if(e === 'All') {
       setFranchiseeId({franchisee_name: 'All'});
-      setSelectedFranchisee('All');
+      setSelectedFranchisee('all');
     } else {
       setFranchiseeId({...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0]});
       setSelectedFranchisee(e);
@@ -94,11 +94,15 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
   };
 
   useEffect(() => {
-    // if (localStorage.getItem('user_role') === 'franchisor_admin') {
-    //   fetchFranchiseeList();
-    // } else {
-    //   fetchAndPopulateFranchiseeDetails();
-    // }
+    if(localStorage.getItem('user_role') === 'franchisor_admin') {
+      setSelectedFranchisee('All');
+      setFranchiseeId({ franchisee_name: 'All' });
+    } else {
+      setSelectedFranchisee(franchiseeList[0]?.id);
+    }
+  }, [franchiseeList]);
+
+  useEffect(() => {
     fetchFranchiseeList();
   }, []);
 
@@ -106,8 +110,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
     savePermissionInState();
   }, []);
 
-  franchiseeList && console.log('FRANCHISEE LIST:', franchiseeList);
-  franchiseeId && console.log('Franchisee id:', franchiseeId);
+  franchiseeList && console.log('FRANCHISEE LIST:', franchiseeList)
   return (
     <>
       <div className="topheader">
