@@ -152,7 +152,7 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
-      if(!croppedImage) {
+      if(croppedImage) {
         setFormErrors(prevState => ({
           ...prevState,
           profile_pic: null
