@@ -87,7 +87,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
     console.log('SELECTED FRANCHISEE:', e);
     if(e === 'All') {
       setFranchiseeId({franchisee_name: 'All'});
-      setSelectedFranchisee('All');
+      setSelectedFranchisee('all');
     } else {
       setFranchiseeId({...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0]});
       setSelectedFranchisee(e);
@@ -96,7 +96,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
 
   useEffect(() => {
     if(localStorage.getItem('user_role') === 'franchisor_admin') {
-      setSelectedFranchisee('All');
+      setSelectedFranchisee('all');
     } else {
       setSelectedFranchisee(franchiseeList[0]?.id);
     }
