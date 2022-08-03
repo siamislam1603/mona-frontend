@@ -127,7 +127,7 @@ function FormResponse(props) {
                                     <span className="text-capitalize">
                                       {item.user.role.split('_').join(' ')},
                                     </span>{' '}
-                                    {item.user.franchisee.franchisee_name}
+                                    {item?.user?.franchisee?.franchisee_name}
                                   </h6>
                                 </div>
                               </div>
