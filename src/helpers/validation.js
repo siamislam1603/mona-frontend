@@ -222,6 +222,10 @@ export const TrainingFormValidation = (form, coverImage) => {
   if (!title) {
     errors.title = 'Training title is required!';
   }
+
+  if(title <= 2) {
+    errors.title_length = "Training title should be more than 2 characters."
+  }
   
   if (!description) {
     errors.description = 'Training description is required!';

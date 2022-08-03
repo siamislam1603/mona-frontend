@@ -236,7 +236,7 @@ const AddNewTraining = () => {
       setTrainingCategory([
         ...categoryList.map((data) => ({
           id: data.id,
-          value: data.category_alias,
+          value: data.category_name,
           label: data.category_name,
         })),
       ]);
@@ -257,7 +257,7 @@ const AddNewTraining = () => {
     const { name, value } = event.target;
     setTrainingData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value.trim(),
     }));
     if (!!errors[name]) {
       setErrors({
@@ -271,7 +271,7 @@ const AddNewTraining = () => {
     event.preventDefault();
     // window.scrollTo(0, 0);
     
-    let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles); 
+    let errorObj = TrainingFormValidation(trainingData, coverImage); 
     console.log(errorObj);
     if(Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
@@ -363,12 +363,26 @@ const AddNewTraining = () => {
                     <Row>
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Name</Form.Label>
+                          <Form.Label>Training Name*</Form.Label>
                           <Form.Control
                             type="text"
                             name="title"
+                            placeholder="Enter Training Title"
                             onChange={(e) => {
-                              handleTrainingData(e);
+                              if(trainingData.title.length <= 20) {
+                                setTrainingData(prevState => ({
+                                  ...prevState,
+                                  title: e.target.value
+                                }));
+                              }
+
+                              if(trainingData.title.length > 2) {
+                                setErrors(prevState => ({
+                                  ...prevState,
+                                  title_length: null
+                                }));
+                              }
+
                               setErrors(prevState => ({
                                 ...prevState,
                                 title: null
@@ -376,12 +390,13 @@ const AddNewTraining = () => {
                             }}
                           />
                           { errors.title !== null && <span className="error">{errors.title}</span> }
+                          { errors.title === null && errors.title_length !== null && <span className="error">{errors.title_length}</span> }
                         </Form.Group>
                       </Col>
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Category</Form.Label>
+                          <Form.Label>Training Category*</Form.Label>
                           <Select
                             closeMenuOnSelect={true}
                             components={animatedComponents}
@@ -404,10 +419,11 @@ const AddNewTraining = () => {
 
                       <Col md={12} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Description</Form.Label>
+                          <Form.Label>Training Description*</Form.Label>
                           <Form.Control
                             as="textarea"
                             name="description"
+                            placeholder="Enter Training Description"
                             rows={3}
                             onChange={(e) => {
                               handleTrainingData(e);
@@ -423,30 +439,37 @@ const AddNewTraining = () => {
 
                       <Col md={12} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Meta Description</Form.Label>
+                          <Form.Label>Meta Description*</Form.Label>
                           <Form.Control
                             as="textarea"
                             name="meta_description"
+                            placeholder="Enter Meta Description"
                             rows={3}
                             onChange={(e) => {
-                              handleTrainingData(e);
+                              if(trainingData.meta_description.length >= 0 && trainingData.meta_description.length <= 250) {
+                                setTrainingData(prevState => ({
+                                  ...prevState,
+                                  meta_description: e.target.value
+                                }));
+                              }
                               setErrors(prevState => ({
                                 ...prevState,
                                 meta_description: null
                               }));
                             }}
                           />
-                          { errors.meta_description && <span className="error">{errors.meta_description}</span> }
+                          { errors.meta_description !== null && <span className="error">{errors.meta_description}</span> }
                         </Form.Group>
                       </Col>
 
                       <Col md={6} className="mb-3">
                         <Form.Group className="relative">
-                          <Form.Label>Time required to complete</Form.Label>
+                          <Form.Label>Time required to complete*</Form.Label>
                           <div style={{ display: "flex", gap: "5px" }}>
                             <Form.Control
                               style={{ flex: 6 }}
                               type="number"
+                              placeholder="Time Needed For This Training"
                               onChange={(event) => {
                                 setTrainingData((prevState) => ({
                                   ...prevState,
@@ -487,7 +510,8 @@ const AddNewTraining = () => {
       
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Cover Image :</Form.Label>
+                          <Form.Label>Upload Cover Image*:</Form.Label>
+                          <p style={{ fontSize: '9px', marginTop: "-10px" }}>(png, jpg & jpeg)</p>
                           <DropOneFile
                             onSave={setCoverImage}
                             setErrors={setErrors}
@@ -501,6 +525,8 @@ const AddNewTraining = () => {
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
                           <DropAllFile
+                            title="Video"
+                            type="video"
                             onSave={setVideoTutorialFiles}
                           />
                         </Form.Group>
@@ -558,12 +584,12 @@ const AddNewTraining = () => {
             <Row>
               <Col lg={3} sm={6}>
                 <Form.Group>
-                  <Form.Label>Start Date</Form.Label>
+                  <Form.Label>Start Date*</Form.Label>
                   <Form.Control
                     type="date"
-                    name="start_date"
                     onChange={(e) => {
                       handleTrainingSettings(e);
+
                       setTrainingSettingErrors(prevState => ({
                         ...prevState,
                         start_date: null
@@ -575,7 +601,7 @@ const AddNewTraining = () => {
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-sm-0">
                 <Form.Group>
-                  <Form.Label>Start Time</Form.Label>
+                  <Form.Label>Start Time*</Form.Label>
                   <Form.Control
                     type="time"
                     name="start_time"
@@ -760,7 +786,27 @@ const AddNewTraining = () => {
                 <div className={`custom-checkbox ${trainingSettings.is_applicable_to_all === false ? "d-none": ""}`}>
                   <Form.Label className="d-block">Select User Roles</Form.Label>
                   <div className="btn-checkbox d-block">
-                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                  <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                      <Form.Check 
+                        type="checkbox" 
+                        checked={trainingSettings.user_roles.includes("franchisee_admin")}
+                        label="Franchisee Admin"
+                        onChange={() => {
+                          if(trainingSettings.user_roles.includes("franchisee_admin")) {
+                            let data = trainingSettings.user_roles.filter(t => t !== "franchisee_admin");
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              user_roles: [...data]
+                            }));
+                          }
+
+                          if(!trainingSettings.user_roles.includes("franchisee_admin"))
+                            setTrainingSettings(prevState => ({
+                            ...prevState,
+                            user_roles: [...trainingSettings.user_roles, "franchisee_admin"]
+                        }))}} />
+                    </Form.Group>
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
                       <Form.Check 
                         type="checkbox" 
                         checked={trainingSettings.user_roles.includes("coordinator")}
@@ -780,7 +826,7 @@ const AddNewTraining = () => {
                             user_roles: [...trainingSettings.user_roles, "coordinator"]
                         }))}} />
                     </Form.Group>
-                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                       <Form.Check 
                         type="checkbox" 
                         label="Educator"
@@ -804,9 +850,10 @@ const AddNewTraining = () => {
                       <Form.Check 
                         type="checkbox" 
                         label="All Roles"
-                        checked={trainingSettings.user_roles.length === 2}
+                        checked={trainingSettings.user_roles.length === 3}
                         onChange={() => {
-                          if(trainingSettings.user_roles.includes("coordinator") 
+                          if(trainingSettings.user_roles.includes("franchisee_admin") 
+                              && trainingSettings.user_roles.includes("coordinator")
                               && trainingSettings.user_roles.includes("educator")) {
                                 setTrainingSettings(prevState => ({
                                   ...prevState,
@@ -814,11 +861,12 @@ const AddNewTraining = () => {
                                 }));
                               }
                             
-                          if(!trainingSettings.user_roles.includes("coordinator") 
+                          if(!trainingSettings.user_roles.includes("franchisee_admin")
+                              && !trainingSettings.user_roles.includes("coordinator") 
                               && !trainingSettings.user_roles.includes("educator"))
                             setTrainingSettings(prevState => ({
                               ...prevState,
-                              user_roles: ["coordinator", "educator"]
+                              user_roles: ["franchisee_admin", "coordinator", "educator"]
                             })
                         )}} />
                     </Form.Group>
@@ -859,7 +907,7 @@ const AddNewTraining = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="transparent" onClick={handleClose}>
+          <Button variant="transparent" onClick={() => setSettingsModalPopup(false)}>
             Cancel
           </Button>
           <Button variant="primary" onClick={() => {

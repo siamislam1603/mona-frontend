@@ -153,7 +153,7 @@ const UserManagement = () => {
     },
     {
       dataField: 'number',
-      text: 'Phone Number',
+      text: 'Phone',
       sort: true,
     },
     {
@@ -163,7 +163,7 @@ const UserManagement = () => {
     },
     {
       dataField: 'roleDetail',
-      text: '',
+      text: 'Action',
       formatter: (cell) => {
         cell = cell.split(',');
         return (
