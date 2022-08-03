@@ -16,7 +16,7 @@ import { BASE_URL } from "../components/App";
 import { useParams } from 'react-router-dom';
 
 function ChildEnrollment() {
-  let { childId, parentId, stepId } = useParams();
+  let { childId, parentId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   //state for steps
@@ -70,12 +70,12 @@ function ChildEnrollment() {
     updateStepFromDatabase();
   }, []);
 
-  // useEffect(() => {
-  //   setstep(stepId);
-  // }, [stepId])
-
-  console.log('PARENT ID:', parentId);
-  console.log('CHILD ID:', childId);
+  useEffect(() => {
+    if(childId && parentId) {
+      localStorage.setItem('enrolled_child_id', childId);
+      localStorage.setItem('enrolled_parent_id', parentId);
+    }
+  },[]);
 
   console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   // eslint-disable-next-line default-case

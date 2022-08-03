@@ -2896,3 +2896,8 @@ li.child_tag {
     text-decoration: none;
     color: #000
 }
+
+h6.text-capitalize {
+    color: var(--purple);
+    font-size: 20px;
+}
