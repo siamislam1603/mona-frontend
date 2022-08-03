@@ -75,7 +75,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     console.log('UPDATING FORM ONE DATA!');
     let token = localStorage.getItem('token');
     let childId = localStorage.getItem('enrolled_child_id') || paramsChildId;
-    let parentId = localStorage.getItem('user_id');
+    let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
 
     // UPDATING CHILD DETAIL
     let response;

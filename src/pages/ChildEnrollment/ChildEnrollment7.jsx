@@ -24,6 +24,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     signature: "",
     consent_date: ""
   });
+  const [consentDetail, setConsentDetail] = useState(null);
   const [formStepData, setFormStepData] = useState(step);
   const [formStatus, setFormStatus] = useState('submission');
   const [formSubmissionSuccessDialog, setFormSubmissionSuccessDialog] = useState(false);
@@ -54,6 +55,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       let { child } = response.data;
       let educators = child.users.map(e => e.id);
       let { parents } = child;
+      let { consent } = response.data;
 
       setUserSelectedEducators(educators);
       setConsentData(prevState => ({
@@ -61,6 +63,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
         parent_name: parents[0].family_name,
         consent_date: parents[0].consent_date
       }));
+      setConsentDetail(consent.map(c => ({
+        id: c.id,
+        educator_id: c.educator,
+        consent_given: c.consent_given
+      })));
       setFormStepData(child.form_step);
     };
   }
@@ -77,24 +84,33 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     })
 
     if(response.status === 201 && response.data.status === "success") {
-      if(!(formStepData > step)) {
-        console.log('CONDITION FULLFULLED!');
-        response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step:  nextstep }, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        if(response.status === 201 && response.data.status === "success") {
-          // nextStep();
-
-          setFormStatus('updation');
-          setFormSubmissionSuccessDialog(true);
+      response = await axios.patch(`${BASE_URL}/enrollment/educator-consent/${childId}`, {
+        consentPayload: consentDetail
+      }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
         }
-      }
+      });
 
-      setFormStatus('submission');
-      setFormSubmissionSuccessDialog(true);
+      if(response.status === 201 && response.data.status === "success") {
+        if(!(formStepData > step)) {
+          console.log('CONDITION FULLFULLED!');
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step:  nextstep }, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          });
+  
+          if(response.status === 201 && response.data.status === "success") {
+            // nextStep();
+            setFormStatus('updation');
+            setFormSubmissionSuccessDialog(true);
+          }
+        }
+  
+        setFormStatus('submission');
+        setFormSubmissionSuccessDialog(true);
+      }
     }
   };
 
@@ -102,6 +118,21 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     event.preventDefault();
     updateFormSevenData();
   }
+
+  const handleConsentUpdation = (consentId, consent_given) => {
+    let updatedData = consentDetail.map(c => {
+      if(c.id === consentId) {
+        return {
+          id: c.id,
+          educator_id: c.educator_id,
+          consent_given: !consent_given
+        }
+      }
+      return c;
+    });
+
+    setConsentDetail(updatedData);
+  };
 
   const handleSubmissionRedirection = async () => {
     console.log('UPDATING THE ENROLLMENT STATE!');
@@ -133,37 +164,56 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [])
 
-  consentData && console.log('Consent Data:', consentData);
+  // consentData && console.log('Consent Data:', consentData);
+  consentDetail && console.log('CONSENT DETAIL:', consentDetail);
   return (
     <>
       <div className="enrollment-form-sec">
         <Form onSubmit={handleDataSubmit}>
           <h2 className="title-xs mt-4 mb-4">Consent for educator and nominated assistant R 144</h2>
 
-          <div className="grayback">
-            <Col>
-              <Form.Group className="mb-3 single-field">
-                <Form.Label>Give consent to the educator</Form.Label>
-                <Select
-                  placeholder="Which Franchisee?"
-                  closeMenuOnSelect={false}
-                  isMulti
-                  isDisabled={true}
-                  value={educatorData?.filter(d => userSelectedEducators?.includes(parseInt(d.id)))}
-                  options={educatorData}
-                />
-              </Form.Group>
-            </Col>
-            <Form.Group className="mb-3 single-field">
-              <Form.Label>to provide care and education to my child.; and nominated assistant/s</Form.Label>
-              <Form.Control
-                type="text"
-                name="to_provide_care_and_education_to_my_child"
-                // onChange={}
-              />
-            </Form.Group>
-            <p>to support the educator in transporting my child to and from regular outings or excursion, providing care while educator has an appointment for the period of less than 4 hours, or in an emergency where the educator needs medical attention. Assistant may also provide support to the educator while the educator is providing care for my child.</p>
-          </div>
+          {
+            consentDetail && consentDetail.map(consent => {
+              return (
+                <div className="grayback" style={{ marginBottom: "1rem" }}>
+                  <Col>
+                    <Form.Group className="mb-3 single-field">
+                      <Form.Label>Give consent to the educator</Form.Label>
+                      <Select
+                        placeholder="Which Franchisee?"
+                        closeMenuOnSelect={false}
+                        isMulti
+                        isDisabled={true}
+                        value={educatorData?.filter(d => parseInt(d.id) === parseInt(consent.educator_id))}
+                        options={educatorData}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Form.Group className="mb-3 single-field">
+                    <Form.Label>to provide care and education to my child.; and nominated assistant/s</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="to_provide_care_and_education_to_my_child"
+                      // onChange={}
+                    />
+                  </Form.Group>
+                  <p>to support the educator in transporting my child to and from regular outings or excursion, providing care while educator has an appointment for the period of less than 4 hours, or in an emergency where the educator needs medical attention. Assistant may also provide support to the educator while the educator is providing care for my child.</p>
+
+                  <Form.Group>
+                    <div className="btn-checkbox" style={{padding: 0, margin: 0}}>
+                      <Form.Check 
+                        type="checkbox" 
+                        id={`accept_${consent.id}`} 
+                        checked={consent.consent_given === true}
+                        label="I consent to the above educator."
+                        onChange={() => handleConsentUpdation(consent.id, consent.consent_given)} />
+                    </div>
+                  </Form.Group>
+                </div>
+              )
+              })
+          }
+
           <h3 className="title-xs mt-4 mb-4">Authorization by Parents / Authorized person for the Approved Provider, Nomminated Supervisor or Educator</h3>
 
           <div className="grayback">

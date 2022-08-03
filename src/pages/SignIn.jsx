@@ -43,9 +43,9 @@ const SignIn = () => {
         }
       })
 
-      if(response.status === 200 && response.data.status === "success") {
+      if (response.status === 200 && response.data.status === "success") {
         let { permissionsObject } = response.data;
-        
+
         console.log('PERMISSIONS OBJECT:', permissionsObject)
         localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
       }
@@ -193,7 +193,7 @@ const SignIn = () => {
                       </Col>
                       <Col className="text-end">
                         <Link to="/forgot-password" className="custom_rest">
-                        Forgot Password?
+                          Forgot Password?
                         </Link>
                       </Col>
                     </Row>
