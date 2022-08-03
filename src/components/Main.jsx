@@ -101,7 +101,7 @@ const Main = () => {
         />
 
         <Route
-          path="/child-enrollment/:stepId"
+          path="/child-enrollment/:childId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

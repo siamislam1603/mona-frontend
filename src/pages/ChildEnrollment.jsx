@@ -16,7 +16,7 @@ import { BASE_URL } from "../components/App";
 import { useParams } from 'react-router-dom';
 
 function ChildEnrollment() {
-  let { childId, parentId, stepId } = useParams();
+  let { childId, parentId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   //state for steps
