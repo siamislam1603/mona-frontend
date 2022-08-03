@@ -4,6 +4,7 @@ import axios from 'axios';
 import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
 import { BASE_URL } from "../../components/App";
 import { useEffect } from "react";
+import { useParams } from 'react-router-dom';
 import { faListSquares } from "@fortawesome/free-solid-svg-icons";
 
 let nextstep = 3;
@@ -20,7 +21,7 @@ let disease_name = [
   "varicella"
 ];
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
-
+  let { parentId: paramsParentId } = useParams();
   const [healthInformation, setHealthInformation] = useState({
     medical_service: "",
     telephone: "",
@@ -111,7 +112,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           });
 
           if(response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('user_id');
+            let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
 
             response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
               headers: {
@@ -207,6 +208,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
       localStorage.setItem('enrolled_parent_id', child.parents[0].id);
+      if(paramsParentId) {
+        localStorage.setItem('enrolled_parent_id', paramsParentId);
+      }
+
       console.log('CHILD DATA:', child);
 
       if(child.form_step > step) {
@@ -291,10 +296,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     } else {
       if(formStepData && formStepData > step) {
         console.log('UPDATING THE EXISTING DATA!');
-        // updateFormTwoData();
+        updateFormTwoData();
       } else {
         console.log('CREATING NEW DATA!')
-        // saveFormTwoData();
+        saveFormTwoData();
       }
     }
     // nextStep();

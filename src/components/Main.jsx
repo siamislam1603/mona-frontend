@@ -80,7 +80,7 @@ const Main = () => {
           }
         />
 
-        <Route
+        {/* <Route
           path="/child-enrollment-init/:parentId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -88,7 +88,7 @@ const Main = () => {
               <ChildEnrollmentInitiation />
             </Protected>
           }
-        />
+        /> */}
 
         <Route
           path="/child-enrollment"
@@ -101,7 +101,7 @@ const Main = () => {
         />
 
         <Route
-          path="/child-enrollment/:childId"
+          path="/child-enrollment/:childId/:parentId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

@@ -587,6 +587,7 @@ const AddNewTraining = () => {
                   <Form.Label>Start Date*</Form.Label>
                   <Form.Control
                     type="date"
+                    name="start_date"
                     onChange={(e) => {
                       handleTrainingSettings(e);
 
