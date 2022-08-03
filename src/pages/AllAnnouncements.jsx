@@ -136,6 +136,7 @@ useEffect(() =>{
 useEffect(() =>{
     if(props.allAnnouncement){
       setAnnouncementDetail(props.allAnnouncement)
+      console.log("THE Annoncement all props",props.allAnnouncement)
     }
 },[props.allAnnouncement])
 
