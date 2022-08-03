@@ -31,7 +31,9 @@ function FormResponse(props) {
     };
 
     fetch(
-      `${BASE_URL}/form/response?form_id=${location?.state?.id ? location?.state?.id : 1}`,
+      `${BASE_URL}/form/response?form_id=${
+        location?.state?.id ? location?.state?.id : 1
+      }`,
       requestOptions
     )
       .then((response) => response.json())
@@ -125,7 +127,7 @@ function FormResponse(props) {
                                     <span className="text-capitalize">
                                       {item.user.role.split('_').join(' ')},
                                     </span>{' '}
-                                    {item.user.franchisee.franchisee_name}
+                                    {item?.user?.franchisee?.franchisee_name}
                                   </h6>
                                 </div>
                               </div>
@@ -161,13 +163,27 @@ function FormResponse(props) {
                                           src="../img/bx_right-arrow-alt.svg"
                                           alt=""
                                         />
-                                        <p>
-                                          {
-                                            Object.values(
-                                              JSON.parse(item.fields)
-                                            )[inner_index]
-                                          }
-                                        </p>
+                                        {Object.values(JSON.parse(item.fields))[
+                                          inner_index
+                                        ].includes('data:image') ? (
+                                          <>
+                                            <img
+                                              src={`${
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]
+                                              }`}
+                                            ></img>
+                                          </>
+                                        ) : (
+                                          <p>
+                                            {
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]
+                                            }
+                                          </p>
+                                        )}
                                       </div>
                                     </div>
                                   );
