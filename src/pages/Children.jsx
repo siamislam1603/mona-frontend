@@ -110,8 +110,8 @@ const Children = () => {
         }
     };
 
-    const handleEnrollmentPageRedirection = async () => {
-        window.location.href=`/child-enrollment/1`    
+    const handleEnrollmentPageRedirection = async (childId) => {
+        window.location.href=`/child-enrollment/${childId}`    
     };
 
     const DeactivateChild = async (id) => {
@@ -294,7 +294,7 @@ const Children = () => {
                             :
                             <div className="cta-col">
                                 <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-                                onClick={handleEnrollmentPageRedirection(cell.childId)}>
+                                onClick={() => handleEnrollmentPageRedirection(cell.childId)}>
                                     View Enrolment
                                 </button>
                             </div>
