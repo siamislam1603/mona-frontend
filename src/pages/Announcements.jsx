@@ -42,8 +42,8 @@ const Announcements =  () => {
   const [theCommon,setTheCommon] = useState(null)
   const [myAnnouncementData,setMyAnnouncementData]= useState([])
   const [myLoadData,setMyLoadData]= useState([])
-  const [myDataLength,setMyDataLength] = useState(null)
-  const [myCount,setMyCount] = useState(null);
+  const [myDataLength,setMyDataLength] = useState('')
+  const [myCount,setMyCount] = useState('');
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -72,7 +72,7 @@ const Announcements =  () => {
     
   }
   const LoadMoreMyData = async () =>{
-    console.log("THE MY DATA LOAD MORE")
+    console.log("THE MY DATA LOAD MORE", mypage)
     try {
       
         setMyPage(mypage+5)
@@ -194,7 +194,7 @@ const Announcements =  () => {
             authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        // console.log("THE else serach",allAnnouncement.length)
+        console.log("THE else serach",response)
         // LoadMoreALl()
 
         if(response.status === 200 && response.data.status === "success") {
@@ -225,9 +225,10 @@ const Announcements =  () => {
      console.log("The franhise change and ",response.data)
      if(response.status === 200 && response.data.status === "success") {
        setAllAnnouncement(response.data.result.searchedData);
-       console.log("THE DATA INSIDE SELECT FRANHSIE",response.data.result)
+      //  console.log("THE DATA INSIDE SELECT FRANHSIE",response.data.result)
        setTheCommon(response.data.result.searchedData.length)
        setCount(response.data.result.count)
+      //  console.log("THE COUNT AFTER ",response.data.result.count)
        setLoadMoreData(loadMoreData.slice(0,5))
        setPage(5)
     }
@@ -239,11 +240,14 @@ const Announcements =  () => {
     } catch (error) {
       console.log("THE ERROR INSIDE ON LOAD ANNOUNCEMNET",error)
       setAllAnnouncement([])
+      setCount(0)
+      setTheCommon(0)
 
     }
   }
 
   const onLoadMyAnnouncement = async() =>{
+
     try {
       let usedId = localStorage.getItem("user_id")
       let api_url =" "
@@ -255,12 +259,14 @@ const Announcements =  () => {
          authorization: `Bearer ${localStorage.getItem('token')}`,
        },
      }); 
-     console.log("ON LOAD MY ANNOUNCEMENT ",response.status)
+     console.log("ON LOAD MY ANNOUNCEMENT ",response.data,response.data.data.searchedData.length,myDataLength)
      if(response.status === 200 && response.data.status){
         setMyAnnouncementData(response.data.data.searchedData)
-        setMyDataLength(response.data.data.searchedData.length)
+         let datalength  = response.data.data.searchedData.length
+         console.log("THE LENGHT",datalength)
+        setMyDataLength(datalength)
         setMyCount(response.data.data.count)
-        setMyLoadData(myLoadData.slice(0,5))
+        // setMyLoadData(myLoadData.slice(0,5))
         setMyPage(5)
      }
     } catch (error) {
@@ -271,36 +277,35 @@ const Announcements =  () => {
   const myAnnnoucementData = async(e) =>{
     setPage(0)
     try {
-      let api_url = ' ';
-      setPage(0)
-      if(e){
-        searchvalue = e.target.value
-      }
-
-      console.log("THE SERACH VALUE IN MY",searchvalue) 
+        let api_url = ' ';
+        // setPage(0)
+        if(e){
+          searchvalue = e.target.value
+        }
       if(searchvalue){
-        let usedId = localStorage.getItem("user_id")
-        api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=1000`
-       
-      // api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset${offset}=&limit=5`
+            console.log("THE SERACH VALUE IN MY",searchvalue) 
+            let usedId = localStorage.getItem("user_id")
+            api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=1000`
+          
+          // api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset${offset}=&limit=5`
 
-      const response = await axios.get(api_url, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      console.log("THE MY ANNOUCOUNCEMENT",response)
-      if(response.status === 200 &&  response.data.status === "success"){
-        setMyAnnouncementData(response.data.data.searchedData)
+              const response = await axios.get(api_url, {
+                headers: {
+                  authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+              });
+              console.log("THE MY ANNOUCOUNCEMENT",response)
+              if(response.status === 200 &&  response.data.status === "success"){
+                setMyAnnouncementData(response.data.data.searchedData)
+              }
+          else{
+            console.log("THE DATA NOTE FOUNC")
+          }
       }
       else{
-        // console.log("NO DATA TO SEARCH INSIDE MY ANNOUNCEMEN")
-      }
-    
-      // setMyAnnouncementData(response.data.data.searchedData)
-      }
-      else{
-        // console.log("NO SEARCH VALUE")
+        console.log("NO SEARCH VALUE")
+        // setMyPage(5)
+        setMyLoadData(myLoadData.slice(0,5))
         let usedId = localStorage.getItem("user_id")
         api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=5`
         const response = await axios.get(api_url, {
@@ -308,9 +313,11 @@ const Announcements =  () => {
             authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        // console.log("THE MY ANNOUNCEMENT DATA",response)
-        console.log("THE MYANOUNCEMENT LENGHT",myAnnouncementData)
+        console.log("THE MY ANNOUNCEMENT DATA",response)
+        console.log("THE MY SEARCH URL ",api_url)
+        console.log("THE Search value have nothing",myAnnouncementData)
         if(response.status === 200 &&  response.status === "success"){
+          
           setMyAnnouncementData(response.data.data.searchedData)
           setMyDataLength(myAnnouncementData.length)
         }
@@ -350,13 +357,14 @@ const Announcements =  () => {
     }
     else if(tabLinkPath==="/my-announcements"){
       // setPage(0)
-      myAnnnoucementData()
+      // myAnnnoucementData()
+      onLoadMyAnnouncement()
       if(mypage>5){
         setMyPage(0);
       }
      
       setMyLoadData(myLoadData.slice(0,5))
-      setMyDataLength(myAnnouncementData.length)
+      // setMyDataLength(myAnnouncementData.length)
       console.log("MY ANNOUNCEMENT CALL TAB",mypage)
       // console.log(" All annoucement LENGTH in MYANNOUCNEMT",allAnnouncement.length)
       // setLoadMoreData(loadMoreData.slice(0,5))
@@ -394,11 +402,12 @@ const Announcements =  () => {
   },[loadMoreData])
   useEffect(() =>{
     setMyDataLength(myLoadData.length)
+    
   },[myLoadData])
   
 
   console.log("THE COUNT AND COMMON",theCount,theCommon)
-  console.log("MY COUNT AND MY COMMON",myCount,myDataLength)
+  console.log("MY COUNT AND MY data lenght",myCount,myDataLength)
   // console.log("THE LOAD MORE MY DATA",myLoadData)
   // console.log("MY PAGE",mypage)
   console.log("THE New Load More adat,",loadMoreData)
@@ -453,7 +462,7 @@ const Announcements =  () => {
                   {/* searchValue={search} franchisee ={franchiseeData} loadData={loadMoreData} */}
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements allAnnouncement1={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue} />}
+                      && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue} />}
                     {tabLinkPath === "/my-announcements" 
                       && <MyAnnouncements myAnnouncementData={myAnnouncementData} myLoadData={myLoadData} />}
                 

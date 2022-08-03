@@ -88,10 +88,11 @@ const MyAnnouncements = (props) => {
     }
   },[props.myLoadData])
   useEffect(()=>{
-      if(props?.myAnnouncementData) {
+      if(props.myAnnouncementData) {
         setmyAnnouncement(props.myAnnouncementData)
       }
   },[props.myAnnouncementData])
+  console.log("MY ANNOUNCEMENT DATA props",props.myAnnouncementData)
   
   // useEffect(() =>{
   //   if(!props.searchValue){

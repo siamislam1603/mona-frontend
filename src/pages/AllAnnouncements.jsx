@@ -116,7 +116,7 @@ useEffect(() =>{
     AllAnnouncementData()
     // console.log("The search value is not found",props.search)
   }
-  else if(props.allAnnouncements){
+  else if(props.allAnnouncement){
     // console.log("The search value have something",props.search)
     // setAnnouncementDetail(props.search)
     setAnnouncementDetail(props.allAnnouncement)
@@ -134,11 +134,11 @@ useEffect(() =>{
     
 // },[props.franchisee])
 useEffect(() =>{
-    if(props?.allAnnouncements){
-      setAnnouncementDetail(props.allAnnouncements)
-      console.log("THE Annoncement all props",props.allAnnouncements)
+    if(props.allAnnouncement){
+      setAnnouncementDetail(props.allAnnouncement)
+      console.log("THE Annoncement all props",props.allAnnouncement)
     }
-},[props.allAnnouncements])
+},[props.allAnnouncement])
 
 useEffect(() =>{
   if(props?.loadMoreData?.length>0){
@@ -154,7 +154,7 @@ useEffect(() =>{
 
 // console.log("The franhise",props.franchisee)
   console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
-console.log("The annoumce all ",props.allAnnouncements)
+console.log("The annoumce all ",props.allAnnouncement)
   // console.log("The seach in all announcement", props.search)
   {console.log("THE ANNOINCE",announcementDetails)}
 
