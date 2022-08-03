@@ -152,6 +152,17 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
+      if(croppedImage) {
+        setFormErrors(prevState => ({
+          ...prevState,
+          profile_pic: null
+        }));
+      } else {
+        setFormErrors(prevState => ({
+          ...prevState,
+          profile_pic: 'Image is required!'
+        }));
+      }
     } else {
       console.log('Erorrs removed!');
       let data=new FormData();
@@ -319,6 +330,13 @@ const NewUser = () => {
   }
 
   useEffect(() => {
+    setFormErrors(prevState => ({
+      ...prevState,
+      profile_pic: null
+    }))
+  }, [croppedImage]);
+
+  useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
     fetchCities();
@@ -345,6 +363,7 @@ const NewUser = () => {
 
   formData && console.log('FORM ERRORS:', formData);
   franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
+  formErrors && console.log('FORM ERRORS:', formErrors);
 
   return (
     <>
@@ -376,10 +395,10 @@ const NewUser = () => {
                           popupVisible && 
                           <ImageCropPopup 
                             image={image} 
-                            setCroppedImage={setCroppedImage} 
+                            setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
-                        
+                        { formErrors.profile_pic !== null && <span className="error">{formErrors.profile_pic}</span> }
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
