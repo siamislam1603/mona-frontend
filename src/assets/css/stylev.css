@@ -567,7 +567,6 @@ button:focus {
     margin: 20px 0;
 }
 
-.my-new-formsection label,
 .my-new-formsection input[type=text],
 .my-new-formsection select {
     background-color: #fff !important;
@@ -2896,4 +2895,9 @@ li.child_tag {
 .FileReop {
     text-decoration: none;
     color: #000
+}
+
+h6.text-capitalize {
+    color: var(--purple);
+    font-size: 20px;
 }

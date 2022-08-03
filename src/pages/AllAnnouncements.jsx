@@ -275,7 +275,7 @@ useEffect(() =>{
                            
                            ))
                         ): (
-                          <div>No data found</div>
+                          <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
                         )
                       }
                     </Accordion>
