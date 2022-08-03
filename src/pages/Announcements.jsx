@@ -222,7 +222,7 @@ const Announcements =  () => {
          authorization: `Bearer ${localStorage.getItem('token')}`,
        },
      }); 
-  
+     console.log("The franhise change and ",response.data)
      if(response.status === 200 && response.data.status === "success") {
        setAllAnnouncement(response.data.result.searchedData);
        console.log("THE DATA INSIDE SELECT FRANHSIE",response.data.result)
@@ -453,7 +453,7 @@ const Announcements =  () => {
                   {/* searchValue={search} franchisee ={franchiseeData} loadData={loadMoreData} */}
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue} />}
+                      && <AllAnnouncements allAnnouncement1={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue} />}
                     {tabLinkPath === "/my-announcements" 
                       && <MyAnnouncements myAnnouncementData={myAnnouncementData} myLoadData={myLoadData} />}
                 
