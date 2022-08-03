@@ -53,12 +53,46 @@ import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
 import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
 import FileRpositoryList from '../pages/FileRpositoryList';
+
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
   useEffect(() => {
     const item = localStorage.getItem('token');
+
+
     if (item) {
+
+
+      // SETTING 2 HOURS TIMEOUT FOR LOGOUT
+      const loginTime = new Date();
+      const logoutTime = new Date();
+      logoutTime.setTime(loginTime.getTime() + 1 * 60 * 60 * 1000); // 1 HOUR
+      console.log("Auto logout at:", logoutTime);
+
+      function autoLogout() {
+        (function loop() {
+          var now = new Date();
+          if (now > logoutTime) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('user_name');
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('menu_list');
+            localStorage.removeItem('active_tab');
+            localStorage.removeItem('selectedFranchisee');
+            localStorage.removeItem("attempts")
+            localStorage.removeItem("enrolled_parent_id")
+            localStorage.removeItem("enrolled_child_id")
+            window.location.href = '/';
+          }
+          now = new Date();
+          var delay = 6000 - (now % 6000);
+          setTimeout(loop, delay);
+        })();
+      }
+
+      autoLogout();
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
@@ -80,7 +114,7 @@ const Main = () => {
           }
         />
 
-        <Route
+        {/* <Route
           path="/child-enrollment-init/:parentId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -88,7 +122,7 @@ const Main = () => {
               <ChildEnrollmentInitiation />
             </Protected>
           }
-        />
+        /> */}
 
         <Route
           path="/child-enrollment"
@@ -101,7 +135,7 @@ const Main = () => {
         />
 
         <Route
-          path="/child-enrollment/:childId"
+          path="/child-enrollment/:childId/:parentId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

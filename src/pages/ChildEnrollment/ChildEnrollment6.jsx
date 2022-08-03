@@ -30,7 +30,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   };
 
   const fetchParentDataAndPopulate = async () => {
-    let parentId = localStorage.getItem('user_id');
+    let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/enrollment/parent/${parentId}`, {
       headers: {
