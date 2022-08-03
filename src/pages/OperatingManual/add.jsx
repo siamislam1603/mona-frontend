@@ -69,11 +69,7 @@ const AddOperatingManual = () => {
     if (selectedFranchisee) {
       if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
       else
-        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee
-          .split(',')[0]
-          .split(' ')
-          .map((d) => d.charAt(0).toLowerCase() + d.slice(1))
-          .join('_')}`;
+        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
       api_url = `${BASE_URL}/auth/users`;
     }

@@ -27,7 +27,7 @@ const MyAnnouncements = (props) => {
         "Authorization": "Bearer " + token
       }
      })
-     console.log("The repsonse mY anncounce,",response)
+    //  console.log("The repsonse mY anncounce,",response)
      if(response.status === 200) {
         setmyAnnouncement(response.data.result.searchedData)
      }
