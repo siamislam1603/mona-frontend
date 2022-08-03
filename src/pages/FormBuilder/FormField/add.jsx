@@ -452,53 +452,6 @@ const AddFormField = (props) => {
       .then((result) => console.log('delete data successfully!'))
       .catch((error) => console.log('error', error));
   };
-  const onSubmitSetting = (e) => {
-    e.preventDefault();
-
-    const newErrors = createFormSettingModelValidation(
-      formSettingData,
-      selectedFranchisee,
-      selectedUserRole
-    );
-
-    if (Object.keys(newErrors).length > 0) {
-      setFormSettingError(newErrors);
-    } else {
-      var myHeaders = new Headers();
-      console.log('Select Franchisee', selectedFranchisee);
-      console.log('Select User Role', selectedUserRole);
-      myHeaders.append('Content-Type', 'application/json');
-      let data = formSettingData;
-      if (
-        data['applicable_to_franchisee'] === 'No' ||
-        data['applicable_to_franchisee'] === false
-      )
-        data['franchisee'] = JSON.stringify(selectedFranchisee);
-      if (
-        data['applicable_to_user'] === 'No' ||
-        data['applicable_to_user'] === false
-      )
-        data['user'] = JSON.stringify(selectedUserRole);
-      fetch(`${BASE_URL}/form?form_name=${location?.state?.form_name}`, {
-        method: 'post',
-        body: JSON.stringify(data),
-        headers: myHeaders,
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          alert('Submit Successfully---->');
-          setFormSettingData(res?.result);
-          if (res.result.franchisee) {
-            selectedFranchisee = JSON.parse(res?.result?.franchisee);
-          }
-          if (res.result.user) {
-            selectedUserRole = JSON.parse(res?.result?.user);
-          }
-          console.log('selected Franchisee--->', selectedFranchisee);
-          console.log('selected UserRole------>', selectedUserRole);
-        });
-    }
-  };
   const onSubmit = (e) => {
     e.preventDefault();
     const newErrors = createFormFieldValidation(form);
@@ -568,7 +521,8 @@ const AddFormField = (props) => {
       })
         .then((res) => res.json())
         .then((res) => {
-          alert('Submit Successfully---->');
+          navigate("/form");
+
           res?.result?.map((item) => {
             if (item.option) {
               item.option = JSON.parse(item.option);

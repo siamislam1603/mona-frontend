@@ -84,6 +84,8 @@ const DynamicForm = (props) => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
+    console.log('form---->', form);
+    console.log('form_data---->', formData);
     const newErrors = DynamicFormValidation(form, formData);
     console.log('newErrors---->', newErrors);
     if (Object.keys(newErrors).length > 0) {
@@ -96,7 +98,7 @@ const DynamicForm = (props) => {
         method: 'POST',
         headers: myHeaders,
         body: JSON.stringify({
-          form_id: formData[0]?.form_id,
+          form_id: formData[Object.keys(formData)[0]][0]?.form_id,
           user_id: localStorage.getItem('user_id'),
           behalf_of: behalfOf,
           data: form,
@@ -168,28 +170,48 @@ const DynamicForm = (props) => {
                     )}
                     {}
                     {Object.keys(formData)?.map((item) => {
-                      return (
-                        item ? <>
-                        <h6 className="text-capitalize">{item}</h6>
-                        {formData[item]?.map((inner_item)=>{
+                      return item ? (
+                        <>
+                          
+                          {formData[item]?.map((inner_item,index) => {
+                            return inner_item.form_field_permissions.length >
+                              0 ? (
+                              inner_item?.form_field_permissions?.map(
+                                (permission) => {
+                                  return (
+                                    permission?.fill_access_users.includes(
+                                      localStorage.getItem('user_role')
+                                    ) && (
+                                      <>
+                                      {index===0 && <h6 className="text-capitalize">{item}</h6>}
+                                      <InputFields
+                                        {...inner_item}
+                                        error={errors}
+                                        onChange={setField}
+                                      />
+                                      </>
+                                    )
+                                  );
+                                }
+                              )
+                            ) : (
+                              <InputFields
+                                {...inner_item}
+                                error={errors}
+                                onChange={setField}
+                              />
+                            );
+                          })}
+                        </>
+                      ) : (
+                        formData[item]?.map((inner_item) => {
                           return (
                             <InputFields
                               {...inner_item}
                               error={errors}
                               onChange={setField}
                             />
-                          )
-                        })}
-                        
-                        </> : 
-                        formData[item]?.map((inner_item)=>{
-                          return (
-                            <InputFields
-                              {...inner_item}
-                              error={errors}
-                              onChange={setField}
-                            />
-                          )
+                          );
                         })
                       );
                     })}

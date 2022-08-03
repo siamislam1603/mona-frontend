@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Container, Row, Form, Dropdown,Modal } from "react-bootstrap";
+import { Button, Col, Container, Row, Form, Dropdown, Modal } from "react-bootstrap";
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
@@ -24,8 +24,14 @@ const EducatorAssignPopup = (props) => {
         
     }
 
+    useEffect(()=>{
+        const defaultEducators = JSON.parse(localStorage.getItem("DefaultEducators"))
+        setSelectedEducators(defaultEducators)
+    },[])
+    
 const selectRow = {
     mode: 'checkbox',
+    selected:[...selectedEducators],
     clickToSelect:true,
     onSelect: (row, isSelect, rowIndex, e) => {
         if (isSelect) {
