@@ -163,7 +163,7 @@ useEffect(() =>{
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                     <Accordion defaultActiveKey="0">
                       { announcementDetails &&
-                        announcementDetails.length !==0 ? (
+                        announcementDetails?.length !==0 ? (
                           announcementDetails.map((details,index) => (
                             <div key={index}>
                            <Accordion.Item eventKey={index} >
@@ -231,12 +231,12 @@ useEffect(() =>{
                                    </div>
                                  </Col>
                                  <Col md={8}>
-                                   {details &&details.coverImage && <div className="head">Related Images :</div>}
+                                   {details &&details?.coverImage && <div className="head">Related Images :</div>}
                                    <div className="cont">
                                      <div className="related-images">
      
    
-                                       {details && details.coverImage &&
+                                       {details && details?.coverImage &&
                                          <div className="item">
                                            <a href="/"><img src={details.coverImage} alt=""/></a>
                                          </div>
@@ -245,7 +245,7 @@ useEffect(() =>{
                                      </div>
                                    </div>
    
-                                  {details.announcement_files.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+                                  {details.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                                      <div className="cont">
                                      <div className="related-files">
                                        {details.announcement_files.map((detail,index) =>(
