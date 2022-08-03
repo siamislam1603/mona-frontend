@@ -99,8 +99,8 @@ const Children = () => {
         }
     };
 
-    const handleEnrollmentPageRedirection = async () => {
-        window.location.href=`/child-enrollment/1`    
+    const handleEnrollmentPageRedirection = async (childId) => {
+        window.location.href=`/child-enrollment/${childId}`    
     };
     
     const rowEvents = {

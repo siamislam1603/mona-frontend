@@ -70,7 +70,7 @@ const DynamicForm = (props) => {
     fetch(
       `${BASE_URL}/field?form_name=${
         location.pathname.split('/')[location.pathname.split('/').length - 1]
-      }&franchisee_id=${localStorage.getItem('franchisee_id')}`,
+      }&franchisee_id=${localStorage.getItem('franchisee_id')}&request=user`,
       requestOptions
     )
       .then((response) => response.text())
@@ -143,7 +143,7 @@ const DynamicForm = (props) => {
                       <Col sm={6}>
                         <div className="child_info_field sex">
                           <span className="form-label">Behalf of:</span>
-                          <div className="d-flex mt-2"></div>
+                          <div clas Name="d-flex mt-2"></div>
                           <div className="btn-radio d-flex align-items-center">
                             <Form.Select
                               name={'behalf_of'}
@@ -166,13 +166,31 @@ const DynamicForm = (props) => {
                         </div>
                       </Col>
                     )}
-                    {formData?.map((item) => {
+                    {}
+                    {Object.keys(formData)?.map((item) => {
                       return (
-                        <InputFields
-                          {...item}
-                          error={errors}
-                          onChange={setField}
-                        />
+                        item ? <>
+                        <h6 className="text-capitalize">{item}</h6>
+                        {formData[item]?.map((inner_item)=>{
+                          return (
+                            <InputFields
+                              {...inner_item}
+                              error={errors}
+                              onChange={setField}
+                            />
+                          )
+                        })}
+                        
+                        </> : 
+                        formData[item]?.map((inner_item)=>{
+                          return (
+                            <InputFields
+                              {...inner_item}
+                              error={errors}
+                              onChange={setField}
+                            />
+                          )
+                        })
                       );
                     })}
                     {console.log(

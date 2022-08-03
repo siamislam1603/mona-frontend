@@ -23,8 +23,8 @@ const AvailableTraining = ({ filter }) => {
 
     if(response.status === 200 && response.data.status === "success") {
       console.log('RESPONSE:', response.data);
-      const { training } = response.data;
-      setAvailableTrainingData(training);
+      const { searchedData } = response.data;
+      setAvailableTrainingData(searchedData);
     }
   };
 
