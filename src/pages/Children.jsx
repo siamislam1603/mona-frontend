@@ -18,13 +18,24 @@ const Children = () => {
     // Modal start
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = (id,educators) =>{
+        let defEducators = educators.map((edu)=>{
+            return edu.id 
+        })
+        localStorage.setItem("SelectedChild",id)
+        localStorage.setItem("DefaultEducators",JSON.stringify(defEducators))
+        setShow(true)
+    };
     // Modal ENd
 
  // Modal start
     const [cpShow, setCpShow] = useState(false);
     const handleCpClose = () => setCpShow(false);
-    const handleCpShow = () => setCpShow(true);
+    const handleCpShow = async (id) =>{
+        localStorage.setItem("SelectedChild",id)
+        await fetchParents(id)
+        setCpShow(true)
+    };
     // Modal ENd
 
     const navigate = useNavigate();
@@ -102,6 +113,36 @@ const Children = () => {
     const handleEnrollmentPageRedirection = async (childId) => {
         window.location.href=`/child-enrollment/${childId}`    
     };
+
+    const DeactivateChild = async (id) => {
+        let token = localStorage.getItem('token');
+        const response = await axios.patch(`${BASE_URL}/enrollment/deactivate-reactivate-child/${id}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if(response.status === 201 && response.data.status === "success") {
+            // POPUP HERE
+            console.log('Child Deactivated');
+        }
+    }
+
+    const fetchParents = async (id) => {
+        let childId = localStorage.getItem("SelectedChild")
+        let response =await axios.get(`${BASE_URL}/enrollment/child/parent/${childId || id}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        if (response.status === 200) {
+            let defaultparents = response.data?.parentData.map((parent)=>{
+                return parent.id
+            })
+            
+            localStorage.setItem("DefaultParents",JSON.stringify(defaultparents))
+        }
+    }
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
@@ -133,10 +174,16 @@ const Children = () => {
                 navigate(`/edit-user/${row.userID}`);
             }
             if (e.target.text === 'Add Educator'){
-                handleShow()
+                let defEducators = row.Educator.educators.map((edu)=>{
+                    return edu.id 
+                })
+                handleShow(row.id,row.Educator.educators || [])
             }
             if (e.target.text === 'Add Co-Parent'){
-                handleCpShow()
+                handleCpShow(row.id)
+            }
+            if (e.target.text === 'Deactivate'){
+                DeactivateChild(row.id)
             }
         },
     };
@@ -180,7 +227,7 @@ const Children = () => {
         id: child.id,
         name: child.fullname,
         Location : child.home_address,
-        Educator: child.users,
+        Educator: {educators:child.users, childId:child.id},
         EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated }
     }));
     console.log('Products:', productsTow);
@@ -197,13 +244,13 @@ const Children = () => {
                 console.log(cell,"celll")
                 return (
                     <>
-                        {cell.length == 0 ?
+                        {cell.educators.length == 0 ?
                             <div className="user-list">
-                                <Button variant="outline-primary" onClick={handleShow} style={{ backgroundColor: "#3e5d58", color: "white" }}>
+                                <Button variant="outline-primary" onClick={()=>handleShow(cell.childId,cell.educators)} style={{ backgroundColor: "#3e5d58", color: "white" }}>
                                     Add Educator
                                 </Button>
                             </div> :
-                            (cell || []).map((item)=>{
+                            (cell.educators || []).map((item)=>{
                                return (
                                 <div>
                                     <div className="user-list mt-3">
@@ -272,6 +319,7 @@ const Children = () => {
                                     <Dropdown.Item href="#">Edit</Dropdown.Item>
                                     <Dropdown.Item href="#">Add Educator</Dropdown.Item>
                                     <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
+                                    <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>

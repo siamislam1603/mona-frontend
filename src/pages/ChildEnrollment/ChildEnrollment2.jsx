@@ -65,7 +65,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     details_of_restrictions: "",
     log: []
   });
-  const [parentMedicationPermission, setParentMedicationPermission] = useState(false);
+  const [parentData, setParentData] = useState({
+    i_give_medication_permission: false,
+    log: []
+  });
   const [formStepData, setFormStepData] = useState(null);
   const [idList, setIdList] = useState({
     health_information_id: null,
@@ -110,7 +113,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           if(response.status === 201 && response.data.status === "success") {
             let parentId = localStorage.getItem('user_id');
 
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {i_give_medication_permission: parentMedicationPermission}, {
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
@@ -165,7 +168,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           // UPDATING PARENT PERMISSION
           if(response.status === 201 && response.data.status === "success") {
             let parentId = localStorage.getItem('user_id');
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {i_give_medication_permission: parentMedicationPermission}, {
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
@@ -268,7 +271,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           medical_information_id: medinfo.id
         }));
 
-        setParentMedicationPermission(child.parents[0].i_give_medication_permission);
+        setParentData(prevState => ({
+          ...prevState,
+          i_give_medication_permission: child.parents[0].i_give_medication_permission
+        }));
         setFormStepData(child.form_step);
       } 
 
@@ -303,9 +309,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   // healthInformation && console.log('HEALTH INFORMATION:', healthInformation);
   // childImmunisationRecord && console.log('IMMUNISATION RECORD LATEST:', childImmunisationRecord);
   // childDetails && console.log('CHILD DETAILS:', childDetails);
-  childMedicalInformation && console.log('CHILD MEDICAL INFORMATION:', childMedicalInformation);
+  // childMedicalInformation && console.log('CHILD MEDICAL INFORMATION:', childMedicalInformation);
   // parentMedicationPermission && console.log('HAS MY CONSENT:', parentMedicationPermission);
   // idList && console.log('ID LIST:', idList);
+  parentData && console.log('PARENT DATA:', parentData);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -2694,6 +2701,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_sensitivity"]
                                   }));
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "details_of_allergies" && d !== "inclusion_support_form_of_allergies")
+                                  }));
                                 }
                             }} />
                           </div>
@@ -2813,6 +2825,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_autoinjection_device"]
+                                  }));
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "has_anaphylaxis_medical_plan_been_provided")
                                   }));
                                 }
                               }} />
@@ -2957,6 +2974,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "any_other_medical_condition"]
                                   }));
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "detail_of_other_condition")
+                                  }));
                                 }
                               }} />
                           </div>
@@ -3030,6 +3052,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_dietary_restrictions"]
                                   }));
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "details_of_restrictions")
+                                  }));
                                 }
                               }} />
                           </div>
@@ -3079,9 +3106,21 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Check 
                     type="checkbox" 
                     id="accept" 
-                    checked={parentMedicationPermission}
+                    checked={parentData.i_give_medication_permission}
                     label="I have read and accept all the above points."
-                    onChange={() => setParentMedicationPermission(!parentMedicationPermission)} />
+                    onChange={() => {
+                      setParentData(prevState => ({
+                        ...prevState,
+                        i_give_medication_permission: !parentData.i_give_medication_permission,
+                      }));
+                      
+                      if(!parentData.log.includes("i_give_medication_permission")) {
+                        setParentData(prevState => ({
+                          ...prevState,
+                          log: [...parentData.log, "i_give_medication_permission"]
+                        }));
+                      }
+                    }} />
                 </div>
               </Form.Group>
             </div>

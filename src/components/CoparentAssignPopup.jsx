@@ -24,8 +24,14 @@ const CoparentAssignPopup = (props) => {
         
     }
 
+ useEffect(()=>{
+    const defaultParents = JSON.parse(localStorage.getItem("DefaultParents"))
+        setSelectedParents(defaultParents)
+ },[])
+
 const selectRow = {
     mode: 'checkbox',
+    selected:[...selectedParents],
     clickToSelect:true,
     onSelect: (row, isSelect, rowIndex, e) => {
         if (isSelect) {
