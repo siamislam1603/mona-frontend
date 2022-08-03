@@ -125,17 +125,18 @@ useEffect(() =>{
     setAnnouncementDetail(props.search)
   }
 },[search])
- useEffect(() =>{
-    if(props.allAnnouncement?.length>0){
-      // console.log("Don't have fanrhise")
-    }
-    setAnnouncementDetail(props.allAnnouncement)
-    console.log("The frnahise under all announcement",props.allAnnouncement)
+//  useEffect(() =>{
+//     if(props.allAnnouncements?.length>0){
+//       // console.log("Don't have fanrhise")
+//     }
+//     setAnnouncementDetail(props.allAnnouncements)
+//     console.log("The frnahise under all announcement",props.allAnnouncements)
     
-},[props.franchisee])
+// },[props.franchisee])
 useEffect(() =>{
     if(props.allAnnouncement){
       setAnnouncementDetail(props.allAnnouncement)
+      console.log("THE Annoncement all props",props.allAnnouncement)
     }
 },[props.allAnnouncement])
 
@@ -152,12 +153,12 @@ useEffect(() =>{
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
 // console.log("The franhise",props.franchisee)
-//   console.log(" THE All  MORE DATA inside All ANnoncements",props.allAnnouncement)
-// console.log("The annoumce all ",announcementDetails)
+  console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
+console.log("The annoumce all ",props.allAnnouncement)
   // console.log("The seach in all announcement", props.search)
+  {console.log("THE ANNOINCE",announcementDetails)}
 
   return (
-    
     <div className="announcement-accordion">
        
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
