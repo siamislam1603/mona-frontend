@@ -141,7 +141,7 @@ const FranchiseeDashboard = () => {
   const count_User_Api = () => {
     let token = localStorage.getItem('token');
 
-    const countUrl = `http://3.26.39.12:4000/dashboard/franchisee/activity-count`;
+    const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
     axios.get(countUrl, {
       headers: {
         "Authorization": `Bearer ${token}`

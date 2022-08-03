@@ -26,9 +26,9 @@ const AddOperatingManual = () => {
   const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
   const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
   const [relatedFiles, setRelatedFiles] = useState([]);
-  const [imageUrl,setImageUrl]=useState("");
-  const [videoUrl,setVideoUrl]=useState("");
-  const [videoThumbnailUrl,setVideoThumbnailUrl]=useState("");
+  const [imageUrl, setImageUrl] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
+  const [videoThumbnailUrl, setVideoThumbnailUrl] = useState('');
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
@@ -69,11 +69,7 @@ const AddOperatingManual = () => {
     if (selectedFranchisee) {
       if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
       else
-        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee
-          .split(',')[0]
-          .split(' ')
-          .map((d) => d.charAt(0).toLowerCase() + d.slice(1))
-          .join('_')}`;
+        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
       api_url = `${BASE_URL}/auth/users`;
     }
@@ -213,9 +209,9 @@ const AddOperatingManual = () => {
         // data['accessible_to_all'] = false;
         // }
       }
-      data['cover_image']=imageUrl;
-      data['video_thumbnail']=videoThumbnailUrl;
-      data['reference_video']=videoUrl;
+      data['cover_image'] = imageUrl;
+      data['video_thumbnail'] = videoThumbnailUrl;
+      data['reference_video'] = videoUrl;
       data['created_by'] = localStorage.getItem('user_id');
       data['shared_by'] = localStorage.getItem('user_id');
       upperRoleUser = getUpperRoleUser();
@@ -248,9 +244,9 @@ const AddOperatingManual = () => {
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
       let data = { ...operatingManualData };
-      data['cover_image']=imageUrl;
-      data['video_thumbnail']=videoThumbnailUrl;
-      data['reference_video']=videoUrl;
+      data['cover_image'] = imageUrl;
+      data['video_thumbnail'] = videoThumbnailUrl;
+      data['reference_video'] = videoUrl;
       data.created_by = localStorage.getItem('user_id');
       data.upper_role = upperRoleUser;
       console.log('data---->', data);
@@ -373,8 +369,7 @@ const AddOperatingManual = () => {
             }, 8000);
           }
           if (name === 'cover_image') {
-             setImageUrl(res.url);
-            
+            setImageUrl(res.url);
 
             setTimeout(() => {
               setImageLoaderFlag(false);
@@ -529,7 +524,9 @@ const AddOperatingManual = () => {
                     <Row>
                       <Col sm={6}>
                         <Form.Group>
-                          <Form.Label className="formlabel">Sub-Module Name</Form.Label>
+                          <Form.Label className="formlabel">
+                            Sub-Module Name
+                          </Form.Label>
                           <Form.Control
                             type="text"
                             name="title"
@@ -550,7 +547,9 @@ const AddOperatingManual = () => {
                       </Col>
                       <Col sm={6}>
                         <Form.Group>
-                          <Form.Label className="formlabel">Position in the tree-structure</Form.Label>
+                          <Form.Label className="formlabel">
+                            Position in the tree-structure
+                          </Form.Label>
                           <Form.Control
                             type="number"
                             name="order"
@@ -576,10 +575,13 @@ const AddOperatingManual = () => {
                           <Form.Label className="formlabel">
                             Description
                           </Form.Label>
-                         
+                            {console.log("operatingManualData--->",operatingManualData)}
+                            {console.log("location?.state?.id---->",location?.state?.id)}
+                            {console.log("location?.state?.category_name---->",location?.state?.category_name)}
                           {location?.state?.id &&
-                          location?.state?.category_name ? (
+                          location?.state?.category_name && operatingManualData?.description ? (
                             <MyEditor
+                              name="description"
                               operatingManual={{ ...operatingManualData }}
                               errors={errors}
                               handleChange={(e, data) => {
@@ -588,6 +590,7 @@ const AddOperatingManual = () => {
                             />
                           ) : (
                             <MyEditor
+                              name="description"
                               errors={errors}
                               handleChange={(e, data) => {
                                 setOperatingManualField(e, data);
@@ -610,9 +613,7 @@ const AddOperatingManual = () => {
                               ) : null}
                               <img
                                 src={
-                                 imageUrl
-                                    ? imageUrl
-                                    : '../img/image_icon.png'
+                                  imageUrl ? imageUrl : '../img/image_icon.png'
                                 }
                               ></img>
                             </div>
@@ -643,9 +644,7 @@ const AddOperatingManual = () => {
                             <Button
                               variant="link"
                               onClick={() => {
-                                let data = { ...operatingManualData };
-                                delete data['cover_image'];
-                                setOperatingManualData(data);
+                                setImageUrl("");
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -705,10 +704,8 @@ const AddOperatingManual = () => {
                               variant="link"
                               className="remove_bin"
                               onClick={() => {
-                                let data = { ...operatingManualData };
-                                delete data['reference_video'];
-                                delete data['video_thumbnail'];
-                                setOperatingManualData(data);
+                                setVideoUrl("");
+                                setVideoThumbnailUrl("");
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -750,9 +747,14 @@ const AddOperatingManual = () => {
                   <Row>
                     <Col sm={12}>
                       <div className="bottom_button">
-                        <Button className="preview" onClick={()=>{
-                          navigate("/operatingmanual");
-                        }}>Cancel</Button>
+                        <Button
+                          className="preview"
+                          onClick={() => {
+                            navigate('/operatingmanual');
+                          }}
+                        >
+                          Cancel
+                        </Button>
                         <Button className="saveForm" onClick={onSubmit}>
                           Save
                         </Button>
@@ -1012,7 +1014,14 @@ const AddOperatingManual = () => {
           </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button className="back" onClick={()=>{setFormSettingFlag(false) }}>Cancel</Button>
+          <Button
+            className="back"
+            onClick={() => {
+              setFormSettingFlag(false);
+            }}
+          >
+            Cancel
+          </Button>
           <Button className="done" onClick={onModelSubmit}>
             Save Settings
           </Button>

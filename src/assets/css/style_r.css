@@ -1,0 +1,28 @@
+.modal-button {
+  padding: .8rem 2.2rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #455C58;
+  color: #fff;
+}
+
+.modal-paragraph {
+  font-weight: 400;
+  font-size: 1.2rem;
+}
+
+/* BUTTON STYLES */
+.btn {
+  padding: .1rem 1rem;
+  border-radius: 5px;
+}
+
+.view-enrolment {
+  border: 2px solid #AA0061;
+  color: #AA0061;
+}
+
+.initiate-enrolment {
+  border: 2px solid #3E5D58;
+  color: #3E5D58;
+}

@@ -32,7 +32,7 @@ const [announcementData, setAnnouncementData] = useState({
 const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
-  const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
+  const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [error, setError] = useState({user_roles: []});
 
@@ -137,13 +137,13 @@ const createAnnouncement = async (data) => {
       const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
       if(response.status === 200 && Object.keys(response.data).length > 1) {
         const { users } = response.data;
-        setFetchedFranchiseeUsers([
+        setFetchedFranchiseeUsers(
           ...users?.map((data) => ({
             id: data.id,
             cat: data.fullname.toLowerCase().split(" ").join("_"),
             key: data.fullname
           })),
-        ]);
+        );
       }
     };
 
@@ -157,14 +157,16 @@ const createAnnouncement = async (data) => {
           "Authorization": `Bearer ${token}`
         }
       });
-  
+      console.log("The franhsie list",response)
       if(response.status === 200 && response.data.status === "success") {
         let { franchiseeList } = response.data;
-  
+
         setFranchiseeData(franchiseeList.map(franchisee => ({
+                   
           id: franchisee.id,
-          value: franchisee.franchisee_alias,
-          label: franchisee.franchisee_name
+          value: franchisee.franchisee_name,
+          label: franchisee.franchisee_name,
+          city: franchisee.franchisee_city
         })));  
       }
     }
@@ -306,7 +308,7 @@ const createAnnouncement = async (data) => {
 
    
 // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-// console.log(franchiseeData);
+console.log("The franhiseData 1",franchiseeData);
   return (
     
     <>
@@ -443,7 +445,7 @@ const createAnnouncement = async (data) => {
                   <div className="my-new-formsection">
                     <Row>
                       <Col sm={6}>
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label> Cover Image :</Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
@@ -452,19 +454,19 @@ const createAnnouncement = async (data) => {
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
                           <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Related Files :</Form.Label>
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
                   {/* <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                  <Form.Group>
+                  <Form.Group className="mb-3 form-group">
                   <Form.Label>Schedule Date</Form.Label>
                   <Form.Control 
                    type="date"
@@ -474,7 +476,7 @@ const createAnnouncement = async (data) => {
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                <Form.Group>
+                <Form.Group className="mb-3 form-group">
                   <Form.Label>Schedule Time</Form.Label>
                   <Form.Control 
                   type="time"

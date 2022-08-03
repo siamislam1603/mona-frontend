@@ -24,6 +24,11 @@ import Setting from '../Setting';
 let counter = 0;
 let selectedFranchisee = [];
 let selectedUserRole = [];
+let selectedFillAccessUserId = '';
+let selectedFillAccessUser = [];
+let selectedSignatoriesUserId = '';
+let selectedSignatoriesUser = [];
+
 const AddFormField = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,6 +38,9 @@ const AddFormField = (props) => {
   const [formSettingError, setFormSettingError] = useState({});
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
+  const [user, setUser] = useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   // const [conditionModelData, setConditionModelData] = useState([]);
   const [franchisee, setFranchisee] = useState([]);
   const [userRole, setUserRole] = useState([]);
@@ -49,14 +57,106 @@ const AddFormField = (props) => {
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
   useEffect(() => {
     setFormSettingFlag(false);
-    console.log("location?.state?.id---->",location?.state?.id);
-    console.log("location?.state?.form_name--->",location?.state?.form_name);
+    console.log('location?.state?.id---->', location?.state?.id);
+    console.log('location?.state?.form_name--->', location?.state?.form_name);
     if (location?.state?.form_name) {
       getFormField();
       getFormData();
       getUserRoleAndFranchiseeData();
     }
-  }, []);
+  }, [user]);
+  useEffect(() => {
+    getUser();
+  }, [localStorage.getItem('f_id')]);
+  const getUser = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    let api_url = '';
+    console.log('selectedFranchisee--->', selectedFranchisee);
+    if (selectedFranchisee) {
+      if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
+      else
+        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
+    } else {
+      api_url = `${BASE_URL}/auth/users`;
+    }
+
+    fetch(api_url, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.data?.map((item) => {
+          item['status'] = false;
+        });
+        if (selectedFranchisee) {
+          if (selectedFranchisee === 'All') setUser(result?.data);
+          else setUser(result?.users);
+        } else setUser(result?.data);
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const setCheckBoxField = (name, value, checked, index) => {
+    let tempArr = [...form];
+    const tempObj = tempArr[index];
+    if (checked) {
+      tempObj[name] = tempObj[name].replace('undefined', '');
+      tempObj[name] += value + ',';
+    } else {
+      tempObj[name] = tempObj[name].replace(value + ',', '');
+    }
+    tempArr[Index] = tempObj;
+    setForm(tempArr);
+  };
+  function onFillAccessSelectUser(optionsList, selectedItem) {
+    selectedFillAccessUserId += selectedItem.id + ',';
+    selectedFillAccessUser.push({
+      id: selectedItem.id,
+      email: selectedItem.email,
+    });
+    console.log('selectedFillAccessUserId---->', selectedFillAccessUserId);
+  }
+  function onFillAccessRemoveUser(selectedList, removedItem) {
+    selectedFillAccessUserId = selectedFillAccessUserId.replace(
+      removedItem.id + ',',
+      ''
+    );
+    const index = selectedFillAccessUser.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedFillAccessUser.splice(index, 1);
+    {
+      console.log('selectedFillAccessUserId---->', selectedFillAccessUserId);
+    }
+  }
+  function onSignatorieselectUser(optionsList, selectedItem) {
+    selectedSignatoriesUserId += selectedItem.id + ',';
+    selectedSignatoriesUser.push({
+      id: selectedItem.id,
+      email: selectedItem.email,
+    });
+    console.log('selectedFillAccessUserId---->', selectedSignatoriesUserId);
+  }
+  function onSignatoriesRemoveUser(selectedList, removedItem) {
+    selectedSignatoriesUserId = selectedSignatoriesUserId.replace(
+      removedItem.id + ',',
+      ''
+    );
+    const index = selectedFillAccessUser.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedSignatoriesUser.splice(index, 1);
+    {
+      console.log('selectedFillAccessUserId---->', selectedSignatoriesUserId);
+    }
+  }
   // function onSelectFranchisee(optionsList, selectedItem) {
   //   console.log('selected_item---->2', selectedItem);
   //   selectedFranchisee.push({
@@ -201,7 +301,11 @@ const AddFormField = (props) => {
       .then((res) => {
         if (res?.result.length > 0) {
           let sectionData = [];
+          let flag = false;
           res?.result?.map((item) => {
+            if (item.field_type === 'signature') {
+              flag = true;
+            }
             if (item.option) {
               item.option = JSON.parse(item.option);
             }
@@ -212,9 +316,51 @@ const AddFormField = (props) => {
                 sectionData.push(item?.section_name.split('_').join(' '));
               }
             }
+            if (
+              item?.accessible_to_role === '0' ||
+              item?.accessible_to_role === false
+            ) {
+              user.map((user_item) => {
+                console.log(
+                  'user---->',
+                  user_item,
+                  '\nitem?.fill_access_users--->',
+                  item?.fill_access_users
+                );
+                if (item?.fill_access_users) {
+                  if (
+                    item?.fill_access_users.includes(user_item.id.toString())
+                  ) {
+                    console.log('user_els--->', user_item);
+                    selectedFillAccessUser.push({
+                      id: user_item.id,
+                      email: user_item.email,
+                    });
+                    selectedFillAccessUserId += user_item.id + ',';
+                  }
+                }
+                if (item?.signatories_role) {
+                  if (item?.signatories_role.includes(item.id.toString())) {
+                    console.log('user_els--->', item);
+                    selectedSignatoriesUser.push({
+                      id: item.id,
+                      email: item.email,
+                    });
+                    selectedSignatoriesUserId += item.id + ',';
+                  }
+                }
+              });
+            }
           });
+
           setSection(sectionData);
           if (!conditionFlag && !groupFlag) {
+            if (res?.form_permission?.signatories === true && flag === false) {
+              res?.result?.push({
+                field_label: 'Signature',
+                field_type: 'signature',
+              });
+            }
             setForm(res?.result);
             // setConditionModelData(res?.result);
             setGroupModelData(res?.result);
@@ -222,6 +368,74 @@ const AddFormField = (props) => {
             setGroupModelData(res?.result);
           } else {
             // setConditionModelData(res?.result);
+          }
+        } else {
+          console.log(
+            'res?.form?.previous_form---->',
+            res?.form?.previous_form
+          );
+          if (res?.form?.previous_form !== '') {
+            fetch(
+              `${BASE_URL}/field?form_name=${res?.form?.previous_form}`,
+              requestOptions
+            )
+              .then((response) => response.json())
+              .then((result) => {
+                if (result?.result.length > 0) {
+                  let sectionData = [];
+                  let flag = false;
+                  result?.result?.map((item) => {
+                    console.log('item.field_type----->', item);
+                    if (item.field_type === 'signature') {
+                      flag = true;
+                    }
+                    delete item.id;
+                    if (item.option) {
+                      item.option = JSON.parse(item.option);
+                    }
+                    if (item?.section_name) {
+                      if (
+                        !sectionData.includes(
+                          item?.section_name.split('_').join(' ')
+                        )
+                      ) {
+                        sectionData.push(
+                          item?.section_name.split('_').join(' ')
+                        );
+                      }
+                    }
+                    
+                  });
+                  setSection(sectionData);
+                  if (!conditionFlag && !groupFlag) {
+                    if (
+                      res?.form_permission?.signatories === true &&
+                      flag === false
+                    ) {
+                      console.log('Hello23423423423');
+                      result?.result?.push({
+                        field_label: 'Signature',
+                        field_type: 'signature',
+                      });
+                    }
+                    setForm(result?.result);
+                    // setConditionModelData(res?.result);
+                    setGroupModelData(result?.result);
+                  } else if (groupFlag) {
+                    setGroupModelData(result?.result);
+                  }
+                }
+              });
+          } else if (res?.form_permission?.signatories === true) {
+            setForm([
+              { field_type: 'text' },
+              { field_type: 'radio', option: [{ '': '' }, { '': '' }] },
+              { field_type: 'checkbox', option: [{ '': '' }, { '': '' }] },
+              {
+                field_label: 'Signature',
+                field_type: 'signature',
+              },
+            ]);
           }
         }
       })
@@ -310,9 +524,46 @@ const AddFormField = (props) => {
     } else {
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
+      let data = [...form];
+      data?.map((item) => {
+        console.log('item.accessible_to_role--->', item.accessible_to_role);
+        data['accessible_to_role'] = item.accessible_to_role;
+        data['signatories'] = item.signatories;
+        if (
+          item.accessible_to_role === '1' ||
+          item.accessible_to_role === true
+        ) {
+          item['signatories_role'] = item.signatories_role
+            ? item.signatories_role.slice(0, -1)
+            : null;
+          item['fill_access_users'] = item.fill_access_users
+            ? item.fill_access_users.slice(0, -1)
+            : null;
+        }
+        if (
+          item.accessible_to_role === '0' ||
+          item.accessible_to_role === false
+        ) {
+          item['signatories_role'] = selectedSignatoriesUserId
+            ? selectedSignatoriesUserId.slice(0, -1)
+            : null;
+          item['fill_access_users'] = selectedFillAccessUserId
+            ? selectedFillAccessUserId.slice(0, -1)
+            : null;
+        }
+        if (item.section_name) {
+          item['franchisee_id'] = localStorage.getItem('f_id');
+          item['shared_by'] = localStorage.getItem('user_id');
+          item['section'] = true;
+        } else {
+          item['section'] = false;
+        }
+      });
+      console.log('Hello---->payload is here', data);
+
       fetch(`${BASE_URL}/field/add?form_name=${location?.state?.form_name}`, {
         method: 'post',
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
         headers: myHeaders,
       })
         .then((res) => res.json())
@@ -398,13 +649,25 @@ const AddFormField = (props) => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={(name, id) => {
+                    setSelectedFranchisee(name);
+                    setSelectedFranchiseeId(id);
+                    localStorage.setItem('f_id', id);
+                  }}
+                />
                 <Row>
                   <Col sm={8}>
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
-                          navigate('/form/setting',{state:{id: location?.state?.id,form_name: location?.state?.form_name}});
+                          navigate('/form/setting', {
+                            state: {
+                              id: location?.state?.id,
+                              form_name: location?.state?.form_name,
+                            },
+                          });
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
@@ -835,7 +1098,22 @@ const AddFormField = (props) => {
                   <Row>
                     <Col sm={12}>
                       <div className="button mb-5">
-                        <Button className="preview" onClick={()=>{navigate(`/form/preview/${location?.state?.form_name}`,{state:{id: location?.state?.id,form_name:location?.state?.form_name}})}}>Preview</Button>
+                        <Button
+                          className="preview"
+                          onClick={() => {
+                            navigate(
+                              `/form/preview/${location?.state?.form_name}`,
+                              {
+                                state: {
+                                  id: location?.state?.id,
+                                  form_name: location?.state?.form_name,
+                                },
+                              }
+                            );
+                          }}
+                        >
+                          Preview
+                        </Button>
                         <Button className="saveForm" onClick={onSubmit}>
                           Save Form
                         </Button>
@@ -848,7 +1126,6 @@ const AddFormField = (props) => {
                         show={conditionFlag}
                         onHide={() => {
                           setConditionFlag(false);
-                          getFormField();
                         }}
                         size="lg"
                         aria-labelledby="contained-modal-title-vcenter"
@@ -1170,9 +1447,8 @@ const AddFormField = (props) => {
                       show={groupFlag}
                       onHide={() => {
                         setGroupFlag(false);
-                        getFormField();
                       }}
-                      size="md"
+                      size="xl"
                       aria-labelledby="contained-modal-title-vcenter"
                       centered
                     >
@@ -1198,7 +1474,7 @@ const AddFormField = (props) => {
                                       value={item}
                                       name="section_name"
                                       checked={
-                                        groupModelData[Index]?.section_name ===
+                                        form[Index]?.section_name ===
                                         item.toLowerCase().split(' ').join('_')
                                       }
                                       onChange={(e) => {
@@ -1206,82 +1482,537 @@ const AddFormField = (props) => {
                                           .toLocaleLowerCase()
                                           .split(' ')
                                           .join('_');
-                                        const tempArr = [...groupModelData];
+                                        const tempArr = [...form];
                                         const tempObj = tempArr[Index];
                                         tempObj[e.target.name] = e.target.value;
+                                        tempObj['fill_access_users'] = '';
+                                        tempObj['signatories_role'] = '';
+                                        tempObj['accessible_to_role'] = '1';
                                         tempArr[Index] = tempObj;
-                                        setGroupModelData(tempArr);
+                                        setForm(tempArr);
                                       }}
                                     />
                                     <span className="checkmark"></span>
                                   </label>
-                                  {groupModelData[Index]?.section_name===item.toLowerCase().split(' ').join('_') && <div className="sub_check_box">
-                                    <h2>Applicable to:</h2>
-                                    <div className="sub_check_box_list">
-                                      <div className="modal_check_box">
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Franchisor Admin
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
+                                  {form[Index]?.section_name ===
+                                    item.toLowerCase().split(' ').join('_') && (
+                                    <>
+                                      <Col md={12}>
+                                        <Form.Group>
+                                          <Form.Label className="form_label_title">
+                                            Select:
+                                          </Form.Label>
+                                          <div className="new-form-radio">
+                                            <div className="new-form-radio-box">
+                                              <label for="user_role">
+                                                <input
+                                                  type="radio"
+                                                  value={1}
+                                                  name="accessible_to_role"
+                                                  id="user_role"
+                                                  onChange={(e) => {
+                                                    setField(
+                                                      e.target.name,
+                                                      e.target.value,
+                                                      Index
+                                                    );
+                                                  }}
+                                                  checked={
+                                                    form[Index]
+                                                      ?.accessible_to_role ===
+                                                      '1' ||
+                                                    form[Index]
+                                                      ?.accessible_to_role ===
+                                                      true
+                                                  }
+                                                />
+                                                <span className="radio-round"></span>
+                                                <p>User Roles</p>
+                                              </label>
+                                            </div>
+                                            <div className="new-form-radio-box">
+                                              <label for="specific_user">
+                                                <input
+                                                  type="radio"
+                                                  value={0}
+                                                  name="accessible_to_role"
+                                                  id="specific_user"
+                                                  onChange={(e) => {
+                                                    setField(
+                                                      e.target.name,
+                                                      e.target.value,
+                                                      Index
+                                                    );
+                                                  }}
+                                                  checked={
+                                                    form[Index]
+                                                      ?.accessible_to_role ===
+                                                      '0' ||
+                                                    form[Index]
+                                                      ?.accessible_to_role ===
+                                                      false
+                                                  }
+                                                />
+                                                <span className="radio-round"></span>
+                                                <p>Specific Users</p>
+                                              </label>
+                                            </div>
+                                          </div>
+                                        </Form.Group>
+                                      </Col>
+                                      {form[Index]?.accessible_to_role ===
+                                        '1' ||
+                                      form[Index]?.accessible_to_role ===
+                                        true ? (
+                                        <>
+                                          <Col md={12} className="mt-2">
+                                            <Form.Label>
+                                              Fill access user:
+                                            </Form.Label>
+                                            <div className="checkbox-card">
+                                              <div className="modal-two-check user-roles-box">
+                                                <label className="container">
+                                                  Franchisor Admin
+                                                  <input
+                                                    type="checkbox"
+                                                    name="fill_access_users"
+                                                    value="franchisor_admin"
+                                                    checked={form[
+                                                      Index
+                                                    ]?.fill_access_users?.includes(
+                                                      'franchisor_admin'
+                                                    )}
+                                                    onChange={(e) => {
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked,
+                                                        Index
+                                                      );
+                                                    }}
+                                                  />
+                                                  <span className="checkmark"></span>
+                                                </label>
+                                                <label className="container">
+                                                  Franchisee Admin
+                                                  <input
+                                                    type="checkbox"
+                                                    name="fill_access_users"
+                                                    value="franchisee_admin"
+                                                    checked={form[
+                                                      Index
+                                                    ]?.fill_access_users?.includes(
+                                                      'franchisee_admin'
+                                                    )}
+                                                    onChange={(e) => {
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked,
+                                                        Index
+                                                      );
+                                                    }}
+                                                  />
+                                                  <span className="checkmark"></span>
+                                                </label>
+                                                <label className="container">
+                                                  Co-ordinators
+                                                  <input
+                                                    type="checkbox"
+                                                    name="fill_access_users"
+                                                    value="coordinator"
+                                                    checked={form[
+                                                      Index
+                                                    ]?.fill_access_users?.includes(
+                                                      'coordinator'
+                                                    )}
+                                                    onChange={(e) => {
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked,
+                                                        Index
+                                                      );
+                                                    }}
+                                                  />
+                                                  <span className="checkmark"></span>
+                                                </label>
+                                                <label className="container">
+                                                  Educators
+                                                  <input
+                                                    type="checkbox"
+                                                    name="fill_access_users"
+                                                    value="educator"
+                                                    checked={form[
+                                                      Index
+                                                    ]?.fill_access_users?.includes(
+                                                      'educator'
+                                                    )}
+                                                    onChange={(e) => {
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked,
+                                                        Index
+                                                      );
+                                                    }}
+                                                  />
+                                                  <span className="checkmark"></span>
+                                                </label>
+                                                <label className="container">
+                                                  Parent/Guardian
+                                                  <input
+                                                    type="checkbox"
+                                                    name="fill_access_users"
+                                                    value="parent"
+                                                    checked={form[
+                                                      Index
+                                                    ]?.fill_access_users?.includes(
+                                                      'parent'
+                                                    )}
+                                                    onChange={(e) => {
+                                                      setCheckBoxField(
+                                                        e.target.name,
+                                                        e.target.value,
+                                                        e.target.checked,
+                                                        Index
+                                                      );
+                                                    }}
+                                                  />
+                                                  <span className="checkmark"></span>
+                                                </label>
+                                              </div>
+                                            </div>
+                                          </Col>
+                                          <Col md={12}>
+                                            <div className="sharing_section mt-3">
+                                              <div className="sharing signatories-toggle">
+                                                <div className="sharing-title">
+                                                  <p
+                                                    style={{
+                                                      color: '#333333',
+                                                    }}
+                                                  >
+                                                    Signatories
+                                                  </p>
+                                                </div>
+                                                <div className="toogle-swich">
+                                                  <input
+                                                    className="switch"
+                                                    name="signatories"
+                                                    type="checkbox"
+                                                    checked={
+                                                      form[Index]?.signatories
+                                                    }
+                                                    onChange={(e) => {
+                                                      setField(
+                                                        e.target.name,
+                                                        e.target.checked,
+                                                        Index
+                                                      );
+                                                    }}
+                                                  />
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </Col>
+                                          <Col md={12}>
+                                            {form[Index]?.signatories && (
+                                              <div className="checkbox-card">
+                                                <div className="modal-two-check user-roles-box">
+                                                  <label className="container">
+                                                    Franchisor Admin
+                                                    <input
+                                                      type="checkbox"
+                                                      name="signatories_role"
+                                                      value="franchisor_admin"
+                                                      checked={form[
+                                                        Index
+                                                      ]?.signatories_role?.includes(
+                                                        'franchisor_admin'
+                                                      )}
+                                                      onChange={(e) => {
+                                                        setCheckBoxField(
+                                                          e.target.name,
+                                                          e.target.value,
+                                                          e.target.checked,
+                                                          Index
+                                                        );
+                                                      }}
+                                                    />
+                                                    <span className="checkmark"></span>
+                                                  </label>
+                                                  <label className="container">
+                                                    Franchisee Admin
+                                                    <input
+                                                      type="checkbox"
+                                                      name="signatories_role"
+                                                      value="franchisee_admin"
+                                                      checked={form[
+                                                        Index
+                                                      ]?.signatories_role?.includes(
+                                                        'franchisee_admin'
+                                                      )}
+                                                      onChange={(e) => {
+                                                        setCheckBoxField(
+                                                          e.target.name,
+                                                          e.target.value,
+                                                          e.target.checked,
+                                                          Index
+                                                        );
+                                                      }}
+                                                    />
+                                                    <span className="checkmark"></span>
+                                                  </label>
+                                                  <label className="container">
+                                                    Co-ordinators
+                                                    <input
+                                                      type="checkbox"
+                                                      name="signatories_role"
+                                                      value="coordinator"
+                                                      checked={form[
+                                                        Index
+                                                      ]?.signatories_role?.includes(
+                                                        'coordinator'
+                                                      )}
+                                                      onChange={(e) => {
+                                                        setCheckBoxField(
+                                                          e.target.name,
+                                                          e.target.value,
+                                                          e.target.checked,
+                                                          Index
+                                                        );
+                                                      }}
+                                                    />
+                                                    <span className="checkmark"></span>
+                                                  </label>
+                                                  <label className="container">
+                                                    Educators
+                                                    <input
+                                                      type="checkbox"
+                                                      name="signatories_role"
+                                                      value="educator"
+                                                      checked={form[
+                                                        Index
+                                                      ]?.signatories_role?.includes(
+                                                        'educator'
+                                                      )}
+                                                      onChange={(e) => {
+                                                        setCheckBoxField(
+                                                          e.target.name,
+                                                          e.target.value,
+                                                          e.target.checked,
+                                                          Index
+                                                        );
+                                                      }}
+                                                    />
+                                                    <span className="checkmark"></span>
+                                                  </label>
+                                                  <label className="container">
+                                                    Parent/Guardian
+                                                    <input
+                                                      type="checkbox"
+                                                      name="signatories_role"
+                                                      value="parent"
+                                                      checked={form[
+                                                        Index
+                                                      ]?.signatories_role?.includes(
+                                                        'parent'
+                                                      )}
+                                                      onChange={(e) => {
+                                                        setCheckBoxField(
+                                                          e.target.name,
+                                                          e.target.value,
+                                                          e.target.checked,
+                                                          Index
+                                                        );
+                                                      }}
+                                                    />
+                                                    <span className="checkmark"></span>
+                                                  </label>
+                                                </div>
+                                              </div>
+                                            )}
+                                          </Col>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Row style={{ marginTop: '10px' }}>
+                                            <Col md={12}>
+                                              <Form.Group>
+                                                <Form.Label>
+                                                  Select Users For Fill Access
+                                                </Form.Label>
+                                                <div className="select-with-plus">
+                                                  <Multiselect
+                                                    displayValue="email"
+                                                    className="multiselect-box default-arrow-select"
+                                                    // placeholder="Select Franchisee"
+                                                    selectedValues={
+                                                      selectedFillAccessUser
+                                                    }
+                                                    // onKeyPressFn={function noRefCheck() {}}
+                                                    onRemove={
+                                                      onFillAccessRemoveUser
+                                                    }
+                                                    // onSearch={function noRefCheck() {}}
+                                                    onSelect={
+                                                      onFillAccessSelectUser
+                                                    }
+                                                    options={user}
+                                                  />
+                                                </div>
+                                                <p className="error">
+                                                  {errors.franchisee}
+                                                </p>
+                                              </Form.Group>
+                                            </Col>
+                                          </Row>
+                                          <Row>
+                                            <Col md={12}>
+                                              <div
+                                                className="sharing_section"
+                                                style={{ margin: 0 }}
+                                              >
+                                                <div
+                                                  className="sharing signatories-toggle"
+                                                  style={{
+                                                    marginTop: '-10px',
+                                                    marginBottom: '10px',
+                                                  }}
+                                                >
+                                                  <div className="sharing-title">
+                                                    <p
+                                                      style={{
+                                                        color: '#333333',
+                                                      }}
+                                                    >
+                                                      Signatories
+                                                    </p>
+                                                  </div>
+                                                  <div className="toogle-swich">
+                                                    <input
+                                                      className="switch"
+                                                      name="signatories"
+                                                      type="checkbox"
+                                                      checked={
+                                                        form[Index]?.signatories
+                                                      }
+                                                      onChange={(e) => {
+                                                        setField(
+                                                          e.target.name,
+                                                          e.target.checked,
+                                                          Index
+                                                        );
+                                                      }}
+                                                    />
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </Col>
+                                          </Row>
+                                          {form[Index]?.signatories && (
+                                            <Col md={12}>
+                                              <Form.Group>
+                                                <Form.Label>
+                                                  Select Signatories
+                                                </Form.Label>
+                                                <div className="select-with-plus">
+                                                  <Multiselect
+                                                    displayValue="email"
+                                                    className="multiselect-box default-arrow-select"
+                                                    // placeholder="Select Franchisee"
+                                                    selectedValues={
+                                                      selectedSignatoriesUser
+                                                    }
+                                                    // onKeyPressFn={function noRefCheck() {}}
+                                                    onRemove={
+                                                      onSignatoriesRemoveUser
+                                                    }
+                                                    // onSearch={function noRefCheck() {}}
+                                                    onSelect={
+                                                      onSignatorieselectUser
+                                                    }
+                                                    options={user}
+                                                  />
+                                                </div>
+                                                <p className="error">
+                                                  {errors.franchisee}
+                                                </p>
+                                              </Form.Group>
+                                            </Col>
+                                          )}
+                                        </>
+                                      )}
+                                      {/* <div className="sub_check_box">
+                                        <h2>Applicable to:</h2>
+                                        <div className="sub_check_box_list">
+                                          <div className="modal_check_box">
+                                            <div className="modal-two-check">
+                                              <label class="container">
+                                                Franchisor Admin
+                                                <input
+                                                  type="checkbox"
+                                                  id="abc"
+                                                  name="section_name"
+                                                  value="abc"
+                                                />
+                                                <span class="checkmark"></span>
+                                              </label>
+                                            </div>
+                                            <div className="modal-two-check">
+                                              <label class="container">
+                                                Franchisee Admin
+                                                <input
+                                                  type="checkbox"
+                                                  id="abc"
+                                                  name="section_name"
+                                                  value="abc"
+                                                />
+                                                <span class="checkmark"></span>
+                                              </label>
+                                            </div>
+                                            <div className="modal-two-check">
+                                              <label class="container">
+                                                Co-ordinators
+                                                <input
+                                                  type="checkbox"
+                                                  id="abc"
+                                                  name="section_name"
+                                                  value="abc"
+                                                />
+                                                <span class="checkmark"></span>
+                                              </label>
+                                            </div>
+                                            <div className="modal-two-check">
+                                              <label class="container">
+                                                Educators
+                                                <input
+                                                  type="checkbox"
+                                                  id="abc"
+                                                  name="section_name"
+                                                  value="abc"
+                                                />
+                                                <span class="checkmark"></span>
+                                              </label>
+                                            </div>
+                                            <div className="modal-two-check">
+                                              <label class="container">
+                                                Parents
+                                                <input
+                                                  type="checkbox"
+                                                  id="abc"
+                                                  name="section_name"
+                                                  value="abc"
+                                                />
+                                                <span class="checkmark"></span>
+                                              </label>
+                                            </div>
+                                          </div>
                                         </div>
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Franchisee Admin
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
-                                        </div>
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Co-ordinators
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
-                                        </div>
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Co-ordinators
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
-                                        </div>
-                                        <div className="modal-two-check">
-                                          <label class="container">
-                                            Co-ordinators
-                                            <input
-                                              type="checkbox"
-                                              id="abc"
-                                              name="section_name"
-                                              value="abc"
-                                            />
-                                            <span class="checkmark"></span>
-                                          </label>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>}
+                                      </div> */}
+                                    </>
+                                  )}
                                 </>
                               );
                             })}
@@ -1304,6 +2035,34 @@ const AddFormField = (props) => {
                               className="done"
                               onClick={() => {
                                 setGroupFlag(!groupFlag);
+
+                                let data = [...form];
+                                if (data[Index]['signatories'] === true) {
+                                  let flag = false;
+                                  data.map((item) => {
+                                    if (
+                                      item.field_type === 'signature' &&
+                                      item.section_name ===
+                                        data[Index]['section_name']
+                                    ) {
+                                      flag = true;
+                                    }
+                                  });
+                                  if (flag === false)
+                                    data.push({
+                                      field_label: 'Signature',
+                                      field_type: 'signature',
+                                      section_name: data[Index]['section_name'],
+                                      accessible_to_role:
+                                        data[Index]['accessible_to_role'],
+                                      fill_access_users:
+                                        data[Index]['fill_access_users'],
+                                      signatories: data[Index]['signatories'],
+                                      signatories_role:
+                                        data[Index]['signatories_role'],
+                                    });
+                                }
+                                setForm(data);
                               }}
                             >
                               Done
@@ -1365,9 +2124,14 @@ const AddFormField = (props) => {
                       </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <div className='setting_model_body'>
-                    <Setting onModelChange={()=>{setFormSettingFlag(false);}} />
-                    </div>
+                      <div className="setting_model_body">
+                        <Setting
+                          onModelChange={() => {
+                            getFormField();
+                            setFormSettingFlag(false);
+                          }}
+                        />
+                      </div>
                     </Modal.Body>
                   </Modal>
                 </Form>

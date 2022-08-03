@@ -45,7 +45,7 @@ export default function MyEditor(props) {
 
   return (
     <div className="App">
-      {props.operatingManual ? (
+      {props?.operatingManual ? (
         <CKEditor
           // editor={ClassicEditor}
           config={{
@@ -74,10 +74,10 @@ export default function MyEditor(props) {
 
             // removePlugins: ['Image'], 
           }}
-          data={props.operatingManual.description}
+          data={props?.operatingManual?.description}
          
           onChange={(event, editor) => {
-            props.handleChange(props.name ||"description", editor.getData());
+            props.handleChange(props.name, editor.getData());
           }}
           {...props}
         />
@@ -110,7 +110,7 @@ export default function MyEditor(props) {
           
           editor={ClassicEditor}
           onChange={(event, editor) => {
-            props.handleChange(props.name ||"description", editor.getData());
+            props.handleChange(props.name, editor.getData());
           }}
           {...props}
         />
