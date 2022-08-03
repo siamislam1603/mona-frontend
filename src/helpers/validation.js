@@ -1,13 +1,15 @@
 export const DynamicFormValidation = (form, data) => {
   let newErrors = {};
-  data.map((item) => {
-    console.log('item.required', item.required);
-    if (item.required) {
-      if (!form[`${item.field_name}`]) {
-        newErrors[`${item.field_name}`] = `${item.field_label} is required`;
+  Object.keys(data)?.map((item) => {
+  data[item].map((inner_item) => {
+    console.log('item.required', inner_item.required);
+    if (inner_item.required) {
+      if (!form[`${inner_item.field_name}`]) {
+        newErrors[`${inner_item.field_name}`] = `${inner_item.field_label} is required`;
       }
     }
   });
+});
   return newErrors;
 };
 export const createCategoryValidation = (form) => {
