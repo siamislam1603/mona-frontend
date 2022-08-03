@@ -1,4 +1,4 @@
-export const DynamicFormValidation = (form, data) => {
+export const DynamicFormValidation = (form, data,behalf_of) => {
   let newErrors = {};
   Object.keys(data)?.map((item) => {
   data[item].map((inner_item) => {
@@ -10,6 +10,9 @@ export const DynamicFormValidation = (form, data) => {
     }
   });
 });
+  if(!behalf_of || behalf_of==="")
+    newErrors.behalf_of='Behalf of is required';
+    
   return newErrors;
 };
 export const createCategoryValidation = (form) => {
