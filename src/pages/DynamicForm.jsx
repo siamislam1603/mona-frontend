@@ -16,7 +16,7 @@ const DynamicForm = (props) => {
   const [form, setForm] = useState({});
   const [formPermission, setFormPermission] = useState({});
   const [targetUser, setTargetUser] = useState([]);
-  const [behalfOf,setBehalfOf]=useState("");
+  const [behalfOf, setBehalfOf] = useState('');
 
   const setField = (field, value) => {
     setForm({ ...form, [field]: value });
@@ -70,7 +70,7 @@ const DynamicForm = (props) => {
     fetch(
       `${BASE_URL}/field?form_name=${
         location.pathname.split('/')[location.pathname.split('/').length - 1]
-      }&franchisee_id=${localStorage.getItem('franchisee_id')}`,
+      }&franchisee_id=${localStorage.getItem('franchisee_id')}&request=user`,
       requestOptions
     )
       .then((response) => response.text())
@@ -98,7 +98,7 @@ const DynamicForm = (props) => {
         body: JSON.stringify({
           form_id: formData[0]?.form_id,
           user_id: localStorage.getItem('user_id'),
-          behalf_of:behalfOf,
+          behalf_of: behalfOf,
           data: form,
         }),
         redirect: 'follow',
@@ -115,7 +115,7 @@ const DynamicForm = (props) => {
   };
   return (
     <>
-    {console.log("formPermission--->",formPermission)}
+      {console.log('formPermission--->', formPermission)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -132,39 +132,72 @@ const DynamicForm = (props) => {
                 </Row>
                 <Form>
                   <Row>
-                    {formData?.map((item) => {
+                    {!(
+                      formPermission?.target_user?.includes(
+                        localStorage.getItem('user_role')
+                      ) ||
+                      formPermission?.target_user?.includes(
+                        localStorage.getItem('user_id')
+                      )
+                    ) && (
+                      <Col sm={6}>
+                        <div className="child_info_field sex">
+                          <span className="form-label">Behalf of:</span>
+                          <div clas Name="d-flex mt-2"></div>
+                          <div className="btn-radio d-flex align-items-center">
+                            <Form.Select
+                              name={'behalf_of'}
+                              onChange={(e) => {
+                                setBehalfOf(e.target.value);
+                              }}
+                            >
+                              <option>Select Behalf of</option>
+                              {targetUser?.map((item) => {
+                                return (
+                                  <>
+                                    <option value={item.id}>
+                                      {item.email}
+                                    </option>
+                                  </>
+                                );
+                              })}
+                            </Form.Select>
+                          </div>
+                        </div>
+                      </Col>
+                    )}
+                    {}
+                    {Object.keys(formData)?.map((item) => {
                       return (
-                        <InputFields
-                          {...item}
-                          error={errors}
-                          onChange={setField}
-                        />
+                        item ? <>
+                        <h6 className="text-capitalize">{item}</h6>
+                        {formData[item]?.map((inner_item)=>{
+                          return (
+                            <InputFields
+                              {...inner_item}
+                              error={errors}
+                              onChange={setField}
+                            />
+                          )
+                        })}
+                        
+                        </> : 
+                        formData[item]?.map((inner_item)=>{
+                          return (
+                            <InputFields
+                              {...inner_item}
+                              error={errors}
+                              onChange={setField}
+                            />
+                          )
+                        })
                       );
                     })}
-                    {console.log("formPermission?.fill_access_users--->",formPermission?.fill_access_users)}
-                    {!(formPermission?.fill_access_users?.includes(localStorage.getItem("user_role")) || formPermission?.fill_access_users?.includes(localStorage.getItem("user_id"))) && <Col sm={6}> 
-                      <div className="child_info_field sex">
-                        <span className="form-label">
-                          Behalf of:
-                        </span>
-                        <div className="d-flex mt-2"></div>
-                        <div className="btn-radio d-flex align-items-center">
-                          <Form.Select
-                            name={"behalf_of"}
-                            onChange={(e)=>{setBehalfOf(e.target.value)}}
-                          >
-                            <option>Select Behalf of</option>
-                            {targetUser?.map((item) => {
-                              return (
-                                <>
-                                  <option value={item.id}>{item.email}</option>
-                                </>
-                              );
-                            })}
-                          </Form.Select>
-                        </div>
-                      </div>
-                    </Col>}
+                    {console.log(
+                      'formPermission?.fill_access_users--->',
+                      formPermission?.target_user
+                    )}
+
                     <Col md={12}>
                       <div className="custom_submit">
                         <Button

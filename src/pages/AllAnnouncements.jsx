@@ -30,15 +30,16 @@ const [searchData,setSearchData] = useState()
     try {
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/announcement`, {
+      let franhiseAlias = "all"
+      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&search=&offset=0&limit=5`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
-      // console.log("The data",response);
+      // console.log("The All Announcement",response.data.result);
       
       if(response.status === 200 && response.data.status === "success") {
-          setAnnouncementDetail(response.data.searchedData);
+          setAnnouncementDetail(response.data.result.searchedData);
       }
     } catch (error) {
         if(error.response.status === 404){
@@ -51,17 +52,12 @@ const [searchData,setSearchData] = useState()
 }
 // console.log("The props",props.search)
 
-
-const formatMetaDescription = (str) => {
-    let newFile = str.replace(/<p>/g, '');
-    newFile = newFile.split('</p>')[0];
-    return newFile;
-} 
 const deleteAlert = (id) =>{
   if(window.confirm('Are you sure you want to delete?')){
      deleteAnnouncement(id);
   }
 }
+
 
 const deleteAnnouncement = async (id) =>{
   try {
@@ -112,38 +108,61 @@ useEffect(() => {
   AllAnnouncementData()
 }, [])
 useEffect(() =>{
-  console.log("The props.ssearch state change")
+  // console.log("The props.ssearch state change")
   setSearchData(props.search)
 },[props.search]) 
 useEffect(() =>{
-  if(!props.searchValue){
+  if(!props.search){
     AllAnnouncementData()
-    console.log("The search value is not found",props.searchValue)
+    // console.log("The search value is not found",props.search)
   }
-  else{
-    console.log("The search value have something",props.searchValue)
+  else if(props.allAnnouncement){
+    // console.log("The search value have something",props.search)
+    // setAnnouncementDetail(props.search)
+    setAnnouncementDetail(props.allAnnouncement)
+  }
+  else {
     setAnnouncementDetail(props.search)
   }
-},[props.search])
+},[search])
+ useEffect(() =>{
+    if(props.allAnnouncement?.length>0){
+      // console.log("Don't have fanrhise")
+    }
+    setAnnouncementDetail(props.allAnnouncement)
+    console.log("The frnahise under all announcement",props.allAnnouncement)
+    
+},[props.franchisee])
+useEffect(() =>{
+    if(props.allAnnouncement){
+      setAnnouncementDetail(props.allAnnouncement)
+    }
+},[props.allAnnouncement])
+
+useEffect(() =>{
+  if(props?.loadMoreData?.length>0){
+    setAnnouncementDetail(props.loadMoreData)
+    // console.log("THE LOAD MORE DATA IS NOT EMPYU",props.loadMoreData)
+  }
+  else{
+    // console.log("THE LOAD MORE DATA EMPY ")
+  }
+},[props.loadMoreData])
+
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
-console.log("The annoumce all ",announcementDetails)
-  // console.log("The seach in all announcement", props.search,props.searchValue)
+// console.log("The franhise",props.franchisee)
+//   console.log(" THE All  MORE DATA inside All ANnoncements",props.allAnnouncement)
+// console.log("The annoumce all ",announcementDetails)
+  // console.log("The seach in all announcement", props.search)
 
   return (
     
     <div className="announcement-accordion">
        
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
-
-                        {/* <MyEditor
-                              operatingManual={{ ...operatingManualData }} 
-                             
-                            /> */}
-      {/* <iframe title="video file" className="embed-responsive-item" src="https://embed.api.video/vod/vi54sj9dAakOHJXKrUycCQZp" frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
-
                     <Accordion defaultActiveKey="0">
-                      {
+                      { announcementDetails &&
                         announcementDetails.length !==0 ? (
                           announcementDetails.map((details,index) => (
                             <div key={index}>
@@ -256,7 +275,7 @@ console.log("The annoumce all ",announcementDetails)
                            
                            ))
                         ): (
-                          <div>No data found</div>
+                          <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
                         )
                       }
                     </Accordion>

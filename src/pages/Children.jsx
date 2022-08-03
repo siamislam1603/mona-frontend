@@ -7,6 +7,8 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
+import EducatorAssignPopup from '../components/EducatorAssignPopup';
+import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
 const Children = () => {
     useEffect(()=>{
@@ -17,6 +19,12 @@ const Children = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    // Modal ENd
+
+ // Modal start
+    const [cpShow, setCpShow] = useState(false);
+    const handleCpClose = () => setCpShow(false);
+    const handleCpShow = () => setCpShow(true);
     // Modal ENd
 
     const navigate = useNavigate();
@@ -30,14 +38,16 @@ const Children = () => {
     const [selectedEducatorIds, setSelectedEducatorIds] = useState([]);
     const [selectedEducators,setSelectedEducators] = useState([]);
     const [educators, setEducators] = useState([]); 
+    const [parents, setParents] = useState([]);
+    const [reloadFlag, setReloadFlag] = useState(false);
     
     const init = async() => {
         // Set Parents Franchisee
-        const franchiseeId = location.state.franchisee_id
-          setFranchiseId(franchiseeId)
+        const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id');
+          setFranchiseId(franchiseeId);
         
         // Children List
-        let response =await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
+        let response = await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -59,7 +69,39 @@ const Children = () => {
             console.log(coordinators,"coordinatorrr")
             setEducators(coordinators)
           }
+
+        //   Parents list
+        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/guardian`, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+          if (CpResponse.status === 200) {
+            const {coordinators} = CpResponse.data;
+            console.log(coordinators,"coordinatorrr")
+            setParents(coordinators)
+          }
     }
+
+    const sendInitiationMail = async (childId) => {
+        let token = localStorage.getItem('token');
+        const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${params.id}`, { childId }, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if(response.status === 201 && response.data.status === "success") {
+            // POPUP HERE
+            console.log('Invitation Mail Sent!');
+            setReloadFlag(!reloadFlag);
+
+        }
+    };
+
+    const handleEnrollmentPageRedirection = async (childId) => {
+        window.location.href=`/child-enrollment/${childId}`    
+    };
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
@@ -92,6 +134,9 @@ const Children = () => {
             }
             if (e.target.text === 'Add Educator'){
                 handleShow()
+            }
+            if (e.target.text === 'Add Co-Parent'){
+                handleCpShow()
             }
         },
     };
@@ -128,15 +173,17 @@ const Children = () => {
     const products = educators.map((educator)=>({
         id: educator.id,
         name: educator.fullname + "," + (educator.profile_photo ? educator.profile_photo : "../img/user.png"),
-        Location: educator.city
+        Location: educator.city,
     }))
 
-    const productsTow = childrenList.map((child)=>({
+    const productsTow = childrenList?.map((child)=>({
         id: child.id,
         name: child.fullname,
         Location : child.home_address,
-        Educator: child.users
-    }))
+        Educator: child.users,
+        EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated }
+    }));
+    console.log('Products:', productsTow);
 
     const   PColumns = [
         {
@@ -182,16 +229,29 @@ const Children = () => {
 
         },
         {
-            dataField: 'number',
+            dataField: 'EnrollFlag',
             text: '',
             formatter: (cell) => {
+                console.log(cell, 'ENROLLED CELL');
                 return (
-                    <>
-                        <div className="cta-col">
-                            <button className="Enrolment_Button btn btn-outline-secondary" style={{"fontSize":"0.8rem","fontWeight":"8  00"}}>
-                                View Enrolment
-                            </button>
-                        </div>
+                    <>  {
+                            cell.enrollFlag === 0 ?
+                            <div className="cta-col">
+                                <button 
+                                    className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                    disabled={cell.initiationFlag === true}
+                                    onClick={() => sendInitiationMail(cell.childId)}>
+                                    {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
+                                </button>
+                            </div>
+                            :
+                            <div className="cta-col">
+                                <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                onClick={() => handleEnrollmentPageRedirection(cell.childId)}>
+                                    View Enrolment
+                                </button>
+                            </div>
+                        }
                     </>
                 );
             },
@@ -211,6 +271,7 @@ const Children = () => {
                                     <Dropdown.Item href="#">Delete</Dropdown.Item>
                                     <Dropdown.Item href="#">Edit</Dropdown.Item>
                                     <Dropdown.Item href="#">Add Educator</Dropdown.Item>
+                                    <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>
@@ -235,6 +296,11 @@ const Children = () => {
         }
     ];
 
+    useEffect(() => {
+        init();
+    }, [reloadFlag]);
+
+    childrenList && console.log('Children List:', childrenList);
     return (
         <>
             <div id="main">
@@ -246,16 +312,35 @@ const Children = () => {
                             </aside>
                             <div className="sec-column">
                                 <TopHeader
-                                    selectedFranchisee={selectedFranchisee}
                                     setSelectedFranchisee={setSelectedFranchisee}
                                 />
                                 <div className="entry-container">
                                     <div className="user-management-sec">
-                                        <header className="title-head">
+                                        <header className="title-head"
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center"
+                                            }}>
                                             <h1 className="title-lg">
                                                 <Link to="/user-management"> </Link>
                                                 Children
                                             </h1>
+
+                                            {
+                                                localStorage.getItem('user_role') !== "guardian" &&
+                                                <Link 
+                                                    to={`/child-enrollment-init/${params.id}`}
+                                                    style={{
+                                                        backgroundColor: "#455C58",
+                                                        color: "#fff",
+                                                        padding: ".9rem 2.3rem",
+                                                        fontWeight: 500,
+                                                        borderRadius: "5px"
+                                                    }}>
+                                                    Add Child
+                                                </Link>
+                                            }
                                         </header>
                                         <BootstrapTable
                                             keyField="id"
@@ -271,7 +356,7 @@ const Children = () => {
                     </Container>
                 </section>
             </div>
-            <Modal size="lg" show={show} onHide={handleClose}>
+            {/* <Modal size="lg" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Select Educator</Modal.Title>
                     <Button variant="outline-secondary" onClick={handleClose} style={{ position: 'absolute', right: '80px' }}>
@@ -312,7 +397,9 @@ const Children = () => {
                         Add
                     </Button>
                 </Modal.Footer>
-            </Modal >
+            </Modal > */}
+            {show ? <EducatorAssignPopup educators={educators} handleClose={()=>handleClose()} show={show}/> : ""}
+            {cpShow ? <CoparentAssignPopup parents={parents} handleClose={()=>handleCpClose()} show={cpShow}/> : ""}
         </>
     );
 };

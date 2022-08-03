@@ -225,6 +225,7 @@ button:focus {
     /* align-items: center; */
     /* padding: 15px 20px 16px 20px; */
 }
+
 .date-line {
     margin-top: 0 !important;
     margin-bottom: 24px !important;
@@ -566,7 +567,6 @@ button:focus {
     margin: 20px 0;
 }
 
-.my-new-formsection label,
 .my-new-formsection input[type=text],
 .my-new-formsection select {
     background-color: #fff !important;
@@ -1282,10 +1282,12 @@ button:focus {
 .tree li.branch>a.tree-title {
     color: #AA0061;
 }
-.title_active img{
-    width:15px;
-    height:15px
+
+.title_active img {
+    width: 15px;
+    height: 15px
 }
+
 .branch>ul li {
     font-family: 'Noto Sans';
     font-style: normal;
@@ -1487,6 +1489,7 @@ span.module_dot {
 .reference_videos .vidico {
     position: relative;
     height: 329px;
+    width: 100%;
 }
 
 .reference_videos .vidico:before {
@@ -1617,10 +1620,12 @@ button.vidico img {
     line-height: 33px;
     color: #333333;
 }
+
 button.forms-content.create-other {
     border: none;
     min-width: 300px;
 }
+
 .new_module .formlabel.form-label {
     margin-bottom: 8px !important;
     line-height: normal !important;
@@ -1942,14 +1947,14 @@ img#user-pic {}
     height: 34px;
 }
 
-  
+
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-  
+
 .slider {
     position: absolute;
     cursor: pointer;
@@ -1962,7 +1967,7 @@ img#user-pic {}
     transition: .4s;
 }
 
-  
+
 .slider:before {
     position: absolute;
     content: "";
@@ -1983,28 +1988,28 @@ input:focus+.slider {
     box-shadow: 0 0 1px #2196F3;
 }
 
-  
+
 input:checked+.slider {
     background-color: #2196F3;
 }
-  
+
 input:focus+.slider {
     box-shadow: 0 0 1px #2196F3;
 }
-  
+
 input:checked+.slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
 
-  
+
 /* Rounded sliders */
 .slider.round {
     border-radius: 34px;
 }
 
-  
+
 .slider.round:before {
     border-radius: 50%;
 }
@@ -2116,7 +2121,7 @@ hr {
     cursor: pointer;
 }
 
-  
+
 .select-check-wrp .form-group label {
     position: relative;
     cursor: pointer;
@@ -2238,12 +2243,14 @@ hr {
     top: 50%;
     pointer-events: none;
 }
+
 .applicable_section_card {
     background: rgb(144 144 144 / 10%);
     border-radius: 15px;
     padding: 12px 30px 30px;
     margin-top: 30px;
 }
+
 .sharing-title p {
     font-style: normal;
     font-weight: 400;
@@ -2280,7 +2287,7 @@ label.form_label_title.form-label {
     margin: 0px;
 }
 
-.form-label{
+.form-label {
     font-weight: 500 !important;
     font-size: 14px !important;
     line-height: 22px !important;
@@ -2350,6 +2357,7 @@ thead.table_title tr th:first-child {
     padding-left: 16px;
     text-align: left;
 }
+
 .user_role_table tr td {
     padding: 12px 11px !important;
     font-size: 14px;
@@ -2670,12 +2678,15 @@ li.child_tag {
     border-radius: 12.1116px;
     padding: 14px;
 }
-.table_body .user_box:last-child{
+
+.table_body .user_box:last-child {
     margin-bottom: 0;
 }
-.table_body .user_box{
+
+.table_body .user_box {
     margin-bottom: 13px;
 }
+
 .table_body .user_box .user_profile {
     display: flex;
     align-items: center;
@@ -2728,9 +2739,11 @@ li.child_tag {
     background-color: transparent;
     border-radius: 8px;
 }
-.select_group_model .modal-content{
+
+.select_group_model .modal-content {
     min-width: 687px;
 }
+
 .sub_check_box h2 {
     font-family: 'Noto Sans';
     font-style: normal;
@@ -2739,14 +2752,17 @@ li.child_tag {
     line-height: 22px;
     color: #333333;
 }
+
 .sub_check_box {
     margin-left: 76px;
 }
+
 .modal_check_box {
     display: flex;
     flex-wrap: wrap;
 }
-.sub_check_box_list .modal_check_box .modal-two-check label{
+
+.sub_check_box_list .modal_check_box .modal-two-check label {
     font-size: 14px;
     min-width: 175px;
     width: 100%;
@@ -2764,6 +2780,7 @@ li.child_tag {
     color: #333333;
     line-height: 0;
 }
+
 .table-checkbox span {
     height: 26px;
     width: 26px;
@@ -2776,13 +2793,16 @@ li.child_tag {
     flex: 0 0 26px;
     position: relative;
 }
+
 .table-checkbox input {
     display: none;
 }
+
 .table-checkbox input {
     display: none;
 }
-.table-checkbox input:checked + span:before {
+
+.table-checkbox input:checked+span:before {
     content: "";
     position: absolute;
     left: 8px;
@@ -2793,6 +2813,7 @@ li.child_tag {
     border-width: 0 3px 3px 0;
     transform: rotate(45deg);
 }
+
 .signatories-toggle {
     justify-content: flex-start !important;
     margin-bottom: 20px;
@@ -2823,7 +2844,8 @@ li.child_tag {
     padding: 16px 19px;
     border-radius: 10px;
 }
-.custom-menu-dots .dropdown-item{
+
+.custom-menu-dots .dropdown-item {
     padding: 0.01rem 1rem !important;
 }
 
@@ -2832,18 +2854,20 @@ li.child_tag {
 
 
 
-.previewTitle{
-    display:'flex';
+.previewTitle {
+    display: 'flex';
     align-items: center;
     justify-content: space-between;
 }
 
-.previewTitle > div{
-    width:auto
+.previewTitle>div {
+    width: auto
 }
-.userBox *{
-    margin:0;
+
+.userBox * {
+    margin: 0;
 }
+
 .userBox {
     display: flex;
     align-items: center;
@@ -2853,12 +2877,13 @@ li.child_tag {
     padding: 8px 15px;
     border-radius: 4px;
 }
-.userBox > div{
-    display:flex;
+
+.userBox>div {
+    display: flex;
     align-items: center;
 }
 
-.userBox .user-role{
+.userBox .user-role {
     font-family: 'Noto Sans';
     font-style: normal;
     font-weight: 500;
@@ -2867,10 +2892,12 @@ li.child_tag {
     color: rgba(51, 51, 51, 0.5);
 }
 
-.setting_model_body .row {
-    margin-top: -23px !important;
+.FileReop {
+    text-decoration: none;
+    color: #000
 }
-.setting_model_body .mt-5.mb-5.d-flex.justify-content-center {
-    margin-top: 0px !important;
-    margin-bottom: 0px !important;
+
+h6.text-capitalize {
+    color: var(--purple);
+    font-size: 20px;
 }

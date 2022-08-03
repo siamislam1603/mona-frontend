@@ -96,7 +96,7 @@ const EditAnnouncement = () => {
     } 
     else{
       setErrors({})
-      if(announcementCopyData && coverImage) {
+      if(announcementCopyData ) {
          console.log("After submit the buton",announcementCopyData)
          let data = new FormData();
       
@@ -111,6 +111,7 @@ const EditAnnouncement = () => {
           });
           setUpdateAnnouncement(true);
           setLoader(true)
+          console.log("The edit announcement")
           UpdateAnnouncement(data)
       }
     }
@@ -133,8 +134,8 @@ const EditAnnouncement = () => {
   }
   const UpdateAnnouncement = async(data) =>{
     // data.append("")
-    // const theres = await  axios.post('https://httpbin.org/anything', data);
-        // console.log("THE RESPONSE",theres)
+    const theres = await  axios.post('https://httpbin.org/anything', data);
+        console.log("THE RESPONSE",theres)
         try {
           console.log("Updating Annoucement")
           const token = localStorage.getItem('token');
@@ -145,10 +146,12 @@ const EditAnnouncement = () => {
               "Authorization": "Bearer " + token
             }
            });
-           console.log("The response",response)
-           if(response.status === 200 && response.data.status === "success"){
+           console.log("The cover image inside updating ",coverImage)
+           
+           if(response.status === 200 && response.data.status === "success" && coverImage){
               const id = announcementData.id;
               console.log("The id",id)
+              console.log("The cover image inside 2",coverImage)
              
               // const theres = await  axios.post('https://httpbin.org/anything', data);
               // console.log("THE RESPONSE",theres)
@@ -171,8 +174,20 @@ const EditAnnouncement = () => {
                    
                 }
               }
-              else{
-                console.log("The Object Type")
+              
+              else if(coverImage === null){
+                console.log("The cover image is null")
+              }
+              else if (typeof coverImage === "object" || coverImage === null || coverImage === "undefined"){
+                if(Object.keys(coverImage).length === 0){
+                    console.log("The cover image is empty")
+                    window.location.href="/announcements"; 
+                    setCoverImage(null) 
+                    setFetchedCoverImage(null)  
+
+                }
+                else{
+                  console.log("The Object Type", typeof coverImage)
                 let data = new FormData()
                 data.append('id',id);
                 data.append('image', coverImage[0]);
@@ -202,8 +217,16 @@ const EditAnnouncement = () => {
                       setTopErrorMessage(null);
                     }, 3000)
                 }
+                }
               }
            }
+           else{
+            console.log("The cover image is empty")
+            window.location.href="/announcements";    
+
+           }
+         
+          
         } catch (error) {
           // if(response.status === 200 && response.data.status === "fail") {
           //   console.log('ERROR RESPONSE!');
@@ -217,7 +240,8 @@ const EditAnnouncement = () => {
           //     setTopErrorMessage(null);
           //   }, 3000)
           // }
-          // console.log("The error",error)
+          console.log("The error",error)
+
           if(error.response.status === 403 && error.response.data.status === "fail"){
             console.log('ERROR RESPONSE!', error);
           
@@ -245,8 +269,9 @@ const EditAnnouncement = () => {
 
       setFranchiseeData(franchiseeList.map(franchisee => ({
         id: franchisee.id,
-        value: franchisee.franchisee_alias,
-        label: franchisee.franchisee_name
+        value: franchisee.franchisee_name,
+        label: franchisee.franchisee_name,
+        city: franchisee.franchisee_city
       })));  
     }
   }
@@ -315,13 +340,14 @@ const EditAnnouncement = () => {
 // console.log("The time",announcementData.scheduled_date.split("T")[1])
 // console.log("The Image settig",coverImage,typeof coverImage)
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
-  console.log("The COPY DATA",announcementCopyData )
-  console.log("THE VIDEO DATA",fetchedVideoTutorialFiles)
-  console.log("ANNOUNCEMENT DATA",announcementData)
+  // console.log("The COPY DATA",announcementCopyData )
+  // console.log("THE VIDEO DATA",fetchedVideoTutorialFiles)
+  // console.log("ANNOUNCEMENT DATA",announcementData)
+  console.log("The cover image",coverImage)
   const dateToFormat = '1976-04-19T12:59-0500';
   // start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
 
- console.log("The format time",moment("2022-07-29T11:17:00.000Z").utc().format('HH:mm:ss'))
+ 
   return (
     <>
       {/* {console.log('Annoucement--->', announcementData)}
@@ -394,9 +420,6 @@ const EditAnnouncement = () => {
                                 }));
                               }}
                             /> */}
-    
-                            
-                         {/* </div>       */}
                           {
                             localStorage.getItem('user_role') === 'franchisor_admin' ? (
                               <div className="select-with-plus">

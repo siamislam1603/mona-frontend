@@ -102,15 +102,11 @@ const OperatingManual = () => {
       headers: myHeaders,
     };
     let api_url = '';
-    console.log('selectedFranchisee--->', selectedFranchisee);
     if (selectedFranchisee) {
+      console.log('selectedFranchisee--->', selectedFranchisee);
       if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
       else
-        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee
-          .split(',')[0]
-          .split(' ')
-          .map((d) => d.charAt(0).toLowerCase() + d.slice(1))
-          .join('_')}`;
+        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
       api_url = `${BASE_URL}/auth/users`;
     }
@@ -1010,7 +1006,7 @@ const OperatingManual = () => {
           </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button className="back">Cancel</Button>
+          <Button className="back" onClick={()=>{setFormSettingFlag(false)}}>Cancel</Button>
           <Button className="done" onClick={onModelSubmit}>
             Save Settings
           </Button>
