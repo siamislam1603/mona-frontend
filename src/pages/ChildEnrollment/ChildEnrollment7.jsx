@@ -29,6 +29,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [formStepData, setFormStepData] = useState(step);
   const [formStatus, setFormStatus] = useState('submission');
   const [formSubmissionSuccessDialog, setFormSubmissionSuccessDialog] = useState(false);
+  const [userConsentFormDialog, setUserConsentFormDialog] = useState(true);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
@@ -117,7 +118,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   const handleDataSubmit = event => {
     event.preventDefault();
-    updateFormSevenData();
+    // updateFormSevenData();
   }
 
   const handleConsentUpdation = (consentId, consent_given) => {
@@ -291,6 +292,47 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
             className="modal-button"
             onClick={() => handleSubmissionRedirection()}>Okay</button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={userConsentFormDialog}
+        size="lg">
+          <Modal.Header>
+            <Modal.Title>Parent Consent Form</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <Form.Group>
+                <div className="btn-checkbox" style={{padding: 0, margin: 0, width: "100%"}}>
+                  <Form.Check 
+                    type="checkbox" 
+                    style={{ padding: "0px", margin: "0px 0px 20px 0px" }}
+                    // id={`accept_${consent.id}`} 
+                    // checked={consent.consent_given === true}
+                    label="Parent/Guardian's consent required"
+                    // onChange={() => handleConsentUpdation(consent.id, consent.consent_given)} 
+                  />
+
+                  <div className="comment-box" style={{  width: "100%" }}>
+                    <p><strong>Add Comment</strong></p>
+                    <Form.Control
+                      name="your comment here" 
+                      as="textarea" 
+                      style={{width: "100%"}}
+                      // value={emergencyContactData?.address || ""}
+                      rows={10} />
+                  </div> 
+                </div>
+              </Form.Group>
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleSubmissionRedirection()}>Ask For Consent</button>
+          </Modal.Footer>
       </Modal>
     </>
   );
