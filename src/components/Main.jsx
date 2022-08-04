@@ -62,8 +62,6 @@ const Main = () => {
 
 
     if (item) {
-
-
       // SETTING 2 HOURS TIMEOUT FOR LOGOUT
       const loginTime = new Date();
       const logoutTime = new Date();
