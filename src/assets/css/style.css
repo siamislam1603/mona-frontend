@@ -614,7 +614,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .change-pass-sec { max-width:700px; margin: auto; }
 
-.react-bootstrap-table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.react-bootstrap-table { display: block; width: 100%; -webkit-overflow-scrolling: touch; }
 
 
 /* =================================================================================== */
