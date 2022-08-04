@@ -11,8 +11,22 @@ const EducatorAssignPopup = (props) => {
   const [selectedEducators, setSelectedEducators] = useState([])
   const handleClose = () => props.handleClose();
     const assignEducators = async() => {
+        console.log(JSON.parse(localStorage.getItem("DefaultEducators")),"default")
+        let removedEducators = JSON.parse(localStorage.getItem("DefaultEducators")).map((educator)=>{
+            if(!selectedEducators.includes(educator)){
+                console.log("andar aa raha hai")
+                return educator
+            }
+        })
+
+        removedEducators = removedEducators.filter(function( element ) {
+            return element !== undefined;
+         });
+        
+        console.log(removedEducators,selectedEducators,"eduuca")
+
         let childId = localStorage.getItem("SelectedChild")
-        let response =await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${childId}`,{educatorIds:selectedEducators}, {
+        let response =await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${childId}`,{educatorIds:selectedEducators,removedEducatorIds:removedEducators}, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },

@@ -83,7 +83,7 @@ const Children = () => {
           }
 
         //   Parents list
-        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/guardian`, {
+        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/parents/${franchiseeId}`, {
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
