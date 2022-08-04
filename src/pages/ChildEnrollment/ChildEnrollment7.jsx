@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
+import moment from 'moment';
 import Select from 'react-select';
 
 
@@ -61,7 +62,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       setConsentData(prevState => ({
         ...prevState,
         parent_name: parents[0].family_name,
-        consent_date: parents[0].consent_date
+        consent_date: moment(parents[0].consent_date).format('YYYY-MM-DD')
       }));
       setConsentDetail(consent.map(c => ({
         id: c.id,
@@ -75,7 +76,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   // UPDATING FORM SEVEN DATA;
   const updateFormSevenData = async () => {
     let token = localStorage.getItem('token');
-    let parentId = localStorage.getItem('user_id');
+    let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
     let response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...consentData}, {
       headers: {
@@ -146,7 +147,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     if(response.status === 201 && response.data.status === "success") {
-      let parent_id = localStorage.getItem('user_id');
+      let parent_id = localStorage.getItem('enrolled_parent_id');
       window.location.href=`http://localhost:5000/children/${parent_id}`;
     }
   }
