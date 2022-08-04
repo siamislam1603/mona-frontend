@@ -27,7 +27,8 @@ const [loader, setLoader] = useState(false);
 const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
 const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
-  user_roles: []
+  user_roles: [],
+  is_event:1
 });
 const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -195,7 +196,7 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
-      // console.log("The name and value",name,value)
+      console.log("The name and value",name,value)
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
@@ -308,7 +309,8 @@ const createAnnouncement = async (data) => {
 
    
 // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-console.log("The franhiseData 1",franchiseeData);
+// console.log("The franhiseData 1",franchiseeData);
+console.log("THE handle ",announcementData)
   return (
     
     <>
@@ -439,8 +441,49 @@ console.log("The franhiseData 1",franchiseeData);
                   />
                 </Form.Group>
                 {error.start_time && <p className="form-errors">{error.start_time}</p>}
-
+             
               </Col>
+              <Col lg={3} sm={6}>
+                  <Form.Group >
+                    <div className="btn-radio inline-col">
+                      <Form.Label>Event or Announcement</Form.Label>
+                      <div>
+                      <Form.Check
+                        type="radio"
+                        name="is_event"
+                        id="a"
+                        label="Announcement"
+                        onChange={() =>{
+                          setAnnouncementData((prevState) => ({
+                            ...prevState,
+                            // [name]: value,
+                            is_event:0
+                          })); 
+                        }}
+                        
+                        defaultChecked
+                       
+                         />
+                      <Form.Check
+                        type="radio"
+                        name="is_event"
+                        id="e"
+                        onChange={() =>{
+                          setAnnouncementData((prevState) => ({
+                            ...prevState,
+                            // [name]: value,
+                            is_event:1
+                          })); 
+                        }}
+                        label="Event"
+                         />
+                      </div>
+                    
+                    </div>
+                  </Form.Group>
+                </Col>
+              
+              
                     </Row>
                   <div className="my-new-formsection">
                     <Row>
