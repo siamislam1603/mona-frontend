@@ -13,7 +13,7 @@ const CoparentAssignPopup = (props) => {
     const assignParents = async() => {
         console.log(selectedParents,"selPar")
         let childId = localStorage.getItem("SelectedChild")
-        let response =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds:selectedParents}, {
+        let response =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds: selectedParents}, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
+import moment from 'moment';
 import Select from 'react-select';
 
 
@@ -24,10 +25,15 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     signature: "",
     consent_date: ""
   });
+  const [parentConsentData, setParentConsentData] = useState({
+    asked_for_consent: false,
+    comment: ""
+  });
   const [consentDetail, setConsentDetail] = useState(null);
   const [formStepData, setFormStepData] = useState(step);
   const [formStatus, setFormStatus] = useState('submission');
   const [formSubmissionSuccessDialog, setFormSubmissionSuccessDialog] = useState(false);
+  const [userConsentFormDialog, setUserConsentFormDialog] = useState(false);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
@@ -61,7 +67,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       setConsentData(prevState => ({
         ...prevState,
         parent_name: parents[0].family_name,
-        consent_date: parents[0].consent_date
+        consent_date: moment(parents[0].consent_date).format('YYYY-MM-DD')
       }));
       setConsentDetail(consent.map(c => ({
         id: c.id,
@@ -75,7 +81,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   // UPDATING FORM SEVEN DATA;
   const updateFormSevenData = async () => {
     let token = localStorage.getItem('token');
-    let parentId = localStorage.getItem('user_id');
+    let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
     let response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...consentData}, {
       headers: {
@@ -103,12 +109,14 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   
           if(response.status === 201 && response.data.status === "success") {
             // nextStep();
-            setFormStatus('updation');
             setFormSubmissionSuccessDialog(true);
           }
         }
-  
-        setFormStatus('submission');
+        
+        if(localStorage.getItem('user_role') === 'coordinator' && localStorage.getItem('change_count') > 0) {
+          setUserConsentFormDialog(true);
+        }
+
         setFormSubmissionSuccessDialog(true);
       }
     }
@@ -118,6 +126,25 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     event.preventDefault();
     updateFormSevenData();
   }
+
+  const handleParentConsentSubmission = async () => {
+    let response = await axios.post(`${BASE_URL}/enrollment/parent-consent/`, {
+      ...parentConsentData,
+      consent_initiator_id: localStorage.getItem('user_id'),
+      consent_recipient_id: localStorage.getItem('enrolled_parent_id'),
+      child_id: localStorage.getItem('enrolled_child_id'),
+    }, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+        setUserConsentFormDialog(false);
+        localStorage.removeItem('change_count');
+        setFormSubmissionSuccessDialog(true);
+    }
+  };
 
   const handleConsentUpdation = (consentId, consent_given) => {
     let updatedData = consentDetail.map(c => {
@@ -146,7 +173,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     if(response.status === 201 && response.data.status === "success") {
-      let parent_id = localStorage.getItem('user_id');
+      let parent_id = localStorage.getItem('enrolled_parent_id');
       window.location.href=`http://localhost:5000/children/${parent_id}`;
     }
   }
@@ -165,7 +192,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   }, [])
 
   // consentData && console.log('Consent Data:', consentData);
-  consentDetail && console.log('CONSENT DETAIL:', consentDetail);
+  // consentDetail && console.log('CONSENT DETAIL:', consentDetail);
+  parentConsentData && console.log('PARENT CONSENT DATA:', parentConsentData);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -280,16 +308,62 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           <Modal.Title className="modal-title">Congratulations!</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { formStatus === "submission"
-            ? <p className="modal-paragraph">Form Submitted Successfully.</p>
-            : <p className="modal-paragraph">Form Updated Successfully.</p>
-          }
+          <p className="modal-paragraph">Form Submitted Successfully.</p>
         </Modal.Body>
         <Modal.Footer>
           <button 
             className="modal-button"
             onClick={() => handleSubmissionRedirection()}>Okay</button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={userConsentFormDialog}
+        size="lg">
+          <Modal.Header>
+            <Modal.Title>Parent Consent Form</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <Form.Group>
+                <div className="btn-checkbox" style={{padding: 0, margin: 0, width: "100%"}}>
+                  <Form.Check 
+                    type="checkbox" 
+                    style={{ padding: "0px", margin: "0px 0px 20px 0px" }}
+                    id={`accept_consent_1`} 
+                    checked={parentConsentData.asked_for_consent === true}
+                    label="Parent/Guardian's consent required"
+                    onChange={() => setParentConsentData(prevState => ({
+                      ...prevState,
+                      asked_for_consent: !parentConsentData.asked_for_consent
+                    }))} 
+                  />
+
+                  <div className="comment-box" style={{  width: "100%" }}>
+                    <p><strong>Add Comment</strong></p>
+                    <Form.Control
+                      name="your comment here" 
+                      as="textarea" 
+                      style={{width: "100%"}}
+                      value={parentConsentData?.comment || ""}
+                      rows={10}
+                      onChange={(e) => setParentConsentData(prevState => ({
+                        ...prevState,
+                        comment: e.target.value
+                      }))} />
+                  </div> 
+                  <p>* You've done {localStorage.getItem('change_count')} {localStorage.getItem('change_count') > 1 ? "changes" : "change"} in this form!</p>
+                </div>
+              </Form.Group>
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleParentConsentSubmission()}>Ask For Consent</button>
+          </Modal.Footer>
       </Modal>
     </>
   );

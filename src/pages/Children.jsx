@@ -18,7 +18,7 @@ const Children = () => {
     // Modal start
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = (id,educators) =>{
+    const handleShow = (id, educators) =>{
         let defEducators = educators.map((edu)=>{
             return edu.id 
         })
@@ -32,7 +32,7 @@ const Children = () => {
     const [cpShow, setCpShow] = useState(false);
     const handleCpClose = () => setCpShow(false);
     const handleCpShow = async (id) =>{
-        localStorage.setItem("SelectedChild",id)
+        localStorage.setItem("SelectedChild", id)
         await fetchParents(id)
         setCpShow(true)
     };
@@ -64,8 +64,9 @@ const Children = () => {
             },
           });
           if (response.status === 200) {
+            // console.log('RESPONSE:', response.data);
             const { parentData } = response.data;
-            console.log(parentData,"users")
+            // console.log(parentData,"users")
             setChildrenList(parentData.children)
           }
           
@@ -77,7 +78,7 @@ const Children = () => {
           });
           if (eduResponse.status === 200) {
             const {coordinators} = eduResponse.data;
-            console.log(coordinators,"coordinatorrr")
+            // console.log(coordinators,"coordinatorrr")
             setEducators(coordinators)
           }
 
@@ -89,7 +90,7 @@ const Children = () => {
           });
           if (CpResponse.status === 200) {
             const {coordinators} = CpResponse.data;
-            console.log(coordinators,"coordinatorrr")
+            // console.log(coordinators,"coordinatorrr")
             setParents(coordinators)
           }
     }
@@ -124,13 +125,13 @@ const Children = () => {
 
         if(response.status === 201 && response.data.status === "success") {
             // POPUP HERE
-            console.log('Child Deactivated');
+            // console.log('Child Deactivated');
         }
     }
 
     const fetchParents = async (id) => {
         let childId = localStorage.getItem("SelectedChild")
-        let response =await axios.get(`${BASE_URL}/enrollment/child/parent/${childId || id}`, {
+        let response = await axios.get(`${BASE_URL}/enrollment/child/parent/${childId || id}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -142,6 +143,19 @@ const Children = () => {
             
             localStorage.setItem("DefaultParents",JSON.stringify(defaultparents))
         }
+
+        // let response = await axios.get(`${BASE_URL}/user-group/users/guardian`, {
+        //     headers: {
+        //         "Authorization": `Bearer ${localStorage.getItem('token')}`
+        //     }
+        // });
+        // console.log('RESPONSE FROM PARENT:', response.data);
+        // if(response.status === 200 && response.data.status === "success") {
+        //     let { users} = response.data;
+        //     let defaultParents = users.map(d => d.id);
+        //     console.log('DEFAULT PARENTS:', defaultParents);
+        //     localStorage.setItem("DefaultParents", JSON.stringify(defaultParents));
+        // }
     }
     
     const rowEvents = {
@@ -181,6 +195,7 @@ const Children = () => {
             }
             if (e.target.text === 'Add Co-Parent'){
                 handleCpShow(row.id)
+                // addCoparentToChild()
             }
             if (e.target.text === 'Deactivate'){
                 DeactivateChild(row.id)
@@ -203,10 +218,8 @@ const Children = () => {
             //     DeleteId.push(row.userID);
             // }
 
-            console.log("hello")
         },
         onSelectAll: (isSelect, rows, e) => {
-            console.log("helo")
             if (isSelect) {
                 userData.map((item) => {
                     DeleteId.push(item.userID);
@@ -230,7 +243,7 @@ const Children = () => {
         Educator: {educators:child.users, childId:child.id},
         EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated }
     }));
-    console.log('Products:', productsTow);
+    // console.log('Products:', productsTow);
 
     const   PColumns = [
         {
@@ -241,7 +254,7 @@ const Children = () => {
             dataField: 'Educator',
             text: 'Educator',
             formatter: (cell) => {
-                console.log(cell,"celll")
+                // console.log(cell,"celll")
                 return (
                     <>
                         {cell.educators.length == 0 ?
@@ -279,7 +292,7 @@ const Children = () => {
             dataField: 'EnrollFlag',
             text: '',
             formatter: (cell) => {
-                console.log(cell, 'ENROLLED CELL');
+                // console.log(cell, 'ENROLLED CELL');
                 return (
                     <>  {
                             cell.enrollFlag === 0 ?
@@ -348,7 +361,7 @@ const Children = () => {
         init();
     }, [reloadFlag]);
 
-    childrenList && console.log('Children List:', childrenList);
+    // childrenList && console.log('Children List:', childrenList);
     return (
         <>
             <div id="main">

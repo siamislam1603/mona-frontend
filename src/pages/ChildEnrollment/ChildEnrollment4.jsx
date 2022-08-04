@@ -122,6 +122,21 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
             });
     
             if(response.status === 201 && response.data.status === "success") {
+              let changeCount = localStorage.getItem('change_count');
+
+              if(emergencyContactData.log.length > 0)
+                changeCount++;
+
+              if(authorizedNomineeData.log.length > 0)
+                changeCount++;
+              
+              if(authorizedPersonData.log.length > 0)
+                changeCount++;
+
+              if(otherAuthorizedPersonData.log.length > 0)
+                changeCount++;
+              
+              localStorage.setItem('change_count', changeCount);
               nextStep();
             }
           }
@@ -232,8 +247,8 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
-      localStorage.setItem('enrolled_parent_id', child.parents[0].id);
-      console.log('CHILD DATA:', child);
+      // localStorage.setItem('enrolled_parent_id', child.parents[0].id);
+      // console.log('CHILD DATA:', child);
 
       if(child.form_step > step) {
         

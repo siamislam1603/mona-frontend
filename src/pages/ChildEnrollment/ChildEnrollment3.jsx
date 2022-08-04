@@ -48,6 +48,15 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
       });
 
       if(response.status === 201 && response.data.status === "success") {
+        let changeCount = localStorage.getItem('change_count');
+
+        if(agreedBookingHours.log.length > 0)
+          changeCount++;
+
+        if(agreedHolidayHours.log.length > 0)
+          changeCount++;
+        
+        localStorage.setItem('change_count', changeCount);
         nextStep();
       }
     }
@@ -145,10 +154,8 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDetailsAndPopulate();
   }, [])
 
-  // agreedBookingHours && console.log('Agreed Hours:', agreedBookingHours);
+  agreedBookingHours && console.log('Agreed Hours:', agreedBookingHours);
   agreedHolidayHours && console.log('Agreed Holiday Hours:', agreedHolidayHours);
-  idList && console.log('ID LIST:', idList);
-  formStepData && console.log(formStepData);
   return (
     <>
       <div className="enrollment-form-sec">

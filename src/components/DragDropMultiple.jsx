@@ -2,7 +2,19 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave,Files, setErrors, title="Files" }) {
+export default function DropAllFile({ onSave,Files, setErrors, title="Files", type="file" }) {
+  let typeObj;
+
+  if(type === "video") {
+    typeObj = {
+      'video/*': ['.mp4', '.flv', '.mkv']
+    }
+  } else {
+    typeObj = {
+      'pdf/*': ['.pdf', '.doc', '.xlsx', '.xlsm']
+    }
+  }
+  
   console.log("The files",Files)
   const [data, setData] = useState([]);
   const [theFiles,setTheFiles] = useState();
@@ -21,9 +33,7 @@ export default function DropAllFile({ onSave,Files, setErrors, title="Files" }) 
     // accept: {
     //   'image/*, audio/*, video/*': ['.png', '.jpg', '.jpeg','.pdf','.doc','.txt','.wpd'],
     // },
-    accept: {
-      'video/*': ['.mp4', '.flv', '.mkv']
-    },
+    accept: typeObj
   });
 
   const handleFileDelete = (file) => {

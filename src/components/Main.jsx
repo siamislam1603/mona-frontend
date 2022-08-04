@@ -62,12 +62,10 @@ const Main = () => {
 
 
     if (item) {
-
-
       // SETTING 2 HOURS TIMEOUT FOR LOGOUT
       const loginTime = new Date();
       const logoutTime = new Date();
-      logoutTime.setTime(loginTime.getTime() + 1 * 60 * 60 * 1000); // 1 HOUR
+      logoutTime.setTime(loginTime.getTime() + 2 * 60 * 60 * 1000); // 1 HOUR
       console.log("Auto logout at:", logoutTime);
 
       function autoLogout() {
@@ -114,7 +112,7 @@ const Main = () => {
           }
         />
 
-        {/* <Route
+        <Route
           path="/child-enrollment-init/:parentId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -122,7 +120,7 @@ const Main = () => {
               <ChildEnrollmentInitiation />
             </Protected>
           }
-        /> */}
+        />
 
         <Route
           path="/child-enrollment"

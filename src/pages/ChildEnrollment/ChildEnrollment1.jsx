@@ -74,8 +74,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const updateFormOneData = async (childData, parentData) => {
     console.log('UPDATING FORM ONE DATA!');
     let token = localStorage.getItem('token');
-    let childId = localStorage.getItem('enrolled_child_id') || paramsChildId;
-    let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
+    let childId = localStorage.getItem('enrolled_child_id')
+    let parentId = localStorage.getItem('enrolled_parent_id');
 
     // UPDATING CHILD DETAIL
     let response;
@@ -107,6 +107,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
 
         if(response.status === 201 && response.data.status === "success") {
+
+          let changeCount = 0;
+          if(formOneChildData.log.length > 0)
+            changeCount++;
+
+          if(formOneParentData.log.length > 0)
+            changeCount++;
+
+          localStorage.setItem('change_count', changeCount);
+
           nextStep();
         }
       }
