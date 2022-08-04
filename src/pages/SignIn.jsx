@@ -28,7 +28,6 @@ const SignIn = () => {
 
     if (res.status === 200 && res.data.status === 'success') {
 
-
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user_id', res.data.user.id);
       localStorage.setItem('user_role', res.data.user.role);
@@ -54,26 +53,26 @@ const SignIn = () => {
       console.log('IS LOGGED IN?', res.data.user.isLoggedIn);
 
       if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/franchisor-dashboard';
+        window.location.href = '/franchisor-dashboard';
         localStorage.setItem('selectedFranchisee',"All")
       } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href =JSON.parse(localStorage.getItem('redirectURL')) ||  '/change-password';
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 1) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/coordinator-dashboard';
+        window.location.href = '/coordinator-dashboard';
       } else if(res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 0) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/change-password';
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/franchisee-dashboard';
+        window.location.href = '/franchisee-dashboard';
       } else if(res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/change-password';
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'educator' && res.data.user.isLoggedIn === 1) {
-        window.location.href =JSON.parse(localStorage.getItem('redirectURL')) ||  '/educator-dashboard';
+        window.location.href = '/educator-dashboard';
       } else if(res.data.user.role === 'educator' && res.data.user.isLoggedIn === 0) {
-        window.location.href=JSON.parse(localStorage.getItem('redirectURL')) || "/change-password";
+        window.location.href= "/change-password";
       } else if (res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 1) {
-        window.location.href =JSON.parse(localStorage.getItem('redirectURL')) ||  '/parents-dashboard';
+        window.location.href = '/parents-dashboard';
       } else if(res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 0) {
-        window.location.href=JSON.parse(localStorage.getItem('redirectURL')) || "/change-password";
+        window.location.href= "/change-password";
       }
     } else if (res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);
@@ -105,10 +104,10 @@ const SignIn = () => {
   }, [formErrors]);
 
   useEffect(()=>{
-    console.log(window.location.pathname,"pathhname")
-    if(window.location.pathname !== "/"){
-      localStorage.setItem("redirectURL",JSON.stringify(window.location.pathname))
-    }
+    // console.log(window.location.pathname,"pathhname")
+    // if(window.location.pathname !== "/"){
+    //   localStorage.setItem("redirectURL",JSON.stringify(window.location.pathname))
+    // }
   },[])
 
   return (

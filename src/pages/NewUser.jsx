@@ -278,7 +278,7 @@ const NewUser = () => {
       setTrainingCategoryData([
         ...categoryList.map((data) => ({
           id: data.id,
-          value: data.category_alias,
+          value: data.category_name,
           label: data.category_name,
         })),
       ]);
@@ -292,7 +292,7 @@ const NewUser = () => {
       const { pdcList } = response.data;
       setPdcData(pdcList.map(data => ({
         id: data.id,
-        value: data.category_alias,
+        value: data.category_name,
         label: data.category_name
       })));
     }
@@ -305,7 +305,7 @@ const NewUser = () => {
       const { businessAssetList } = response.data;
       setBuinessAssetData(businessAssetList.map(data => ({
         id: data.id,
-        value: data.asset_alias,
+        value: data.asset_name,
         label: data.asset_name
       })));
     }
