@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
+import moment from 'moment';
 import Select from 'react-select';
 
 
@@ -28,6 +29,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [formStepData, setFormStepData] = useState(step);
   const [formStatus, setFormStatus] = useState('submission');
   const [formSubmissionSuccessDialog, setFormSubmissionSuccessDialog] = useState(false);
+  const [userConsentFormDialog, setUserConsentFormDialog] = useState(true);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
@@ -61,7 +63,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       setConsentData(prevState => ({
         ...prevState,
         parent_name: parents[0].family_name,
-        consent_date: parents[0].consent_date
+        consent_date: moment(parents[0].consent_date).format('YYYY-MM-DD')
       }));
       setConsentDetail(consent.map(c => ({
         id: c.id,
@@ -75,7 +77,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   // UPDATING FORM SEVEN DATA;
   const updateFormSevenData = async () => {
     let token = localStorage.getItem('token');
-    let parentId = localStorage.getItem('user_id');
+    let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
     let response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...consentData}, {
       headers: {
@@ -116,7 +118,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   const handleDataSubmit = event => {
     event.preventDefault();
-    updateFormSevenData();
+    // updateFormSevenData();
   }
 
   const handleConsentUpdation = (consentId, consent_given) => {
@@ -146,7 +148,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     if(response.status === 201 && response.data.status === "success") {
-      let parent_id = localStorage.getItem('user_id');
+      let parent_id = localStorage.getItem('enrolled_parent_id');
       window.location.href=`http://localhost:5000/children/${parent_id}`;
     }
   }
@@ -290,6 +292,47 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
             className="modal-button"
             onClick={() => handleSubmissionRedirection()}>Okay</button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={userConsentFormDialog}
+        size="lg">
+          <Modal.Header>
+            <Modal.Title>Parent Consent Form</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <Form.Group>
+                <div className="btn-checkbox" style={{padding: 0, margin: 0, width: "100%"}}>
+                  <Form.Check 
+                    type="checkbox" 
+                    style={{ padding: "0px", margin: "0px 0px 20px 0px" }}
+                    // id={`accept_${consent.id}`} 
+                    // checked={consent.consent_given === true}
+                    label="Parent/Guardian's consent required"
+                    // onChange={() => handleConsentUpdation(consent.id, consent.consent_given)} 
+                  />
+
+                  <div className="comment-box" style={{  width: "100%" }}>
+                    <p><strong>Add Comment</strong></p>
+                    <Form.Control
+                      name="your comment here" 
+                      as="textarea" 
+                      style={{width: "100%"}}
+                      // value={emergencyContactData?.address || ""}
+                      rows={10} />
+                  </div> 
+                </div>
+              </Form.Group>
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleSubmissionRedirection()}>Ask For Consent</button>
+          </Modal.Footer>
       </Modal>
     </>
   );

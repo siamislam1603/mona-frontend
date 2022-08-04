@@ -167,7 +167,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
-      localStorage.setItem('enrolled_parent_id', child.parents[0].id);
+      // localStorage.setItem('enrolled_parent_id', child.parents[0].id);
       console.log('CHILD DATA:', child);
 
       if(child.form_step > step) {

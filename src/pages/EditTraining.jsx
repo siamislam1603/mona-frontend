@@ -197,10 +197,12 @@ const EditTraining = () => {
       }
     );
 
+    console.log('TRAINING BODY UPDATE RESPONSE:', response);
+
     if(response.status === 200 && response.data.status === "success") {
       let token = localStorage.getItem('token');
       let user_id = localStorage.getItem('user_id')
-      const shareResponse = await axios.post(`${BASE_URL}/share/${trainingId}`, {
+      const shareResponse = await axios.post(`${BASE_URL}/share/${trainingId}?titlePage=`, {
         assigned_franchisee: trainingSettings.assigned_franchisee,
         assigned_users: trainingSettings.assigned_users,
         user_roles: trainingSettings.user_roles,
