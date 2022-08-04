@@ -107,6 +107,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
 
         if(response.status === 201 && response.data.status === "success") {
+
+          let changeCount = 0;
+          if(formOneChildData.log.length > 0)
+            changeCount++;
+
+          if(formOneParentData.log.length > 0)
+            changeCount++;
+
+          localStorage.setItem('change_count', changeCount);
+
           nextStep();
         }
       }
