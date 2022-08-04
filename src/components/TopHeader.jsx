@@ -77,9 +77,13 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
       localStorage.removeItem('menu_list');
       localStorage.removeItem('active_tab');
       localStorage.removeItem('selectedFranchisee');
-      localStorage.removeItem("attempts")
-      localStorage.removeItem("enrolled_parent_id")
+      localStorage.removeItem("attempts")  
+      localStorage.removeItem("enrolled_parent_id")  
       localStorage.removeItem("enrolled_child_id")
+      localStorage.removeItem("redirectURL")    
+      localStorage.removeItem("SelectedChild")  
+      localStorage.removeItem("DefaultEducators")  
+      localStorage.removeItem("DefaultParents")  
       window.location.href = '/';
     }
   };
