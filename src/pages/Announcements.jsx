@@ -117,15 +117,24 @@ const Announcements =  () => {
   const handelLoadMore = (e) =>{
     e.preventDefault()
     LoadMoreALl()
+
   }
   const LoadMoreALl = async() =>{
     console.log("THE PAGE Outside",page) 
 
       try {
         if(tabLinkPath === "/all-announcements"){
+          // if(page>5){
+          //   setPage(5);
+          // }
+          // else if(page === 5){
+          //   setPage(5)
+          // }
+          
+            setPage(page+5)
+        
           console.log("THE LOAD MORE DATA ",loadMoreData)
         
-          setPage(page+5);
           console.log("THE PAGE INSIDE",page) 
           let api_url = '';
           api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=${page}&limit=5`
@@ -213,7 +222,8 @@ const Announcements =  () => {
   }
   const onLoadAnnouncement = async() =>{
     try {
-    
+
+      console.log("ON LOAD ALL ANNOUCEMENT CALL FUNCTON")
       let api_url =" "
       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=5`
       console.log("THE API_URL ONLOAD ANNOUCNEMENT",api_url)
@@ -228,9 +238,18 @@ const Announcements =  () => {
       //  console.log("THE DATA INSIDE SELECT FRANHSIE",response.data.result)
        setTheCommon(response.data.result.searchedData.length)
        setCount(response.data.result.count)
+       console.log("THE PAGE DSADA",page,response.data.result.searchedData.length)
       //  console.log("THE COUNT AFTER ",response.data.result.count)
-       setLoadMoreData(loadMoreData.slice(0,5))
-       setPage(5)
+      //  setLoadMoreData(loadMoreData.slice(0,5))
+      //  setPage(5)
+      if(response.data.result.searchedData.length>5){
+        console.log(" DATA LENGTH IS GREATER THEN 5")
+        setPage(0)
+      }
+      else{
+        console.log(" DATA IS NOT FREATER THEN LENGTH 5")
+        setPage(5)
+      }
     }
     else{
       console.log('NOT DATA AVIABKLE in thi franhsi')
@@ -267,8 +286,14 @@ const Announcements =  () => {
         setMyDataLength(datalength)
         setMyCount(response.data.data.count)
         // setMyLoadData(myLoadData.slice(0,5))
-        setMyPage(5)
-     }
+        if(datalength>5){
+          setPage(0)
+        }
+        else{
+         setMyPage(5)
+
+        }
+      }
     } catch (error) {
       console.log("There is no data")
        setMyAnnouncementData([])
@@ -338,46 +363,46 @@ const Announcements =  () => {
     console.log("The reponse for count",response.data.result.count)
     setCount(response.data.result.count)
   }
-  useEffect(() =>{
-    console.log("THE TBALINK PATH",tabLinkPath)
-    if(tabLinkPath==="/all-announcements"){
-      console.log("ALL ANNOUNCEMENT CALL TAB")
-      onLoadAnnouncement()
-      // console.log("LL-ANNOUCEM All annoucement LENGTH",allAnnouncement)
-      // console.log("THe ALL ANNOUNCEMENT LENGTH",allAnnouncement)
-      // setTheCommon(allAnnouncement.length)
+  // useEffect(() =>{
+  //   console.log("THE TBALINK PATH",tabLinkPath)
+  //   if(tabLinkPath==="/all-announcements"){
+  //     console.log("ALL ANNOUNCEMENT CALL TAB")
+  //     onLoadAnnouncement()
+  //     // console.log("LL-ANNOUCEM All annoucement LENGTH",allAnnouncement)
+  //     // console.log("THe ALL ANNOUNCEMENT LENGTH",allAnnouncement)
+  //     // setTheCommon(allAnnouncement.length)
       
-      // setCount(count)
-      setLoadMoreData(loadMoreData.slice(0,5))
-      setPage(page+5)
-      setMyPage(5)
-      console.log("THE ALL ANNOUNCEMENT",loadMoreData)
+  //     // setCount(count)
+  //     setLoadMoreData(loadMoreData.slice(0,5))
+  //     setPage(page+5)
+  //     setMyPage(5)
+  //     console.log("THE ALL ANNOUNCEMENT",loadMoreData)
 
       
-    }
-    else if(tabLinkPath==="/my-announcements"){
-      // setPage(0)
-      // myAnnnoucementData()
-      onLoadMyAnnouncement()
-      if(mypage>5){
-        setMyPage(0);
-      }
+  //   }
+  //   else if(tabLinkPath==="/my-announcements"){
+  //     // setPage(0)
+  //     // myAnnnoucementData()
+  //     onLoadMyAnnouncement()
+  //     if(mypage>5){
+  //       setMyPage(0);
+  //     }
      
-      setMyLoadData(myLoadData.slice(0,5))
-      // setMyDataLength(myAnnouncementData.length)
-      console.log("MY ANNOUNCEMENT CALL TAB",mypage)
-      // console.log(" All annoucement LENGTH in MYANNOUCNEMT",allAnnouncement.length)
-      // setLoadMoreData(loadMoreData.slice(0,5))
-      // setLoadMoreData([])
-      // LoadMoreALl()
+  //     setMyLoadData(myLoadData.slice(0,5))
+  //     // setMyDataLength(myAnnouncementData.length)
+  //     console.log("MY ANNOUNCEMENT CALL TAB",mypage)
+  //     // console.log(" All annoucement LENGTH in MYANNOUCNEMT",allAnnouncement.length)
+  //     // setLoadMoreData(loadMoreData.slice(0,5))
+  //     // setLoadMoreData([])
+  //     // LoadMoreALl()
 
-    }
-  },[tabLinkPath])
+  //   }
+  // },[tabLinkPath])
 
   useEffect(() =>{
     if(selectedFranchisee && tabLinkPath==="/all-announcements"){
       onLoadAnnouncement()
-      console.log("THE SELECT FRANHSIE ON LOADANNOUNCEMENT",loadMoreData,allAnnouncement)
+      console.log(" SELECT FRANHSIE ON LOADANNOUNCEMENT",loadMoreData,allAnnouncement)
       // console.log()
       // setPage(0)
       // setLoadMoreData([])
@@ -407,9 +432,9 @@ const Announcements =  () => {
   
 
   console.log("THE COUNT AND COMMON",theCount,theCommon)
-  console.log("MY COUNT AND MY data lenght",myCount,myDataLength)
+  // console.log("MY COUNT AND MY data lenght",myCount,myDataLength)
   // console.log("THE LOAD MORE MY DATA",myLoadData)
-  // console.log("MY PAGE",mypage)
+  console.log("PAGE",page)
   console.log("THE New Load More adat,",loadMoreData)
 
 
