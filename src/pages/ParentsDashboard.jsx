@@ -27,7 +27,8 @@ const ParentsDashboard = () => {
   };
 
   const moveToChildEnrollmentForm = () => {
-    window.location.href="/child-enrollment";
+    let parentId = localStorage.getItem('user_id')
+    window.location.href=`/child-enrollment/71/${parentId}`;
   }
 
   useEffect(() => {

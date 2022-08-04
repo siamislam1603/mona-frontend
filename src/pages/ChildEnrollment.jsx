@@ -40,10 +40,8 @@ function ChildEnrollment() {
   }
 
   const updateStepFromDatabase = async () => {
-    let parentId = localStorage.getItem('user_id');
+    let parentId = localStorage.getItem('enrolled_parent_id');
     let token = localStorage.getItem('token');
-
-    console.log(`Parent ID: ${parentId}\ntoken: ${token}`);
 
     let response = await axios.get(`${BASE_URL}/enrollment/parent/child/${parentId}`, {
       headers: {
@@ -51,11 +49,9 @@ function ChildEnrollment() {
       }
     });
 
-    console.log('STEP DATA RESPONSE:', response);
-
     if(response.status === 200 && response.data.status === "success") {
       let {childData} = response.data;
-      localStorage.setItem('enrolled_child_id', childData[0].id);
+      // localStorage.setItem('enrolled_child_id', childData[0].id);
       // localStorage.setItem('isChildEnrolled', childData[0].)
       let form_step = childData[0].form_step || 1;
       console.log('Setting the step to', form_step);
