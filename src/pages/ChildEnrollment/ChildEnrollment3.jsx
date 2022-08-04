@@ -145,10 +145,8 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDetailsAndPopulate();
   }, [])
 
-  // agreedBookingHours && console.log('Agreed Hours:', agreedBookingHours);
+  agreedBookingHours && console.log('Agreed Hours:', agreedBookingHours);
   agreedHolidayHours && console.log('Agreed Holiday Hours:', agreedHolidayHours);
-  idList && console.log('ID LIST:', idList);
-  formStepData && console.log(formStepData);
   return (
     <>
       <div className="enrollment-form-sec">

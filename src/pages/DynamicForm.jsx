@@ -86,7 +86,7 @@ const DynamicForm = (props) => {
     e.preventDefault();
     console.log('form---->', form);
     console.log('form_data---->', formData);
-    const newErrors = DynamicFormValidation(form, formData);
+    const newErrors = DynamicFormValidation(form, formData,behalfOf);
     console.log('newErrors---->', newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -151,9 +151,15 @@ const DynamicForm = (props) => {
                               name={'behalf_of'}
                               onChange={(e) => {
                                 setBehalfOf(e.target.value);
+                                if(e.target.value!=="")
+                                {
+                                  let errorData=[{...errors}];
+                                  errorData['behalf_of']=null;
+                                  setErrors(errorData);
+                                }
                               }}
                             >
-                              <option>Select Behalf of</option>
+                              <option value="">Select Behalf of</option>
                               {targetUser?.map((item) => {
                                 return (
                                   <>
@@ -165,6 +171,7 @@ const DynamicForm = (props) => {
                               })}
                             </Form.Select>
                           </div>
+                          <p style={{ color: "red",marginTop:"-8px"}}>{errors.behalf_of}</p>
                         </div>
                       </Col>
                     )}
