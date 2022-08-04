@@ -445,7 +445,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .educator-sec .educator-detail .edu-name { font-size: var(--fontxxxl); font-family: var(--fontrubik); }
 .educator-sec .educator-detail .edu-tel { background: url("../img/tel-ico.png") no-repeat; background-position:left center; }
 .educator-sec .educator-detail .edu-email { background: url("../img/mail-ico.png") no-repeat; background-position:left 6px; }
-.educator-sec .educator-detail .edu-know { background: url("../img/chart-ico.png") no-repeat; background-position:left center; }
+.educator-sec .educator-detail .edu-know { background: url("../img/location-ico.png") no-repeat; background-position:left center; }
 .educator-sec .educator-detail .edu-tel, .educator-sec .educator-detail .edu-email, .educator-sec .educator-detail .edu-know { padding-left: 25px; opacity: .5; overflow-wrap: normal; overflow-wrap: break-word; overflow-wrap: anywhere; }
 .educator-sec .educator-detail a { color: var(--black); }
 .educator-sec .educator-detail .edu-tel:hover, .educator-sec .educator-detail .edu-email:hover, .educator-sec .educator-detail .edu-know:hover { opacity: 1; }
