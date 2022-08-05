@@ -68,6 +68,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   // MODAL DIALOG STATES
   const [showSubmissionSuccessModal, setShowSubmissionSuccessModal] = useState(false);
+  const [showConsentCommentDialog, setShowConsentCommentDialog] = useState(false);
 
 
   // FUNCTION TO UPDATE THIS FORM DATA
@@ -107,6 +108,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
 
         if(response.status === 201 && response.data.status === "success") {
+
+          let changeCount = 0;
+          if(formOneChildData.log.length > 0)
+            changeCount++;
+
+          if(formOneParentData.log.length > 0)
+            changeCount++;
+
+          localStorage.setItem('change_count', changeCount);
+
           nextStep();
         }
       }
@@ -330,14 +341,17 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     fetchChildDataAndPopulate();
   }, []);
 
-  // useEffect(() => {
-  //   fetchParentUserDetails(); 
-  // }, [])
+  useEffect(() => {
+    console.log("checking useEffect!")
+    if(localStorage.getItem('has_given_consent') !== null) {
+      setShowConsentCommentDialog(true);
+    }
+  }, [])
 
   // formStepData && console.log('You\'re on step:', formStepData);
-  formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
-  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
-  console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
+  // formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
+  // formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
+  // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
       <div className="enrollment-form-sec my-5">
@@ -1338,6 +1352,27 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
           <Modal.Footer>
 
           </Modal.Footer>
+        </Modal>
+      }
+      {
+        <Modal
+          show={showConsentCommentDialog}
+          onHide={() => setShowConsentCommentDialog(false)}>
+            <Modal.Header>
+              <Modal.Title>Consent Request!</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              <p>Verify the changes made by Co-ordinator.</p>
+              <p>Co-ordinator comment:</p>
+              <p>"{localStorage.getItem('consent_comment')}"</p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <button 
+                className="modal-button"
+                onClick={() => setShowConsentCommentDialog(false)}>Ok</button>
+            </Modal.Footer>
         </Modal>
       }
     </>

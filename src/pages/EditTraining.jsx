@@ -39,7 +39,7 @@ const timeqty = [
 /* FETCHES RELATED FILE NAME*/
 function fetchRealatedFileName(fileURLString) {
   let name = fileURLString.split("/");
-  name = name[name.length-1];
+  name = name[name.length - 1];
   name = name.split("_");
   let extension = name[2].split(".")[1];
   name = name[0].split("-").join(" ");
@@ -97,6 +97,11 @@ const EditTraining = () => {
     }
   };
 
+  const handleTrainingCancel = () => {
+    localStorage.setItem('active_tab', '/created-training');
+    window.location.href="/training";
+  };
+
   // FETCHING FRANCHISEE LIST
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
@@ -106,7 +111,7 @@ const EditTraining = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       setFranchiseeList(response.data.franchiseeList.map(data => ({
         id: data.id,
         cat: data.franchisee_alias,
@@ -120,7 +125,7 @@ const EditTraining = () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
     console.log('RESPONSE:', response);
-    if(response.status === 200 && Object.keys(response.data).length > 1) {
+    if (response.status === 200 && Object.keys(response.data).length > 1) {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
         ...users?.map((data) => ({
@@ -142,7 +147,7 @@ const EditTraining = () => {
     });
 
     console.log('RESPONSE EDIT TRAINING:', response);
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
 
       setEditTrainingData(training);
@@ -166,21 +171,21 @@ const EditTraining = () => {
       start_time: moment(editTrainingData?.start_date).format('HH:mm'),
       end_date: editTrainingData?.end_date ? moment(editTrainingData?.end_date).format('YYYY-MM-DD') : '',
       end_time: editTrainingData?.end_date ? moment(editTrainingData?.end_date).format('HH:mm') : '',
-      user_roles: editTrainingData?.shares[0].assigned_roles,
-      assigned_users: editTrainingData?.shares[0].assigned_users,
-      assigned_users_obj: fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0].assigned_users.includes(user.id + "")),
-      assigned_franchisee: editTrainingData?.shares[0].franchisee === null ? ['all'] : [parseInt(editTrainingData?.shares[0].franchisee)],
-      assigned_franchisee_obj: editTrainingData?.shares[0].franchisee === null ? [] : franchiseeList?.filter(franchisee => franchisee.id === parseInt(editTrainingData?.shares[0].franchisee)),
-      is_applicable_to_all: editTrainingData?.shares[0].user_or_roles === 1 ? true : false,
+      user_roles: editTrainingData?.shares[0]?.assigned_roles,
+      assigned_users: editTrainingData?.shares[0]?.assigned_users,
+      assigned_users_obj: fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0]?.assigned_users.includes(user.id + "")),
+      assigned_franchisee: editTrainingData?.shares[0]?.franchisee === null ? ['all'] : [parseInt(editTrainingData?.shares[0]?.franchisee)],
+      assigned_franchisee_obj: editTrainingData?.shares[0]?.franchisee === null ? [] : franchiseeList?.filter(franchisee => franchisee.id === parseInt(editTrainingData?.shares[0]?.franchisee)),
+      is_applicable_to_all: editTrainingData?.shares[0]?.user_or_roles === 1 ? true : false,
     }));
 
     setCoverImage(editTrainingData?.coverImage);
     setFetchedCoverImage(editTrainingData?.coverImage);
 
-    setSendToAllFranchisee(editTrainingData?.shares[0].franchisee === null ? "all" : "none");
+    setSendToAllFranchisee(editTrainingData?.shares[0]?.franchisee === null ? "all" : "none");
     
     setFetchedVideoTutorialFiles(editTrainingData?.training_files?.filter(file => file.fileType === ".mp4"));
-    
+
     setFetchedRelatedFiles(editTrainingData?.training_files?.filter(file => file.fileType !== '.mp4'));
     console.log('FETCHED DATA COPIED!');
   }
@@ -191,16 +196,18 @@ const EditTraining = () => {
     const token = localStorage.getItem('token');
     const response = await axios.put(
       `${BASE_URL}/training/updateTraining/${trainingId}`, data, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
+      headers: {
+        "Authorization": "Bearer " + token
       }
+    }
     );
 
-    if(response.status === 200 && response.data.status === "success") {
+    console.log('TRAINING BODY UPDATE RESPONSE:', response);
+
+    if (response.status === 200 && response.data.status === "success") {
       let token = localStorage.getItem('token');
       let user_id = localStorage.getItem('user_id')
-      const shareResponse = await axios.post(`${BASE_URL}/share/${trainingId}`, {
+      const shareResponse = await axios.post(`${BASE_URL}/share/${trainingId}?titlePage=`, {
         assigned_franchisee: trainingSettings.assigned_franchisee,
         assigned_users: trainingSettings.assigned_users,
         user_roles: trainingSettings.user_roles,
@@ -212,25 +219,25 @@ const EditTraining = () => {
         }
       });
 
-      if(shareResponse.status === 201 && shareResponse.data.status === "success") {
+      if (shareResponse.status === 201 && shareResponse.data.status === "success") {
         let data = new FormData();
         data.append('id', trainingId);
         data.append('image', coverImage[0]);
 
         let imgSaveResponse = await axios.post(
           `${BASE_URL}/training/coverImg?title="training"`, data, {
-            headers: {
-              "Authorization": "Bearer " + token
-            }
+          headers: {
+            "Authorization": "Bearer " + token
           }
+        }
         );
 
-        if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+        if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
           setLoader(false)
           setCreateTrainingModal(false);
           localStorage.setItem('success_msg', 'Training Updated Successfully!');
           localStorage.setItem('active_tab', '/created-training');
-          window.location.href="/training";
+          window.location.href = "/training";
         } else {
           setTopErrorMessage("unable to save cover image!");
           setTimeout(() => {
@@ -238,7 +245,7 @@ const EditTraining = () => {
           }, 3000)
         }
 
-      } else if(response.status === 200 && response.data.status === "fail") {
+      } else if (response.status === 200 && response.data.status === "fail") {
         const { msg } = response.data;
         setTopErrorMessage(msg);
         setLoader(false);
@@ -247,26 +254,26 @@ const EditTraining = () => {
         }, 3000)
       }
     }
-  };    
+  };
 
   // FETCHING TRAINING CATEGORIES
   const fetchTrainingCategories = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(
       `${BASE_URL}/training/get-training-categories`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
+      headers: {
+        "Authorization": "Bearer " + token
       }
+    }
     );
 
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
-      console.log('CATEGORY:', )
+      console.log('CATEGORY:',)
       setTrainingCategory([
         ...categoryList.map((data) => ({
           id: data.id,
-          value: data.category_alias,
+          value: data.category_name,
           label: data.category_name,
         })),
       ]);
@@ -294,27 +301,27 @@ const EditTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
-    
-    let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles); 
 
-    if(Object.keys(errorObj).length > 0) {
+    let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles);
+
+    if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
       setErrors({});
-      if(Object.keys(trainingSettings).length === 1) {
+      if (Object.keys(trainingSettings).length === 1) {
         setSettingsModalPopup(true);
       } else {
         setAllowSubmit(true);
       }
 
-      if(settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+      if (settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
         let data = new FormData();
 
-        for(let [key, values] of Object.entries(trainingSettings)) {
+        for (let [key, values] of Object.entries(trainingSettings)) {
           data.append(`${key}`, values);
         }
 
-        for(let [ key, values ] of Object.entries(trainingData)) {
+        for (let [key, values] of Object.entries(trainingData)) {
           data.append(`${key}`, values)
         }
 
@@ -325,7 +332,7 @@ const EditTraining = () => {
         relatedFiles.forEach((file, index) => {
           data.append(`images`, file);
         });
-        
+
         window.scrollTo(0, 0);
         setCreateTrainingModal(true);
         setLoader(true);
@@ -342,7 +349,7 @@ const EditTraining = () => {
         "Authorization": `Bearer ${token}`
       }
     });
- 
+
     console.log('Delete response:', deleteResponse);
     setFileDeleteResponse(deleteResponse);
     // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
@@ -390,7 +397,7 @@ const EditTraining = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader
-                  selectedFranchisee={selectedFranchisee} 
+                  selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
@@ -401,7 +408,7 @@ const EditTraining = () => {
                       </span>
                     </h1>
                   </header>
-                    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
+                  {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
                   {
                     editTrainingData &&
                     <div className="training-form">
@@ -411,11 +418,12 @@ const EditTraining = () => {
                             <Form.Label>Training Name</Form.Label>
                             <Form.Control
                               type="text"
+                              maxLength={20}
                               name="title"
                               value={trainingData.title}
                               onChange={handleTrainingData}
                             />
-                            { errors && errors.title && <span className="error">{errors.title}</span> }
+                            {errors && errors.title && <span className="error">{errors.title}</span>}
                           </Form.Group>
                         </Col>
 
@@ -432,7 +440,7 @@ const EditTraining = () => {
                                 category_id: e.id
                               }))}
                             />
-                            { errors && errors.category_id && <span className="error">{errors.category_id}</span> }
+                            {errors && errors.category_id && <span className="error">{errors.category_id}</span>}
                           </Form.Group>
                         </Col>
 
@@ -446,7 +454,7 @@ const EditTraining = () => {
                               value={trainingData.description}
                               onChange={handleTrainingData}
                             />
-                            { errors && errors.description && <span className="error">{errors.description}</span> }
+                            {errors && errors.description && <span className="error">{errors.description}</span>}
                           </Form.Group>
                         </Col>
 
@@ -456,11 +464,12 @@ const EditTraining = () => {
                             <Form.Control
                               as="textarea"
                               name="meta_description"
+                              maxLength={255}
                               rows={3}
                               value={trainingData.meta_description}
                               onChange={handleTrainingData}
                             />
-                            { errors && errors.meta_description && <span className="error">{errors.meta_description}</span> }
+                            {errors && errors.meta_description && <span className="error">{errors.meta_description}</span>}
                           </Form.Group>
                         </Col>
 
@@ -484,7 +493,7 @@ const EditTraining = () => {
                                 value={trainingData.time_unit || ""}
                                 components={animatedComponents}
                                 options={timeqty}
-                                onChange={(event) =>  
+                                onChange={(event) =>
                                   setTrainingData((prevState) => ({
                                     ...prevState,
                                     time_unit:
@@ -493,23 +502,25 @@ const EditTraining = () => {
                                 }
                               />
                             </div>
-                            { errors && errors.time_required_to_complete && <span className="error">{errors.time_required_to_complete}</span> }
+                            {errors && errors.time_required_to_complete && <span className="error">{errors.time_required_to_complete}</span>}
                           </Form.Group>
                         </Col>
                       </Row>
                       <Row>
-        
+
                         <Col md={6} className="mb-3">
                           <Form.Group>
                             <Form.Label>Upload Cover Image :</Form.Label>
                             <DropOneFile
                               onSave={setCoverImage}
+                              title="Image"
                               setErrors={setErrors}
                               setFetchedCoverImage={setFetchedCoverImage}
-                              // setTrainingData={setTraining}
+                            // setTrainingData={setTraining}
                             />
+                            <small className="fileinput">(png, jpg & jpeg)</small>
                             {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
-                          { errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span> } 
+                            {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
                         </Col>
 
@@ -517,8 +528,10 @@ const EditTraining = () => {
                           <Form.Group>
                             <Form.Label>Upload Video Tutorial Here :</Form.Label>
                             <DropAllFile
+                              title="Videos"
                               onSave={setVideoTutorialFiles}
                             />
+                            <small className="fileinput">(mp4, flv & mkv)</small>
                             <div className="media-container">
                               {
                                 fetchedVideoTutorialFiles &&
@@ -527,10 +540,10 @@ const EditTraining = () => {
                                     <div className="file-container">
                                       <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
                                       <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
-                                      <img 
+                                      <img
                                         onClick={() => handleTrainingFileDelete(video.id)}
-                                        className="file-remove" 
-                                        src="../img/removeIcon.svg" 
+                                        className="file-remove"
+                                        src="../img/removeIcon.svg"
                                         alt="" />
                                     </div>
                                   )
@@ -546,6 +559,7 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
+                            <small className="fileinput">(pdf, doc & xslx)</small>
                             <div className="media-container">
                               {
                                 fetchedRelatedFiles &&
@@ -554,10 +568,10 @@ const EditTraining = () => {
                                     <div className="file-container">
                                       {/* <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} /> */}
                                       <p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p>
-                                      <img 
+                                      <img
                                         onClick={() => handleTrainingFileDelete(file.id)}
-                                        className="file-remove" 
-                                        src="../img/removeIcon.svg" 
+                                        className="file-remove"
+                                        src="../img/removeIcon.svg"
                                         alt="" />
                                     </div>
                                   )
@@ -572,8 +586,9 @@ const EditTraining = () => {
                               variant="outline"
                               className="me-3"
                               type="submit"
+                              onClick={handleTrainingCancel}
                             >
-                              Preview
+                              Cancel
                             </Button>
                             <Button
                               variant="primary"
@@ -586,7 +601,7 @@ const EditTraining = () => {
                         </Col>
                       </Row>
                     </div>
-                    }
+                  }
                 </div>
               </div>
             </div>
@@ -667,7 +682,7 @@ const EditTraining = () => {
                   </Form.Group>
                 </Col>
               </Row>
-              
+
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
@@ -726,14 +741,14 @@ const EditTraining = () => {
                         displayValue="key"
                         selectedValues={trainingSettings.assigned_franchisee_obj}
                         className="multiselect-box default-arrow-select"
-                        onKeyPressFn={function noRefCheck() {}}
+                        onKeyPressFn={function noRefCheck() { }}
                         onRemove={function noRefCheck(data) {
                           setTrainingSettings((prevState) => ({
                             ...prevState,
                             assigned_franchisee: [...data.map(data => data.id)],
                           }));
                         }}
-                        onSearch={function noRefCheck() {}}
+                        onSearch={function noRefCheck() { }}
                         onSelect={function noRefCheck(data) {
                           setTrainingSettings((prevState) => ({
                             ...prevState,
@@ -743,7 +758,7 @@ const EditTraining = () => {
                         options={franchiseeList}
                       />
                     </div>
-                  </Form.Group> 
+                  </Form.Group>
                 </Col>
               </Row>
 
@@ -791,20 +806,20 @@ const EditTraining = () => {
                         </label>
                       </div>
                     </div>
-                
+
                   </Form.Group>
                 </Col>
                 <Col lg={9} md={6} className="mt-3 mt-md-0">
-                  <div className={`custom-checkbox ${trainingSettings.is_applicable_to_all === false ? "d-none": ""}`}>
+                  <div className={`custom-checkbox ${trainingSettings.is_applicable_to_all === false ? "d-none" : ""}`}>
                     <Form.Label className="d-block">Select User Roles</Form.Label>
                     <div className="btn-checkbox d-block">
                       <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
-                        <Form.Check 
-                          type="checkbox" 
+                        <Form.Check
+                          type="checkbox"
                           checked={trainingSettings.user_roles?.includes("coordinator")}
                           label="Co-ordinators"
                           onChange={() => {
-                            if(trainingSettings.user_roles?.includes("coordinator")) {
+                            if (trainingSettings.user_roles?.includes("coordinator")) {
                               let data = trainingSettings.user_roles.filter(t => t !== "coordinator");
                               setTrainingSettings(prevState => ({
                                 ...prevState,
@@ -812,19 +827,20 @@ const EditTraining = () => {
                               }));
                             }
 
-                            if(!trainingSettings.user_roles?.includes("coordinator"))
+                            if (!trainingSettings.user_roles?.includes("coordinator"))
                               setTrainingSettings(prevState => ({
-                              ...prevState,
-                              user_roles: [...trainingSettings.user_roles, "coordinator"]
-                          }))}} />
+                                ...prevState,
+                                user_roles: [...trainingSettings.user_roles, "coordinator"]
+                              }))
+                          }} />
                       </Form.Group>
                       <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
-                        <Form.Check 
-                          type="checkbox" 
+                        <Form.Check
+                          type="checkbox"
                           label="Educator"
                           checked={trainingSettings.user_roles?.includes("educator")}
                           onChange={() => {
-                            if(trainingSettings.user_roles?.includes("educator")) {
+                            if (trainingSettings.user_roles?.includes("educator")) {
                               let data = trainingSettings.user_roles.filter(t => t !== "educator");
                               setTrainingSettings(prevState => ({
                                 ...prevState,
@@ -832,38 +848,40 @@ const EditTraining = () => {
                               }));
                             }
 
-                            if(!trainingSettings.user_roles?.includes("educator"))
+                            if (!trainingSettings.user_roles?.includes("educator"))
                               setTrainingSettings(prevState => ({
-                              ...prevState,
-                              user_roles: [...trainingSettings.user_roles, "educator"]
-                          }))}} />
+                                ...prevState,
+                                user_roles: [...trainingSettings.user_roles, "educator"]
+                              }))
+                          }} />
                       </Form.Group>
                       <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                        <Form.Check 
-                          type="checkbox" 
+                        <Form.Check
+                          type="checkbox"
                           label="All Roles"
                           checked={trainingSettings.user_roles?.length === 2}
                           onChange={() => {
-                            if(trainingSettings.user_roles?.includes("coordinator") 
-                                && trainingSettings.user_roles.includes("educator")) {
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    user_roles: [],
-                                  }));
-                                }
-                              
-                            if(!trainingSettings.user_roles?.includes("coordinator") 
-                                && !trainingSettings.user_roles.includes("educator"))
+                            if (trainingSettings.user_roles?.includes("coordinator")
+                              && trainingSettings.user_roles.includes("educator")) {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                user_roles: [],
+                              }));
+                            }
+
+                            if (!trainingSettings.user_roles?.includes("coordinator")
+                              && !trainingSettings.user_roles.includes("educator"))
                               setTrainingSettings(prevState => ({
                                 ...prevState,
                                 user_roles: ["coordinator", "educator"]
                               })
-                          )}} />
+                              )
+                          }} />
                       </Form.Group>
                     </div>
                   </div>
 
-                  <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings.is_applicable_to_all === true ? "d-none": ""}`}>
+                  <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings.is_applicable_to_all === true ? "d-none" : ""}`}>
                     <Col>
                       <Form.Group>
                         <Form.Label>Select User Names</Form.Label>
@@ -872,7 +890,7 @@ const EditTraining = () => {
                           displayValue="key"
                           selectedValues={trainingSettings.assigned_users_obj}
                           className="multiselect-box default-arrow-select"
-                          onKeyPressFn={function noRefCheck() {}}
+                          onKeyPressFn={function noRefCheck() { }}
                           onRemove={function noRefCheck(data) {
                             setTrainingSettings((prevState) => ({
                               ...prevState,
@@ -880,7 +898,7 @@ const EditTraining = () => {
                               assigned_users_obj: [...data.map(data => data)]
                             }));
                           }}
-                          onSearch={function noRefCheck() {}}
+                          onSearch={function noRefCheck() { }}
                           onSelect={function noRefCheck(data) {
                             setTrainingSettings((prevState) => ({
                               ...prevState,
@@ -890,7 +908,7 @@ const EditTraining = () => {
                           }}
                           options={fetchedFranchiseeUsers}
                         />
-                        
+
                       </Form.Group>
                     </Col>
                   </div>
@@ -910,12 +928,11 @@ const EditTraining = () => {
             Save Settings
           </Button>
         </Modal.Footer>
-      </Modal> 
+      </Modal>
       {
-        createTrainingModal && 
+        createTrainingModal &&
         <Modal
-          show={createTrainingModal}
-          onHide={() => setCreateTrainingModal(false)}>
+          show={createTrainingModal}>
           <Modal.Header>
             <Modal.Title>
               Updating Training
@@ -929,12 +946,12 @@ const EditTraining = () => {
             </div>
           </Modal.Body>
 
-          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          {
-            loader === true && <div>
-              <ReactBootstrap.Spinner animation="border" />
-            </div>
-          }
+          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {
+              loader === true && <div>
+                <ReactBootstrap.Spinner animation="border" />
+              </div>
+            }
           </Modal.Footer>
         </Modal>
       }

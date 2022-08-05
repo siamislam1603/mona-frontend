@@ -64,6 +64,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
         });
 
         if(response.status === 201 && response.data.status === "success") {
+          let changeCount = localStorage.getItem('change_count');
+
+          if(childDailyRoutineData.log.length > 0)
+            changeCount++;
+
+          if(agreement.log.length > 0)
+            changeCount++;
+          
+          localStorage.setItem('change_count', changeCount);
           nextStep();
         }
       }

@@ -28,7 +28,6 @@ const SignIn = () => {
 
     if (res.status === 200 && res.data.status === 'success') {
 
-
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user_id', res.data.user.id);
       localStorage.setItem('user_role', res.data.user.role);
@@ -52,28 +51,29 @@ const SignIn = () => {
 
       console.log('ROLE:', res.data.user.role);
       console.log('IS LOGGED IN?', res.data.user.isLoggedIn);
+      let redirectTo = JSON.parse(localStorage.getItem('redirectURL'))
 
       if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/franchisor-dashboard';
+        window.location.href = redirectTo || '/franchisor-dashboard';
         localStorage.setItem('selectedFranchisee',"All")
       } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href =JSON.parse(localStorage.getItem('redirectURL')) ||  '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 1) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/coordinator-dashboard';
+        window.location.href = redirectTo || '/coordinator-dashboard';
       } else if(res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 0) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/franchisee-dashboard';
+        window.location.href = redirectTo || '/franchisee-dashboard';
       } else if(res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = JSON.parse(localStorage.getItem('redirectURL')) || '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'educator' && res.data.user.isLoggedIn === 1) {
-        window.location.href =JSON.parse(localStorage.getItem('redirectURL')) ||  '/educator-dashboard';
+        window.location.href = redirectTo || '/educator-dashboard';
       } else if(res.data.user.role === 'educator' && res.data.user.isLoggedIn === 0) {
-        window.location.href=JSON.parse(localStorage.getItem('redirectURL')) || "/change-password";
+        window.location.href= redirectTo || "/change-password";
       } else if (res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 1) {
-        window.location.href =JSON.parse(localStorage.getItem('redirectURL')) ||  '/parents-dashboard';
+        window.location.href = redirectTo || '/parents-dashboard';
       } else if(res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 0) {
-        window.location.href=JSON.parse(localStorage.getItem('redirectURL')) || "/change-password";
+        window.location.href= redirectTo || "/change-password";
       }
     } else if (res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);

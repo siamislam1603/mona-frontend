@@ -8,9 +8,40 @@ import { BASE_URL } from "../components/App";
 
 
 const ParentsDashboard = () => {
-  
+
   const [userDetails, setUserDetails] = useState(null);
   const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(false);
+  const [viewEnrollmentDialog, setViewEnrollmentDialog] = useState(false);
+
+  const checkPendingConsent = async () => {
+    let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { parentConsentData } = response.data;
+      console.log('PARENT CONSENT DATA:', parentConsentData[0]);
+      localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
+      localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
+      localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
+      localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
+      localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
+      
+      if(parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
+        console.log('VIEWING ENROLLMENT DIALOG');
+        setViewEnrollmentDialog(true);
+      }
+    } else {
+
+    }
+  }
+
+  const handleViewEnrollment = async () => {
+    setViewEnrollmentDialog(false);
+    window.location.href=`/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
+  }
 
   const fetchUserDetails = async (userId) => {
     let token = localStorage.getItem('token');
@@ -20,31 +51,35 @@ const ParentsDashboard = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { user } = response.data;
       setUserDetails(user);
     }
   };
 
   const moveToChildEnrollmentForm = () => {
-    let parentId = localStorage.getItem('user_id')
-    window.location.href=`/child-enrollment/71/${parentId}`;
+    let parentId = localStorage.getItem('user_id');
+    window.location.href = `/child-enrollment/73/${parentId}`;
   }
 
   useEffect(() => {
     let user_role = localStorage.getItem('user_role');
     let user_id = localStorage.getItem('user_id');
-    
-    if(user_role === 'guardian')
+
+    if (user_role === 'guardian')
       fetchUserDetails(user_id);
   }, []);
 
   useEffect(() => {
-    if(userDetails?.isChildEnrolled === 0) {
+    if (userDetails?.isChildEnrolled === 0) {
       setChildEnrollMessageDialog(true);
     }
   }, [userDetails?.isChildEnrolled]);
-  
+
+  useEffect(() => {
+    checkPendingConsent();
+  });
+
   return (
     <>
       <div id="main">
@@ -52,16 +87,19 @@ const ParentsDashboard = () => {
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader />
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>
                       <div className="maincolumn">
+                        <header className="title-head mb-4 justify-content-between">
+                          <h4 className="title-sm mb-0"><strong>Educators</strong></h4>
+                        </header>
                         <div className="educator-sec mb-5">
-                          <div className="educator-pic"><img src="../img/educator-pic.jpg" alt=""/></div>
+                          <div className="educator-pic"><img src="../img/educator-pic.jpg" alt="" /></div>
                           <div className="educator-detail">
                             <h1 class="edu-name mb-2">James Parker</h1>
                             <div className="edu-tel mb-2"><a href="tel:+6145434234">+61 454 342 34</a></div>
@@ -76,12 +114,12 @@ const ParentsDashboard = () => {
                           </header>
                           <div className="column-list event-list">
                             <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
                               <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
                               <div className="cta-col">
                                 <Dropdown>
                                   <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
+                                    <img src="../img/dot-ico.svg" alt="" />
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
                                     <Dropdown.Item href="#">Delete</Dropdown.Item>
@@ -90,12 +128,12 @@ const ParentsDashboard = () => {
                               </div>
                             </div>
                             <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
                               <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
                               <div className="cta-col">
                                 <Dropdown>
                                   <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
+                                    <img src="../img/dot-ico.svg" alt="" />
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
                                     <Dropdown.Item href="#">Delete</Dropdown.Item>
@@ -104,12 +142,12 @@ const ParentsDashboard = () => {
                               </div>
                             </div>
                             <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
                               <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
                               <div className="cta-col">
                                 <Dropdown>
                                   <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
+                                    <img src="../img/dot-ico.svg" alt="" />
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
                                     <Dropdown.Item href="#">Delete</Dropdown.Item>
@@ -118,12 +156,12 @@ const ParentsDashboard = () => {
                               </div>
                             </div>
                             <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
                               <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
                               <div className="cta-col">
                                 <Dropdown>
                                   <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
+                                    <img src="../img/dot-ico.svg" alt="" />
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
                                     <Dropdown.Item href="#">Delete</Dropdown.Item>
@@ -132,12 +170,12 @@ const ParentsDashboard = () => {
                               </div>
                             </div>
                             <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt=""/></a></div>
+                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
                               <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
                               <div className="cta-col">
                                 <Dropdown>
                                   <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
+                                    <img src="../img/dot-ico.svg" alt="" />
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
                                     <Dropdown.Item href="#">Delete</Dropdown.Item>
@@ -313,11 +351,11 @@ const ParentsDashboard = () => {
                           </header>
                           <div className="column-list access-list two-col">
                             <div className="item">
-                              <div className="pic"><img src="../img/story-ico.png" alt=""/></div>
+                              <div className="pic"><img src="../img/story-ico.png" alt="" /></div>
                               <div className="name">Story park</div>
                             </div>
                             <div className="item">
-                              <div className="pic"><img src="../img/harmony-ico.png" alt=""/></div>
+                              <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                               <div className="name">Harmony</div>
                             </div>
                           </div>
@@ -330,13 +368,13 @@ const ParentsDashboard = () => {
                           <div className="column-list announcements-list">
                             <div className="listing">
                               <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                 <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
+                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                 <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
                               </a>
                             </div>
@@ -354,7 +392,6 @@ const ParentsDashboard = () => {
       {
         childEnrollMessageDialog &&
         <Modal
-          
           show={childEnrollMessageDialog}>
           <Modal.Header>
             <Modal.Title>Welcome {userDetails?.fullname.split(" ")[0]}</Modal.Title>
@@ -368,18 +405,35 @@ const ParentsDashboard = () => {
           </Modal.Body>
 
           <Modal.Footer>
-            <button style={{ 
-              padding: ".7rem 1.4rem", 
-              fontWeight: '500', 
+            <button style={{
+              padding: ".7rem 1.4rem",
+              fontWeight: '500',
               fontSize: '.8rem',
               color: "#fff",
               backgroundColor: '#3E5D58',
               border: "none",
-              borderRadius: "5px"  
+              borderRadius: "5px"
             }} onClick={() => moveToChildEnrollmentForm()}>Child Enrollment Form</button>
           </Modal.Footer>
         </Modal>
       }
+
+      <Modal 
+        show={viewEnrollmentDialog}>
+        <Modal.Header>
+          <Modal.Title>Pending Consent Notification</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>You have a pending consent from your coordinator. Click on <strong>View Enrollment Form</strong> to go through it.</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <button 
+            className="modal-button"
+            onClick={() => handleViewEnrollment()}>View Enrollment Form</button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

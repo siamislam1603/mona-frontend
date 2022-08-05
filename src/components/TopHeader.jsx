@@ -84,6 +84,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
       localStorage.removeItem("SelectedChild")  
       localStorage.removeItem("DefaultEducators")  
       localStorage.removeItem("DefaultParents")  
+      localStorage.removeItem('has_given_consent');
       window.location.href = '/';
     }
   };
