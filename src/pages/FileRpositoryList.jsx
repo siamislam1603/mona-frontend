@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from "axios";
+import VideoPop from "../components/VideoPop";
 import paginationFactory from 'react-bootstrap-table2-paginator';
 const animatedComponents = makeAnimated();
 const { SearchBar } = Search;
@@ -58,22 +59,20 @@ const FileRpositoryList = () => {
         let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/6`, requestOptions)
         response = await response.json();
         setUser(response.result)
-
         const users = response.result.files;
-
-        console.log(users, "success")
-
+        // console.log(users, "++++++++++++++++++++++++++++")
         let tempData = users.map((dt) => ({
             name: `${dt.fileType}`,
             createdAt: dt.createdAt,
             userID: dt.id,
-            creatorName: dt.creatorName + "," + dt.creatorRole
+            creatorName: dt.creatorName + "," + dt.creatorRole,
+            Shaired: dt.repository.repository_shares.length
         }));
-        // tempData = tempData.filter((data) => data.is_deleted === 0);
-        console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
         setUserData(tempData);
     }
-    console.log(user, "user")
+
+    console.log(userData, "user")
+
     useEffect(() => {
         GetFile();
     }, [])
@@ -88,9 +87,23 @@ const FileRpositoryList = () => {
                 return (
                     <>
                         <div className="user-list">
-                            <span>
-                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                            </span>
+                            {cell === "image/jpeg" ?
+                                <span>
+                                    <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                </span>
+                                : cell === "audio/mpeg" ?
+                                    < span >
+                                        <img src="../img/audio-ico.png" className="me-2" alt="" />
+                                    </span> :
+                                    cell === "video/mp4" ?
+                                        < span >
+                                            <VideoPop
+                                                data={cell}
+                                                title={``}
+                                                // duration={trainingDetails.completion_time}
+                                                fun={handleClose} />
+                                        </span> : "oisdu"
+                            }
                             <span className="user-name">
                                 {cell}
                             </span>
@@ -126,9 +139,27 @@ const FileRpositoryList = () => {
             }
         },
         {
-            dataField: 'Shared',
+            dataField: 'Shaired',
             text: 'Shared',
             sort: true,
+            formatter: (cell) => {
+                return (
+                    <>
+                        <div className="user-list">
+                            {cell > 0 ?
+                                <span className="user-name">
+                                    <img src="../img/sharing-ico.png" className="me-2" alt="" />
+                                    Shared
+                                </span> :
+                                <span className="user-name">
+                                    <img src="../img/close_icons.png" className="me-2" alt="" />
+                                    No Shared
+                                </span>
+                            }
+                        </div>
+                    </>
+                );
+            }
         },
         {
             dataField: 'repository_files',

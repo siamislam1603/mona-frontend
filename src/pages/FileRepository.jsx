@@ -68,7 +68,6 @@ const FileRepository = () => {
   const [user, setUser] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [category, setCategory] = useState([]);
-  console.log(category, "category")
   const [filterFlag, setFilterFlag] = useState(false);
   const [selectedAll, setSelectedAll] = useState(false);
   const handleClose = () => setShow(false);
@@ -76,7 +75,6 @@ const FileRepository = () => {
   const [userRole, setUserRole] = useState([]);
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [loaderFlag, setLoaderFlag] = useState(false);
-
   const [columns, setColumns] = useState([
     {
       dataField: 'name',
@@ -92,8 +90,17 @@ const FileRepository = () => {
                   <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                 </span>
                 <span className="user-name">
-                  {cell[0]}
-                  <small>{cell[1]}</small>
+                  {cell[0] === "1" ? "Daily Use" :
+                    cell[0] === "2" ? "Business Management" :
+                      cell[0] === "3" ? "Employeement" :
+                        cell[0] === "4" ? "Compliance" :
+                          cell[0] === "5" ? "Care Giving" :
+                            cell[0] === "6" ? "Curriculum & Planning" :
+                              cell[0] === "7" ? "Resources" :
+                                cell[0] === "8" ? "General" : "Null"
+                  }
+
+                  {/* <small>{cell[1]}</small> */}
                 </span>
               </div>
             </Link>
@@ -162,10 +169,10 @@ const FileRepository = () => {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     })
-    console.log(response, "response")
+    console.log(response, "+++++++++++++++++++++", "response")
     if (response.status === 200) {
       const users = response.data.searchedData;
-      console.log(users, "success")
+      console.log(users, "successsuccesssuccesssuccesssuccess")
 
       let tempData = users.map((dt) => ({
         name: `${dt.categoryId}, ${dt.fileName}`,
@@ -177,7 +184,6 @@ const FileRepository = () => {
       // tempData = tempData.filter((data) => data.is_deleted === 0);
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
       setUserData(tempData);
-
       let temp = tempData;
     }
   }
@@ -203,12 +209,11 @@ const FileRepository = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
-    fetch(`${BASE_URL}/fileRepo/`, requestOptions)
-      .then((result) => setCategory(result?.result))
+    let result = await fetch(`${BASE_URL}/fileRepo/files-category`, requestOptions);
+    result = await result.json()
+      .then((result) => setCategory(result.category))
       .catch((error) => console.log('error', error));
   };
-
-
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append(
