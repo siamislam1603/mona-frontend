@@ -51,28 +51,29 @@ const SignIn = () => {
 
       console.log('ROLE:', res.data.user.role);
       console.log('IS LOGGED IN?', res.data.user.isLoggedIn);
+      let redirectTo = JSON.parse(localStorage.getItem('redirectURL'))
 
       if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = '/franchisor-dashboard';
+        window.location.href = redirectTo || '/franchisor-dashboard';
         localStorage.setItem('selectedFranchisee',"All")
       } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 1) {
-        window.location.href = '/coordinator-dashboard';
+        window.location.href = redirectTo || '/coordinator-dashboard';
       } else if(res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 0) {
-        window.location.href = '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = '/franchisee-dashboard';
+        window.location.href = redirectTo || '/franchisee-dashboard';
       } else if(res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'educator' && res.data.user.isLoggedIn === 1) {
-        window.location.href = '/educator-dashboard';
+        window.location.href = redirectTo || '/educator-dashboard';
       } else if(res.data.user.role === 'educator' && res.data.user.isLoggedIn === 0) {
-        window.location.href= "/change-password";
+        window.location.href= redirectTo || "/change-password";
       } else if (res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 1) {
-        window.location.href = '/parents-dashboard';
+        window.location.href = redirectTo || '/parents-dashboard';
       } else if(res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 0) {
-        window.location.href= "/change-password";
+        window.location.href= redirectTo || "/change-password";
       }
     } else if (res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);
@@ -104,10 +105,10 @@ const SignIn = () => {
   }, [formErrors]);
 
   useEffect(()=>{
-    // console.log(window.location.pathname,"pathhname")
-    // if(window.location.pathname !== "/"){
-    //   localStorage.setItem("redirectURL",JSON.stringify(window.location.pathname))
-    // }
+    console.log(window.location.pathname,"pathhname")
+    if(window.location.pathname !== "/"){
+      localStorage.setItem("redirectURL",JSON.stringify(window.location.pathname))
+    }
   },[])
 
   return (
