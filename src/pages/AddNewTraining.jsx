@@ -369,6 +369,11 @@ const AddNewTraining = () => {
                             maxLength={20}
                             name="title"
                             placeholder="Enter Training Title"
+                            // onKeyPress={(e) => {
+                            //     if (e.keyCode === 32) {
+                            //       e.preventDefault();
+                            //     }
+                            // }}
                             onChange={(e) => {
                               if(trainingData.title.length <= 20) {
                                 setTrainingData(prevState => ({
