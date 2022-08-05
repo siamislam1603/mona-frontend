@@ -18,7 +18,7 @@ const CompleteTraining = ({ filter }) => {
 
     console.log('RESPONSE DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
-      const { trainingList } = response.data;
+      const { response: trainingList } = response.data;
       setCompletedTrainingData(trainingList);
     }
   };  

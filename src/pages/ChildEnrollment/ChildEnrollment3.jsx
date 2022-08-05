@@ -48,6 +48,15 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
       });
 
       if(response.status === 201 && response.data.status === "success") {
+        let changeCount = localStorage.getItem('change_count');
+
+        if(agreedBookingHours.log.length > 0)
+          changeCount++;
+
+        if(agreedHolidayHours.log.length > 0)
+          changeCount++;
+        
+        localStorage.setItem('change_count', changeCount);
         nextStep();
       }
     }

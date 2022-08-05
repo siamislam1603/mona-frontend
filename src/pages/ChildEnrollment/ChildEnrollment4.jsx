@@ -122,6 +122,21 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
             });
     
             if(response.status === 201 && response.data.status === "success") {
+              let changeCount = localStorage.getItem('change_count');
+
+              if(emergencyContactData.log.length > 0)
+                changeCount++;
+
+              if(authorizedNomineeData.log.length > 0)
+                changeCount++;
+              
+              if(authorizedPersonData.log.length > 0)
+                changeCount++;
+
+              if(otherAuthorizedPersonData.log.length > 0)
+                changeCount++;
+              
+              localStorage.setItem('change_count', changeCount);
               nextStep();
             }
           }
