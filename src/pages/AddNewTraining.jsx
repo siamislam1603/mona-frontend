@@ -103,6 +103,11 @@ const AddNewTraining = () => {
     }
   };
 
+  // MANUAL DATE DISABLE
+  const disableDateInput = () => {
+    return false;
+  }
+
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
     const response = await axios.get(`${BASE_URL}/api/user-role`);
@@ -518,13 +523,13 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image*:</Form.Label>
-                          <small className="fileinput">(png, jpg & jpeg)</small>
                           <DropOneFile
                             title="Image"
                             onSave={setCoverImage}
                             setErrors={setErrors}
                             // setTrainingData={setTraining}
                           />
+                          <small className="fileinput">(png, jpg & jpeg)</small>
                         { errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span> } 
                         </Form.Group>
                       </Col>
@@ -532,22 +537,22 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <small className="fileinput">(mp4, flv & mkv)</small>
                           <DropAllFile
                             title="Video"
                             type="video"
                             onSave={setVideoTutorialFiles}
                           />
+                          <small className="fileinput">(mp4, flv & mkv)</small>
                         </Form.Group>
                       </Col>
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
-                          <small className="fileinput">(pdf, doc & xslx)</small>
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />
+                          <small className="fileinput">(pdf, doc & xslx)</small>
                         </Form.Group>
                       </Col>
                       <Col md={12}>
@@ -597,6 +602,7 @@ const AddNewTraining = () => {
                   <Form.Label>Start Date*</Form.Label>
                   <Form.Control
                     type="date"
+                    onKeyPress={() => disableDateInput()}
                     name="start_date"
                     onChange={(e) => {
                       handleTrainingSettings(e);

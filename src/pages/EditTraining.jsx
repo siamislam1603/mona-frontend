@@ -268,7 +268,7 @@ const EditTraining = () => {
       setTrainingCategory([
         ...categoryList.map((data) => ({
           id: data.id,
-          value: data.category_alias,
+          value: data.category_name,
           label: data.category_name,
         })),
       ]);
@@ -413,6 +413,7 @@ const EditTraining = () => {
                             <Form.Label>Training Name</Form.Label>
                             <Form.Control
                               type="text"
+                              maxLength={20}
                               name="title"
                               value={trainingData.title}
                               onChange={handleTrainingData}
@@ -458,6 +459,7 @@ const EditTraining = () => {
                             <Form.Control
                               as="textarea"
                               name="meta_description"
+                              maxLength={255}
                               rows={3}
                               value={trainingData.meta_description}
                               onChange={handleTrainingData}
@@ -510,6 +512,7 @@ const EditTraining = () => {
                               setFetchedCoverImage={setFetchedCoverImage}
                             // setTrainingData={setTraining}
                             />
+                            <small className="fileinput">(png, jpg & jpeg)</small>
                             {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
@@ -521,6 +524,7 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setVideoTutorialFiles}
                             />
+                            <small className="fileinput">(mp4, flv & mkv)</small>
                             <div className="media-container">
                               {
                                 fetchedVideoTutorialFiles &&
@@ -548,6 +552,7 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
+                            <small className="fileinput">(pdf, doc & xslx)</small>
                             <div className="media-container">
                               {
                                 fetchedRelatedFiles &&
@@ -919,8 +924,7 @@ const EditTraining = () => {
       {
         createTrainingModal &&
         <Modal
-          show={createTrainingModal}
-          onHide={() => setCreateTrainingModal(false)}>
+          show={createTrainingModal}>
           <Modal.Header>
             <Modal.Title>
               Updating Training

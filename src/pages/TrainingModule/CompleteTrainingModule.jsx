@@ -45,7 +45,7 @@ const CompleteTraining = ({ filter }) => {
                     <a href="/training-detail">{item.training.title}</a>
                     <div className="datecol">
                       <span className="red-date">Due Date:</span>
-                      <span className="time">{ item.completion_time }</span>
+                      <span className="time">{ item.training.completion_time }</span>
                     </div>
                   </div>
                   <div className="cta-col">
