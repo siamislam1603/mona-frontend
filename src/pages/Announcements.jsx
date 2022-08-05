@@ -8,6 +8,7 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import AllAnnouncements from "./AllAnnouncements";
 import MyAnnouncements from "./MyAnnouncements";
+import AllEvent from "./AllEvent";
 import { debounce } from 'lodash';
 
 
@@ -479,7 +480,8 @@ const Announcements =  () => {
                   <div className="training-cat mb-3">
                     <ul>
                       <li><a onClick={handleLinkClick}  path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
-                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements</a></li>
+                      <li><a onClick={handleLinkClick} path="/all-events" className={`${tabLinkPath === "/all-events" ? "active" : ""}`} >All Events</a></li>
+                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements or My Event</a></li>
                   
                     </ul>
                   </div>
@@ -490,7 +492,8 @@ const Announcements =  () => {
                       && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue} />}
                     {tabLinkPath === "/my-announcements" 
                       && <MyAnnouncements myAnnouncementData={myAnnouncementData} myLoadData={myLoadData} />}
-                
+                   {tabLinkPath === "/all-events" && <AllEvent/>}   
+                    
                   </div>
                   {/* {franchiseeData && franchiseeData.searchedData.length} */}
                   {/* {theCommon && theCommon ===theCount ? (
@@ -529,10 +532,7 @@ const Announcements =  () => {
                         ):
                       (
                         <button type="button" onClick={handleLoadMyAnnouncement} class="btn btn-primary">Load More My</button>
-
-                      )
-                        
-                      } 
+                     )} 
                         </>
 
                        )

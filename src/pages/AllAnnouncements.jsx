@@ -180,7 +180,7 @@ console.log("The annoumce all ",props.allAnnouncement)
                                          (data) =>
                                           data.charAt(0).toUpperCase() + data.slice(1)
                                          ).join(' ')
-                             : ''}:</span>{userName}</small></div>
+                             : ''} : </span>{userName}</small></div>
                                  <div className="date">
                                     <Dropdown>
                                      <Dropdown.Toggle id="extrabtn" className="ctaact">

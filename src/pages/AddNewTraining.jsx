@@ -481,6 +481,8 @@ const AddNewTraining = () => {
                             <Form.Control
                               style={{ flex: 6 }}
                               type="number"
+                              min={1}
+                              max={100}
                               placeholder="Time Needed For This Training"
                               onChange={(event) => {
                                 setTrainingData((prevState) => ({

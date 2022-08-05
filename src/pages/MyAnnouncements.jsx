@@ -143,7 +143,7 @@ const MyAnnouncements = (props) => {
                                       (data) =>
                                        data.charAt(0).toUpperCase() + data.slice(1)
                                       ).join(' ')
-                          : ''}:</span>{userName}</small></div>              
+                          : ''} : </span>{userName}</small></div>              
               <div className="date">
                  
                   {/* <Dropdown.Toggle id="extrabtn" className="ctaact">
