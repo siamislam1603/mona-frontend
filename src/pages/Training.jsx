@@ -47,11 +47,11 @@ const Training = () => {
 
   // STYLE ACTIVE LINKS
   const navLinkStyles = ({ isActive }) => {
-    return isActive ? { 
-        color: "#AA0061", 
-        fontWeight: "700", 
-        opacity: 1
-      } : {}
+    return isActive ? {
+      color: "#AA0061",
+      fontWeight: "700",
+      opacity: 1
+    } : {}
   };
 
   const handleLinkClick = event => {
@@ -63,18 +63,18 @@ const Training = () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(
       `${BASE_URL}/training/get-training-categories`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
+      headers: {
+        "Authorization": "Bearer " + token
       }
+    }
     );
 
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
       setTrainingCategory([
         {
-          id: 0, 
-          value: 'select category', 
+          id: 0,
+          value: 'select category',
           label: 'Select Category'
         },
         ...categoryList.map((data) => ({
@@ -89,7 +89,7 @@ const Training = () => {
   };
 
   useEffect(() => {
-    if(localStorage.getItem('success_msg')) {
+    if (localStorage.getItem('success_msg')) {
       setTopSuccessMessage(localStorage.getItem('success_msg'));
       localStorage.removeItem('success_msg');
 
@@ -101,11 +101,11 @@ const Training = () => {
 
   useEffect(() => {
     fetchTrainingCategories();
-    if(localStorage.getItem('user_role') !== 'franchisor_admin') {
+    if (localStorage.getItem('user_role') !== 'franchisor_admin') {
       setTabLinkPath('/available-training');
     }
 
-    if(localStorage.getItem('active_tab')) {
+    if (localStorage.getItem('active_tab')) {
       let path = localStorage.getItem('active_tab');
       console.log('PATH IS:', path);
       setTabLinkPath(path);
@@ -121,12 +121,12 @@ const Training = () => {
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader 
-                 selectedFranchisee={selectedFranchisee}
-                 setSelectedFranchisee={setSelectedFranchisee} />
+                <TopHeader
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Trainings</h1>
@@ -134,11 +134,11 @@ const Training = () => {
                       <div className="extra-btn">
                         <div className="data-search me-3">
                           <label for="search-bar" className="search-label">
-                            <input 
-                              id="search-bar" 
-                              type="text" 
-                              className="form-control" 
-                              placeholder="Search" 
+                            <input
+                              id="search-bar"
+                              type="text"
+                              className="form-control"
+                              placeholder="Search"
                               value={filterData.search}
                               onChange={e => setFilterData(prevState => ({
                                 ...prevState,
@@ -147,39 +147,39 @@ const Training = () => {
                           </label>
                         </div>
                         {
-                            localStorage.getItem('user_role') === 'stanley' &&
-                        <Dropdown className="filtercol me-3">
-                          <Dropdown.Toggle id="extrabtn" variant="btn-outline">
-                            <i className="filter-ico"></i> Add Filters
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <header>Filter by:</header>
-                            <div className="custom-radio btn-radio mb-2">
-                              <label>Users:</label>
-                              <Form.Group>
-                                <Form.Check
-                                  inline
-                                  label='Franchisee'
-                                  value='franchisee'
-                                  name="users"
-                                  type="radio"
-                                  id='one'
-                                  onChange={e => setFilterData(prevState => ({
-                                    ...prevState,
-                                    user: e.target.value
-                                  }))}
-                                />
-                              </Form.Group>
-                            </div>
-                            <footer>
-                              <Button variant="transparent" type="submit">Cancel</Button>
-                              <Button variant="primary" type="submit">Apply</Button>
-                            </footer>
-                          </Dropdown.Menu>
-                        </Dropdown>
+                          localStorage.getItem('user_role') === 'stanley' &&
+                          <Dropdown className="filtercol me-3">
+                            <Dropdown.Toggle id="extrabtn" variant="btn-outline">
+                              <i className="filter-ico"></i> Add Filters
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <header>Filter by:</header>
+                              <div className="custom-radio btn-radio mb-2">
+                                <label>Users:</label>
+                                <Form.Group>
+                                  <Form.Check
+                                    inline
+                                    label='Franchisee'
+                                    value='franchisee'
+                                    name="users"
+                                    type="radio"
+                                    id='one'
+                                    onChange={e => setFilterData(prevState => ({
+                                      ...prevState,
+                                      user: e.target.value
+                                    }))}
+                                  />
+                                </Form.Group>
+                              </div>
+                              <footer>
+                                <Button variant="transparent" type="submit">Cancel</Button>
+                                <Button variant="primary" type="submit">Apply</Button>
+                              </footer>
+                            </Dropdown.Menu>
+                          </Dropdown>
                         }
                         {
-                          verifyPermission("training_files", "add") && 
+                          verifyPermission("training_files", "add") &&
                           <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
                         }
 
@@ -187,7 +187,7 @@ const Training = () => {
                           localStorage.getItem('user_role') === 'stanley' &&
                           <Dropdown>
                             <Dropdown.Toggle id="extrabtn" className="ctaact">
-                              <img src="../img/dot-ico.svg" alt=""/>
+                              <img src="../img/dot-ico.svg" alt="" />
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                               <Dropdown.Item href="#">Export All</Dropdown.Item>
@@ -200,11 +200,11 @@ const Training = () => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
-                      <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
-                      <li><a onClick={handleLinkClick} path="/complete-training"  className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
+                      <li><a onClick={handleLinkClick}  path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Available Training</a></li>
+                      <li><a onClick={handleLinkClick} path="/complete-training" className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
                       {
                         verifyPermission("training_files", "add") &&
-                        <li><a onClick={handleLinkClick} path="/created-training"  className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
+                        <li><a onClick={handleLinkClick} path="/created-training" className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Trainings Created</a></li>
                       }
                     </ul>
                     <div className="selectdropdown ms-auto d-flex align-items-center">
@@ -225,18 +225,18 @@ const Training = () => {
                   </div>
                   {
                     topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
-                  } 
+                  }
                   <div className="training-column">
-                    {tabLinkPath === "/available-training" 
+                    {tabLinkPath === "/available-training"
                       && <AvailableTrainingModule
-                            filter={filterData} />}
-                    {tabLinkPath === "/complete-training" 
+                        filter={filterData} />}
+                    {tabLinkPath === "/complete-training"
                       && <CompleteTrainingModule
-                            filter={filterData} />}
-                    {tabLinkPath === "/created-training" 
-                      && <CreatedTrainingModule 
-                            filter={filterData}
-                            selectedFranchisee={selectedFranchisee} />}
+                        filter={filterData} />}
+                    {tabLinkPath === "/created-training"
+                      && <CreatedTrainingModule
+                        filter={filterData}
+                        selectedFranchisee={selectedFranchisee} />}
                   </div>
                 </div>
               </div>
