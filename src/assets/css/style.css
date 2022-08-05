@@ -650,7 +650,10 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 
 
-
+.dropzone {
+  display: inline-block;
+  overflow: hidden;
+}
 
 
 /* Responsive */
