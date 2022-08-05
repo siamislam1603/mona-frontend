@@ -513,7 +513,7 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image*:</Form.Label>
-                          <p style={{ fontSize: '9px', marginTop: "-5px" }}>(png, jpg & jpeg)</p>
+                          <small className="fileinput">(png, jpg & jpeg)</small>
                           <DropOneFile
                             title="Image"
                             onSave={setCoverImage}
@@ -527,7 +527,7 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
-                          <p style={{ fontSize: '9px', marginTop: "-5px" }}>(mp4, flv & mkv)</p>
+                          <small className="fileinput">(mp4, flv & mkv)</small>
                           <DropAllFile
                             title="Video"
                             type="video"
