@@ -28,7 +28,7 @@ const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
 const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
   user_roles: [],
-  is_event:1
+  is_event:0
 });
 const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -530,7 +530,8 @@ console.log("THE handle ",announcementData)
               </Col> */}
                       <Col md={12}>
                         <div className="cta text-center mt-5 mb-5">
-                          <Button variant="outline" className="me-3" type="submit">Preview</Button>
+                        <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>
+
                           <Button variant="primary" type="submit" onClick={handleDataSubmit}>Save</Button>
                         </div>
                       </Col>

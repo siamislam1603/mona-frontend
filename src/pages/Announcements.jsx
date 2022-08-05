@@ -131,7 +131,7 @@ const Announcements =  () => {
           //   setPage(5)
           // }
           
-            setPage(page+5)
+          setPage(page+5)
         
           console.log("THE LOAD MORE DATA ",loadMoreData)
         

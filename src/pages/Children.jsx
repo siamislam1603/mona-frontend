@@ -310,6 +310,10 @@ const Children = () => {
                                 onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
                                     View Enrolment
                                 </button>
+                                {
+                                    localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null &&
+                                    <p style={{ fontSize: "12px", color: "red", textAlign: 'center', marginTop:   "3px" }}>Pending for consent!</p>
+                                }
                             </div>
                         }
                     </>
@@ -360,6 +364,7 @@ const Children = () => {
     useEffect(() => {
         init();
     }, [reloadFlag]);
+
 
     // childrenList && console.log('Children List:', childrenList);
     return (
