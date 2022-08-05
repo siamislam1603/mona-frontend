@@ -544,7 +544,7 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Related Files :</Form.Label>
-                          <p style={{ fontSize: '9px', marginTop: "-5px" }}>(pdf, doc & xslx)</p>
+                          <small className="fileinput">(pdf, doc & xslx)</small>
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />
