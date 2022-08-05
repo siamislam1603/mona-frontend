@@ -366,6 +366,7 @@ const AddNewTraining = () => {
                           <Form.Label>Training Name*</Form.Label>
                           <Form.Control
                             type="text"
+                            maxLength={20}
                             name="title"
                             placeholder="Enter Training Title"
                             onChange={(e) => {
@@ -443,6 +444,7 @@ const AddNewTraining = () => {
                           <Form.Control
                             as="textarea"
                             name="meta_description"
+                            maxLength={255}
                             placeholder="Enter Meta Description"
                             rows={3}
                             onChange={(e) => {

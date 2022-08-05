@@ -22,7 +22,7 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
     maxFiles: 1,
     multiple: false,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg'],
+      'image/png': ['.png', '.jpg', '.jpeg'],
     },
   });
 
