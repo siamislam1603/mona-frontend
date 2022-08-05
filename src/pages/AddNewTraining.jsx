@@ -513,6 +513,7 @@ const AddNewTraining = () => {
                           <Form.Label>Upload Cover Image*:</Form.Label>
                           <p style={{ fontSize: '9px', marginTop: "-5px" }}>(png, jpg & jpeg)</p>
                           <DropOneFile
+                            title="Image"
                             onSave={setCoverImage}
                             setErrors={setErrors}
                             // setTrainingData={setTraining}
