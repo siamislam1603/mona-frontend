@@ -166,6 +166,7 @@ const TrainingDetail = () => {
                           <div className="video-tuto-sec mb-5">
                             <h3 className="title-sm">Video Tutorials</h3>
                             <div className="vid-col-sec">
+                              {console.log(trainingDetails, "trainingDetails")}
                               {
                                 trainingDetails.training_files.map((data, index) =>
                                   data.fileType === '.mp4' &&

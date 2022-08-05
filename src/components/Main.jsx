@@ -53,6 +53,8 @@ import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
 import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
 import FileRpositoryList from '../pages/FileRpositoryList';
+import FilerepoMyAdd from '../pages/FilerepoMyAdd';
+import RepoEdit from '../pages/RepoEdit';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -546,7 +548,24 @@ const Main = () => {
             </Protected>
           }
         />
-
+        <Route
+          path="/file-repository-List-me/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FilerepoMyAdd />
+            </Protected>
+          }
+        />
+        <Route
+          path="/file-repository-Edit/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <RepoEdit />
+            </Protected>
+          }
+        />
         <Route
           path="/announcements"
           element={
@@ -601,7 +620,7 @@ const Main = () => {
           }
         />
         <Route
-          path="/file-repository-List"
+          path="/file-repository-List/:id"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
