@@ -48,16 +48,19 @@ const CompleteTraining = ({ filter }) => {
                       <span className="time">{ item.training.completion_time }</span>
                     </div>
                   </div>
-                  <div className="cta-col">
-                    <Dropdown>
-                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                        <img src="../img/dot-ico.svg" alt=""/>
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item href="#">Delete</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </div>
+                  {
+                    (localStorage.getItem('user_role') !== 'coordinator' && localStorage.getItem('user_role') !== 'educator') &&
+                    <div className="cta-col">
+                      <Dropdown> 
+                        <Dropdown.Toggle variant="transparent" id="ctacol">
+                          <img src="../img/dot-ico.svg" alt=""/>
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <Dropdown.Item href="#">Delete</Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+                  }
                 </div>
               </div>
             </Col>

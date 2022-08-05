@@ -166,12 +166,12 @@ const EditTraining = () => {
       start_time: moment(editTrainingData?.start_date).format('HH:mm'),
       end_date: editTrainingData?.end_date ? moment(editTrainingData?.end_date).format('YYYY-MM-DD') : '',
       end_time: editTrainingData?.end_date ? moment(editTrainingData?.end_date).format('HH:mm') : '',
-      user_roles: editTrainingData?.shares[0].assigned_roles,
-      assigned_users: editTrainingData?.shares[0].assigned_users,
-      assigned_users_obj: fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0].assigned_users.includes(user.id + "")),
-      assigned_franchisee: editTrainingData?.shares[0].franchisee === null ? ['all'] : [parseInt(editTrainingData?.shares[0].franchisee)],
-      assigned_franchisee_obj: editTrainingData?.shares[0].franchisee === null ? [] : franchiseeList?.filter(franchisee => franchisee.id === parseInt(editTrainingData?.shares[0].franchisee)),
-      is_applicable_to_all: editTrainingData?.shares[0].user_or_roles === 1 ? true : false,
+      user_roles: editTrainingData?.shares[0]?.assigned_roles,
+      assigned_users: editTrainingData?.shares[0]?.assigned_users,
+      assigned_users_obj: fetchedFranchiseeUsers?.filter(user => editTrainingData?.shares[0]?.assigned_users.includes(user.id + "")),
+      assigned_franchisee: editTrainingData?.shares[0]?.franchisee === null ? ['all'] : [parseInt(editTrainingData?.shares[0]?.franchisee)],
+      assigned_franchisee_obj: editTrainingData?.shares[0]?.franchisee === null ? [] : franchiseeList?.filter(franchisee => franchisee.id === parseInt(editTrainingData?.shares[0]?.franchisee)),
+      is_applicable_to_all: editTrainingData?.shares[0]?.user_or_roles === 1 ? true : false,
     }));
 
     setCoverImage(editTrainingData?.coverImage);
