@@ -177,7 +177,7 @@ const EditTraining = () => {
     setCoverImage(editTrainingData?.coverImage);
     setFetchedCoverImage(editTrainingData?.coverImage);
 
-    setSendToAllFranchisee(editTrainingData?.shares[0].franchisee === null ? "all" : "none");
+    setSendToAllFranchisee(editTrainingData?.shares[0]?.franchisee === null ? "all" : "none");
     
     setFetchedVideoTutorialFiles(editTrainingData?.training_files?.filter(file => file.fileType === ".mp4"));
     

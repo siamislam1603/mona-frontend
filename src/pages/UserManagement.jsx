@@ -46,26 +46,7 @@ const UserManagement = () => {
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
   const [deleteResponse, setDeleteResponse] = useState(null);
-
-  // HELPER FUNCTIONS
-  const isConnectedToChildren = async (parentId) => {
-    let response = await axios.get(`${BASE_URL}/enrollment/children/${parentId}`, {
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-
-    if(response.status === 200 && response.data.status === "success") {
-      let { parentData } = response.data;
-      
-      console.log(`IS PARENT WITH ID ${parentId}, CONNECTED TO CHILDREN?`, parentData.children.length > 0);
-      return parentData.children.length > 0;
-    }
-
-    return false;
-  }
-
-
+  
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
@@ -185,17 +166,20 @@ const UserManagement = () => {
       dataField: 'roleDetail',
       text: 'Action',
       formatter: (cell) => {
+        console.log('CELL:', cell);
         cell = cell.split(',');
         return (
           <>
             {
-              (cell[0] === "guardian" && isConnectedToChildren(cell[3])) ?
-                  (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
-                    View Children
-                  </button>
-                ) : cell[0] === "guardian" ? (<button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
+              (cell[0] === "guardian" && cell[1] === 0) ? (
+                  <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
                   New Children
-                </button>): ""
+                  </button>
+                ) : (cell[0] === "guardian" && cell[1] !== 0) ?
+                (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
+                View Children
+              </button>
+              ) : ""
             }
           </>
         );

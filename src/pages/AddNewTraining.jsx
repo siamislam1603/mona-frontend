@@ -516,7 +516,7 @@ const AddNewTraining = () => {
                             onSave={setCoverImage}
                             setErrors={setErrors}
                             // setTrainingData={setTraining}
-                          /><p style={{ fontSize: '9px', marginTop: "-10px" }}>(png, jpg & jpeg)</p>
+                          />
                         { errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span> } 
                         </Form.Group>
                       </Col>

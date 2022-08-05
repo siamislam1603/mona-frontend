@@ -408,7 +408,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .three-col .item { flex: 0 0 32%; }
 .three-col .item:nth-child(3n) { margin-left: 1%; margin-right: 0; }
 
-.training-column .item { background-color: var(--offwhite); overflow: hidden; border-radius: 18px; margin-bottom: 1rem; }
+.training-column .item { background-color: var(--offwhite); overflow: auto; border-radius: 18px; margin-bottom: 1rem; }
 .training-column .item .pic { overflow: hidden; border-radius: 18px; position: relative; }
 .training-column .item .pic .lthumb { position: absolute; right:25px; bottom: 25px; z-index: 2; }
 .training-column .item .fixcol { display:flex; align-items: center; padding: 15px; }
