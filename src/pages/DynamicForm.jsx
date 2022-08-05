@@ -18,8 +18,8 @@ const DynamicForm = (props) => {
   const [targetUser, setTargetUser] = useState([]);
   const [behalfOf, setBehalfOf] = useState('');
 
-  const setField = (field, value) => {
-    setForm({ ...form, [field]: value });
+  const setField = (section, field, value) => {
+    setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -78,6 +78,36 @@ const DynamicForm = (props) => {
         let res = JSON.parse(result);
         setFormData(res.result);
         setFormPermission(res.form_permission);
+        let formsData = {};
+        let data = {};
+        Object.keys(res?.result)?.map((item) => {
+          if (!formsData[item]) formsData[item] = {};
+          if (!data[item]) data[item] = [];
+
+          res?.result[item]?.map((inner_item) => {
+            if (inner_item.form_field_permissions.length > 0) {
+              inner_item?.form_field_permissions?.map((permission) => {
+                if (
+                  permission?.fill_access_users.includes(
+                    localStorage.getItem('user_role')
+                  ) ||
+                  permission?.fill_access_users.includes(
+                    localStorage.getItem('user_id')
+                  )
+                ) {
+                  formsData[item][`${inner_item.field_name}`] = null;
+                  data[item].push(inner_item);
+                } else {
+                  delete formsData[item];
+                  delete data[item];
+                }
+              });
+            }
+            console.log('form_data---->1212', data);
+          });
+        });
+        setForm(formsData);
+        setFormData(data);
         console.log(res.result);
       })
       .catch((error) => console.log('error', error));
@@ -86,11 +116,12 @@ const DynamicForm = (props) => {
     e.preventDefault();
     console.log('form---->', form);
     console.log('form_data---->', formData);
-    const newErrors = DynamicFormValidation(form, formData,behalfOf);
+    const newErrors = DynamicFormValidation(form, formData, behalfOf);
     console.log('newErrors---->', newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
+      alert('sucess');
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
       console.log('formData[0]?.form?.id---->', formData[0]?.form_id);
@@ -117,7 +148,7 @@ const DynamicForm = (props) => {
   };
   return (
     <>
-      {console.log('formPermission--->', formPermission)}
+      {console.log('form_data---->', formData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -129,7 +160,14 @@ const DynamicForm = (props) => {
                 <TopHeader />
                 <Row>
                   <div className="forms-managment-left new-form-title">
-                    <h6>New Form</h6>
+                    <h6>
+                      {
+                        location.pathname.split('/')[
+                          location.pathname.split('/').length - 1
+                        ]
+                      }{' '}
+                      Form
+                    </h6>
                   </div>
                 </Row>
                 <Form>
@@ -151,10 +189,9 @@ const DynamicForm = (props) => {
                               name={'behalf_of'}
                               onChange={(e) => {
                                 setBehalfOf(e.target.value);
-                                if(e.target.value!=="")
-                                {
-                                  let errorData=[{...errors}];
-                                  errorData['behalf_of']=null;
+                                if (e.target.value !== '') {
+                                  let errorData = { ...errors };
+                                  errorData['behalf_of'] = null;
                                   setErrors(errorData);
                                 }
                               }}
@@ -171,36 +208,31 @@ const DynamicForm = (props) => {
                               })}
                             </Form.Select>
                           </div>
-                          <p style={{ color: "red",marginTop:"-8px"}}>{errors.behalf_of}</p>
+                          <p style={{ color: 'red', marginTop: '-8px' }}>
+                            {errors.behalf_of}
+                          </p>
                         </div>
                       </Col>
                     )}
-                    {}
                     {Object.keys(formData)?.map((item) => {
                       return item ? (
                         <>
-                          
-                          {formData[item]?.map((inner_item,index) => {
+                          {console.log('item---->', item)}
+                          {formData[item]?.map((inner_item, index) => {
                             return inner_item.form_field_permissions.length >
                               0 ? (
-                              inner_item?.form_field_permissions?.map(
-                                (permission) => {
-                                  return (
-                                    permission?.fill_access_users.includes(
-                                      localStorage.getItem('user_role')
-                                    ) && (
-                                      <>
-                                      {index===0 && <h6 className="text-capitalize">{item}</h6>}
-                                      <InputFields
-                                        {...inner_item}
-                                        error={errors}
-                                        onChange={setField}
-                                      />
-                                      </>
-                                    )
-                                  );
-                                }
-                              )
+                              <>
+                                {index === 0 && (
+                                  <h6 className="text-capitalize">{item}</h6>
+                                )}
+                                <InputFields
+                                  {...inner_item}
+                                  error={errors}
+                                  onChange={(key, value) => {
+                                    setField(item, key, value);
+                                  }}
+                                />
+                              </>
                             ) : (
                               <InputFields
                                 {...inner_item}
@@ -216,7 +248,9 @@ const DynamicForm = (props) => {
                             <InputFields
                               {...inner_item}
                               error={errors}
-                              onChange={setField}
+                              onChange={(key, value) => {
+                                setField(item, key, value);
+                              }}
                             />
                           );
                         })
