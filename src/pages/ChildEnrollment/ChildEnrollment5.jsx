@@ -20,6 +20,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
     dietary_requirement: "",
     allergy: "",
     comment: "",
+    log: []
   });
   const [agreement, setAgreement] = useState({
     photo_taken: true,
@@ -27,7 +28,8 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
     remind_child: true,
     provide_child: true,
     give_permission_for_sunscreen: true,
-    assist_child: true
+    assist_child: true,
+    log: []
   });
 
   // ERROR HANDLING STATE
@@ -62,6 +64,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
         });
 
         if(response.status === 201 && response.data.status === "success") {
+          let changeCount = localStorage.getItem('change_count');
+
+          if(childDailyRoutineData.log.length > 0)
+            changeCount++;
+
+          if(agreement.log.length > 0)
+            changeCount++;
+          
+          localStorage.setItem('change_count', changeCount);
           nextStep();
         }
       }
@@ -96,7 +107,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
         if(response.status === 201 && response.data.status === "success") {
           
           // UPDATING THE STEP VALUE INSIDE CHILD TABLE
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {form_step: step}, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {form_step: nextstep}, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
@@ -165,7 +176,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
-      localStorage.setItem('enrolled_parent_id', child.parents[0].id);
+      // localStorage.setItem('enrolled_parent_id', child.parents[0].id);
       console.log('CHILD DATA:', child);
 
       if(child.form_step > step) {
@@ -196,7 +207,8 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
 
-  childDailyRoutineData && console.log('DAILY ROUTINE:', childDailyRoutineData);
+  // childDailyRoutineData && console.log('DAILY ROUTINE:', childDailyRoutineData);
+  agreement && console.log('AGREEMENT:', agreement);
   return (
     <>
       <div className="enrollment-form-sec mt-5">
@@ -216,20 +228,38 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                       checked={agreement?.photo_taken === true}
                       defaultChecked
                       label="Yes"
-                      onChange={() => setAgreement(prevState => ({
-                        ...prevState,
-                        photo_taken: true
-                      }))} />
+                      onChange={() => {
+                        setAgreement(prevState => ({
+                          ...prevState,
+                          photo_taken: true
+                        }));
+
+                        if(!agreement.log.includes("photo_taken")) {
+                          setAgreement(prevState => ({
+                            ...prevState,
+                            log: [...agreement.log, "photo_taken"]
+                          }));
+                        }
+                      }} />
                     <Form.Check 
                       type="radio" 
                       name="photo" 
                       id="nop" 
                       label="No"
                       checked={agreement?.photo_taken === false}
-                      onChange={() => setAgreement(prevState => ({
-                        ...prevState,
-                        photo_taken: false
-                      }))} />
+                      onChange={() => {
+                        setAgreement(prevState => ({
+                          ...prevState,
+                          photo_taken: false
+                         }));
+
+                         if(!agreement.log.includes("photo_taken")) {
+                          setAgreement(prevState => ({
+                            ...prevState,
+                            log: [...agreement.log, "photo_taken"]
+                          }));
+                        }
+                      }} />
                   </div>
                 </Form.Group>
               </div>
@@ -253,6 +283,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           sleep_time: null
                         }));
+                      }}
+                      
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("sleep_time")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "sleep_time"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.sleep_time !== null && <span className="error">{childDailyRoutineError?.sleep_time}</span> }
                   </Form.Group>
@@ -271,6 +310,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           bottle_time: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("bottle_time")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "bottle_time"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.bottle_time !== null && <span className="error">{childDailyRoutineError?.bottle_time}</span> }
                   </Form.Group>
@@ -289,6 +337,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           toileting: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("toileting")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "toileting"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.toileting !== null && <span className="error">{childDailyRoutineError?.toileting}</span> }
                   </Form.Group>
@@ -307,6 +364,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           routines: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("routines")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "routines"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.routines !== null && <span className="error">{childDailyRoutineError?.routines}</span> }
                   </Form.Group>
@@ -325,6 +391,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           likes_dislikes: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("likes_dislikes")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "likes_dislikes"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.likes_dislikes !== null && <span className="error">{childDailyRoutineError?.likes_dislikes}</span> }
                   </Form.Group>
@@ -343,6 +418,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           comforter: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("comforter")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "comforter"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.comforter !== null && <span className="error">{childDailyRoutineError?.comforter}</span> }
                   </Form.Group>
@@ -361,6 +445,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           religion: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("religion")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "religion"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.religion !== null && <span className="error">{childDailyRoutineError?.religion}</span> }
                   </Form.Group>
@@ -379,6 +472,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           dietary_requirement: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("dietary_requirement")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "dietary_requirement"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.dietary_requirement !== null && <span className="error">{childDailyRoutineError?.dietary_requirement}</span> }
                   </Form.Group>
@@ -397,6 +499,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           allergy: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("allergy")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "allergy"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.allergy !== null && <span className="error">{childDailyRoutineError?.allergy}</span> }
                   </Form.Group>
@@ -415,6 +526,15 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           ...prevState,
                           comment: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!childDailyRoutineData.log.includes("comment")) {
+                          setChildDailyRoutineData(prevState => ({
+                            ...prevState,
+                            log: [...childDailyRoutineData.log, "comment"]
+                          }));
+                        }
                       }} />
                     { childDailyRoutineError?.comment !== null && <span className="error">{childDailyRoutineError?.comment}</span> }
                   </Form.Group>
@@ -437,10 +557,19 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     id="dress"
                     checked={agreement?.dress_child || false} 
                     label="Dress my child in cool clothing that covers as much skin as possible e.g. tops that cover the shoulders, arms and chest, has higher necklines or collars, and long shorts and skirts. I understand that singlet tops or shoestring dresses do not provide adequate sun protection and are best layered with a shirt or t-shirt."
-                    onChange={() => setAgreement(prevState => ({
-                      ...prevState,
-                      dress_child: !agreement.dress_child
-                    }))} />
+                    onChange={() => {
+                      setAgreement(prevState => ({
+                        ...prevState,
+                        dress_child: !agreement.dress_child
+                      }));
+
+                      if(!agreement.log.includes("dress_child")) {
+                        setAgreement(prevState => ({
+                          ...prevState,
+                          log: [...agreement.log, "dress_child"]
+                        }));
+                      }
+                    }} />
                 </div>
               </Form.Group>
               <Form.Group className="mb-3">
@@ -450,10 +579,19 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     id="remind" 
                     checked={agreement?.remind_child || false} 
                     label="Remind my child to bring and wear a sun-protective hat that shades the face, neck and ears (e.g. wide-brimmed, bucket or legionnaire hat). I understand that baseball / peak style caps do not provide adequate sun protection and are not appropriate for outdoor play."
-                    onChange={() => setAgreement(prevState => ({
-                      ...prevState,
-                      remind_child: !agreement.remind_child
-                    }))} />
+                    onChange={() => {
+                      setAgreement(prevState => ({
+                        ...prevState,
+                        remind_child: !agreement.remind_child
+                      }));
+
+                      if(!agreement.log.includes("remind_child")) {
+                        setAgreement(prevState => ({
+                          ...prevState,
+                          log: [...agreement.log, "remind_child"]
+                        }));
+                      }
+                    }} />
                 </div>
               </Form.Group>
               <Form.Group className="mb-3">
@@ -463,10 +601,19 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     id="provide" 
                     checked={agreement?.provide_child || false} 
                     label="Provide my child with appropriate close-fitting wrap-around sunglasses labelled AS:1067 to help protect their eyes."
-                    onChange={() => setAgreement(prevState => ({
-                      ...prevState,
-                      provide_child: !agreement.provide_child
-                    }))} />
+                    onChange={() => {
+                      setAgreement(prevState => ({
+                        ...prevState,
+                        provide_child: !agreement.provide_child
+                      }));
+
+                      if(!agreement.log.includes("provide_child")) {
+                        setAgreement(prevState => ({
+                          ...prevState,
+                          log: [...agreement.log, "provide_child"]
+                        }));
+                      }
+                    }} />
                 </div>
               </Form.Group>
               <Form.Group className="mb-3">
@@ -476,10 +623,19 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     id="permission" 
                     checked={agreement?.give_permission_for_sunscreen || false} 
                     label="Give permission for educWators/staff to apply SPF30 (or higher) broad-spectrum, water-resistant sunscreen supplied by the service to all exposed parts of my child’s skin including their face, neck, ears, arms and legs."
-                    onChange={() => setAgreement(prevState => ({
-                      ...prevState,
-                      give_permission_for_sunscreen: !agreement.give_permission_for_sunscreen
-                    }))} />
+                    onChange={() => {
+                      setAgreement(prevState => ({
+                        ...prevState,
+                        give_permission_for_sunscreen: !agreement.give_permission_for_sunscreen
+                      }));
+
+                      if(!agreement.log.includes("give_permission_for_sunscreen")) {
+                        setAgreement(prevState => ({
+                          ...prevState,
+                          log: [...agreement.log, "give_permission_for_sunscreen"]
+                        }));
+                      }
+                    }} />
                 </div>
               </Form.Group>
               <div className="text-center mb-3">OR</div>
@@ -498,10 +654,19 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                     id="educators" 
                     checked={agreement?.assist_child || false} 
                     label="To give permission for educators/staff to assist my child to develop independent, self-help skills by applying SPF30 (or higher) broad-spectrum, water-resistant sunscreen to all exposed parts of their own skin including their face, neck, ears, arms and legs. (Recommended from ages three and above) "
-                    onChange={() => setAgreement(prevState => ({
-                      ...prevState,
-                      assist_child: !agreement.assist_child
-                    }))} />
+                    onChange={() => {
+                      setAgreement(prevState => ({
+                        ...prevState,
+                        assist_child: !agreement.assist_child
+                      }));
+
+                      if(!agreement.log.includes("assist_child")) {
+                        setAgreement(prevState => ({
+                          ...prevState,
+                          log: [...agreement.log, "assist_child"]
+                        }));
+                      }
+                    }} />
                 </div>
               </Form.Group>
             </div>

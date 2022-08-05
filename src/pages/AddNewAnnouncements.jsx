@@ -27,7 +27,8 @@ const [loader, setLoader] = useState(false);
 const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
 const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
-  user_roles: []
+  user_roles: [],
+  is_event:0
 });
 const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -195,7 +196,7 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
-      // console.log("The name and value",name,value)
+      console.log("The name and value",name,value)
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
@@ -308,7 +309,8 @@ const createAnnouncement = async (data) => {
 
    
 // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-console.log("The franhiseData 1",franchiseeData);
+// console.log("The franhiseData 1",franchiseeData);
+console.log("THE handle ",announcementData)
   return (
     
     <>
@@ -439,13 +441,54 @@ console.log("The franhiseData 1",franchiseeData);
                   />
                 </Form.Group>
                 {error.start_time && <p className="form-errors">{error.start_time}</p>}
-
+             
               </Col>
+              <Col lg={3} sm={6}>
+                  <Form.Group >
+                    <div className="btn-radio inline-col">
+                      <Form.Label>Event or Announcement</Form.Label>
+                      <div>
+                      <Form.Check
+                        type="radio"
+                        name="is_event"
+                        id="a"
+                        label="Announcement"
+                        onChange={() =>{
+                          setAnnouncementData((prevState) => ({
+                            ...prevState,
+                            // [name]: value,
+                            is_event:0
+                          })); 
+                        }}
+                        
+                        defaultChecked
+                       
+                         />
+                      <Form.Check
+                        type="radio"
+                        name="is_event"
+                        id="e"
+                        onChange={() =>{
+                          setAnnouncementData((prevState) => ({
+                            ...prevState,
+                            // [name]: value,
+                            is_event:1
+                          })); 
+                        }}
+                        label="Event"
+                         />
+                      </div>
+                    
+                    </div>
+                  </Form.Group>
+                </Col>
+              
+              
                     </Row>
                   <div className="my-new-formsection">
                     <Row>
                       <Col sm={6}>
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label> Cover Image :</Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
@@ -454,19 +497,19 @@ console.log("The franhiseData 1",franchiseeData);
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Video Tutorial Here :</Form.Label>
                           <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
-                        <Form.Group>
+                        <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Related Files :</Form.Label>
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
                   {/* <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                  <Form.Group>
+                  <Form.Group className="mb-3 form-group">
                   <Form.Label>Schedule Date</Form.Label>
                   <Form.Control 
                    type="date"
@@ -476,7 +519,7 @@ console.log("The franhiseData 1",franchiseeData);
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                <Form.Group>
+                <Form.Group className="mb-3 form-group">
                   <Form.Label>Schedule Time</Form.Label>
                   <Form.Control 
                   type="time"
@@ -487,7 +530,8 @@ console.log("The franhiseData 1",franchiseeData);
               </Col> */}
                       <Col md={12}>
                         <div className="cta text-center mt-5 mb-5">
-                          <Button variant="outline" className="me-3" type="submit">Preview</Button>
+                        <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>
+
                           <Button variant="primary" type="submit" onClick={handleDataSubmit}>Save</Button>
                         </div>
                       </Col>

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
 import { BASE_URL } from "../../components/App";
 import { useEffect } from "react";
+import { useParams } from 'react-router-dom';
 import { faListSquares } from "@fortawesome/free-solid-svg-icons";
 
 let nextstep = 3;
@@ -20,7 +21,7 @@ let disease_name = [
   "varicella"
 ];
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
-
+  let { parentId: paramsParentId } = useParams();
   const [healthInformation, setHealthInformation] = useState({
     medical_service: "",
     telephone: "",
@@ -40,12 +41,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     measules: [],
     meningococcal_c: [],
     varicella: [],
+    log: []
   });
   const [childDetails, setChildDetails] = useState({
     has_health_record: false,
     has_been_immunized: false,
     has_court_orders: false,
-    changes_described: ""
+    changes_described: "",
+    log: []
   });
   const [childMedicalInformation, setChildMedicalInformation] = useState({
     has_special_needs: false,
@@ -60,9 +63,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     any_other_medical_condition: false,
     detail_of_other_condition: "",
     has_dietary_restrictions: false,
-    details_of_restrictions: ""
+    details_of_restrictions: "",
+    log: []
   });
-  const [parentMedicationPermission, setParentMedicationPermission] = useState(false);
+  const [parentData, setParentData] = useState({
+    i_give_medication_permission: false,
+    log: []
+  });
   const [formStepData, setFormStepData] = useState(null);
   const [idList, setIdList] = useState({
     health_information_id: null,
@@ -105,14 +112,32 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           });
 
           if(response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('enrolled_parent_id');
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {i_give_medication_permission: parentMedicationPermission}, {
+            let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
+
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
             });
 
             if(response.status === 201 && response.data.status === "success") {
+
+              let changeCount = localStorage.getItem('change_count');
+
+              if(childImmunisationRecord.log.length > 0)
+                changeCount++;
+
+              if(childDetails.log.length > 0)
+                changeCount++;
+              
+              if(childMedicalInformation.log.length > 0)
+                changeCount++;
+
+              if(parentData.log.length > 0)
+                changeCount++;
+              
+              localStorage.setItem('change_count', changeCount);
+
               nextStep();
             }
           }
@@ -160,8 +185,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           
           // UPDATING PARENT PERMISSION
           if(response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('enrolled_parent_id');
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {i_give_medication_permission: parentMedicationPermission}, {
+            let parentId = localStorage.getItem('user_id');
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
@@ -200,6 +225,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
       localStorage.setItem('enrolled_parent_id', child.parents[0].id);
+      if(paramsParentId) {
+        localStorage.setItem('enrolled_parent_id', paramsParentId);
+      }
+
       console.log('CHILD DATA:', child);
 
       if(child.form_step > step) {
@@ -264,7 +293,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           medical_information_id: medinfo.id
         }));
 
-        setParentMedicationPermission(child.parents[0].i_give_medication_permission);
+        setParentData(prevState => ({
+          ...prevState,
+          i_give_medication_permission: child.parents[0].i_give_medication_permission
+        }));
         setFormStepData(child.form_step);
       } 
 
@@ -297,11 +329,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   // formStepData && console.log('FORM STEP:', formStepData);
   // healthInformation && console.log('HEALTH INFORMATION:', healthInformation);
-  childImmunisationRecord && console.log('IMMUNISATION RECORD LATEST:', childImmunisationRecord);
+  // childImmunisationRecord && console.log('IMMUNISATION RECORD LATEST:', childImmunisationRecord);
   // childDetails && console.log('CHILD DETAILS:', childDetails);
   // childMedicalInformation && console.log('CHILD MEDICAL INFORMATION:', childMedicalInformation);
   // parentMedicationPermission && console.log('HAS MY CONSENT:', parentMedicationPermission);
   // idList && console.log('ID LIST:', idList);
+  parentData && console.log('PARENT DATA:', parentData);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -321,10 +354,18 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         className="ps-0" 
                         label="Yes"
                         checked={childDetails?.has_court_orders === true}
-                        onChange={() => setChildDetails(prevState => ({
-                          ...prevState,
-                          has_court_orders: true
-                        }))} />
+                        onChange={() => {
+                          setChildDetails(prevState => ({
+                            ...prevState,
+                            has_court_orders: true
+                          }));
+                          if(!childDetails.log.includes("has_court_orders")) {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              log: [...childDetails.log, "has_court_orders"]
+                            }));
+                          }
+                        }} />
                       <Form.Check 
                         type="radio" 
                         name="powers" 
@@ -332,11 +373,24 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         defaultChecked
                         checked={childDetails?.has_court_orders === false}
                         label="No"
-                        onChange={() => setChildDetails(prevState => ({
-                          ...prevState,
-                          has_court_orders: false,
-                          changes_described: ""
-                        }))} />
+                        onChange={() => {
+                          setChildDetails(prevState => ({
+                            ...prevState,
+                            has_court_orders: false,
+                            changes_described: ""
+                          }))
+                          if(!childDetails.log.includes("has_court_orders")) {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              log: [...childDetails.log, "has_court_orders"]
+                            }));
+                          } else {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              log: childDetails.log.filter(d => d !== "changes_described")
+                            }));
+                          }
+                        }} />
                     </div>
                     <Form.Text className="text-muted">
                       if ‘Yes’ please provide to the service for sighting.
@@ -357,7 +411,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           onChange={(e) => setChildDetails(prevState => ({
                             ...prevState,
                             [e.target.name]: e.target.value
-                          }))} />
+                          }))}
+                          onBlur={(e) => {
+                            if(!childDetails.log.includes("changes_described")) {
+                              setChildDetails(prevState => ({
+                                ...prevState,
+                                log: [...childDetails.log, "changes_described"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
                     <Col md={12}>
@@ -422,7 +484,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             medical_service: null
                           }));
                         }} 
-                      />
+                        onBlur={(e) => {
+                          if(!childDetails.log.includes("medical_service")) {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              log: [...childDetails.log, "medical_service"]
+                            }));
+                          }
+                        }} />
                       { healthInfoFormErrors?.medical_service !== null && <span className="error">{healthInfoFormErrors?.medical_service}</span> }
                     </Form.Group>
                   </Col>
@@ -445,7 +514,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           telephone: null
                         }));
                       }} 
-                    />
+                      onBlur={(e) => {
+                        if(!childDetails.log.includes("telephone")) {
+                          setChildDetails(prevState => ({
+                            ...prevState,
+                            log: [...childDetails.log, "telephone"]
+                          }));
+                        }
+                      }} />
                     { healthInfoFormErrors?.telephone !== null && <span className="error">{healthInfoFormErrors?.telephone}</span> }
                     </Form.Group>
                   </Col>
@@ -468,7 +544,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             medical_service_address: null
                           }));
                       }} 
-                    />
+                      onBlur={(e) => {
+                        if(!childDetails.log.includes("medical_service_address")) {
+                          setChildDetails(prevState => ({
+                            ...prevState,
+                            log: [...childDetails.log, "medical_service_address"]
+                          }));
+                        }
+                      }} />
                     { healthInfoFormErrors?.medical_service_address !== null && <span className="error">{healthInfoFormErrors?.medical_service_address}</span> }
                     </Form.Group>
                   </Col>
@@ -491,7 +574,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             maternal_and_child_health_centre: null
                           }));
                         }} 
-                      />
+                        onBlur={(e) => {
+                          if(!childDetails.log.includes("maternal_and_child_health_centre")) {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              log: [...childDetails.log, "maternal_and_child_health_centre"]
+                            }));
+                          }
+                        }} />
                       { healthInfoFormErrors?.maternal_and_child_health_centre !== null && <span className="error">{healthInfoFormErrors?.maternal_and_child_health_centre}</span> }
                     </Form.Group>
                   </Col>
@@ -507,10 +597,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           className="ps-0"
                           checked={childDetails?.has_health_record === true} 
                           label="Yes"
-                          onChange={() => setChildDetails(prevState => ({
-                            ...prevState,
-                            has_health_record: true
-                          }))} />
+                          onChange={() => {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              has_health_record: true
+                            }));
+
+                            if(!childDetails.log.includes("has_health_record")) {
+                              setChildDetails(prevState => ({
+                                ...prevState,
+                                log: [...childDetails.log, "has_health_record"]
+                              }));
+                            }
+                          }} />
                         <Form.Check 
                           type="radio" 
                           name="health" 
@@ -518,10 +617,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           label="No"
                           checked={childDetails?.has_health_record === false} 
                           defaultChecked
-                          onChange={() => setChildDetails(prevState => ({
-                            ...prevState,
-                            has_health_record: false
-                          }))} />
+                          onChange={() => {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              has_health_record: false
+                            }));
+
+                            if(!childDetails.log.includes("has_health_record")) {
+                              setChildDetails(prevState => ({
+                                ...prevState,
+                                log: [...childDetails.log, "has_health_record"]
+                              }));
+                            }
+                          }} />
                       </div>
                       <Form.Text className="text-muted">
                         if ‘Yes’ please provide to the service for sighting.
@@ -581,10 +689,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           checked={childDetails?.has_been_immunized === true} 
                           className="ps-0" 
                           label="Yes"
-                          onChange={() => setChildDetails(prevState => ({
-                            ...prevState,
-                            has_been_immunized: true
-                          }))} />
+                          onChange={() => {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              has_been_immunized: true
+                            }));
+
+                            if(!childDetails.log.includes("has_been_immunized")) {
+                              setChildDetails(prevState => ({
+                                ...prevState,
+                                log: [...childDetails.log, "has_been_immunized"]
+                              }));
+                            }
+                          }} />
                         <Form.Check 
                           type="radio" 
                           name="immunized" 
@@ -592,10 +709,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           label="No"
                           checked={childDetails?.has_been_immunized === false}
                           defaultChecked
-                          onChange={() => setChildDetails(prevState => ({
-                            ...prevState,
-                            has_been_immunized: false
-                          }))} />
+                          onChange={() => {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              has_been_immunized: false
+                            }));
+
+                            if(!childDetails.log.includes("has_been_immunized")) {
+                              setChildDetails(prevState => ({
+                                ...prevState,
+                                log: [...childDetails.log, "has_been_immunized"]
+                              }));
+                            }
+                          }} />
                       </div>
                       <Form.Text className="text-muted">
                         if ‘Yes’ please provide the details.
@@ -673,6 +799,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -693,6 +826,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -713,6 +853,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -733,6 +880,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -753,6 +907,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -773,6 +934,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -793,6 +961,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -816,6 +991,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -836,6 +1018,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -856,6 +1045,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -876,6 +1072,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -896,6 +1099,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -916,6 +1126,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -936,6 +1153,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -959,6 +1183,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -979,6 +1210,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -999,6 +1237,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1019,6 +1264,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1039,6 +1291,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1059,6 +1318,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1079,6 +1345,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1102,6 +1375,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1122,6 +1402,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1142,6 +1429,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1162,6 +1456,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1182,6 +1483,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1202,6 +1510,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1222,6 +1537,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1245,6 +1567,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1265,6 +1594,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1285,6 +1621,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1305,6 +1648,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1325,6 +1675,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1345,6 +1702,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1365,6 +1729,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1388,6 +1759,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1408,6 +1786,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1428,6 +1813,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1448,6 +1840,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1468,6 +1867,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1488,6 +1894,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1508,6 +1921,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1531,6 +1951,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "measules"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1551,6 +1978,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "measules"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1571,6 +2005,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "measules"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1591,6 +2032,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "measules"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1611,6 +2059,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "measules"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1631,6 +2086,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "measules"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1651,6 +2113,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "measules"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1674,6 +2143,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1694,6 +2170,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1714,6 +2197,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1734,6 +2224,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1754,6 +2251,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1774,6 +2278,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1794,6 +2305,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1817,6 +2335,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "varicella"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1837,6 +2362,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "varicella"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1857,6 +2389,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "varicella"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1877,6 +2416,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "varicella"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1897,6 +2443,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "varicella"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1917,6 +2470,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "varicella"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1937,6 +2497,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     ...prevState,
                                     varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                   }));
+
+                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    setChildImmunisationRecord(prevState => ({
+                                      ...prevState,
+                                      log: [...childImmunisationRecord.log, "varicella"]
+                                    }));
+                                  }
                                 }} />
                             </div>
                           </Form.Group>
@@ -1994,10 +2561,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               id="yesp" 
                               label="Yes"
                               checked={childMedicalInformation?.has_special_needs === true}
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                has_special_needs: true
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_special_needs: true
+                                }));
+
+                                if(!childMedicalInformation.log.includes("has_special_needs")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "has_special_needs"]
+                                  }));
+                                }
+                              }} />
                             <Form.Check 
                               type="radio" 
                               name="photo" 
@@ -2012,6 +2588,18 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     special_need_details: "",
                                     inclusion_support_form_of_special_needs: false
                                   }));
+
+                                  if(!childMedicalInformation.log.includes("has_special_needs")) {
+                                    setChildMedicalInformation(prevState => ({
+                                      ...prevState,
+                                      log: [...childMedicalInformation.log, "has_special_needs"]
+                                    }));
+                                  } else {
+                                    setChildMedicalInformation(prevState => ({
+                                      ...prevState,
+                                      log: childMedicalInformation.log.filter(d => d !== "special_need_details" && d !== "inclusion_support_form_of_special_needs")
+                                    }));
+                                  }
                               }} />
                           </div>
                         </Form.Group>
@@ -2033,7 +2621,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               onChange={(e) => setChildMedicalInformation(prevState => ({
                                 ...prevState,
                                 [e.target.name]: e.target.value
-                              }))} />
+                              }))}
+                              onBlur={(e) => {
+                                if(!childMedicalInformation.log.includes("special_need_details")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "special_need_details"]
+                                  }));
+                                }
+                              }} />
                           </Form.Group>
                           <div className="single-col mb-3">
                             <p>Inclusion Support Form (If applicable)</p>
@@ -2045,10 +2641,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   id="yesss" 
                                   label="Yes"
                                   checked={childMedicalInformation?.inclusion_support_form_of_special_needs === true}
-                                  onChange={() => setChildMedicalInformation(prevState => ({
-                                    ...prevState,
-                                    inclusion_support_form_of_special_needs: true
-                                  }))} />
+                                  onChange={() => {
+                                    setChildMedicalInformation(prevState => ({
+                                      ...prevState,
+                                      inclusion_support_form_of_special_needs: true
+                                    }));
+
+                                    if(!childMedicalInformation.log.includes("inclusion_support_form_of_special_needs")) {
+                                      setChildMedicalInformation(prevState => ({
+                                        ...prevState,
+                                        log: [...childMedicalInformation.log, "inclusion_support_form_of_special_needs"]
+                                      }));
+                                    }
+                                  }} />
                                 <Form.Check 
                                   type="radio" 
                                   name="support" 
@@ -2056,10 +2661,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   label="No"
                                   checked={childMedicalInformation?.inclusion_support_form_of_special_needs === false}
                                   defaultChecked
-                                  onChange={() => setChildMedicalInformation(prevState => ({
-                                    ...prevState,
-                                    inclusion_support_form_of_special_needs: false
-                                  }))} />
+                                  onChange={() => {
+                                    setChildMedicalInformation(prevState => ({
+                                      ...prevState,
+                                      inclusion_support_form_of_special_needs: false
+                                    }));
+
+                                    if(!childMedicalInformation.log.includes("inclusion_support_form_of_special_needs")) {
+                                      setChildMedicalInformation(prevState => ({
+                                        ...prevState,
+                                        log: [...childMedicalInformation.log, "inclusion_support_form_of_special_needs"]
+                                      }));
+                                    }
+                                  }} />
                               </div>
                             </Form.Group>
                           </div>
@@ -2076,11 +2690,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               id="yesa" 
                               label="Yes"
                               checked={childMedicalInformation?.has_sensitivity === true}
-                              onChange={() => setChildMedicalInformation(prevState => ({
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
                                   ...prevState,
                                   has_sensitivity: true
-                                }))
-                              } />
+                                }));
+
+                                if(!childMedicalInformation.log.includes("has_sensitivity")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "has_sensitivity"]
+                                  }));
+                                }
+                              }} />
                             <Form.Check 
                               type="radio" 
                               name="senstivity" 
@@ -2095,6 +2717,18 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   details_of_allergies: "",
                                   inclusion_support_form_of_allergies: false
                                 }));
+
+                                if(!childMedicalInformation.log.includes("has_sensitivity")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "has_sensitivity"]
+                                  }));
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "details_of_allergies" && d !== "inclusion_support_form_of_allergies")
+                                  }));
+                                }
                             }} />
                           </div>
                         </Form.Group>
@@ -2109,10 +2743,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               as="textarea" 
                               value={childMedicalInformation?.details_of_allergies || ""}
                               rows={3}
-                              onChange={(e) => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                [e.target.name]: e.target.value
-                              }))} />
+                              onChange={(e) => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  [e.target.name]: e.target.value
+                                }));
+
+                                if(!childMedicalInformation.log.includes("details_of_allergies")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "details_of_allergies"]
+                                  }));
+                                }
+                              }} />
                           </Form.Group>
                           <div className="single-col mb-3">
                             <p>Inclusion Support Form (If applicable)</p>
@@ -2124,10 +2767,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   id="yesdd" 
                                   label="Yes"
                                   checked={childMedicalInformation?.inclusion_support_form_of_allergies === true}
-                                  onChange={() => setChildMedicalInformation(prevState => ({
-                                    ...prevState,
-                                    inclusion_support_form_of_allergies: true
-                                  }))} />
+                                  onChange={() => {
+                                    setChildMedicalInformation(prevState => ({
+                                      ...prevState,
+                                      inclusion_support_form_of_allergies: true
+                                    }));
+
+                                    if(!childMedicalInformation.log.includes("inclusion_support_form_of_allergies")) {
+                                      setChildMedicalInformation(prevState => ({
+                                        ...prevState,
+                                        log: [...childMedicalInformation.log, "inclusion_support_form_of_allergies"]
+                                      }));
+                                    }
+                                  }} />
                                 <Form.Check 
                                   type="radio" 
                                   name="applicable" 
@@ -2135,10 +2787,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   label="No"
                                   checked={childMedicalInformation?.inclusion_support_form_of_allergies === false}
                                   defaultChecked
-                                  onChange={() => setChildMedicalInformation(prevState => ({
-                                    ...prevState,
-                                    inclusion_support_form_of_allergies: false
-                                  }))} />
+                                  onChange={() => {
+                                    setChildMedicalInformation(prevState => ({
+                                      ...prevState,
+                                      inclusion_support_form_of_allergies: false
+                                    }));
+
+                                    if(!childMedicalInformation.log.includes("inclusion_support_form_of_allergies")) {
+                                      setChildMedicalInformation(prevState => ({
+                                        ...prevState,
+                                        log: [...childMedicalInformation.log, "inclusion_support_form_of_allergies"]
+                                      }));
+                                    }
+                                  }} />
                               </div>
                             </Form.Group>
                           </div>
@@ -2155,10 +2816,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               id="yesin" 
                               label="Yes"
                               checked={childMedicalInformation?.has_autoinjection_device === true}
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                has_autoinjection_device: true
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_autoinjection_device: true
+                                }));
+
+                                if(!childMedicalInformation.log.includes("has_autoinjection_device")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "has_autoinjection_device"]
+                                  }));
+                                }
+                              }} />
                             <Form.Check 
                               type="radio" 
                               name="injection" 
@@ -2166,11 +2836,25 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               label="No"
                               checked={childMedicalInformation?.has_autoinjection_device === false || childMedicalInformation?.has_autoinjection_device === null}
                               defaultChecked
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                has_autoinjection_device: false,
-                                has_anaphylaxis_medical_plan_been_provided: false
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_autoinjection_device: false,
+                                  has_anaphylaxis_medical_plan_been_provided: false
+                                }));
+
+                                if(!childMedicalInformation.log.includes("has_autoinjection_device")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "has_autoinjection_device"]
+                                  }));
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "has_anaphylaxis_medical_plan_been_provided")
+                                  }));
+                                }
+                              }} />
                           </div>
                         </Form.Group>
                       </div>
@@ -2186,10 +2870,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 id="yesm" 
                                 label="Yes"
                                 checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === true}
-                                onChange={() => setChildMedicalInformation(prevState => ({
-                                  ...prevState,
-                                  has_anaphylaxis_medical_plan_been_provided: true
-                                }))} />
+                                onChange={() => {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    has_anaphylaxis_medical_plan_been_provided: true
+                                  }));
+
+                                  if(!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
+                                    setChildMedicalInformation(prevState => ({
+                                      ...prevState,
+                                      log: [...childMedicalInformation.log, "has_anaphylaxis_medical_plan_been_provided"]
+                                    }));
+                                  }  
+                                }} />
                               <Form.Check 
                                 type="radio" 
                                 name="service" 
@@ -2197,10 +2890,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 label="No"
                                 checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === false}
                                 defaultChecked
-                                onChange={() => setChildMedicalInformation(prevState => ({
-                                  ...prevState,
-                                  has_anaphylaxis_medical_plan_been_provided: false
-                                }))} />
+                                onChange={() => {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    has_anaphylaxis_medical_plan_been_provided: false
+                                  }));
+
+                                  if(!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
+                                    setChildMedicalInformation(prevState => ({
+                                      ...prevState,
+                                      log: [...childMedicalInformation.log, "has_anaphylaxis_medical_plan_been_provided"]
+                                    }));
+                                  }
+                                }} />
                             </div>
                           </Form.Group>
                         </div>
@@ -2215,10 +2917,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               id="yese" 
                               label="Yes"
                               checked={childMedicalInformation?.risk_management_plan_completed === true}
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                risk_management_plan_completed: true
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  risk_management_plan_completed: true
+                                }));
+
+                                if(!childMedicalInformation.log.includes("risk_management_plan_completed")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "risk_management_plan_completed"]
+                                  }));
+                                }
+                              }} />
                             <Form.Check 
                               type="radio" 
                               name="management" 
@@ -2226,10 +2937,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               defaultChecked
                               label="No"
                               checked={childMedicalInformation?.risk_management_plan_completed === false || childMedicalInformation?.risk_management_plan_completed === null}
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                risk_management_plan_completed: false
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  risk_management_plan_completed: false
+                                }));
+
+                                if(!childMedicalInformation.log.includes("risk_management_plan_completed")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "risk_management_plan_completed"]
+                                  }));
+                                }
+                              }} />
                           </div>
                         </Form.Group>
                       </div>
@@ -2244,10 +2964,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               id="yest" 
                               label="Yes"
                               checked={childMedicalInformation?.any_other_medical_condition === true}
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                any_other_medical_condition: true
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  any_other_medical_condition: true
+                                }));
+
+                                if(!childMedicalInformation.log.includes("any_other_medical_condition")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "any_other_medical_condition"]
+                                  }));
+                                }
+                              }} />
                             <Form.Check 
                               type="radio" 
                               name="conditions" 
@@ -2255,11 +2984,25 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               label="No"
                               checked={childMedicalInformation?.any_other_medical_condition === false}
                               defaultChecked
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                any_other_medical_condition: false,
-                                detail_of_other_condition: ""
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  any_other_medical_condition: false,
+                                  detail_of_other_condition: ""
+                                }));
+
+                                if(!childMedicalInformation.log.includes("any_other_medical_condition")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "any_other_medical_condition"]
+                                  }));
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "detail_of_other_condition")
+                                  }));
+                                }
+                              }} />
                           </div>
                         </Form.Group>
                       </div>
@@ -2272,10 +3015,21 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             as="textarea" 
                             rows={3}
                             value={childMedicalInformation?.detail_of_other_condition || ""}
-                            onChange={(e) => setChildMedicalInformation(prevState => ({
-                              ...prevState,
-                              [e.target.name]: e.target.value
-                            }))} />
+                            onChange={(e) => {
+                              setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                [e.target.name]: e.target.value
+                              }));
+                            }} 
+
+                            onBlur={(e) => {
+                              if(!childMedicalInformation.log.includes("detail_of_other_condition")) {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  log: [...childMedicalInformation.log, "detail_of_other_condition"]
+                                }));
+                              }
+                            }} />
                         </Form.Group>
                       }
                       <div className="single-col mb-3">
@@ -2288,10 +3042,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               id="yesh" 
                               label="Yes"
                               checked={childMedicalInformation?.has_dietary_restrictions === true}
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                has_dietary_restrictions: true
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_dietary_restrictions: true
+                                }));
+
+                                if(!childMedicalInformation.log.includes("has_dietary_restrictions")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "has_dietary_restrictions"]
+                                  }));
+                                }
+                              }} />
                             <Form.Check 
                               type="radio" 
                               name="dietary" 
@@ -2299,11 +3062,25 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               label="No"
                               checked={childMedicalInformation?.has_dietary_restrictions === false}
                               defaultChecked
-                              onChange={() => setChildMedicalInformation(prevState => ({
-                                ...prevState,
-                                has_dietary_restrictions: false,
-                                details_of_restrictions: ""
-                              }))} />
+                              onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_dietary_restrictions: false,
+                                  details_of_restrictions: ""
+                                }));
+
+                                if(!childMedicalInformation.log.includes("has_dietary_restrictions")) {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: [...childMedicalInformation.log, "has_dietary_restrictions"]
+                                  }));
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "details_of_restrictions")
+                                  }));
+                                }
+                              }} />
                           </div>
                         </Form.Group>
                       </div>
@@ -2316,10 +3093,20 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             as="textarea" 
                             rows={3}
                             value={childMedicalInformation?.details_of_restrictions || ""}
-                            onChange={(e) => setChildMedicalInformation(prevState => ({
-                              ...prevState,
-                              [e.target.name]: e.target.value
-                            }))} />
+                            onChange={(e) => {
+                              setChildMedicalInformation(prevState => ({
+                                ...prevState,
+                                [e.target.name]: e.target.value
+                              }));
+                            }} 
+                            onBlur={(e) => {
+                              if(!childMedicalInformation.log.includes("details_of_restrictions")) {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  log: [...childMedicalInformation.log, "details_of_restrictions"]
+                                }));
+                              }
+                            }}/>
                         </Form.Group>
                       }
                     </div>
@@ -2341,9 +3128,21 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Check 
                     type="checkbox" 
                     id="accept" 
-                    checked={parentMedicationPermission}
+                    checked={parentData.i_give_medication_permission}
                     label="I have read and accept all the above points."
-                    onChange={() => setParentMedicationPermission(!parentMedicationPermission)} />
+                    onChange={() => {
+                      setParentData(prevState => ({
+                        ...prevState,
+                        i_give_medication_permission: !parentData.i_give_medication_permission,
+                      }));
+                      
+                      if(!parentData.log.includes("i_give_medication_permission")) {
+                        setParentData(prevState => ({
+                          ...prevState,
+                          log: [...parentData.log, "i_give_medication_permission"]
+                        }));
+                      }
+                    }} />
                 </div>
               </Form.Group>
             </div>

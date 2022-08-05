@@ -2,7 +2,19 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave,Files,setErrors }) {
+export default function DropAllFile({ onSave,Files, setErrors, title="Files", type="file" }) {
+  let typeObj;
+
+  if(type === "video") {
+    typeObj = {
+      'video/*': ['.mp4', '.flv', '.mkv']
+    }
+  } else {
+    typeObj = {
+      'pdf/*': ['.pdf', '.doc', '.xlsx', '.xlsm']
+    }
+  }
+  
   console.log("The files",Files)
   const [data, setData] = useState([]);
   const [theFiles,setTheFiles] = useState();
@@ -18,11 +30,10 @@ export default function DropAllFile({ onSave,Files,setErrors }) {
     maxFiles: 5,
     multiple: true,
     // accept:'.doc, .pdf, , .png, .jpg',
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg','.pdf','.doc','.txt','.wpd'],
-    },
-
-
+    // accept: {
+    //   'image/*, audio/*, video/*': ['.png', '.jpg', '.jpeg','.pdf','.doc','.txt','.wpd'],
+    // },
+    accept: typeObj
   });
 
   const handleFileDelete = (file) => {
@@ -59,12 +70,11 @@ export default function DropAllFile({ onSave,Files,setErrors }) {
   }
 
   return (
-    <div className="file-upload-form mt-3">
-      <div {...getRootProps({ className: 'dropzone' })}>
+    <div className="file-upload-form">
+      <div {...getRootProps({ className: 'dropzone' })} style={{ width: "150px" }}>
         <input {...getInputProps()} />
         <span className="text-center uploadfile cursor" style={{ display: 'inline-block', marginBottom: '10px' }}>
-          <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
-          Files
+          <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add {title}
         </span>
       </div>
 

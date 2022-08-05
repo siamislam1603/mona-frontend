@@ -62,7 +62,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       });
 
       if(response.status === 201 && response.data.status === "success") {
-        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${child.id}`, { educatorIds: [formOneChildData.educator] }, {
+        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${child.id}`, { educatorIds: formOneChildData.educator }, {
           headers: {
             "Authorization": `Bearer ${token}`
           }     
@@ -178,11 +178,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Select
                                   placeholder={formOneChildData?.language || "Select"}
                                   closeMenuOnSelect={true}
+                                  isMulti
                                   options={educatorData}
                                   onChange={(e) => {
                                     setFormOneChildData((prevState) => ({
                                       ...prevState,
-                                      educator: e.id,
+                                      educator: [...e.map(e => e.id)]
                                     }));
                                   }}
                                 />

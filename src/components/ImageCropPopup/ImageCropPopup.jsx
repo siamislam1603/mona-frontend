@@ -5,7 +5,9 @@ import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
 import './ImageCropPopup.css';
 
-const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible }) => {
+let temp = () => {};
+
+const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible, setFormErrors=temp }) => {
 
     const [croppedArea, setCroppedArea] = useState(null);
     const [tempImage, setTempImage] = useState(null);
@@ -22,6 +24,10 @@ const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible }) => {
         let croppedImage = convertCanvasToImg(croppedImageCanvas);
 
         setCroppedImage(croppedImage);
+        setFormErrors(prevState => ({
+            ...prevState,
+            profile_pic: null
+        }));
         setPopupVisible(false);
     }
 

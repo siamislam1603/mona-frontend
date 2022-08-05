@@ -18,18 +18,24 @@ const MyAnnouncements = (props) => {
   const [myAnnouncement,setmyAnnouncement] = useState([]);
   // const {id} = useParams
   const myAnnouncementData = async() =>{
-    let token = localStorage.getItem('token')
+    try {
+      let token = localStorage.getItem('token')
     let id= localStorage.getItem("user_id")
-    console.log("sending response");
-    const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${id}`, {
+    // console.log("sending response");
+    let franhiseAlias = "all"
+    let usedId = localStorage.getItem("user_id")
+    const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${franhiseAlias}&search=&offset=0&limit=5`, {
       headers: {
         "Authorization": "Bearer " + token
       }
      })
-     console.log("The repsonse mY anncounce,",response)
+    //  console.log("The repsonse mY anncounce,",response)
      if(response.status === 200) {
         setmyAnnouncement(response.data.data.searchedData)
      }
+    } catch (error) {
+       setmyAnnouncement([])
+    }
   }
   const deleteAnnouncement = async (id) =>{
     const token = localStorage.getItem('token');
@@ -42,9 +48,7 @@ const MyAnnouncements = (props) => {
     if(response.status === 200){
         console.log("Delete succussfully")
         myAnnouncementData()
-
     }
-  
   }
   const userName = localStorage.getItem("user_name");
   const userROle = localStorage.getItem("user_role")
@@ -74,31 +78,51 @@ const MyAnnouncements = (props) => {
   useEffect(() =>{
     myAnnouncementData()
   },[])
-  
   useEffect(() =>{
-    if(!props.searchValue){
-      myAnnouncementData()
-      console.log("The search value is not found",props.searchValue)
-    }
-    else if(props.franchisee.searchData){
-      console.log("The search value have something",props.searchValue)
-      // setAnnouncementDetail(props.search)
-      setmyAnnouncement(props.franchisee.searchData)
+    if(props.myLoadData?.length>0){
+      console.log("MY LOAD MORE DATA")
+      setmyAnnouncement(props.myLoadData)
     }
     else{
-      console.log("The search value have something",props.searchValue)
-      setmyAnnouncement(props.search)
+         
     }
-  },[props.search])
-  useEffect(() =>{
-    if(props.franchisee.status === 404){
-      console.log("Don't have fanrhise")
-    }
-    setmyAnnouncement(props.franchisee.searchedData)
-    console.log("The frnahise under all announcement",props.franchisee)
+  },[props.myLoadData])
+  useEffect(()=>{
+      if(props.myAnnouncementData) {
+        setmyAnnouncement(props.myAnnouncementData)
+      }
+  },[props.myAnnouncementData])
+  console.log("MY ANNOUNCEMENT DATA props",props.myAnnouncementData)
+  
+  // useEffect(() =>{
+  //   if(!props.searchValue){
+  //     myAnnouncementData()
+  //     console.log("The search value is not found",props.searchValue)
+  //   }
+  //   else if(props.franchisee.searchData){
+  //     console.log("The search value have something",props.searchValue)
+  //     // setAnnouncementDetail(props.search)
+  //     setmyAnnouncement(props.franchisee.searchData)
+  //   }
+  //   else{
+  //     console.log("The search value have something",props.searchValue)
+  //     setmyAnnouncement(props.search)
+  //   }
+  // },[props.search])
+//   useEffect(() =>{
+//     if(props.franchisee.status === 404){
+//       console.log("Don't have fanrhise")
+//     }
+//     setmyAnnouncement(props.franchisee.searchedData)
+//     console.log("The frnahise under all announcement",props.franchisee)
     
-},[props.franchisee])
- 
+// },[props.franchisee])
+// useEffect(() =>{
+//   if(props.loadData.length>0){
+//     setmyAnnouncement(props.loadData)
+//   }
+// },[props.loadData])
+//  console.log("THE MY ANNOUNCEMENT DATA",myAnnouncement)
   return (
     <div className="announcement-accordion">
         <h1> My Announcement</h1>

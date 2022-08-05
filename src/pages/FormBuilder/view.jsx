@@ -951,7 +951,14 @@ function ViewFormBuilder(props) {
                               <h4>
                                 {moment(item.createdAt).format('DD/MM/YYYY')}
                               </h4>
-                              <button>View Response</button>
+                              <button  onClick={() => {
+                                  navigate('/form/response', {
+                                    state: {
+                                      id: OthersFormData[Index]?.forms[innerIndex]
+                                        ?.id,
+                                    },
+                                  });
+                                }}>View Response</button>
                             </div>
                           </div>
                         </div>

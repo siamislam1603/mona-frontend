@@ -152,6 +152,17 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
+      if(croppedImage) {
+        setFormErrors(prevState => ({
+          ...prevState,
+          profile_pic: null
+        }));
+      } else {
+        setFormErrors(prevState => ({
+          ...prevState,
+          profile_pic: 'Image is required!'
+        }));
+      }
     } else {
       console.log('Erorrs removed!');
       let data=new FormData();
@@ -267,7 +278,7 @@ const NewUser = () => {
       setTrainingCategoryData([
         ...categoryList.map((data) => ({
           id: data.id,
-          value: data.category_alias,
+          value: data.category_name,
           label: data.category_name,
         })),
       ]);
@@ -281,7 +292,7 @@ const NewUser = () => {
       const { pdcList } = response.data;
       setPdcData(pdcList.map(data => ({
         id: data.id,
-        value: data.category_alias,
+        value: data.category_name,
         label: data.category_name
       })));
     }
@@ -294,7 +305,7 @@ const NewUser = () => {
       const { businessAssetList } = response.data;
       setBuinessAssetData(businessAssetList.map(data => ({
         id: data.id,
-        value: data.asset_alias,
+        value: data.asset_name,
         label: data.asset_name
       })));
     }
@@ -317,6 +328,13 @@ const NewUser = () => {
       })));  
     }
   }
+
+  useEffect(() => {
+    setFormErrors(prevState => ({
+      ...prevState,
+      profile_pic: null
+    }))
+  }, [croppedImage]);
 
   useEffect(() => {
     fetchCountryData();
@@ -345,6 +363,7 @@ const NewUser = () => {
 
   formData && console.log('FORM ERRORS:', formData);
   franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
+  formErrors && console.log('FORM ERRORS:', formErrors);
 
   return (
     <>
@@ -376,10 +395,10 @@ const NewUser = () => {
                           popupVisible && 
                           <ImageCropPopup 
                             image={image} 
-                            setCroppedImage={setCroppedImage} 
+                            setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
-                        
+                        { formErrors.profile_pic !== null && <span className="error">{formErrors.profile_pic}</span> }
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
