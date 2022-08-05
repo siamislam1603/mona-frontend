@@ -97,6 +97,11 @@ const EditTraining = () => {
     }
   };
 
+  const handleTrainingCancel = () => {
+    localStorage.setItem('active_tab', '/created-training');
+    window.location.href="/training";
+  };
+
   // FETCHING FRANCHISEE LIST
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
@@ -508,6 +513,7 @@ const EditTraining = () => {
                             <Form.Label>Upload Cover Image :</Form.Label>
                             <DropOneFile
                               onSave={setCoverImage}
+                              title="Image"
                               setErrors={setErrors}
                               setFetchedCoverImage={setFetchedCoverImage}
                             // setTrainingData={setTraining}
@@ -522,6 +528,7 @@ const EditTraining = () => {
                           <Form.Group>
                             <Form.Label>Upload Video Tutorial Here :</Form.Label>
                             <DropAllFile
+                              title="Videos"
                               onSave={setVideoTutorialFiles}
                             />
                             <small className="fileinput">(mp4, flv & mkv)</small>
@@ -579,8 +586,9 @@ const EditTraining = () => {
                               variant="outline"
                               className="me-3"
                               type="submit"
+                              onClick={handleTrainingCancel}
                             >
-                              Preview
+                              Cancel
                             </Button>
                             <Button
                               variant="primary"
