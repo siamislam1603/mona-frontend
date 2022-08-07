@@ -8,6 +8,7 @@ const Signature = (props) => {
   const clear = (e) => {
     e.preventDefault();
     sigPad.current.clear();
+    props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),"");
   };
   const trim = (e) => {
     e.preventDefault();
@@ -35,6 +36,7 @@ const Signature = (props) => {
           <button onClick={trim}>Trim</button>
         </div>
       </Form.Group>
+      <p style={{color:"red"}}>{controls.error[controls.field_name]}</p>
     </Col>
   );
 };
