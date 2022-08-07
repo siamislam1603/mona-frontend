@@ -51,19 +51,13 @@ const validateTrainingSettings = (trainingSettings) => {
 }
 
 const AddNewTraining = () => {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  // const [show, setShow] = useState(false);
+  // const handleClose = () => setShow(false);
 
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
   const [createTrainingModal, setCreateTrainingModal] = useState(false);
 
-  const [userRoles, setUserRoles] = useState([]);
-  const [sendToAllFranchisee, setSendToAllFranchisee] = useState('none');
-  const [franchiseeList, setFranchiseeList] = useState();
-  const [settingsModalPopup, setSettingsModalPopup] = useState(false);
-  const [allowSubmit, setAllowSubmit] = useState(false);
-  const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({ 
     time_unit: "Hours",
     title: "",
@@ -72,13 +66,25 @@ const AddNewTraining = () => {
     category_id: "",
     time_required_to_complete: "" 
   });
-  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [], is_applicable_to_all: false, assigned_franchisee: [], assigned_users: [], start_date: "", start_time: "" });
+  const [trainingSettings, setTrainingSettings] = useState({ 
+    start_date: "", 
+    start_time: "", 
+    send_to_all_franchisee: false,
+    applicable_to: 'roles', 
+    assigned_franchisee: [], 
+    assigned_roles: [], 
+    assigned_users: []
+  });
+  const [userRoles, setUserRoles] = useState([]);
+  const [franchiseeList, setFranchiseeList] = useState();
+  const [settingsModalPopup, setSettingsModalPopup] = useState(false);
+  const [allowSubmit, setAllowSubmit] = useState(false);
+  const [trainingCategory, setTrainingCategory] = useState([]);
   const [coverImage, setCoverImage] = useState({});
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
-  const [allFranchisee, setAllFranchisee] = useState(false);
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
@@ -102,11 +108,6 @@ const AddNewTraining = () => {
       })));
     }
   };
-
-  // MANUAL DATE DISABLE
-  const disableDateInput = () => {
-    return false;
-  }
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
@@ -137,84 +138,71 @@ const AddNewTraining = () => {
     console.log('Training Details Response:', response);
 
     if(response.status === 201 && response.data.status === "success") {
+      // let { id } = response.data.training;
+
+      // let token = localStorage.getItem('token');
+      // let user_id = localStorage.getItem('user_id')
+      // const shareResponse = await axios.post(`${BASE_URL}/share/${id}?titlePage=`, {
+      //   assigned_franchisee: trainingSettings.assigned_franchisee,
+      //   assigned_users: trainingSettings.assigned_users,
+      //   assigned_roles: trainingSettings.assigned_roles,
+      //   shared_by: user_id,
+      //   applicable_to: trainingSettings.applicable_to,
+      // }, {
+      //   headers: {
+      //     "Authorization": `Bearer ${token}`
+      //   }
+      // });
+
+      // console.log('TRAINING SHARED RESPONSE:', shareResponse);
+
+      // if(shareResponse.status === 201 && shareResponse.data.status === "success") {
       let { id } = response.data.training;
 
-      let token = localStorage.getItem('token');
-      let user_id = localStorage.getItem('user_id')
-      const shareResponse = await axios.post(`${BASE_URL}/share/${id}?titlePage=`, {
-        assigned_franchisee: trainingSettings.assigned_franchisee,
-        assigned_users: trainingSettings.assigned_users,
-        user_roles: trainingSettings.user_roles,
-        shared_by: user_id,
-        is_applicable_to_all: trainingSettings.is_applicable_to_all,
-      }, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
+      let data = new FormData();
+      data.append('id', id);
+      data.append('image', coverImage[0]);
 
-      console.log('TRAINING SHARED RESPONSE:', shareResponse);
-
-      if(shareResponse.status === 201 && shareResponse.data.status === "success") {
-        let { id } = response.data.training;
-
-        let data = new FormData();
-        data.append('id', id);
-        data.append('image', coverImage[0]);
-
-        let imgSaveResponse = await axios.post(
-          `${BASE_URL}/training/coverImg?title="training"`, data, {
-            headers: {
-              "Authorization": "Bearer " + token
-            }
+      let imgSaveResponse = await axios.post(
+        `${BASE_URL}/training/coverImg?title="training"`, data, {
+          headers: {
+            "Authorization": "Bearer " + token
           }
-        );
-
-        if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
-          setLoader(false)
-          localStorage.setItem('success_msg', 'Training Created Successfully!');
-          localStorage.setItem('active_tab', '/created-training');
-          window.location.href="/training";
-        } else {
-          setTopErrorMessage("unable to save cover image!");
-          setTimeout(() => {
-            setTopErrorMessage(null);
-          }, 3000)
         }
+      );
 
-        } else if(response.status === 200 && response.data.status === "fail") {
-          const { msg } = response.data;
-          setTopErrorMessage(msg);
-          setLoader(false);
-          setCreateTrainingModal(false);
-          setTimeout(() => {
-            setTopErrorMessage(null);
-          }, 3000)
-        } 
+      if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+        setLoader(false)
+        localStorage.setItem('success_msg', 'Training Created Successfully!');
+        localStorage.setItem('active_tab', '/created-training');
+        window.location.href="/training";
+      } else {
+        setTopErrorMessage("unable to save cover image!");
+        setTimeout(() => {
+          setTopErrorMessage(null);
+        }, 3000)
       }
-  };  
+    } else if(response.status === 200 && response.data.status === "fail") {
+      const { msg } = response.data;
+      setTopErrorMessage(msg);
+      setLoader(false);
+      setCreateTrainingModal(false);
+      setTimeout(() => {
+        setTopErrorMessage(null);
+      }, 3000)
+    } 
+};  
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    if(allFranchisee === false) {
-      const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
-      console.log('RESPONSE:', response);
-      if(response.status === 200 && Object.keys(response.data).length > 1) {
+    console.log('franchisee_id:', franchisee_id);
+    if(franchisee_id.length > 0 && franchisee_id[0] !== 'all') {
+      console.log('FETCHING FRANCHISEE USERS!');
+      const response = await axios.get(`${BASE_URL}/user-group/users/franchisee/${franchisee_id[0]}`);
+      if(response.status === 200 && response.data.status === "success") {
         const { users } = response.data;
         setFetchedFranchiseeUsers([
           ...users?.map((data) => ({
-            id: data.id,
-            cat: data.fullname.toLowerCase().split(" ").join("_"),
-            key: data.fullname
-          })),
-        ]);
-      }
-    } else {
-      const response = await axios.get(`${BASE_URL}/user-group/users`);
-      if(response.status === 200 && response.data.status === "success") {
-        const { allUser } = response.data;
-        setFetchedFranchiseeUsers([
-          ...allUser?.map((data) => ({
             id: data.id,
             cat: data.fullname.toLowerCase().split(" ").join("_"),
             key: data.fullname
@@ -264,12 +252,6 @@ const AddNewTraining = () => {
       ...prevState,
       [name]: value.trim(),
     }));
-    if (!!errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: null,
-      });
-    }
   };
 
   const handleDataSubmit = event => {
@@ -282,33 +264,25 @@ const AddNewTraining = () => {
       setErrors(errorObj);
     } else {
       setErrors({});
-      // if(Object.keys(trainingSettings).length === 0) {
-      //   setSettingsModalPopup(true);
-      // }
       if(!allowSubmit)
         setSettingsModalPopup(true);
 
       if(settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
-        // console.log('Submitting Finally!');
-        
-        let data = new FormData();
 
+        let data = new FormData();
         for(let [key, values] of Object.entries(trainingSettings)) {
           data.append(`${key}`, values);
         }
-
         for(let [ key, values ] of Object.entries(trainingData)) {
           data.append(`${key}`, values)
         }
-
         videoTutorialFiles.forEach((file, index) => {
           data.append(`images`, file);
         });
-
         relatedFiles.forEach((file, index) => {
           data.append(`images`, file);
         });
-        
+
         window.scrollTo(0, 0);
         setCreateTrainingModal(true);
         setLoader(true);
@@ -328,19 +302,14 @@ const AddNewTraining = () => {
     fetchFranchiseeList();
   }, []);
 
-  // useEffect(() => {
-  //   fetchFranchiseeUsers(selectedFranchisee);
-  // }, [selectedFranchisee]);
 
   useEffect(() => {
-    fetchFranchiseeUsers(trainingSettings?.assigned_franchisee[0]);
-  }, [trainingSettings?.assigned_franchisee.length > 0]);
+    fetchFranchiseeUsers(trainingSettings?.assigned_franchisee);
+  }, [trainingSettings.assigned_franchisee]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   trainingData && console.log('TRAINING DATA:', trainingData);
-  // // videoTutorialFiles && console.log('VIDEO TUTORIAL FILE:', videoTutorialFiles);
-  // settingsModalPopup && console.log('Setting Modal Popul', settingsModalPopup);
-  // fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
+  
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -604,7 +573,6 @@ const AddNewTraining = () => {
                   <Form.Label>Start Date*</Form.Label>
                   <Form.Control
                     type="date"
-                    onKeyPress={() => disableDateInput()}
                     name="start_date"
                     onChange={(e) => {
                       handleTrainingSettings(e);
@@ -672,16 +640,15 @@ const AddNewTraining = () => {
                       <label for="all">
                         <input
                           type="radio"
-                          checked={sendToAllFranchisee === 'all'}
+                          checked={trainingSettings?.send_to_all_franchisee === true}
                           name="send_to_all_franchisee"
                           id="all"
                           onChange={() => {
                             setTrainingSettings(prevState => ({
                               ...prevState,
+                              send_to_all_franchisee: true,
                               assigned_franchisee: ['all']
                             }));
-                            setSendToAllFranchisee('all');
-                            setAllFranchisee(true);
                           }}
                         />
                         <span className="radio-round"></span>
@@ -693,15 +660,14 @@ const AddNewTraining = () => {
                         <input
                           type="radio"
                           name="send_to_all_franchisee"
-                          checked={sendToAllFranchisee === 'none'}
+                          checked={trainingSettings?.send_to_all_franchisee === false}
                           id="none"
                           onChange={() => {
                             setTrainingSettings(prevState => ({
                               ...prevState,
+                              send_to_all_franchisee: false,
                               assigned_franchisee: []
                             }));
-                            setSendToAllFranchisee('none');
-                            setAllFranchisee(false);
                           }}
                         />
                         <span className="radio-round"></span>
@@ -717,7 +683,7 @@ const AddNewTraining = () => {
                   <Form.Label>Select Franchisee</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
-                      disable={sendToAllFranchisee === 'all'}
+                      disable={trainingSettings?.send_to_all_franchisee === true}
                       singleSelect={true}
                       placeholder={"Select User Names"}
                       displayValue="key"
@@ -754,12 +720,12 @@ const AddNewTraining = () => {
                           type="radio"
                           value="Y"
                           name="roles"
-                          checked={ trainingSettings.is_applicable_to_all === true }
+                          checked={ trainingSettings?.applicable_to === 'roles' }
                           id="yes1"
                           onChange={(event) => {
                             setTrainingSettings((prevState) => ({
                               ...prevState,
-                              is_applicable_to_all: true,
+                              applicable_to: 'roles',
                             }));
 
                             setTrainingSettings((prevState) => ({
@@ -779,17 +745,17 @@ const AddNewTraining = () => {
                           type="radio"
                           value="N"
                           name="roles"
-                          checked={ trainingSettings.is_applicable_to_all === false }
+                          checked={ trainingSettings?.applicable_to === 'users' }
                           id="no1"
                           onChange={(event) => {
                             setTrainingSettings((prevState) => ({
                               ...prevState,
-                              is_applicable_to_all: false,
+                              applicable_to: 'users'
                             }));
 
                             setTrainingSettings((prevState) => ({
                               ...prevState,
-                              user_roles: []
+                              assigned_roles: []
                             }));
                           }}
                         />
@@ -802,97 +768,97 @@ const AddNewTraining = () => {
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
-                <div className={`custom-checkbox ${trainingSettings.is_applicable_to_all === false ? "d-none": ""}`}>
+                <div className={`custom-checkbox ${trainingSettings.applicable_to === 'users' ? "d-none": ""}`}>
                   <Form.Label className="d-block">Select User Roles</Form.Label>
                   <div className="btn-checkbox d-block">
                   <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                       <Form.Check 
                         type="checkbox" 
-                        checked={trainingSettings.user_roles.includes("franchisee_admin")}
+                        checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
                         label="Franchisee Admin"
                         onChange={() => {
-                          if(trainingSettings.user_roles.includes("franchisee_admin")) {
-                            let data = trainingSettings.user_roles.filter(t => t !== "franchisee_admin");
+                          if(trainingSettings.assigned_roles.includes("franchisee_admin")) {
+                            let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
                             setTrainingSettings(prevState => ({
                               ...prevState,
-                              user_roles: [...data]
+                              assigned_roles: [...data]
                             }));
                           }
 
-                          if(!trainingSettings.user_roles.includes("franchisee_admin"))
+                          if(!trainingSettings.assigned_roles.includes("franchisee_admin"))
                             setTrainingSettings(prevState => ({
                             ...prevState,
-                            user_roles: [...trainingSettings.user_roles, "franchisee_admin"]
+                            assigned_roles: [...trainingSettings.assigned_roles, "franchisee_admin"]
                         }))}} />
                     </Form.Group>
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
                       <Form.Check 
                         type="checkbox" 
-                        checked={trainingSettings.user_roles.includes("coordinator")}
+                        checked={trainingSettings.assigned_roles?.includes("coordinator")}
                         label="Co-ordinators"
                         onChange={() => {
-                          if(trainingSettings.user_roles.includes("coordinator")) {
-                            let data = trainingSettings.user_roles.filter(t => t !== "coordinator");
+                          if(trainingSettings.assigned_roles.includes("coordinator")) {
+                            let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
                             setTrainingSettings(prevState => ({
                               ...prevState,
-                              user_roles: [...data]
+                              assigned_roles: [...data]
                             }));
                           }
 
-                          if(!trainingSettings.user_roles.includes("coordinator"))
+                          if(!trainingSettings.assigned_roles.includes("coordinator"))
                             setTrainingSettings(prevState => ({
                             ...prevState,
-                            user_roles: [...trainingSettings.user_roles, "coordinator"]
+                            assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
                         }))}} />
                     </Form.Group>
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                       <Form.Check 
                         type="checkbox" 
                         label="Educator"
-                        checked={trainingSettings.user_roles.includes("educator")}
+                        checked={trainingSettings.assigned_roles.includes("educator")}
                         onChange={() => {
-                          if(trainingSettings.user_roles.includes("educator")) {
-                            let data = trainingSettings.user_roles.filter(t => t !== "educator");
+                          if(trainingSettings.assigned_roles.includes("educator")) {
+                            let data = trainingSettings.assigned_roles.filter(t => t !== "educator");
                             setTrainingSettings(prevState => ({
                               ...prevState,
-                              user_roles: [...data]
+                              assigned_roles: [...data]
                             }));
                           }
 
-                          if(!trainingSettings.user_roles.includes("educator"))
+                          if(!trainingSettings.assigned_roles.includes("educator"))
                             setTrainingSettings(prevState => ({
                             ...prevState,
-                            user_roles: [...trainingSettings.user_roles, "educator"]
+                            assigned_roles: [...trainingSettings.assigned_roles, "educator"]
                         }))}} />
                     </Form.Group>
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
                       <Form.Check 
                         type="checkbox" 
                         label="All Roles"
-                        checked={trainingSettings.user_roles.length === 3}
+                        checked={trainingSettings.assigned_roles.length === 3}
                         onChange={() => {
-                          if(trainingSettings.user_roles.includes("franchisee_admin") 
-                              && trainingSettings.user_roles.includes("coordinator")
-                              && trainingSettings.user_roles.includes("educator")) {
+                          if(trainingSettings.assigned_roles.includes("franchisee_admin") 
+                              && trainingSettings.assigned_roles.includes("coordinator")
+                              && trainingSettings.assigned_roles.includes("educator")) {
                                 setTrainingSettings(prevState => ({
                                   ...prevState,
-                                  user_roles: [],
+                                  assigned_roles: [],
                                 }));
                               }
                             
-                          if(!trainingSettings.user_roles.includes("franchisee_admin")
-                              && !trainingSettings.user_roles.includes("coordinator") 
-                              && !trainingSettings.user_roles.includes("educator"))
+                          if(!trainingSettings.assigned_roles.includes("franchisee_admin")
+                              && !trainingSettings.assigned_roles.includes("coordinator") 
+                              && !trainingSettings.assigned_roles.includes("educator"))
                             setTrainingSettings(prevState => ({
                               ...prevState,
-                              user_roles: ["franchisee_admin", "coordinator", "educator"]
+                              assigned_roles: ["franchisee_admin", "coordinator", "educator"]
                             })
                         )}} />
                     </Form.Group>
                   </div>
                 </div>
 
-                <div className={`mt-3 mt-md-0 ${trainingSettings.is_applicable_to_all === true ? "d-none": ""}`}>
+                <div className={`mt-3 mt-md-0 ${trainingSettings.applicable_to === 'roles' ? "d-none": ""}`}>
                   <Form.Group>
                     <Form.Label>Select User Names</Form.Label>
                     <Multiselect
