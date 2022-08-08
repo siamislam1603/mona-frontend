@@ -3,3 +3,22 @@
 /* BUTTON STYLES */
 .view-enrolment { border: 2px solid #AA0061; color: #AA0061; }
 .initiate-enrolment { border: 2px solid #3E5D58; color: #3E5D58; }
+
+.center {
+  text-align: center;
+}
+
+p.center {
+  font-size: 1rem;
+}
+
+/* DISABLED BUTTONS */
+.disabled-button {
+  background-color: #455C58;
+  padding: 0.9rem 2.3rem;
+  color:#fff;
+  font-weight: 500;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 0 5px;
+}
