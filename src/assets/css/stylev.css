@@ -2909,4 +2909,10 @@ li.child_tag {
 h6.text-capitalize {
     color: var(--purple);
     font-size: 20px;
+}   
+.create-by img {
+    height: auto;
+    width: 38px;
+    border-radius: 100%;
+    margin-left:7px;
 }
