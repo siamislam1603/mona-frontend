@@ -62,7 +62,7 @@ const AvailableTraining = ({ filter }) => {
                       </div>
                     </div>
                     {
-                      (localStorage.getItem('user_role') !== 'coordinator' && localStorage.getItem('user_role') !== 'educator') &&
+                      (localStorage.getItem('user_role') !== 'educator') &&
                        <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">
