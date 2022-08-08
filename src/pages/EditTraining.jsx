@@ -61,12 +61,8 @@ const EditTraining = () => {
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({});
-<<<<<<< HEAD
-  const [trainingSettings, setTrainingSettings] = useState({ user_roles: [] });
-=======
   const [trainingSettings, setTrainingSettings] = useState({ });
 
->>>>>>> 98b2dd061a35d68e84d39b87296e753e6615bade
   const [coverImage, setCoverImage] = useState({});
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -148,15 +144,11 @@ const EditTraining = () => {
     console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-<<<<<<< HEAD
-      setEditTrainingData(training);
-=======
 
       copyDataToStates(training);
->>>>>>> 98b2dd061a35d68e84d39b87296e753e6615bade
     }
   };
-  console.log(editTrainingData, "editTrainingData")
+  // console.log(editTrainingData, "editTrainingData")
 
 
 
@@ -205,13 +197,8 @@ const EditTraining = () => {
     }
     );
 
-<<<<<<< HEAD
-
-    console.log('TRAINING BODY UPDATE RESPONSE:', response);
-=======
     if (response.status === 201 && response.data.status === "success") {
       console.log('TYPE OF COVER IMAGE:', typeof coverImage[0]);
->>>>>>> 98b2dd061a35d68e84d39b87296e753e6615bade
 
       let data = new FormData();
       data.append('id', trainingId);
