@@ -193,11 +193,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           localStorage.removeItem('consent_comment');
           localStorage.removeItem('has_given_consent');
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`http://localhost:5000/children/${parent_id}`;
+          window.location.href=`http://3.26.39.12:5000/children/${parent_id}`;
         }
       } else {
         let parent_id = localStorage.getItem('enrolled_parent_id');
-        window.location.href=`http://localhost:5000/children/${parent_id}`;
+        window.location.href=`http://3.26.39.12:5000/children/${parent_id}`;
       }
     }
   }
@@ -213,7 +213,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       data.append('image', blob);
     }
 
-    let response = await axios.put(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
+    let response = await axios.put(`$http://3.26.39.12:4000/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
