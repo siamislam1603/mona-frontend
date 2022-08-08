@@ -181,7 +181,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
     if(response.status === 201 && response.data.status === "success") {
 
-      if(localStorage.getItem('asked_for_consent') !== null) {
+      if(localStorage.getItem('asked_for_consent') !== null || typeof localStorage.getItem('asked_for_consent') !== "undefined") {
         response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('enrolled_parent_id')}`, { childId: localStorage.getItem('enrolled_child_id') }, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem('token')}`
@@ -193,11 +193,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           localStorage.removeItem('consent_comment');
           localStorage.removeItem('has_given_consent');
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`http://localhost:5000/children/${parent_id}`;
+          window.location.href=`${BASE_URL}/children/${parent_id}`;
         }
       } else {
         let parent_id = localStorage.getItem('enrolled_parent_id');
-        window.location.href=`http://localhost:5000/children/${parent_id}`;
+        window.location.href=`${BASE_URL}/children/${parent_id}`;
       }
     }
   }

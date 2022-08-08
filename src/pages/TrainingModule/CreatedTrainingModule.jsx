@@ -15,7 +15,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [shareType, setShareType] = useState("roles");
   const [userList, setUserList] = useState();
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
-  const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState('');
+  const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
     assigned_franchisee: [],
@@ -130,6 +130,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
 
   // FETCH TRAINING DATA
   const fetchTrainingData = async (trainingId) => {
+    console.log('TRAINING ID:', trainingId);
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${userId}`, {
@@ -141,7 +142,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-
+      console.log('TRAINING:', training);
       copyDataToStates(training);
     }
   };
@@ -155,6 +156,8 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       applicable_to: training?.shares[0]?.applicable_to,
       send_to_all_franchisee: training?.shares[0]?.franchisee === 'all' ? true : false,
     }));  
+
+    fetchFranchiseeUsers(training?.shares[0]?.franchisee[0]);
   }
 
   useEffect(() => {
@@ -170,20 +173,16 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   }, [])
 
   useEffect(() => {
-    console.log('INSIDE TRAINING ID FUNCTION!');
-    console.log('IS NAN:', isNaN(saveTrainingId));
-    if(isNaN(saveTrainingId) === false) {
-      console.log('IS A NUMBER!');
-      fetchTrainingData(saveTrainingId);
-    }
+    fetchTrainingData(saveTrainingId);
+    console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
-  useEffect(() => {
-    if(formSettings.assigned_franchisee[0] !== 'all') {
-      console.log('fetching franchisee', formSettings?.assigned_franchisee[0], 'uesrs!');
-      fetchFranchiseeUsers(formSettings?.assigned_franchisee[0]);
-    }
-  }, [formSettings?.assigned_franchisee]);
+  // useEffect(() => {
+  //   if(formSettings.assigned_franchisee[0] !== 'all') {
+  //     console.log('fetching franchisee', formSettings?.assigned_franchisee[0], 'uesrs!');
+  //     fetchFranchiseeUsers(formSettings?.assigned_franchisee[0]);
+  //   }
+  // }, [formSettings?.assigned_franchisee]);
 
   formSettings && console.log('FORM SETTINGS:', formSettings);
   fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
@@ -281,7 +280,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       </div>
       
       {
-        fetchedFranchiseeUsers &&
+        formSettings &&
         <Modal
           show={showModal}
           onHide={() => setShowModal(false)}
