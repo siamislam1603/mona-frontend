@@ -78,10 +78,16 @@ const NewUser = () => {
     console.log('RESPONSE:', response);
 
     if(response.status === 201 && response.data.status === "success") {
+      let { data } = response.data;
       setLoader(false);
       setCreateUserModal(false);
       localStorage.setItem('success_msg', 'User created successfully!');
-      window.location.href="/user-management";
+
+      if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+        window.location.href=`/children/${data.id}`;
+      } else {
+        window.location.href="/user-management";
+      }
 
     } else if(response.status === 200 && response.data.status === "fail") {
       setLoader(false);
@@ -146,6 +152,17 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
+      if(croppedImage) {
+        setFormErrors(prevState => ({
+          ...prevState,
+          profile_pic: null
+        }));
+      } else {
+        setFormErrors(prevState => ({
+          ...prevState,
+          profile_pic: 'Image is required!'
+        }));
+      }
     } else {
       console.log('Erorrs removed!');
       let data=new FormData();
@@ -254,21 +271,14 @@ const NewUser = () => {
   };
 
   const fetchTrainingCategories = async () => {
-    let token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`,
-      {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      }
-    );
+      `${BASE_URL}/training/get-training-categories`);
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
       setTrainingCategoryData([
         ...categoryList.map((data) => ({
           id: data.id,
-          value: data.category_alias,
+          value: data.category_name,
           label: data.category_name,
         })),
       ]);
@@ -276,36 +286,26 @@ const NewUser = () => {
   };
 
   const fetchProfessionalDevelopementCategories = async () => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
     
     if(response.status === 200 && response.data.status === "success") {
       const { pdcList } = response.data;
       setPdcData(pdcList.map(data => ({
         id: data.id,
-        value: data.category_alias,
+        value: data.category_name,
         label: data.category_name
       })));
     }
   }; 
 
   const fetchBuinessAssets = async () => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
     
     if(response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
       setBuinessAssetData(businessAssetList.map(data => ({
         id: data.id,
-        value: data.asset_alias,
+        value: data.asset_name,
         label: data.asset_name
       })));
     }
@@ -328,6 +328,13 @@ const NewUser = () => {
       })));  
     }
   }
+
+  useEffect(() => {
+    setFormErrors(prevState => ({
+      ...prevState,
+      profile_pic: null
+    }))
+  }, [croppedImage]);
 
   useEffect(() => {
     fetchCountryData();
@@ -356,6 +363,7 @@ const NewUser = () => {
 
   formData && console.log('FORM ERRORS:', formData);
   franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
+  formErrors && console.log('FORM ERRORS:', formErrors);
 
   return (
     <>
@@ -387,10 +395,10 @@ const NewUser = () => {
                           popupVisible && 
                           <ImageCropPopup 
                             image={image} 
-                            setCroppedImage={setCroppedImage} 
+                            setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
-                        
+                        { formErrors.profile_pic !== null && <span className="error">{formErrors.profile_pic}</span> }
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
@@ -498,7 +506,7 @@ const NewUser = () => {
                             <Form.Control
                               type="tel"
                               name="postalCode"
-                              maxlength="4"
+                              maxLength="4"
                               placeholder="Your Postal Code"
                               value={formData.postalCode ?? ''}
                               onChange={(e) => {

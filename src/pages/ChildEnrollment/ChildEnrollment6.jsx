@@ -2,127 +2,100 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
-import { useParams } from "react-router-dom";
-import Select from 'react-select';
+import { useEffect } from "react";
 
 
 
 let nextstep = 7;
 let step = 6;
 
-// const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
-//   const submitFormData = (e) => {
-//     e.preventDefault();
-//     nextStep();
-//   };
+const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
 
-  const ChildEnrollment6 = ({prevStep}) => {
+  const [acceptedAllPoints, setAcceptedAllPoints] = useState(false);
+  const [formStepData, setFormStepData] = useState(null);
 
-    const [concentData, setConcentData] = useState({ 
-      give_consent_to_the_educator: "",
-      to_provide_care_and_education_to_my_child: "",
-      i: "",
-      signature: "",
-      date: "",
-    });
-  
-    const [submitted, setSubmitted] = useState(false);
-    const [errors, setErrors] = useState({});
-    const [topErrorMessage, setTopErrorMessage] = useState(null);
-    const [loader, setLoader] = useState(false);
-    const [educatorData, setEducatorData] = useState(null);
-
-    const createConcentForm = async (data) => {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${BASE_URL}/concent/addConcent`, data, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
-      if(response.status === 201 && response.data.status === "success") {
-        setLoader(false)
-          localStorage.setItem('success_msg', 'Concent Form Created Successfully!');
-          localStorage.setItem('active_tab', '/child-enrollment/6');
-          window.location.href="/child-enrollment";
-      }else if(response.status === 200 && response.data.status === "fail") {
-        const { msg } = response.data;
-        setTopErrorMessage(msg);
-        setLoader(false);
-        setTimeout(() => {
-          setTopErrorMessage(null);
-        }, 3000)
-      } 
-
-    }
-    
-    // let {id} = useParams();
-    // console.log(id);
-    const fetchEducatorList = async () => {
-      const token = localStorage.getItem('token');
-      console.log("ppppppppppppppppppp");
-      const response = await axios.get(`${BASE_URL}/enrollment/child/educators/18`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      console.log(response);
-      if(response.status === 200 && response.data.status === "success") {
-        console.log(response);
-        let {ChildData} = response.data;
-        console.log(ChildData);
-        setEducatorData(ChildData.map(educator => ({
-          id: educator.id,
-          users: {
-            fullname: educator.fullname,
-            // profile_photo: educator.profile_photo,
-            // city: educator.city,
-            // franchisee_id: educator.franchisee_id
-          }
-        })));  
+  const populateFormStepData = async () => {
+    let token = localStorage.getItem('token');
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
       }
-  
+    });
 
-    }
-
-    useEffect(() => {
-      fetchEducatorList();
-    }, []);
-
-    const handleConcentEducator = (event) => {
-      setConcentData((prevState) => ({
-        ...prevState,
-        give_consent_to_the_educator: [...event.map(option => option.id + "")]
-      }));
-    };
-
-  
-
-  const handleConcentData = (event) => {
-    const {name, value} = event.target;
-    setConcentData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-    if(!!errors[name]){
-      setErrors({
-        ...errors,
-        [name]: null,
-      })
+    if(response.status === 200 && response.data.status === "success") {
+      let { child } = response.data;
+      setFormStepData(child.form_step);
     }
   };
 
-  const handleDataSubmit = event => {
-    event.preventDefault();
-    if(concentData) {
-      let data = new FormData();
-      for(let [ key, values ] of Object.entries(concentData)) {
-        data.append(`${key}`, values)
+  const fetchParentDataAndPopulate = async () => {
+    let parentId = localStorage.getItem('enrolled_parent_id');
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/enrollment/parent/${parentId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    console.log('PARENT:', response.data);
+
+    if(response.status === 200 && response.data.status === "success") {
+      const { user } = response.data;
+
+      if(formStepData > step) {
+        console.log('VALID CONDITION');
+        setAcceptedAllPoints(user.accepted_all_points);
       }
       window.scrollTo(0, 0);
         setLoader(true);
         createConcentForm(data);
     }
-  }
+  };
+
+  const updateFormSixData = async () => {
+    let token = localStorage.getItem('token');
+    let parentId = localStorage.getItem('enrolled_parent_id');
+    let childId = localStorage.getItem('enrolled_child_id');
+    let response;
+    
+    response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, { accepted_all_points: acceptedAllPoints }, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+      if(!(formStepData > step)) {
+        response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step:  nextstep }, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if(response.status === 201 && response.data.status === "success") {
+          nextStep();
+        }
+      }
+
+      nextStep();
+    }
+  };
+
+  const handleDataSubmit = (e) => {
+    e.preventDefault();
+
+    updateFormSixData();
+  };
+
+  useEffect(() => {
+    fetchParentDataAndPopulate();
+  }, [formStepData]);
+
+  useEffect(() => {
+    populateFormStepData();
+  })
+  acceptedAllPoints && console.log('Accepted all points:', acceptedAllPoints);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -147,123 +120,15 @@ let step = 6;
               </ol>
               <Form.Group className="mb-3">
                 <div className="btn-checkbox">
-                  <Form.Check type="checkbox" id="accept" label="I have read and accept all the above points." />
+                  <Form.Check 
+                    type="checkbox" 
+                    id="accept" 
+                    checked={acceptedAllPoints === true}
+                    label="I have read and accept all the above points."
+                    onChange={() => setAcceptedAllPoints(!acceptedAllPoints)} />
                 </div>
               </Form.Group>
             </div>
-          </div>
-          <h2 className="title-xs mt-4 mb-4">Consent for educator and nominated assistant R 144</h2>
-
-          <div className="grayback">
-            <Form.Group className="mb-3 single-field">
-              <Form.Label>Give consent to the educator</Form.Label>
-              {
-
-
-
- <div className="select-with-plus">
-
-<Select
-placeholder="Which Franchisee?"
-closeMenuOnSelect={false}
-isMulti
-options={educatorData}
-onChange={handleConcentEducator}
-/>
-
-</div>
-
-}
-
-              
-
-            
-            </Form.Group>
-            <Form.Group className="mb-3 single-field">
-              <Form.Label>to provide care and education to my child.; and nominated assistant/s</Form.Label>
-              <Form.Control
-                            type="text"
-                            name="to_provide_care_and_education_to_my_child"
-                            onChange={ 
-                              (e) => {
-                              handleConcentData(e);
-                              setErrors(prevState => ({
-                                ...prevState,
-                                to_provide_care_and_education_to_my_child: null
-                              }));
-                            }
-                          }
-                          />
-                           { errors.to_provide_care_and_education_to_my_child !== null && <span className="error">{errors.to_provide_care_and_education_to_my_child}</span> }
-            </Form.Group>
-            <p>to support the educator in transporting my child to and from regular outings or excursion, providing care while educator has an appointment for the period of less than 4 hours, or in an emergency where the educator needs medical attention. Assistant may also provide support to the educator while the educator is providing care for my child.</p>
-          </div>
-          <h3 className="title-xs mt-4 mb-4">Authorization by Parents / Authorized person for the Approved Provider, Nomminated Supervisor or Educator</h3>
-
-          <div className="grayback">
-            <p>Agree to collect or arrange for collection of the child referred to in this enrolment form, if she/he becomes unwell at the service; Understand that this office will contact the Human Service/Child Protection Service in cases of emergency where no individuals nominated and I can’t be notified;  Consent to the proprietor of the family day care service, nominated supervisor or educator to seek medical treatment for the child from a registered medical practitioner, hospital or ambulance service, and transportation of the child by an ambulance service (R 161).</p>
-            <p>Authorize the educator and proprietor of family day care to take the child on regular outings (R 102).</p>
-          </div>
-
-          <h3 className="title-xs mt-4 mb-4">Authorization by parents/guardian</h3>
-
-          <div className="grayback">
-            <Form.Group className="mb-3 single-field">
-              <Form.Label>I,</Form.Label>
-              <Form.Control
-                            type="text"
-                            name="i"
-                            onChange={
-                              (e) => {
-                              handleConcentData(e);
-                              setErrors(prevState => ({
-                                ...prevState,
-                                i: null
-                              }));
-                            }
-                          }
-                          />
-                          { errors.i !== null && <span className="error">{errors.i}</span> }
-            </Form.Group>
-            <p>a person with full authority of the child referred to in this enrolmet form; <br />Declare that the information in this enrolment form is true and correct and undertake to immediately inform the children service in the event of any change to this information;</p>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Signature</Form.Label>
-                  <Form.Control
-                            type="text"
-                            name="signature"
-                            onChange={
-                              (e) => {
-                              handleConcentData(e);
-                              setErrors(prevState => ({
-                                ...prevState,
-                                signature: null
-                              }));
-                            }
-                          }
-                          />
-                          { errors.signature !== null && <span className="error">{errors.signature}</span> }
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Date</Form.Label>
-                  <Form.Control type="date" placeholder="" name="dob"
-                  onChange={ 
-                    (e) => {
-                    handleConcentData(e);
-                    setErrors(prevState => ({
-                      ...prevState,
-                      dob: null
-                    }));
-                  }
-                }
-                  />
-                  { errors.dob !== null && <span className="error">{errors.dob}</span> }
-                </Form.Group>
-              </Col>
-            </Row>
           </div>
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>

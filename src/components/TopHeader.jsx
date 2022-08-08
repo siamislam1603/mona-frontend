@@ -3,48 +3,69 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { BASE_URL } from './App';
 
-const TopHeader = ({ setSelectedFranchisee }) => {
+let temp = () => { }
+
+const TopHeader = ({ setSelectedFranchisee = temp }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
+  const [franchiseeId, setFranchiseeId] = useState();
   const [permissionList, setPermissionList] = useState();
+
+
 
   const savePermissionInState = async () => {
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
     setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
   };
 
+  const [userDashboardLink, setuserDashboardLink] = useState();
+
   const fetchFranchiseeList = async () => {
+
+
     let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/role/franchisee`, {
       headers: {
         Authorization: 'Bearer ' + token,
       },
     });
-    if (response.status === 200) {
+    if (response.status === 200 && response.data.status === "success") {
       const { franchiseeList: franchiseeData } = response.data;
-      setFranchiseeList([
-        ...franchiseeData.map((data) => ({
+
+      let renderedData, filteredData;
+      if (localStorage.getItem('user_role') === 'franchisor_admin') {
+        renderedData = franchiseeData.map((data) => ({
           id: data.id,
           franchisee_name: `${data.franchisee_name}, ${data.city}`,
-        })),
-      ]);
+        }));
+        setFranchiseeList(renderedData);
+      } else {
+        let franchisee_id = localStorage.getItem('franchisee_id');
+        renderedData = franchiseeData.map((data) => ({
+          id: data.id,
+          franchisee_name: `${data.franchisee_name}, ${data.city}`,
+        }));
+        filteredData = renderedData.filter(d => parseInt(d.id) === parseInt(franchisee_id));
+        setFranchiseeList(filteredData);
+      }
     }
   };
 
-  const fetchAndPopulateFranchiseeDetails = async () => {
-    const response = await axios.get(
-      `${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`
-    );
-    if (response.status === 200) {
-      const { franchisee } = response.data;
-      setSelectedFranchisee(franchisee.franchisee_name ? franchisee.franchisee_name==="All" ? "" : franchisee.franchisee_name : "", franchisee.id);
-      setFranchiseeList(
-        [franchisee].map((data) => ({
-          id: data.id,
-          franchisee_name: `${data.franchisee_name}, ${data.city}`,
-        }))
-      );
-    }
-  };
+
+  // const fetchAndPopulateFranchiseeDetails = async () => {
+  //   const response = await axios.get(
+  //     `${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`
+  //   );
+  //   if (response.status === 200) {
+  //     const { franchisee } = response.data;
+  //     setSelectedFranchisee(franchisee.franchisee_name ? franchisee.franchisee_name === "All" ? "" : franchisee.franchisee_name : "", franchisee.id);
+  //     setFranchiseeList(
+  //       [franchisee].map((data) => ({
+  //         id: data.id,
+  //         franchisee_name: `${data.franchisee_name}, ${data.city}`,
+  //       }))
+  //     );
+  //   }
+  // };
 
   const logout = async () => {
     const response = await axios.get(`${BASE_URL}/auth/logout`);
@@ -58,7 +79,12 @@ const TopHeader = ({ setSelectedFranchisee }) => {
       localStorage.removeItem('selectedFranchisee');
       localStorage.removeItem("attempts")  
       localStorage.removeItem("enrolled_parent_id")  
-      localStorage.removeItem("enrolled_child_id")  
+      localStorage.removeItem("enrolled_child_id")
+      localStorage.removeItem("redirectURL")    
+      localStorage.removeItem("SelectedChild")  
+      localStorage.removeItem("DefaultEducators")  
+      localStorage.removeItem("DefaultParents")  
+      localStorage.removeItem('has_given_consent');
       window.location.href = '/';
     }
   };
@@ -68,28 +94,53 @@ const TopHeader = ({ setSelectedFranchisee }) => {
   };
 
   const selectFranchisee = (e) => {
-    let id;
-    franchiseeList.map((item) => {
-      if (item.franchisee_name === e) {
-        id = item.id;
-      }
-    });
-    setSelectedFranchisee(e, id);
-    localStorage.setItem('selectedFranchisee', e);
+    console.log('SELECTED FRANCHISEE:', e);
+    if (e === 'All') {
+      setFranchiseeId({ franchisee_name: 'All' });
+      setSelectedFranchisee('all');
+    } else {
+      setFranchiseeId({ ...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
+      setSelectedFranchisee(e);
+    }
   };
 
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'franchisor_admin') {
-      fetchFranchiseeList();
+      setSelectedFranchisee('All');
+      setFranchiseeId({ franchisee_name: 'All' });
     } else {
-      fetchAndPopulateFranchiseeDetails();
+      setSelectedFranchisee(franchiseeList[0]?.id);
     }
+  }, [franchiseeList]);
+
+  useEffect(() => {
+    var user_dashboar_link = '';
+    if (localStorage.getItem('user_role') === 'coordinator')
+      user_dashboar_link = '/coordinator-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisor_admin')
+      user_dashboar_link = '/franchisor-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisee_admin')
+      user_dashboar_link = '/franchisee-dashboard'
+    else if (localStorage.getItem('user_role') === 'coodinator')
+      user_dashboar_link = '/coordinator-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisee_admin')
+      user_dashboar_link = '/franchisee-dashboard'
+    else if (localStorage.getItem('user_role') === 'educator')
+      user_dashboar_link = '/educator-dashboard'
+    else if (localStorage.getItem('user_role') === 'guardian')
+      user_dashboar_link = '/parents-dashboard'
+
+    setuserDashboardLink(user_dashboar_link);
+
+
+    fetchFranchiseeList();
   }, []);
 
   useEffect(() => {
     savePermissionInState();
   }, []);
 
+  franchiseeList && console.log('FRANCHISEE LIST:', franchiseeList)
   return (
     <>
       <div className="topheader">
@@ -97,12 +148,12 @@ const TopHeader = ({ setSelectedFranchisee }) => {
           <div className="selectdropdown">
             <Dropdown onSelect={selectFranchisee}>
               <Dropdown.Toggle id="dropdown-basic">
-                {localStorage.getItem('selectedFranchisee') ||
+                {franchiseeId?.franchisee_name ||
                   franchiseeList[0]?.franchisee_name ||
                   'No Data Available'}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {localStorage.getItem("user_role")==="franchisor_admin" ? <React.Fragment key="">
+                {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
                   <Dropdown.Item eventKey="All">
                     <span className="loction-pic">
                       <img alt="" id="user-pic" src="/img/user.png" />
@@ -113,7 +164,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                 {franchiseeList.map((data) => {
                   return (
                     <React.Fragment key={data.id}>
-                      <Dropdown.Item eventKey={`${data.franchisee_name}`}>
+                      <Dropdown.Item eventKey={`${data.id}`}>
                         <span className="loction-pic">
                           <img alt="" id="user-pic" src="/img/user.png" />
                         </span>
@@ -135,7 +186,7 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                 </a>
               </li>
               <li>
-                <a href="/">
+                <a href={userDashboardLink}>
                   <img alt="" src="/img/home-icon.svg" />
                 </a>
               </li>
@@ -153,25 +204,25 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                     <span className="user-name">
                       {localStorage.getItem('user_name')
                         ? localStorage
-                            .getItem('user_name')
-                            .split(' ')
-                            .map(
-                              (data) =>
-                                data.charAt(0).toUpperCase() + data.slice(1)
-                            )
-                            .join(' ')
+                          .getItem('user_name')
+                          .split(' ')
+                          .map(
+                            (data) =>
+                              data.charAt(0).toUpperCase() + data.slice(1)
+                          )
+                          .join(' ')
                         : ''}
 
                       <small>
                         {localStorage.getItem('user_role')
                           ? localStorage
-                              .getItem('user_role')
-                              .split('_')
-                              .map(
-                                (data) =>
-                                  data.charAt(0).toUpperCase() + data.slice(1)
-                              )
-                              .join(' ')
+                            .getItem('user_role')
+                            .split('_')
+                            .map(
+                              (data) =>
+                                data.charAt(0).toUpperCase() + data.slice(1)
+                            )
+                            .join(' ')
                           : ''}
                       </small>
                     </span>
@@ -179,15 +230,15 @@ const TopHeader = ({ setSelectedFranchisee }) => {
                   <Dropdown.Menu style={{ zIndex: '2000' }}>
                     {permissionList
                       ? permissionList.map((top_menu) => {
-                          return (
-                            <Dropdown.Item
-                              key={top_menu.id}
-                              href={top_menu.controller.menu_link}
-                            >
-                              {top_menu.controller.controller_label}
-                            </Dropdown.Item>
-                          );
-                        })
+                        return (
+                          <Dropdown.Item
+                            key={top_menu.id}
+                            href={top_menu.controller.menu_link}
+                          >
+                            {top_menu.controller.controller_label}
+                          </Dropdown.Item>
+                        );
+                      })
                       : null}
 
                     {/* <Dropdown.Item href="#">All Franchisee</Dropdown.Item>

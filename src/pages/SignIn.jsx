@@ -7,6 +7,7 @@ import WelcomeMsg from '../components/WelcomeMsg';
 import { BASE_URL } from '../components/App';
 import validateSignInForm from '../helpers/validateSignInForm';
 import axios from 'axios';
+import { useNavigate} from 'react-router-dom'
 
 const initialFields = {
   email: '',
@@ -20,12 +21,12 @@ const SignIn = () => {
   const { email, password } = fields;
   const [formErrors, setFormErrors] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
+  const navigate = useNavigate()
 
   const verifyUser = async (data) => {
     const res = await axios.post(`${BASE_URL}/auth/login`, data);
 
     if (res.status === 200 && res.data.status === 'success') {
-
 
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user_id', res.data.user.id);
@@ -41,37 +42,38 @@ const SignIn = () => {
         }
       })
 
-      if(response.status === 200 && response.data.status === "success") {
+      if (response.status === 200 && response.data.status === "success") {
         let { permissionsObject } = response.data;
-        
+
         console.log('PERMISSIONS OBJECT:', permissionsObject)
         localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
       }
 
       console.log('ROLE:', res.data.user.role);
       console.log('IS LOGGED IN?', res.data.user.isLoggedIn);
+      let redirectTo = JSON.parse(localStorage.getItem('redirectURL'))
 
       if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/franchisor-dashboard';
         localStorage.setItem('selectedFranchisee',"All")
       } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/coordinator-dashboard';
       } else if(res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 0) {
-        window.location.href = '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/franchisee-dashboard';
       } else if(res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = '/change-password';
+        window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'educator' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/educator-dashboard';
       } else if(res.data.user.role === 'educator' && res.data.user.isLoggedIn === 0) {
-        window.location.href="/change-password";
+        window.location.href= redirectTo || "/change-password";
       } else if (res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/parents-dashboard';
       } else if(res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 0) {
-        window.location.href="/change-password";
+        window.location.href= redirectTo || "/change-password";
       }
     } else if (res.status === 200 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.msg);
@@ -101,6 +103,13 @@ const SignIn = () => {
       verifyUser(fields);
     }
   }, [formErrors]);
+
+  useEffect(()=>{
+    console.log(window.location.pathname,"pathhname")
+    if(window.location.pathname !== "/"){
+      localStorage.setItem("redirectURL",JSON.stringify(window.location.pathname))
+    }
+  },[])
 
   return (
     <>
@@ -184,7 +193,7 @@ const SignIn = () => {
                       </Col>
                       <Col className="text-end">
                         <Link to="/forgot-password" className="custom_rest">
-                        Forgot Password?
+                          Forgot Password?
                         </Link>
                       </Col>
                     </Row>

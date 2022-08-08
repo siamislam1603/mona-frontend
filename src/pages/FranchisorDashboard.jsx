@@ -73,24 +73,39 @@ const columns1 = [
 const FranchisorDashboard = () => {
   const [count, setcount] = React.useState(null);
   const [state, setstate] = React.useState();
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
   console.log("alsoidjh", latest_announcement[0].scheduled_date)
   const announcement = () => {
+    let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
-    axios.get(countUrl).then((response) => {
-      setlatest_announcement(response.data.data.all_announcements);
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
+      setlatest_announcement(response.data.recentAnnouncement);
+      console.log(response.data)
     }).catch((e) => {
       console.log("Error", e);
     })
   }
+
   const count_Api = () => {
+    let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count`;
-    axios.get(countUrl).then((response) => {
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
       setcount(response.data);
+      console.log(count)
     }).catch((e) => {
       console.log(e);
     })
+
   }
 
 
@@ -98,6 +113,8 @@ const FranchisorDashboard = () => {
     count_Api();
     announcement();
   }, []);
+
+  selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
 
   if (!count) return null;
   return (
@@ -110,7 +127,8 @@ const FranchisorDashboard = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader 
+                  setSelectedFranchisee={setSelectedFranchisee}/>
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>
@@ -313,13 +331,12 @@ const FranchisorDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-
                             {latest_announcement.map((data) => {
                               return (
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{data.title}<span className="date">{data.scheduled_date}</span></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
                                   </a>
                                 </div>
                               );

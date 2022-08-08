@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
 import ChildEnrollment from '../pages/ChildEnrollment';
-import ChildEnrollment1 from '../pages/ChildEnrollment/ChildEnrollment1';
-import ChildEnrollment2 from '../pages/ChildEnrollment/ChildEnrollment2';
-import ChildEnrollment3 from '../pages/ChildEnrollment/ChildEnrollment3';
-import ChildEnrollment4 from '../pages/ChildEnrollment/ChildEnrollment4';
-import ChildEnrollment5 from '../pages/ChildEnrollment/ChildEnrollment5';
-import ChildEnrollment6 from '../pages/ChildEnrollment/ChildEnrollment6';
-import ChildEnrollment7 from '../pages/ChildEnrollment/ChildEnrollment7';
+// import ChildEnrollment1 from '../pages/ChildEnrollment/ChildEnrollment1';
+// import ChildEnrollment2 from '../pages/ChildEnrollment/ChildEnrollment2';
+// import ChildEnrollment3 from '../pages/ChildEnrollment/ChildEnrollment3';
+// import ChildEnrollment4 from '../pages/ChildEnrollment/ChildEnrollment4';
+// import ChildEnrollment5 from '../pages/ChildEnrollment/ChildEnrollment5';
+// import ChildEnrollment6 from '../pages/ChildEnrollment/ChildEnrollment7';
+// import ChildEnrollment7 from '../pages/ChildEnrollment/ChildEnrollment8';
 import SignIn from '../pages/SignIn';
 import ForgotPassword from '../pages/ForgotPassword';
 import UserManagement from '../pages/UserManagement';
@@ -51,12 +51,47 @@ import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
 import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
+import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
+import FileRpositoryList from '../pages/FileRpositoryList';
+import FilerepoMyAdd from '../pages/FilerepoMyAdd';
+import RepoEdit from '../pages/RepoEdit';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
   useEffect(() => {
     const item = localStorage.getItem('token');
+
+
     if (item) {
+      // SETTING 2 HOURS TIMEOUT FOR LOGOUT
+      const loginTime = new Date();
+      const logoutTime = new Date();
+      logoutTime.setTime(loginTime.getTime() + 2 * 60 * 60 * 1000); // 1 HOUR
+      console.log("Auto logout at:", logoutTime);
+
+      function autoLogout() {
+        (function loop() {
+          var now = new Date();
+          if (now > logoutTime) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('user_name');
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('menu_list');
+            localStorage.removeItem('active_tab');
+            localStorage.removeItem('selectedFranchisee');
+            localStorage.removeItem("attempts")
+            localStorage.removeItem("enrolled_parent_id")
+            localStorage.removeItem("enrolled_child_id")
+            window.location.href = '/';
+          }
+          now = new Date();
+          var delay = 6000 - (now % 6000);
+          setTimeout(loop, delay);
+        })();
+      }
+
+      autoLogout();
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
@@ -79,6 +114,16 @@ const Main = () => {
         />
 
         <Route
+          path="/child-enrollment-init/:parentId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildEnrollmentInitiation />
+            </Protected>
+          }
+        />
+
+        <Route
           path="/child-enrollment"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -87,77 +132,29 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
-          path="/child-enrollment/1"
+          path="/child-enrollment/:childId/:parentId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <ChildEnrollment1 />
+              <ChildEnrollment />
             </Protected>
           }
         />
-        
-        <Route
-          path="/child-enrollment/2"
+
+
+
+        {/* <Route
+          path="/child-enrollment/:childId/:parentId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <ChildEnrollment2 />
+              <ChildEnrollment />
             </Protected>
           }
-        />
-        
-        <Route
-          path="/child-enrollment/3"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildEnrollment3 />
-            </Protected>
-          }
-        />
-        
-        <Route
-          path="/child-enrollment/4"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildEnrollment4 />
-            </Protected>
-          }
-        />
-        
-        <Route
-          path="/child-enrollment/5"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildEnrollment5 />
-            </Protected>
-          }
-        />
-        
-        <Route
-          path="/child-enrollment/6"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildEnrollment6 />
-            </Protected>
-          }
-        />
-        
-        <Route
-          path="/child-enrollment/7"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildEnrollment7 />
-            </Protected>
-          }
-        />
-    
+        /> */}
+
         <Route
           path="/forgot-password"
           element={
@@ -170,8 +167,8 @@ const Main = () => {
         <Route
           path="/reset-password"
           element={
-            
-              <ResetPassword />
+
+            <ResetPassword />
           }
         />
 
@@ -180,6 +177,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               {/* <ForgotPassword /> */}
+              <SignIn />
               <AddPermissions />
             </Protected>
           }
@@ -203,7 +201,7 @@ const Main = () => {
               <EditFranchisees />
             </Protected>
           }
-        />    
+        />
 
         <Route
           path="/all-franchisees"
@@ -366,13 +364,13 @@ const Main = () => {
           }
         />
         <Route
-        path='/form/setting'
-        element={
-          <Protected isLoggedIn={isLoggedIn}>
-            <SignIn />
-            <FormSetting />
-          </Protected>
-        }
+          path='/form/setting'
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FormSetting />
+            </Protected>
+          }
         />
         <Route
           path="/form/add"
@@ -484,7 +482,7 @@ const Main = () => {
           }
         />
 
-      <Route
+        <Route
           path="/my-announcements"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -523,7 +521,24 @@ const Main = () => {
             </Protected>
           }
         />
-
+        <Route
+          path="/file-repository-List-me/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FilerepoMyAdd />
+            </Protected>
+          }
+        />
+        <Route
+          path="/file-repository-Edit/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <RepoEdit />
+            </Protected>
+          }
+        />
         <Route
           path="/announcements"
           element={
@@ -545,7 +560,7 @@ const Main = () => {
             )
           }
         />
-         <Route
+        <Route
           path="/edit-announcement/:id"
           element={
             typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
@@ -571,15 +586,24 @@ const Main = () => {
         <Route
           path="/children/:id"
           element={
-          <Protected isLoggedIn={isLoggedIn}>
-            <SignIn />
-            <Children />
-          </Protected>
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Children />
+            </Protected>
+          }
+        />
+        <Route
+          path="/file-repository-List/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FileRpositoryList />
+            </Protected>
           }
         />
 
       </Routes>
-      
+
     </main>
   );
 };

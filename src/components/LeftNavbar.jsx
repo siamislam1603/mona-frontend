@@ -6,7 +6,10 @@ import { BASE_URL } from './App';
 
 const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
+  const [userDashboardLink, setuserDashboardLink] = useState();
+
   const fetchPermissionList = async () => {
+
 
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
     setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
@@ -28,17 +31,35 @@ const LeftNavbar = () => {
   };
 
   useEffect(() => {
-    
+    var user_dashboar_link = '';
+    if (localStorage.getItem('user_role') === 'coordinator')
+      user_dashboar_link = '/coordinator-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisor_admin')
+      user_dashboar_link = '/franchisor-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisee_admin')
+      user_dashboar_link = '/franchisee-dashboard'
+    else if (localStorage.getItem('user_role') === 'coodinator')
+      user_dashboar_link = '/coordinator-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisee_admin')
+      user_dashboar_link = '/franchisee-dashboard'
+    else if (localStorage.getItem('user_role') === 'educator')
+      user_dashboar_link = '/educator-dashboard'
+    else if (localStorage.getItem('user_role') === 'guardian')
+      user_dashboar_link = '/parents-dashboard'
+
+    setuserDashboardLink(user_dashboar_link)
+
     fetchPermissionList();
   }, []);
 
-  
+
   return (
     <>
       <div className="logo-column text-center">
-        <Navbar.Brand href="#home">
+        <Navbar.Brand href={userDashboardLink}>
           <img src="/img/logo-ico.png" alt="" />
         </Navbar.Brand>
+
       </div>
       <Navbar expand="xl">
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

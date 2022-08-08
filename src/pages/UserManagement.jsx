@@ -18,7 +18,7 @@ import { BASE_URL } from '../components/App';
 import { CSVDownload } from 'react-csv';
 import { useRef } from 'react';
 import { debounce } from 'lodash';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // const { ExportCSVButton } = CSVExport;
 
@@ -35,47 +35,46 @@ const training = [
   },
 ];
 
-let DeleteId=[];
+let DeleteId = [];
 const UserManagement = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [filter, setFilter] = useState(null);
-  const [search,setSearch]=useState('');
+  const [search, setSearch] = useState('');
   const [deleteResponse, setDeleteResponse] = useState(null);
+  
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
 
         async function deleteUserFromDB() {
-
           const response = await axios.patch(
             `${BASE_URL}/auth/user/delete/${row.userID}`,
             {
               is_deleted: 1,
             }, {
-              headers: {
-                "Authorization": `Bearer ${localStorage.getItem('token')}`
-              }
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
             }
+          }
           );
-          if(response.status === 200 && response.data.status === "success")
+          if (response.status === 200 && response.data.status === "success")
             setDeleteResponse(response);
         }
 
-        if(window.confirm('Are you sure you want to delete?')){
+        if (window.confirm('Are you sure you want to delete?')) {
 
-        deleteUserFromDB();
+          deleteUserFromDB();
 
         }
 
         fetchUserDetails();
       }
-      if(e.target.text==="Edit")
-      {
+      if (e.target.text === "Edit") {
         navigate(`/edit-user/${row.userID}`);
       }
     },
@@ -84,51 +83,45 @@ const UserManagement = () => {
 
     mode: 'checkbox',
     onSelect: (row, isSelect, rowIndex, e) => {
-      if(DeleteId.includes(row.userID))
-      {
+      if (DeleteId.includes(row.userID)) {
         let Index;
-        DeleteId.map((item,index)=>{
-          if(item===row.userID)
-          {
-            Index=index;
+        DeleteId.map((item, index) => {
+          if (item === row.userID) {
+            Index = index;
           }
         })
         DeleteId.splice(Index, 1);
       }
-      else
-      {
+      else {
         DeleteId.push(row.userID);
       }
 
     },
     onSelectAll: (isSelect, rows, e) => {
-      if(isSelect)
-      {
-        userData.map((item)=>{
+      if (isSelect) {
+        userData.map((item) => {
           DeleteId.push(item.userID);
         });
       }
-      else
-      {
-        DeleteId=[];
+      else {
+        DeleteId = [];
       }
     }
   };
-  const onDeleteAll=async()=>{
+  const onDeleteAll = async () => {
 
-    if(window.confirm('Are you sure you want to delete All Records?')){
+    if (window.confirm('Are you sure you want to delete All Records?')) {
 
-      let response = await axios.post( `${BASE_URL}/auth/user/delete/all`,{id:DeleteId}, {
+      let response = await axios.post(`${BASE_URL}/auth/user/delete/all`, { id: DeleteId }, {
 
         headers: {
           authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        
+
       });
-      if(response.status === 200)
-      {
+      if (response.status === 200) {
         fetchUserDetails();
-        DeleteId=[];
+        DeleteId = [];
       }
 
     }
@@ -161,7 +154,7 @@ const UserManagement = () => {
     },
     {
       dataField: 'number',
-      text: 'Phone Number',
+      text: 'Phone',
       sort: true,
     },
     {
@@ -171,20 +164,21 @@ const UserManagement = () => {
     },
     {
       dataField: 'roleDetail',
-      text: '',
+      text: 'Action',
       formatter: (cell) => {
+        console.log('CELL:', cell);
         cell = cell.split(',');
         return (
           <>
             {
-              cell[0] == "guardian" ? (
-                cell[1] == 1 ? (
-                  <button className='btn btn-outline-secondary' onClick={()=>navigate(`/children/${cell[3]}`,{state:{franchisee_id:cell[2]}})}>
-                    View Children
-                  </button>
-                ) : <button className='btn btn-outline-danger' onClick={()=>navigate('/child-enrollment')}>
+              (cell[0] === "guardian" && cell[1] === 0) ? (
+                  <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
                   New Children
-                </button>
+                  </button>
+                ) : (cell[0] === "guardian" && cell[1] !== 0) ?
+                (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
+                View Children
+              </button>
               ) : ""
             }
           </>
@@ -219,27 +213,21 @@ const UserManagement = () => {
 
   const fetchUserDetails = async () => {
     let api_url = '';
-    
-    let franchiseeFormat = selectedFranchisee
-      .split(',')[0]
-      .split(' ')
-      .map((dt) => dt.charAt(0).toLowerCase() + dt.slice(1))
-      .join('_')
-      .toLowerCase();
+
     if (search) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?search=${search}`;
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}`;
     }
-    if(filter)
-    {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?filter=${filter}`;
+    if (filter) {
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?filter=${filter}`;
     }
-    if(search && filter)
-    {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}?search=${search}&filter=${filter}`;
+    if (search && filter) {
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}&filter=${filter}`;
     }
-    if(!search && !filter) {
-      api_url = `${BASE_URL}/role/user/${franchiseeFormat}`;
+    if (!search && !filter) {
+      api_url = `${BASE_URL}/role/user/${selectedFranchisee}`;
     }
+
+
     let response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -249,7 +237,6 @@ const UserManagement = () => {
       const { users } = response.data;
       console.log('USERS:', users);
       let tempData = users.map((dt) => ({
-  
         name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
@@ -259,16 +246,16 @@ const UserManagement = () => {
         location: dt.city,
         is_deleted: dt.is_deleted,
         userID: dt.id,
-        roleDetail: dt.role+ "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id
+        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id
       }));
-      
+
       tempData = tempData.filter((data) => data.is_deleted === 0);
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee",tempData)
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
       setUserData(tempData);
 
       let temp = tempData;
       let csv_data = [];
-      temp.map((item,index) => {
+      temp.map((item, index) => {
         // item['Name'] = item['name'];
         // item['Email'] = item['email'];
         // item['Phone Number'] = item['number'];
@@ -277,13 +264,13 @@ const UserManagement = () => {
         // delete item['email'];
         // delete item['number'];
         // delete item['location'];
-        
+
         delete item.is_deleted;
         // delete item.user_id;
         csv_data.push(item);
-        let data={...csv_data[index]};
-        data["name"]=data.name.split(",")[1];
-        csv_data[index]=data;
+        let data = { ...csv_data[index] };
+        data["name"] = data.name.split(",")[1];
+        csv_data[index] = data;
       });
       setCsvData(csv_data);
     }
@@ -304,28 +291,29 @@ const UserManagement = () => {
   }, [selectedFranchisee]);
 
   useEffect(() => {
-    if(deleteResponse!==null)
+    if (deleteResponse !== null)
       fetchUserDetails();
   }, [deleteResponse]);
 
   useEffect(() => {
-    if(filter==="")
+    if (filter === "")
       fetchUserDetails();
   }, [filter]);
 
   useEffect(() => {
-    if(localStorage.getItem('success_msg')) {
-        setTopSuccessMessage(localStorage.getItem('success_msg'));
-        localStorage.removeItem('success_msg');
+    if (localStorage.getItem('success_msg')) {
+      setTopSuccessMessage(localStorage.getItem('success_msg'));
+      localStorage.removeItem('success_msg');
 
-        setTimeout(() => {
-            setTopSuccessMessage(null);
-        }, 3000);
+      setTimeout(() => {
+        setTopSuccessMessage(null);
+      }, 3000);
     }
   }, []);
 
   const csvLink = useRef();
   userData && console.log('USER DATA:', userData.map(data => data));
+  selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
   return (
     <>
       <div id="main">
@@ -337,7 +325,6 @@ const UserManagement = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader
-                  selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
                 <div className="entry-container">
@@ -351,7 +338,7 @@ const UserManagement = () => {
                         <>
                           {
                             topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
-                          } 
+                          }
                           <header className="title-head">
                             <h1 className="title-lg">All User</h1>
                             <div className="othpanel">
@@ -398,7 +385,7 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="one"
-                                          checked={filter==="Franchisor_Admin"}
+                                          checked={filter === "Franchisor_Admin"}
                                           onChange={(event) =>
                                             setFilter(event.target.value)
                                           }
@@ -410,7 +397,7 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="five"
-                                          checked={filter==="Franchisee_Admin"}
+                                          checked={filter === "Franchisee_Admin"}
                                           onChange={(event) =>
                                             setFilter(event.target.value)
                                           }
@@ -422,7 +409,7 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="two"
-                                          checked={filter==="Coordinator"}
+                                          checked={filter === "Coordinator"}
                                           onChange={(event) =>
                                             setFilter(event.target.value)
                                           }
@@ -434,7 +421,7 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="three"
-                                          checked={filter==="Educator"}
+                                          checked={filter === "Educator"}
                                           onChange={(event) =>
                                             setFilter(event.target.value)
                                           }
@@ -446,7 +433,7 @@ const UserManagement = () => {
                                           name="users"
                                           type="radio"
                                           id="four"
-                                          checked={filter==="Guardian"}
+                                          checked={filter === "Guardian"}
                                           onChange={(event) =>
                                             setFilter(event.target.value)
                                           }
@@ -478,14 +465,14 @@ const UserManagement = () => {
                                       <Button
                                         variant="transparent"
                                         type="submit"
-                                        onClick={()=>{setFilter('');}}
+                                        onClick={() => { setFilter(''); }}
                                       >
                                         Reset
                                       </Button>
                                       <Button
                                         variant="primary"
                                         type="submit"
-                                        onClick={()=>{handleApplyFilter(filter)}}
+                                        onClick={() => { handleApplyFilter(filter) }}
                                       >
                                         Apply
                                       </Button>
@@ -522,7 +509,7 @@ const UserManagement = () => {
                                         </CSVDownload>
                                       )}
                                     </Dropdown.Item>
-                                    <Dropdown.Item onClick={()=>{onDeleteAll()}}>
+                                    <Dropdown.Item onClick={() => { onDeleteAll() }}>
                                       Delete All Row
                                     </Dropdown.Item>
                                   </Dropdown.Menu>

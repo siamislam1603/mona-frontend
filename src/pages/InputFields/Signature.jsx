@@ -8,11 +8,12 @@ const Signature = (props) => {
   const clear = (e) => {
     e.preventDefault();
     sigPad.current.clear();
+    props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),"");
   };
   const trim = (e) => {
     e.preventDefault();
     console.log(controls.field_name,"-------->",sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
-    props.onChange(sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
+    props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
   };
   return (
     <Col sm={6}>
@@ -25,6 +26,7 @@ const Signature = (props) => {
               border: "1px solid #e5e5e5",
               width: "300px",
               minHeight: "65%",
+              display: "grid"
             },
           }}
           ref={sigPad}
@@ -34,6 +36,7 @@ const Signature = (props) => {
           <button onClick={trim}>Trim</button>
         </div>
       </Form.Group>
+      <p style={{color:"red"}}>{controls.error[controls.field_name]}</p>
     </Col>
   );
 };
