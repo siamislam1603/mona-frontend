@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Col, Row, Dropdown } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from "axios";
+import moment from 'moment';
 
 const CompleteTraining = ({ filter }) => {
   const [completedTrainingData, setCompletedTrainingData] = useState([]);
@@ -44,7 +45,7 @@ const CompleteTraining = ({ filter }) => {
                   <div className="iconame">
                     <a href="/training-detail">{item.training.title}</a>
                     <div className="datecol">
-                      <span className="red-date">Due Date:</span>
+                      <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
                       <span className="time">{ item.training.completion_time }</span>
                     </div>
                   </div>
