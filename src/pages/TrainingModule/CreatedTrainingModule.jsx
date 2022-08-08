@@ -170,10 +170,13 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   }, [])
 
   useEffect(() => {
-    if(saveTrainingId) {
+    console.log('INSIDE TRAINING ID FUNCTION!');
+    console.log('IS NAN:', isNaN(saveTrainingId));
+    if(isNaN(saveTrainingId) === false) {
+      console.log('IS A NUMBER!');
       fetchTrainingData(saveTrainingId);
     }
-  }, [saveTrainingId])
+  }, [saveTrainingId]);
 
   useEffect(() => {
     if(formSettings.assigned_franchisee[0] !== 'all') {
