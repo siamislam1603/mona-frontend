@@ -15,35 +15,39 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     name: "",
     address: "",
     telephone: "",
-    relationship_to_the_child: ""
+    relationship_to_the_child: "",
+    log: []
   });
 
   const [authorizedNomineeData, setAuthorizedNomineeData] = useState({
     name: "",
     address: "",
     telephone: "",
-    relationship_to_the_child: ""
+    relationship_to_the_child: "",
+    log: []
   });
   
   const [authorizedPersonData, setAuthorizedPersonData] = useState({
     name: "",
     address: "",
     telephone: "",
-    relationship_to_the_child: ""
+    relationship_to_the_child: "",
+    log: []
   });
   
   const [otherAuthorizedPersonData, setOtherAuthorizedPersonData] = useState({
     name: "",
     address: "",
     telephone: "",
-    relationship_to_the_child: ""
+    relationship_to_the_child: "",
+    log: []
   });
   const [formStepData, setFormStepData] = useState(null);
   const [idList, setIdList] = useState({
     emergency_contact_id: null,
     authorized_nominee_id: null,
     auuhtorized_person_id: null,
-    other_authorized_person_id: null
+    other_authorized_person_id: null,
   });
 
   // ERROR HANDLING STATES
@@ -118,6 +122,21 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
             });
     
             if(response.status === 201 && response.data.status === "success") {
+              let changeCount = localStorage.getItem('change_count');
+
+              if(emergencyContactData.log.length > 0)
+                changeCount++;
+
+              if(authorizedNomineeData.log.length > 0)
+                changeCount++;
+              
+              if(authorizedPersonData.log.length > 0)
+                changeCount++;
+
+              if(otherAuthorizedPersonData.log.length > 0)
+                changeCount++;
+              
+              localStorage.setItem('change_count', changeCount);
               nextStep();
             }
           }
@@ -228,8 +247,8 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
-      localStorage.setItem('enrolled_parent_id', child.parents[0].id);
-      console.log('CHILD DATA:', child);
+      // localStorage.setItem('enrolled_parent_id', child.parents[0].id);
+      // console.log('CHILD DATA:', child);
 
       if(child.form_step > step) {
         
@@ -297,6 +316,11 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
 
+  emergencyContactData && console.log('EMERGENCY CONTACT:', emergencyContactData);
+  authorizedNomineeData && console.log('AUTHORIZED NOMINEE:', authorizedNomineeData);
+  authorizedPersonData && console.log('AUTHORIZED PERSON:', authorizedPersonData);
+  otherAuthorizedPersonData && console.log('OTHER AUTHORIZED PERSON:', otherAuthorizedPersonData);
+
   return (
     <>
       <div className="enrollment-form-sec">
@@ -320,6 +344,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           name: null
                         }));
+                      }}
+                      
+                      onBlur={(e) => {
+                        if(!emergencyContactData.log.includes("name")) {
+                          setEmergencyContactData(prevState => ({
+                            ...prevState,
+                            log: [...emergencyContactData.log, "name"]
+                          }));
+                        }
                       }} />
                     { emergencyContactError?.name !== null && <span className="error">{emergencyContactError?.name}</span> }
                   </Form.Group>
@@ -337,6 +370,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           address: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!emergencyContactData.log.includes("address")) {
+                          setEmergencyContactData(prevState => ({
+                            ...prevState,
+                            log: [...emergencyContactData.log, "address"]
+                          }));
+                        }
                       }} />
                     { emergencyContactError?.address !== null && <span className="error">{emergencyContactError?.address}</span> }
                   </Form.Group>
@@ -353,6 +395,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           telephone: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!emergencyContactData.log.includes("telephone")) {
+                          setEmergencyContactData(prevState => ({
+                            ...prevState,
+                            log: [...emergencyContactData.log, "telephone"]
+                          }));
+                        }
                       }} />
                     { emergencyContactError?.telephone !== null && <span className="error">{emergencyContactError?.telephone}</span> }
                   </Form.Group>
@@ -368,6 +419,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           relationship_to_the_child: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!emergencyContactData.log.includes("relationship_to_the_child")) {
+                          setEmergencyContactData(prevState => ({
+                            ...prevState,
+                            log: [...emergencyContactData.log, "relationship_to_the_child"]
+                          }));
+                        }
                       }} />
                     { emergencyContactError?.relationship_to_the_child !== null && <span className="error">{emergencyContactError?.relationship_to_the_child}</span> }
                   </Form.Group>
@@ -412,6 +472,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           name: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!authorizedNomineeData.log.includes("name")) {
+                          setAuthorizedNomineeData(prevState => ({
+                            ...prevState,
+                            log: [...authorizedNomineeData.log, "name"]
+                          }));
+                        }
                       }} />
                       { authorizedNomineeError?.name !== null && <span className="error">{authorizedNomineeError?.name}</span> }
                   </Form.Group>
@@ -429,6 +498,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           address: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!authorizedNomineeData.log.includes("address")) {
+                          setAuthorizedNomineeData(prevState => ({
+                            ...prevState,
+                            log: [...authorizedNomineeData.log, "address"]
+                          }));
+                        }
                       }} />
                       { authorizedNomineeError?.address !== null && <span className="error">{authorizedNomineeError?.address}</span> }
                   </Form.Group>
@@ -445,6 +523,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           telephone: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!authorizedNomineeData.log.includes("telephone")) {
+                          setAuthorizedNomineeData(prevState => ({
+                            ...prevState,
+                            log: [...authorizedNomineeData.log, "telephone"]
+                          }));
+                        }
                       }} />
                       { authorizedNomineeError?.telephone !== null && <span className="error">{authorizedNomineeError?.telephone}</span> }
                   </Form.Group>
@@ -461,6 +548,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           relationship_to_the_child: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!authorizedNomineeData.log.includes("relationship_to_the_child")) {
+                          setAuthorizedNomineeData(prevState => ({
+                            ...prevState,
+                            log: [...authorizedNomineeData.log, "relationship_to_the_child"]
+                          }));
+                        }
                       }} />
                       { authorizedNomineeError?.relationship_to_the_child !== null && <span className="error">{authorizedNomineeError?.relationship_to_the_child}</span> }
                   </Form.Group>
@@ -507,6 +603,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           name: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!authorizedPersonData.log.includes("name")) {
+                          setAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            log: [...authorizedPersonData.log, "name"]
+                          }));
+                        }
                       }} />
                       { authorizedPersonError?.name !== null && <span className="error">{authorizedPersonError?.name}</span> }
                   </Form.Group>
@@ -524,6 +629,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           address: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!authorizedPersonData.log.includes("address")) {
+                          setAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            log: [...authorizedPersonData.log, "address"]
+                          }));
+                        }
                       }} />
                       { authorizedPersonError?.address !== null && <span className="error">{authorizedPersonError?.address}</span> }
                   </Form.Group>
@@ -540,6 +654,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           telephone: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!authorizedPersonData.log.includes("telephone")) {
+                          setAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            log: [...authorizedPersonData.log, "telephone"]
+                          }));
+                        }
                       }} />
                       { authorizedPersonError?.telephone !== null && <span className="error">{authorizedPersonError?.telephone}</span> }
                   </Form.Group>
@@ -556,6 +679,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           relationship_to_the_child: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!authorizedPersonData.log.includes("relationship_to_the_child")) {
+                          setAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            log: [...authorizedPersonData.log, "relationship_to_the_child"]
+                          }));
+                        }
                       }} />
                       { authorizedPersonError?.relationship_to_the_child !== null && <span className="error">{authorizedPersonError?.relationship_to_the_child}</span> }
                   </Form.Group>
@@ -600,6 +732,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           name: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!otherAuthorizedPersonData.log.includes("name")) {
+                          setOtherAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            log: [...otherAuthorizedPersonData.log, "name"]
+                          }));
+                        }
                       }} />
                       { otherAuthorizedPersonError?.name !== null && <span className="error">{otherAuthorizedPersonError?.name}</span> }
                   </Form.Group>
@@ -617,6 +758,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           address: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!otherAuthorizedPersonData.log.includes("address")) {
+                          setOtherAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            log: [...otherAuthorizedPersonData.log, "address"]
+                          }));
+                        }
                       }} />
                       { otherAuthorizedPersonError?.address !== null && <span className="error">{otherAuthorizedPersonError?.address}</span> }
                   </Form.Group>
@@ -633,6 +783,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           telephone: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!otherAuthorizedPersonData.log.includes("telephone")) {
+                          setOtherAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            log: [...otherAuthorizedPersonData.log, "telephone"]
+                          }));
+                        }
                       }} />
                       { otherAuthorizedPersonError?.telephone !== null && <span className="error">{otherAuthorizedPersonError?.telephone}</span> }
                   </Form.Group>
@@ -649,6 +808,15 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                           ...prevState,
                           relationship_to_the_child: null
                         }));
+                      }}
+
+                      onBlur={(e) => {
+                        if(!otherAuthorizedPersonData.log.includes("relationship_to_the_child")) {
+                          setOtherAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            log: [...otherAuthorizedPersonData.log, "relationship_to_the_child"]
+                          }));
+                        }
                       }} />
                       { otherAuthorizedPersonError?.relationship_to_the_child !== null && <span className="error">{otherAuthorizedPersonError?.relationship_to_the_child}</span> }
                   </Form.Group>

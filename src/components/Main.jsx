@@ -53,12 +53,45 @@ import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
 import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
 import FileRpositoryList from '../pages/FileRpositoryList';
+import FilerepoMyAdd from '../pages/FilerepoMyAdd';
+import RepoEdit from '../pages/RepoEdit';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
   useEffect(() => {
     const item = localStorage.getItem('token');
+
+
     if (item) {
+      // SETTING 2 HOURS TIMEOUT FOR LOGOUT
+      const loginTime = new Date();
+      const logoutTime = new Date();
+      logoutTime.setTime(loginTime.getTime() + 2 * 60 * 60 * 1000); // 1 HOUR
+      console.log("Auto logout at:", logoutTime);
+
+      function autoLogout() {
+        (function loop() {
+          var now = new Date();
+          if (now > logoutTime) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('user_name');
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('menu_list');
+            localStorage.removeItem('active_tab');
+            localStorage.removeItem('selectedFranchisee');
+            localStorage.removeItem("attempts")
+            localStorage.removeItem("enrolled_parent_id")
+            localStorage.removeItem("enrolled_child_id")
+            window.location.href = '/';
+          }
+          now = new Date();
+          var delay = 6000 - (now % 6000);
+          setTimeout(loop, delay);
+        })();
+      }
+
+      autoLogout();
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
@@ -101,7 +134,7 @@ const Main = () => {
         />
 
         <Route
-          path="/child-enrollment/:stepId"
+          path="/child-enrollment/:childId/:parentId"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -488,7 +521,24 @@ const Main = () => {
             </Protected>
           }
         />
-
+        <Route
+          path="/file-repository-List-me/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FilerepoMyAdd />
+            </Protected>
+          }
+        />
+        <Route
+          path="/file-repository-Edit/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <RepoEdit />
+            </Protected>
+          }
+        />
         <Route
           path="/announcements"
           element={
@@ -543,7 +593,7 @@ const Main = () => {
           }
         />
         <Route
-          path="/file-repository-List"
+          path="/file-repository-List/:id"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

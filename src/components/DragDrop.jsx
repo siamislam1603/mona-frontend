@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 let random = () => {}
 
-export default function DropAllFile({ image,onSave, setTrainingData, setErrors, setFetchedCoverImage=random }) {
+export default function DropAllFile({ image,onSave, setTrainingData, setErrors, setFetchedCoverImage=random, title="Files" }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -22,7 +22,7 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
     maxFiles: 1,
     multiple: false,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg'],
+      'image/png': ['.png', '.jpg', '.jpeg'],
     },
   });
 
@@ -66,11 +66,10 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
   },[image])
   return (
     <div className="file-upload-form">
-      <div {...getRootProps({ className: 'dropzone' })} style={{ width: "150px" }}>
+      <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
-        <span className="text-center uploadfile cursor" style={{ display: 'inline-block', marginBottom: '10px' }}>
-          <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
-          Files
+        <span className="text-center uploadfile cursor">
+          <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add {title}
         </span>
       </div>
       

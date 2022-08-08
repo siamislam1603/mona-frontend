@@ -6,6 +6,7 @@ import Select from 'react-select';
 // import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../../components/App";
 import { childFormValidator, parentFormValidator  } from "../../helpers/enrollmentValidation";
+import { useParams } from 'react-router-dom';
 
 let nextstep = 2;
 let step = 1;
@@ -19,6 +20,7 @@ let countryData = [
 ]
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
+  let { childId: paramsChildId } = useParams();
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
@@ -32,7 +34,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     child_origin: "NATSI",
     development_delay: false,
     another_service: false,
-    school_status: "no-school"
+    school_status: "no-school",
+    log: []
   });
 
   // STATE TO HANDLE PARENT DATA
@@ -48,7 +51,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     ethnicity: "",
     primary_language: "",
     occupation: "",
-    child_live_with_this_parent: false
+    child_live_with_this_parent: false,
+    log: []
   });
   const [occupationData, setOccupationData] = useState(null);
   const [ethnicityData, setEthnicityData] = useState(null);
@@ -64,14 +68,15 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   // MODAL DIALOG STATES
   const [showSubmissionSuccessModal, setShowSubmissionSuccessModal] = useState(false);
+  const [showConsentCommentDialog, setShowConsentCommentDialog] = useState(false);
 
 
   // FUNCTION TO UPDATE THIS FORM DATA
   const updateFormOneData = async (childData, parentData) => {
     console.log('UPDATING FORM ONE DATA!');
     let token = localStorage.getItem('token');
-    let childId = localStorage.getItem('enrolled_child_id');
-    let parentId = localStorage.getItem('user_id');
+    let childId = localStorage.getItem('enrolled_child_id')
+    let parentId = localStorage.getItem('enrolled_parent_id');
 
     // UPDATING CHILD DETAIL
     let response;
@@ -103,6 +108,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
 
         if(response.status === 201 && response.data.status === "success") {
+
+          let changeCount = 0;
+          if(formOneChildData.log.length > 0)
+            changeCount++;
+
+          if(formOneParentData.log.length > 0)
+            changeCount++;
+
+          localStorage.setItem('change_count', changeCount);
+
           nextStep();
         }
       }
@@ -152,9 +167,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const handleChildData = event => {
     const { name, value } = event.target;
+
     setFormOneChildData(prevState => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -263,7 +279,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const fetchChildDataAndPopulate = async () => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
-    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let enrolledChildId = localStorage.getItem('enrolled_child_id') || paramsChildId;
     console.log('Enrolled child id:', enrolledChildId);
     let token = localStorage.getItem('token');
 
@@ -325,22 +341,25 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     fetchChildDataAndPopulate();
   }, []);
 
-  // useEffect(() => {
-  //   fetchParentUserDetails(); 
-  // }, [])
+  useEffect(() => {
+    console.log("checking useEffect!")
+    if(localStorage.getItem('has_given_consent') !== null) {
+      setShowConsentCommentDialog(true);
+    }
+  }, [])
 
   // formStepData && console.log('You\'re on step:', formStepData);
-  formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
-  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
-  console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
+  // formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
+  // formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
+  // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
       <div className="enrollment-form-sec my-5">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <div className="grayback">
-              <h2 className="title-xs mb-2">Information about the child</h2>
-              <p className="form_info mb-4">A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
+              <h2 className="title-xs mb-2">Infdleormation about the child</h2>
+              <p className="form_info mb-4">A parent or guardian who ns lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
@@ -354,8 +373,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         handleChildData(e);
                         setChildFormErrors(prevState => ({
                           ...prevState,
-                          fullname: null
+                          fullname: null,
                         }))
+                      }}
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("fullname")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "fullname"]
+                          }));
+                        }
                       }} />
                     { childFormErrors?.fullname !== null && <span className="error">{childFormErrors?.fullname}</span> }
                   </Form.Group>
@@ -374,6 +401,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           family_name: null
                         }))
+                      }}
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("family_name")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "family_name"]
+                          }));
+                        }
                       }} />
                     { childFormErrors?.family_name !== null && <span className="error">{childFormErrors?.family_name}</span> }
                   </Form.Group>
@@ -390,8 +425,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         handleChildData(e);
                         setChildFormErrors(prevState => ({
                           ...prevState,
-                          usually_called: null
+                          usually_called: null,
                         }))
+                      }}
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("usually_called")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "usually_called"]
+                          }));
+                        }
                       }} />
                     { childFormErrors?.usually_called !== null && <span className="error">{childFormErrors?.usually_called}</span> }
                   </Form.Group>
@@ -410,6 +453,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           dob: null
                         }))
+                      }}
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("dob")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "dob"]
+                          }));
+                        }
                       }} />
                     { childFormErrors?.dob !== null && <span className="error">{childFormErrors?.dob}</span> }
                   </Form.Group>
@@ -425,20 +476,36 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         label="Male"
                         checked={formOneChildData?.gender === "M"}
                         defaultChecked
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          gender: "M"
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            gender: "M"
+                          }));
+                          if(!formOneChildData.log.includes("gender")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "gender"]
+                            }));
+                          }
+                        }} />
                       <Form.Check
                         type="radio"
                         name="gender"
                         id="femalecheck"
                         checked = {formOneChildData?.gender === "F"}
                         label="Female"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          gender: "F"
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            gender: "F"
+                          }));
+                          if(!formOneChildData.log.includes("gender")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "gender"]
+                            }));
+                          }
+                        }} />
                     </div>
                   </Form.Group>
                 </Col>
@@ -457,6 +524,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           home_address: null
                         }))
+                      }}
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("home_address")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "home_address"]
+                          }));
+                        }
                       }} />
                     { childFormErrors?.home_address !== null && <span className="error">{childFormErrors?.home_address}</span> }
                   </Form.Group>
@@ -477,6 +552,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           language: null
                         }));
+
+                        if(!formOneChildData.log.includes("language")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "language"]
+                          }));
+                        }
                       }}
                     />
                     { childFormErrors?.language !== null && <span className="error">{childFormErrors?.language}</span> }
@@ -498,6 +580,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           country_of_birth: null
                         }));
+                        if(!formOneChildData.log.includes("country_of_birth")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "country_of_birth"]
+                          }));
+                        }
                       }}
                     />
                     { childFormErrors?.country_of_birth !== null && <span className="error">{childFormErrors?.country_of_birth}</span> }
@@ -514,10 +602,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         checked={formOneChildData?.child_origin.toUpperCase() === "NATSI"}
                         defaultChecked
                         label="No, not Aboriginal or Torres Straight Islander"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          child_origin: "NATSI"
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            child_origin: "NATSI"
+                          }));
+
+                          if(!formOneChildData.log.includes("child_origin")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "child_origin"]
+                            }));
+                          }
+                        }} />
 
                       <Form.Check
                         type="radio"
@@ -525,30 +622,55 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         id="yesaboriginal"
                         checked={formOneChildData?.child_origin.toUpperCase() === "A"}
                         label="Yes, Aboriginal"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          child_origin: "A"
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            child_origin: "A"
+                          }));
+
+                          if(!formOneChildData.log.includes("child_origin")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "child_origin"]
+                            }));
+                          }
+                        }} />
                       <Form.Check
                         type="radio"
                         name="aboriginaltorres"
                         id="yesaboriginaltorres"
                         checked={formOneChildData?.child_origin.toUpperCase() === "YATSI"}
                         label="Yes, Aboriginal and Torres Straight Islander"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          child_origin: "YATSI"
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            child_origin: "YATSI"
+                          }));
+                          if(!formOneChildData.log.includes("child_origin")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "child_origin"]
+                            }));
+                          }
+                        }} />
                       <Form.Check
                         type="radio"
                         name="aboriginaltorres"
                         id="yestorres"
                         checked={formOneChildData?.child_origin.toUpperCase() === "TSI"}
                         label="Yes, Torres Straight Islander"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          child_origin: "TSI"
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            child_origin: "TSI"
+                          }));
+                          if(!formOneChildData.log.includes("child_origin")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "child_origin"]
+                            }));
+                          }
+                        }} />
                     </div>
                   </Form.Group>
                 </Col>
@@ -563,10 +685,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         className="ps-0"
                         checked={formOneChildData?.development_delay === true}
                         label="Yes"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          development_delay: true
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            development_delay: true
+                          }));
+
+                          if(!formOneChildData.log.includes("development_delay")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "development_delay"]
+                            }));
+                          }
+                        }} />
                       <Form.Check
                         type="radio"
                         name="disability"
@@ -574,14 +705,22 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         label="No"
                         checked={formOneChildData?.development_delay === false}
                         defaultChecked
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          development_delay: false,
-                          child_medicare_no: null,
-                          child_crn: null,
-                          parent_crn_1: null,
-                          parent_crn_2: null
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            development_delay: false,
+                            child_medicare_no: null,
+                            child_crn: null,
+                            parent_crn_1: null,
+                            parent_crn_2: null
+                          }));
+                          if(!formOneChildData.log.includes("development_delay")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "development_delay"]
+                            }));
+                          }
+                        }} />
                     </div>
                     <Form.Text className="text-muted">
                       if ‘Yes’ please provide information (Inclusion Support Form if applicable)
@@ -644,10 +783,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         checked={formOneChildData?.another_service === true}
                         className="ps-0"
                         label="Yes"
-                        onChange={(event) => setFormOneChildData(prevState => ({
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
                           ...prevState,
                           another_service: true
-                        }))} />
+                          }));
+
+                          if(!formOneChildData.log.includes("another_service")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "another_service"]
+                            }));
+                          }
+                        }} />
                       <Form.Check
                         type="radio"
                         name="anotherser"
@@ -655,10 +803,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         defaultChecked
                         checked={formOneChildData?.another_service === false}
                         label="No"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          another_service: false
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            another_service: false
+                          }));
+
+                          if(!formOneChildData.log.includes("another_service")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "another_service"]
+                            }));
+                          }
+                        }} />
                     </div>
                     <Form.Text className="text-muted">
                       If you answered YES please specify day and hours at other service.
@@ -710,10 +867,18 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         id="atschool"
                         checked={formOneChildData?.school_status === "at-school"}
                         label="At School"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          school_status: "at-school"
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            school_status: "at-school"
+                          }));
+                          if(!formOneChildData.log.includes("school_status")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "school_status"]
+                            }));
+                          }
+                        }} />
                       <Form.Check
                         type="radio"
                         name="school"
@@ -721,10 +886,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         defaultChecked
                         checked={formOneChildData?.school_status === "no-school"}
                         label="Non School"
-                        onChange={(event) => setFormOneChildData(prevState => ({
-                          ...prevState,
-                          school_status: "no-school"
-                        }))} />
+                        onChange={(event) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            school_status: "no-school"
+                          }));
+
+                          if(!formOneChildData.log.includes("school_status")) {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              log: [...formOneChildData.log, "school_status"]
+                            }));
+                          }
+                        }} />
                     </div>
                   </Form.Group>
                 </Col>
@@ -795,20 +969,38 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                               label="Parent" 
                               checked={formOneParentData?.relation_type === "parent"}
                               defaultChecked
-                              onChange={(event) => setFormOneParentData(prevState => ({
-                                ...prevState,
-                                relation_type: "parent"
-                              }))} />
+                              onChange={(event) => {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  relation_type: "parent"
+                                }))
+
+                                if(!formOneParentData.log.includes("relation_type")) {
+                                  setFormOneParentData(prevState => ({
+                                    ...prevState,
+                                    log: [...formOneParentData.log, "relation_type"]
+                                  }));
+                                }
+                              }} />
                             <Form.Check 
                               type="radio" 
                               name="information1" 
                               id="guardian1" 
                               label="Guardian"
                               checked={formOneParentData?.relation_type === "guardian"}
-                              onChange={(event) => setFormOneParentData(prevState => ({
-                                ...prevState,
-                                relation_type: "guardian"
-                              }))} />
+                              onChange={(event) => {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  relation_type: "guardian"
+                                }));
+
+                                if(!formOneParentData.log.includes("relation_type")) {
+                                  setFormOneParentData(prevState => ({
+                                    ...prevState,
+                                    log: [...formOneParentData.log, "relation_type"]
+                                  }));
+                                }
+                              }} />
                           </div>
                         </Form.Group>
 
@@ -826,6 +1018,15 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 family_name: null
                               }));
                             }} 
+
+                            onBlur={(e) => {
+                              if(!formOneParentData.log.includes("family_name")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "family_name"]
+                                }));
+                              }
+                            }}
                           />
                           { parentFormErrors?.family_name !== null && <span className="error">{parentFormErrors?.family_name}</span> }
                         </Form.Group>
@@ -843,6 +1044,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 ...prevState,
                                 given_name: null
                               }));
+                            }}
+                            onBlur={(e) => {
+                              if(!formOneParentData.log.includes("given_name")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "given_name"]
+                                }));
+                              }
                             }} 
                           />
                           { parentFormErrors?.given_name !== null && <span className="error">{parentFormErrors?.given_name}</span> }
@@ -862,6 +1071,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 dob: null
                               }));
                             }} 
+                            onBlur={(e) => {
+                              if(!formOneParentData.log.includes("dob")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "dob"]
+                                }));
+                              }
+                            }}
                           />
                           { parentFormErrors?.dob !== null && <span className="error">{parentFormErrors?.dob}</span> }
                         </Form.Group>
@@ -881,6 +1098,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 address_as_per_child: null
                               }));
                             }} 
+                            onBlur={(e) => {
+                              if(!formOneParentData.log.includes("address_as_per_child")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "address_as_per_child"]
+                                }));
+                              }
+                            }}
                           />
                           { parentFormErrors?.address_as_per_child !== null && <span className="error">{parentFormErrors?.address_as_per_child}</span> }
                         </Form.Group>
@@ -898,6 +1123,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 ...prevState,
                                 telephone: null
                               }));
+                            }}
+                            onBlur={(e) => {
+                              if(!formOneParentData.log.includes("telephone")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "telephone"]
+                                }));
+                              }
                             }} 
                           />
                           { parentFormErrors?.telephone !== null && <span className="error">{parentFormErrors?.telephone}</span> }
@@ -917,6 +1150,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 email: null
                               }));
                             }} 
+                            onBlur={(e) => {
+                              if(!formOneParentData.log.includes("email")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "email"]
+                                }));
+                              }
+                            }}
                           />
                           { parentFormErrors?.email !== null && <span className="error">{parentFormErrors?.email}</span> }
                         </Form.Group>
@@ -931,20 +1172,37 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                               label="Yes" 
                               checked={formOneParentData?.child_live_with_this_parent === true}
                               defaultChecked
-                              onChange={(event) => setFormOneParentData(prevState => ({
-                                ...prevState,
-                                child_live_with_this_parent: true
-                              }))} />
+                              onChange={(event) => {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  child_live_with_this_parent: true
+                                }));
+
+                                if(!formOneParentData.log.includes("child_live_with_this_parent")) {
+                                  setFormOneParentData(prevState => ({
+                                    ...prevState,
+                                    log: [...formOneParentData.log, "child_live_with_this_parent"]
+                                  }));
+                                }
+                              }} />
                             <Form.Check 
                               type="radio" 
                               name="live1" 
                               id="nop" 
                               label="No"
                               checked={formOneParentData?.child_live_with_this_parent === false}
-                              onChange={(event) => setFormOneParentData(prevState => ({
-                                ...prevState,
-                                child_live_with_this_parent: false
-                              }))} />
+                              onChange={(event) => {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  child_live_with_this_parent: false
+                                }));
+                                if(!formOneParentData.log.includes("child_live_with_this_parent")) {
+                                  setFormOneParentData(prevState => ({
+                                    ...prevState,
+                                    log: [...formOneParentData.log, "child_live_with_this_parent"]
+                                  }));
+                                }
+                              }} />
                           </div>
                         </Form.Group>
                         
@@ -964,6 +1222,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 ...prevState,
                                 place_of_birth: null
                               }));
+                              if(!formOneParentData.log.includes("place_of_birth")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "place_of_birth"]
+                                }));
+                              }
                             }}
                           />
                           { parentFormErrors?.place_of_birth !== null && <span className="error">{parentFormErrors?.place_of_birth}</span> }
@@ -986,6 +1250,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 ...prevState,
                                 ethnicity: null
                               }));
+
+                              if(!formOneParentData.log.includes("ethnicity")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "ethnicity"]
+                                }));
+                              }
                             }}
                           />
                           { parentFormErrors?.ethnicity !== null && <span className="error">{parentFormErrors?.ethnicity}</span> }
@@ -1007,6 +1278,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 ...prevState,
                                 primary_language: null
                               }));
+
+                              if(!formOneParentData.log.includes("primary_language")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "primary_language"]
+                                }));
+                              }
                             }}
                           />
                           { parentFormErrors?.primary_language !== null && <span className="error">{parentFormErrors?.primary_language}</span> }
@@ -1028,6 +1306,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                                 ...prevState,
                                 occupation: null
                               }));
+
+                              if(!formOneParentData.log.includes("occupation")) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  log: [...formOneParentData.log, "occupation"]
+                                }));
+                              }
                             }}
                           />
                           { parentFormErrors?.occupation !== null && <span className="error">{parentFormErrors?.occupation}</span> }
@@ -1067,6 +1352,27 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
           <Modal.Footer>
 
           </Modal.Footer>
+        </Modal>
+      }
+      {
+        <Modal
+          show={showConsentCommentDialog}
+          onHide={() => setShowConsentCommentDialog(false)}>
+            <Modal.Header>
+              <Modal.Title>Consent Request!</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              <p>Verify the changes made by Co-ordinator.</p>
+              <p>Co-ordinator comment:</p>
+              <p>"{localStorage.getItem('consent_comment')}"</p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <button 
+                className="modal-button"
+                onClick={() => setShowConsentCommentDialog(false)}>Ok</button>
+            </Modal.Footer>
         </Modal>
       }
     </>

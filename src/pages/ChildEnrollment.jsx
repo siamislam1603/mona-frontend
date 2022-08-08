@@ -16,7 +16,7 @@ import { BASE_URL } from "../components/App";
 import { useParams } from 'react-router-dom';
 
 function ChildEnrollment() {
-  let { childId, parentId, stepId } = useParams();
+  let { childId, parentId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   //state for steps
@@ -40,10 +40,8 @@ function ChildEnrollment() {
   }
 
   const updateStepFromDatabase = async () => {
-    let parentId = localStorage.getItem('user_id');
+    let parentId = localStorage.getItem('enrolled_parent_id');
     let token = localStorage.getItem('token');
-
-    console.log(`Parent ID: ${parentId}\ntoken: ${token}`);
 
     let response = await axios.get(`${BASE_URL}/enrollment/parent/child/${parentId}`, {
       headers: {
@@ -51,15 +49,21 @@ function ChildEnrollment() {
       }
     });
 
-    console.log('STEP DATA RESPONSE:', response);
-
     if(response.status === 200 && response.data.status === "success") {
       let {childData} = response.data;
-      localStorage.setItem('enrolled_child_id', childData[0].id);
+      // localStorage.setItem('enrolled_child_id', childData[0].id);
       // localStorage.setItem('isChildEnrolled', childData[0].)
       let form_step = childData[0].form_step || 1;
       console.log('Setting the step to', form_step);
-      setstep(form_step);
+
+      // console.log('ASKED FOR CONSENT:', localStorage.getItem('asked_for_consent'));
+      if(localStorage.getItem('asked_for_consent') === "true") {
+        // console.log('ASKED FOR CONSENT');
+        setstep(1);  
+      } else {
+        // console.log('Didn\'t ask for consent');
+        setstep(form_step);
+      }
     } else {
       setstep(1);
     }
@@ -70,12 +74,12 @@ function ChildEnrollment() {
     updateStepFromDatabase();
   }, []);
 
-  // useEffect(() => {
-  //   setstep(stepId);
-  // }, [stepId])
-
-  console.log('PARENT ID:', parentId);
-  console.log('CHILD ID:', childId);
+  useEffect(() => {
+    if(childId && parentId) {
+      localStorage.setItem('enrolled_child_id', childId);
+      localStorage.setItem('enrolled_parent_id', parentId);
+    }
+  },[]);
 
   console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   // eslint-disable-next-line default-case

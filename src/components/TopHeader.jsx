@@ -3,19 +3,25 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { BASE_URL } from './App';
 
-let temp = () => {}
+let temp = () => { }
 
 const TopHeader = ({ setSelectedFranchisee = temp }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
   const [franchiseeId, setFranchiseeId] = useState();
   const [permissionList, setPermissionList] = useState();
 
+
+
   const savePermissionInState = async () => {
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
     setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
   };
 
+  const [userDashboardLink, setuserDashboardLink] = useState();
+
   const fetchFranchiseeList = async () => {
+
+
     let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/role/franchisee`, {
       headers: {
@@ -26,7 +32,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
       const { franchiseeList: franchiseeData } = response.data;
 
       let renderedData, filteredData;
-      if(localStorage.getItem('user_role') === 'franchisor_admin') {
+      if (localStorage.getItem('user_role') === 'franchisor_admin') {
         renderedData = franchiseeData.map((data) => ({
           id: data.id,
           franchisee_name: `${data.franchisee_name}, ${data.city}`,
@@ -41,7 +47,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
         filteredData = renderedData.filter(d => parseInt(d.id) === parseInt(franchisee_id));
         setFranchiseeList(filteredData);
       }
-    } 
+    }
   };
 
 
@@ -73,7 +79,12 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
       localStorage.removeItem('selectedFranchisee');
       localStorage.removeItem("attempts")  
       localStorage.removeItem("enrolled_parent_id")  
-      localStorage.removeItem("enrolled_child_id")  
+      localStorage.removeItem("enrolled_child_id")
+      localStorage.removeItem("redirectURL")    
+      localStorage.removeItem("SelectedChild")  
+      localStorage.removeItem("DefaultEducators")  
+      localStorage.removeItem("DefaultParents")  
+      localStorage.removeItem('has_given_consent');
       window.location.href = '/';
     }
   };
@@ -84,17 +95,17 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
 
   const selectFranchisee = (e) => {
     console.log('SELECTED FRANCHISEE:', e);
-    if(e === 'All') {
-      setFranchiseeId({franchisee_name: 'All'});
-      setSelectedFranchisee('All');
+    if (e === 'All') {
+      setFranchiseeId({ franchisee_name: 'All' });
+      setSelectedFranchisee('all');
     } else {
-      setFranchiseeId({...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0]});
+      setFranchiseeId({ ...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
       setSelectedFranchisee(e);
     }
   };
 
   useEffect(() => {
-    if(localStorage.getItem('user_role') === 'franchisor_admin') {
+    if (localStorage.getItem('user_role') === 'franchisor_admin') {
       setSelectedFranchisee('All');
       setFranchiseeId({ franchisee_name: 'All' });
     } else {
@@ -103,6 +114,25 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
   }, [franchiseeList]);
 
   useEffect(() => {
+    var user_dashboar_link = '';
+    if (localStorage.getItem('user_role') === 'coordinator')
+      user_dashboar_link = '/coordinator-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisor_admin')
+      user_dashboar_link = '/franchisor-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisee_admin')
+      user_dashboar_link = '/franchisee-dashboard'
+    else if (localStorage.getItem('user_role') === 'coodinator')
+      user_dashboar_link = '/coordinator-dashboard'
+    else if (localStorage.getItem('user_role') === 'franchisee_admin')
+      user_dashboar_link = '/franchisee-dashboard'
+    else if (localStorage.getItem('user_role') === 'educator')
+      user_dashboar_link = '/educator-dashboard'
+    else if (localStorage.getItem('user_role') === 'guardian')
+      user_dashboar_link = '/parents-dashboard'
+
+    setuserDashboardLink(user_dashboar_link);
+
+
     fetchFranchiseeList();
   }, []);
 
@@ -156,7 +186,7 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
                 </a>
               </li>
               <li>
-                <a href="/">
+                <a href={userDashboardLink}>
                   <img alt="" src="/img/home-icon.svg" />
                 </a>
               </li>

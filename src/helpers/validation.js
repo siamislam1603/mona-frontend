@@ -1,13 +1,28 @@
-export const DynamicFormValidation = (form, data) => {
+export const DynamicFormValidation = (form, data, behalf_of) => {
   let newErrors = {};
-  data.map((item) => {
-    console.log('item.required', item.required);
-    if (item.required) {
-      if (!form[`${item.field_name}`]) {
-        newErrors[`${item.field_name}`] = `${item.field_label} is required`;
+  Object.keys(data)?.map((item) => {
+    
+    
+    
+    
+    // console.log('inner_item_item--->', item);
+    data[item].map((inner_item) => {
+      // console.log('inner_item', form[item]);
+
+      if (inner_item.required) {
+      console.log('inner_item',inner_item);
+        console.log("form-=-->21321313",form);
+        if (!form[item][`${inner_item.field_name}`]) {
+          newErrors[
+            `${inner_item.field_name}`
+          ] = `${inner_item.field_label} is required`;
+        }
       }
-    }
+    });
   });
+  if (!behalf_of || behalf_of === '')
+    newErrors.behalf_of = 'Behalf of is required';
+
   return newErrors;
 };
 export const createCategoryValidation = (form) => {
@@ -103,9 +118,9 @@ export const createFormValidation = (form) => {
     form_description,
     form_template_select,
     previous_form,
-    category_id
+    category_id,
   } = form;
-  
+
   if (!form_name || form_name === '')
     newErrors.form_name = 'Form Title is Required';
   if (!form_type || form_type === '')
@@ -115,58 +130,61 @@ export const createFormValidation = (form) => {
   if (form_template_select === 'Yes')
     if (!previous_form || previous_form === '')
       newErrors.previous_form = 'Previous Form is Required';
-  if(!category_id || category_id==='')
-  newErrors.category_id = 'Category is Required';
+  if (!category_id || category_id === '')
+    newErrors.category_id = 'Category is Required';
 
   return newErrors;
 };
 export const createOperatingManualValidation = (form) => {
   let newErrors = {};
-  let { title, description,order } = form;
+  let { title, description, order } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-  if (order<0)
-    newErrors.order= "Value must be greater than 0";
-  if (order===0 || order==="0")
-    newErrors.order= "Value must be greater than 0";
-  if (!order || order === '')
-    newErrors.order = 'Position is Required';
-  
-  
+  if (order < 0) newErrors.order = 'Value must be greater than 0';
+  if (order === 0 || order === '0')
+    newErrors.order = 'Value must be greater than 0';
+  if (!order || order === '') newErrors.order = 'Position is Required';
+
   return newErrors;
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form,coverImage) =>{
-  console.log("The form validation",form)
+export const AddNewAnnouncementValidation = (form, coverImage) => {
+  console.log('The form validation', form);
   let newErrors = {};
-  console.log("The form validat", form)
-  let { title, meta_description, start_date, start_time} = form;
-  console.log("The tile valdiation", start_date)
-  if(!title || title === ' ') newErrors.title="Announcement Title is Required"
+  console.log('The form validat', form);
+  let { title, meta_description, start_date, start_time } = form;
+  console.log('The tile valdiation', start_date);
+  if (!title || title === ' ')
+    newErrors.title = 'Announcement Title is Required';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
-  if(!start_date || start_date === "undefined") newErrors.start_date="Start Date Required"
-  if(!start_time || start_time === "undefined") newErrors.start_time="Start Time Required"
-  if(!meta_description || meta_description === ' ') newErrors.meta_description="Announcement Description is Required"
-  
-  return newErrors;
+  if (!start_date || start_date === 'undefined')
+    newErrors.start_date = 'Start Date Required';
+  if (!start_time || start_time === 'undefined')
+    newErrors.start_time = 'Start Time Required';
+  if (!meta_description || meta_description === ' ')
+    newErrors.meta_description = 'Announcement Description is Required';
 
-}
-export const EditAnnouncementValidation = (form,coverImage,Data)=>{
-  let newErrors = {};
-  console.log("The form validat", form)
-  // console.log("The DATA VALIDATION",newData)
-  let { title,meta_description,start_date,start_time} = form;
- 
-  console.log("All valiatiion",title,start_date,meta_description)
-  if(!title || title === ' ') newErrors.title="Title is Required"
-  // if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
-  if( !meta_description || meta_description === ' ') newErrors.meta_description="Description is Required"
-  if(start_date === " " &&!start_date || start_date === ' ') newErrors.start_date="Start Date Required"
-  if(start_time === " "&& !start_time || start_time === ' ') newErrors.start_time="Start Time Required"
   return newErrors;
-}
+};
+export const EditAnnouncementValidation = (form, coverImage, Data) => {
+  let newErrors = {};
+  console.log('The form validat', form);
+  // console.log("The DATA VALIDATION",newData)
+  let { title, meta_description, start_date, start_time } = form;
+
+  console.log('All valiatiion', title, start_date, meta_description);
+  if (!title || title === ' ') newErrors.title = 'Title is Required';
+  // if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
+  if (!meta_description || meta_description === ' ')
+    newErrors.meta_description = 'Description is Required';
+  if ((start_date === ' ' && !start_date) || start_date === ' ')
+    newErrors.start_date = 'Start Date Required';
+  if ((start_time === ' ' && !start_time) || start_time === ' ')
+    newErrors.start_time = 'Start Time Required';
+  return newErrors;
+};
 export const ChildRegisterFormValidation = (form) => {
   let newErrors = {};
   let {
@@ -206,7 +224,6 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
-
 export const TrainingFormValidation = (form, coverImage) => {
   let errors = {};
   let {
@@ -220,24 +237,28 @@ export const TrainingFormValidation = (form, coverImage) => {
   if (!title) {
     errors.title = 'Training title is required!';
   }
-  
+
+  if (title <= 2) {
+    errors.title_length = 'Training title should be more than 2 characters.';
+  }
+
   if (!description) {
     errors.description = 'Training description is required!';
   }
-  
+
   if (!meta_description) {
     errors.meta_description = 'Meta description is required!';
   }
-  
+
   if (!category_id) {
     errors.category_id = 'Training category title is required!';
   }
-  
+
   if (!time_required_to_complete) {
     errors.time_required_to_complete = 'Training time is required!';
   }
 
-  if(Object.keys(coverImage).length === 0) {
+  if (Object.keys(coverImage).length === 0) {
     errors.coverImage = 'Cover image required!';
   }
 
@@ -245,53 +266,50 @@ export const TrainingFormValidation = (form, coverImage) => {
 };
 
 export const PasswordValidation = (form) => {
- let errors = {};
-  let {
-    oldpassword,
-    new_password,
-    confirm_password
-  } = form;
+  let errors = {};
+  let { oldpassword, new_password, confirm_password } = form;
 
   if (!oldpassword) {
     errors.oldpassword = 'Old password is required!';
   }
-  if(!new_password){
-    errors.new_password = 'New Password is required'
+  if (!new_password) {
+    errors.new_password = 'New Password is required';
   }
-  if(new_password && new_password.length<5){
-    errors.new_password="Minimum length 5"
+  if (new_password && new_password.length < 5) {
+    errors.new_password = 'Minimum length 5';
   }
-  
-  if(!confirm_password){
-    errors.confirm_password = 'Confirm password'
+
+  if (!confirm_password) {
+    errors.confirm_password = 'Confirm password';
   }
-  if(new_password && confirm_password && new_password !== confirm_password ){
-      errors.new_password = "New password and Confirm password need to be same"
-      errors.confirm_password = "New password and Confirm password need to be same"
+  if (new_password && confirm_password && new_password !== confirm_password) {
+    errors.new_password = 'New password and Confirm password need to be same';
+    errors.confirm_password =
+      'New password and Confirm password need to be same';
   }
-  if(oldpassword && new_password && oldpassword === new_password){
-    errors.new_password = "Old and New Password need to be different"
-    errors.oldpassword = "Old and New Password need to be different"
+  if (oldpassword && new_password && oldpassword === new_password) {
+    errors.new_password = 'Old and New Password need to be different';
+    errors.oldpassword = 'Old and New Password need to be different';
   }
-  
 
   return errors;
 };
-export const ResetPasswordValidation = (form) =>{
+export const ResetPasswordValidation = (form) => {
   let errors = {};
-  let {new_password,confirm_password} = form;
-  if(!new_password){
-    errors.new_password = "New password require"
+  let { new_password, confirm_password } = form;
+  if (!new_password) {
+    errors.new_password = 'New password require';
   }
-  if(!confirm_password){
-    errors.confirm_password = "Confirm password require"
+  if (!confirm_password) {
+    errors.confirm_password = 'Confirm password require';
   }
-  if(new_password && confirm_password && new_password !== confirm_password ){
-    errors.new_password = "New password and Confirm password need to be same"
-    errors.confirm_password = "New password and Confirm password need to be same"
+  if (new_password && confirm_password && new_password !== confirm_password) {
+    errors.new_password = 'New password and Confirm password need to be same';
+    errors.confirm_password =
+      'New password and Confirm password need to be same';
   }
   return errors;
-}
+};
 export const FranchiseeFormValidation = (formObj) => {
   let errors = {};
   let {
@@ -306,114 +324,90 @@ export const FranchiseeFormValidation = (formObj) => {
     contact,
   } = formObj;
 
-  if(!franchisee_name) {
-    errors.franchisee_name = "Franchisee Name is required!"
+  if (!franchisee_name) {
+    errors.franchisee_name = 'Franchisee Name is required!';
   }
 
-  if(!abn) {
-    errors.abn = "provide australian business number";
+  if (!abn) {
+    errors.abn = 'provide australian business number';
   }
 
-  if(!city) {
-    errors.city = "City is required!";
+  if (!city) {
+    errors.city = 'City is required!';
   }
 
-  if(!state) {
-    errors.state = "State is required!";
+  if (!state) {
+    errors.state = 'State is required!';
   }
 
-  if(!franchisee_number) {
-    errors.franchisee_number = "Franchisee number is required!";
+  if (!franchisee_number) {
+    errors.franchisee_number = 'Franchisee number is required!';
   }
 
-  if(!acn) {
-    errors.acn = "provide australian company number!";
+  if (!acn) {
+    errors.acn = 'provide australian company number!';
   }
 
-  if(!address) {
-    errors.address = "Address is required!";
+  if (!address) {
+    errors.address = 'Address is required!';
   }
 
-  if(!postcode) {
-    errors.postcode = "postal code is required!";
+  if (!postcode) {
+    errors.postcode = 'postal code is required!';
   }
 
-  if(!contact) {
-    errors.contact = "contact number is required!";
+  if (!contact) {
+    errors.contact = 'contact number is required!';
   }
 
   return errors;
-}
-
+};
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
 
-  let {
-    fullname,
-    role,
-    city,
-    address,
-    postalCode,
-    email,
-    phone,
-    franchisee
-  } = formObj;
+  let { fullname, role, city, address, postalCode, email, phone, franchisee } =
+    formObj;
 
-  if(!fullname)
-    errors.fullname = "Username is required!";
+  if (!fullname) errors.fullname = 'Username is required!';
 
-  if(!franchisee) 
-    errors.franchisee = "Franchisee is required!";
+  if (!franchisee) errors.franchisee = 'Franchisee is required!';
 
-  if(!role)
-    errors.role = "User role is required!";
-  
-  if(!city)
-    errors.city = "City is required!";
-  
-  if(!address)
-    errors.address = "Address is required!";
+  if (!role) errors.role = 'User role is required!';
 
-  if(!postalCode)
-    errors.postalCode = "Postal code is required!";
+  if (!city) errors.city = 'City is required!';
 
-  if(postalCode.length !== 4) 
-    errors.postalCodeLength = "Postal code should be 4-digit long!"
+  if (!address) errors.address = 'Address is required!';
 
-  if(!email)
-    errors.email = "Email is required!";
+  if (!postalCode) errors.postalCode = 'Postal code is required!';
 
-  if(!phone)
-    errors.phone = "Phone number is required!";
+  if (postalCode.length !== 4)
+    errors.postalCodeLength = 'Postal code should be 4-digit long!';
+
+  if (!email) errors.email = 'Email is required!';
+
+  if (!phone) errors.phone = 'Phone number is required!';
 
   return errors;
 };
 
 export const personValidation = (personValidationForm) => {
   let errors = {};
-  let {
-    name,
-    address,
-    telephone,
-    relationship_to_the_child
-  } = personValidationForm;
+  let { name, address, telephone, relationship_to_the_child } =
+    personValidationForm;
 
-  if(!name)
-    errors.name = "Name is required!";
+  if (!name) errors.name = 'Name is required!';
 
-  if(!address)
-    errors.address = "Address is required!";
+  if (!address) errors.address = 'Address is required!';
 
-  if(!telephone)
-    errors.telephone = "Telephone number is required!";
-  
-  if(!relationship_to_the_child)
-    errors.relationship_to_the_child = "Specify their relationship to the child!";
+  if (!telephone) errors.telephone = 'Telephone number is required!';
+
+  if (!relationship_to_the_child)
+    errors.relationship_to_the_child =
+      'Specify their relationship to the child!';
 
   return errors;
-}
-
+};
 
 export const childDailyRoutineValidation = (childDailyRoutineForm) => {
   let errors = {};
@@ -430,35 +424,26 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
     comment,
   } = childDailyRoutineForm;
 
-  if(!sleep_time)
-    errors.sleep_time = "sleep time is required!";
+  if (!sleep_time) errors.sleep_time = 'sleep time is required!';
 
-  if(!bottle_time)
-    errors.bottle_time = "bottle time is required!";
+  if (!bottle_time) errors.bottle_time = 'bottle time is required!';
 
-  if(!toileting)
-    errors.toileting = "toilet time is required!";
+  if (!toileting) errors.toileting = 'toilet time is required!';
 
-  if(!routines)
-    errors.routines = "routine is required!";
+  if (!routines) errors.routines = 'routine is required!';
 
-  if(!likes_dislikes)
-    errors.likes_dislikes = "specify the likes or dislikes!";
+  if (!likes_dislikes) errors.likes_dislikes = 'specify the likes or dislikes!';
 
-  if(!comforter)
-    errors.comforter = "comforter is required!";
+  if (!comforter) errors.comforter = 'comforter is required!';
 
-  if(!religion)
-    errors.religion = "religion is reuqired!";
+  if (!religion) errors.religion = 'religion is reuqired!';
 
-  if(!dietary_requirement)
-    errors.dietary_requirement = "specify the dietary requirements!";
+  if (!dietary_requirement)
+    errors.dietary_requirement = 'specify the dietary requirements!';
 
-  if(!allergy)
-    errors.allergy = "mention the alergies, if any!";
+  if (!allergy) errors.allergy = 'mention the alergies, if any!';
 
-  if(!comment)
-    errors.comment = "provide a comment!";
-  
+  if (!comment) errors.comment = 'provide a comment!';
+
   return errors;
-}
+};

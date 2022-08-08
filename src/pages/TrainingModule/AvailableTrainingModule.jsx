@@ -23,8 +23,8 @@ const AvailableTraining = ({ filter }) => {
 
     if(response.status === 200 && response.data.status === "success") {
       console.log('RESPONSE:', response.data);
-      const { training } = response.data;
-      setAvailableTrainingData(training);
+      const { searchedData } = response.data;
+      setAvailableTrainingData(searchedData);
     }
   };
 
@@ -61,18 +61,21 @@ const AvailableTraining = ({ filter }) => {
                         <span className="time">{ item.completion_time } { item.completion_in}</span>
                       </div>
                     </div>
-                    <div className="cta-col">
-                      <Dropdown>
-                        <Dropdown.Toggle variant="transparent" id="ctacol">
-                          <img src="../img/dot-ico.svg" alt=""/>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item href="#">Delete</Dropdown.Item>
-                          <Dropdown.Item href="#">Edit</Dropdown.Item>
-                          <Dropdown.Item href="#">Share</Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
+                    {
+                      (localStorage.getItem('user_role') !== 'coordinator' && localStorage.getItem('user_role') !== 'educator') &&
+                       <div className="cta-col">
+                        <Dropdown>
+                          <Dropdown.Toggle variant="transparent" id="ctacol">
+                            <img src="../img/dot-ico.svg" alt=""/>
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Item href="#">Delete</Dropdown.Item>
+                            <Dropdown.Item href={`/edit-training/${item.id}`}>Edit</Dropdown.Item>
+                            <Dropdown.Item href="#">Share</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </div>
+                    }
                   </div>
                 </div>
               </Col>

@@ -46,6 +46,7 @@ const UserManagement = () => {
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
   const [deleteResponse, setDeleteResponse] = useState(null);
+  
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
@@ -153,7 +154,7 @@ const UserManagement = () => {
     },
     {
       dataField: 'number',
-      text: 'Phone Number',
+      text: 'Phone',
       sort: true,
     },
     {
@@ -163,20 +164,21 @@ const UserManagement = () => {
     },
     {
       dataField: 'roleDetail',
-      text: '',
+      text: 'Action',
       formatter: (cell) => {
+        console.log('CELL:', cell);
         cell = cell.split(',');
         return (
           <>
             {
-              cell[0] == "guardian" ? (
-                cell[1] == 1 ? (
-                  <button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
-                    View Children
-                  </button>
-                ) : <button className='btn btn-outline-danger' onClick={() => navigate('/child-enrollment')}>
+              (cell[0] === "guardian" && cell[1] === 0) ? (
+                  <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
                   New Children
-                </button>
+                  </button>
+                ) : (cell[0] === "guardian" && cell[1] !== 0) ?
+                (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
+                View Children
+              </button>
               ) : ""
             }
           </>
