@@ -3,13 +3,14 @@ import { Col, Container, Form, Row, Button } from 'react-bootstrap';
 import { BASE_URL } from '../components/App';
 import { DynamicFormValidation } from '../helpers/validation';
 import InputFields from './InputFields';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import { getSuggestedQuery } from '@testing-library/react';
 let values = [];
 const DynamicForm = (props) => {
   const location = useLocation();
+  const navigate= useNavigate();
   console.log('location----->', location);
   const [formData, setFormData] = useState([]);
   const [errors, setErrors] = useState({});
@@ -58,6 +59,7 @@ const DynamicForm = (props) => {
       .then((response) => response.json())
       .then((result) => {
         setTargetUser(result?.data);
+        
       })
       .catch((error) => console.log('error', error));
   };
@@ -103,6 +105,10 @@ const DynamicForm = (props) => {
                 }
               });
             }
+            else
+            {
+              data[item].push(inner_item);
+            }
             console.log('form_data---->1212', data);
           });
         });
@@ -121,7 +127,6 @@ const DynamicForm = (props) => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      alert('sucess');
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
       console.log('formData[0]?.form?.id---->', formData[0]?.form_id);
@@ -141,7 +146,7 @@ const DynamicForm = (props) => {
         .then((response) => response.text())
         .then((result) => {
           result = JSON.parse(result);
-          alert(result?.message);
+          navigate("/form");
         })
         .catch((error) => console.log('error', error));
     }

@@ -340,7 +340,7 @@ const AddNewTraining = () => {
                           <Form.Label>Training Name*</Form.Label>
                           <Form.Control
                             type="text"
-                            maxLength={20}
+                            maxLength={100}
                             name="title"
                             placeholder="Enter Training Title"
                             // onKeyPress={(e) => {

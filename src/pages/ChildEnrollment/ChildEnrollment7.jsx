@@ -193,11 +193,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           localStorage.removeItem('consent_comment');
           localStorage.removeItem('has_given_consent');
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`http://localhost:5000/children/${parent_id}`;
+          window.location.href=`${BASE_URL}/children/${parent_id}`;
         }
       } else {
         let parent_id = localStorage.getItem('enrolled_parent_id');
-        window.location.href=`http://localhost:5000/children/${parent_id}`;
+        window.location.href=`${BASE_URL}/children/${parent_id}`;
       }
     }
   }
