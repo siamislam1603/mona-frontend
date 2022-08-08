@@ -54,24 +54,24 @@ const SignIn = () => {
       let redirectTo = JSON.parse(localStorage.getItem('redirectURL'))
 
       if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = redirectTo || '/franchisor-dashboard';
+        window.location.href = '/franchisor-dashboard';
         localStorage.setItem('selectedFranchisee',"All")
       } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 0) {
         window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 1) {
-        window.location.href = redirectTo || '/coordinator-dashboard';
+        window.location.href = '/coordinator-dashboard';
       } else if(res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 0) {
         window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 1) {
-        window.location.href = redirectTo || '/franchisee-dashboard';
+        window.location.href = '/franchisee-dashboard';
       } else if(res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 0) {
         window.location.href = redirectTo || '/change-password';
       } else if (res.data.user.role === 'educator' && res.data.user.isLoggedIn === 1) {
-        window.location.href = redirectTo || '/educator-dashboard';
+        window.location.href = '/educator-dashboard';
       } else if(res.data.user.role === 'educator' && res.data.user.isLoggedIn === 0) {
         window.location.href= redirectTo || "/change-password";
       } else if (res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 1) {
-        window.location.href = redirectTo || '/parents-dashboard';
+        window.location.href = '/parents-dashboard';
       } else if(res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 0) {
         window.location.href= redirectTo || "/change-password";
       }
