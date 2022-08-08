@@ -48,6 +48,7 @@ function fetchRealatedFileName(fileURLString) {
 
 const EditTraining = () => {
   const { trainingId } = useParams();
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
 
@@ -64,13 +65,10 @@ const EditTraining = () => {
 
   const [coverImage, setCoverImage] = useState({});
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
-
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
-
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
-
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [franchiseeList, setFranchiseeList] = useState();
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState();
@@ -134,6 +132,7 @@ const EditTraining = () => {
     }
   };
 
+
   const fetchTrainingData = async () => {
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
@@ -142,7 +141,6 @@ const EditTraining = () => {
         "Authorization": "Bearer " + token
       }
     });
-
     console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
@@ -150,6 +148,9 @@ const EditTraining = () => {
       copyDataToStates(training);
     }
   };
+  // console.log(editTrainingData, "editTrainingData")
+
+
 
   const copyDataToStates = (training) => {
     // POPULATING STATES WITH THE FETCHED DATA
@@ -162,7 +163,6 @@ const EditTraining = () => {
       time_unit: training?.completion_time?.split(" ")[1],
       time_required_to_complete: training?.completion_time?.split(" ")[0],
     }));
-
     setTrainingSettings(prevState => ({
       ...prevState,
       start_date: moment(training?.start_date).format('YYYY-MM-DD'),
@@ -188,6 +188,7 @@ const EditTraining = () => {
   const updateTraining = async (data) => {
     console.log('CREATING THE TRAINING');
     const token = localStorage.getItem('token');
+
     const response = await axios.put(
       `${BASE_URL}/training/updateTraining/${trainingId}`, data, {
       headers: {
@@ -276,12 +277,11 @@ const EditTraining = () => {
     }));
   };
 
+
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
-
     let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles);
-
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
@@ -310,7 +310,6 @@ const EditTraining = () => {
         relatedFiles.forEach((file, index) => {
           data.append(`images`, file);
         });
-
         window.scrollTo(0, 0);
         setCreateTrainingModal(true);
         setLoader(true);
@@ -385,7 +384,7 @@ const EditTraining = () => {
                             <Form.Label>Training Name</Form.Label>
                             <Form.Control
                               type="text"
-                              maxLength={20}
+                              maxLength={100}
                               name="title"
                               value={trainingData?.title}
                               onChange={handleTrainingData}
