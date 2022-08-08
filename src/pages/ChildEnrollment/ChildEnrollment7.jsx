@@ -43,8 +43,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   const fetchChildDataAndPopulate = async () => {
     let token = localStorage.getItem('token');
-    let enrolledChildId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    // let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let response = await axios.get(`${BASE_URL}/enrollment/child/14`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
