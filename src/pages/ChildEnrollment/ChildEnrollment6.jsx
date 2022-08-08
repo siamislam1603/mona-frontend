@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
-import { useEffect } from "react";
 
 
 
