@@ -51,8 +51,11 @@ import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
 import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
+import ChildNotifications from '../pages/ChildEnrollment/ChildNotifications';
 import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
 import FileRpositoryList from '../pages/FileRpositoryList';
+import FilerepoMyAdd from '../pages/FilerepoMyAdd';
+import RepoEdit from '../pages/RepoEdit';
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
@@ -62,12 +65,10 @@ const Main = () => {
 
 
     if (item) {
-
-
       // SETTING 2 HOURS TIMEOUT FOR LOGOUT
       const loginTime = new Date();
       const logoutTime = new Date();
-      logoutTime.setTime(loginTime.getTime() + 1 * 60 * 60 * 1000); // 1 HOUR
+      logoutTime.setTime(loginTime.getTime() + 2 * 60 * 60 * 1000); // 1 HOUR
       console.log("Auto logout at:", logoutTime);
 
       function autoLogout() {
@@ -123,6 +124,16 @@ const Main = () => {
             </Protected>
           }
         />
+
+        <Route 
+          path="/child-enrollment/notification"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildNotifications />
+            </Protected>
+          }
+          />
 
         <Route
           path="/child-enrollment"
@@ -522,7 +533,24 @@ const Main = () => {
             </Protected>
           }
         />
-
+        <Route
+          path="/file-repository-List-me/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FilerepoMyAdd />
+            </Protected>
+          }
+        />
+        <Route
+          path="/file-repository-Edit/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <RepoEdit />
+            </Protected>
+          }
+        />
         <Route
           path="/announcements"
           element={
@@ -577,7 +605,7 @@ const Main = () => {
           }
         />
         <Route
-          path="/file-repository-List"
+          path="/file-repository-List/:id"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

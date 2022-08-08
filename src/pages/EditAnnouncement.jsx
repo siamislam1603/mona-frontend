@@ -50,7 +50,9 @@ const EditAnnouncement = () => {
   const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
   
   //Copy Announcement Data
-  const [announcementCopyData,setAnnouncementCopyData] = useState({})
+  const [announcementCopyData,setAnnouncementCopyData] = useState({
+  is_event:0
+  })
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
   const [theVideo,setTheVideo] = useState({})
@@ -298,7 +300,8 @@ const EditAnnouncement = () => {
     meta_description: announcementData?.meta_description,
     start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
     start_time: moment(announcementData?.scheduled_date).utc().format('HH:mm'),
-    franchise: announcementData.franchise
+    franchise: announcementData.franchise,
+    is_event: announcementData.is_event,
   }))
   setAnnouncementsSettings(prevState =>({
     ...prevState,
@@ -342,8 +345,8 @@ const EditAnnouncement = () => {
   // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   // console.log("The COPY DATA",announcementCopyData )
   // console.log("THE VIDEO DATA",fetchedVideoTutorialFiles)
-  // console.log("ANNOUNCEMENT DATA",announcementData)
-  console.log("The cover image",coverImage)
+  console.log("ANNOUNCEMENT DATA",announcementData)
+  console.log("The cover image",announcementCopyData)
   const dateToFormat = '1976-04-19T12:59-0500';
   // start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
 
@@ -553,6 +556,48 @@ const EditAnnouncement = () => {
                 {errors.start_time && <p className="form-errors">{errors.start_time}</p>}
 
               </Col>
+              <Col lg={3} sm={6}>
+                  <Form.Group >
+                    <div className="btn-radio inline-col">
+                      <Form.Label>Event or Announcement</Form.Label>
+                      <div>
+                      <Form.Check
+                        type="radio"
+                        name="is_event"
+                        id="a"
+                        label="Announcement"
+                        checked={announcementCopyData && announcementCopyData.is_event === 0}
+                        onChange={(e) => {
+                          setAnnouncementCopyData((prevState) => ({
+                            ...prevState,
+                            // [name]: value,
+                            is_event:0
+                          })); 
+                        }}
+                        
+                        
+                       
+                         />
+                      <Form.Check
+                        type="radio"
+                        name="is_event"
+                        id="e"
+                        checked={announcementCopyData && announcementCopyData.is_event === 1}
+
+                        onChange={(e) => {
+                          setAnnouncementCopyData((prevState) => ({
+                            ...prevState,
+                            // [name]: value,
+                            is_event:1
+                          })); 
+                        }}
+                        label="Event"
+                         />
+                      </div>
+                    
+                    </div>
+                  </Form.Group>
+                </Col>
                     </Row>
                     <div className="my-new-formsection">
                     <Row>

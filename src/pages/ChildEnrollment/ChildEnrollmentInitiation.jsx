@@ -46,7 +46,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     event.preventDefault();
     console.log('SUBMITTING FORM DATA');
     let token = localStorage.getItem('token');
-    let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData }, {
+    let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: localStorage.getItem('franchisee_id') }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }

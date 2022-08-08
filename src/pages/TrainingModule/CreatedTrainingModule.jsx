@@ -15,21 +15,23 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [shareType, setShareType] = useState("roles");
   const [userList, setUserList] = useState();
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
+  const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [formSettings, setFormSettings] = useState({
-    user_roles: [],
+    assigned_roles: [],
     assigned_franchisee: [],
     assigned_users: []
   });
 
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
+
     const response = await axios.get(`${BASE_URL}/role/franchisee`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       setFranchiseeList(response.data.franchiseeList.map(data => ({
         id: data.id,
         cat: data.franchisee_alias,
@@ -42,7 +44,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_");
     const response = await axios.get(`${BASE_URL}/user-group/users/franchisee/${franchisee_alias}`);
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setUserList(users.map(user => ({
         id: user.id,
@@ -57,21 +59,34 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const handleTrainingSharing = async () => {
     let token = localStorage.getItem('token');
     let user_id = localStorage.getItem('user_id')
-    const response = await axios.post(`${BASE_URL}/share/${saveTrainingId}`, {
+    const response = await axios.post(`${BASE_URL}/share/${saveTrainingId}?titlePage=share`, {
       ...formSettings,
-      shared_by: user_id,
-      is_applicable_to_all: applicableToAll
+      shared_by: parseInt(user_id),
     }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       // const { dataObj } = response.data;
       
     }
   }
+
+  const fetchFranchiseeUsers = async (franchisee_id) => {
+    const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
+    if (response.status === 200 && Object.keys(response.data).length > 1) {
+      const { users } = response.data;
+      setFetchedFranchiseeUsers([
+        ...users?.map((data) => ({
+          id: data.id,
+          cat: data.fullname.toLowerCase().split(" ").join("_"),
+          key: data.fullname
+        })),
+      ]);
+    }
+  };
 
   const fetchCreatedTrainings = async () => {
     try {
@@ -83,7 +98,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
         }
       });
 
-      if(response.status === 200 && response.data.status === "success") {
+      if (response.status === 200 && response.data.status === "success") {
         const { searchedData } = response.data;
         let myTrainings = searchedData.filter(training => training.addedBy === parseInt(user_id));
         let otherTrainings = searchedData.filter(training => training.addedBy !== parseInt(user_id));
@@ -91,7 +106,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
         setMyTrainingData(myTrainings);
         setOtherTrainingData(otherTrainings);
       }
-    } catch(error) {
+    } catch (error) {
       console.log('Erorr:', error);
     }
   };
@@ -105,13 +120,45 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
         "Authorization": `Bearer ${token}`
       }
     });
-    
+
     // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       setTrainingDeleteMessage(response.data.message);
-    } else if(response.status === 200 && response.data.status === "fail") {
+    } else if (response.status === 200 && response.data.status === "fail") {
       setTrainingDeleteMessage(response.data.message);
     }
+  }
+
+  // FETCH TRAINING DATA
+  const fetchTrainingData = async (trainingId) => {
+    console.log('TRAINING ID:', trainingId);
+    const userId = localStorage.getItem('user_id');
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${userId}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    console.log('RESPONSE EDIT TRAINING:', response);
+    if (response.status === 200 && response.data.status === "success") {
+      const { training } = response.data;
+      console.log('TRAINING:', training);
+      copyDataToStates(training);
+    }
+  };
+
+  const copyDataToStates = (training) => {
+    setFormSettings(prevState => ({
+      ...prevState,
+      assigned_users: training?.shares[0]?.assigned_users,
+      assigned_roles: training?.shares[0]?.assigned_roles,
+      assigned_franchisee: training?.shares[0]?.franchisee,
+      applicable_to: training?.shares[0]?.applicable_to,
+      send_to_all_franchisee: training?.shares[0]?.franchisee === 'all' ? true : false,
+    }));  
+
+    fetchFranchiseeUsers(training?.shares[0]?.franchisee[0]);
   }
 
   useEffect(() => {
@@ -121,12 +168,25 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   useEffect(() => {
     fetchUserList();
   }, [selectedFranchisee]);
-  
+
   useEffect(() => {
     fetchFranchiseeList();
   }, [])
 
+  useEffect(() => {
+    fetchTrainingData(saveTrainingId);
+    console.log('SAVE TRAINING ID:', saveTrainingId);
+  }, [saveTrainingId]);
+
+  // useEffect(() => {
+  //   if(formSettings.assigned_franchisee[0] !== 'all') {
+  //     console.log('fetching franchisee', formSettings?.assigned_franchisee[0], 'uesrs!');
+  //     fetchFranchiseeUsers(formSettings?.assigned_franchisee[0]);
+  //   }
+  // }, [formSettings?.assigned_franchisee]);
+
   formSettings && console.log('FORM SETTINGS:', formSettings);
+  fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
   // otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
   return (
     <>
@@ -135,41 +195,41 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
           <Row style={{ marginBottom: '40px' }}>
             {myTrainingData?.length > 0 && <h1>Created by me</h1>}
             {myTrainingData?.map((training) => {
-            return(
-            <Col lg={4} md={6} key={training.id}>
-              <div className="item mt-3 mb-3">
-                <div className="pic">
-                  <a href={`/training-detail/${training.id}`}>
-                    <img src={training.coverImage} alt=""/>
-                    <span className="lthumb">
-                      <img src="../img/logo-thumb.png" alt=""/>
-                    </span>
-                  </a>
-                </div>
-                <div className="fixcol">
-                  <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                  <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a> <span className="time">{training.completion_time}</span></div>
-                  <div className="cta-col">
-                    <Dropdown>
-                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                        <img src="../img/dot-ico.svg" alt=""/>
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => {
-                          if(window.confirm("Are you sure you want to delete this training?"))
-                            handleTrainingDelete(training.id)
-                        }}>Delete</Dropdown.Item>
-                        <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
-                        <Dropdown.Item href="#" onClick={() => {
-                          setSaveTrainingId(training.id);
-                          setShowModal(true)
-                        }}>Share</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
+              return (
+                <Col lg={4} md={6} key={training.id}>
+                  <div className="item mt-3 mb-3">
+                    <div className="pic">
+                      <a href={`/training-detail/${training.id}`}>
+                        <img src={training.coverImage} alt="" />
+                        <span className="lthumb">
+                          <img src="../img/logo-thumb.png" alt="" />
+                        </span>
+                      </a>
+                    </div>
+                    <div className="fixcol">
+                      <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                      <div className="cta-col">
+                        <Dropdown>
+                          <Dropdown.Toggle variant="transparent" id="ctacol">
+                            <img src="../img/dot-ico.svg" alt="" />
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this training?"))
+                                handleTrainingDelete(training.id)
+                            }}>Delete</Dropdown.Item>
+                            <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
+                            <Dropdown.Item href="#" onClick={() => {
+                              setSaveTrainingId(training.id);
+                              setShowModal(true)
+                            }}>Share</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </Col>
+                </Col>
               );
             })}
           </Row>
@@ -179,83 +239,85 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
               otherTrainingData?.length > 0 && <h1 style={{ marginBottom: '25px' }}>Created by others</h1>
             }
             {otherTrainingData?.map((training) => {
-            return(
-            <Col lg={4} md={6} key={training.id}>
-              <div 
-                className="item mt-3 mb-3">
-                <div className="pic">
-                  <a href={`/training-detail/${training.id}`}>
-                    <img src={training.coverImage} alt=""/>
-                    <span className="lthumb">
-                      <img src="../img/logo-thumb.png" alt=""/>
-                    </span>
-                  </a>
-                </div>
-                <div className="fixcol">
-                  <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                  <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
-                  <div className="cta-col">
-                    <Dropdown>
-                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                        <img src="../img/dot-ico.svg" alt=""/>
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item href="#">Delete</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
+              return (
+                <Col lg={4} md={6} key={training.id}>
+                  <div
+                    className="item mt-3 mb-3">
+                    <div className="pic">
+                      <a href={`/training-detail/${training.id}`}>
+                        <img src={training.coverImage} alt="" />
+                        <span className="lthumb">
+                          <img src="../img/logo-thumb.png" alt="" />
+                        </span>
+                      </a>
+                    </div>
+                    <div className="fixcol">
+                      <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                      <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
+                      <div className="cta-col">
+                        <Dropdown>
+                          <Dropdown.Toggle variant="transparent" id="ctacol">
+                            <img src="../img/dot-ico.svg" alt="" />
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Item href="#">Delete</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </div>
+                    </div>
+                    <div className="created-by">
+                      <h4 className="title">Created by:</h4>
+                      <div className="createrimg">
+                        <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
+                      </div>
+                      <p>{training.user?.fullname}, <span>{training.user?.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
+                    </div>
                   </div>
-                </div>
-                <div className="created-by">
-                  <h4 className="title">Created by:</h4>
-                  <div className="createrimg">
-                    <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
-                  </div>
-                  <p>{training.user?.fullname}, <span>{training.user?.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
-                </div>
-              </div>
-            </Col>
+                </Col>
               );
             })}
           </Row>
         </div>
       </div>
+      
+      {
+        formSettings &&
+        <Modal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          size="lg"
+          className="form-settings-modal"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered>
+          <Modal.Header closeButton>
+            <Modal.Title
+              id="contained-modal-title-vcenter"
+              className="modal-heading">
+              <img src="../../img/carbon_settings.svg" />
+              Form Settings
+            </Modal.Title>
+          </Modal.Header>
 
-      <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        size="lg"
-        className="form-settings-modal"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered>
-        <Modal.Header closeButton>
-          <Modal.Title
-            id="contained-modal-title-vcenter"
-            className="modal-heading">
-            <img src="../../img/carbon_settings.svg" />
-            Form Settings
-          </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
+          <Modal.Body>
             <div className="form-settings-content">
               <Row className="mt-4">
                 <Col lg={3} md={6}>
-                <Form.Group>
+                  <Form.Group>
                     <Form.Label>Send to all franchisee:</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
                         <label for="all">
                           <input
                             type="radio"
-                            checked={sendToAllFranchisee === 'all'}
+                            checked={formSettings?.send_to_all_franchisee === true}
                             name="send_to_all_franchisee"
                             id="all"
                             onChange={() => {
                               setFormSettings(prevState => ({
                                 ...prevState,
+                                send_to_all_franchisee: true,
                                 assigned_franchisee: ['all']
                               }));
-                              setSendToAllFranchisee('all')
                             }}
                           />
                           <span className="radio-round"></span>
@@ -267,14 +329,14 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                           <input
                             type="radio"
                             name="send_to_all_franchisee"
-                            checked={sendToAllFranchisee === 'none'}
+                            checked={formSettings?.send_to_all_franchisee === false}
                             id="none"
                             onChange={() => {
                               setFormSettings(prevState => ({
                                 ...prevState,
+                                send_to_all_franchisee: false,
                                 assigned_franchisee: []
                               }));
-                              setSendToAllFranchisee('none')
                             }}
                           />
                           <span className="radio-round"></span>
@@ -290,19 +352,20 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                     <Form.Label>Select Franchisee</Form.Label>
                     <div className="select-with-plus">
                       <Multiselect
-                        disable={sendToAllFranchisee === 'all'}
+                        disable={formSettings?.send_to_all_franchisee === true}
                         placeholder={"Select User Names"}
                         singleSelect={true}
                         displayValue="key"
+                        selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.assigned_franchisee) === d.id)}
                         className="multiselect-box default-arrow-select"
-                        onKeyPressFn={function noRefCheck() {}}
+                        onKeyPressFn={function noRefCheck() { }}
                         onRemove={function noRefCheck(data) {
                           setFormSettings((prevState) => ({
                             ...prevState,
                             assigned_franchisee: [...data.map(data => data.id)],
                           }));
                         }}
-                        onSearch={function noRefCheck() {}}
+                        onSearch={function noRefCheck() { }}
                         onSelect={function noRefCheck(data) {
                           setFormSettings((prevState) => ({
                             ...prevState,
@@ -312,30 +375,27 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                         options={franchiseeList}
                       />
                     </div>
-                  </Form.Group> 
+                  </Form.Group>
                 </Col>
               </Row>
 
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Accessible to:</Form.Label>
+                    <Form.Label>Applicable to:</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
                         <label for="roles">
                           <input
                             type="radio"
-                            checked={shareType === "roles"}
+                            checked={formSettings?.applicable_to === 'roles'}
                             name="accessible_to_role"
                             id="roles"
-                            onChange={() => {
-                              setFormSettings(prevState => ({
+                            onChange={(event) => {
+                              setFormSettings((prevState) => ({
                                 ...prevState,
-                                assigned_users: [],
-                                assigned_users_data: []
+                                applicable_to: 'roles',
                               }));
-                              setApplicableToAll(true);
-                              setShareType("roles");
                             }}
                           />
                           <span className="radio-round"></span>
@@ -347,15 +407,13 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                           <input
                             type="radio"
                             name="accessible_to_role"
-                            checked={shareType === "users"}
+                            checked={formSettings?.applicable_to === 'users'}
                             id="users"
-                            onChange={() => {
-                              setFormSettings(prevState => ({
+                            onChange={(event) => {
+                              setFormSettings((prevState) => ({
                                 ...prevState,
-                                user_roles: []
+                                applicable_to: 'users',
                               }));
-                              setApplicableToAll(false);
-                              setShareType("users");
                             }}
                           />
                           <span className="radio-round"></span>
@@ -367,99 +425,103 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                 </Col>
 
                 <Col lg={9} md={12}>
-                {  
-                  shareType === "roles" ? 
-                  <>
-                    <Form.Label className="d-block">Select User Roles</Form.Label>
-                      <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
-                        <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
-                          <Form.Check 
-                            type="checkbox" 
-                            checked={formSettings.user_roles.includes("coordinator")}
-                            label="Co-ordinators"
-                            onChange={() => {
-                              if(formSettings.user_roles.includes("coordinator")) {
-                                let data = formSettings.user_roles.filter(t => t !== "coordinator");
-                                setFormSettings(prevState => ({
-                                  ...prevState,
-                                  user_roles: [...data]
-                                }));
-                              }
+                  {
+                    formSettings?.applicable_to === "roles" ?
+                      <>
+                        <Form.Label className="d-block">Select User Roles</Form.Label>
+                        <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
+                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                            <Form.Check
+                              type="checkbox"
+                              checked={formSettings?.assigned_roles?.includes("coordinator")}
+                              label="Co-ordinators"
+                              onChange={() => {
+                                if (formSettings.assigned_roles.includes("coordinator")) {
+                                  let data = formSettings.assigned_roles.filter(t => t !== "coordinator");
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [...data]
+                                  }));
+                                }
 
-                              if(!formSettings.user_roles.includes("coordinator"))
-                                setFormSettings(prevState => ({
-                                ...prevState,
-                                user_roles: [...formSettings.user_roles, "coordinator"]
-                            }))}} />
-                        </Form.Group>
-                        
-                        <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
-                          <Form.Check 
-                            type="checkbox" 
-                            label="Educators"
-                            checked={formSettings.user_roles.includes("educator")}
-                            onChange={() => {
-                              if(formSettings.user_roles.includes("educator")) {
-                                let data = formSettings.user_roles.filter(t => t !== "educator");
-                                setFormSettings(prevState => ({
-                                  ...prevState,
-                                  user_roles: [...data]
-                                }));
-                              }
+                                if (!formSettings.assigned_roles.includes("coordinator"))
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [...formSettings.assigned_roles, "coordinator"]
+                                  }))
+                              }} />
+                          </Form.Group>
 
-                              if(!formSettings.user_roles.includes("educator"))
-                                setFormSettings(prevState => ({
-                                ...prevState,
-                                user_roles: [...formSettings.user_roles, "educator"]
-                            }))}} />
-                        </Form.Group>
+                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                            <Form.Check
+                              type="checkbox"
+                              label="Educators"
+                              checked={formSettings.assigned_roles.includes("educator")}
+                              onChange={() => {
+                                if (formSettings.assigned_roles.includes("educator")) {
+                                  let data = formSettings.assigned_roles.filter(t => t !== "educator");
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [...data]
+                                  }));
+                                }
 
-                        <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
-                          <Form.Check 
-                            type="checkbox" 
-                            label="Guardians"
-                            checked={formSettings.user_roles.includes("guardian")}
-                            onChange={() => {
-                              if(formSettings.user_roles.includes("guardian")) {
-                                let data = formSettings.user_roles.filter(t => t !== "guardian");
-                                setFormSettings(prevState => ({
-                                  ...prevState,
-                                  user_roles: [...data]
-                                }));
-                              }
+                                if (!formSettings.assigned_roles.includes("educator"))
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [...formSettings.assigned_roles, "educator"]
+                                  }))
+                              }} />
+                          </Form.Group>
 
-                              if(!formSettings.user_roles.includes("guardian"))
-                                setFormSettings(prevState => ({
-                                ...prevState,
-                                user_roles: [...formSettings.user_roles, "guardian"]
-                            }))}} />
-                        </Form.Group>
+                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
+                            <Form.Check
+                              type="checkbox"
+                              label="Guardians"
+                              checked={formSettings.assigned_roles.includes("guardian")}
+                              onChange={() => {
+                                if (formSettings.assigned_roles.includes("guardian")) {
+                                  let data = formSettings.assigned_roles.filter(t => t !== "guardian");
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [...data]
+                                  }));
+                                }
 
-                        <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                          <Form.Check 
-                            type="checkbox" 
-                            label="All Roles"
-                            checked={formSettings.user_roles.length === 3}
-                            onChange={() => {
-                              if(formSettings.user_roles.includes("coordinator") 
-                                  && formSettings.user_roles.includes("educator")
-                                  && formSettings.user_roles.includes("guardian")) {
-                                    setFormSettings(prevState => ({
-                                      ...prevState,
-                                      user_roles: [],
-                                    }));
-                                  }
-                                
-                              if(!formSettings.user_roles.includes("coordinator") 
-                                  && !formSettings.user_roles.includes("educator")
-                                  && !formSettings.user_roles.includes("guardian"))
-                                setFormSettings(prevState => ({
-                                  ...prevState,
-                                  user_roles: ["coordinator", "educator", "guardian"]
-                                })
-                            )}} />
-                        </Form.Group>
-                      </div> </>:
+                                if (!formSettings.assigned_roles.includes("guardian"))
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [...formSettings.assigned_roles, "guardian"]
+                                  }))
+                              }} />
+                          </Form.Group>
+
+                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                            <Form.Check
+                              type="checkbox"
+                              label="All Roles"
+                              checked={formSettings.assigned_roles.length === 3}
+                              onChange={() => {
+                                if (formSettings.assigned_roles.includes("coordinator")
+                                  && formSettings.assigned_roles.includes("educator")
+                                  && formSettings.assigned_roles.includes("guardian")) {
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [],
+                                  }));
+                                }
+
+                                if (!formSettings.assigned_roles.includes("coordinator")
+                                  && !formSettings.assigned_roles.includes("educator")
+                                  && !formSettings.assigned_roles.includes("guardian"))
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: ["coordinator", "educator", "guardian"]
+                                  })
+                                  )
+                              }} />
+                          </Form.Group>
+                        </div> </> :
                       <Form.Group>
                         <Form.Label>Select User</Form.Label>
                         <div className="select-with-plus">
@@ -467,43 +529,43 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             placeholder={"Select User Names"}
                             displayValue="key"
                             className="multiselect-box default-arrow-select"
-                            onKeyPressFn={function noRefCheck() {}}
+                            selectedValues={fetchedFranchiseeUsers?.filter(d => formSettings?.assigned_users.includes(d.id + ""))}
+                            onKeyPressFn={function noRefCheck() { }}
                             onRemove={function noRefCheck(data) {
                               setFormSettings((prevState) => ({
                                 ...prevState,
                                 assigned_users: [...data.map(data => data.id)],
-                                assigned_users_data: [...data.map(data => data)]
                               }));
                             }}
-                            onSearch={function noRefCheck() {}}
+                            onSearch={function noRefCheck() { }}
                             onSelect={function noRefCheck(data) {
                               setFormSettings((prevState) => ({
                                 ...prevState,
                                 assigned_users: [...data.map((data) => data.id)],
-                                assigned_users_data: [...data.map(data => data)]
                               }));
                             }}
-                            options={userList}
+                            options={fetchedFranchiseeUsers}
                           />
                         </div>
-                    </Form.Group> 
+                      </Form.Group>
                   }
                 </Col>
               </Row>
             </div>
-        </Modal.Body>
-        <Modal.Footer className="justify-content-center">
-          <Button className="back" onClick={() => setShowModal(false)}>Cancel</Button>
-          <Button 
-            className="done" 
-            onClick={() => {
-              setShowModal(false);
-              handleTrainingSharing();
-            }}>
-            Save Settings
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          </Modal.Body>
+          <Modal.Footer className="justify-content-center">
+            <Button className="back" onClick={() => setShowModal(false)}>Cancel</Button>
+            <Button
+              className="done"
+              onClick={() => {
+                setShowModal(false);
+                handleTrainingSharing();
+              }}>
+              Save Settings
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      }
     </>
   );
 };

@@ -11,6 +11,7 @@ const CoparentAssignPopup = (props) => {
   const [selectedParents, setSelectedParents] = useState([])
   const handleClose = () => props.handleClose();
     const assignParents = async() => {
+        console.log(selectedParents,"selPar")
         let childId = localStorage.getItem("SelectedChild")
         let response =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds: selectedParents}, {
             headers: {
@@ -36,12 +37,13 @@ const selectRow = {
     onSelect: (row, isSelect, rowIndex, e) => {
         if (isSelect) {
             let arr = selectedParents
-            arr.push(row.id)
+            arr.push(row.parentId)
             setSelectedParents(arr)
         }
         else {
+            console.log(row,"row")
             let arr = selectedParents
-            let index = arr.indexOf(row.id)
+            let index = arr.indexOf(row.parentId)
             let removed = arr.splice(index, 1);
             setSelectedParents(arr)
         }
@@ -50,7 +52,7 @@ const selectRow = {
     
         if (isSelect) {
             rows = rows.map((row)=>{
-                return row.id
+                return row.parentId
             })
             setSelectedParents(rows)
         }
@@ -61,9 +63,10 @@ const selectRow = {
 };
 
 const products = props.parents.map((parent)=>({
-    id: parent.id,
+    id: parent.parent.parentId,
     name: parent.fullname + "," + (parent.profile_photo ? parent.profile_photo : "../img/user.png"),
-    Location: parent.city
+    Location: parent.city,
+    parentId:parent.parent.parentId
 }))
 
 const PopColumns = [

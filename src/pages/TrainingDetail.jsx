@@ -23,7 +23,7 @@ const TrainingDetail = () => {
   const [trainingFinishedDate, setTrainingFinishedDate] = useState(null);
   const [users, setUsers] = useState();
   const [relatedForms, setRelatedForms] = useState();
-  
+
   // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
     const user_id = localStorage.getItem('user_id');
@@ -34,9 +34,9 @@ const TrainingDetail = () => {
         "Authorization": "Bearer " + token
       }
     });
-    console.log("The response",response)
+    console.log("The response", response)
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
       setTrainingDetails(training);
     }
@@ -55,13 +55,13 @@ const TrainingDetail = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { userObj } = response.data;
       setUsers(userObj.map(user => ({
         id: user.id,
         name: user.fullname,
         role: user.role,
-        finish_date: user.finish_date 
+        finish_date: user.finish_date
       })));
     }
   }
@@ -77,7 +77,7 @@ const TrainingDetail = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       setTrainingFinishedDate(response.data.finished_date);
       setHideTrainingFinishButton(true);
     }
@@ -94,16 +94,16 @@ const TrainingDetail = () => {
     });
 
 
-    if(response.status === 200 && response.data.status === "hidden") {
+    if (response.status === 200 && response.data.status === "hidden") {
       setHideTrainingFinishButton(false);
-    } else if(response.status === 200 && response.data.status === "success") {
+    } else if (response.status === 200 && response.data.status === "success") {
       let { finished_date } = response.data;
       setTrainingFinishedDate(finished_date);
       setHideTrainingFinishButton(true);
     }
   };
 
-  useEffect(() =>{
+  useEffect(() => {
     getTrainingDetails();
     fetchTrainingFinishDate();
     fetchUsersWithFinishTraining();
@@ -121,19 +121,19 @@ const TrainingDetail = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader 
+                <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
                 {trainingDetails &&
-                <div className="entry-container">
-                  <header className="title-head">
-                    <div className="traning-head">
-                      <h1 className="title-sm mb-2">{trainingDetails.title}</h1>
-                      <small class="d-block">Due Date: {moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
-                    </div>
-                    <div className="othpanel">
-                      <div className="extra-btn">
-                        {/* <Dropdown>
+                  <div className="entry-container">
+                    <header className="title-head">
+                      <div className="traning-head">
+                        <h1 className="title-sm mb-2">{trainingDetails.title}</h1>
+                        <small class="d-block">Due Date: {moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
+                      </div>
+                      <div className="othpanel">
+                        <div className="extra-btn">
+                          {/* <Dropdown>
                           <Dropdown.Toggle id="extrabtn" className="ctaact">
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
@@ -141,212 +141,213 @@ const TrainingDetail = () => {
                             <Dropdown.Item href="#">Delete All</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown> */}
+                        </div>
                       </div>
-                    </div>
-                  </header>
-                  <div className="traning-detail-sec">
-                    <div className="thumb-vid">
-                      <img 
-                        src={trainingDetails.coverImage}
-                        alt="video thumbnail" />
-                    </div>
-                    <div className="created-by">
-                      <h4 className="title">Created by:</h4>
-                      <div className="createrimg">
-                        <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
+                    </header>
+                    <div className="traning-detail-sec">
+                      <div className="thumb-vid">
+                        <img
+                          src={trainingDetails.coverImage}
+                          alt="video thumbnail" />
                       </div>
-                      <p>{trainingDetails.user_data.fullname}, <span>{trainingDetails.user_data.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
-                    </div>
-                    <div className="training-cont mt-3 mb-5">
-                      <p>{trainingDetails.description}</p>
-                    </div>
-                    
-                    <Row>
-                      <Col lg={5} md={6}>
-                        <div className="video-tuto-sec mb-5">
-                          <h3 className="title-sm">Video Tutorials</h3>
-                          <div className="vid-col-sec">
+                      <div className="created-by">
+                        <h4 className="title">Created by:</h4>
+                        <div className="createrimg">
+                          <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
+                        </div>
+                        <p>{trainingDetails.user_data.fullname}, <span>{trainingDetails.user_data.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
+                      </div>
+                      <div className="training-cont mt-3 mb-5">
+                        <p>{trainingDetails.description}</p>
+                      </div>
+
+                      <Row>
+                        <Col lg={5} md={6}>
+                          <div className="video-tuto-sec mb-5">
+                            <h3 className="title-sm">Video Tutorials</h3>
+                            <div className="vid-col-sec">
+                              {console.log(trainingDetails, "trainingDetails")}
                               {
-                                trainingDetails.training_files.map((data,index) =>    
-                                  data.fileType === '.mp4' && 
-                                    (
-                                      <VideoPop 
-                                        data={data}
-                                        title={`Training Video ${index + 1}`}
-                                        duration={trainingDetails.completion_time} 
-                                        fun={handleClose}/>
-                                    )
+                                trainingDetails.training_files.map((data, index) =>
+                                  data.fileType === '.mp4' &&
+                                  (
+                                    <VideoPop
+                                      data={data}
+                                      title={`Training Video ${index + 1}`}
+                                      duration={trainingDetails.completion_time}
+                                      fun={handleClose} />
+                                  )
                                 )
                               }
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={7} md={6}>
-                        <div className="related-files-sec mb-5">  
-                          <h3 className="title-sm">Related Files</h3>
-                          <div className="column-list files-list two-col mb-5">
-                            {
-                              trainingDetails.training_files.map((data, index) => data.fileType !== '.mp4' && (
-                                <div className="item">
-                                  <div className="pic"><a href="">
-                                    <img src="../img/book-ico.png" alt="" /></a>
-                                  </div>
-                                  <div className="name">
-                                    <a href={data.file}>
-                                      {`document${index - 1}${data.fileType}`} <span className="time">{ trainingDetails.completion_time}</span>
-                                    </a>
-                                  </div>
-                                  <div className="cta-col">
-                                    <a href="">
-                                      <img src="../img/removeIcon.svg" alt="" />
-                                    </a>
-                                  </div>
-                                </div>
-                              ))
-                            }
-                          </div>
-                        </div>
-                      </Col>
-
-                      {
-                        relatedForms && 
-                        <Col md={12}>
-                          <div className="related-form-sec mb-5">  
-                            <h3 className="title-sm">Related Form</h3>
-                            <div className="column-list files-list three-col">
-                              <div className="item">
-                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                <div className="name"><a href="">Survey 1</a></div>
-                                <div className="cta-col">
-                                  <Dropdown>
-                                    <Dropdown.Toggle variant="transparent" id="ctacol">
-                                      <img src="../img/dot-ico.svg" alt=""/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </div>
-                              <div className="item">
-                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                <div className="name"><a href="">Survey 1</a></div>
-                                <div className="cta-col">
-                                  <Dropdown>
-                                    <Dropdown.Toggle variant="transparent" id="ctacol">
-                                      <img src="../img/dot-ico.svg" alt=""/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </div>
-                              <div className="item">
-                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                <div className="name"><a href="">Survey 1</a></div>
-                                <div className="cta-col">
-                                  <Dropdown>
-                                    <Dropdown.Toggle variant="transparent" id="ctacol">
-                                      <img src="../img/dot-ico.svg" alt=""/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </div>
-                              <div className="item">
-                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                <div className="name"><a href="">Survey 1</a></div>
-                                <div className="cta-col">
-                                  <Dropdown>
-                                    <Dropdown.Toggle variant="transparent" id="ctacol">
-                                      <img src="../img/dot-ico.svg" alt=""/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </div>
-                              <div className="item">
-                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                <div className="name"><a href="">Survey 1</a></div>
-                                <div className="cta-col">
-                                  <Dropdown>
-                                    <Dropdown.Toggle variant="transparent" id="ctacol">
-                                      <img src="../img/dot-ico.svg" alt=""/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </div>
-                              <div className="item">
-                                <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                <div className="name"><a href="">Survey 1</a></div>
-                                <div className="cta-col">
-                                  <Dropdown>
-                                    <Dropdown.Toggle variant="transparent" id="ctacol">
-                                      <img src="../img/dot-ico.svg" alt=""/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </div>
                             </div>
                           </div>
                         </Col>
-                      }
-                      
-                      {
-                        users && 
-                        <Col md={12}>
-                          <div className="training-participants-sec mb-5">  
-                            <h3 className="title-sm">Training Participants:</h3>
-                            <div className="column-list files-list three-col">
+                        <Col lg={7} md={6}>
+                          <div className="related-files-sec mb-5">
+                            <h3 className="title-sm">Related Files</h3>
+                            <div className="column-list files-list two-col mb-5">
                               {
-                                users.map(user => {
-                                  return (
-                                    <div className="item">
-                                      <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                                      <div className="name"><a href="">{user.name} <span class="time">{user.role}</span></a></div>
-                                      <div className="completed-col">
-                                        Completed on <span class="date">{moment(user.finish_date).format('MM/DD/YYYY')}</span>
-                                      </div>
+                                trainingDetails.training_files.map((data, index) => data.fileType !== '.mp4' && (
+                                  <div className="item">
+                                    <div className="pic"><a href="">
+                                      <img src="../img/book-ico.png" alt="" /></a>
                                     </div>
-                                  );
-                                })
+                                    <div className="name">
+                                      <a href={data.file}>
+                                        {`document${index - 1}${data.fileType}`} <span className="time">{trainingDetails.completion_time}</span>
+                                      </a>
+                                    </div>
+                                    <div className="cta-col">
+                                      <a href="">
+                                        <img src="../img/removeIcon.svg" alt="" />
+                                      </a>
+                                    </div>
+                                  </div>
+                                ))
                               }
                             </div>
                           </div>
                         </Col>
-                      }
-                    </Row>
 
-                    <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
-                      { hideTrainingFinishButton === true
-                        ? <p> You've finished this training on {moment(trainingFinishedDate).format(
-                          'MMMM Do, YYYY'
-                        )}</p>
-                        : <p>
+                        {
+                          relatedForms &&
+                          <Col md={12}>
+                            <div className="related-form-sec mb-5">
+                              <h3 className="title-sm">Related Form</h3>
+                              <div className="column-list files-list three-col">
+                                <div className="item">
+                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                  <div className="name"><a href="">Survey 1</a></div>
+                                  <div className="cta-col">
+                                    <Dropdown>
+                                      <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
+                                </div>
+                                <div className="item">
+                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                  <div className="name"><a href="">Survey 1</a></div>
+                                  <div className="cta-col">
+                                    <Dropdown>
+                                      <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
+                                </div>
+                                <div className="item">
+                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                  <div className="name"><a href="">Survey 1</a></div>
+                                  <div className="cta-col">
+                                    <Dropdown>
+                                      <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
+                                </div>
+                                <div className="item">
+                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                  <div className="name"><a href="">Survey 1</a></div>
+                                  <div className="cta-col">
+                                    <Dropdown>
+                                      <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
+                                </div>
+                                <div className="item">
+                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                  <div className="name"><a href="">Survey 1</a></div>
+                                  <div className="cta-col">
+                                    <Dropdown>
+                                      <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
+                                </div>
+                                <div className="item">
+                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
+                                  <div className="name"><a href="">Survey 1</a></div>
+                                  <div className="cta-col">
+                                    <Dropdown>
+                                      <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </Col>
+                        }
+
+                        {
+                          users &&
+                          <Col md={12}>
+                            <div className="training-participants-sec mb-5">
+                              <h3 className="title-sm">Training Participants:</h3>
+                              <div className="column-list files-list three-col">
+                                {
+                                  users.map(user => {
+                                    return (
+                                      <div className="item">
+                                        <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
+                                        <div className="name"><a href="">{user.name} <span class="time">{user.role}</span></a></div>
+                                        <div className="completed-col">
+                                          Completed on <span class="date">{moment(user.finish_date).format('MM/DD/YYYY')}</span>
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                }
+                              </div>
+                            </div>
+                          </Col>
+                        }
+                      </Row>
+
+                      <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
+                        {hideTrainingFinishButton === true
+                          ? <p> You've finished this training on {moment(trainingFinishedDate).format(
+                            'MMMM Do, YYYY'
+                          )}</p>
+                          : <p>
                             Please acknowledge by clicking below that you have
                             completed this training completely and can proceed
                             further.
                           </p>
-                        
-                      }
-                      <button className={`btn btn-primary ${hideTrainingFinishButton === true ? "d-none" : ""}`} onClick={handleFinishTraining}>
-                        Yes, I have completed the training
-                      </button>
+
+                        }
+                        <button className={`btn btn-primary ${hideTrainingFinishButton === true ? "d-none" : ""}`} onClick={handleFinishTraining}>
+                          Yes, I have completed the training
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              }
+                }
               </div>
             </div>
           </Container>
