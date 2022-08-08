@@ -48,6 +48,7 @@ function fetchRealatedFileName(fileURLString) {
 
 const EditTraining = () => {
   const { trainingId } = useParams();
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
 
@@ -61,16 +62,12 @@ const EditTraining = () => {
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({});
   const [trainingSettings, setTrainingSettings] = useState({ user_roles: [] });
-
   const [coverImage, setCoverImage] = useState({});
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
-
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
-
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
-
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [franchiseeList, setFranchiseeList] = useState();
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState();
@@ -132,6 +129,7 @@ const EditTraining = () => {
     }
   };
 
+
   const fetchTrainingData = async () => {
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
@@ -140,14 +138,15 @@ const EditTraining = () => {
         "Authorization": "Bearer " + token
       }
     });
-
     console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-
       setEditTrainingData(training);
     }
   };
+  console.log(editTrainingData, "editTrainingData")
+
+
 
   // COPYING FETCHED DATA INTO INTERNAL STATE
   const copyFetchedData = () => {
@@ -160,7 +159,6 @@ const EditTraining = () => {
       time_required_to_complete: parseInt(editTrainingData?.completion_time.split(" ")[0]),
       time_unit: editTrainingData?.completion_time.split(" ")[1],
     }));
-
     setTrainingSettings(prevState => ({
       start_date: moment(editTrainingData?.start_date).format('YYYY-MM-DD'),
       start_time: moment(editTrainingData?.start_date).format('HH:mm'),
@@ -189,6 +187,7 @@ const EditTraining = () => {
   const updateTraining = async (data) => {
     console.log('CREATING THE TRAINING');
     const token = localStorage.getItem('token');
+
     const response = await axios.put(
       `${BASE_URL}/training/updateTraining/${trainingId}`, data, {
       headers: {
@@ -196,6 +195,7 @@ const EditTraining = () => {
       }
     }
     );
+
 
     console.log('TRAINING BODY UPDATE RESPONSE:', response);
 
@@ -293,12 +293,11 @@ const EditTraining = () => {
     }));
   };
 
+
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
-
     let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles);
-
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
@@ -327,7 +326,6 @@ const EditTraining = () => {
         relatedFiles.forEach((file, index) => {
           data.append(`images`, file);
         });
-
         window.scrollTo(0, 0);
         setCreateTrainingModal(true);
         setLoader(true);

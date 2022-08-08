@@ -23,6 +23,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
 
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
+
     const response = await axios.get(`${BASE_URL}/role/franchisee`, {
       headers: {
         "Authorization": `Bearer ${token}`

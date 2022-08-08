@@ -21,7 +21,7 @@ const AvailableTraining = ({ filter }) => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       console.log('RESPONSE:', response.data);
       const { searchedData } = response.data;
       setAvailableTrainingData(searchedData);
@@ -46,40 +46,40 @@ const AvailableTraining = ({ filter }) => {
       <div id="main">
         <div className="training-column">
           <Row>
-          {availableTrainingData 
-            ? availableTrainingData.map((item) => {
-              return(
-              <Col lg={4} md={6}>
-                <div className="item mt-3 mb-3">
-                  <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.coverImage} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                  <div className="fixcol">
-                    <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                    <div className="iconame">
-                      <a href="/training-detail">{item.title}</a>
-                      <div className="datecol">
-                        <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
-                        <span className="time">{ item.completion_time } { item.completion_in}</span>
+            {availableTrainingData
+              ? availableTrainingData.map((item) => {
+                return (
+                  <Col lg={4} md={6}>
+                    <div className="item mt-3 mb-3">
+                      <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.coverImage} alt="" /> <span className="lthumb"><img src="../img/logo-thumb.png" alt="" /></span></a></div>
+                      <div className="fixcol">
+                        <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                        <div className="iconame">
+                          <a href="/training-detail">{item.title}</a>
+                          <div className="datecol">
+                            <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
+                            <span className="time">{item.completion_time} {item.completion_in}</span>
+                          </div>
+                        </div>
+                        <div className="cta-col">
+                          <Dropdown>
+                            <Dropdown.Toggle variant="transparent" id="ctacol">
+                              <img src="../img/dot-ico.svg" alt="" />
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item href="#">Delete</Dropdown.Item>
+                              <Dropdown.Item href="#">Edit</Dropdown.Item>
+                              <Dropdown.Item href="#">Share</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </div>
                       </div>
                     </div>
-                    <div className="cta-col">
-                      <Dropdown>
-                        <Dropdown.Toggle variant="transparent" id="ctacol">
-                          <img src="../img/dot-ico.svg" alt=""/>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item href="#">Delete</Dropdown.Item>
-                          <Dropdown.Item href="#">Edit</Dropdown.Item>
-                          <Dropdown.Item href="#">Share</Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  </div>
-                </div>
-              </Col>
+                  </Col>
                 );
               })
               : <div><p>No trainings assigned to you!</p></div>
-              }
+            }
           </Row>
         </div>
       </div>

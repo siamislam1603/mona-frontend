@@ -77,9 +77,12 @@ const FranchisorDashboard = () => {
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
   console.log("alsoidjh", latest_announcement[0].scheduled_date)
+
+
   const announcement = () => {
     let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
+
     axios.get(countUrl, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -105,7 +108,6 @@ const FranchisorDashboard = () => {
     }).catch((e) => {
       console.log(e);
     })
-
   }
 
 
@@ -127,8 +129,8 @@ const FranchisorDashboard = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader 
-                  setSelectedFranchisee={setSelectedFranchisee}/>
+                <TopHeader
+                  setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>
