@@ -103,6 +103,10 @@ const DynamicForm = (props) => {
                 }
               });
             }
+            else
+            {
+              data[item].push(inner_item);
+            }
             console.log('form_data---->1212', data);
           });
         });
