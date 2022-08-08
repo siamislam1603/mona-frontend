@@ -181,7 +181,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
     if(response.status === 201 && response.data.status === "success") {
 
-      if(localStorage.getItem('asked_for_consent') !== null || typeof localStorage.getItem('asked_for_consent') !== "undefined") {
+      if(localStorage.getItem('asked_for_consent') !== null) {
         response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('enrolled_parent_id')}`, { childId: localStorage.getItem('enrolled_child_id') }, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem('token')}`
