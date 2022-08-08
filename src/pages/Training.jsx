@@ -200,7 +200,7 @@ const Training = () => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
                     <ul>
-                      <li><a onClick={handleLinkClick} path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Trainings Available</a></li>
+                      <li><a onClick={handleLinkClick}  path="/available-training" className={`${tabLinkPath === "/available-training" ? "active" : ""}`}>Available Training</a></li>
                       <li><a onClick={handleLinkClick} path="/complete-training" className={`${tabLinkPath === "/complete-training" ? "active" : ""}`}>Complete Training</a></li>
                       {
                         verifyPermission("training_files", "add") &&

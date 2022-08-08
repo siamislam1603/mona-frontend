@@ -1032,6 +1032,11 @@ button:focus {
     align-items: center;
 }
 
+.response-header-left-line{
+    border-right: 1px solid #bababa;
+    padding-right: 10px;
+}
+
 .responses-header-image {
     width: 61px;
     border-radius: 10px;
@@ -1141,9 +1146,13 @@ button:focus {
     margin-top: 25px;
 }
 
+.response-margin{
+    margin-top:45px;
+}
+
 .content-wrap-title {
     margin-bottom: 20px;
-    color: #AA0061;
+    color: #000000;
     font-size: 18px;
     border-bottom: 1px solid rgb(51 51 51 / 10%);
     padding-bottom: 15px;
@@ -2900,4 +2909,10 @@ li.child_tag {
 h6.text-capitalize {
     color: var(--purple);
     font-size: 20px;
+}   
+.create-by img {
+    height: auto;
+    width: 38px;
+    border-radius: 100%;
+    margin-left:7px;
 }

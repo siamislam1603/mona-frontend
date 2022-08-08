@@ -10,6 +10,7 @@ import ImageUpload from "./InputFields/ImageUpload";
 const InputFields = (props) => {
   let inputElement = null;
   const { ...controls } = props;
+  
   console.log("controls.field_type---->", controls.field_type);
   switch (controls.field_type) {
     case "radio":
@@ -34,7 +35,7 @@ const InputFields = (props) => {
       inputElement = <ImageUpload {...controls} />;
       break;
     default:
-      inputElement = <Input {...controls} />;
+      inputElement = <Input {...controls}  />;
   }
   return inputElement;
 };

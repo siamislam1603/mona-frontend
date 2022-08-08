@@ -90,6 +90,31 @@ function ViewFormBuilder(props) {
       })
       .catch((error) => console.log('error', error));
   };
+  const seenFormResponse = (data) => {
+    console.log("data--->",data);
+    let seenData = [];
+    data?.map((item) => {
+      item?.map((inner_item) => {
+        seenData.push({
+          id: inner_item.id,
+          user_id: localStorage.getItem('user_id'),
+        });
+      });
+    });
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(seenData),
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/response/seen`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => console.log(result?.message))
+      .catch((error) => console.log('error', error));
+  };
   return (
     <>
       <div id="main">
@@ -586,8 +611,20 @@ function ViewFormBuilder(props) {
                                                             setIndex(index);
                                                           }}
                                                         >
-                                                          <img src="../img/form-user-round.svg" />
-                                                          <span>
+                                                          <img src="../img/form-user-round.svg" onClick={() => {
+                                                                seenFormResponse(
+                                                                  item?.forms[
+                                                                    Index
+                                                                  ]?.form_data
+                                                                );
+                                                              }}/>
+                                                          <span onClick={() => {
+                                                                seenFormResponse(
+                                                                  item?.forms[
+                                                                    Index
+                                                                  ]?.form_data
+                                                                );
+                                                              }}>
                                                             {
                                                               inner_item
                                                                 ?.form_data
@@ -728,8 +765,26 @@ function ViewFormBuilder(props) {
                                                               setIndex(index);
                                                             }}
                                                           >
-                                                            <img src="../img/form-user-round.svg" />
-                                                            <span>
+                                                            <img
+                                                              src="../img/form-user-round.svg"
+                                                              onClick={() => {
+                                                                seenFormResponse(
+                                                                  item?.forms[
+                                                                    Index
+                                                                  ]?.form_data
+                                                                );
+                                                              }}
+                                                            />
+                                                            {console.log("item?.forms---->",item?.forms)}
+                                                            <span
+                                                              onClick={() => {
+                                                                seenFormResponse(
+                                                                  item?.forms[
+                                                                    Index
+                                                                  ]?.form_data
+                                                                );
+                                                              }}
+                                                            >
                                                               {
                                                                 inner_item
                                                                   ?.form_data
@@ -840,6 +895,7 @@ function ViewFormBuilder(props) {
         show={viewResponseFlag}
         onHide={() => {
           setViewResponseFlag(false);
+          getFormData('')
         }}
         backdrop="static"
         keyboard={false}
@@ -921,28 +977,19 @@ function ViewFormBuilder(props) {
                   )
                 : OthersFormData[Index]?.forms &&
                   OthersFormData[Index]?.forms[innerIndex]?.form_data.map(
-                    (item) => {
+                    (item, index) => {
                       return (
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">
                               <img src="../img/user_img.png" alt="" />
-                              <h4>
-                                {
-                                  OthersFormData[Index]?.forms[innerIndex]?.user
-                                    ?.fullname
-                                }
-                              </h4>
+                              <h4>{item[0]?.user?.fullname}</h4>
                             </div>
                           </div>
                           <div className="user_role">
                             <div className="user_detail">
                               <h4 className="text-capitalize">
-                                {OthersFormData[Index]?.forms[
-                                  innerIndex
-                                ]?.user?.role
-                                  .split('_')
-                                  .join(' ')}
+                                {item[0]?.user?.role.split('_').join(' ')}
                               </h4>
                             </div>
                           </div>
@@ -951,14 +998,19 @@ function ViewFormBuilder(props) {
                               <h4>
                                 {moment(item.createdAt).format('DD/MM/YYYY')}
                               </h4>
-                              <button  onClick={() => {
+                              <button
+                                onClick={() => {
                                   navigate('/form/response', {
                                     state: {
-                                      id: OthersFormData[Index]?.forms[innerIndex]
-                                        ?.id,
+                                      id: OthersFormData[Index]?.forms[
+                                        innerIndex
+                                      ]?.id,
                                     },
                                   });
-                                }}>View Response</button>
+                                }}
+                              >
+                                View Response
+                              </button>
                             </div>
                           </div>
                         </div>

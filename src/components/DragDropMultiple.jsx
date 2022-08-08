@@ -11,7 +11,7 @@ export default function DropAllFile({ onSave,Files, setErrors, title="Files", ty
     }
   } else {
     typeObj = {
-      'pdf/*': ['.pdf', '.doc', '.xlsx', '.xlsm']
+      'text/*': ['.pdf', '.doc', '.xlsx', '.xlsm']
     }
   }
   
@@ -71,9 +71,9 @@ export default function DropAllFile({ onSave,Files, setErrors, title="Files", ty
 
   return (
     <div className="file-upload-form">
-      <div {...getRootProps({ className: 'dropzone' })} style={{ width: "150px" }}>
+      <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
-        <span className="text-center uploadfile cursor" style={{ display: 'inline-block', marginBottom: '10px' }}>
+        <span className="text-center uploadfile cursor">
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add {title}
         </span>
       </div>

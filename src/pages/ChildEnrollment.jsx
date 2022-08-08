@@ -55,7 +55,15 @@ function ChildEnrollment() {
       // localStorage.setItem('isChildEnrolled', childData[0].)
       let form_step = childData[0].form_step || 1;
       console.log('Setting the step to', form_step);
-      setstep(form_step);
+
+      // console.log('ASKED FOR CONSENT:', localStorage.getItem('asked_for_consent'));
+      if(localStorage.getItem('asked_for_consent') === "true") {
+        // console.log('ASKED FOR CONSENT');
+        setstep(1);  
+      } else {
+        // console.log('Didn\'t ask for consent');
+        setstep(form_step);
+      }
     } else {
       setstep(1);
     }

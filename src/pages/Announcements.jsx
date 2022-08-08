@@ -8,6 +8,7 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import AllAnnouncements from "./AllAnnouncements";
 import MyAnnouncements from "./MyAnnouncements";
+import AllEvent from "./AllEvent";
 import { debounce } from 'lodash';
 
 
@@ -478,9 +479,16 @@ const Announcements = () => {
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
+<<<<<<< HEAD
                       <li><a onClick={handleLinkClick} path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
                       <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements</a></li>
 
+=======
+                      <li><a onClick={handleLinkClick}  path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
+                      <li><a onClick={handleLinkClick} path="/all-events" className={`${tabLinkPath === "/all-events" ? "active" : ""}`} >All Events</a></li>
+                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements or My Event</a></li>
+                  
+>>>>>>> 98b2dd061a35d68e84d39b87296e753e6615bade
                     </ul>
                   </div>
 
@@ -490,6 +498,11 @@ const Announcements = () => {
                       && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData={loadMoreData} search={searchvalue} />}
                     {tabLinkPath === "/my-announcements"
                       && <MyAnnouncements myAnnouncementData={myAnnouncementData} myLoadData={myLoadData} />}
+<<<<<<< HEAD
+=======
+                   {tabLinkPath === "/all-events" && <AllEvent/>}   
+                    
+>>>>>>> 98b2dd061a35d68e84d39b87296e753e6615bade
                   </div>
                   {/* {franchiseeData && franchiseeData.searchedData.length} */}
                   {/* {theCommon && theCommon ===theCount ? (
@@ -523,6 +536,7 @@ const Announcements = () => {
                       )
                       : (
                         <>
+<<<<<<< HEAD
                           {myDataLength === myCount ? (
                             null
                           ) :
@@ -532,6 +546,14 @@ const Announcements = () => {
                             )
 
                           }
+=======
+                        {myDataLength === myCount ? (
+                          null
+                        ):
+                      (
+                        <button type="button" onClick={handleLoadMyAnnouncement} class="btn btn-primary">Load More My</button>
+                     )} 
+>>>>>>> 98b2dd061a35d68e84d39b87296e753e6615bade
                         </>
 
                       )
