@@ -476,7 +476,7 @@ function ViewFormBuilder(props) {
                                           <Col lg={4}>
                                             <div className="forms-content create-other">
                                               <div className="content-icon-section" onClick={()=>{
-                                                navigate("/form/response",{id: inner_item.id})
+                                                navigate("/form/response",{state:{id: inner_item.id}})
                                               }}>
                                                 <img
                                                   src={
@@ -516,7 +516,8 @@ function ViewFormBuilder(props) {
                                                   ).format('DD/MM/YYYY')}
                                                 </h4>
                                               </div>
-                                              {inner_item.form_type!=="single_submission" && (<div className="content-toogle">
+                                              {/* {inner_item.form_type!=="single_submission" && ( */}
+                                              <div className="content-toogle">
                                                 <Dropdown>
                                                   <Dropdown.Toggle id="dropdown-basic1">
                                                     <FontAwesomeIcon
@@ -538,7 +539,8 @@ function ViewFormBuilder(props) {
                                                     
                                                   </Dropdown.Menu>
                                                 </Dropdown>
-                                              </div>)}
+                                              </div>
+                                             {/* )} */}
                                             </div>
                                           </Col>
                                         </>
