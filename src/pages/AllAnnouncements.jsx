@@ -91,20 +91,28 @@ const getRelatedFileName = (str) => {
   return name;
 }
 const getAddedTime = (str) =>{
-  const Added= moment(str).format('YYYY-MM-DD')
+  // const Added= moment(str).format('YYYY-MM-DD')
+  console.log("THe astring",str)
+  const Added= moment(str).format('DD/MM/YYYY')
+  // console.log("THe data",dateww)
   var today = new Date();
   let d = new Date(today);
   let month = (d.getMonth() + 1).toString().padStart(2, '0');
   let day = d.getDate().toString().padStart(2, '0');
   let year = d.getFullYear();
-   let datae =  [year, month, day].join('-');
-   
-   if(datae == Added){
-    return "Added today"
+   let datae =  [day, month, year].join('/');
+   console.log("THE DATE",datae,Added)
+   let temp;
+   if(datae === Added){
+    temp = "Added today";
    }
-   if(Added<datae){
-    return Added
+
+   if(Added < datae){
+    temp = Added;
+    console.log("THE added date i smaller",typeof Added, typeof datae);
    }
+
+   return temp;
 }
 useEffect(() => {
   AllAnnouncementData()
@@ -158,9 +166,9 @@ useEffect(() =>{
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
 // console.log("The franhise",props.franchisee)
-  console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
-console.log("The annoumce all ",props.allAnnouncement)
-  // console.log("The seach in all announcement", props.search)
+//   console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
+// console.log("The annoumce all ",props.allAnnouncement)
+//   // console.log("The seach in all announcement", props.search)
   {console.log("THE ANNOINCE",announcementDetails)}
 
   return (
@@ -169,14 +177,19 @@ console.log("The annoumce all ",props.allAnnouncement)
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                     <Accordion defaultActiveKey="0">
                       { announcementDetails &&
-                        announcementDetails.length !==0 ? (
+                        announcementDetails?.length !==0 ? (
                           announcementDetails.map((details,index) => (
                             <div key={index}>
                            <Accordion.Item eventKey={index} >
                              <Accordion.Header>
                                <div className="head-title">
                                  <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                                 <div className="title-xxs">{details.title}<small><span> {
+                                 <div className="title-xxs">{details.title}
+                                 
+                                 <small><span>
+                                <span>{getAddedTime(details.createdAt)}</span>
+                                  
+                                   {
                                  localStorage.getItem('user_role')
                                      ? localStorage
                                        .getItem('user_role')
@@ -185,8 +198,11 @@ console.log("The annoumce all ",props.allAnnouncement)
                                          (data) =>
                                           data.charAt(0).toUpperCase() + data.slice(1)
                                          ).join(' ')
-                             : ''} : </span>{userName}</small></div>
-                                 <div className="date">
+                             : ''} : </span>{userName}
+                             
+                             </small>
+                             </div>
+                                 {/* <div className="date">
                                     <Dropdown>
                                      <Dropdown.Toggle id="extrabtn" className="ctaact">
                                        <img src="../img/dot-ico.svg" alt=""/>
@@ -201,7 +217,7 @@ console.log("The annoumce all ",props.allAnnouncement)
                                        <Dropdown.Item onClick={() =>deleteAlert(details.id)}>Delete</Dropdown.Item>
                                      </Dropdown.Menu>
                                    </Dropdown>
-                                 </div>
+                                 </div> */}
                                </div>
                              </Accordion.Header>
                              <Accordion.Body>
@@ -224,7 +240,7 @@ console.log("The annoumce all ",props.allAnnouncement)
                                  <Col md={4}>
                                    <div className="video-col">
                                    
-                                     {   details.announcement_files?.map((detail,index) =>(
+                                     {   details?.announcement_files?.map((detail,index) =>(
                                               <>
                                               {detail.fileType == ".mp4" && !detail.is_deleted  ? (
                                                  <AnnouncementVideo 
@@ -242,12 +258,12 @@ console.log("The annoumce all ",props.allAnnouncement)
                                    </div>
                                  </Col>
                                  <Col md={8}>
-                                   {details &&details.coverImage && <div className="head">Related Images :</div>}
+                                   {details &&details?.coverImage && <div className="head">Related Images :</div>}
                                    <div className="cont">
                                      <div className="related-images">
      
    
-                                       {details && details.coverImage &&
+                                       {details && details?.coverImage &&
                                          <div className="item">
                                            <a href="/"><img src={details.coverImage} alt=""/></a>
                                          </div>
@@ -256,10 +272,10 @@ console.log("The annoumce all ",props.allAnnouncement)
                                      </div>
                                    </div>
    
-                                  {details.announcement_files.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+                                  {details?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                                      <div className="cont">
                                      <div className="related-files">
-                                       {details.announcement_files.map((detail,index) =>(
+                                       {details?.announcement_files?.map((detail,index) =>(
                                          
                                               <>
                                                
@@ -268,6 +284,7 @@ console.log("The annoumce all ",props.allAnnouncement)
                                                  <p>{getRelatedFileName(detail.file)}</p>
                                                  <small>
                                                  {getAddedTime(detail.createdAt)}
+                                                 {console.log("COnsole date",detail.createdAt)}
                                                  </small></span></a></div>
                                               ):(
                                                null
