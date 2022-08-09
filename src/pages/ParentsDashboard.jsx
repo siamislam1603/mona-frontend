@@ -14,7 +14,38 @@ const ParentsDashboard = () => {
   const [event, setEvent] = useState([{}]);
   const [announcements, setannouncements] = useState([]);
   const [editTrainingData, setEditTrainingData] = useState([]);
+  const [viewEnrollmentDialog, setViewEnrollmentDialog] = useState(false);
 
+  const checkPendingConsent = async () => {
+    let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { parentConsentData } = response.data;
+      console.log('PARENT COMSENT DATA:', parentConsentData);
+      console.log('PARENT CONSENT DATA:', parentConsentData[0]);
+      localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
+      localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
+      localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
+      localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
+      localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
+      
+      if(parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
+        console.log('VIEWING ENROLLMENT DIALOG');
+        setViewEnrollmentDialog(true);
+      }
+    } else {
+
+    }
+  }
+
+  const handleViewEnrollment = async () => {
+    setViewEnrollmentDialog(false);
+    window.location.href=`/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
+  }
 
   const events = async () => {
     const token = localStorage.getItem('token');
@@ -101,6 +132,10 @@ const ParentsDashboard = () => {
       setChildEnrollMessageDialog(true);
     }
   }, [userDetails?.isChildEnrolled]);
+
+  useEffect(() => {
+    checkPendingConsent();
+  });
 
   return (
     <>
@@ -459,6 +494,23 @@ const ParentsDashboard = () => {
           </Modal.Footer>
         </Modal>
       }
+
+      <Modal 
+        show={viewEnrollmentDialog}>
+        <Modal.Header>
+          <Modal.Title>Pending Consent Notification</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>You have a pending consent from your coordinator. Click on <strong>View Enrollment Form</strong> to go through it.</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <button 
+            className="modal-button"
+            onClick={() => handleViewEnrollment()}>View Enrollment Form</button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
