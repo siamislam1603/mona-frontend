@@ -88,7 +88,7 @@ function FormResponse(props) {
                           />
                         </Form.Group>
                       </div>
-                      <div className="forms-filter">
+                      {/* <div className="forms-filter">
                         <Button variant="outline-primary">
                           <img src="../img/Vector.svg" />
                           Add Filters
@@ -111,7 +111,7 @@ function FormResponse(props) {
                             </Dropdown.Menu>
                           </Dropdown>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
