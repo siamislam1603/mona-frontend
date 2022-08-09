@@ -664,7 +664,7 @@ useEffect(() =>{
                           null
                         ):
                       (
-                        <button type="button" onClick={handleLoadMyAnnouncement} class="btn btn-primary">Load More My</button>
+                        <button type="button" onClick={handleLoadMyAnnouncement} class="btn btn-primary">Load More</button>
                      )} 
                         </>
                     ):(
@@ -678,7 +678,7 @@ useEffect(() =>{
                         null
                       ):
                       (
-                        <button type="button" class="btn btn-primary">Load More Event</button>
+                        <button type="button" class="btn btn-primary">Load More</button>
 
                       )
                         
