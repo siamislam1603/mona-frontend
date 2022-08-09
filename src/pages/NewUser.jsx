@@ -242,11 +242,21 @@ const NewUser = () => {
     if (response.status === 200) {
       const { userRoleList } = response.data;
       let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
+      
+      newRoleList = newRoleList.map(d => ({
+        value: d.role_name,
+        label: d.role_label,
+      }));
+
+      if(localStorage.getItem('user_role') === 'franchisee_admin') {
+        newRoleList = newRoleList.filter(role => role.label !== 'Franchisee Admin');
+      }
+
+      if(localStorage.getItem('user_role')) {
+        newRoleList = newRoleList.filter(role => role.role_name !== 'Franchisee Admin' && role.role_name !== 'Coordinator');
+      }
       setUserRoleData(
-        newRoleList.map((list) => ({
-          value: list.role_name,
-          label: list.role_label,
-        }))
+        newRoleList
       );
     }
   };

@@ -80,47 +80,38 @@ const EditUser = () => {
     console.log("The reponse", response)
     if(response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
-      setEditUserData(user);
+      console.log('USER:', user);
+      copyDataToState(user);
     }
   };
 
-  const copyDataToState = () => {
+  const copyDataToState = (user) => {
     setFormData(prevState => ({
-      id: editUserData?.id,
-      fullname: editUserData?.fullname,
-
-      role: editUserData?.role,
-      roleObj:userRoleData.filter(d => d.value === editUserData.role),
-      
-      city: editUserData?.city,
-      address: editUserData?.address,
-      postalCode: editUserData?.postalCode,
-      email: editUserData?.email,
-      telcode: editUserData?.phone.split("-")[0],
-      phone: editUserData?.phone.split("-")[1],
-      franchisee_id: editUserData?.franchisee_id,
-      
-      trainingCategories: editUserData?.training_categories?.map(d => parseInt(d)),
-      trainingCategoriesObj: trainingCategoryData?.filter(category => editUserData?.training_categories?.includes(category.id + "")),
-
-      professionalDevCategories: editUserData?.professional_development_categories?.map(d => parseInt(d)),
-      professionalDevCategoriesObj: pdcData?.filter(user => editUserData?.professional_development_categories?.includes(user.id + "")),
-
-      coordinator: editUserData?.coordinator,
-
-      businessAssets: editUserData?.business_assets?.map(d => parseInt(d)),
-      businessAssetsObj: businessAssetData?.filter(user => editUserData?.business_assets?.includes(user.id + '')),
-      
-      terminationDate: moment(editUserData?.termination_date).format('YYYY-MM-DD'),
-      termination_reach_me: editUserData?.termination_reach_me,
-      user_signature: editUserData?.user_signature,
-      termination_date: editUserData?.termination_date
+      id: user?.id,
+      fullname: user?.fullname,
+      role: user?.role,
+      city: user?.city,
+      address: user?.address,
+      postalCode: user?.postalCode,
+      email: user?.email,
+      telcode: user?.phone.split("-")[0],
+      phone: user?.phone.split("-")[1],
+      franchisee_id: user?.franchisee_id,
+      trainingCategories: user?.training_categories?.map(d => parseInt(d)),
+      professionalDevCategories: user?.professional_development_categories?.map(d => parseInt(d)),
+      coordinator: user?.coordinator,
+      businessAssets: user?.business_assets?.map(d => parseInt(d)),
+      termination_date: moment(user?.termination_date).format('YYYY-MM-DD'),
+      termination_reach_me: user?.termination_reach_me,
+      user_signature: user?.user_signature,
+      profile_photo: user?.profile_photo
     }));
-    setCroppedImage(editUserData?.profile_photo);
+    setCroppedImage(user?.profile_photo);
   }
 
   // CREATES NEW USER INSIDE THE DATABASE
   const updateUserDetails = async (data) => {
+    console.log('UPDATING USER DETAILS!');
     const token = localStorage.getItem('token');
     const response = await axios.patch(`${BASE_URL}/auth/user/${userId}`, data, {
       headers: {
@@ -237,12 +228,22 @@ const EditUser = () => {
     });
     if (response.status === 200) {
       const { userRoleList } = response.data;
+      let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
+      
+      newRoleList = newRoleList.map(d => ({
+        value: d.role_name,
+        label: d.role_label,
+      }));
+
+      if(localStorage.getItem('user_role') === 'franchisee_admin') {
+        newRoleList = newRoleList.filter(role => role.label !== 'Franchisee Admin');
+      }
+
+      if(localStorage.getItem('user_role')) {
+        newRoleList = newRoleList.filter(role => role.role_name !== 'Franchisee Admin' && role.role_name !== 'Coordinator');
+      }
       setUserRoleData(
-        userRoleList.map((list) => ({
-          id: list.id,
-          value: list.role_name,
-          label: list.role_label,
-        }))
+        newRoleList
       );
     }
   };
@@ -281,7 +282,7 @@ const EditUser = () => {
       setTrainingCategoryData([
         ...categoryList.map((data) => ({
           id: data.id,
-          value: data.category_alias,
+          value: data.category_name,
           label: data.category_name,
         })),
       ]);
@@ -300,7 +301,7 @@ const EditUser = () => {
       const { pdcList } = response.data;
       setPdcData(pdcList.map(data => ({
         id: data.id,
-        value: data.category_alias,
+        value: data.category_name,
         label: data.category_name
       })));
     }
@@ -318,7 +319,7 @@ const EditUser = () => {
       const { businessAssetList } = response.data;
       setBuinessAssetData(businessAssetList.map(data => ({
         id: data.id,
-        value: data.asset_alias,
+        value: data.asset_name,
         label: data.asset_name
       })));
     }
@@ -337,7 +338,7 @@ const EditUser = () => {
 
       setFranchiseeData(franchiseeList.map(franchisee => ({
         id: franchisee.id,
-        value: franchisee.franchisee_alias,
+        value: franchisee.franchisee_name,
         label: franchisee.franchisee_name
       })));  
     }
@@ -395,10 +396,10 @@ const EditUser = () => {
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
-  editUserData && console.log('EDIT USER DATA:', editUserData);
+  // editUserData && console.log('EDIT USER DATA:', editUserData);
+  // formData && console.log('FORM DATA:', formData);
+  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
   formData && console.log('FORM DATA:', formData);
-  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-
   return (
     <>
       <div id="main">
@@ -422,7 +423,7 @@ const EditUser = () => {
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
                           setPopupVisible={setPopupVisible}
-                          fetchedPhoto={editUserData?.profile_photo || ""}
+                          fetchedPhoto={formData?.profile_photo || ""}
                         />
                         <span className="error">
                           {!formData.file && formErrors.file}
@@ -459,7 +460,7 @@ const EditUser = () => {
                             <Select
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
-                              value={formData.roleObj}
+                              value={userRoleData.filter(d => d.value === formData?.role) || ""}
                               options={userRoleData}
                               onChange={(e) =>
                                 setFormData((prevState) => ({
@@ -477,8 +478,9 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Suburb</Form.Label>
                             <Select
-                              placeholder={formData?.city || "Which Suburb?"}
+                              placeholder={"Which Suburb?"}
                               closeMenuOnSelect={true}
+                              value={cityData?.filter(d => d.label === formData?.city) || ""}
                               options={cityData}
                               onChange={(e) =>
                                 setFormData((prevState) => ({
@@ -566,13 +568,12 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              value={formData.trainingCategoriesObj}
+                              value={trainingCategoryData?.filter(d => d.id === parseInt(formData?.franchisee_id))}
                               options={trainingCategoryData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   trainingCategories: [...selectedOptions.map(d => parseInt(d.id))],
-                                  trainingCategoriesObj: selectedOptions
                                 }));
                               }}
                             />
@@ -584,13 +585,12 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              value={formData.professionalDevCategoriesObj}
+                              value={pdcData?.filter(d => d.id === parseInt(formData?.professionalDevCategories))}
                               options={pdcData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   professionalDevCategories: [...selectedOptions.map(d => parseInt(d.id))],
-                                  professionalDevCategoriesObj: selectedOptions
                                 }));
                               }}
                             />
@@ -603,7 +603,7 @@ const EditUser = () => {
                               closeMenuOnSelect={true}
                               options={franchiseeData}
                               // isMulti
-                              value={formData?.franchiseeObj || franchiseeData?.filter(data => parseInt(data.id) === parseInt(formData?.franchisee_id))}
+                              value={franchiseeData?.filter(data => parseInt(data.id) === parseInt(formData?.franchisee_id))}
                               onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -625,7 +625,7 @@ const EditUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Primary Co-ordinator</Form.Label>
+                            <Form.Label>Select Primary Co-ordinator</Form.Label> 
                             <Select
                               isDisabled={formData.role !== 'educator'}
                               placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
@@ -652,13 +652,12 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              value={formData.businessAssetsObj}
+                              value={businessAssetData?.filter(d => d.id === parseInt(formData?.businessAssets))}
                               options={businessAssetData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   businessAssets: [...selectedOptions.map(d => parseInt(d.id))],
-                                  businessAssetsObj: selectedOptions
                                 }));
                               }}
                             />
@@ -677,7 +676,7 @@ const EditUser = () => {
                               type="date"
                               disabled={true}
                               name="terminationDate"
-                              value={formData.terminationDate}
+                              value={formData?.terminationDate}
                               onChange={handleChange}
                             />
                             {
