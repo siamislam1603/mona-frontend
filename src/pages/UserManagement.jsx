@@ -171,11 +171,11 @@ const UserManagement = () => {
         return (
           <>
             {
-              (cell[0] === "guardian" && cell[1] === 0) ? (
+              (cell[0] === "guardian" && cell[1] == 0) ? (
                   <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
                   New Children
                   </button>
-                ) : (cell[0] === "guardian" && cell[1] !== 0) ?
+                ) : (cell[0] === "guardian" && cell[1] != 0) ?
                 (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
                 View Children
               </button>
