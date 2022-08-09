@@ -641,7 +641,8 @@ useEffect(() =>{
                     )
                   } */}
 
-                  
+                  <div className="text-center">
+
                   {
                       tabLinkPath=== "/all-announcements" ? 
                       (
@@ -688,6 +689,8 @@ useEffect(() =>{
                       null
                     )
                   }
+                  </div>
+
                 </div>
               </div>
             </div>
