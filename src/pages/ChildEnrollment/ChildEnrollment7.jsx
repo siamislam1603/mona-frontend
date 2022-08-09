@@ -145,11 +145,20 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
     console.log('RESPONSE CONSENT:', response);
     if(response.status === 201 && response.data.status === "success") {
-        let { parentConsentObject } = response.data;
-        localStorage.setItem('has_given_consent', parentConsentObject.has_given_consent);
+      let { parentConsentObject } = response.data;
+      console.log('PARENT CONSENT OBJECT!', parentConsentObject);
+      localStorage.setItem('has_given_consent', parentConsentObject.has_given_consent);
+      localStorage.setItem('consent_child_id', parentConsentObject.child_id);
+
+      response = await axios.post(`${BASE_URL}/enrollment/send-notification/consent-mail/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id'), franchisee_id: localStorage.getItem('franchisee_id') });
+
+      console.log('CONSENT MAIL RESPONSE', response);
+      if(response.status === 201 && response.data.status === "success") {
+        console.log('CLOSING THE DIALOG!');
         setUserConsentFormDialog(false);
         localStorage.removeItem('change_count');
         setFormSubmissionSuccessDialog(true);
+      }
     }
   };
 
@@ -171,7 +180,6 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const handleSubmissionRedirection = async () => {
     console.log('UPDATING THE ENROLLMENT STATE!');
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
-    console.log('ENROLLED CHILD ID:', enrolledChildId);
     let token = localStorage.getItem('token');
     let response = await axios.patch(`${BASE_URL}/enrollment/child/${enrolledChildId}`, { isChildEnrolled: 1 }, {
       headers: {
@@ -179,9 +187,32 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
-    if(response.status === 201 && response.data.status === "success") {
+    if(response.status === 201 && response.data.status === "success" && localStorage.getItem('user_role') === 'guardian') {
+      response = await axios.post(`${BASE_URL}/enrollment/send-notification/mailer/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id') });
 
-      if(localStorage.getItem('asked_for_consent') !== null || typeof localStorage.getItem('asked_for_consent') !== "undefined") {
+      if(response.status === 201 && response.data.status === "success") {
+
+        if(localStorage.getItem('asked_for_consent') !== null) {
+          response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('enrolled_parent_id')}`, { childId: localStorage.getItem('enrolled_child_id') }, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+  
+          if(response.status === 201 && response.data.status === "success") {
+            localStorage.removeItem('asked_for_consent');
+            localStorage.removeItem('consent_comment');
+            localStorage.removeItem('has_given_consent');
+            let parent_id = localStorage.getItem('enrolled_parent_id');
+            window.location.href=`http://localhost:5000/children/${parent_id}`;
+          }
+        } else {
+          let parent_id = localStorage.getItem('enrolled_parent_id');
+          window.location.href=`http://localhost:5000/children/${parent_id}`;
+        }
+      }
+    } else if(response.status === 201 && response.data.status === "success") {
+      if(localStorage.getItem('asked_for_consent') !== null) {
         response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('enrolled_parent_id')}`, { childId: localStorage.getItem('enrolled_child_id') }, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem('token')}`
@@ -193,11 +224,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           localStorage.removeItem('consent_comment');
           localStorage.removeItem('has_given_consent');
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`${BASE_URL}/children/${parent_id}`;
+          window.location.href=`http://localhost:5000/children/${parent_id}`;
         }
       } else {
         let parent_id = localStorage.getItem('enrolled_parent_id');
-        window.location.href=`${BASE_URL}/children/${parent_id}`;
+        window.location.href=`http://localhost:5000/children/${parent_id}`;
       }
     }
   }
