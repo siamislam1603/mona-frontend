@@ -25,7 +25,6 @@ const ParentsDashboard = () => {
 
     if(response.status === 200 && response.data.status === "success") {
       let { parentConsentData } = response.data;
-      console.log('PARENT COMSENT DATA:', parentConsentData);
       console.log('PARENT CONSENT DATA:', parentConsentData[0]);
       localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
       localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
@@ -49,7 +48,7 @@ const ParentsDashboard = () => {
 
   const events = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard//parent/quick-access-events`, {
+    const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-events`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -64,7 +63,7 @@ const ParentsDashboard = () => {
 
   const Userannouncements = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard//parent/quick-access-announcements`, {
+    const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-announcements`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -136,7 +135,7 @@ const ParentsDashboard = () => {
   useEffect(() => {
     checkPendingConsent();
   });
-
+  
   return (
     <>
       <div id="main">
