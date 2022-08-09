@@ -20,6 +20,7 @@ const DynamicForm = (props) => {
   const [behalfOf, setBehalfOf] = useState('');
 
   const setField = (section, field, value) => {
+    
     setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
     if (!!errors[field]) {
       setErrors({
@@ -235,6 +236,8 @@ const DynamicForm = (props) => {
                                   {...inner_item}
                                   error={errors}
                                   onChange={(key, value) => {
+                                    console.log("KEY--->",key);
+                                    console.log("VALUE--->",value);
                                     setField(item, key, value);
                                   }}
                                 />
@@ -243,7 +246,11 @@ const DynamicForm = (props) => {
                               <InputFields
                                 {...inner_item}
                                 error={errors}
-                                onChange={setField}
+                                onChange={(key, value) => {
+                                  console.log("KEY--->",key);
+                                  console.log("VALUE--->",value);
+                                  setField(key, value);
+                                }}
                               />
                             );
                           })}
@@ -255,6 +262,8 @@ const DynamicForm = (props) => {
                               {...inner_item}
                               error={errors}
                               onChange={(key, value) => {
+                                console.log("KEY--->",key);
+                                  console.log("VALUE--->",value);
                                 setField(item, key, value);
                               }}
                             />
