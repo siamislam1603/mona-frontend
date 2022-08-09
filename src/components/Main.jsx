@@ -51,10 +51,12 @@ import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
 import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
+import ChildNotifications from '../pages/ChildEnrollment/ChildNotifications';
 import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
 import FileRpositoryList from '../pages/FileRpositoryList';
 import FilerepoMyAdd from '../pages/FilerepoMyAdd';
 import RepoEdit from '../pages/RepoEdit';
+
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -122,6 +124,16 @@ const Main = () => {
             </Protected>
           }
         />
+
+        <Route 
+          path="/child-enrollment/notification"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildNotifications />
+            </Protected>
+          }
+          />
 
         <Route
           path="/child-enrollment"

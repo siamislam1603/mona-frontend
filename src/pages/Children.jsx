@@ -67,7 +67,11 @@ const Children = () => {
             // console.log('RESPONSE:', response.data);
             const { parentData } = response.data;
             // console.log(parentData,"users")
-            setChildrenList(parentData.children)
+            if(parentData !== null) {
+                setChildrenList(parentData?.children)
+             } else {
+                setChildrenList([]);
+             }
           }
           
         //   Educators list
@@ -311,7 +315,7 @@ const Children = () => {
                                     View Enrolment
                                 </button>
                                 {
-                                    localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null &&
+                                    (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId) &&
                                     <p style={{ fontSize: "12px", color: "red", textAlign: 'center', marginTop:   "3px" }}>Pending for consent!</p>
                                 }
                             </div>
@@ -366,7 +370,7 @@ const Children = () => {
     }, [reloadFlag]);
 
 
-    // childrenList && console.log('Children List:', childrenList);
+    childrenList && console.log('Children List:', childrenList);
     return (
         <>
             <div id="main">
@@ -408,13 +412,27 @@ const Children = () => {
                                                 </Link>
                                             }
                                         </header>
-                                        <BootstrapTable
-                                            keyField="id"
-                                            rowEvents={rowEvents}
-                                            selectRow={selectRow}
-                                            data={productsTow}
-                                            columns={PColumns}
-                                        />
+                                        {
+                                            childrenList.length === 0 ?
+                                            <div className="center-division">
+                                                {
+                                                    localStorage.getItem('user_role') !== 'guardian' ?
+                                                    <>
+                                                        <p className="center">No child connected to this parent.</p>
+                                                        <p className="center">Click on <strong className="disabled-button">Add Child</strong> to add one.</p>
+                                                    </>
+                                                    : <><p className="center">No child connected to this parent.</p></>
+                                                }
+                                            </div>
+                                            :
+                                            <BootstrapTable
+                                                keyField="id"
+                                                rowEvents={rowEvents}
+                                                selectRow={selectRow}
+                                                data={productsTow}
+                                                columns={PColumns}
+                                            />
+                                        }
                                     </div>
                                 </div>
                             </div>

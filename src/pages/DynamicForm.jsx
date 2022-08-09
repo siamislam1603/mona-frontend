@@ -71,7 +71,7 @@ const DynamicForm = (props) => {
 
     fetch(
       `${BASE_URL}/field?form_name=${
-        location.pathname.split('/')[location.pathname.split('/').length - 1]
+        location.pathname.split('/')[location.pathname.split('/').length - 1].replaceAll("%20"," ")
       }&franchisee_id=${localStorage.getItem('franchisee_id')}&request=user`,
       requestOptions
     )
@@ -146,6 +146,7 @@ const DynamicForm = (props) => {
         .then((response) => response.text())
         .then((result) => {
           result = JSON.parse(result);
+          alert(result?.message);
           navigate("/form");
         })
         .catch((error) => console.log('error', error));
@@ -169,7 +170,7 @@ const DynamicForm = (props) => {
                       {
                         location.pathname.split('/')[
                           location.pathname.split('/').length - 1
-                        ]
+                        ].replaceAll("%20"," ")
                       }{' '}
                       Form
                     </h6>
