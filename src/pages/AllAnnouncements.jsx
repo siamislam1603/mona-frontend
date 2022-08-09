@@ -14,6 +14,8 @@ const AllAnnouncements = (props) => {
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
   });
+const [userRole,setUserRole]=useState(null)
+
 const userName = localStorage.getItem("user_name");
 const userROle = localStorage.getItem("user_role");
 const [search,setSearch]=useState('');
@@ -31,7 +33,7 @@ const [searchData,setSearchData] = useState()
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
       let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&search=&offset=0&limit=5`, {
+      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&isEvent=0&search=&offset=0&limit=5`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -106,6 +108,9 @@ const getAddedTime = (str) =>{
 }
 useEffect(() => {
   AllAnnouncementData()
+  const user_role = localStorage.getItem("user_role")
+  setUserRole(user_role)
+  
 }, [])
 useEffect(() =>{
   // console.log("The props.ssearch state change")
@@ -187,7 +192,12 @@ console.log("The annoumce all ",props.allAnnouncement)
                                        <img src="../img/dot-ico.svg" alt=""/>
                                      </Dropdown.Toggle>
                                      <Dropdown.Menu>
-                                       <Dropdown.Item href={`/edit-announcement/${details.id}`}>Edit</Dropdown.Item>
+                                     {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
+                                     <Dropdown.Item href={`/edit-announcement/${details.id}`}>Edit</Dropdown.Item>
+                                          
+                                          ): (
+                                            null
+                                          )}
                                        <Dropdown.Item onClick={() =>deleteAlert(details.id)}>Delete</Dropdown.Item>
                                      </Dropdown.Menu>
                                    </Dropdown>

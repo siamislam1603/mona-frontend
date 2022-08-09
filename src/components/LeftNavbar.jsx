@@ -12,7 +12,31 @@ const LeftNavbar = () => {
 
 
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
-    setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
+    if(localStorage.getItem('user_role') !== 'guardian') {
+      menu_list = menu_list.filter(d => d.controller.controller_label !== 'Child Enrollment');
+    }
+
+    menu_list = menu_list.map(d => {
+      if(d.controller.controller_label === 'Child Enrollment') {
+        return {
+          controller: {
+            id: d.controller.id,
+            actions: d.controller.actions,
+            controller_icon: d.controller.controller_icon,
+            controller_name: d.controller.controller_name,
+            controller_label: d.controller.controller_label,
+            show_in_menu: d.controller.show_in_menu,
+            menu_link: `children/${localStorage.getItem('user_id')}`
+          }
+        }
+      }
+
+      return d;
+    });
+
+    console.log('MENU LIST:', menu_list);
+    // console.log('REFORMED:', menu_list.filter(permission => permission.controller.show_in_menu === true));
+    setPermissionList(menu_list);
 
     // console.log('FETCHING PERMISSION LIST');
     // let token = localStorage.getItem('token');
@@ -52,7 +76,7 @@ const LeftNavbar = () => {
     fetchPermissionList();
   }, []);
 
-
+  permissionList && console.log('PERMISSION LIST:', permissionList);
   return (
     <>
       <div className="logo-column text-center">
@@ -68,7 +92,7 @@ const LeftNavbar = () => {
           <Nav className="mr-auto w-100">
             {permissionList && permissionList.map(permission => {
               return (
-                <React.Fragment key={permission.controller.id}>
+                <React.Fragment key={permission.controller_id}>
                   <LinkContainer to={`/${permission.controller.menu_link}`}>
                     <Nav.Link>
                       <span>

@@ -322,7 +322,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         getFileCategory();
         getUser();
         fetchFranchiseeList();
-    }, [trainingDeleteMessage, userData])
+    }, [trainingDeleteMessage,])
 
     const handleTrainingDelete = async (cell) => {
         console.log('DELETING THE TRAINING!');
@@ -519,7 +519,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                                             Params.id === "8" ? "General" : "Null"
                                                                 }
                                                                 <small>{userData.length} files</small>
-
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">
@@ -663,7 +662,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         </Col>
                                     </Row>
                                     <div className="toggle-switch">
-                                        <Row>
+                                        {/* <Row>
                                             <Col md={12}>
                                                 <div className="t-switch">
                                                     <p>Enable Sharing</p>
@@ -679,7 +678,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     </div>
                                                 </div>
                                             </Col>
-                                        </Row>
+                                        </Row> */}
                                     </div>
                                     <div className="setting-heading">
                                         <h2>Settings</h2>

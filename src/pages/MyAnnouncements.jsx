@@ -15,23 +15,31 @@ import moment from 'moment';
 const MyAnnouncements = (props) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
+  
   const [myAnnouncement,setmyAnnouncement] = useState([]);
   // const {id} = useParams
+  const [userRole,setUserRole]=useState(null)
+
   const myAnnouncementData = async() =>{
     try {
       let token = localStorage.getItem('token')
     let id= localStorage.getItem("user_id")
     // console.log("sending response");
     let franhiseAlias = "all"
-    let usedId = localStorage.getItem("user_id")
-    const response = await axios.get(`${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${franhiseAlias}&search=&offset=0&limit=5`, {
+    let userId = localStorage.getItem("user_id")
+    // http://localhost:4000/announcement/created-announcement-events/2/?franchiseeAlias=all&limit=25&search=
+    // http://localhost:4000/announcement/created-announcement-events/2?franchiseeAlias=all&limit=25&search=
+    const response =
+     await axios
+     .get(`${BASE_URL}/announcement/created-announcement-events/${userId}/?franchiseeAlias=${franhiseAlias}&offset=0&limit=5&search=  
+     `, {
       headers: {
         "Authorization": "Bearer " + token
       }
      })
-    //  console.log("The repsonse mY anncounce,",response)
+     console.log("The repsonse mY anncounce,",response)
      if(response.status === 200) {
-        setmyAnnouncement(response.data.data.searchedData)
+        setmyAnnouncement(response.data.result.searchedData)
      }
     } catch (error) {
        setmyAnnouncement([])
@@ -77,6 +85,8 @@ const MyAnnouncements = (props) => {
   }
   useEffect(() =>{
     myAnnouncementData()
+    const user_role = localStorage.getItem("user_role")
+    setUserRole(user_role)
   },[])
   useEffect(() =>{
     if(props.myLoadData?.length>0){
@@ -90,6 +100,7 @@ const MyAnnouncements = (props) => {
   useEffect(()=>{
       if(props.myAnnouncementData) {
         setmyAnnouncement(props.myAnnouncementData)
+    
       }
   },[props.myAnnouncementData])
   console.log("MY ANNOUNCEMENT DATA props",props.myAnnouncementData)
@@ -122,10 +133,10 @@ const MyAnnouncements = (props) => {
 //     setmyAnnouncement(props.loadData)
 //   }
 // },[props.loadData])
-//  console.log("THE MY ANNOUNCEMENT DATA",myAnnouncement)
+ console.log("THE MY ANNOUNCEMENT DATA",myAnnouncement)
   return (
     <div className="announcement-accordion">
-        <h1> My Announcement</h1>
+        {/* <h1> My Announcement</h1> */}
     <Accordion defaultActiveKey="0">
       { myAnnouncement &&
        myAnnouncement.length !== 0 ? (
@@ -134,7 +145,8 @@ const MyAnnouncements = (props) => {
           <Accordion.Header>
             <div className="head-title">
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-              <div className="title-xxs">{data.title}<small><span> {
+              <div className="title-xxs">{data.title}<small><span>
+                 {
                               localStorage.getItem('user_role')
                                   ? localStorage
                                     .getItem('user_role')
@@ -143,7 +155,11 @@ const MyAnnouncements = (props) => {
                                       (data) =>
                                        data.charAt(0).toUpperCase() + data.slice(1)
                                       ).join(' ')
-                          : ''} : </span>{userName}</small></div>              
+                          : ''} : </span>{userName}  ||
+                          {data.is_event === 1 ?<span style ={{color:"black",fontWeight:"bold"}}> Event</span>:<span style ={{color:"black",fontWeight:"900"}}> Announcement</span> }
+                            
+                          </small>
+                          </div>              
               <div className="date">
                  
                   {/* <Dropdown.Toggle id="extrabtn" className="ctaact">
@@ -156,7 +172,11 @@ const MyAnnouncements = (props) => {
                                     <img src="../img/dot-ico.svg" alt=""/>
                                   </Dropdown.Toggle>
                                   <Dropdown.Menu>
-                                    <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>
+                                  {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
+                                    <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                   
+                                    ): (
+                                      null
+                                    )}
                                     <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
                                   </Dropdown.Menu>
                                 </Dropdown>

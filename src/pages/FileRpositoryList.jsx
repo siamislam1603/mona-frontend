@@ -83,9 +83,11 @@ const FileRpositoryList = () => {
     }
     const onSubmit = async (e) => {
         e.preventDefault();
+
         selectedUser?.map((item) => {
             selectedFranchiseeId += item.id + ',';
         });
+
         setLoaderFlag(true);
 
         var myHeaders = new Headers();
@@ -97,6 +99,7 @@ const FileRpositoryList = () => {
         console.log(localStorage, "localStorage");
 
         const file = formSettingData.setting_files[0];
+        console.log('file------->', file);
         console.log('file------->', file);
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
         console.log('reader---->');
