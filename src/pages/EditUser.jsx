@@ -568,12 +568,12 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              value={trainingCategoryData?.filter(d => d.id === parseInt(formData?.franchisee_id))}
+                              value={trainingCategoryData?.filter(d => formData?.trainingCategories?.includes(parseInt(d.id)))}
                               options={trainingCategoryData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  trainingCategories: [...selectedOptions.map(d => parseInt(d.id))],
+                                  trainingCategories: [...selectedOptions.map(option => option.id)],
                                 }));
                               }}
                             />
@@ -585,12 +585,12 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              value={pdcData?.filter(d => d.id === parseInt(formData?.professionalDevCategories))}
+                              value={pdcData?.filter(d => formData?.professionalDevCategories?.includes(parseInt(d.id)))}
                               options={pdcData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  professionalDevCategories: [...selectedOptions.map(d => parseInt(d.id))],
+                                  professionalDevCategories: [...selectedOptions.map(option => option.id)],
                                 }));
                               }}
                             />
@@ -652,12 +652,12 @@ const EditUser = () => {
                               closeMenuOnSelect={false}
                               components={animatedComponents}
                               isMulti
-                              value={businessAssetData?.filter(d => d.id === parseInt(formData?.businessAssets))}
+                              value={businessAssetData?.filter(d => formData?.businessAssets?.includes(parseInt(d.id)))}
                               options={businessAssetData}
                               onChange={(selectedOptions) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
-                                  businessAssets: [...selectedOptions.map(d => parseInt(d.id))],
+                                  businessAssets: [...selectedOptions.map(option => option.id)],
                                 }));
                               }}
                             />
