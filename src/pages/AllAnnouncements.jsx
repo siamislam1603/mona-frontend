@@ -259,7 +259,7 @@ console.log("The annoumce all ",props.allAnnouncement)
                                   {details.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                                      <div className="cont">
                                      <div className="related-files">
-                                       {details.announcement_files.map((detail,index) =>(
+                                       {details?.announcement_files?.map((detail,index) =>(
                                          
                                               <>
                                                

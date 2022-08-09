@@ -123,6 +123,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   type="date"
                                   placeholder=""
                                   name="dob"
+                                  max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.dob || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
