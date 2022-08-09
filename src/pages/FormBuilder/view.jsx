@@ -506,7 +506,7 @@ function ViewFormBuilder(props) {
                                                 />
                                               </div>
                                               <div className="content-title-section" onClick={()=>{
-                                                navigate("/form/response",{id: inner_item.id})
+                                                navigate("/form/response",{state:{id: inner_item.id}})
                                               }}>
                                                 <h6>{inner_item.form_name}</h6>
                                                 <h4>
