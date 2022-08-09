@@ -68,13 +68,13 @@ const MyAnnouncements = (props) => {
     return name;
   }
   const getAddedTime = (str) =>{
-    const Added= moment(str).format('YYYY-MM-DD')
+    const Added= moment(str).format('DD/MM/YYYY')
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [year, month, day].join('-');
+     let datae =  [year, month, day].join('/');
      
      if(datae == Added){
       return "Added today"
@@ -146,6 +146,8 @@ const MyAnnouncements = (props) => {
             <div className="head-title">
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
               <div className="title-xxs">{data.title}<small><span>
+              <span>{getAddedTime(data.createdAt)}</span>
+
                  {
                               localStorage.getItem('user_role')
                                   ? localStorage
