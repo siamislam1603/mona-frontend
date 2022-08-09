@@ -26,13 +26,16 @@ function FormResponse(props) {
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
   useEffect(() => {
+    getResponse("");
+  }, []);
+  const getResponse=(search)=>{
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
     };
 
     fetch(
-      `${BASE_URL}/form/response?form_id=${
+      `${BASE_URL}/form/response?search=${search}&form_id=${
         location?.state?.id ? location?.state?.id : 1
       }`,
       requestOptions
@@ -43,7 +46,7 @@ function FormResponse(props) {
         setFormData(result?.form);
       })
       .catch((error) => console.log('error', error));
-  }, []);
+  }
   return (
     <>
       {console.log('result?.result---->', responseData)}
@@ -85,6 +88,9 @@ function FormResponse(props) {
                             type="text"
                             placeholder="Search..."
                             name="search"
+                            onChange={(e) => {
+                              getResponse(e.target.value);
+                            }}
                           />
                         </Form.Group>
                       </div>
@@ -133,8 +139,9 @@ function FormResponse(props) {
                                         <div
                                           className={
                                             responseData[index].length - 1 ===
-                                            inner_index || (inner_index > 0
-                                            && responseData[index][
+                                              inner_index ||
+                                            (inner_index > 0 &&
+                                              responseData[index][
                                                 inner_index - 1
                                               ]?.user.fullname.includes(
                                                 inner_item.user.fullname
@@ -159,23 +166,23 @@ function FormResponse(props) {
                                           </h5>
                                           <h6>
                                             <span className="text-capitalize">
-                                            {inner_index > 0
-                                              ? !responseData[index][
-                                                  inner_index - 1
-                                                ].user.role
-                                                .split('_')
-                                                .join(' ').includes(
+                                              {inner_index > 0
+                                                ? !responseData[index][
+                                                    inner_index - 1
+                                                  ].user.role
+                                                    .split('_')
+                                                    .join(' ')
+                                                    .includes(
+                                                      inner_item?.user.role
+                                                        .split('_')
+                                                        .join(' ')
+                                                    ) &&
                                                   inner_item?.user.role
-                                                  .split('_')
-                                                  .join(' ')
-                                                ) &&
-                                                inner_item?.user.role
-                                                .split('_')
-                                                .join(' ')+","
-                                              : inner_item?.user.role
-                                              .split('_')
-                                              .join(' ')+","}
-                                              
+                                                    .split('_')
+                                                    .join(' ') + ','
+                                                : inner_item?.user.role
+                                                    .split('_')
+                                                    .join(' ') + ','}
                                             </span>{' '}
                                             {inner_index > 0
                                               ? !responseData[index][
@@ -222,10 +229,10 @@ function FormResponse(props) {
                                       item
                                     )}
                                     <h4 className="content-wrap-title text-capitalize">
-                                      Filled By {item.user.fullname} |  {item.section_name} Section
+                                      Filled By {item.user.fullname} |{' '}
+                                      {item.section_name} Section
                                     </h4>
-                                      
-                                    
+
                                     {Object.keys(JSON.parse(item.fields)).map(
                                       (inner_item, inner_index) => {
                                         return (
@@ -243,10 +250,31 @@ function FormResponse(props) {
                                                 src="../img/bx_right-arrow-alt.svg"
                                                 alt=""
                                               />
+                                              {console.log(
+                                                'dsfsfsfs',
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]
+                                              )}
                                               {Object.values(
                                                 JSON.parse(item.fields)
                                               )[inner_index]?.includes(
                                                 'data:image'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.png'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.jpg'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.jpeg'
                                               ) ? (
                                                 <>
                                                   <img
