@@ -49,24 +49,25 @@ const EditFranchisees = () => {
     });
 
     if(response.status === 200 && response.data.status === "success") {
-      const { franchiseeList } = response.data;
-      setEditFranchiseeData(franchiseeList);
+      const { franchisees } = response.data;
+      console.log('FRANCHISEE DATA:', franchisees);
+      copyDataToLocalState(franchisees);
     }
   };
 
-  const copyDataToLocalState = () => {
+  const copyDataToLocalState = (franchisee) => {
     setFranchiseeData(prevState => ({
-        franchisee_name: editFranchiseeData?.franchisee_name,
-        abn: editFranchiseeData?.abn,
-        city: editFranchiseeData?.city,
-        state: editFranchiseeData?.state,
-        contact: editFranchiseeData?.contact,
-        franchisee_admin_email: editFranchiseeData?.franchisee_admin_email,
-        franchisee_number: editFranchiseeData?.franchisee_number,
-        acn: editFranchiseeData?.acn,
-        address: editFranchiseeData?.address,
-        postcode: editFranchiseeData?.postcode,
-        franchisee_admin: editFranchiseeData?.franchisee_admin,
+        franchisee_name: franchisee?.franchisee_name,
+        abn: franchisee?.abn,
+        city: franchisee?.city,
+        state: franchisee?.state,
+        contact: franchisee?.contact,
+        franchisee_admin_email: franchisee?.franchisee_admin_email,
+        franchisee_number: franchisee?.franchisee_number,
+        acn: franchisee?.acn,
+        address: franchisee?.address,
+        postcode: franchisee?.postcode,
+        franchisee_admin: franchisee?.franchisee_admin,
     }));
   }
 

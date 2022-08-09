@@ -158,10 +158,10 @@ useEffect(() =>{
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
 // console.log("The franhise",props.franchisee)
-  console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
-console.log("The annoumce all ",props.allAnnouncement)
-  // console.log("The seach in all announcement", props.search)
-  {console.log("THE ANNOINCE",announcementDetails)}
+//   console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
+// console.log("The annoumce all ",props.allAnnouncement)
+//   // console.log("The seach in all announcement", props.search)
+//   {console.log("THE ANNOINCE",announcementDetails)}
 
   return (
     <div className="announcement-accordion">
@@ -224,7 +224,7 @@ console.log("The annoumce all ",props.allAnnouncement)
                                  <Col md={4}>
                                    <div className="video-col">
                                    
-                                     {   details.announcement_files?.map((detail,index) =>(
+                                     {   details?.announcement_files?.map((detail,index) =>(
                                               <>
                                               {detail.fileType == ".mp4" && !detail.is_deleted  ? (
                                                  <AnnouncementVideo 
@@ -256,10 +256,10 @@ console.log("The annoumce all ",props.allAnnouncement)
                                      </div>
                                    </div>
    
-                                  {details.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+                                  {details?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                                      <div className="cont">
                                      <div className="related-files">
-                                       {details.announcement_files.map((detail,index) =>(
+                                       {details?.announcement_files?.map((detail,index) =>(
                                          
                                               <>
                                                
