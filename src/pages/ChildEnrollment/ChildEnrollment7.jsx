@@ -192,9 +192,6 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
       if(response.status === 201 && response.data.status === "success") {
 
-<<<<<<< HEAD
-      if(localStorage.getItem('asked_for_consent')) {
-=======
         if(localStorage.getItem('asked_for_consent') !== null) {
           response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('enrolled_parent_id')}`, { childId: localStorage.getItem('enrolled_child_id') }, {
             headers: {
@@ -216,7 +213,6 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       }
     } else if(response.status === 201 && response.data.status === "success") {
       if(localStorage.getItem('asked_for_consent') !== null) {
->>>>>>> d6eb3524b0564f397c4fb41ef7fbe6d30688c633
         response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('enrolled_parent_id')}`, { childId: localStorage.getItem('enrolled_child_id') }, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem('token')}`
