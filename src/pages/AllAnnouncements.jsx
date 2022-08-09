@@ -158,10 +158,10 @@ useEffect(() =>{
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
 // console.log("The franhise",props.franchisee)
-  console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
-console.log("The annoumce all ",props.allAnnouncement)
-  // console.log("The seach in all announcement", props.search)
-  {console.log("THE ANNOINCE",announcementDetails)}
+//   console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
+// console.log("The annoumce all ",props.allAnnouncement)
+//   // console.log("The seach in all announcement", props.search)
+//   {console.log("THE ANNOINCE",announcementDetails)}
 
   return (
     <div className="announcement-accordion">
@@ -169,7 +169,7 @@ console.log("The annoumce all ",props.allAnnouncement)
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                     <Accordion defaultActiveKey="0">
                       { announcementDetails &&
-                        announcementDetails.length !==0 ? (
+                        announcementDetails?.length !==0 ? (
                           announcementDetails.map((details,index) => (
                             <div key={index}>
                            <Accordion.Item eventKey={index} >
@@ -224,7 +224,7 @@ console.log("The annoumce all ",props.allAnnouncement)
                                  <Col md={4}>
                                    <div className="video-col">
                                    
-                                     {   details.announcement_files?.map((detail,index) =>(
+                                     {   details?.announcement_files?.map((detail,index) =>(
                                               <>
                                               {detail.fileType == ".mp4" && !detail.is_deleted  ? (
                                                  <AnnouncementVideo 
@@ -242,12 +242,12 @@ console.log("The annoumce all ",props.allAnnouncement)
                                    </div>
                                  </Col>
                                  <Col md={8}>
-                                   {details &&details.coverImage && <div className="head">Related Images :</div>}
+                                   {details &&details?.coverImage && <div className="head">Related Images :</div>}
                                    <div className="cont">
                                      <div className="related-images">
      
    
-                                       {details && details.coverImage &&
+                                       {details && details?.coverImage &&
                                          <div className="item">
                                            <a href="/"><img src={details.coverImage} alt=""/></a>
                                          </div>
@@ -256,10 +256,10 @@ console.log("The annoumce all ",props.allAnnouncement)
                                      </div>
                                    </div>
    
-                                  {details.announcement_files.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+                                  {details?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                                      <div className="cont">
                                      <div className="related-files">
-                                       {details.announcement_files.map((detail,index) =>(
+                                       {details?.announcement_files?.map((detail,index) =>(
                                          
                                               <>
                                                
