@@ -48,6 +48,7 @@ const Announcements =  () => {
   const [eventLength,setEventLength] = useState(' ')
   const [eventCount,setEventCount] = useState('')
   const [allEvent,setAllEvent] = useState([])
+
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -64,16 +65,20 @@ const Announcements =  () => {
       console.log("THE SEARCH ALL ANNOUNCMENT")
       AllannoucementData(e)
     }
-    else{
+    else if(tabLinkPath==="/my-announcements"){
       console.log("THE SEARCH IN MY ANNOUNCEMENT")
       myAnnnoucementData(e)
     }
+    else {
+      console.log("SEARCH IN EVENTS")
+      AllEventSearch(e)
+    }
     // fetchUserDetails(e)    //  console.log("The api_url",api_url)
   };
+  
   const handleLoadMyAnnouncement = (e) =>{
     e.preventDefault()
     LoadMoreMyData()
-    
   }
   const LoadMoreMyData = async () =>{
     await setPage(0)
@@ -179,7 +184,7 @@ const Announcements =  () => {
       }
       let api_url = ' '
       if(searchvalue){
-        console.log("NO search value ", searchvalue)
+        // console.log("NO search value ", searchvalue)
          api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=${theCount}`
          const response = await axios.get(api_url, {
           headers: {
@@ -234,7 +239,7 @@ const Announcements =  () => {
 
       console.log("ON LOAD ALL ANNOUCEMENT CALL FUNCTON")
       let api_url =" "
-      api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=5`
+      api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=0&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=5`
       console.log("THE API_URL ONLOAD ANNOUCNEMENT",api_url)
       const response = await axios.get(api_url, {
        headers: {
@@ -389,6 +394,52 @@ const Announcements =  () => {
     } catch (error) {
         console.log("THE ERROR INSIDE MY ANNOUNCEMENT",error)
         setTheMyAnnoucemenet([])
+    }
+  }
+  const AllEventSearch = async(e) =>{
+    try {
+      if(e) {
+        searchvalue = e.target.value
+      }
+      if(searchvalue){
+        let api_url= ' '
+        console.log("THE SERACH VALUE IN MY",searchvalue) 
+        let usedId = localStorage.getItem("user_id")
+        // api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=1000`
+      
+      // api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset${offset}=&limit=5`
+       let userId = localStorage.getItem("user_id")
+       api_url = `${BASE_URL}/announcement/created-announcement-events/${userId}/?franchiseeAlias=${selectedFranchisee}&isEvent=1&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=${eventCount}`
+          const response = await axios.get(api_url, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          })
+          console.log("THE ALL EVENT SEARCH",response, api_url)
+          if(response.status === 200 &&  response.data.status === "success"){
+            setAllEvent(response.data.result.searchedData)
+          }
+   
+        }
+        else{
+          console.log("NO DATA")
+          let api_url= ' '
+          let userId = localStorage.getItem("user_id")
+          const token = localStorage.getItem('token');
+ 
+          const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=1&search=&offset=0&limit=5`, {
+            headers: {
+              "Authorization": "Bearer " + token
+            }
+          })
+          console.log("THE ALL EVENT SEARCH",response, api_url)
+          if(response.status === 200 &&  response.data.status === "success"){
+            setAllEvent(response.data.result.searchedData)
+          }
+        }
+    } catch (error) {
+      console.log("THE ERROR",error)
+      setAllEvent([])
     }
   }
   const TheCount = async() =>{
@@ -562,7 +613,7 @@ const Announcements =  () => {
                       && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue} />}
                     {tabLinkPath === "/my-announcements" 
                       && <MyAnnouncements myAnnouncementData={theMyAnnouncement} myLoadData={myLoadData} />}
-                   {tabLinkPath === "/all-events" && <AllEvent/>}   
+                   {tabLinkPath === "/all-events"  && <AllEvent allEvent={allEvent}/>}   
                     
                   </div>
                   {/* {franchiseeData && franchiseeData.searchedData.length} */}

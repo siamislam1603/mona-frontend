@@ -6,7 +6,7 @@ import axios from "axios";
 import AnnouncementVideo from "./AnnouncementVideo";
 import { debounce } from 'lodash';
 import moment from 'moment';
-const AllEvent = () => {
+const AllEvent = (props) => {
   const [allEventData,setAllEventData] = useState([])
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -81,6 +81,12 @@ useEffect(() =>{
   const user_role = localStorage.getItem("user_role")
   setUserRole(user_role)
 },[])
+useEffect(() =>{
+  if(props.allEvent){
+    setAllEventData(props.allEvent)
+  }
+},[props.allEvent])
+console.log("THE EVENT PROPS",props.allEvent)
   return (
     <div className="announcement-accordion">
     <Accordion defaultActiveKey="0">
