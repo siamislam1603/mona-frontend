@@ -19,6 +19,7 @@ import { CSVDownload } from 'react-csv';
 import { useRef } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
+import { verifyPermission } from '../helpers/roleBasedAccess';
 
 // const { ExportCSVButton } = CSVExport;
 
@@ -46,7 +47,6 @@ const UserManagement = () => {
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
   const [deleteResponse, setDeleteResponse] = useState(null);
-  
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
@@ -479,12 +479,10 @@ const UserManagement = () => {
                                     </footer>
                                   </Dropdown.Menu>
                                 </Dropdown>
-                                <a
-                                  href="/new-user"
-                                  className="btn btn-primary me-3"
-                                >
-                                  + Create New User
-                                </a>
+                                {
+                                    verifyPermission("user_management", "add") &&
+                                    <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
+                                }
                                 <Dropdown>
                                   <Dropdown.Toggle
                                     id="extrabtn"

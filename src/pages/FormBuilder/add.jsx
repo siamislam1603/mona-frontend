@@ -90,6 +90,7 @@ function AddFormBuilder(props) {
     } else {
       var myHeaders = new Headers();
       let data={...form};
+      data["link"]=BASE_URL+"/form/dynamic/"+data.form_name;
       data["created_by"]=localStorage.getItem("user_id");
       data["upper_role"]=getUpperRoleUser();
       myHeaders.append('Content-Type', 'application/json');
