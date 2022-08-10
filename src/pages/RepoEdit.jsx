@@ -7,7 +7,11 @@ import Multiselect from 'multiselect-react-dropdown';
 import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
+import DropOneFile from '../components/DragDrop';
+import Select from 'react-select';
 import { useParams } from 'react-router-dom';
+import { EditFleRepo } from '../helpers/validation'
+// import { TrainingFormValidation } from '../helpers/validation';
 const animatedComponents = makeAnimated();
 let selectedUserId = '';
 
@@ -17,19 +21,14 @@ const RepoEdit = () => {
     const [settingsModalPopup, setSettingsModalPopup] = useState(false);
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+    console.log(formSettingData, "formSettingData")
     const [errors, setErrors] = useState({});
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [user, setUser] = useState([]);
-    const [loaderFlag, setLoaderFlag] = useState(false);
-    const [userData, setUserData] = useState([]);
-    const [MetaDisc, SetMetaDisc] = useState([]);
-    const [img, SetImg] = useState([]);
     const [data, setData] = useState([])
-    const [description, setdescription] = useState([])
-    const [image, setImage] = useState([])
-    const [userDatacategory, setUsercategory] = useState([]);
-
+    const [coverImage, setCoverImage] = useState({});
+    const [fetchedCoverImage, setFetchedCoverImage] = useState();
 
     const toBase64 = (file) =>
         new Promise((resolve, reject) => {
@@ -47,67 +46,96 @@ const RepoEdit = () => {
         })
         console.log(response, "response")
         if (response.status === 200 && response.data.status === "success") {
-            const result = response.data.file;
-            setData(result);
-            console.log('result>>>>>>>', result)
+            const FileResult = response.data.file;
+            console.log('result>>>>>>>', FileResult)
+            copyFetchedData(FileResult);
         }
-        // let result = response.data.file
-        // let Repositoryfiles = result.repository_files[0]
-        // setData(result)
-        // console.log
-        // setdescription(result.description)
-        // setImage(Repositoryfiles.filesPath)
-        // setUsercategory(Repositoryfiles.categoryId)
-        // console.log("Repositoryfiles", Repositoryfiles)
+
     }
     console.log(">>>>>>>>>>>>>data", data)
-
-    const copyFetchedData = () => {
+    const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
             createdAt: data?.createdAt,
             description: data?.description,
             meta_description: data?.meta_description,
-            category_id: data?.category_id,
-            category_id: data?.category_id,
-            category_id: data?.category_id,
-
+            title: data?.title,
+            categoryId: data?.repository_files[0].categoryId,
+            filesPath: data?.repository_files[0].filesPath,
+            repository_shares: data?.repository_shares[0].franchisee,
+            accessibleToRole: data?.repository_shares[0].accessibleToRole,
+            assigned_users: data?.repository_shares[0].assigned_users,
+            assigned_roles: data?.repository_shares[0].assigned_roles,
         }));
+        setCoverImage(data?.repository_files[0].filesPath);
+        setFetchedCoverImage(data?.repository_files[0].filesPath);
+
+    }
+    // FUNCTION TO SAVE TRAINING SETTINGS
+    const handleDiscriptionSettings = (event) => {
+        const { name, value } = event.target;
+        setData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    // FUNCTION TO SAVE TRAINING DATA
+    const handleDiscriptionData = (event) => {
+        const { name, value } = event.target;
+        setData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    // Update API For File Repo
+
+    const updatefile = async (data) => {
+        const token = localStorage.getItem('token');
+        const response = await axios.put(
+            `${BASE_URL}/fileRepo/${Params.id}`, data, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        }
+        );
+        console.log(response, "<<<<<<<<<<<>>>>>>>>");
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    const handleDataSubmit = event => {
+        event.preventDefault();
+        let errorObj = EditFleRepo(data, coverImage);
+        if (Object.keys(errorObj).length > 0) {
+            setErrors(errorObj);
+        } else { }
+        
+    }
 
 
 
 
 
     const getFileCategory = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
+        const token = localStorage.getItem('token');
+        const response = await axios.get(
+            `${BASE_URL}/fileRepo/files-category/`, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        }
         );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-        let result = await fetch(`${BASE_URL}/fileRepo/files-category/`, requestOptions);
-        result = await result.json()
-            .then((result) => setCategory(result.category))
-            .catch((error) => console.log('error', error));
+        if (response.status === 200 && response.data.status === "success") {
+            const categoryList = response.data.category;
+            console.log('CATEGORY:', categoryList)
+            setCategory([
+                ...categoryList.map((data) => ({
+                    id: data.id,
+                    value: data.category_name,
+                    label: data.category_name,
+                })),
+            ]);
+        }
     };
 
     const getUser = () => {
@@ -167,38 +195,12 @@ const RepoEdit = () => {
         }
     };
 
-
-    // const Update = async () => {
-    //     console.log('CREATING THE TRAINING');
-    //     const token = localStorage.getItem('token');
-    //     const response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${Params}`, {
-    //         headers: {
-    //             "Authorization": "Bearer " + token
-    //         }
-    //     }
-    //     );
-    //     console.log(response, "responseresponseresponseresponseresponseresponse")
-    // }
-
-
-
-
-
     useEffect(() => {
         GetData();
-        // updateTraining();
-        // Update();
-        // getUserRoleAndFranchiseeData();
-        // getMyAddedFileRepoData();
-        // getFilesSharedWithMeData();
         getFileCategory();
         getUser();
+        updatefile();
     }, []);
-
-
-
-
-
 
 
 
@@ -229,15 +231,31 @@ const RepoEdit = () => {
                                             <div className="modal-top">
                                                 <div className="modal-top-containt">
                                                     <Row>
-                                                        <Col md={12}>
-                                                            <Form.Group>
-                                                                <DragDropRepository onChange={setField} />
-                                                                <p className="error">{errors.setting_files}</p>
-                                                            </Form.Group>
+                                                        <Col md={6}>
+                                                            {/* <div className="repositorydrag"> */}
+                                                            <DropOneFile
+                                                                onSave={setCoverImage}
+                                                                title="Image"
+                                                                setErrors={setErrors}
+                                                                setFetchedCoverImage={setFetchedCoverImage}
+                                                            // setTrainingData={setTraining}
+                                                            />
+                                                            <small className="fileinput">(png, jpg & jpeg)</small>
+                                                            {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
+                                                            {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
+                                                            {/* </div> */}
                                                         </Col>
+                                                        <Col md={6}></Col>
+                                                        {/* <Form.Group>
+                                                                <DragDropRepository value={data.filesPath} onChange={data.filesPath} />
+                                                                <p className="error">{errors.setting_files}</p>
+                                                                <img src={data.filesPath} alt="" width="100px" height="100px" />
+                                                                {console.log(data.filesPath)}
+                                                            </Form.Group> */}
                                                     </Row>
                                                     <div className="toggle-switch">
-                                                        <Row>
+
+                                                        {/* <Row>
                                                             <Col md={12}>
                                                                 <div className="t-switch">
                                                                     <p>Enable Sharing</p>
@@ -253,7 +271,7 @@ const RepoEdit = () => {
                                                                     </div>
                                                                 </div>
                                                             </Col>
-                                                        </Row>
+                                                        </Row> */}
                                                     </div>
                                                     <div className="setting-heading">
                                                         <h2>Settings</h2>
@@ -270,10 +288,9 @@ const RepoEdit = () => {
                                                                 <Form.Control
                                                                     as="textarea"
                                                                     rows={2}
-                                                                    name="meta_description"
-                                                                    onChange={(e) => {
-                                                                        setField(e.target.name, e.target.value);
-                                                                    }}
+                                                                    name="description"
+                                                                    value={data?.description}
+                                                                    onChange={handleDiscriptionData}
                                                                 />
                                                             </Form.Group>
                                                         </div>
@@ -281,19 +298,18 @@ const RepoEdit = () => {
                                                     <Col lg={12}>
                                                         <Form.Group>
                                                             <Form.Label>File Category</Form.Label>
-                                                            <Form.Select
+                                                            {/* {console.log(trainingCategory.filter(c => c.id === trainingData.category_id), "trainingCategory")} */}
+                                                            <Select
+                                                                closeMenuOnSelect={true}
+                                                                options={category}
+                                                                value={category.filter(c => c.id === data.categoryId) || category.filter(c => c.id === data.categoryId)}
                                                                 name="file_category"
-                                                                onChange={(e) => {
-                                                                    setField(e.target.name, e.target.value);
-                                                                }}
-                                                            >
-                                                                <option value="">Select File Category</option>
-                                                                {category?.map((item) => {
-                                                                    return (
-                                                                        <option value={item.id}>{item.category_name}</option>
-                                                                    );
-                                                                })}
-                                                            </Form.Select>
+                                                                onChange={(e) => setData(prevState => ({
+                                                                    ...prevState,
+                                                                    categoryId: e.id
+                                                                }))}
+                                                            />
+                                                            {errors && errors.categoryId && <span className="error">{errors.categoryId}</span>}
                                                         </Form.Group>
                                                     </Col>
                                                 </Row>
@@ -307,12 +323,18 @@ const RepoEdit = () => {
                                                                         <input
                                                                             type="radio"
                                                                             value={1}
-                                                                            name="accessible_to_role"
+                                                                            name="accessibleToRole"
                                                                             id="yes"
-                                                                            onChange={(e) => {
-                                                                                setField(e.target.name, parseInt(e.target.value));
+                                                                            onChange={(event) => {
+                                                                                setData((prevState) => ({
+                                                                                    ...prevState,
+                                                                                    accessibleToRole: 1,
+                                                                                }));
                                                                             }}
-                                                                            checked={formSettingData.accessible_to_role === 1}
+                                                                            // onChange={(e) => {
+                                                                            //     setData(e.target.name, parseInt(e.target.value));
+                                                                            // }}
+                                                                            checked={data.accessibleToRole === 1}
                                                                         />
                                                                         <span className="radio-round"></span>
                                                                         <p>User Roles</p>
@@ -323,12 +345,15 @@ const RepoEdit = () => {
                                                                         <input
                                                                             type="radio"
                                                                             value={0}
-                                                                            name="accessible_to_role"
+                                                                            name="accessibleToRole"
                                                                             id="no"
-                                                                            onChange={(e) => {
-                                                                                setField(e.target.name, parseInt(e.target.value));
+                                                                            onChange={(event) => {
+                                                                                setData((prevState) => ({
+                                                                                    ...prevState,
+                                                                                    accessibleToRole: 0,
+                                                                                }));
                                                                             }}
-                                                                            checked={formSettingData.accessible_to_role === 0}
+                                                                            checked={data.accessibleToRole === 0}
                                                                         />
                                                                         <span className="radio-round"></span>
                                                                         <p>Specific Users</p>
@@ -338,39 +363,33 @@ const RepoEdit = () => {
                                                         </Form.Group>
                                                     </Col>
                                                     <Col lg={9} md={12}>
-                                                        {formSettingData.accessible_to_role === 1 ? (
+                                                        {data.accessibleToRole === 1 ? (
                                                             <Form.Group>
                                                                 <Form.Label>Select User Roles</Form.Label>
                                                                 <div className="modal-two-check user-roles-box">
                                                                     <label className="container">
                                                                         Co-ordinators
+                                                                        {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                         <input
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="coordinator"
-                                                                            onClick={(e) => {
-                                                                                let data = { ...formSettingData };
-                                                                                if (
-                                                                                    !data['shared_role']
-                                                                                        .toString()
-                                                                                        .includes(e.target.id)
-                                                                                ) {
-                                                                                    data['shared_role'] += e.target.id + ',';
-                                                                                } else {
-                                                                                    data['shared_role'] = data[
-                                                                                        'shared_role'
-                                                                                    ].replace(e.target.id + ',', '');
-                                                                                    if (data['shared_role'].includes('all')) {
-                                                                                        data['shared_role'] = data[
-                                                                                            'shared_role'
-                                                                                        ].replace('all,', '');
-                                                                                    }
+                                                                            checked={data?.assigned_roles?.toString().includes('coordinator')}
+                                                                            onChange={() => {
+                                                                                if (data.assigned_roles?.includes("coordinator")) {
+                                                                                    let Data = data.assigned_roles.filter(t => t !== "coordinator");
+                                                                                    setData(prevState => ({
+                                                                                        ...prevState,
+                                                                                        assigned_roles: [...Data]
+                                                                                    }));
                                                                                 }
-                                                                                setFormSettingData(data);
+
+                                                                                if (!data.assigned_roles?.includes("coordinator"))
+                                                                                    setData(prevState => ({
+                                                                                        ...prevState,
+                                                                                        assigned_roles: [...data.assigned_roles, "coordinator"]
+                                                                                    }))
                                                                             }}
-                                                                            checked={formSettingData?.shared_role
-                                                                                ?.toString()
-                                                                                .includes('coordinator')}
                                                                         />
                                                                         <span className="checkmark"></span>
                                                                     </label>
@@ -380,29 +399,23 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="educator"
-                                                                            onClick={(e) => {
-                                                                                let data = { ...formSettingData };
-                                                                                if (
-                                                                                    !data['shared_role']
-                                                                                        .toString()
-                                                                                        .includes(e.target.id)
-                                                                                ) {
-                                                                                    data['shared_role'] += e.target.id + ',';
-                                                                                } else {
-                                                                                    data['shared_role'] = data[
-                                                                                        'shared_role'
-                                                                                    ].replace(e.target.id + ',', '');
-                                                                                    if (data['shared_role'].includes('all')) {
-                                                                                        data['shared_role'] = data[
-                                                                                            'shared_role'
-                                                                                        ].replace('all,', '');
-                                                                                    }
+                                                                            checked={data?.assigned_roles?.toString().includes('educator')}
+                                                                            onChange={() => {
+                                                                                if (data.assigned_roles?.includes("educator")) {
+                                                                                    let Data = data.assigned_roles.filter(t => t !== "educator");
+                                                                                    setData(prevState => ({
+                                                                                        ...prevState,
+                                                                                        assigned_roles: [...Data]
+                                                                                    }));
                                                                                 }
-                                                                                setFormSettingData(data);
+
+                                                                                if (!data.assigned_roles?.includes("educator"))
+                                                                                    setData(prevState => ({
+                                                                                        ...prevState,
+                                                                                        assigned_roles: [...data.assigned_roles, "educator"]
+                                                                                    }))
                                                                             }}
-                                                                            checked={formSettingData?.shared_role
-                                                                                ?.toString()
-                                                                                .includes('educator')}
+
                                                                         />
                                                                         <span className="checkmark"></span>
                                                                     </label>
@@ -412,29 +425,23 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="parent"
-                                                                            onClick={(e) => {
-                                                                                let data = { ...formSettingData };
-                                                                                if (
-                                                                                    !data['shared_role']
-                                                                                        .toString()
-                                                                                        .includes(e.target.id)
-                                                                                ) {
-                                                                                    data['shared_role'] += e.target.id + ',';
-                                                                                } else {
-                                                                                    data['shared_role'] = data[
-                                                                                        'shared_role'
-                                                                                    ].replace(e.target.id + ',', '');
-                                                                                    if (data['shared_role'].includes('all')) {
-                                                                                        data['shared_role'] = data[
-                                                                                            'shared_role'
-                                                                                        ].replace('all,', '');
-                                                                                    }
+                                                                            checked={data?.assigned_roles.includes('parent')}
+                                                                            onChange={() => {
+                                                                                if (data.assigned_roles?.includes("parent")) {
+                                                                                    let Data = data.assigned_roles.filter(t => t !== "parent");
+                                                                                    setData(prevState => ({
+                                                                                        ...prevState,
+                                                                                        assigned_roles: [...Data]
+                                                                                    }));
                                                                                 }
-                                                                                setFormSettingData(data);
+
+                                                                                if (!data.assigned_roles?.includes("parent"))
+                                                                                    setData(prevState => ({
+                                                                                        ...prevState,
+                                                                                        assigned_roles: [...data.assigned_roles, "parent"]
+                                                                                    }))
                                                                             }}
-                                                                            checked={formSettingData?.shared_role?.includes(
-                                                                                'parent'
-                                                                            )}
+
                                                                         />
                                                                         <span className="checkmark"></span>
                                                                     </label>
@@ -444,76 +451,58 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="all_roles"
-                                                                            onClick={(e) => {
-                                                                                let data = { ...formSettingData };
-                                                                                console.log('e.target.checked', e.target.checked);
-                                                                                if (e.target.checked === true) {
-                                                                                    if (
-                                                                                        !data['shared_role']
-                                                                                            .toString()
-                                                                                            .includes('parent')
-                                                                                    ) {
-                                                                                        data['shared_role'] += 'parent,';
-                                                                                    }
-                                                                                    if (
-                                                                                        !data['shared_role']
-                                                                                            .toString()
-                                                                                            .includes('educator')
-                                                                                    ) {
-                                                                                        data['shared_role'] += 'educator,';
-                                                                                    }
-                                                                                    if (
-                                                                                        !data['shared_role']
-                                                                                            .toString()
-                                                                                            .includes('coordinator')
-                                                                                    ) {
-                                                                                        data['shared_role'] += 'coordinator,';
-                                                                                    }
-                                                                                    if (
-                                                                                        !data['shared_role']
-                                                                                            .toString()
-                                                                                            .includes('all')
-                                                                                    ) {
-                                                                                        data['shared_role'] += 'all,';
-                                                                                    }
-                                                                                    setFormSettingData(data);
-                                                                                } else {
-                                                                                    data['shared_role'] = '';
-                                                                                    setFormSettingData(data);
+                                                                            checked={data?.assigned_roles?.includes('all')}
+                                                                            onChange={() => {
+                                                                                if (data.assigned_roles?.includes("coordinator")
+                                                                                    && data.assigned_roles.includes("educator")
+                                                                                    && data.assigned_roles.includes("parent")) {
+                                                                                    setData(prevState => ({
+                                                                                        ...prevState,
+                                                                                        assigned_roles: [],
+                                                                                    }));
                                                                                 }
-                                                                            }}
-                                                                            checked={formSettingData?.shared_role?.includes(
-                                                                                'all'
-                                                                            )}
-                                                                        />
+                                                                                if (!data.assigned_roles?.includes("coordinator")
+                                                                                    && !data.assigned_roles.includes("educator")
+                                                                                    && !data.assigned_roles.includes("parent")
+                                                                                )
+                                                                                    setData(prevState => ({
+                                                                                        ...prevState,
+                                                                                        assigned_roles: ["coordinator", "educator", "parent"]
+                                                                                    })
+                                                                                    )
+                                                                            }} />
                                                                         <span className="checkmark"></span>
                                                                     </label>
                                                                 </div>
                                                             </Form.Group>
                                                         ) : null}
-                                                        {formSettingData.accessible_to_role === 0 ? (
+                                                        {data.accessibleToRole === 0 ? (
                                                             <Form.Group>
                                                                 <Form.Label>Select User</Form.Label>
                                                                 <div className="select-with-plus">
                                                                     <Multiselect
                                                                         displayValue="email"
                                                                         className="multiselect-box default-arrow-select"
-                                                                        // placeholder="Select Franchisee"
-                                                                        selectedValues={selectedUser}
-                                                                        // onKeyPressFn={function noRefCheck() {}}
+                                                                        selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
                                                                         onRemove={onRemoveUser}
-                                                                        // onSearch={function noRefCheck() {}}
-                                                                        onSelect={onSelectUser}
+                                                                        value={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
+                                                                        onSelect={(selectedOptions) => {
+                                                                            setData((prevState) => ({
+                                                                                ...prevState,
+                                                                                assigned_users: [...selectedOptions.map(option => option.id + "")]
+                                                                            }));
+                                                                        }}
                                                                         options={user}
                                                                     />
+                                                                    {console.log(data, "????????????????????a")}
                                                                 </div>
                                                                 <p className="error">{errors.franchisee}</p>
                                                             </Form.Group>
                                                         ) : null}
                                                     </Col>
-                                                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                                                    <Form.Group className="mb-3" controlId="formBasicPassword" align-items-center>
                                                         <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} >Cancel</Button>
-                                                        <Button type="submit" > Save Details</Button>
+                                                        <Button type="submit" onClick={handleDataSubmit} > Save Details</Button>
                                                     </Form.Group>
                                                 </Row>
                                             </div>

@@ -84,75 +84,10 @@ const FileRepository = () => {
     category_id: null,
     search: ""
   });
-  // const [columns, setColumns] = useState([
-  //   {
-  //     dataField: 'name',
-  //     text: 'Name',
-  //     sort: true,
-  //     formatter: (cell) => {
-  //       cell = cell.split(',');
-  //       return (
-  //         <>
-
-  //           <div className="user-list">
-  //             <Link to={`/file-repository-List/${cell[0]}`} className="FileResp">
-  //               <span>
-  //                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
-  //               </span>
-  //             </Link>
-  //             <span className="user-name">
-  //               {cell[0] === "1" ? "Daily Use" :
-  //                 cell[0] === "2" ? "Business Management" :
-  //                   cell[0] === "3" ? "Employeement" :
-  //                     cell[0] === "4" ? "Compliance" :
-  //                       cell[0] === "5" ? "Care Giving" :
-  //                         cell[0] === "6" ? "Curriculum & Planning" :
-  //                           cell[0] === "7" ? "Resources" :
-  //                             cell[0] === "8" ? "General" : "Null"
-  //               }
-  //               <small>{cell[1]} Files</small>
-  //             </span>
-  //           </div>
-  //         </>
-  //       );
-  //     },
-  //   },
-  //   {
-  //     dataField: 'createdAt',
-  //     text: 'Created on',
-  //     sort: true,
-  //   },
-  //   {
-  //     dataField: 'creatorName',
-  //     text: 'Created by',
-  //     sort: true,
-
-  //   },
-  //   {
-  //     dataField: 'repository_files',
-  //     text: '',
-  //     formatter: (cell) => {
-  //       return (
-  //         <>
-  //           <div className="cta-col">
-  //             <Dropdown>
-  //               <Dropdown.Toggle variant="transparent" id="ctacol">
-  //                 <img src="../img/dot-ico.svg" alt="" />
-  //               </Dropdown.Toggle>
-  //               <Dropdown.Menu>
-  //                 <Dropdown.Item href="#">Delete</Dropdown.Item>
-  //               </Dropdown.Menu>
-  //             </Dropdown>
-  //           </div>
-  //         </>
-  //       );
-  //     },
-  //   },
-  // ]);
 
   const [tabFlag, setTabFlag] = useState(true);
   const [fileRepoData, setFileRepoData] = useState([]);
-  const [sharedWithMeFileRepoData, setSharedWithMeFileRepoData] = useState([]);
+  const [assigned_usersMeFileRepoData, setassigned_usersMeFileRepoData] = useState([]);
   const [errors, setErrors] = useState({});
   const [post, setPost] = React.useState([]);
 
@@ -160,29 +95,6 @@ const FileRepository = () => {
   const [userData, setUserData] = useState([]);
 
   userData && console.log('USER DATA:', userData.map(data => data));
-
-  // const GetData = async () => {
-  //   let response = await axios.get(`${BASE_URL}/fileRepo/2`, {
-  //     headers: {
-  //       authorization: `Bearer ${localStorage.getItem('token')}`,
-  //     },
-  //   })
-
-  //   console.log(response, "+++++++++++++++++++++", "response")
-
-  //   if (response.status === 200) {
-  //     const users = response.data.searchedData;
-  //     console.log(users, "successsuccesssuccesssuccesssuccess")
-  //     let tempData = users.map((dt) => ({
-  //       name: `${dt.categoryId}, ${dt.fileName}`,
-  //       createdAt: dt.createdAt,
-  //       userID: dt.id,
-  //       creatorName: dt.creatorName + "," + dt.creatorRole
-  //     }));
-  //     setUserData(tempData);
-  //     let temp = tempData;
-  //   }
-  // }
 
   const GetData = async () => {
     let response = await axios.get(`${BASE_URL}/fileRepo/`, {
@@ -212,7 +124,7 @@ const FileRepository = () => {
     GetData();
     // getUserRoleAndFranchiseeData();
     getMyAddedFileRepoData();
-    getFilesSharedWithMeData();
+    getFilesassigned_usersMeData();
     getFileCategory();
     getUser();
   }, []);
@@ -283,18 +195,19 @@ const FileRepository = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
     selectedUser?.map((item) => {
       selectedFranchiseeId += item.id + ',';
     });
     setLoaderFlag(true);
+
     var myHeaders = new Headers();
+
     myHeaders.append(
       'Authorization',
       'Bearer ' + localStorage.getItem('token')
     );
+    console.log(localStorage, "localStorage");
 
-    
     const file = formSettingData.setting_files[0];
     console.log('file------->', file);
     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
@@ -321,12 +234,12 @@ const FileRepository = () => {
     } else {
       if (formSettingData.accessible_to_role === 1) {
         formdata.append(
-          'sharedRole',
+          'user_roles',
           formSettingData.shared_role.slice(0, -1)
         );
         formdata.append(
-          'sharedWith',
-          null
+          'assigned_users',
+          ""
         );
         formdata.append(
           'accessibleToRole',
@@ -338,11 +251,11 @@ const FileRepository = () => {
         );
       } else {
         formdata.append(
-          'sharedRole',
-          null
+          'user_roles',
+          ""
         );
         formdata.append(
-          'sharedWith',
+          'assigned_users',
           selectedUserId.slice(0, -1)
         );
         formdata.append(
@@ -355,6 +268,7 @@ const FileRepository = () => {
         );
       }
     }
+
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -381,8 +295,7 @@ const FileRepository = () => {
       .catch((error) => console.log('error', error));
   };
 
-
-  const getFilesSharedWithMeData = () => {
+  const getFilesassigned_usersMeData = () => {
     var myHeaders = new Headers();
     myHeaders.append(
       'authorization',
@@ -394,7 +307,7 @@ const FileRepository = () => {
       headers: myHeaders,
     };
     fetch(
-      `${BASE_URL}/uploads/sharedWithMe/${localStorage.getItem('user_id')}`,
+      `${BASE_URL}/uploads/assigned_usersMe/${localStorage.getItem('user_id')}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -421,7 +334,7 @@ const FileRepository = () => {
         //   });
         // });
         // console.log('repoData---->', repoData);
-        setSharedWithMeFileRepoData(res);
+        setassigned_usersMeFileRepoData(res);
       })
       .catch((error) => console.log('error', error));
   };
@@ -546,7 +459,7 @@ const FileRepository = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader />
-                {console.log("sharedWithMeFileRepoData------>", sharedWithMeFileRepoData)}
+                {console.log("assigned_usersMeFileRepoData------>", assigned_usersMeFileRepoData)}
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
                     <ToolkitProvider
@@ -564,7 +477,7 @@ const FileRepository = () => {
                                 <div className="data-search me-3">
                                   <SearchBar {...props.searchProps} />
                                 </div>
-                                <Dropdown className="filtercol me-3">
+                                {/* <Dropdown className="filtercol me-3">
                                   <Dropdown.Toggle
                                     id="extrabtn"
                                     variant="btn-outline"
@@ -633,7 +546,7 @@ const FileRepository = () => {
                                       </Button>
                                     </footer>
                                   </Dropdown.Menu>
-                                </Dropdown>
+                                </Dropdown> */}
                                 <span
                                   className="btn btn-primary me-3"
                                   onClick={handleShow}
@@ -643,7 +556,7 @@ const FileRepository = () => {
                                   />{' '}
                                   Upload File
                                 </span>
-                                <Dropdown>
+                                {/* <Dropdown>
                                   <Dropdown.Toggle
                                     id="extrabtn"
                                     className="ctaact"
@@ -660,7 +573,7 @@ const FileRepository = () => {
                                       Delete All Row
                                     </Dropdown.Item>
                                   </Dropdown.Menu>
-                                </Dropdown>
+                                </Dropdown> */}
                               </div>
                             </div>
                           </header>
@@ -740,7 +653,7 @@ const FileRepository = () => {
                   </Col>
                 </Row>
                 <div className="toggle-switch">
-                  <Row>
+                  {/* <Row>
                     <Col md={12}>
                       <div className="t-switch">
                         <p>Enable Sharing</p>
@@ -756,7 +669,7 @@ const FileRepository = () => {
                         </div>
                       </div>
                     </Col>
-                  </Row>
+                  </Row> */}
                 </div>
                 <div className="setting-heading">
                   <h2>Settings</h2>
