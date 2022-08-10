@@ -529,6 +529,7 @@ const Announcements =  () => {
       console.log("ALL EVENTS",response)
       if(response.status === 200 && response.data.status === "success") {
         setEventCount(response.data.result.count)
+        setMyDataLength(response.data.result.searchedData.length)
       }
     } catch (error) {
         if(error.response.status === 404){
@@ -554,7 +555,26 @@ useEffect(() =>{
     else if(tabLinkPath==="/my-announcements" ){
       // console.log("INSIDE MY ANNOUNCEMENT USEEFFCT")
       // setMyPage(5)
-      myDataCount()
+    myDataCount()
+      
+      if(mypage>=5){
+        setMyPage(5)
+        console.log("SETMYPAGE PAGE TO 5",mypage)
+        setMyLoadData(myLoadData.slice(0,5))
+      }
+      // myDataCount()
+     }
+     else if(tabLinkPath==="/all-events"){
+      EventCount()
+      // setLoadMoreEvent(loadMoreEvent.slice(0,5))
+      if(pageEvent>=5){
+        setpageEvent(5)
+        setLoadMoreEvent(loadMoreEvent.slice(0,5))
+        // console.log("THE LOADDER DATA",loadMoreData.slice(0,5))
+      }
+      // console.log("EVENT count and length",eventCount,eventLength,loadMoreEvent)
+      // setEventLength(loadMoreEvent.length)
+      
      }
 
 },[tabLinkPath])
