@@ -505,7 +505,7 @@ const Main = () => {
         />
 
         <Route
-          path="/Notification"
+          path="/notifications"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

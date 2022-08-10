@@ -47,8 +47,8 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
         setAcceptedAllPoints(user.accepted_all_points);
       }
       window.scrollTo(0, 0);
-        setLoader(true);
-        createConcentForm(data);
+        // setLoader(true);
+        // createConcentForm(data);
     }
   };
 
