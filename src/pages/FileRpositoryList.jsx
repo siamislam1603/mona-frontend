@@ -83,11 +83,9 @@ const FileRpositoryList = () => {
     }
     const onSubmit = async (e) => {
         e.preventDefault();
-
         selectedUser?.map((item) => {
             selectedFranchiseeId += item.id + ',';
         });
-
         setLoaderFlag(true);
 
         var myHeaders = new Headers();
@@ -99,7 +97,6 @@ const FileRpositoryList = () => {
         console.log(localStorage, "localStorage");
 
         const file = formSettingData.setting_files[0];
-        console.log('file------->', file);
         console.log('file------->', file);
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
         console.log('reader---->');
@@ -125,12 +122,12 @@ const FileRpositoryList = () => {
         } else {
             if (formSettingData.accessible_to_role === 1) {
                 formdata.append(
-                    'sharedRole',
+                    'user_roles',
                     formSettingData.shared_role.slice(0, -1)
                 );
                 formdata.append(
-                    'sharedWith',
-                    null
+                    'assigned_users',
+                    ""
                 );
                 formdata.append(
                     'accessibleToRole',
@@ -142,11 +139,11 @@ const FileRpositoryList = () => {
                 );
             } else {
                 formdata.append(
-                    'sharedRole',
-                    null
+                    'user_roles',
+                    ""
                 );
                 formdata.append(
-                    'sharedWith',
+                    'assigned_users',
                     selectedUserId.slice(0, -1)
                 );
                 formdata.append(
@@ -284,35 +281,36 @@ const FileRpositoryList = () => {
             dataField: 'name',
             text: 'Name',
             sort: true,
-            resizable: true,
             formatter: (cell) => {
                 cell = cell.split(',');
                 return (
                     <>
-                        <div className="user-list">
+
+                        <div div className="user-list">
                             {cell[0] === "image/jpeg" ?
-                                <div style={{ width: "100%", display: "flex" }}>
-                                    < div style={{ width: "%" }}>
+                                <>
+                                    <span className="user-pic-tow">
                                         <a href={cell[2]} download>
                                             <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                         </a>
-                                    </div>
-                                    <div width="70%">
+                                    </span>
+                                    <span className="user-name">
                                         {cell[1]}.img
-                                    </div>
-                                </div>
+                                    </span>
+                                </>
                                 :
                                 cell[0] === "audio/mpeg" ?
-                                    <div style={{ width: "100%", display: "flex" }}>
-                                        < div style={{ width: "25%" }}>
+                                    <>
+                                        <span className="user-pic-tow">
                                             <a href={cell[2]} download>
                                                 <img src="../img/audio-ico.png" className="me-2" alt="" />
                                             </a>
-                                        </div>
-                                        <div style={{ width: "75%" }}>
+                                        </span>
+                                        <span className="user-name">
                                             {cell[1]}.mp3
-                                        </div>
-                                    </div>
+                                        </span>
+                                    </>
+
                                     : cell[0] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
@@ -324,20 +322,20 @@ const FileRpositoryList = () => {
                                                 />
                                             </div>
                                         </> :
-                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" ?
-                                            <div style={{ wwidth: "100%", display: "flex" }}>
-                                                < div style={{ width: "25%" }}>
+
+                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf"  ?
+                                            <>
+                                                <span className="user-pic-tow">
                                                     <a href={cell[2]} download >
                                                         <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                                     </a>
-                                                </div>
-                                                <div style={{ width: "75%" }}>
+                                                </span>
+                                                <span className="user-name">
                                                     {cell[1]}.Doc
-                                                </div>
-                                            </div> : cell[0]
+                                                </span>
+                                            </> : cell[0]
                             }
                         </div>
-
                     </>
                 );
             },
@@ -457,7 +455,7 @@ const FileRpositoryList = () => {
                                                                 <div className="data-search me-3">
                                                                     <SearchBar {...props.searchProps} />
                                                                 </div>
-                                                                <Dropdown className="filtercol me-3">
+                                                                {/* <Dropdown className="filtercol me-3">
                                                                     <Dropdown.Toggle
                                                                         id="extrabtn"
                                                                         variant="btn-outline"
@@ -526,7 +524,7 @@ const FileRpositoryList = () => {
                                                                             </Button>
                                                                         </footer>
                                                                     </Dropdown.Menu>
-                                                                </Dropdown>
+                                                                </Dropdown> */}
                                                                 <span
                                                                     className="btn btn-primary me-3"
                                                                     onClick={handleShow}
@@ -536,7 +534,7 @@ const FileRpositoryList = () => {
                                                                     />{' '}
                                                                     Upload File
                                                                 </span>
-                                                                <Dropdown>
+                                                                {/* <Dropdown>
                                                                     <Dropdown.Toggle
                                                                         id="extrabtn"
                                                                         className="ctaact"
@@ -545,15 +543,13 @@ const FileRpositoryList = () => {
                                                                     </Dropdown.Toggle>
                                                                     <Dropdown.Menu>
                                                                         <Dropdown.Item>
-                                                                            {/* <ExportCSVButton {...props.csvProps}>
-                                                                    Export CSV!!
-                                                                </ExportCSVButton> */}
+                                                                          
                                                                         </Dropdown.Item>
                                                                         <Dropdown.Item href="#">
                                                                             Delete All Row
                                                                         </Dropdown.Item>
                                                                     </Dropdown.Menu>
-                                                                </Dropdown>
+                                                                </Dropdown> */}
                                                             </div>
                                                         </div>
                                                     </header>
@@ -593,7 +589,7 @@ const FileRpositoryList = () => {
                                         </Col>
                                     </Row>
                                     <div className="toggle-switch">
-                                        <Row>
+                                        {/* <Row>
                                             <Col md={12}>
                                                 <div className="t-switch">
                                                     <p>Enable Sharing</p>
@@ -609,7 +605,7 @@ const FileRpositoryList = () => {
                                                     </div>
                                                 </div>
                                             </Col>
-                                        </Row>
+                                        </Row> */}
                                     </div>
                                     <div className="setting-heading">
                                         <h2>Settings</h2>
