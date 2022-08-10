@@ -9,7 +9,7 @@ import axios from "axios";
 import AllAnnouncements from "./AllAnnouncements";
 import MyAnnouncements from "./MyAnnouncements";
 import AllEvent from "./AllEvent";
-import { debounce } from 'lodash';
+import { debounce, slice } from 'lodash';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 
 
@@ -141,13 +141,13 @@ const Announcements =  () => {
 
       try {
         if(tabLinkPath === "/all-announcements"){
-          if(page>5){
-             setPage(5);
-          }
-          else{
-            setPage(page+5)
-          }
-          //  setPage(page+5)
+          // if(page>5){
+          //    setPage(5);
+          // }
+          // else{
+          //   setPage(page+5)
+          // }
+           setPage(page+5)
         
           console.log("THE LOAD MORE DATA ",loadMoreData)
         
@@ -205,10 +205,11 @@ const Announcements =  () => {
       }
       else{
          console.log("THE PAGE for lloadMoreoad ",page) 
-         setPage(5)
-        //  if(loadMoreData>5){
+         setPage(0)
+      
           setLoadMoreData(loadMoreData.slice(0,5))
-        // }
+
+        
         //  setLoadMoreData([])
         // console.log("THE ELSE",loadMoreData)
         //  setLoadMoreData(loadMoreData.slice(0,5))
@@ -499,11 +500,18 @@ useEffect(() =>{
 
     if(tabLinkPath==="/all-announcements"){
       TheCount()
+      // onLoadAnnouncement()
       // setPage(0)
-      console.log("TABLINKPATH CHANGED")
+      if(page>=5){
+        setPage(5)
+        setLoadMoreData(loadMoreData.slice(0,5))
+        console.log("THE LOADDER DATA",loadMoreData.slice(0,5))
+      }
+      console.log("TABLINKPATH CHANGED",page)
     }
     else if(tabLinkPath==="/my-announcements" ){
       // console.log("INSIDE MY ANNOUNCEMENT USEEFFCT")
+      // setMyPage(5)
       myDataCount()
      }
 
@@ -543,7 +551,7 @@ useEffect(() =>{
   console.log("MY COUNT AND MY data lenght",myCount,myDataLength,)
   // console.log("THE LOAD MORE MY DATA",theMyAnnouncement)
   console.log("PAGE page and Mypage",page,mypage)
-  // console.log("THE New Load More adat,",loadMoreData)
+  console.log("THE New Load More adat,",loadMoreData)
 
   
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
@@ -633,7 +641,8 @@ useEffect(() =>{
                     )
                   } */}
 
-                  
+                  <div className="text-center">
+
                   {
                       tabLinkPath=== "/all-announcements" ? 
                       (
@@ -656,7 +665,7 @@ useEffect(() =>{
                           null
                         ):
                       (
-                        <button type="button" onClick={handleLoadMyAnnouncement} class="btn btn-primary">Load More My</button>
+                        <button type="button" onClick={handleLoadMyAnnouncement} class="btn btn-primary">Load More</button>
                      )} 
                         </>
                     ):(
@@ -670,7 +679,7 @@ useEffect(() =>{
                         null
                       ):
                       (
-                        <button type="button" class="btn btn-primary">Load More Event</button>
+                        <button type="button" class="btn btn-primary">Load More</button>
 
                       )
                         
@@ -680,6 +689,8 @@ useEffect(() =>{
                       null
                     )
                   }
+                  </div>
+
                 </div>
               </div>
             </div>

@@ -48,13 +48,13 @@ const getRelatedFileName = (str) => {
   return name;
 } 
 const getAddedTime = (str) =>{
-  const Added= moment(str).format('YYYY-MM-DD')
+  const Added= moment(str).format('DD/MM/YYYY')
   var today = new Date();
   let d = new Date(today);
   let month = (d.getMonth() + 1).toString().padStart(2, '0');
   let day = d.getDate().toString().padStart(2, '0');
   let year = d.getFullYear();
-   let datae =  [year, month, day].join('-');
+   let datae =  [year, month, day].join('/');
    
    if(datae == Added){
     return "Added today"
@@ -76,6 +76,7 @@ const deleteAnnouncement = async (id) =>{
       allEvent()
   }
 }
+
 useEffect(() =>{
   allEvent()
   const user_role = localStorage.getItem("user_role")
@@ -97,7 +98,9 @@ console.log("THE EVENT PROPS",props.allEvent)
           <Accordion.Header>
             <div className="head-title">
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-              <div className="title-xxs">{data.title}<small><span> {
+              <div className="title-xxs">{data.title}<small><span>
+              <span className="timesec">{getAddedTime(data.createdAt)}</span>
+                {
                               localStorage.getItem('user_role')
                                   ? localStorage
                                     .getItem('user_role')

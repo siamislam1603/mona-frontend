@@ -19,6 +19,7 @@ import { CSVDownload } from 'react-csv';
 import { useRef } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
+import { verifyPermission } from '../helpers/roleBasedAccess';
 
 // const { ExportCSVButton } = CSVExport;
 
@@ -479,12 +480,10 @@ const UserManagement = () => {
                                     </footer>
                                   </Dropdown.Menu>
                                 </Dropdown>
-                                <a
-                                  href="/new-user"
-                                  className="btn btn-primary me-3"
-                                >
-                                  + Create New User
-                                </a>
+                                {
+                                    verifyPermission("user_management", "add") &&
+                                    <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
+                                }
                                 <Dropdown>
                                   <Dropdown.Toggle
                                     id="extrabtn"

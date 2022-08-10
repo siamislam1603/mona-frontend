@@ -91,20 +91,28 @@ const getRelatedFileName = (str) => {
   return name;
 }
 const getAddedTime = (str) =>{
-  const Added= moment(str).format('YYYY-MM-DD')
+  // const Added= moment(str).format('YYYY-MM-DD')
+  console.log("THe astring",str)
+  const Added= moment(str).format('DD/MM/YYYY')
+  // console.log("THe data",dateww)
   var today = new Date();
   let d = new Date(today);
   let month = (d.getMonth() + 1).toString().padStart(2, '0');
   let day = d.getDate().toString().padStart(2, '0');
   let year = d.getFullYear();
-   let datae =  [year, month, day].join('-');
-   
-   if(datae == Added){
-    return "Added today"
+   let datae =  [day, month, year].join('/');
+   console.log("THE DATE",datae,Added)
+   let temp;
+   if(datae === Added){
+    temp = "Added today";
    }
-   if(Added<datae){
-    return Added
+
+   if(Added < datae){
+    temp = Added;
+    console.log("THE added date i smaller",typeof Added, typeof datae);
    }
+
+   return temp;
 }
 useEffect(() => {
   AllAnnouncementData()
@@ -161,7 +169,7 @@ useEffect(() =>{
 //   console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
 // console.log("The annoumce all ",props.allAnnouncement)
 //   // console.log("The seach in all announcement", props.search)
-//   {console.log("THE ANNOINCE",announcementDetails)}
+  {console.log("THE ANNOINCE",announcementDetails)}
 
   return (
     <div className="announcement-accordion">
@@ -176,7 +184,12 @@ useEffect(() =>{
                              <Accordion.Header>
                                <div className="head-title">
                                  <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                                 <div className="title-xxs">{details.title}<small><span> {
+                                 <div className="title-xxs">{details.title}
+                                 
+                                 <small><span>
+                                <span className="timesec">{getAddedTime(details.createdAt)}</span>
+                                  
+                                   {
                                  localStorage.getItem('user_role')
                                      ? localStorage
                                        .getItem('user_role')
@@ -185,8 +198,11 @@ useEffect(() =>{
                                          (data) =>
                                           data.charAt(0).toUpperCase() + data.slice(1)
                                          ).join(' ')
-                             : ''} : </span>{userName}</small></div>
-                                 <div className="date">
+                             : ''} : </span>{userName}
+                             
+                             </small>
+                             </div>
+                                 {/* <div className="date">
                                     <Dropdown>
                                      <Dropdown.Toggle id="extrabtn" className="ctaact">
                                        <img src="../img/dot-ico.svg" alt=""/>
@@ -201,7 +217,7 @@ useEffect(() =>{
                                        <Dropdown.Item onClick={() =>deleteAlert(details.id)}>Delete</Dropdown.Item>
                                      </Dropdown.Menu>
                                    </Dropdown>
-                                 </div>
+                                 </div> */}
                                </div>
                              </Accordion.Header>
                              <Accordion.Body>
@@ -268,6 +284,7 @@ useEffect(() =>{
                                                  <p>{getRelatedFileName(detail.file)}</p>
                                                  <small>
                                                  {getAddedTime(detail.createdAt)}
+                                                 {console.log("COnsole date",detail.createdAt)}
                                                  </small></span></a></div>
                                               ):(
                                                null
