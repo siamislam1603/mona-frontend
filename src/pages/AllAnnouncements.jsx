@@ -187,7 +187,7 @@ useEffect(() =>{
                                  <div className="title-xxs">{details.title}
                                  
                                  <small><span>
-                                <span>{getAddedTime(details.createdAt)}</span>
+                                <span className="timesec">{getAddedTime(details.createdAt)}</span>
                                   
                                    {
                                  localStorage.getItem('user_role')
