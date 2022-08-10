@@ -5,10 +5,13 @@ import { BASE_URL } from './App';
 
 let temp = () => { }
 
-const TopHeader = ({ setSelectedFranchisee = temp }) => {
+const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
   const [franchiseeId, setFranchiseeId] = useState();
   const [permissionList, setPermissionList] = useState();
+  const [notificationDialog, setNotificationDialog] = useState(true);
+  const [notifType, setNotifType] = useState('none');
+  const [notifData, setNotifData] = useState(null);
 
 
 
@@ -104,6 +107,27 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
     }
   };
 
+  const fetchNotificationData = async () => {
+    const response = await axios.get(`${BASE_URL}/notification/data/${notifType}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { data } = response.data
+      let filteredData = data.map(d => ({
+        id: d.id,
+        title: d.title,
+        created_for: d.created_for
+      }));
+      filteredData = filteredData.filter(d => parseInt(d.created_for) === parseInt(localStorage.getItem('user_id')));
+      filteredData = filteredData.slice(0, 5);
+
+      setNotifData(filteredData);
+    }
+  };
+
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'franchisor_admin') {
       setSelectedFranchisee('All');
@@ -112,6 +136,15 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
       setSelectedFranchisee(franchiseeList[0]?.id);
     }
   }, [franchiseeList]);
+
+  useEffect(() => {
+    setNotifType(notificationType)
+  }, [])
+
+  useEffect(() => {
+    console.log('Fetching notificaiton data');
+    fetchNotificationData();
+  }, [notifType])
 
   useEffect(() => {
     var user_dashboar_link = '';
@@ -140,10 +173,11 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
     savePermissionInState();
   }, []);
 
-  franchiseeList && console.log('FRANCHISEE LIST:', franchiseeList)
+  notifData && console.log('DATA=>:', notifData);
+  notifType && console.log('TYPE=>:', notifType);
   return (
     <>
-      <div className="topheader">
+      <div className="topheader" style={{ position: 'relative' }}>
         <div className="lpanel">
           <div className="selectdropdown">
             <Dropdown onSelect={selectFranchisee}>
@@ -192,7 +226,11 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
               </li>
               <li>
                 <a href="/">
-                  <img alt="" src="/img/notification-icon.svg" />
+                  <img 
+                    alt=""
+                    // onMouseEnter={() => setNotificationDialog(true)} 
+                    // onMouseLeave={() => setNotificationDialog(false)} 
+                    src="/img/notification-icon.svg" />
                 </a>
               </li>
               <li className="user-col">
@@ -260,6 +298,25 @@ const TopHeader = ({ setSelectedFranchisee = temp }) => {
           </div>
         </div>
       </div>
+      {/* {
+        notificationDialog === true &&
+        <div className="notification-dialog">
+          <div className="notification-dialog-body">
+            {
+              notifData && notifData.map(d => {
+                return (
+                  <div className="notification">
+                    {d.title.slice(0, 70) + '...'}
+                  </div>
+                )
+              })
+            }
+          </div>
+          <div className="notification-dialog-footer">
+            <p className="notification-link">View More</p>
+          </div>
+        </div>
+      } */}
     </>
   );
 };

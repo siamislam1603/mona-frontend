@@ -159,7 +159,7 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
   return (
     <>
       <div className="enrollment-form-sec">
-        <Form onSubmit={submitFormData}>``
+        <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">Please tick the type of care you require <small>(Agreed Booking Hours)</small></h2>
             <div className="grayback">

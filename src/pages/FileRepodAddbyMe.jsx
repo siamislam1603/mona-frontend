@@ -25,7 +25,7 @@ const selectRow = {
 };
 
 const FileRepodAddbyMe = () => {
-    
+
     const [userData, setUserData] = useState([]);
     userData && console.log('USER DATA:', userData.map(data => data));
 
@@ -37,7 +37,6 @@ const FileRepodAddbyMe = () => {
         })
 
         console.log(response, "+++++++++++++++++++++", "created-filesBy-category")
-
         if (response.status === 200) {
             const users = response.data.dataDetails;
             console.log(users, "successsuccesssuccesssuccesssuccess")
@@ -60,7 +59,6 @@ const FileRepodAddbyMe = () => {
                 cell = cell.split(',');
                 return (
                     <>
-
                         <div className="user-list">
                             <Link to={`/file-repository-List-me/${cell[0]}`} className="FileResp">
                                 <span>
@@ -139,10 +137,6 @@ const FileRepodAddbyMe = () => {
         // getUser();
     }, []);
     return (
-
-
-
-
         <div>
             <ToolkitProvider
                 keyField="name"
