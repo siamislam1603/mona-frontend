@@ -15,6 +15,8 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { verifyPermission } from '../helpers/roleBasedAccess';
+
 import ToolkitProvider, {
     Search,
     CSVExport,
