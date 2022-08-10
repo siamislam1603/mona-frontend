@@ -87,6 +87,14 @@ useEffect(() =>{
     setAllEventData(props.allEvent)
   }
 },[props.allEvent])
+useEffect(() =>{
+  if(props?.loadEvent?.length>0){
+    setAllEventData(props.loadEvent)
+  }
+  else{
+    
+  }
+},[props.loadEvent])
 console.log("THE EVENT PROPS",props.allEvent)
   return (
     <div className="announcement-accordion">

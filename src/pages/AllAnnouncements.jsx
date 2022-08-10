@@ -92,7 +92,7 @@ const getRelatedFileName = (str) => {
 }
 const getAddedTime = (str) =>{
   // const Added= moment(str).format('YYYY-MM-DD')
-  console.log("THe astring",str)
+  // console.log("THe astring",str)
   const Added= moment(str).format('DD/MM/YYYY')
   // console.log("THe data",dateww)
   var today = new Date();
@@ -101,7 +101,7 @@ const getAddedTime = (str) =>{
   let day = d.getDate().toString().padStart(2, '0');
   let year = d.getFullYear();
    let datae =  [day, month, year].join('/');
-   console.log("THE DATE",datae,Added)
+  //  console.log("THE DATE",datae,Added)
    let temp;
    if(datae === Added){
     temp = "Added today";
@@ -109,7 +109,7 @@ const getAddedTime = (str) =>{
 
    if(Added < datae){
     temp = Added;
-    console.log("THE added date i smaller",typeof Added, typeof datae);
+    // console.log("THE added date i smaller",typeof Added, typeof datae);
    }
 
    return temp;
@@ -284,7 +284,7 @@ useEffect(() =>{
                                                  <p>{getRelatedFileName(detail.file)}</p>
                                                  <small>
                                                  {getAddedTime(detail.createdAt)}
-                                                 {console.log("COnsole date",detail.createdAt)}
+                                                 {/* {console.log("COnsole date",detail.createdAt)} */}
                                                  </small></span></a></div>
                                               ):(
                                                null
