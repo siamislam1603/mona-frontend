@@ -479,10 +479,10 @@ const UserManagement = () => {
                                     </footer>
                                   </Dropdown.Menu>
                                 </Dropdown>
-                                {
+                                {/* {
                                     verifyPermission("user_management", "add") &&
                                     <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
-                                }
+                                } */}
                                 <Dropdown>
                                   <Dropdown.Toggle
                                     id="extrabtn"

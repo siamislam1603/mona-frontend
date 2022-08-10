@@ -36,14 +36,26 @@ const columns = [
   {
     dataField: 'name',
     text: 'Child Name',
+
     formatter: (cell) => {
-      cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+      console.log("The cell",cell)
+      cell = cell?.split(",");
+      return (<><div className="user-list"><span className="user-pic"><img src="../img/upload.jpg" alt='' /></span><span className="user-name">{cell} </span></div></>)
     },
   },
   {
     dataField: 'specialneed',
     text: 'Child with special needs',
+    formatter: (cell) => {
+      console.log("The cell",cell)
+      // cell = cell.split(",");
+      return (<>
+      <div className="user-list">
+        {/* <span className="user-pic"><img src={cell} alt='' /></span> */}
+        <span className="user-name">{cell === "false" ? "No": "Yes"} </span>
+      </div>
+      </>)
+    },
   },
   {
     dataField: "action",
@@ -67,7 +79,7 @@ const EducatorDashboard = () => {
   const [announcements, setannouncements] = useState([{}]);
   const [training, setTraining] = useState([])
   const [coordinator, setCoordinator] = useState([])
-
+  const [childrenData,setChildrenData]= useState([])
   const Userannouncements = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/educator/quick-access-announcements`, {
@@ -81,6 +93,26 @@ const EducatorDashboard = () => {
       setannouncements(training);
     }
   };
+  const Children = async() =>{
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/dashboard/educator/children-with-special-needs`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if(response.status === 200){
+      let data = response.data.childrenWithSpecialNeeds;
+      let tempData  = data.map((dt) =>({
+        name:`${dt.fullname}`,
+        specialneed : `${dt.child_medical_information.has_special_needs}`
+
+      }))
+      console.log("THE TEM",tempData)
+      setChildrenData([])
+    }
+    console.log("THE CHILDER REPONSE",response)
+
+  }
 
 
   const Coordinator = async () => {
@@ -111,15 +143,39 @@ const EducatorDashboard = () => {
   }
   console.log(training, "response")
 
-
+  const getAddedTime = (str) =>{
+    // const Added= moment(str).format('YYYY-MM-DD')
+    // console.log("THe astring",str)
+    const Added= moment(str).format('DD/MM/YYYY')
+    // console.log("THe data",dateww)
+    var today = new Date();
+    let d = new Date(today);
+    let month = (d.getMonth() + 1).toString().padStart(2, '0');
+    let day = d.getDate().toString().padStart(2, '0');
+    let year = d.getFullYear();
+     let datae =  [day, month, year].join('/');
+    //  console.log("THE DATE",datae,Added)
+     let temp;
+     if(datae === Added){
+      temp = "Added today";
+     }
+  
+     if(Added < datae){
+      temp = Added;
+      // console.log("THE added date i smaller",typeof Added, typeof datae);
+     }
+  
+     return temp;
+  }
 
   useEffect(() => {
     Userannouncements();
     Training();
     Coordinator();
+    Children();
   }, [])
 
-
+console.log("Childeren data",childrenData)
   return (
     <>
       <div id="main">
@@ -184,11 +240,23 @@ const EducatorDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            <BootstrapTable
+                            {/* <BootstrapTable
                               keyField="name"
-                              data={products}
+                              data={childrenData}
                               columns={columns}
-                            />
+                            /> */}
+                            {
+                              childrenData?.length>0 ? (
+                                <BootstrapTable
+                                keyField="name"
+                                data={childrenData}
+                                columns={columns}
+                              />
+                              ): (
+                                <div className="text-center mb-5 mt-5"><strong>No children enrolled yet !</strong></div>
+
+                              )
+                            }
                           </div>
                         </div>
                         {/*<div className="files-sec pb-5">
@@ -381,7 +449,9 @@ const EducatorDashboard = () => {
                                     <div className="listing">
                                       <a href="/" className="item">
                                         <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                        <div className="name">{item.title} <span className="date">{item.scheduled_date}</span></div>
+                                        <div className="name">{item.title} 
+                                        
+                                        <span className="date">{item.scheduled_date}</span></div>
                                       </a>
                                     </div>
                                   </>
