@@ -156,6 +156,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
+
         // if (
         //     formSettingData.accessible_to_role === null ||
         //     formSettingData.accessible_to_role === undefined
@@ -205,6 +206,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         //         );
         //     }
         // }
+
 
         var requestOptions = {
             method: 'POST',
@@ -346,35 +348,36 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             dataField: 'name',
             text: 'Name',
             sort: true,
-            resizable: true,
             formatter: (cell) => {
                 cell = cell.split(',');
                 return (
                     <>
-                        <div className="user-list">
+
+                        <div div className="user-list">
                             {cell[0] === "image/jpeg" ?
-                                <div style={{ width: "100%", display: "flex" }}>
-                                    < div style={{ width: "%" }}>
+                                <>
+                                    <span className="user-pic-tow">
                                         <a href={cell[2]} download>
                                             <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                         </a>
-                                    </div>
-                                    <div width="70%">
+                                    </span>
+                                    <span className="user-name">
                                         {cell[1]}.img
-                                    </div>
-                                </div>
+                                    </span>
+                                </>
                                 :
                                 cell[0] === "audio/mpeg" ?
-                                    <div style={{ width: "100%", display: "flex" }}>
-                                        < div style={{ width: "25%" }}>
+                                    <>
+                                        <span className="user-pic-tow">
                                             <a href={cell[2]} download>
                                                 <img src="../img/audio-ico.png" className="me-2" alt="" />
                                             </a>
-                                        </div>
-                                        <div style={{ width: "75%" }}>
+                                        </span>
+                                        <span className="user-name">
                                             {cell[1]}.mp3
-                                        </div>
-                                    </div>
+                                        </span>
+                                    </>
+
                                     : cell[0] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
@@ -386,20 +389,20 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 />
                                             </div>
                                         </> :
+
                                         cell[0] === "application/octet-stream" || cell[0] === "application/pdf" ?
-                                            <div style={{ wwidth: "100%", display: "flex" }}>
-                                                < div style={{ width: "25%" }}>
+                                            <>
+                                                <span className="user-pic-tow">
                                                     <a href={cell[2]} download >
                                                         <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                                     </a>
-                                                </div>
-                                                <div style={{ width: "75%" }}>
+                                                </span>
+                                                <span className="user-name">
                                                     {cell[1]}.Doc
-                                                </div>
-                                            </div> : cell[0]
+                                                </span>
+                                            </> : cell[0]
                             }
                         </div>
-
                     </>
                 );
             },
@@ -525,7 +528,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                 <div className="data-search me-3">
                                                                     <SearchBar {...props.searchProps} />
                                                                 </div>
-                                                                <Dropdown className="filtercol me-3">
+                                                                {/* <Dropdown className="filtercol me-3">
                                                                     <Dropdown.Toggle
                                                                         id="extrabtn"
                                                                         variant="btn-outline"
@@ -594,7 +597,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                             </Button>
                                                                         </footer>
                                                                     </Dropdown.Menu>
-                                                                </Dropdown>
+                                                                </Dropdown> */}
                                                                 <span
                                                                     className="btn btn-primary me-3"
                                                                     onClick={handleShow}
@@ -604,7 +607,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     />{' '}
                                                                     Upload File
                                                                 </span>
-                                                                <Dropdown>
+                                                                {/* <Dropdown>
                                                                     <Dropdown.Toggle
                                                                         id="extrabtn"
                                                                         className="ctaact"
@@ -613,15 +616,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     </Dropdown.Toggle>
                                                                     <Dropdown.Menu>
                                                                         <Dropdown.Item>
-                                                                            {/* <ExportCSVButton {...props.csvProps}>
-                                                                    Export CSV!!
-                                                                </ExportCSVButton> */}
+                                                                           
                                                                         </Dropdown.Item>
                                                                         <Dropdown.Item href="#">
                                                                             Delete All Row
                                                                         </Dropdown.Item>
                                                                     </Dropdown.Menu>
-                                                                </Dropdown>
+                                                                </Dropdown> */}
                                                             </div>
                                                         </div>
                                                     </header>
@@ -662,22 +663,22 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     </Row>
                                     <div className="toggle-switch">
                                         {/* <Row>
-                                            <Col md={12}>
-                                                <div className="t-switch">
-                                                    <p>Enable Sharing</p>
-                                                    <div className="toogle-swich">
-                                                        <input
-                                                            className="switch"
-                                                            type="checkbox"
-                                                            name="enable_sharing"
-                                                            onChange={(e) => {
-                                                                setField(e.target.name, e.target.checked);
-                                                            }}
-                                                        />
+                                                <Col md={12}>
+                                                    <div className="t-switch">
+                                                        <p>Enable Sharing</p>
+                                                        <div className="toogle-swich">
+                                                            <input
+                                                                className="switch"
+                                                                type="checkbox"
+                                                                name="enable_sharing"
+                                                                onChange={(e) => {
+                                                                    setField(e.target.name, e.target.checked);
+                                                                }}
+                                                            />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </Col>
-                                        </Row> */}
+                                                </Col>
+                                            </Row> */}
                                     </div>
                                     <div className="setting-heading">
                                         <h2>Settings</h2>

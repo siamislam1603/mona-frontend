@@ -10,7 +10,7 @@ import { getSuggestedQuery } from '@testing-library/react';
 let values = [];
 const DynamicForm = (props) => {
   const location = useLocation();
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   console.log('location----->', location);
   const [formData, setFormData] = useState([]);
   const [errors, setErrors] = useState({});
@@ -51,15 +51,21 @@ const DynamicForm = (props) => {
       redirect: 'follow',
       headers: myHeaders,
     };
-    let api_url = `${BASE_URL}/form/target_users?form_name=${
-      location.pathname.split('/')[location.pathname.split('/').length - 1]
-    }&franchisee_id=${localStorage.getItem('franchisee_id')}`;
+    let form_name = encodeURIComponent(
+      location.pathname
+        .split('/')
+        [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+    );
+
+    
+    let api_url = `${BASE_URL}/form/target_users?form_name=${form_name}&franchisee_id=${localStorage.getItem(
+      'franchisee_id'
+    )}`;
 
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         setTargetUser(result?.data);
-        
       })
       .catch((error) => console.log('error', error));
   };
@@ -69,10 +75,13 @@ const DynamicForm = (props) => {
       redirect: 'follow',
     };
 
+    let form_name = encodeURIComponent(
+      location.pathname
+        .split('/')
+        [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+    );
     fetch(
-      `${BASE_URL}/field?form_name=${
-        location.pathname.split('/')[location.pathname.split('/').length - 1].replaceAll("%20"," ")
-      }&franchisee_id=${localStorage.getItem('franchisee_id')}&request=user`,
+      `${BASE_URL}/field?form_name=${form_name}&franchisee_id=${localStorage.getItem('franchisee_id')}&request=user`,
       requestOptions
     )
       .then((response) => response.text())
@@ -104,9 +113,7 @@ const DynamicForm = (props) => {
                   delete data[item];
                 }
               });
-            }
-            else
-            {
+            } else {
               data[item].push(inner_item);
             }
             console.log('form_data---->1212', data);
@@ -147,7 +154,7 @@ const DynamicForm = (props) => {
         .then((result) => {
           result = JSON.parse(result);
           alert(result?.message);
-          navigate("/form");
+          navigate('/form');
         })
         .catch((error) => console.log('error', error));
     }
@@ -167,11 +174,12 @@ const DynamicForm = (props) => {
                 <Row>
                   <div className="forms-managment-left new-form-title">
                     <h6>
-                      {
-                        location.pathname.split('/')[
-                          location.pathname.split('/').length - 1
-                        ].replaceAll("%20"," ")
-                      }{' '}
+                      {location.pathname
+                        .split('/')
+                        [location.pathname.split('/').length - 1].replaceAll(
+                          '%20',
+                          ' '
+                        )}{' '}
                       Form
                     </h6>
                   </div>
@@ -235,6 +243,8 @@ const DynamicForm = (props) => {
                                   {...inner_item}
                                   error={errors}
                                   onChange={(key, value) => {
+                                    console.log('KEY--->', key);
+                                    console.log('VALUE--->', value);
                                     setField(item, key, value);
                                   }}
                                 />
@@ -243,7 +253,11 @@ const DynamicForm = (props) => {
                               <InputFields
                                 {...inner_item}
                                 error={errors}
-                                onChange={setField}
+                                onChange={(key, value) => {
+                                  console.log('KEY--->', key);
+                                  console.log('VALUE--->', value);
+                                  setField(key, value);
+                                }}
                               />
                             );
                           })}
@@ -255,6 +269,8 @@ const DynamicForm = (props) => {
                               {...inner_item}
                               error={errors}
                               onChange={(key, value) => {
+                                console.log('KEY--->', key);
+                                console.log('VALUE--->', value);
                                 setField(item, key, value);
                               }}
                             />
