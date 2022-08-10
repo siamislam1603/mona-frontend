@@ -108,7 +108,7 @@ const EducatorDashboard = () => {
 
       }))
       console.log("THE TEM",tempData)
-      setChildrenData([])
+      setChildrenData(tempData)
     }
     console.log("THE CHILDER REPONSE",response)
 
