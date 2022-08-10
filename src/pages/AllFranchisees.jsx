@@ -15,6 +15,8 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { verifyPermission } from '../helpers/roleBasedAccess';
+
 import ToolkitProvider, {
     Search,
     CSVExport,
@@ -323,13 +325,20 @@ const AllFranchisees = () => {
                                                                     </Button>
                                                                 </footer>
                                                             </Dropdown.Menu>
+                                                            
                                                         </Dropdown>}
-                                                        <a
+                                                        {/* <a
                                                             href="/new-franchisees"
                                                             className="btn btn-primary me-3"
                                                         >
                                                             + Add New Franchisee
-                                                        </a>
+                                                        </a> */}
+
+                                                        {
+                                                            verifyPermission("franchisee_management", "add") &&
+                                                            <a href="/new-franchisees" className="btn btn-primary me-3">+ Add New Franchisee</a>
+                                                        }
+
                                                         {/* <Dropdown>
                                                             <Dropdown.Toggle
                                                                 id="extrabtn"
