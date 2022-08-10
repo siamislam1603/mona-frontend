@@ -22,3 +22,56 @@ p.center {
   display: inline-block;
   margin: 0 5px;
 }
+
+
+/* NOTIFICATION DIALOG */
+.notification-dialog {
+  transition: all .5s ease-in-out;
+  background-color: #fff;
+  height: 350px;
+  width: 250px;
+  box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px; 
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+  right: 220px;
+}
+
+.notification-dialog-body {
+  flex: 10;
+}
+
+.notification-dialog-footer,
+.notification-dialog-header {
+  flex: 1;
+  position: relative;
+}
+
+.notification-dialog-header {
+  background-color: #fff;
+  padding: 1rem;
+  border-bottom: .3px solid #e7e7e7;
+}
+
+.notification-dialog-footer {
+  background-color: #EB5757;
+  padding: .4rem;
+}
+
+.notification-title,
+.notification-link {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  color: #fff;
+}
+
+.notification-title {
+  color: #272727;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: .2px;
+}
