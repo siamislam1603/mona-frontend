@@ -329,21 +329,23 @@ const Children = () => {
             text: '',
             formatter: (cell) => {
                 return (
-                    <>
-                        <div className="cta-col">
-                            <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt="" />
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                    <Dropdown.Item href="#">Add Educator</Dropdown.Item>
-                                    <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
-                                    <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </div>
+                    <>  {
+                            localStorage.getItem('user_role') !== 'guardian' &&
+                            <div className="cta-col">
+                                <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                        <Dropdown.Item href="#">Edit</Dropdown.Item>
+                                        <Dropdown.Item href="#">Add Educator</Dropdown.Item>
+                                        <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
+                                        <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </div>
+                        }
                     </>
                 );
             },

@@ -126,6 +126,17 @@ const Main = () => {
         />
 
         <Route 
+          path="/notifications"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildNotifications />
+            </Protected>
+          }
+          />
+
+
+<Route 
           path="/child-enrollment/notification"
           element={
             <Protected isLoggedIn={isLoggedIn}>
