@@ -146,7 +146,7 @@ const MyAnnouncements = (props) => {
             <div className="head-title">
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
               <div className="title-xxs">{data.title}<small><span>
-              <span>{getAddedTime(data.createdAt)}</span>
+              <span className="timesec">{getAddedTime(data.createdAt)}</span>
 
                  {
                               localStorage.getItem('user_role')
