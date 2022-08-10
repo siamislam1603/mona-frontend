@@ -386,6 +386,7 @@ function Setting(props) {
       data['response_visibility'] = form.response_visibility
         ? form.response_visibility.slice(0, -1)
         : null;
+      
     }
     if (data.accessible_to_role === '0' || data.accessible_to_role === false) {
       data['form_visible_to'] = selectedFormVisibleUserId
@@ -404,6 +405,7 @@ function Setting(props) {
         ? selectedResponseVisibilityUserId.slice(0, -1)
         : null;
     }
+    data["link"]=BASE_URL+"/form/dynamic/"+data.form_name;
     data['franchisee_id'] = localStorage.getItem("f_id");
     data['permission_update'] = true;
     data['shared_by'] = localStorage.getItem('user_id');
