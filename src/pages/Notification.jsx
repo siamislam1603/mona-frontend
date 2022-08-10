@@ -9,8 +9,8 @@ const Noticefication = (props) => {
 
 const userName = localStorage.getItem("user_name");
 const [notificationDetails,setNotificationDetail] = useState([])
-const [show, setShow] = useState(false);
-const handleClose = () => setShow(false);
+// const [show, setShow] = useState(false);
+// const handleClose = () => setShow(false);
  
   const AllAnnouncementData = async () =>{
     try {
@@ -42,12 +42,12 @@ useEffect(() => {
   AllAnnouncementData()
 }, [])
 
-useEffect(() =>{
-    if(props.allAnnouncement){
-      setNotificationDetail(props.allAnnouncement)
-      console.log("THE Annoncement all props",props.allAnnouncement)
-    }
-},[props.allAnnouncement])
+// useEffect(() =>{
+//     if(props.allAnnouncement){
+//       setNotificationDetail(props.allAnnouncement)
+//       console.log("THE Annoncement all props",props.allAnnouncement)
+//     }
+// },[props.allAnnouncement])
 
   return (
     <div className="announcement-accordion">
