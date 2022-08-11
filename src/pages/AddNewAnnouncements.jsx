@@ -176,11 +176,21 @@ const createAnnouncement = async (data) => {
       fetchFranchiseeList();
     }, []);
 
+    const handelSingleFranhisee = (event) =>{
+      setAnnouncementData((prevState) => ({
+        ...prevState,
+        franchise: [event.id]
+      }))
+    }
     const handleAnnouncementFranchisee = (event) => {
+      // localStorage.getItem('user_role') === 'franchisor_admin' ?
+
       setAnnouncementData((prevState) => ({
         ...prevState,
         franchise: [...event.map(option => option.id + "")]
       }));
+      // console.log("EVENT ",event)
+     
     };
 
     const announcementDescription = (field, value) => {
@@ -350,7 +360,7 @@ console.log("THE handle ",announcementData)
 
                             {
 
-                            localStorage.getItem('user_role') === 'franchisee_admin' ?
+                            localStorage.getItem('user_role') === 'franchisor_admin' ?
 
                             <div className="select-with-plus">
 
@@ -362,9 +372,9 @@ console.log("THE handle ",announcementData)
 
                             isMulti
 
-                            isDisabled={true}
+                            // isDisabled={true}
 
-                            value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
+                            // value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
 
                             options={franchiseeData}
 
@@ -378,10 +388,10 @@ console.log("THE handle ",announcementData)
 
                           <Select
                             placeholder="Which Franchisee?"
-                            closeMenuOnSelect={false}
-                            isMulti
+                            closeMenuOnSelect={true}
+                            isMulti={false}
                             options={franchiseeData}
-                            onChange={handleAnnouncementFranchisee}
+                            onChange={handelSingleFranhisee}
                             />
 
                             </div>

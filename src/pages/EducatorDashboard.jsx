@@ -108,7 +108,7 @@ const EducatorDashboard = () => {
 
       }))
       console.log("THE TEM",tempData)
-      setChildrenData([])
+      setChildrenData(tempData)
     }
     console.log("THE CHILDER REPONSE",response)
 
@@ -147,6 +147,7 @@ const EducatorDashboard = () => {
     // const Added= moment(str).format('YYYY-MM-DD')
     // console.log("THe astring",str)
     const Added= moment(str).format('DD/MM/YYYY')
+    console.log("THE ADDED TIME",Added)
     // console.log("THe data",dateww)
     var today = new Date();
     let d = new Date(today);
@@ -154,16 +155,21 @@ const EducatorDashboard = () => {
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
      let datae =  [day, month, year].join('/');
-    //  console.log("THE DATE",datae,Added)
+     console.log("THE DATE",datae,Added)
+     
      let temp;
-     if(datae === Added){
-      temp = "Added today";
+    //  return Added
+     if(datae == Added){
+      temp =  "Added today";
+      console.log("temp",temp)
      }
   
      if(Added < datae){
-      temp = Added;
-      // console.log("THE added date i smaller",typeof Added, typeof datae);
+       temp =  Added;
+       
+      console.log("THE added date i smaller",temp);
      }
+     console.log("THE Temp",temp);
   
      return temp;
   }
@@ -451,7 +457,8 @@ console.log("Childeren data",childrenData)
                                         <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                         <div className="name">{item.title} 
                                         
-                                        <span className="date">{item.scheduled_date}</span></div>
+                                        <span className="date">{getAddedTime(item?.scheduled_date)}</span></div>
+                                        {/* {console.log("THE TIME",item.scheduled_date,getAddedTime(item.scheduled_date))} */}
                                       </a>
                                     </div>
                                   </>
