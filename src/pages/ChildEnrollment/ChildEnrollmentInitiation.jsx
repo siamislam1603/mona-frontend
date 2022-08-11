@@ -19,10 +19,11 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     gender: "M",
   });
   const [educatorData, setEducatorData] = useState();
+  const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   const fetchEducatorList = async () => {
-    const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
-
+    const response = await axios.get(`${BASE_URL}/user-group/usersById/franchisee/${selectedFranchisee}`);
+    console.log('RESPONSE EDUCATOR DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
       setEducatorData(users.map(user => ({
@@ -90,7 +91,8 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                 <LeftNavbar/>
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader 
+                  setSelectedFranchisee={setSelectedFranchisee}/>
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Child Enrollment Initiation Form</h1>

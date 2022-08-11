@@ -188,7 +188,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     if(response.status === 201 && response.data.status === "success" && localStorage.getItem('user_role') === 'guardian') {
-      response = await axios.post(`${BASE_URL}/enrollment/send-notification/mailer/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id'), franchisee_id: localStorage.getItem('franchisee_id') });
+      response = await axios.post(`${BASE_URL}/enrollment/send-notification/mailer/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id'), franchisee_id: localStorage.getItem('franchisee_id')});
 
       if(response.status === 201 && response.data.status === "success") {
 

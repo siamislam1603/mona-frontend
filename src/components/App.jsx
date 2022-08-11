@@ -1,16 +1,9 @@
 import React from 'react';
 import Main from "./Main";
 
-<<<<<<< HEAD
 const BASE_URL = "http://3.26.39.12:4000";
 // const BASE_URL = "http://3.26.240.23:4000";
 // const BASE_URL = "http://127.0.0.1:4000";
-=======
-//  const BASE_URL = "http://3.26.39.12:4000";
-// const BASE_URL = "http://3.26.240.23:4000";
-const BASE_URL = "http://127.0.0.1:4000";
->>>>>>> 84da71a0faf48a1ff588b822eaf1b1e46e68244a
-// const BASE_URL = "http://localhost:4000";
 
 function App() {
   return (
