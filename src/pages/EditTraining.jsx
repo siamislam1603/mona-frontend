@@ -203,7 +203,6 @@ const EditTraining = () => {
       let data = new FormData();
       data.append('id', trainingId);
       data.append('image', coverImage[0]);
-
       let imgSaveResponse = await axios.post(
         `${BASE_URL}/training/coverImg?title=training`, data, {
         headers: {

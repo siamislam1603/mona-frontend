@@ -37,24 +37,27 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [signatureImage, setSignatureImage] = useState(null);
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [fetchedSignatureImage, setFetchedSignatureImage] = useState(null);
+  const [signatureString, setSignatureString] = useState(null);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
 
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
+      console.log('USER DATA:', users);
       setEducatorData(users.map(user => ({
         id: user.id,
         value: user.fullname,
-        label: user.fullname
+        label: user.fullname,
+        assistant: user.nominated_assistant
       })));
     }
   };
 
   const fetchChildDataAndPopulate = async () => {
     let token = localStorage.getItem('token');
-    let enrolledChildId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    // let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let response = await axios.get(`${BASE_URL}/enrollment/child/14`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -188,7 +191,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     if(response.status === 201 && response.data.status === "success" && localStorage.getItem('user_role') === 'guardian') {
-      response = await axios.post(`${BASE_URL}/enrollment/send-notification/mailer/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id'), franchisee_id: localStorage.getItem('franchisee_id') });
+      response = await axios.post(`${BASE_URL}/enrollment/send-notification/mailer/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id'), franchisee_id: localStorage.getItem('franchisee_id')});
 
       if(response.status === 201 && response.data.status === "success") {
 
@@ -251,8 +254,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     if(response.status === 200 && response.data.status === "success") {
-      console.log('SIGNATURE UPLOADED SUCCESSFULLY!');
-      fetchChildDataAndPopulate();
+      let { signature } = response.data;
+      setSignatureString(signature);
     }
   }
       
@@ -311,6 +314,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       type="text"
                       name="to_provide_care_and_education_to_my_child"
+                      value={educatorData?.filter(d => parseInt(d.id) === parseInt(consent.educator_id))[0].assistant}
                       // onChange={}
                     />
                   </Form.Group>
@@ -364,7 +368,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the consent form!</p>
                   }
                   {
-                    // fetchedSignatureImage &&
+                    signatureString &&
                     <img src={fetchedSignatureImage} alt="parent signature" style={{ width: "80px", height: "80px" }} />
                   }
                 </Form.Group>

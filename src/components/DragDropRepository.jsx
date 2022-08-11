@@ -25,11 +25,11 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
     ));
 
   return (
-    <div className="repositorydrag">
-      <div {...getRootProps({ className: "dropzone" })} >
+    <div className="repositorydrag text-center">
+      <div {...getRootProps({ className: "dropzone d-block" })} >
         <input {...getInputProps()} type="file" name="setting_file" />
         <div className="text-center uploadfile">
-          <span>Please Select a file to share : <span className="btn btn-primary" >Choose File</span> <br/> <small>Accepted file types : doc, pdf, mp3, png, jpg</small></span>
+          <span>Please Select a file to share : <br/><span className="btn btn-primary" >Choose File</span> <br/> <small>Accepted file types : doc, pdf, mp3, png, jpg</small></span>
         </div>
         <div className="showfiles">
           <ul>{files}</ul>
