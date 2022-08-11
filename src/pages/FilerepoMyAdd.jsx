@@ -62,8 +62,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [shareType, setShareType] = useState("roles");
     const [applicableToAll, setApplicableToAll] = useState(false);
     const [formSettings, setFormSettings] = useState({
-        user_roles: [],
-        assigned_franchisee: [],
+        assigned_role: [],
+        franchisee: [],
         assigned_users: []
     });
     let Params = useParams();
@@ -91,13 +91,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             })));
         }
     };
-    const handleTrainingSharing = async () => {
+    const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         let user_id = localStorage.getItem('user_id')
-        const response = await axios.post(`${BASE_URL}/share/${saveTrainingId}`, {
-            ...formSettings,
-            shared_by: user_id,
-            is_applicable_to_all: applicableToAll
+        const response = await axios.put(`${BASE_URL}/fileRepo/${saveTrainingId}`, {
+            ...formSettings
+            // shared_by: user_id,
+            // is_applicable_to_all: applicableToAll
         }, {
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -105,7 +105,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         });
 
         if (response.status === 201 && response.data.status === "success") {
-            // const { dataObj } = response.data;
+            console.log("submitted successfully")
 
         }
     }
@@ -156,55 +156,109 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
-        if (
-            formSettingData.accessible_to_role === null ||
-            formSettingData.accessible_to_role === undefined
-        ) {
-            formdata.append(
-                'accessibleToRole',
-                null
-            );
-            formdata.append(
-                'accessibleToAll',
-                true
-            );
-        } else {
-            if (formSettingData.accessible_to_role === 1) {
-                formdata.append(
-                    'user_roles',
-                    formSettingData.shared_role.slice(0, -1)
-                );
-                formdata.append(
-                    'assigned_users',
-                    ""
-                );
-                formdata.append(
-                    'accessibleToRole',
-                    formSettingData.accessible_to_role
-                );
-                formdata.append(
-                    'accessibleToAll',
-                    false
-                );
-            } else {
-                formdata.append(
-                    'user_roles',
-                    ""
-                );
-                formdata.append(
-                    'assigned_users',
-                    selectedUserId.slice(0, -1)
-                );
-                formdata.append(
-                    'accessibleToRole',
-                    formSettingData.accessible_to_role
-                );
-                formdata.append(
-                    'accessibleToAll',
-                    false
-                );
-            }
-        }
+// <<<<<<< HEAD
+//         if (
+//             formSettingData.accessible_to_role === null ||
+//             formSettingData.accessible_to_role === undefined
+//         ) {
+//             formdata.append(
+//                 'accessibleToRole',
+//                 null
+//             );
+//             formdata.append(
+//                 'accessibleToAll',
+//                 true
+//             );
+//         } else {
+//             if (formSettingData.accessible_to_role === 1) {
+//                 formdata.append(
+//                     'user_roles',
+//                     formSettingData.shared_role.slice(0, -1)
+//                 );
+//                 formdata.append(
+//                     'assigned_users',
+//                     ""
+//                 );
+//                 formdata.append(
+//                     'accessibleToRole',
+//                     formSettingData.accessible_to_role
+//                 );
+//                 formdata.append(
+//                     'accessibleToAll',
+//                     false
+//                 );
+//             } else {
+//                 formdata.append(
+//                     'user_roles',
+//                     ""
+//                 );
+//                 formdata.append(
+//                     'assigned_users',
+//                     selectedUserId.slice(0, -1)
+//                 );
+//                 formdata.append(
+//                     'accessibleToRole',
+//                     formSettingData.accessible_to_role
+//                 );
+//                 formdata.append(
+//                     'accessibleToAll',
+//                     false
+//                 );
+//             }
+//         }
+// =======
+
+        // if (
+        //     formSettingData.accessible_to_role === null ||
+        //     formSettingData.accessible_to_role === undefined
+        // ) {
+        //     formdata.append(
+        //         'accessibleToRole',
+        //         null
+        //     );
+        //     formdata.append(
+        //         'accessibleToAll',
+        //         true
+        //     );
+        // } else {
+        //     if (formSettingData.accessible_to_role === 1) {
+        //         formdata.append(
+        //             'sharedRole',
+        //             formSettingData.shared_role.slice(0, -1)
+        //         );
+        //         formdata.append(
+        //             'sharedWith',
+        //             null
+        //         );
+        //         formdata.append(
+        //             'accessibleToRole',
+        //             formSettingData.accessible_to_role
+        //         );
+        //         formdata.append(
+        //             'accessibleToAll',
+        //             false
+        //         );
+        //     } else {
+        //         formdata.append(
+        //             'sharedRole',
+        //             null
+        //         );
+        //         formdata.append(
+        //             'sharedWith',
+        //             selectedUserId.slice(0, -1)
+        //         );
+        //         formdata.append(
+        //             'accessibleToRole',
+        //             formSettingData.accessible_to_role
+        //         );
+        //         formdata.append(
+        //             'accessibleToAll',
+        //             false
+        //         );
+        //     }
+        // }
+
+// >>>>>>> master
 
         var requestOptions = {
             method: 'POST',
@@ -213,23 +267,25 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             redirect: 'follow',
         };
 
-        fetch(`${BASE_URL}/fileRepo/`, requestOptions)
-            .then((response) => {
-                response.json()
-                console.log(response.statusText, "+++++++++++")
-                if (response.statusText === "Created") {
-                    setLoaderFlag(false);
-                    setShow(false);
-                    this.props.history.push(`/file-repository`);
-                }
-            })
-            .then((result) => {
-                if (result) {
-                    setLoaderFlag(false);
-                    setShow(false);
-                }
-            })
-            .catch((error) => console.log('error', error));
+        console.log("submitted",requestOptions)
+
+        // fetch(`${BASE_URL}/fileRepo/`, requestOptions)
+        //     .then((response) => {
+        //         response.json()
+        //         console.log(response.statusText, "+++++++++++")
+        //         if (response.statusText === "Created") {
+        //             setLoaderFlag(false);
+        //             setShow(false);
+        //             this.props.history.push(`/file-repository`);
+        //         }
+        //     })
+        //     .then((result) => {
+        //         if (result) {
+        //             setLoaderFlag(false);
+        //             setShow(false);
+        //         }
+        //     })
+        //     .catch((error) => console.log('error', error));
     };
 
     const GetFile = async () => {
@@ -294,27 +350,24 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             .then((result) => setCategory(result.category))
             .catch((error) => console.log('error', error));
     };
-    const getUser = () => {
+    const getUser = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
             'authorization',
             'Bearer ' + localStorage.getItem('token')
         );
 
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
+        var request = {
             headers: myHeaders,
         };
-        fetch(`${BASE_URL}/auth/users`, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                result?.data?.map((item) => {
-                    item['status'] = false;
-                });
-                setUser(result?.data);
-            })
-            .catch((error) => console.log('error', error));
+
+        let franchiseeArr = JSON.stringify(formSettings.franchisee)
+
+        let response = await axios.get(`http://localhost:4000/auth/users/franchisees?franchiseeId=${franchiseeArr}`, request)
+        if (response.status === 200) {
+           console.log(response.data.users,"respo")
+           setUser(response.data.users)
+        }
     };
 
     useEffect(() => {
@@ -322,7 +375,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         getFileCategory();
         getUser();
         fetchFranchiseeList();
-    }, [trainingDeleteMessage,])
+    }, [trainingDeleteMessage,formSettings.franchisee])
 
     const handleTrainingDelete = async (cell) => {
         console.log('DELETING THE TRAINING!');
@@ -992,7 +1045,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
                                                                 ...prevState,
-                                                                assigned_franchisee: ['all']
+                                                                franchisee: ['all']
                                                             }));
                                                             setSendToAllFranchisee('all')
                                                         }}
@@ -1011,7 +1064,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
                                                                 ...prevState,
-                                                                assigned_franchisee: []
+                                                                franchisee: []
                                                             }));
                                                             setSendToAllFranchisee('none')
                                                         }}
@@ -1031,21 +1084,21 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             <Multiselect
                                                 disable={sendToAllFranchisee === 'all'}
                                                 placeholder={"Select User Names"}
-                                                singleSelect={true}
+                                                // singleSelect={true}
                                                 displayValue="key"
                                                 className="multiselect-box default-arrow-select"
                                                 onKeyPressFn={function noRefCheck() { }}
                                                 onRemove={function noRefCheck(data) {
                                                     setFormSettings((prevState) => ({
                                                         ...prevState,
-                                                        assigned_franchisee: [...data.map(data => data.id)],
+                                                        franchisee: [...data.map(data => data.id)],
                                                     }));
                                                 }}
                                                 onSearch={function noRefCheck() { }}
                                                 onSelect={function noRefCheck(data) {
                                                     setFormSettings((prevState) => ({
                                                         ...prevState,
-                                                        assigned_franchisee: [...data.map((data) => data.id)],
+                                                        franchisee: [...data.map((data) => data.id)],
                                                     }));
                                                 }}
                                                 options={franchiseeList}
@@ -1091,7 +1144,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
                                                                 ...prevState,
-                                                                user_roles: []
+                                                                assigned_role: []
                                                             }));
                                                             setApplicableToAll(false);
                                                             setShareType("users");
@@ -1114,21 +1167,21 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                                                         <Form.Check
                                                             type="checkbox"
-                                                            checked={formSettings.user_roles.includes("coordinator")}
+                                                            checked={formSettings.assigned_role.includes("coordinator")}
                                                             label="Co-ordinators"
                                                             onChange={() => {
-                                                                if (formSettings.user_roles.includes("coordinator")) {
-                                                                    let data = formSettings.user_roles.filter(t => t !== "coordinator");
+                                                                if (formSettings.assigned_role.includes("coordinator")) {
+                                                                    let data = formSettings.assigned_role.filter(t => t !== "coordinator");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        user_roles: [...data]
+                                                                        assigned_role: [...data]
                                                                     }));
                                                                 }
 
-                                                                if (!formSettings.user_roles.includes("coordinator"))
+                                                                if (!formSettings.assigned_role.includes("coordinator"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        user_roles: [...formSettings.user_roles, "coordinator"]
+                                                                        assigned_role: [...formSettings.assigned_role, "coordinator"]
                                                                     }))
                                                             }} />
                                                     </Form.Group>
@@ -1137,20 +1190,20 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             label="Educators"
-                                                            checked={formSettings.user_roles.includes("educator")}
+                                                            checked={formSettings.assigned_role.includes("educator")}
                                                             onChange={() => {
-                                                                if (formSettings.user_roles.includes("educator")) {
-                                                                    let data = formSettings.user_roles.filter(t => t !== "educator");
+                                                                if (formSettings.assigned_role.includes("educator")) {
+                                                                    let data = formSettings.assigned_role.filter(t => t !== "educator");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        user_roles: [...data]
+                                                                        assigned_role: [...data]
                                                                     }));
                                                                 }
 
-                                                                if (!formSettings.user_roles.includes("educator"))
+                                                                if (!formSettings.assigned_role.includes("educator"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        user_roles: [...formSettings.user_roles, "educator"]
+                                                                        assigned_role: [...formSettings.assigned_role, "educator"]
                                                                     }))
                                                             }} />
                                                     </Form.Group>
@@ -1159,20 +1212,20 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             label="Guardians"
-                                                            checked={formSettings.user_roles.includes("guardian")}
+                                                            checked={formSettings.assigned_role.includes("guardian")}
                                                             onChange={() => {
-                                                                if (formSettings.user_roles.includes("guardian")) {
-                                                                    let data = formSettings.user_roles.filter(t => t !== "guardian");
+                                                                if (formSettings.assigned_role.includes("guardian")) {
+                                                                    let data = formSettings.assigned_role.filter(t => t !== "guardian");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        user_roles: [...data]
+                                                                        assigned_role: [...data]
                                                                     }));
                                                                 }
 
-                                                                if (!formSettings.user_roles.includes("guardian"))
+                                                                if (!formSettings.assigned_role.includes("guardian"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        user_roles: [...formSettings.user_roles, "guardian"]
+                                                                        assigned_role: [...formSettings.assigned_role, "guardian"]
                                                                     }))
                                                             }} />
                                                     </Form.Group>
@@ -1181,23 +1234,23 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             label="All Roles"
-                                                            checked={formSettings.user_roles.length === 3}
+                                                            checked={formSettings.assigned_role.length === 3}
                                                             onChange={() => {
-                                                                if (formSettings.user_roles.includes("coordinator")
-                                                                    && formSettings.user_roles.includes("educator")
-                                                                    && formSettings.user_roles.includes("guardian")) {
+                                                                if (formSettings.assigned_role.includes("coordinator")
+                                                                    && formSettings.assigned_role.includes("educator")
+                                                                    && formSettings.assigned_role.includes("guardian")) {
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        user_roles: [],
+                                                                        assigned_role: [],
                                                                     }));
                                                                 }
 
-                                                                if (!formSettings.user_roles.includes("coordinator")
-                                                                    && !formSettings.user_roles.includes("educator")
-                                                                    && !formSettings.user_roles.includes("guardian"))
+                                                                if (!formSettings.assigned_role.includes("coordinator")
+                                                                    && !formSettings.assigned_role.includes("educator")
+                                                                    && !formSettings.assigned_role.includes("guardian"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        user_roles: ["coordinator", "educator", "guardian"]
+                                                                        assigned_role: ["coordinator", "educator", "guardian"]
                                                                     })
                                                                     )
                                                             }} />
@@ -1230,7 +1283,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                             className="done"
                             onClick={() => {
                                 setShowModal(false);
-                                handleTrainingSharing();
+                                handleFileSharing()
                             }}>
                             Save Settings
                         </Button>

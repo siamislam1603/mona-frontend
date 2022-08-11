@@ -264,6 +264,24 @@ export const TrainingFormValidation = (form, coverImage) => {
   return errors;
 };
 
+// <<<<<<< HEAD
+
+// export const EditFleRepo = (form, coverImage) => {
+//   let errors = {};
+//   let {
+//     id,
+//     title,
+//     description,
+//     categoryId,
+//     assigned_users,
+//     assigned_roles,
+//   } = form;
+
+//   if (!title) {
+//     errors.title = ' title is required!';
+//   }
+
+// =======
 
 export const EditFleRepo = (form, coverImage) => {
   let errors = {};
@@ -280,6 +298,7 @@ export const EditFleRepo = (form, coverImage) => {
     errors.title = ' title is required!';
   }
 
+// >>>>>>> master
   if (title <= 2) {
     errors.title_length = ' title should be more than 2 characters.';
   }
@@ -407,7 +426,7 @@ export const FranchiseeFormValidation = (formObj) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
 
-  let { fullname, role, city, address, postalCode, email, phone, franchisee } =
+  let { fullname, role, city, address, postalCode, email, phone, franchisee, nominated_assistant } =
     formObj;
 
   if (!fullname) errors.fullname = 'Username is required!';
@@ -428,6 +447,8 @@ export const UserFormValidation = (formObj) => {
   if (!email) errors.email = 'Email is required!';
 
   if (!phone) errors.phone = 'Phone number is required!';
+
+  if(!nominated_assistant) errors.nominated_assistant = 'Nominated Assistant is required!';
 
   return errors;
 };

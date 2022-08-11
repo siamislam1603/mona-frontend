@@ -346,21 +346,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       placeholder="Child’s Full Name"
                       value={formOneChildData?.fullname || ""}
                       onChange={(e) => {
-                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            fullname: e.target.value
-                          }));
-                          setChildFormErrors(prevState => ({
-                            ...prevState,
-                            fullname: null,
-                          })) 
-                        } else {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            fullname: e.target.value.slice(0, -1)
-                          }));
-                        }
+                        // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                        setFormOneChildData(prevState => ({
+                          ...prevState,
+                          fullname: e.target.value
+                        }));
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          fullname: null,
+                        })) 
+                        // } else {
+                        //   setFormOneChildData(prevState => ({
+                        //     ...prevState,
+                        //     fullname: e.target.value.slice(0, -1)
+                        //   }));
+                        // }
                       }}
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("fullname")) {
@@ -384,21 +384,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       name="family_name"
                       value={formOneChildData?.family_name || ""}
                       onChange={(e) => {
-                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            family_name: e.target.value
-                          }));
-                          setChildFormErrors(prevState => ({
-                            ...prevState,
-                            family_name: null,
-                          })) 
-                        } else {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            family_name: e.target.value.slice(0, -1)
-                          }));
-                        }
+                        // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                        setFormOneChildData(prevState => ({
+                          ...prevState,
+                          family_name: e.target.value
+                        }));
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          family_name: null,
+                        })) 
+                        // } else {
+                        //   setFormOneChildData(prevState => ({
+                        //     ...prevState,
+                        //     family_name: e.target.value.slice(0, -1)
+                        //   }));
+                        // }
                       }}
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("family_name")) {
@@ -422,21 +422,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       name="usually_called"
                       value={formOneChildData?.usually_called || ""}
                       onChange={(e) => {
-                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            usually_called: e.target.value
-                          }));
-                          setChildFormErrors(prevState => ({
-                            ...prevState,
-                            usually_called: null,
-                          })) 
-                        } else {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            usually_called: e.target.value.slice(0, -1)
-                          }));
-                        }
+                        // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                        setFormOneChildData(prevState => ({
+                          ...prevState,
+                          usually_called: e.target.value
+                        }));
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          usually_called: null,
+                        })) 
+                        // } else {
+                        //   setFormOneChildData(prevState => ({
+                        //     ...prevState,
+                        //     usually_called: e.target.value.slice(0, -1)
+                        //   }));
+                        // }
                       }}
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("usually_called")) {
@@ -1025,21 +1025,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             maxLength={50}
                             value={formOneParentData.family_name ||  ""}
                             onChange={(e) => {
-                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  family_name: e.target.value
-                                }));
-                                setParentFormErrors(prevState => ({
-                                  ...prevState,
-                                  family_name: null,
-                                })) 
-                              } else {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  family_name: e.target.value.slice(0, -1)
-                                }));
-                              }
+                              // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                              setFormOneParentData(prevState => ({
+                                ...prevState,
+                                family_name: e.target.value
+                              }));
+                              setParentFormErrors(prevState => ({
+                                ...prevState,
+                                family_name: null,
+                              })) 
+                              // } else {
+                              //   setFormOneParentData(prevState => ({
+                              //     ...prevState,
+                              //     family_name: e.target.value.slice(0, -1)
+                              //   }));
+                              // }
                             }}
 
                             onBlur={(e) => {
@@ -1064,21 +1064,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             maxLength={50}
                             value={formOneParentData.given_name || ""}
                             onChange={(e) => {
-                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  given_name: e.target.value
-                                }));
-                                setParentFormErrors(prevState => ({
-                                  ...prevState,
-                                  given_name: null,
-                                })) 
-                              } else {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  given_name: e.target.value.slice(0, -1)
-                                }));
-                              }
+                              // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                              setFormOneParentData(prevState => ({
+                                ...prevState,
+                                given_name: e.target.value
+                              }));
+                              setParentFormErrors(prevState => ({
+                                ...prevState,
+                                given_name: null,
+                              })) 
+                              // } else {
+                              //   setFormOneParentData(prevState => ({
+                              //     ...prevState,
+                              //     given_name: e.target.value.slice(0, -1)
+                              //   }));
+                              // }
                             }}
                             onBlur={(e) => {
                               if(!formOneParentData.log.includes("given_name")) {
