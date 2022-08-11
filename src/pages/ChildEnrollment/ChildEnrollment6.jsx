@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
-import { useEffect } from "react";
 
 
 
@@ -47,6 +46,9 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
         console.log('VALID CONDITION');
         setAcceptedAllPoints(user.accepted_all_points);
       }
+      window.scrollTo(0, 0);
+        // setLoader(true);
+        // createConcentForm(data);
     }
   };
 

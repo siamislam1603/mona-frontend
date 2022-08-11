@@ -13,30 +13,8 @@ const animatedComponents = makeAnimated();
 
 const ChildNotifications = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  const [announcementDetails, setAnnouncementDetails] = useState(null);
-
-  const AllAnnouncementData = async () =>{
-    try {
-      const token = localStorage.getItem('token');
-      let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&search=&offset=0&limit=5`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
-      if(response.status === 200 && response.data.status === "success") {
-          setAnnouncementDetails(response.data.result.searchedData);
-      }
-    } catch (error) {
-        if(error.response.status === 404){
-          // console.log("The code is 404")
-          setAnnouncementDetails([])
-        }
-    } 
-  }
 
   useEffect(() => {
-    AllAnnouncementData();
   }, []);
 
   return (
@@ -49,9 +27,8 @@ const ChildNotifications = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader
-                  selectedFranchisee={selectedFranchisee}
-                  setSelectedFranchisee={setSelectedFranchisee} />
+                <TopHeader 
+                  notificationType='Child Enrollment'/>
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Notifications</h1>
@@ -105,62 +82,34 @@ const ChildNotifications = () => {
                       }
                       <div className="announcement-accordion"> 
                         <Accordion defaultActiveKey="0">
-                          { announcementDetails &&
-                            announcementDetails.length !==0 ? (
-                              announcementDetails.map((details,index) => (
-                                <div key={index}>
-                                <Accordion.Item eventKey={index} >
-                                  <Accordion.Header>
-                                    <div className="head-title">
-                                      <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                                      <div className="title-xxs">{details.title}<small><span> {
-                                      localStorage.getItem('user_role')
-                                          ? localStorage
-                                            .getItem('user_role')
-                                            .split('_')
-                                            .map(
-                                              (data) =>
-                                              data.charAt(0).toUpperCase() + data.slice(1)
-                                              ).join(' ')
-                                  : ''} : </span>{}</small></div>
-                                      <div className="date">
-                                        <Dropdown>
-                                          <Dropdown.Toggle id="extrabtn" className="ctaact">
-                                            <img src="../img/dot-ico.svg" alt=""/>
-                                          </Dropdown.Toggle>
-                                          <Dropdown.Menu>
-                                            <Dropdown.Item href={`/edit-announcement/${details.id}`}>Edit</Dropdown.Item>
-                                            <Dropdown.Item>Delete</Dropdown.Item>
-                                          </Dropdown.Menu>
-                                        </Dropdown>
-                                      </div>
-                                    </div>
-                                  </Accordion.Header>
-                                  <Accordion.Body>
-                                    <Row className="mb-4">
-                                      <Col xl={2} lg={3}>
-                                        <div className="head">Description :</div>
-                                      </Col>
-                                      <Col xl={10} lg={9}>
-                                          <div
-                                          dangerouslySetInnerHTML={{
-                                            __html: details.meta_description
-                                              ? details.meta_description
-                                              : null,
-                                          }}
-                                          />
-                                        {/* <div className="cont"> {details.meta_description}</div> */}
-                                      </Col>
-                                    </Row>
-                                  </Accordion.Body>
-                                </Accordion.Item>
-                                </div> 
-                                
-                                ))
-                            ): (
-                              <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
-                            )
-                        } 
+                          <Accordion.Item>
+                            <Accordion.Header>
+                              <div className="head-title">
+                                <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                                <div className="title-xxs">title<small><span> {
+                                localStorage.getItem('user_role')
+                                    ? localStorage
+                                      .getItem('user_role')
+                                      .split('_')
+                                      .map(
+                                        (data) =>
+                                        data.charAt(0).toUpperCase() + data.slice(1)
+                                        ).join(' ')
+                            : ''} : </span>{}</small></div>
+                                <div className="date">
+                                  <Dropdown>
+                                    <Dropdown.Toggle id="extrabtn" className="ctaact">
+                                      <img src="../img/dot-ico.svg" alt=""/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Edit</Dropdown.Item>
+                                      <Dropdown.Item>Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
+                              </div>
+                            </Accordion.Header>
+                          </Accordion.Item>
                         </Accordion>
                       </div>
                     </div>

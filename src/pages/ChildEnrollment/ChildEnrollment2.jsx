@@ -468,7 +468,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Doctor’s Name/Medical Service</Form.Label>
+                      <Form.Label>*Doctor’s Name/Medical Service</Form.Label>
                       <Form.Control 
                         type="text"
                         name="medical_service"
@@ -498,7 +498,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Telephone</Form.Label>
+                      <Form.Label>*Telephone</Form.Label>
                       <Form.Control 
                         type="tel"
                         name="telephone"
@@ -528,7 +528,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
                   <Col md={12}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Doctor’s Address/Medical Service</Form.Label>
+                      <Form.Label>*Doctor’s Address/Medical Service</Form.Label>
                       <Form.Control 
                         type="text"
                         name="medical_service_address"
@@ -558,7 +558,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   
                   <Col md={12}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Maternal And Child Health Centre</Form.Label>
+                      <Form.Label>*Maternal And Child Health Centre</Form.Label>
                       <Form.Control 
                         type="text"
                         name="maternal_and_child_health_centre"
@@ -765,7 +765,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </ol>
                 </div> */}
 
-                <h2 className="title-xs mt-4 mb-4">Child’s Immunisation Record</h2>
+                <h2 className="title-xs mt-4 mb-4">Child's Immunization Record</h2>
 
                 <div className="grayback">
                   <Table responsive="md" className="text-left">
