@@ -50,9 +50,16 @@ const FileRpositoryList = () => {
     const [errors, setErrors] = useState({});
     const [selectedUser, setSelectedUser] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
     console.log("userData", userData[0])
     const [user, setUser] = useState([]);
+    const [franchiseeList, setFranchiseeList] = useState();
     let Params = useParams();
+    const [formSettings, setFormSettings] = useState({
+        user_roles: [],
+        assigned_franchisee: [],
+        assigned_users: []
+    });
 
     const toBase64 = (file) =>
         new Promise((resolve, reject) => {
@@ -81,6 +88,22 @@ const FileRpositoryList = () => {
             console.log('selectedUser---->', selectedUser);
         }
     }
+    const fetchFranchiseeList = async () => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (response.status === 200 && response.data.status === "success") {
+            setFranchiseeList(response.data.franchiseeList.map(data => ({
+                id: data.id,
+                cat: data.franchisee_alias,
+                key: `${data.franchisee_name}, ${data.city}`
+            })));
+        }
+    };
     const onSubmit = async (e) => {
         e.preventDefault();
         selectedUser?.map((item) => {
@@ -274,6 +297,7 @@ const FileRpositoryList = () => {
         GetFile();
         getFileCategory();
         getUser();
+        fetchFranchiseeList();
     }, [])
 
     const [columns, setColumns] = useState([
@@ -322,7 +346,6 @@ const FileRpositoryList = () => {
                                                 />
                                             </div>
                                         </> :
-
                                         cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                             <>
                                                 <span className="user-pic-tow">
@@ -630,7 +653,7 @@ const FileRpositoryList = () => {
                                             </Form.Group>
                                         </div>
                                     </Col>
-                                    <Col lg={12}>
+                                    <Col lg={12} className="mb-3">
                                         <Form.Group>
                                             <Form.Label>File Category</Form.Label>
                                             <Form.Select
@@ -648,6 +671,82 @@ const FileRpositoryList = () => {
                                             </Form.Select>
                                         </Form.Group>
                                     </Col>
+                                    <Row>
+                                        <Col lg={3} md={6}>
+                                            <Form.Group>
+                                                <Form.Label>Send to all franchisee:</Form.Label>
+                                                <div className="new-form-radio d-block">
+                                                    <div className="new-form-radio-box">
+                                                        <label for="all">
+                                                            <input
+                                                                type="radio"
+                                                                checked={sendToAllFranchisee === 'all'}
+                                                                name="send_to_all_franchisee"
+                                                                id="all"
+                                                                onChange={() => {
+                                                                    setFormSettings(prevState => ({
+                                                                        ...prevState,
+                                                                        assigned_franchisee: ['all']
+                                                                    }));
+                                                                    setSendToAllFranchisee('all')
+                                                                }}
+                                                            />
+                                                            <span className="radio-round"></span>
+                                                            <p>Yes</p>
+                                                        </label>
+                                                    </div>
+                                                    <div className="new-form-radio-box m-0 mt-3">
+                                                        <label for="none">
+                                                            <input
+                                                                type="radio"
+                                                                name="send_to_all_franchisee"
+                                                                checked={sendToAllFranchisee === 'none'}
+                                                                id="none"
+                                                                onChange={() => {
+                                                                    setFormSettings(prevState => ({
+                                                                        ...prevState,
+                                                                        assigned_franchisee: []
+                                                                    }));
+                                                                    setSendToAllFranchisee('none')
+                                                                }}
+                                                            />
+                                                            <span className="radio-round"></span>
+                                                            <p>No</p>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </Form.Group>
+                                        </Col>
+
+                                        <Col lg={9} md={12}>
+                                            <Form.Group>
+                                                <Form.Label>Select Franchisee</Form.Label>
+                                                <div className="select-with-plus">
+                                                    
+                                                    <Multiselect
+                                                        disable={sendToAllFranchisee === 'all'}
+                                                        placeholder={"Select User Names"}
+                                                        displayValue="key"
+                                                        className="multiselect-box default-arrow-select"
+                                                        onRemove={function noRefCheck(data) {
+                                                            setFormSettings((prevState) => ({
+                                                                ...prevState,
+                                                                assigned_franchisee: [...data.map(data => data.id)],
+                                                            }));
+                                                        }}
+                                                        
+                                                        onSelect={function noRefCheck(data) {
+                                                            setFormSettings((prevState) => ({
+                                                                ...prevState,
+                                                                assigned_franchisee: [...data.map((data) => data.id)],
+                                                            }));
+                                                        }}
+                                                        options={franchiseeList}
+                                                    />
+                                                </div>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
                                 </Row>
                                 <Row className="mt-4">
                                     <Col lg={3} md={6}>

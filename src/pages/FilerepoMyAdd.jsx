@@ -724,6 +724,87 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                 <Row className="mt-4">
                                     <Col lg={3} md={6}>
                                         <Form.Group>
+                                            <Form.Label>Send to all franchisee:</Form.Label>
+                                            <div className="new-form-radio d-block">
+                                                <div className="new-form-radio-box">
+                                                    <label for="all">
+                                                        <input
+                                                            type="radio"
+                                                            checked={sendToAllFranchisee === 'all'}
+                                                            name="send_to_all_franchisee"
+                                                            id="all"
+                                                            onChange={() => {
+                                                                setFormSettings(prevState => ({
+                                                                    ...prevState,
+                                                                    assigned_franchisee: ['all']
+                                                                }));
+                                                                setSendToAllFranchisee('all')
+                                                            }}
+                                                        />
+                                                        <span className="radio-round"></span>
+                                                        <p>Yes</p>
+                                                    </label>
+                                                </div>
+                                                <div className="new-form-radio-box m-0 mt-3">
+                                                    <label for="none">
+                                                        <input
+                                                            type="radio"
+                                                            name="send_to_all_franchisee"
+                                                            checked={sendToAllFranchisee === 'none'}
+                                                            id="none"
+                                                            onChange={() => {
+                                                                setFormSettings(prevState => ({
+                                                                    ...prevState,
+                                                                    assigned_franchisee: []
+                                                                }));
+                                                                setSendToAllFranchisee('none')
+                                                            }}
+                                                        />
+                                                        <span className="radio-round"></span>
+                                                        <p>No</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </Form.Group>
+                                    </Col>
+
+                                    <Col lg={9} md={12}>
+                                        <Form.Group>
+                                            <Form.Label>Select Franchisee</Form.Label>
+                                            <div className="select-with-plus">
+
+                                                <Multiselect
+                                                    disable={sendToAllFranchisee === 'all'}
+                                                    placeholder={"Select User Names"}
+                                                    displayValue="key"
+                                                    className="multiselect-box default-arrow-select"
+                                                    onRemove={function noRefCheck(data) {
+                                                        setFormSettings((prevState) => ({
+                                                            ...prevState,
+                                                            assigned_franchisee: [...data.map(data => data.id)],
+                                                        }));
+                                                    }}
+
+                                                    onSelect={function noRefCheck(data) {
+                                                        setFormSettings((prevState) => ({
+                                                            ...prevState,
+                                                            assigned_franchisee: [...data.map((data) => data.id)],
+                                                        }));
+                                                    }}
+                                                    options={franchiseeList}
+                                                />
+                                            </div>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+
+
+
+
+
+                                <Row className="mt-4">
+                                    <Col lg={3} md={6}>
+                                        <Form.Group>
                                             <Form.Label>Accessible to:</Form.Label>
                                             <div className="new-form-radio d-block">
                                                 <div className="new-form-radio-box">
