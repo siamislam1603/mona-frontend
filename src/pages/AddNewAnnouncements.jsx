@@ -161,7 +161,6 @@ const createAnnouncement = async (data) => {
       console.log("The franhsie list",response)
       if(response.status === 200 && response.data.status === "success") {
         let { franchiseeList } = response.data;
-
         setFranchiseeData(franchiseeList.map(franchisee => ({
                    
           id: franchisee.id,

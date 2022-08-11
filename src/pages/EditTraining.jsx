@@ -199,7 +199,6 @@ const EditTraining = () => {
 
     if (response.status === 201 && response.data.status === "success") {
       console.log('TYPE OF COVER IMAGE:', typeof coverImage[0]);
-
       let data = new FormData();
       data.append('id', trainingId);
       data.append('image', coverImage[0]);

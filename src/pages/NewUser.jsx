@@ -41,6 +41,7 @@ const NewUser = () => {
     professionalDevCategories: "",
     coordinator: "",
     businessAssets: "",
+    nominated_assistant: null,
     terminationDate: "",
     telcode: '+61',
     franchisee: ""
@@ -333,7 +334,7 @@ const NewUser = () => {
       let { franchiseeList } = response.data;
       setFranchiseeData(franchiseeList.map(franchisee => ({
         id: franchisee.id,
-        value: franchisee.franchisee_alias,
+        value: franchisee.franchisee_name,
         label: franchisee.franchisee_name
       })));  
     }
@@ -601,6 +602,27 @@ const NewUser = () => {
                               }}
                             />
                           </Form.Group>
+                          
+                          {
+                            formData && formData?.role === 'educator' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Nominated Assistant</Form.Label>
+                              <Form.Control
+                                type="text"
+                                name="nominated_assistant"
+                                placeholder="Enter Full Name"
+                                value={formData?.nominated_assistant}
+                                onChange={(e) => {
+                                  handleChange(e);
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    nominated_assistant: null
+                                  }));
+                                }}
+                              />
+                              { formErrors.nominated_assistant !== null && <span className="error">{formErrors.nominated_assistant}</span> }
+                            </Form.Group>
+                          }
                             
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
