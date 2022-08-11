@@ -97,6 +97,7 @@ const EditUser = () => {
       telcode: user?.phone.split("-")[0],
       phone: user?.phone.split("-")[1],
       franchisee_id: user?.franchisee_id,
+      nominated_assistant: user?.nominated_assistant || null,
       trainingCategories: user?.training_categories?.map(d => parseInt(d)),
       professionalDevCategories: user?.professional_development_categories?.map(d => parseInt(d)),
       coordinator: user?.coordinator,
@@ -398,7 +399,7 @@ const EditUser = () => {
 
   // editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
-  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
+  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
   formData && console.log('FORM DATA:', formData);
   return (
     <>
@@ -595,6 +596,27 @@ const EditUser = () => {
                               }}
                             />
                           </Form.Group>
+
+                          {
+                            formData && formData?.role === 'educator' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Nominated Assistant</Form.Label>
+                              <Form.Control
+                                type="text"
+                                name="nominated_assistant"
+                                placeholder="Enter Full Name"
+                                value={formData?.nominated_assistant || ""}
+                                onChange={(e) => {
+                                  handleChange(e);
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    nominated_assistant: null
+                                  }));
+                                }}
+                              />
+                              { formErrors.nominated_assistant !== null && <span className="error">{formErrors.nominated_assistant}</span> }
+                            </Form.Group>
+                          }
                           
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
@@ -630,7 +652,7 @@ const EditUser = () => {
                               isDisabled={formData.role !== 'educator'}
                               placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
                               closeMenuOnSelect={true}
-                              value={formData?.coordinatorObj || coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
+                              value={coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
                               options={coordinatorData}
                               onChange={(e) => {
                                 setFormData((prevState) => ({
