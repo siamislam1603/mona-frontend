@@ -614,15 +614,9 @@ useEffect(() =>{
   },[loadMoreEvent])
   
 
-  // console.log("USER ROLE",userRole)
-  console.log("THE COUNT AND COMMON",theCount,theCommon)
-  console.log("MY COUNT AND MY data lenght",myCount,myDataLength,)
-  // console.log("THE LOAD MORE MY DATA",theMyAnnouncement)
-  console.log("PAGE page and Mypage",page,mypage)
-  console.log("THE New Load More adat,",loadMoreData)
-  console.log("THE LOAD MRE EVENT",loadMoreEvent)
-
-  
+  // console.log("THE LENGHT LOAD MORE DATA",loadMoreData)
+  // console.log("The page NUMBER",page)
+   console.log("THE COUNT AND COMMON",theCount,theCommon)
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)
   // console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,loadMoreData)
