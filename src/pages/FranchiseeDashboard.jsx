@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import moment from 'moment';
 
 const products = [
   {
@@ -178,6 +179,25 @@ const FranchiseeDashboard = () => {
       console.log(e);
     })
     console.log(countUser, ":lksjdgcasjhgjhjchvs")
+  }
+  const getAddedTime = (str) =>{
+    const Added= moment(str).format('DD/MM/YYYY')
+    var today = new Date();
+    let d = new Date(today);
+    let month = (d.getMonth() + 1).toString().padStart(2, '0');
+    let day = d.getDate().toString().padStart(2, '0');
+    let year = d.getFullYear();
+     let datae =  [day, month, year].join('/');
+     const date1 = new Date(datae);
+     const date2 = new Date(str);
+     console.log("THE Date1",date1,date2)
+     if(date1 === date2){
+      return "Added today"
+     }
+     else if(date2<date1){
+      return Added
+     }
+  
   }
 
   React.useEffect(() => {
@@ -383,7 +403,12 @@ const FranchiseeDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title} 
+                                      <div>
+                                      <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+
+                                      </div>
+                                      </div>
                                   </a>
                                 </div>
                               );

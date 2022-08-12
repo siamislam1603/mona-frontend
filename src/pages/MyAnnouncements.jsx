@@ -145,7 +145,9 @@ const MyAnnouncements = (props) => {
           <Accordion.Header>
             <div className="head-title">
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-              <div className="title-xxs">{data.title}<small><span>
+              <div className="title-xxs">{data.title}
+              <small>
+                <span>
               <span className="timesec">{getAddedTime(data.createdAt)}</span>
 
                  {
