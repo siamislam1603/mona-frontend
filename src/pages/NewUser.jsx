@@ -41,7 +41,6 @@ const NewUser = () => {
     professionalDevCategories: "",
     coordinator: "",
     businessAssets: "",
-    nominated_assistant: null,
     terminationDate: "",
     telcode: '+61',
     franchisee: ""
