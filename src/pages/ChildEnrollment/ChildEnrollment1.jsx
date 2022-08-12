@@ -31,9 +31,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     home_address: "",
     language: "",
     country_of_birth: "",
+    child_medical_no: "",
+    child_crn: "",
+    parent_crn_1: "",
+    parent_crn_2: "",
     gender: "M",
+    address_of_school: "",
+    name_of_school: "",
+    date_first_went_to_school: "",
     child_origin: "NATSI",
-    development_delay: false,
+    developmental_delay: false,
     another_service: false,
     school_status: "no-school",
     log: []
@@ -280,9 +287,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         country_of_birth: child?.country_of_birth,
         gender: child?.sex,
         child_origin: child?.child_origin,
-        development_delay: child?.developmental_delay,
+        developmental_delay: child?.developmental_delay,
         another_service: child?.using_another_service,
-        school_status: child?.school_status
+        school_status: child?.school_status,
+        child_medical_no: child?.child_medical_no,
+        child_crn: child?.child_crn,
+        parent_crn_1: child?.parent_crn_1,
+        parent_crn_2: child?.parent_crn_2,
+        date_first_went_to_school: child?.date_first_went_to_school,
+        name_of_school: child?.name_of_school,
+        address_of_school: child?.address_of_school
       }));
 
       setFormOneParentData(prevState => ({
@@ -694,18 +708,18 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="disability"
                         id="yesc"
                         className="ps-0"
-                        checked={formOneChildData?.development_delay === true}
+                        checked={formOneChildData?.developmental_delay === true}
                         label="Yes"
                         onChange={(event) => {
                           setFormOneChildData(prevState => ({
                             ...prevState,
-                            development_delay: true
+                            developmental_delay: true
                           }));
 
-                          if(!formOneChildData.log.includes("development_delay")) {
+                          if(!formOneChildData.log.includes("developmental_delay")) {
                             setFormOneChildData(prevState => ({
                               ...prevState,
-                              log: [...formOneChildData.log, "development_delay"]
+                              log: [...formOneChildData.log, "developmental_delay"]
                             }));
                           }
                         }} />
@@ -714,21 +728,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="disability"
                         id="noc"
                         label="No"
-                        checked={formOneChildData?.development_delay === false}
+                        checked={formOneChildData?.developmental_delay === false}
                         defaultChecked
                         onChange={(event) => {
                           setFormOneChildData(prevState => ({
                             ...prevState,
-                            development_delay: false,
-                            child_medicare_no: null,
+                            developmental_delay: false,
+                            child_medical_no: null,
                             child_crn: null,
                             parent_crn_1: null,
                             parent_crn_2: null
                           }));
-                          if(!formOneChildData.log.includes("development_delay")) {
+                          if(!formOneChildData.log.includes("developmental_delay")) {
                             setFormOneChildData(prevState => ({
                               ...prevState,
-                              log: [...formOneChildData.log, "development_delay"]
+                              log: [...formOneChildData.log, "developmental_delay"]
                             }));
                           }
                         }} />
@@ -739,46 +753,93 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 {
-                  formOneChildData.development_delay &&
+                  formOneChildData.developmental_delay &&
                   <>
                     <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>Child Medical No.</Form.Label>
                         <Form.Control
                           type="text"
-                          name="child_medicare_no"
-                          value={formOneChildData.child_medicare_no || ""}
-                          onChange={handleChildData} />
+                          name="child_medical_no"
+                          placeholder="Child Medical No."
+                          value={formOneChildData.child_medical_no || ""}
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("child_medical_no")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "child_medical_no"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
+
                     <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>Child CRN</Form.Label>
                         <Form.Control
                           type="text"
                           name="child_crn"
+                          placeholder="Child CRN"
                           value={formOneChildData.child_crn || ""}
-                          onChange={handleChildData} />
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("child_crn")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "child_crn"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
+                    
                     <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>Parents CRN 1</Form.Label>
                         <Form.Control
                           type="text"
                           name="parent_crn_1"
+                          placeholder="Parent CRN I"
                           value={formOneChildData.parent_crn_1 || ""}
-                          onChange={handleChildData} />
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("parent_crn_1")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "parent_crn_1"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
+                    
                     <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>Parents CRN 2</Form.Label>
                         <Form.Control
                           type="text"
                           name="parent_crn_2"
+                          placeholder="Parent CRN II"
                           value={formOneChildData.parent_crn_2 || ""}
-                          onChange={handleChildData} />
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("parent_crn_2")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "parent_crn_2"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
                   </>
@@ -900,7 +961,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         onChange={(event) => {
                           setFormOneChildData(prevState => ({
                             ...prevState,
-                            school_status: "no-school"
+                            school_status: "no-school",
+                            date_first_went_to_school: null,
+                            name_of_school: null,
+                            address_of_school: null
                           }));
 
                           if(!formOneChildData.log.includes("school_status")) {
@@ -923,7 +987,23 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Col>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Control type="date" placeholder="" name="dob" />
+                        <Form.Control 
+                          type="date"
+                          placeholder="" 
+                          name="date_first_went_to_school"
+                          max={new Date().toISOString().slice(0, 10)}
+                          value={formOneChildData?.date_first_went_to_school || ""}
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("date_first_went_to_school")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "date_first_went_to_school"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
                     <Col md={2}>
@@ -936,7 +1016,41 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Col>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Control type="text" placeholder="" name="dob" />
+                        <Form.Control 
+                          type="text" 
+                          name="name_of_school"
+                          placeholder="Name of School"
+                          value={formOneChildData?.name_of_school || ""}
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("name_of_school")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "name_of_school"]
+                              }));
+                            }
+                          }} />
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Control 
+                          type="text" 
+                          placeholder="Address of School" 
+                          name="address_of_school"
+                          value={formOneChildData?.address_of_school || ""}
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("address_of_school")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "address_of_school"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
                     <Col md={2}>

@@ -178,7 +178,7 @@ console.log("THE EVENT PROPS",props.allEvent)
                 </div>
               </Col>
               <Col md={8}>
-              {data && data?.coverImage && <div className="head">Related Images :</div>
+              {data &&data?.coverImage && <div className="head">Related Images :</div>
               }
               {data && data?.coverImage && 
                     <div className="cont">
@@ -190,7 +190,7 @@ console.log("THE EVENT PROPS",props.allEvent)
                     </div>
                   </div>
               }
-              {data?.announcement_files?.length > 0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+              {data?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                 <div className="cont">
                   <div className="related-files">
                   {data?.announcement_files && data?.announcement_files?.map((detail,index) =>(
