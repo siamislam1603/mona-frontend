@@ -614,13 +614,8 @@ const NewUser = () => {
                                 value={formData?.nominated_assistant}
                                 onChange={(e) => {
                                   handleChange(e);
-                                  setFormErrors(prevState => ({
-                                    ...prevState,
-                                    nominated_assistant: null
-                                  }));
                                 }}
                               />
-                              { formErrors.nominated_assistant !== null && <span className="error">{formErrors.nominated_assistant}</span> }
                             </Form.Group>
                           }
                             
