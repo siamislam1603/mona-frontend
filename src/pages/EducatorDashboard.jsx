@@ -143,35 +143,25 @@ const EducatorDashboard = () => {
   }
   console.log(training, "response")
 
+  
   const getAddedTime = (str) =>{
-    // const Added= moment(str).format('YYYY-MM-DD')
-    // console.log("THe astring",str)
     const Added= moment(str).format('DD/MM/YYYY')
-    console.log("THE ADDED TIME",Added)
-    // console.log("THe data",dateww)
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
      let datae =  [day, month, year].join('/');
-     console.log("THE DATE",datae,Added)
-     
-     let temp;
-    //  return Added
-     if(datae == Added){
-      temp =  "Added today";
-      console.log("temp",temp)
+     const date1 = new Date(datae);
+     const date2 = new Date(str);
+     console.log("THE Date1",date1,date2)
+     if(date1 === date2){
+      return "Added today"
+     }
+     else if(date2<date1){
+      return Added
      }
   
-     if(Added < datae){
-       temp =  Added;
-       
-      console.log("THE added date i smaller",temp);
-     }
-     console.log("THE Temp",temp);
-  
-     return temp;
   }
 
   useEffect(() => {
@@ -457,8 +447,12 @@ console.log("Childeren data",childrenData)
                                         <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                         <div className="name">{item.title} 
                                         
-                                        <span className="date">{getAddedTime(item?.scheduled_date)}</span></div>
-                                        {/* {console.log("THE TIME",item.scheduled_date,getAddedTime(item.scheduled_date))} */}
+                                        <div>
+                                      <span className="timesec">{getAddedTime(item?.createdAt)}</span>
+
+                                      </div>
+                                      </div>
+                                                                              {/* {console.log("THE TIME",item.scheduled_date,getAddedTime(item.scheduled_date))} */}
                                       </a>
                                     </div>
                                   </>
