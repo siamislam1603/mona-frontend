@@ -91,10 +91,9 @@ const RepoEdit = () => {
 
     // Update API For File Repo
 
-    const updatefile = async (data) => {
+    const updatefile = async () => {
         const token = localStorage.getItem('token');
-        const response = await axios.put(
-            `${BASE_URL}/fileRepo/${Params.id}`, data, {
+        const response = await axios.put(`${BASE_URL}/fileRepo/${Params.id}`, { data }, {
             headers: {
                 "Authorization": "Bearer " + token
             }
@@ -103,13 +102,28 @@ const RepoEdit = () => {
         console.log(response, "<<<<<<<<<<<>>>>>>>>");
     }
 
+
+
+
     const handleDataSubmit = event => {
         event.preventDefault();
         let errorObj = EditFleRepo(data, coverImage);
         if (Object.keys(errorObj).length > 0) {
             setErrors(errorObj);
-        } else { }
-        
+        } else {
+            if (settingsModalPopup === false && data && coverImage) {
+                let data = new FormData();
+                for (let [key, values] of Object.entries(data)) {
+                    data.append(`${key}`, values);
+                }
+                for (let [key, values] of Object.entries(data)) {
+                    data.append(`${key}`, values)
+                }
+
+                window.scrollTo(0, 0);
+                updatefile(data);
+            }
+        }
     }
 
 
@@ -502,7 +516,7 @@ const RepoEdit = () => {
                                                     </Col>
                                                     <Form.Group className="mb-3" controlId="formBasicPassword" align-items-center>
                                                         <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} >Cancel</Button>
-                                                        <Button type="submit" onClick={handleDataSubmit} > Save Details</Button>
+                                                        <Button type="submit" onClick={updatefile} > Save Details</Button>
                                                     </Form.Group>
                                                 </Row>
                                             </div>
