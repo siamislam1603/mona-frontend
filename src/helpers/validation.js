@@ -407,7 +407,7 @@ export const FranchiseeFormValidation = (formObj) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
 
-  let { fullname, role, city, address, postalCode, email, phone, franchisee, nominated_assistant } =
+  let { fullname, role, city, address, postalCode, email, phone, franchisee } =
     formObj;
 
   if (!fullname) errors.fullname = 'Username is required!';
@@ -428,8 +428,6 @@ export const UserFormValidation = (formObj) => {
   if (!email) errors.email = 'Email is required!';
 
   if (!phone) errors.phone = 'Phone number is required!';
-
-  if(!nominated_assistant) errors.nominated_assistant = 'Nominated Assistant is required!';
 
   return errors;
 };
