@@ -5,7 +5,12 @@ import TopHeader from "../components/TopHeader";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { BASE_URL } from "../components/App";
+<<<<<<< HEAD
 import moment from 'moment'
+=======
+import moment from 'moment';
+
+>>>>>>> 5a4348b66b60af997234f2b08f8cc2518335ccd9
 
 const ParentsDashboard = () => {
 
@@ -88,6 +93,25 @@ const ParentsDashboard = () => {
       setEditTrainingData(result);
     }
 
+  }
+  const getAddedTime = (str) =>{
+    const Added= moment(str).format('DD/MM/YYYY')
+    var today = new Date();
+    let d = new Date(today);
+    let month = (d.getMonth() + 1).toString().padStart(2, '0');
+    let day = d.getDate().toString().padStart(2, '0');
+    let year = d.getFullYear();
+     let datae =  [day, month, year].join('/');
+     const date1 = new Date(datae);
+     const date2 = new Date(str);
+     console.log("THE Date1",date1,date2)
+     if(date1 === date2){
+      return "Added today"
+     }
+     else if(date2<date1){
+      return Added
+     }
+  
   }
   console.log(editTrainingData, "<<<<<<<<<<response")
 
@@ -441,7 +465,14 @@ const ParentsDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{item.title} <span className="date">{moment(item.createdAt).format('DD/MM/YYYY')}</span></div>
+                                    <div className="name">{item.title}
+                       
+                                      <div>
+                                      <span className="timesec">{getAddedTime(item?.createdAt)}</span>
+
+                                      </div>
+                                      </div>
+                                                                                                          
                                   </a>
                                 </div>
                               </>

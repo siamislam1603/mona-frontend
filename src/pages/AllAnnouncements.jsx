@@ -272,11 +272,11 @@ useEffect(() =>{
                                      </div>
                                    </div>
    
-                                  {details?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+
+                          {details?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                                      <div className="cont">
                                      <div className="related-files">
                                        {details?.announcement_files?.map((detail,index) =>(
-                                         
                                               <>
                                                
                                               {detail.fileType !== ".mp4" && !detail.is_deleted ?(

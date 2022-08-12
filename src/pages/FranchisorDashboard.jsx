@@ -11,6 +11,8 @@ import { BASE_URL } from '../components/App';
 import moment from 'moment';
 
 
+
+
 const products1 = [
   {
     id: 1,
@@ -69,12 +71,14 @@ const columns1 = [
   }
 ];
 
+
 const FranchisorDashboard = () => {
   const [count, setcount] = React.useState(null);
   const [state, setstate] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
+  let token = localStorage.getItem('token');
   console.log("alsoidjh", latest_announcement[0].scheduled_date)
 
 
@@ -109,6 +113,26 @@ const FranchisorDashboard = () => {
     })
   }
 
+  const getAddedTime = (str) =>{
+    
+    const Added= moment(str).format('DD/MM/YYYY')
+    var today = new Date();
+    let d = new Date(today);
+    let month = (d.getMonth() + 1).toString().padStart(2, '0');
+    let day = d.getDate().toString().padStart(2, '0');
+    let year = d.getFullYear();
+     let datae =  [day, month, year].join('/');
+     const date1 = new Date(datae);
+     const date2 = new Date(str);
+     console.log("THE Date1",date1,date2)
+     if(date1 === date2){
+      return "Added today"
+     }
+     else if(date2<date1){
+      return Added
+     }
+  
+  }
 
   React.useEffect(() => {
     count_Api();
@@ -116,7 +140,7 @@ const FranchisorDashboard = () => {
   }, []);
 
   selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
-
+  console.log("The latest Announcement",latest_announcement)
   if (!count) return null;
   return (
     <>
@@ -337,7 +361,17 @@ const FranchisorDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+<<<<<<< HEAD
                                     <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{moment(data.createdAt).format('DD/MM/YYYY')}</span></div>
+=======
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}  
+                                    <div>
+                                      <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+
+                                      </div>
+                                     
+                                     </div>
+>>>>>>> 5a4348b66b60af997234f2b08f8cc2518335ccd9
                                   </a>
                                 </div>
                               );
