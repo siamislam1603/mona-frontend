@@ -361,9 +361,6 @@ const FranchisorDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-<<<<<<< HEAD
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{moment(data.createdAt).format('DD/MM/YYYY')}</span></div>
-=======
                                     <div className="name">{!data.title ? "No Announcement" : data.title}  
                                     <div>
                                       <span className="timesec">{getAddedTime(data?.createdAt)}</span>
@@ -371,7 +368,6 @@ const FranchisorDashboard = () => {
                                       </div>
                                      
                                      </div>
->>>>>>> 5a4348b66b60af997234f2b08f8cc2518335ccd9
                                   </a>
                                 </div>
                               );
