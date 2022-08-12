@@ -346,8 +346,11 @@ const EditAnnouncement = () => {
   // console.log("The COPY DATA",announcementCopyData )
   // console.log("THE VIDEO DATA",fetchedVideoTutorialFiles)
   console.log("ANNOUNCEMENT DATA",announcementData)
-  console.log("The cover image",announcementCopyData)
+  console.log("The cover image",announcementCopyData.franchise)
+  console.log("FRaNHISEE DATA",franchiseeData)
   const dateToFormat = '1976-04-19T12:59-0500';
+  
+  console.log("The value",franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + "")))
   // start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
 
  
@@ -451,11 +454,13 @@ const EditAnnouncement = () => {
                                 placeholder="Which Franchisee?"
                                 closeMenuOnSelect={true}
                                 options={franchiseeData}
-                                // value={franchiseeData}
+                                // value={announcementCopyData.franchise}
+                                value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
+
                                 onChange={(e) =>{                                  
                                   setAnnouncementCopyData((prevState) => ({
                                     ...prevState,
-                                    franchise: e.value
+                                    franchise: [e.id+""]
                                   }));
                                 }}
                               />

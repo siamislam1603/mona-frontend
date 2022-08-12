@@ -10,7 +10,7 @@ import {
 } from 'react-bootstrap';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import { createFormValidation } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -90,7 +90,7 @@ function AddFormBuilder(props) {
     } else {
       var myHeaders = new Headers();
       let data={...form};
-      data["link"]=BASE_URL+"/form/dynamic/"+data.form_name;
+      data["link"]=FRONT_BASE_URL+"/form/dynamic/"+data.form_name;
       data["created_by"]=localStorage.getItem("user_id");
       data["upper_role"]=getUpperRoleUser();
       myHeaders.append('Content-Type', 'application/json');
