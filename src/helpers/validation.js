@@ -1,17 +1,17 @@
 export const DynamicFormValidation = (form, data, behalf_of) => {
   let newErrors = {};
   Object.keys(data)?.map((item) => {
-    
-    
-    
-    
+
+
+
+
     // console.log('inner_item_item--->', item);
     data[item].map((inner_item) => {
       // console.log('inner_item', form[item]);
 
       if (inner_item.required) {
-      console.log('inner_item',inner_item);
-        console.log("form-=-->21321313",form);
+        console.log('inner_item', inner_item);
+        console.log("form-=-->21321313", form);
         if (!form[item][`${inner_item.field_name}`]) {
           newErrors[
             `${inner_item.field_name}`
@@ -261,7 +261,48 @@ export const TrainingFormValidation = (form, coverImage) => {
   if (Object.keys(coverImage).length === 0) {
     errors.coverImage = 'Cover image required!';
   }
+  return errors;
+};
 
+
+export const EditFleRepo = (form, coverImage) => {
+  let errors = {};
+  let {
+    id,
+    title,
+    description,
+    categoryId,
+    assigned_users,
+    assigned_roles,
+  } = form;
+
+  if (!title) {
+    errors.title = ' title is required!';
+  }
+
+  if (title <= 2) {
+    errors.title_length = ' title should be more than 2 characters.';
+  }
+
+  if (!description) {
+    errors.description = 'Training description is required!';
+  }
+
+  if (!categoryId) {
+    errors.categoryId = 'categoryid  is required!';
+  }
+
+  if (!assigned_users) {
+    errors.assigned_users = 'assigned_user time is required!';
+  }
+
+  if (!assigned_roles) {
+    errors.assigned_roles = 'user_roles time is required!';
+  }
+
+  if (Object.keys(coverImage).length === 0) {
+    errors.coverImage = 'Cover image required!';
+  }
   return errors;
 };
 
@@ -366,7 +407,7 @@ export const FranchiseeFormValidation = (formObj) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
 
-  let { fullname, role, city, address, postalCode, email, phone, franchisee } =
+  let { fullname, role, city, address, postalCode, email, phone, franchisee, nominated_assistant } =
     formObj;
 
   if (!fullname) errors.fullname = 'Username is required!';
@@ -387,6 +428,8 @@ export const UserFormValidation = (formObj) => {
   if (!email) errors.email = 'Email is required!';
 
   if (!phone) errors.phone = 'Phone number is required!';
+
+  if(!nominated_assistant) errors.nominated_assistant = 'Nominated Assistant is required!';
 
   return errors;
 };

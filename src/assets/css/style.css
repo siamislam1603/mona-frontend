@@ -301,6 +301,8 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .user-list { display: flex; align-items: center; }
 .user-list .user-pic { flex:0 0 44px; max-width: 44px; margin-right: 1rem; overflow: hidden; border-radius: 100%; min-height: 44px; }
+.user-list .user-pic-tow { flex:0 0 44px; max-width: 44px; margin-right: 1rem; overflow: hidden; border-radius: 0; min-height: 44px; }
+
 .user-list .user-name small { display: block; font-size:var(--fontsm); opacity: .5; }
 
 .extra-btn .ctaact { background-color: #f7f7f7; width: 45px; }

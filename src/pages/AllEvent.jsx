@@ -87,12 +87,20 @@ useEffect(() =>{
     setAllEventData(props.allEvent)
   }
 },[props.allEvent])
+useEffect(() =>{
+  if(props?.loadEvent?.length>0){
+    setAllEventData(props.loadEvent)
+  }
+  else{
+    
+  }
+},[props.loadEvent])
 console.log("THE EVENT PROPS",props.allEvent)
   return (
     <div className="announcement-accordion">
     <Accordion defaultActiveKey="0">
       { allEventData &&
-       allEventData.length !== 0 ? (
+       allEventData?.length !== 0 ? (
         allEventData.map((data,index) => (
           <Accordion.Item eventKey={index} key={index}>
           <Accordion.Header>
@@ -154,7 +162,7 @@ console.log("THE EVENT PROPS",props.allEvent)
             <Row>
               <Col md={4}>
                 <div className="video-col">
-                {data.announcement_files.map((detail,index) =>(
+                {data?.announcement_files?.map((detail,index) =>(
                   <>
                       {detail.fileType == ".mp4" && !detail.is_deleted  ? (
                                  <AnnouncementVideo 
@@ -170,9 +178,9 @@ console.log("THE EVENT PROPS",props.allEvent)
                 </div>
               </Col>
               <Col md={8}>
-              {data &&data.coverImage && <div className="head">Related Images :</div>
+              {data &&data?.coverImage && <div className="head">Related Images :</div>
               }
-              {data && data.coverImage && 
+              {data && data?.coverImage && 
                     <div className="cont">
                     <div className="related-images">
               
@@ -182,10 +190,10 @@ console.log("THE EVENT PROPS",props.allEvent)
                     </div>
                   </div>
               }
-              {data.announcement_files.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+              {data?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                 <div className="cont">
                   <div className="related-files">
-                  {data.announcement_files && data.announcement_files.map((detail,index) =>(
+                  {data?.announcement_files && data?.announcement_files?.map((detail,index) =>(
                       <>
                         {detail.fileType !== ".mp4" && !detail.is_deleted ?(
                             <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">

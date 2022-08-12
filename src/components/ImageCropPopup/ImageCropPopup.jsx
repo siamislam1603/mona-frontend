@@ -7,7 +7,7 @@ import './ImageCropPopup.css';
 
 let temp = () => {};
 
-const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible, setFormErrors=temp }) => {
+const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible, setFormErrors=temp, type="cover_img" }) => {
 
     const [croppedArea, setCroppedArea] = useState(null);
     const [tempImage, setTempImage] = useState(null);
@@ -16,7 +16,12 @@ const ImageCropPopup = ({ image, setCroppedImage, setPopupVisible, setFormErrors
 
     const onCropComplete = (croppedAreaPercentage, croppedAreaPixels) => {
         console.log(croppedAreaPercentage, croppedAreaPixels);
-        setCroppedArea(croppedAreaPixels);
+
+        if(type === 'cover_img') {
+            setCroppedArea(croppedAreaPixels);
+        } else {
+            setCroppedArea({ width: 800, height: 600, x: 350, y: 0 })
+        }
     };
 
     const onImageCrop = async () => {

@@ -56,7 +56,7 @@ import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentI
 import FileRpositoryList from '../pages/FileRpositoryList';
 import FilerepoMyAdd from '../pages/FilerepoMyAdd';
 import RepoEdit from '../pages/RepoEdit';
-
+import Noticefication from '../pages/Notification';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -126,6 +126,17 @@ const Main = () => {
         />
 
         <Route 
+          path="/notifications"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildNotifications />
+            </Protected>
+          }
+          />
+
+
+<Route 
           path="/child-enrollment/notification"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -500,6 +511,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <MyAnnouncements />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/log"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <Noticefication />
             </Protected>
           }
         />

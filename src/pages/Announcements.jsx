@@ -38,6 +38,8 @@ const Announcements =  () => {
   const [page,setPage]= useState(0);
   const [mypage,setMyPage] = useState(0);
   const [loadMoreData,setLoadMoreData]= useState([])
+  const [loadMoreEvent,setLoadMoreEvent] = useState([])
+  const [pageEvent,setpageEvent] = useState(0)
   const [theCount,setCount]= useState(null)
   const [theCommon,setTheCommon] = useState(null)
   // const [myAnnouncementData,setMyAnnouncementData]= useState([])
@@ -74,7 +76,32 @@ const Announcements =  () => {
     }
     // fetchUserDetails(e)    //  console.log("The api_url",api_url)
   };
-  
+  const handleLoadMoreEvent = (e) =>{
+    e.preventDefault()
+    LoadMoreEvent()
+  } 
+  const LoadMoreEvent = async() =>{
+    try {
+      console.log("THE R")
+      setpageEvent(pageEvent+5)
+      let api_url = '';
+      api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&&isEvent=1search=${searchvalue === " " ? "":searchvalue}&offset=${pageEvent}&limit=5`
+      console.log("THE API URL LOADMOREALL",api_url)
+      const response = await axios.get(api_url, {
+        headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      let newData= response.data.result.searchedData
+      setLoadMoreEvent((prev) =>([
+        ...prev,
+        ...newData
+      ])) 
+      
+    } catch (error) {
+      console.log("THe error")
+    }
+  }
   const handleLoadMyAnnouncement = (e) =>{
     e.preventDefault()
     LoadMoreMyData()
@@ -84,12 +111,15 @@ const Announcements =  () => {
     console.log("THE MY DATA LOAD MORE", mypage)
     try {
       let userId = localStorage.getItem("user_id")
-        if(mypage>5){
-          setMyPage(5)
-        }
-        else{
+        // if(mypage>5){
+        //   setMyPage(5)
+        // }
+        // else{
+        //   setMyPage(mypage+5)
+        // }
           setMyPage(mypage+5)
-        }
+
+
           console.log("THE SETMYPAGE",mypage)
           let api_url = '';
          let usedId = localStorage.getItem("user_id")
@@ -113,7 +143,7 @@ const Announcements =  () => {
     }
   }
   const myDataCount = async() =>{
-    let api_url = ' '
+    try { let api_url = ' '
     let franhiseAlias = "all"
     let userId = localStorage.getItem("user_id")
 
@@ -130,6 +160,14 @@ const Announcements =  () => {
     console.log("The reponse for count In My announcement",response.data.result)
     //  console.log("THE COUNT OF MY DATA",response.data.data)
      setMyCount(response.data.result.count)
+      
+    } catch (error) {
+      console.log("MY COUNT ERROR",error)
+      setMyCount(0)
+      setMyDataLength(0)
+      
+    }
+
   }
   const handelLoadMore = (e) =>{
     e.preventDefault()
@@ -205,15 +243,9 @@ const Announcements =  () => {
       }
       else{
          console.log("THE PAGE for lloadMoreoad ",page) 
-         setPage(0)
+         setPage(5)
       
           setLoadMoreData(loadMoreData.slice(0,5))
-
-        
-        //  setLoadMoreData([])
-        // console.log("THE ELSE",loadMoreData)
-        //  setLoadMoreData(loadMoreData.slice(0,5))
-        //  LoadMoreALl()
         console.log("THE SEARCH VLAUE NOW EMPTY")
         console.log("THE lenght",theCommon,count,page)
         api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=0&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=5`
@@ -294,24 +326,36 @@ const Announcements =  () => {
   const OnLoadEvent = async () =>{
     try {
       // console.log("Announcement detial API")
+      if(pageEvent>5){
+        setpageEvent(5)
+      }
+      else{
+        setpageEvent(pageEvent+5)
+      }
+      let api_url =" "
+      api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=0&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=5`
       const token = localStorage.getItem('token');
-      let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&isEvent=1&search=&offset=0&limit=5`, {
+      // let franhiseAlias = "all"
+      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=1&search=&offset=0&limit=5`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
+      console.log("THE EVENT FRANISEE",selectedFranchisee)
       // console.log("The All Announcement",response.data.result);
-      console.log("ALL EVENTS",response)
+      console.log("ALL EVENTS data inside select",response.data.result.searchedData)
       if(response.status === 200 && response.data.status === "success") {
         setAllEvent(response.data.result.searchedData);
         setEventLength(response.data.result.searchedData.length)
-
+        setEventCount(response.data.result.count)
+        setLoadMoreEvent(response.data.result.searchedData)
+        
       }
     } catch (error) {
         if(error.response.status === 404){
           console.log("The code is 404")
           // setAnnouncementDetail([])
+          setAllEvent([])
         }
 
     }
@@ -355,6 +399,8 @@ const Announcements =  () => {
      catch (error) {
       console.log("There is no data",error)
       setTheMyAnnoucemenet([])
+      setMyCount(0)
+      setMyDataLength(0)
     }
   }
   const myAnnnoucementData = async(e) =>{
@@ -416,32 +462,37 @@ const Announcements =  () => {
     }
   }
   const AllEventSearch = async(e) =>{
+  
     try {
       if(e) {
         searchvalue = e.target.value
       }
       if(searchvalue){
         let api_url= ' '
-        console.log("THE SERACH VALUE IN MY",searchvalue) 
+        console.log("EVent search value",searchvalue) 
         let usedId = localStorage.getItem("user_id")
         // api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=1000`
       
       // api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset${offset}=&limit=5`
        let userId = localStorage.getItem("user_id")
-       api_url = `${BASE_URL}/announcement/created-announcement-events/${userId}/?franchiseeAlias=${selectedFranchisee}&isEvent=1&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=${eventCount}`
+      //  /announcement/?franchiseeAlias=${franhiseAlias}&isEvent=1&search=&offset=0&limit=5
+       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=1&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=${eventCount}`
           const response = await axios.get(api_url, {
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           })
-          console.log("THE ALL EVENT SEARCH",response, api_url)
+          console.log("THE ALL EVENT SEARCH", api_url)
           if(response.status === 200 &&  response.data.status === "success"){
             setAllEvent(response.data.result.searchedData)
+            setEventLength(eventCount)
           }
    
         }
         else{
           console.log("NO DATA")
+          setpageEvent(5)
+          setLoadMoreEvent(loadMoreEvent.slice(0,5))
           let api_url= ' '
           let userId = localStorage.getItem("user_id")
           const token = localStorage.getItem('token');
@@ -454,6 +505,7 @@ const Announcements =  () => {
           console.log("THE ALL EVENT SEARCH",response, api_url)
           if(response.status === 200 &&  response.data.status === "success"){
             setAllEvent(response.data.result.searchedData)
+            setEventLength(response.data.result.searchedData.length)
           }
         }
     } catch (error) {
@@ -487,6 +539,7 @@ const Announcements =  () => {
       console.log("ALL EVENTS",response)
       if(response.status === 200 && response.data.status === "success") {
         setEventCount(response.data.result.count)
+        setMyDataLength(response.data.result.searchedData.length)
       }
     } catch (error) {
         if(error.response.status === 404){
@@ -505,14 +558,33 @@ useEffect(() =>{
       if(page>=5){
         setPage(5)
         setLoadMoreData(loadMoreData.slice(0,5))
-        console.log("THE LOADDER DATA",loadMoreData.slice(0,5))
+        // console.log("THE LOADDER DATA",loadMoreData.slice(0,5))
       }
       console.log("TABLINKPATH CHANGED",page)
     }
     else if(tabLinkPath==="/my-announcements" ){
       // console.log("INSIDE MY ANNOUNCEMENT USEEFFCT")
       // setMyPage(5)
-      myDataCount()
+    myDataCount()
+      
+      if(mypage>=5){
+        setMyPage(5)
+        console.log("SETMYPAGE PAGE TO 5",mypage)
+        setMyLoadData(myLoadData.slice(0,5))
+      }
+      // myDataCount()
+     }
+     else if(tabLinkPath==="/all-events"){
+      EventCount()
+      // setLoadMoreEvent(loadMoreEvent.slice(0,5))
+      if(pageEvent>=5){
+        setpageEvent(5)
+        setLoadMoreEvent(loadMoreEvent.slice(0,5))
+        // console.log("THE LOADDER DATA",loadMoreData.slice(0,5))
+      }
+      // console.log("EVENT count and length",eventCount,eventLength,loadMoreEvent)
+      // setEventLength(loadMoreEvent.length)
+      
      }
 
 },[tabLinkPath])
@@ -525,6 +597,9 @@ useEffect(() =>{
       // console.log("INSIDE MY ANNOUNCEMENT USEEFFCT")
       onLoadMyAnnouncement()
      }
+    else if(selectedFranchisee && tabLinkPath==="/all-events"){
+      OnLoadEvent()
+    }
   },[selectedFranchisee])
   useEffect(() =>{
     LoadMoreALl()
@@ -533,8 +608,8 @@ useEffect(() =>{
     myDataCount()
     const user_role = localStorage.getItem("user_role")
     setUserRole(user_role)
-    OnLoadEvent()
     EventCount()
+    LoadMoreEvent()
     
   },[])
   useEffect(()=>{
@@ -544,6 +619,9 @@ useEffect(() =>{
   useEffect(() =>{
     setMyDataLength(myLoadData.length)
   },[myLoadData])
+  useEffect(() =>{
+    setEventLength(loadMoreEvent.length)
+  },[loadMoreEvent])
   
 
   // console.log("USER ROLE",userRole)
@@ -552,6 +630,8 @@ useEffect(() =>{
   // console.log("THE LOAD MORE MY DATA",theMyAnnouncement)
   console.log("PAGE page and Mypage",page,mypage)
   console.log("THE New Load More adat,",loadMoreData)
+  console.log("THE LOAD MRE EVENT",loadMoreEvent)
+  console.log("PERMISSION",verifyPermission("announcements", "add"));
 
   
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
@@ -587,19 +667,19 @@ useEffect(() =>{
                                   />
                           </label>
                         </div>
-                        {/* {
-                          verifyPermission("Announcements", "add") && 
-                        <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
-                        } */}
+                        {
+                          verifyPermission("announcements", "add") && 
+                          <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
+                        }
                            {/* {
                           verifyPermission("training_files", "add") &&
                           <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
                         } */}
-                        {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
+                        {/* {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
                         <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
                         ): (
                           null
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </header>
@@ -607,7 +687,15 @@ useEffect(() =>{
                     <ul>
                       <li><a onClick={handleLinkClick}  path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
                       <li><a onClick={handleLinkClick} path="/all-events" className={`${tabLinkPath === "/all-events" ? "active" : ""}`} >All Events</a></li>
-                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements And Events</a></li>
+                      {
+                        localStorage.getItem('user_role') === 'franchisor_admin' ||localStorage.getItem('user_role') === 'franchisee_admin'  ? (
+                          <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements And Events</a></li>
+
+                        )
+                        :(
+                          null
+                        )
+                      }
                   
                     </ul>
                   </div>
@@ -618,7 +706,7 @@ useEffect(() =>{
                       && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue} />}
                     {tabLinkPath === "/my-announcements" 
                       && <MyAnnouncements myAnnouncementData={theMyAnnouncement} myLoadData={myLoadData} />}
-                   {tabLinkPath === "/all-events"  && <AllEvent allEvent={allEvent}/>}   
+                   {tabLinkPath === "/all-events"  && <AllEvent allEvent={allEvent} loadEvent = {loadMoreEvent}/>}   
                     
                   </div>
                   {/* {franchiseeData && franchiseeData.searchedData.length} */}
@@ -679,7 +767,7 @@ useEffect(() =>{
                         null
                       ):
                       (
-                        <button type="button" class="btn btn-primary">Load More</button>
+                        <button type="button" onClick={handleLoadMoreEvent} class="btn btn-primary">Load More</button>
 
                       )
                         
