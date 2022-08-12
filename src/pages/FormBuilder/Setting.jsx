@@ -10,7 +10,7 @@ import {
 } from 'react-bootstrap';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Multiselect from 'multiselect-react-dropdown';
 
@@ -405,7 +405,7 @@ function Setting(props) {
         ? selectedResponseVisibilityUserId.slice(0, -1)
         : null;
     }
-    data["link"]=BASE_URL+"/form/dynamic/"+data.form_name;
+    data["link"]=FRONT_BASE_URL+"/form/dynamic/"+data.form_name;
     data['franchisee_id'] = localStorage.getItem("f_id");
     data['permission_update'] = true;
     data['shared_by'] = localStorage.getItem('user_id');

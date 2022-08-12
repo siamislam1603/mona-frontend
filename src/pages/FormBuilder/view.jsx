@@ -42,7 +42,7 @@ function ViewFormBuilder(props) {
       redirect: 'follow'
     };
     
-    fetch(`${BASE_URL}/form/${id}`, requestOptions)
+    fetch(`${BASE_URL}/form/${id}?user_id=${localStorage.getItem('user_id')}`, requestOptions)
       .then(response => response.json())
       .then(result => {alert(result?.message);getFormData('');})
       .catch(error => console.log('error', error));
