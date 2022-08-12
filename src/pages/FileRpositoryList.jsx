@@ -69,6 +69,7 @@ const FileRpositoryList = () => {
             reader.onerror = (error) => reject(error);
         });
 
+
     function onSelectUser(optionsList, selectedItem) {
         console.log('selected_item---->2', selectedItem);
         selectedUserId += selectedItem.id + ',';
@@ -78,6 +79,8 @@ const FileRpositoryList = () => {
         });
         console.log('selectedUser---->', selectedUser);
     }
+
+
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
         const index = selectedUser.findIndex((object) => {
@@ -88,6 +91,7 @@ const FileRpositoryList = () => {
             console.log('selectedUser---->', selectedUser);
         }
     }
+
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/role/franchisee`, {
@@ -104,6 +108,7 @@ const FileRpositoryList = () => {
             })));
         }
     };
+
     const onSubmit = async (e) => {
         e.preventDefault();
         selectedUser?.map((item) => {
@@ -117,8 +122,8 @@ const FileRpositoryList = () => {
             'Authorization',
             'Bearer ' + localStorage.getItem('token')
         );
-        console.log(localStorage, "localStorage");
 
+        console.log(localStorage, "localStorage");
         const file = formSettingData.setting_files[0];
         console.log('file------->', file);
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
@@ -130,6 +135,8 @@ const FileRpositoryList = () => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
+        formdata.append('franchisee', formSettings.assigned_franchisee);
+
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -722,7 +729,6 @@ const FileRpositoryList = () => {
                                             <Form.Group>
                                                 <Form.Label>Select Franchisee</Form.Label>
                                                 <div className="select-with-plus">
-                                                    
                                                     <Multiselect
                                                         disable={sendToAllFranchisee === 'all'}
                                                         placeholder={"Select User Names"}
@@ -734,7 +740,6 @@ const FileRpositoryList = () => {
                                                                 assigned_franchisee: [...data.map(data => data.id)],
                                                             }));
                                                         }}
-                                                        
                                                         onSelect={function noRefCheck(data) {
                                                             setFormSettings((prevState) => ({
                                                                 ...prevState,

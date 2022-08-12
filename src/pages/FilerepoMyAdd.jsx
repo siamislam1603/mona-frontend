@@ -75,6 +75,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             reader.onload = () => resolve(reader.result);
             reader.onerror = (error) => reject(error);
         });
+
+
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/role/franchisee`, {
@@ -156,7 +158,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
-
+        formdata.append('franchisee', formSettings.assigned_franchisee);
         // if (
         //     formSettingData.accessible_to_role === null ||
         //     formSettingData.accessible_to_role === undefined
@@ -215,7 +217,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             redirect: 'follow',
         };
 
-        console.log("submitted",requestOptions)
+        console.log("submitted", requestOptions)
 
         // fetch(`${BASE_URL}/fileRepo/`, requestOptions)
         //     .then((response) => {
@@ -298,6 +300,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             .then((result) => setCategory(result.category))
             .catch((error) => console.log('error', error));
     };
+
     const getUser = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -310,11 +313,11 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         };
 
         let franchiseeArr = JSON.stringify(formSettings.franchisee)
-
+        
         let response = await axios.get(`http://localhost:4000/auth/users/franchisees?franchiseeId=${franchiseeArr}`, request)
         if (response.status === 200) {
-           console.log(response.data.users,"respo")
-           setUser(response.data.users)
+            console.log(response.data.users, "respo")
+            setUser(response.data.users)
         }
     };
 
@@ -323,7 +326,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         getFileCategory();
         getUser();
         fetchFranchiseeList();
-    }, [trainingDeleteMessage,formSettings.franchisee])
+    }, [trainingDeleteMessage, formSettings.franchisee])
 
     const handleTrainingDelete = async (cell) => {
         console.log('DELETING THE TRAINING!');

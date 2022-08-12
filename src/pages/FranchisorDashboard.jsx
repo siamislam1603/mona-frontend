@@ -8,8 +8,7 @@ import "react-sweet-progress/lib/style.css";
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
-
-
+import moment from 'moment';
 
 
 const products1 = [
@@ -338,7 +337,7 @@ const FranchisorDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{data.scheduled_date}</span></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}   <span className="date">{moment(data.createdAt).format('DD/MM/YYYY')}</span></div>
                                   </a>
                                 </div>
                               );

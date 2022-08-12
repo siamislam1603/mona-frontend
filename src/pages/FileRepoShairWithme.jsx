@@ -111,22 +111,22 @@ const FileRepoShairWithme = () => {
     {
       dataField: 'repository_files',
       text: '',
-      formatter: (cell) => {
-        return (
-          <>
-            <div className="cta-col">
-              <Dropdown>
-                <Dropdown.Toggle variant="transparent" id="ctacol">
-                  <img src="../img/dot-ico.svg" alt="" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </>
-        );
-      },
+      // formatter: (cell) => {
+      //   return (
+      //     <>
+      //       <div className="cta-col">
+      //         <Dropdown>
+      //           <Dropdown.Toggle variant="transparent" id="ctacol">
+      //             <img src="../img/dot-ico.svg" alt="" />
+      //           </Dropdown.Toggle>
+      //           <Dropdown.Menu>
+      //             <Dropdown.Item href="#">Delete</Dropdown.Item>
+      //           </Dropdown.Menu>
+      //         </Dropdown>
+      //       </div>
+      //     </>
+      //   );
+      // },
     },
   ]);
   useEffect(() => {

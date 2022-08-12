@@ -5,7 +5,7 @@ import TopHeader from "../components/TopHeader";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { BASE_URL } from "../components/App";
-
+import moment from 'moment'
 
 const ParentsDashboard = () => {
 
@@ -23,7 +23,7 @@ const ParentsDashboard = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { parentConsentData } = response.data;
       console.log('PARENT CONSENT DATA:', parentConsentData[0]);
       localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
@@ -31,8 +31,8 @@ const ParentsDashboard = () => {
       localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
       localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
       localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
-      
-      if(parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
+
+      if (parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
         console.log('VIEWING ENROLLMENT DIALOG');
         setViewEnrollmentDialog(true);
       }
@@ -43,7 +43,7 @@ const ParentsDashboard = () => {
 
   const handleViewEnrollment = async () => {
     setViewEnrollmentDialog(false);
-    window.location.href=`/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
+    window.location.href = `/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
   }
 
   const events = async () => {
@@ -135,7 +135,7 @@ const ParentsDashboard = () => {
   useEffect(() => {
     checkPendingConsent();
   });
-  
+
   return (
     <>
       <div id="main">
@@ -441,7 +441,7 @@ const ParentsDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{item.title} <span className="date">{item.scheduled_date}</span></div>
+                                    <div className="name">{item.title} <span className="date">{moment(item.createdAt).format('DD/MM/YYYY')}</span></div>
                                   </a>
                                 </div>
                               </>
@@ -494,7 +494,7 @@ const ParentsDashboard = () => {
         </Modal>
       }
 
-      <Modal 
+      <Modal
         show={viewEnrollmentDialog}>
         <Modal.Header>
           <Modal.Title>Pending Consent Notification</Modal.Title>
@@ -505,7 +505,7 @@ const ParentsDashboard = () => {
         </Modal.Body>
 
         <Modal.Footer>
-          <button 
+          <button
             className="modal-button"
             onClick={() => handleViewEnrollment()}>View Enrollment Form</button>
         </Modal.Footer>
