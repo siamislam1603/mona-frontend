@@ -178,7 +178,11 @@ console.log("THE EVENT PROPS",props.allEvent)
                 </div>
               </Col>
               <Col md={8}>
+<<<<<<< HEAD
               {data && data?.coverImage && <div className="head">Related Images :</div>
+=======
+              {data &&data?.coverImage && <div className="head">Related Images :</div>
+>>>>>>> 6ce3176f37943423ed5d6e563bd9e93bfc4f6e5c
               }
               {data && data?.coverImage && 
                     <div className="cont">
@@ -190,10 +194,14 @@ console.log("THE EVENT PROPS",props.allEvent)
                     </div>
                   </div>
               }
+<<<<<<< HEAD
               {data?.announcement_files?.length > 0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+=======
+              {data?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+>>>>>>> 6ce3176f37943423ed5d6e563bd9e93bfc4f6e5c
                 <div className="cont">
                   <div className="related-files">
-                  {data.announcement_files && data.announcement_files.map((detail,index) =>(
+                  {data?.announcement_files && data?.announcement_files?.map((detail,index) =>(
                       <>
                         {detail.fileType !== ".mp4" && !detail.is_deleted ?(
                             <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
