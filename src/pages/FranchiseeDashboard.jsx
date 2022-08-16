@@ -86,10 +86,10 @@ const products1 = [
 const columns1 = [
   {
     dataField: 'formname',
-    text: 'Form Name',
+    text: 'Child Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
     },
   },
   {
@@ -97,7 +97,7 @@ const columns1 = [
     text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
     },
   },
   {
@@ -179,24 +179,24 @@ const FranchiseeDashboard = () => {
     })
     console.log(countUser, ":lksjdgcasjhgjhjchvs")
   }
-  const getAddedTime = (str) =>{
-    const Added= moment(str).format('DD/MM/YYYY')
+  const getAddedTime = (str) => {
+    const Added = moment(str).format('DD/MM/YYYY')
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [day, month, year].join('/');
-     const date1 = new Date(datae);
-     const date2 = new Date(str);
-     console.log("THE Date1",date1,date2)
-     if(date1 === date2){
+    let datae = [day, month, year].join('/');
+    const date1 = new Date(datae);
+    const date2 = new Date(str);
+    console.log("THE Date1", date1, date2)
+    if (date1 === date2) {
       return "Added today"
-     }
-     else if(date2<date1){
+    }
+    else if (date2 < date1) {
       return Added
-     }
-  
+    }
+
   }
 
   React.useEffect(() => {
@@ -402,12 +402,12 @@ const FranchiseeDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title} 
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}
                                       <div>
-                                      <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+                                        <span className="timesec">{getAddedTime(data?.createdAt)}</span>
 
                                       </div>
-                                      </div>
+                                    </div>
                                   </a>
                                 </div>
                               );

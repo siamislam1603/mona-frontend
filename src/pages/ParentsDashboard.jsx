@@ -90,8 +90,10 @@ const ParentsDashboard = () => {
     }
 
   }
+
   const getAddedTime = (str) =>{
     const Added= moment(str).format('DD/MM/YYYY')
+    console.log(Added ,"Added")
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
@@ -462,10 +464,8 @@ const ParentsDashboard = () => {
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                     <div className="name">{item.title}
-                       
                                       <div>
                                       <span className="timesec">{getAddedTime(item?.createdAt)}</span>
-
                                       </div>
                                       </div>
                                                                                                           
