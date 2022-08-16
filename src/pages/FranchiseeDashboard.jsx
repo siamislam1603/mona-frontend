@@ -187,15 +187,19 @@ const FranchiseeDashboard = () => {
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
      let datae =  [day, month, year].join('/');
-     const date1 = new Date(datae);
-     const date2 = new Date(str);
-     console.log("THE Date1",date1,date2)
-     if(date1 === date2){
+    //  const date1 = new Date(datae);
+    //  const date2 = new Date(str);
+     console.log("THE Date1",Added,datae)
+     if(datae === Added){
       return "Added today"
      }
-     else if(date2<date1){
+     else if(Added<datae){
       return Added
      }
+     else {
+      return Added
+     }
+    // return Added
   
   }
 
