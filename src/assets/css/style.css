@@ -655,7 +655,10 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .dropzone, .uploadfile { display: inline-block; overflow: hidden; }
 .fileinput { display: block; margin-top: -5px; margin-bottom: 10px; font-size: 10px; }
 
-
+.error_page_detail { max-width: 350px; }
+.error_page_detail span { display: block; ont-size: 16px; margin-bottom: 15px; }
+.error_page_detail h1 { font-size: 28px; color: var(--primary); }
+.error_page { margin: 100px 0; }
 
 
 
