@@ -20,6 +20,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   const [educatorData, setEducatorData] = useState(null);
   const [userSelectedEducators, setUserSelectedEducators] = useState(null);
+  const [signatureString, setSignatureString] = useState(null);
   const [consentData, setConsentData] = useState({
     parent_name: "",
     signature: "",
@@ -37,7 +38,6 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [signatureImage, setSignatureImage] = useState(null);
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [fetchedSignatureImage, setFetchedSignatureImage] = useState(null);
-  const [signatureString, setSignatureString] = useState(null);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
@@ -255,9 +255,13 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
     console.log('SIGNATURE RESPONSE:', response);
     if(response.status === 201 && response.data.status === "success") {
-      let { signature } = response.data;
-      console.log('Signature:', signature);
-      setSignatureString(signature);
+      let { signature: signatureURL } = response.data;
+      console.log('Signature:', signatureURL);
+      setSignatureString(signatureURL);
+      setConsentData(prevState => ({
+        ...prevState,
+        signature: signatureURL
+      }));
     }
   }
       
@@ -284,7 +288,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [])
 
-  // consentData && console.log('Consent Data:', consentData);
+  consentData && console.log('Consent Data => signature:', consentData.signature);
   // consentDetail && console.log('CONSENT DETAIL:', consentDetail);
   // parentConsentData && console.log('PARENT CONSENT DATA:', parentConsentData);
   // signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
@@ -312,7 +316,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     </Form.Group>
                   </Col>
                   <Form.Group className="mb-3 single-field">
-                    <Form.Label>to provide care and education to my child.; and nominated assistant/s</Form.Label>
+                    <Form.Label>to provide care and education to my child; and nominated assistant/s</Form.Label>
                     <Form.Control
                       type="text"
                       name="to_provide_care_and_education_to_my_child"
@@ -371,7 +375,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                   }
                   {
                     signatureString &&
-                    <img src={fetchedSignatureImage} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    <img src={consentData?.signature} alt="parent signature" style={{ width: "80px", height: "80px" }} />
                   }
                 </Form.Group>
               </Col>
@@ -395,7 +399,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
             <Button 
-              disabled={consentData?.consentDate === null}
+              disabled={consentData?.consent_date === null}
               variant="primary" 
               type="submit" 
               onClick={handleDataSubmit}>Next</Button>
