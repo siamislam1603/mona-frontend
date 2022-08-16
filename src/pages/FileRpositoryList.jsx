@@ -13,7 +13,7 @@ import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
 import DragDropRepository from '../components/DragDropRepository';
 import axios from "axios";
-
+import { useNavigate } from 'react-router-dom';
 import VideoPop from "../components/VideoPop";
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
@@ -38,6 +38,7 @@ const selectRow = {
 };
 
 const FileRpositoryList = () => {
+    const Navigate = useNavigate();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -201,13 +202,14 @@ const FileRpositoryList = () => {
                 if (response.statusText === "Created") {
                     setLoaderFlag(false);
                     setShow(false);
-                    this.props.history.push(`/file-repository`);
+                    Navigate(`/file-repository`);
                 }
             })
             .then((result) => {
                 if (result) {
                     setLoaderFlag(false);
                     setShow(false);
+                    Navigate(`/file-repository`);
                 }
             })
             .catch((error) => console.log('error', error));
@@ -305,6 +307,7 @@ const FileRpositoryList = () => {
         getFileCategory();
         getUser();
         fetchFranchiseeList();
+        onSubmit()
     }, [])
 
     const [columns, setColumns] = useState([

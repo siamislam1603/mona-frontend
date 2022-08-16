@@ -31,6 +31,7 @@ const RepoEdit = () => {
     const [coverImage, setCoverImage] = useState("");
     const [fetchedCoverImage, setFetchedCoverImage] = useState();
     const [franchiseeList, setFranchiseeList] = useState();
+    const [img, setimg] = useState();
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
@@ -59,9 +60,8 @@ const RepoEdit = () => {
         }
 
     }
-
-    console.log(">>>>>>>>>>>>>data", coverImage, data)
-
+    // setimg(coverImage)
+    // console.log(">>>>>>>>>>>>>", img)
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
@@ -70,18 +70,20 @@ const RepoEdit = () => {
             description: data?.description,
             title: data?.title,
             categoryId: data?.repository_files[0].categoryId,
-            image: coverImage.path,
+            image: data?.repository_files[0].filesPath,
             franchise: data?.repository_shares[0].franchisee,
             accessibleToRole: data?.repository_shares[0].accessibleToRole,
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
         }));
+
         setCoverImage(data?.repository_files[0].filesPath);
         setFetchedCoverImage(data?.repository_files[0].filesPath);
     }
-    console.log()
+    console.log(coverImage, "coverImage")
     // FUNCTION TO SAVE TRAINING SETTINGS
+
     const handleDiscriptionSettings = (event) => {
         const { name, value } = event.target;
         setData((prevState) => ({
@@ -201,10 +203,10 @@ const RepoEdit = () => {
 
     const setField = (field, value) => {
         if (value === null || value === undefined) {
-            setFormSettingData({ ...formSettingData, setting_files: field });
+            setData({ ...data, setting_files: field });
 
         } else {
-            setFormSettingData({ ...formSettingData, [field]: value });
+            setData({ ...data, [field]: value });
         }
 
         if (!!errors[field]) {
@@ -214,6 +216,7 @@ const RepoEdit = () => {
             });
         }
     };
+    
 
     useEffect(() => {
         GetData();
@@ -251,27 +254,25 @@ const RepoEdit = () => {
                                             <div className="modal-top">
                                                 <div className="modal-top-containt">
                                                     <Row>
-                                                        <Col md={6}>
-                                                            {/* <div className="repositorydrag"> */}
+                                                        {/* <Col md={6}>
+                                                           
                                                             <DropOneFile
                                                                 onSave={setCoverImage}
                                                                 title="Image"
                                                                 setErrors={setErrors}
                                                                 setFetchedCoverImage={setFetchedCoverImage}
-                                                            // setTrainingData={setTraining}?
+                                                            setTrainingData={setTraining}?
                                                             />
                                                             <small className="fileinput">(png, jpg & jpeg)</small>
                                                             {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
                                                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
-                                                            {/* </div> */}
-                                                        </Col>
+                                                            
+                                                        </Col> */}
                                                         <Col md={6}></Col>
-                                                        {/* <Form.Group>
-                                                            <DragDropRepository onChange={data.image} />
+                                                        <Form.Group>
+                                                            <DragDropRepository onChange={setField} />
                                                             <p className="error">{errors.setting_files}</p>
-                                                            <img src={data.image} alt="" width="100px" height="100px" />
-                                                          
-                                                        </Form.Group> */}
+                                                        </Form.Group>
                                                     </Row>
                                                     <div className="toggle-switch">
 
