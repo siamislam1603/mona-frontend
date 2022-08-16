@@ -49,7 +49,7 @@ const ParentsDashboard = () => {
 
   const events = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard//parent/quick-access-events`, {
+    const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-events`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -64,7 +64,7 @@ const ParentsDashboard = () => {
 
   const Userannouncements = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard//parent/quick-access-announcements`, {
+    const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-announcements`, {
       headers: {
         "Authorization": "Bearer " + token
       }

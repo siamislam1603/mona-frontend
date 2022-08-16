@@ -264,6 +264,24 @@ export const TrainingFormValidation = (form, coverImage) => {
   return errors;
 };
 
+// <<<<<<< HEAD
+
+// export const EditFleRepo = (form, coverImage) => {
+//   let errors = {};
+//   let {
+//     id,
+//     title,
+//     description,
+//     categoryId,
+//     assigned_users,
+//     assigned_roles,
+//   } = form;
+
+//   if (!title) {
+//     errors.title = ' title is required!';
+//   }
+
+// =======
 
 export const EditFleRepo = (form, coverImage) => {
   let errors = {};
@@ -280,6 +298,7 @@ export const EditFleRepo = (form, coverImage) => {
     errors.title = ' title is required!';
   }
 
+// >>>>>>> master
   if (title <= 2) {
     errors.title_length = ' title should be more than 2 characters.';
   }

@@ -139,9 +139,12 @@ const SignIn = () => {
                       type="email"
                       className="form_input"
                       placeholder="Enter email"
-                      onChange={handleChange}
+                      onChange={(e) => setFields(prevState => ({
+                        ...prevState,
+                        email: e.target.value,
+                      }))}
                       name="email"
-                      value={email}
+                      value={fields?.email}
                     />
                     <span className="error">
                       {!fields.email && formErrors.email}

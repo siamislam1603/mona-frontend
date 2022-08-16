@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
-import moment from 'moment'
+
+import moment from 'moment';
 const products = [
   {
     id: 1,

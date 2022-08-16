@@ -158,7 +158,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
-        formdata.append('franchisee', formSettings.assigned_franchisee);
         // if (
         //     formSettingData.accessible_to_role === null ||
         //     formSettingData.accessible_to_role === undefined
@@ -209,6 +208,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         //     }
         // }
 
+// >>>>>>> master
 
         var requestOptions = {
             method: 'POST',
