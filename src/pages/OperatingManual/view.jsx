@@ -504,6 +504,7 @@ const OperatingManual = () => {
                                           setInnerIndex(inner_index);
                                         }}
                                       >
+                                        {console.log("inner_item---->1111111",inner_item)}
                                         <a
                                           className={
                                             index === Index &&
