@@ -18,24 +18,23 @@ const PageNotFound = () => {
               <aside className="app-sidebar">
                 <LeftNavbar />
               </aside>
-         
-
-                
-                  <Row  className="">
-                    <Col md={8}>
-                      <div className="maincolumn">
-                           <h1>
-                           404: Page not found<br/>
-                          We can’t seem to find the page you’re looking for.
-                            </h1> 
-                        
-                            <img src="../img/error-image.jpg" alt='' />
-                
+              <div className="sec-column">
+                <div className="error_page">
+                  <Row className="align-items-center">
+                    <Col md={6}>
+                      <div className="error_page_detail">
+                        <span>404: Page not found</span>
+                        <h1>We can’t seem to find the page you’re looking for.</h1>
                       </div>
                     </Col>
-                  
+                    <Col md={6}>
+                      <div className="404_image">
+                        <img src="../img/error-image.jpg" alt='' />
+                      </div>
+                    </Col>
                   </Row>
-            
+                </div>
+              </div>
             </div>
           </Container>
         </section>

@@ -15,4 +15,4 @@ function App() {
   );
 }
 export default App;
-export { BASE_URL,FRONT_BASE_URL };
+export { BASE_URL, FRONT_BASE_URL };

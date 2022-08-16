@@ -28,7 +28,7 @@ import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import { createFileRepoValidation } from '../helpers/validation';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import FileRepoShairWithme from './FileRepoShairWithme';
 import FileRepodAddbyMe from './FileRepodAddbyMe';
 
@@ -65,6 +65,8 @@ const selectRow = {
 
 const FileRepository = () => {
   let counter = 0;
+  const Navigate = useNavigate();
+
   const [count, setCount] = useState(0);
   const [show, setShow] = useState(false);
   const [groupFlag, setGroupFlag] = useState(false);
@@ -145,6 +147,7 @@ const FileRepository = () => {
     getFilesassigned_usersMeData();
     getFileCategory();
     getUser();
+    onSubmit();
   }, []);
 
   // if (!post) return null;
@@ -211,6 +214,7 @@ const FileRepository = () => {
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
+
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -304,13 +308,14 @@ const FileRepository = () => {
         if (response.statusText === "Created") {
           setLoaderFlag(false);
           setShow(false);
-          this.props.history.push(`/file-repository`);
+          Navigate(`/file-repository`);
         }
       })
       .then((result) => {
         if (result) {
           setLoaderFlag(false);
           setShow(false);
+          Navigate('/file-repository')
         }
       })
       .catch((error) => console.log('error', error));
