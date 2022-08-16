@@ -24,7 +24,7 @@ const ParentsDashboard = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { parentConsentData } = response.data;
       console.log('PARENT CONSENT DATA:', parentConsentData[0]);
       localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
@@ -32,8 +32,8 @@ const ParentsDashboard = () => {
       localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
       localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
       localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
-      
-      if(parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
+
+      if (parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
         console.log('VIEWING ENROLLMENT DIALOG');
         setViewEnrollmentDialog(true);
       }
@@ -44,7 +44,7 @@ const ParentsDashboard = () => {
 
   const handleViewEnrollment = async () => {
     setViewEnrollmentDialog(false);
-    window.location.href=`/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
+    window.location.href = `/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
   }
 
   const events = async () => {
@@ -155,7 +155,7 @@ const ParentsDashboard = () => {
   useEffect(() => {
     checkPendingConsent();
   });
-  
+
   return (
     <>
       <div id="main">
@@ -521,7 +521,7 @@ const ParentsDashboard = () => {
         </Modal>
       }
 
-      <Modal 
+      <Modal
         show={viewEnrollmentDialog}>
         <Modal.Header>
           <Modal.Title>Pending Consent Notification</Modal.Title>
@@ -532,7 +532,7 @@ const ParentsDashboard = () => {
         </Modal.Body>
 
         <Modal.Footer>
-          <button 
+          <button
             className="modal-button"
             onClick={() => handleViewEnrollment()}>View Enrollment Form</button>
         </Modal.Footer>
