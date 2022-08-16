@@ -13,8 +13,7 @@ import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
 import DragDropRepository from '../components/DragDropRepository';
 import axios from "axios";
-
-import VideoPop from "../components/VideoPop";
+import { useNavigate } from 'react-router-dom';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 
@@ -39,6 +38,7 @@ const selectRow = {
 };
 
 const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
+    const Navigate = useNavigate();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -219,23 +219,23 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         console.log("submitted", requestOptions)
 
-        // fetch(`${BASE_URL}/fileRepo/`, requestOptions)
-        //     .then((response) => {
-        //         response.json()
-        //         console.log(response.statusText, "+++++++++++")
-        //         if (response.statusText === "Created") {
-        //             setLoaderFlag(false);
-        //             setShow(false);
-        //             this.props.history.push(`/file-repository`);
-        //         }
-        //     })
-        //     .then((result) => {
-        //         if (result) {
-        //             setLoaderFlag(false);
-        //             setShow(false);
-        //         }
-        //     })
-        //     .catch((error) => console.log('error', error));
+        fetch(`${BASE_URL}/fileRepo/`, requestOptions)
+            .then((response) => {
+                response.json()
+                console.log(response.statusText, "+++++++++++")
+                if (response.statusText === "Created") {
+                    setLoaderFlag(false);
+                    setShow(false);
+                    Navigate(`/file-repository`);
+                }
+            })
+            .then((result) => {
+                if (result) {
+                    setLoaderFlag(false);
+                    setShow(false);
+                }
+            })
+            .catch((error) => console.log('error', error));
     };
 
     const GetFile = async () => {
@@ -313,7 +313,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         };
 
         let franchiseeArr = JSON.stringify(formSettings.franchisee)
-        
+
         let response = await axios.get(`http://localhost:4000/auth/users/franchisees?franchiseeId=${franchiseeArr}`, request)
         if (response.status === 200) {
             console.log(response.data.users, "respo")
