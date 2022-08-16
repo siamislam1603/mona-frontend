@@ -80,8 +80,13 @@ const EditUser = () => {
     console.log("The reponse", response)
     if(response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
-      console.log('USER:', user);
-      copyDataToState(user);
+
+      if(Object.keys(user).length > 0) {
+        copyDataToState(user);
+      } else {
+        localStorage.setItem('success_msg', 'User doesn\'t exist!');
+        window.location.href="/user-management";
+      }
     }
   };
 
@@ -461,15 +466,16 @@ const EditUser = () => {
                             <Select
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
+                              isDisabled={true}
                               value={userRoleData.filter(d => d.value === formData?.role) || ""}
                               options={userRoleData}
-                              onChange={(e) =>
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  role: e.value,
-                                  roleObj: e
-                                }))
-                              }
+                              // onChange={(e) =>
+                              //   setFormData((prevState) => ({
+                              //     ...prevState,
+                              //     role: e.value,
+                              //     roleObj: e
+                              //   }))
+                              // }
                             />
                             <span className="error">
                               {!formData.role && formErrors.role}
@@ -608,13 +614,8 @@ const EditUser = () => {
                                 value={formData?.nominated_assistant || ""}
                                 onChange={(e) => {
                                   handleChange(e);
-                                  setFormErrors(prevState => ({
-                                    ...prevState,
-                                    nominated_assistant: null
-                                  }));
                                 }}
                               />
-                              { formErrors.nominated_assistant !== null && <span className="error">{formErrors.nominated_assistant}</span> }
                             </Form.Group>
                           }
                           

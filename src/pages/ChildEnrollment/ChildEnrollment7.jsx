@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import axios from 'axios';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import moment from 'moment';
 import Select from 'react-select';
 import UserSignature from '../InputFields/ConsentSignature';
@@ -23,7 +23,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [consentData, setConsentData] = useState({
     parent_name: "",
     signature: "",
-    consent_date: ""
+    consent_date: null
   });
   const [parentConsentData, setParentConsentData] = useState({
     asked_for_consent: false,
@@ -56,8 +56,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   const fetchChildDataAndPopulate = async () => {
     let token = localStorage.getItem('token');
-    // let enrolledChildId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.get(`${BASE_URL}/enrollment/child/14`, {
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -207,11 +207,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
             localStorage.removeItem('consent_comment');
             localStorage.removeItem('has_given_consent');
             let parent_id = localStorage.getItem('enrolled_parent_id');
-            window.location.href=`http://3.26.39.12:5000/children/${parent_id}`;
+            window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
           }
         } else {
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`http://3.26.39.12:5000/children/${parent_id}`;
+          window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
         }
       }
     } else if(response.status === 201 && response.data.status === "success") {
@@ -227,11 +227,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           localStorage.removeItem('consent_comment');
           localStorage.removeItem('has_given_consent');
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`http://3.26.39.12:5000/children/${parent_id}`;
+          window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
         }
       } else {
         let parent_id = localStorage.getItem('enrolled_parent_id');
-        window.location.href=`http://3.26.39.12:5000/children/${parent_id}`;
+        window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
       }
     }
   }
@@ -247,14 +247,16 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       data.append('image', blob);
     }
 
-    let response = await axios.put(`$http://3.26.39.12:4000/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
+    let response = await axios.put(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    console.log('SIGNATURE RESPONSE:', response);
+    if(response.status === 201 && response.data.status === "success") {
       let { signature } = response.data;
+      console.log('Signature:', signature);
       setSignatureString(signature);
     }
   }
@@ -392,7 +394,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           </div>
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
-            <Button variant="primary" type="submit" onClick={handleDataSubmit}>Next</Button>
+            <Button 
+              disabled={consentData?.consentDate === null}
+              variant="primary" 
+              type="submit" 
+              onClick={handleDataSubmit}>Next</Button>
           </div>
         </Form>
       </div>
