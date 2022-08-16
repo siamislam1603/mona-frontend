@@ -203,7 +203,7 @@ const UserManagement = () => {
                 <img src={cell[0]} alt="" />
               </span>
               <span className="user-name">
-                {cell[1]} <small>{cell[2]}</small> <small>{status}</small>
+                {cell[1]} <small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
               </span>
             </div>
           </>
