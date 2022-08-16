@@ -3148,7 +3148,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
             </div>
             <div className="cta text-center mt-5 mb-5">
               <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
-              <Button variant="primary" type="submit">Next</Button>
+              <Button
+                disabled={parentData?.i_give_medication_permission === false} 
+                variant="primary" 
+                type="submit">Next</Button>
             </div>
           </Form>
         </div>

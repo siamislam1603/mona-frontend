@@ -200,14 +200,28 @@ const EditTraining = () => {
     if (response.status === 201 && response.data.status === "success") {
       console.log('TYPE OF COVER IMAGE:', typeof coverImage[0]);
       let data = new FormData();
-      data.append('id', trainingId);
-      data.append('image', coverImage[0]);
-      let imgSaveResponse = await axios.post(
-        `${BASE_URL}/training/coverImg?title=training`, data, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
+
+      let imgSaveResponse;
+      if(typeof coverImage === 'object') {
+        console.log('COVER IMAGE:', coverImage[0]);
+        
+        data.append('id', trainingId);
+        data.append('image', coverImage[0]);
+        
+        imgSaveResponse = await axios.post(
+          `${BASE_URL}/training/coverImg?title=training`, data, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+      } else if(typeof coverImage === 'string') {
+        imgSaveResponse = await axios.patch(
+          `${BASE_URL}/training/updateCoverImgString`, { coverImage, trainingId }, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+      }
 
       if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
         setLoader(false)
@@ -278,7 +292,7 @@ const EditTraining = () => {
 
   const handleDataSubmit = event => {
     event.preventDefault();
-    // window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
     let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
@@ -314,6 +328,8 @@ const EditTraining = () => {
         updateTraining(data);
       }
     }
+
+    // console.log('COVER IMAGE:', coverImage[0]);
   };
 
   const handleTrainingFileDelete = async (fileId) => {
@@ -345,9 +361,9 @@ const EditTraining = () => {
     }
   }, [trainingSettings?.assigned_franchisee]);
 
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  fetchedFranchiseeUsers && console.log('Fetched franchisee USERS:', fetchedFranchiseeUsers);
+  // trainingData && console.log('TRAINING DATA:', trainingData);
+  // trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  // fetchedFranchiseeUsers && console.log('Fetched franchisee USERS:', fetchedFranchiseeUsers);
   // fetchedFranchiseeUsers && console.log('POPULATED USERS:', fetchedFranchiseeUsers?.map(d => trainingSettings?.d.id));
 
   return (
