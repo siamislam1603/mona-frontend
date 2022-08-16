@@ -257,7 +257,7 @@ const AddNewTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
-    
+
     let errorObj = TrainingFormValidation(trainingData, coverImage); 
     console.log(errorObj);
     if(Object.keys(errorObj).length > 0) {
@@ -273,12 +273,15 @@ const AddNewTraining = () => {
         for(let [key, values] of Object.entries(trainingSettings)) {
           data.append(`${key}`, values);
         }
+
         for(let [ key, values ] of Object.entries(trainingData)) {
           data.append(`${key}`, values)
         }
+
         videoTutorialFiles.forEach((file, index) => {
           data.append(`images`, file);
         });
+        
         relatedFiles.forEach((file, index) => {
           data.append(`images`, file);
         });

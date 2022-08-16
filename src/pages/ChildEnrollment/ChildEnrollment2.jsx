@@ -82,60 +82,60 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     let childId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
     // SENDING HEALTH INFORMATION REQUEST
-    let response = await axios.patch(`${BASE_URL}/enrollment/health-information/${idList.health_information_id}`, {...healthInformation }, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/health-information/${idList.health_information_id}`, { ...healthInformation }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       response = await axios.patch(`${BASE_URL}/enrollment/medical-information/${idList.medical_information_id}`, { ...childMedicalInformation }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
       });
 
-      if(response.status === 201 && response.data.status === "success") {
-        response = await axios.patch(`${BASE_URL}/enrollment/immunisation-record/${idList.immunisation_record_id}`, {...childImmunisationRecord}, {
+      if (response.status === 201 && response.data.status === "success") {
+        response = await axios.patch(`${BASE_URL}/enrollment/immunisation-record/${idList.immunisation_record_id}`, { ...childImmunisationRecord }, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
         });
 
-        if(response.status === 201 && response.data.status === "success") {
+        if (response.status === 201 && response.data.status === "success") {
 
           // UPDATING CHILD DETAILS
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...childDetails}, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childDetails }, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
           });
 
-          if(response.status === 201 && response.data.status === "success") {
+          if (response.status === 201 && response.data.status === "success") {
             let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
 
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, { ...parentData }, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
             });
 
-            if(response.status === 201 && response.data.status === "success") {
+            if (response.status === 201 && response.data.status === "success") {
 
               let changeCount = localStorage.getItem('change_count');
 
-              if(childImmunisationRecord.log.length > 0)
+              if (childImmunisationRecord.log.length > 0)
                 changeCount++;
 
-              if(childDetails.log.length > 0)
-                changeCount++;
-              
-              if(childMedicalInformation.log.length > 0)
+              if (childDetails.log.length > 0)
                 changeCount++;
 
-              if(parentData.log.length > 0)
+              if (childMedicalInformation.log.length > 0)
                 changeCount++;
-              
+
+              if (parentData.log.length > 0)
+                changeCount++;
+
               localStorage.setItem('change_count', changeCount);
 
               nextStep();
@@ -151,13 +151,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     let childId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
     // SENDING HEALTH INFORMATION REQUEST
-    let response = await axios.post(`${BASE_URL}/enrollment/health-information`, {...healthInformation, childId}, {
+    let response = await axios.post(`${BASE_URL}/enrollment/health-information`, { ...healthInformation, childId }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       // SENDING MEDICAL INFORMATION REQUEST
       response = await axios.post(`${BASE_URL}/enrollment/medical-information`, { ...childMedicalInformation, childId }, {
         headers: {
@@ -165,41 +165,41 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         }
       });
 
-      if(response.status === 201 && response.data.status === "success") {
+      if (response.status === 201 && response.data.status === "success") {
 
         // SENDING IMMUNIZATION RECORD REQUEST  
-        response = await axios.post(`${BASE_URL}/enrollment/immunisation-record`, {...childImmunisationRecord, childId}, {
+        response = await axios.post(`${BASE_URL}/enrollment/immunisation-record`, { ...childImmunisationRecord, childId }, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
         });
-  
-        if(response.status === 201 && response.data.status === "success") {
+
+        if (response.status === 201 && response.data.status === "success") {
 
           // UPDATING CHILD DETAILS
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...childDetails}, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childDetails }, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
           });
-          
+
           // UPDATING PARENT PERMISSION
-          if(response.status === 201 && response.data.status === "success") {
+          if (response.status === 201 && response.data.status === "success") {
             let parentId = localStorage.getItem('user_id');
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, { ...parentData }, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
             });
 
-            if(response.status === 201 && response.data.status === "success") {
+            if (response.status === 201 && response.data.status === "success") {
               response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: nextstep }, {
                 headers: {
                   "Authorization": `Bearer ${token}`
                 }
               });
 
-              if(response.status === 201 && response.data.status === "success") {
+              if (response.status === 201 && response.data.status === "success") {
                 nextStep();
               }
             }
@@ -222,18 +222,18 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
     console.log('RESPONSE:', response);
 
-    if(response.status === 200 && response.data.status === 'success') {
+    if (response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
       localStorage.setItem('enrolled_parent_id', child.parents[0].id);
-      if(paramsParentId) {
+      if (paramsParentId) {
         localStorage.setItem('enrolled_parent_id', paramsParentId);
       }
 
       console.log('CHILD DATA:', child);
 
-      if(child.form_step > step) {
-      // POPULATING CHILD HEALTH INFORMATION STATE
-        let  { child_health_information: healthInfo } = child;
+      if (child.form_step > step) {
+        // POPULATING CHILD HEALTH INFORMATION STATE
+        let { child_health_information: healthInfo } = child;
         setHealthInformation(prevState => ({
           ...prevState,
           medical_service: healthInfo.medical_service,
@@ -254,11 +254,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           has_court_orders: child.has_court_orders,
           changes_described: child.changes_described
         }));
-        
+
         // SETTING CHILD IMMUNISATION RECORD
         let { child_immunisation_record: irecord } = child;
-        for(let [key, value] of Object.entries(irecord)) {
-          if(disease_name.includes(key + "")){
+        for (let [key, value] of Object.entries(irecord)) {
+          if (disease_name.includes(key + "")) {
             setChildImmunisationRecord(prevState => ({
               ...prevState,
               [key]: value
@@ -298,7 +298,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           i_give_medication_permission: child.parents[0].i_give_medication_permission
         }));
         setFormStepData(child.form_step);
-      } 
+      }
 
 
     }
@@ -306,12 +306,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    
+
     const errors = healthInformationFormValidator(healthInformation);
-    if(Object.keys(errors).length > 0) {
+    if (Object.keys(errors).length > 0) {
       setHealthInfoFormErrors(errors);
     } else {
-      if(formStepData && formStepData > step) {
+      if (formStepData && formStepData > step) {
         console.log('UPDATING THE EXISTING DATA!');
         updateFormTwoData();
       } else {
@@ -347,11 +347,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Group className="mb-3">
                     <Form.Label>Are there any court orders relating to the powers, duties, responsibilities or authorities of any person in relation to the child or access to the child?</Form.Label>
                     <div className="btn-radio inline-col">
-                      <Form.Check 
-                        type="radio" 
-                        name="powers" 
-                        id="yesd" 
-                        className="ps-0" 
+                      <Form.Check
+                        type="radio"
+                        name="powers"
+                        id="yesd"
+                        className="ps-0"
                         label="Yes"
                         checked={childDetails?.has_court_orders === true}
                         onChange={() => {
@@ -359,17 +359,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             ...prevState,
                             has_court_orders: true
                           }));
-                          if(!childDetails.log.includes("has_court_orders")) {
+                          if (!childDetails.log.includes("has_court_orders")) {
                             setChildDetails(prevState => ({
                               ...prevState,
                               log: [...childDetails.log, "has_court_orders"]
                             }));
                           }
                         }} />
-                      <Form.Check 
-                        type="radio" 
-                        name="powers" 
-                        id="nod" 
+                      <Form.Check
+                        type="radio"
+                        name="powers"
+                        id="nod"
                         defaultChecked
                         checked={childDetails?.has_court_orders === false}
                         label="No"
@@ -379,7 +379,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             has_court_orders: false,
                             changes_described: ""
                           }))
-                          if(!childDetails.log.includes("has_court_orders")) {
+                          if (!childDetails.log.includes("has_court_orders")) {
                             setChildDetails(prevState => ({
                               ...prevState,
                               log: [...childDetails.log, "has_court_orders"]
@@ -403,8 +403,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                     <Col md={12}>
                       <Form.Group className="mb-3">
                         <Form.Label>Please describe these changes and provide the contact details of any person given these powers: </Form.Label>
-                        <Form.Control 
-                          as="textarea" 
+                        <Form.Control
+                          as="textarea"
                           rows={3}
                           value={childDetails?.changes_described || ""}
                           name="changes_described"
@@ -413,7 +413,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             [e.target.name]: e.target.value
                           }))}
                           onBlur={(e) => {
-                            if(!childDetails.log.includes("changes_described")) {
+                            if (!childDetails.log.includes("changes_described")) {
                               setChildDetails(prevState => ({
                                 ...prevState,
                                 log: [...childDetails.log, "changes_described"]
@@ -469,120 +469,120 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   <Col md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>*Doctor’s Name/Medical Service</Form.Label>
-                      <Form.Control 
+                      <Form.Control
                         type="text"
                         name="medical_service"
                         value={healthInformation?.medical_service || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
-                            medical_service: e.target.value 
+                            medical_service: e.target.value
                           }));
 
                           setHealthInfoFormErrors(prevState => ({
                             ...prevState,
                             medical_service: null
                           }));
-                        }} 
+                        }}
                         onBlur={(e) => {
-                          if(!childDetails.log.includes("medical_service")) {
+                          if (!childDetails.log.includes("medical_service")) {
                             setChildDetails(prevState => ({
                               ...prevState,
                               log: [...childDetails.log, "medical_service"]
                             }));
                           }
                         }} />
-                      { healthInfoFormErrors?.medical_service !== null && <span className="error">{healthInfoFormErrors?.medical_service}</span> }
+                      {healthInfoFormErrors?.medical_service !== null && <span className="error">{healthInfoFormErrors?.medical_service}</span>}
                     </Form.Group>
                   </Col>
-                  
+
                   <Col md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>*Telephone</Form.Label>
-                      <Form.Control 
+                      <Form.Control
                         type="tel"
                         name="telephone"
                         value={healthInformation?.telephone || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
-                          ...prevState,
-                          telephone: e.target.value 
-                        }));
-
-                        setHealthInfoFormErrors(prevState => ({
-                          ...prevState,
-                          telephone: null
-                        }));
-                      }} 
-                      onBlur={(e) => {
-                        if(!childDetails.log.includes("telephone")) {
-                          setChildDetails(prevState => ({
                             ...prevState,
-                            log: [...childDetails.log, "telephone"]
+                            telephone: e.target.value
                           }));
-                        }
-                      }} />
-                    { healthInfoFormErrors?.telephone !== null && <span className="error">{healthInfoFormErrors?.telephone}</span> }
+
+                          setHealthInfoFormErrors(prevState => ({
+                            ...prevState,
+                            telephone: null
+                          }));
+                        }}
+                        onBlur={(e) => {
+                          if (!childDetails.log.includes("telephone")) {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              log: [...childDetails.log, "telephone"]
+                            }));
+                          }
+                        }} />
+                      {healthInfoFormErrors?.telephone !== null && <span className="error">{healthInfoFormErrors?.telephone}</span>}
                     </Form.Group>
                   </Col>
 
                   <Col md={12}>
                     <Form.Group className="mb-3">
                       <Form.Label>*Doctor’s Address/Medical Service</Form.Label>
-                      <Form.Control 
+                      <Form.Control
                         type="text"
                         name="medical_service_address"
                         value={healthInformation?.medical_service_address || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
-                            medical_service_address: e.target.value 
+                            medical_service_address: e.target.value
                           }));
 
                           setHealthInfoFormErrors(prevState => ({
                             ...prevState,
                             medical_service_address: null
                           }));
-                      }} 
-                      onBlur={(e) => {
-                        if(!childDetails.log.includes("medical_service_address")) {
-                          setChildDetails(prevState => ({
-                            ...prevState,
-                            log: [...childDetails.log, "medical_service_address"]
-                          }));
-                        }
-                      }} />
-                    { healthInfoFormErrors?.medical_service_address !== null && <span className="error">{healthInfoFormErrors?.medical_service_address}</span> }
+                        }}
+                        onBlur={(e) => {
+                          if (!childDetails.log.includes("medical_service_address")) {
+                            setChildDetails(prevState => ({
+                              ...prevState,
+                              log: [...childDetails.log, "medical_service_address"]
+                            }));
+                          }
+                        }} />
+                      {healthInfoFormErrors?.medical_service_address !== null && <span className="error">{healthInfoFormErrors?.medical_service_address}</span>}
                     </Form.Group>
                   </Col>
-                  
+
                   <Col md={12}>
                     <Form.Group className="mb-3">
                       <Form.Label>*Maternal And Child Health Centre</Form.Label>
-                      <Form.Control 
+                      <Form.Control
                         type="text"
                         name="maternal_and_child_health_centre"
                         value={healthInformation.maternal_and_child_health_centre || ""}
-                        onChange={(e) => { 
+                        onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
-                            maternal_and_child_health_centre: e.target.value 
+                            maternal_and_child_health_centre: e.target.value
                           }));
 
                           setHealthInfoFormErrors(prevState => ({
                             ...prevState,
                             maternal_and_child_health_centre: null
                           }));
-                        }} 
+                        }}
                         onBlur={(e) => {
-                          if(!childDetails.log.includes("maternal_and_child_health_centre")) {
+                          if (!childDetails.log.includes("maternal_and_child_health_centre")) {
                             setChildDetails(prevState => ({
                               ...prevState,
                               log: [...childDetails.log, "maternal_and_child_health_centre"]
                             }));
                           }
                         }} />
-                      { healthInfoFormErrors?.maternal_and_child_health_centre !== null && <span className="error">{healthInfoFormErrors?.maternal_and_child_health_centre}</span> }
+                      {healthInfoFormErrors?.maternal_and_child_health_centre !== null && <span className="error">{healthInfoFormErrors?.maternal_and_child_health_centre}</span>}
                     </Form.Group>
                   </Col>
 
@@ -590,12 +590,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Group className="mb-3">
                       <Form.Label>Does your child have a child health record?</Form.Label>
                       <div className="btn-radio inline-col">
-                        <Form.Check 
-                          type="radio" 
-                          name="health" 
-                          id="yes" 
+                        <Form.Check
+                          type="radio"
+                          name="health"
+                          id="yes"
                           className="ps-0"
-                          checked={childDetails?.has_health_record === true} 
+                          checked={childDetails?.has_health_record === true}
                           label="Yes"
                           onChange={() => {
                             setChildDetails(prevState => ({
@@ -603,19 +603,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               has_health_record: true
                             }));
 
-                            if(!childDetails.log.includes("has_health_record")) {
+                            if (!childDetails.log.includes("has_health_record")) {
                               setChildDetails(prevState => ({
                                 ...prevState,
                                 log: [...childDetails.log, "has_health_record"]
                               }));
                             }
                           }} />
-                        <Form.Check 
-                          type="radio" 
-                          name="health" 
-                          id="no" 
+                        <Form.Check
+                          type="radio"
+                          name="health"
+                          id="no"
                           label="No"
-                          checked={childDetails?.has_health_record === false} 
+                          checked={childDetails?.has_health_record === false}
                           defaultChecked
                           onChange={() => {
                             setChildDetails(prevState => ({
@@ -623,7 +623,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               has_health_record: false
                             }));
 
-                            if(!childDetails.log.includes("has_health_record")) {
+                            if (!childDetails.log.includes("has_health_record")) {
                               setChildDetails(prevState => ({
                                 ...prevState,
                                 log: [...childDetails.log, "has_health_record"]
@@ -673,21 +673,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   }
                 </Row>
               </div>
-
               <h2 className="title-xs mt-4 mb-4">Child's immunization record R 162 (F)</h2>
-
               <div className="grayback">
                 <Row>
                   <Col md={12}>
                     <Form.Group className="mb-3">
                       <Form.Label>Has the child been immunized?</Form.Label>
                       <div className="btn-radio inline-col">
-                        <Form.Check 
-                          type="radio" 
-                          name="immunized" 
+                        <Form.Check
+                          type="radio"
+                          name="immunized"
                           id="yesi"
-                          checked={childDetails?.has_been_immunized === true} 
-                          className="ps-0" 
+                          checked={childDetails?.has_been_immunized === true}
+                          className="ps-0"
                           label="Yes"
                           onChange={() => {
                             setChildDetails(prevState => ({
@@ -695,17 +693,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               has_been_immunized: true
                             }));
 
-                            if(!childDetails.log.includes("has_been_immunized")) {
+                            if (!childDetails.log.includes("has_been_immunized")) {
                               setChildDetails(prevState => ({
                                 ...prevState,
                                 log: [...childDetails.log, "has_been_immunized"]
                               }));
                             }
                           }} />
-                        <Form.Check 
-                          type="radio" 
-                          name="immunized" 
-                          id="noi" 
+                        <Form.Check
+                          type="radio"
+                          name="immunized"
+                          id="noi"
                           label="No"
                           checked={childDetails?.has_been_immunized === false}
                           defaultChecked
@@ -715,7 +713,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               has_been_immunized: false
                             }));
 
-                            if(!childDetails.log.includes("has_been_immunized")) {
+                            if (!childDetails.log.includes("has_been_immunized")) {
                               setChildDetails(prevState => ({
                                 ...prevState,
                                 log: [...childDetails.log, "has_been_immunized"]
@@ -740,18 +738,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         <div className="enrollment-form-sec">
           <Form onSubmit={submitFormData}>
             <div className="enrollment-form-column">
-            { 
-              childDetails.has_been_immunized &&
-              <>
-                <h2 className="title-xs mb-4">Information about the child</h2>
+              {
+                childDetails.has_been_immunized &&
+                <>
+                  <h2 className="title-xs mb-4 mt-4">Information about the child</h2>
+                  <div className="grayback">
+                    <p>A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
+                  </div>
 
-                <div className="grayback">
-                  <p>A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
-                </div>
+                  {/* <h2 className="title-xs mt-4 mb-4">Court orders relating to the child</h2> */}
 
-                {/* <h2 className="title-xs mt-4 mb-4">Court orders relating to the child</h2> */}
-
-                {/* <div className="grayback">
+                  {/* <div className="grayback">
                   <ol>
                     <li>Bring the original court order/s for staff to see and a copy to attach to this enrolment form;</li>
                     <li>If these orders:<br />
@@ -765,1761 +762,1761 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </ol>
                 </div> */}
 
-                <h2 className="title-xs mt-4 mb-4">Child's Immunization Record</h2>
+                  <h2 className="title-xs mt-4 mb-4">Child's Immunization Record</h2>
 
-                <div className="grayback">
-                  <Table responsive="md" className="text-left">
-                    <thead>
-                      <tr>
-                        <th align="left">Immunisation <br /><small>(Valid from March 2008)</small></th>
-                        <th align="center">Birth</th>
-                        <th align="center">2 Months</th>
-                        <th align="center">4 Months</th>
-                        <th align="center">6 Months</th>
-                        <th align="center">12 Months</th>
-                        <th align="center">18 Months</th>
-                        <th align="center">4 Years</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td align="left">Hepatitis B</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check
-                                name="hepatitis_b" 
-                                type="checkbox"
-                                val="1" 
-                                checked={childImmunisationRecord?.hepatitis_b.includes("1")}
-                                id="hepatitis_b1" 
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
-                                  }));
-
-                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                  <div className="grayback">
+                    <Table responsive="md" className="text-left">
+                      <thead>
+                        <tr>
+                          <th align="left">Immunisation <br /><small>(Valid from March 2008)</small></th>
+                          <th align="center">Birth</th>
+                          <th align="center">2 Months</th>
+                          <th align="center">4 Months</th>
+                          <th align="center">6 Months</th>
+                          <th align="center">12 Months</th>
+                          <th align="center">18 Months</th>
+                          <th align="center">4 Years</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td align="left">Hepatitis B</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="hepatitis_b"
+                                  type="checkbox"
+                                  val="1"
+                                  checked={childImmunisationRecord?.hepatitis_b.includes("1")}
+                                  id="hepatitis_b1"
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
 
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="hepatitis_b"
-                                type="checkbox" 
-                                id="hepatitis_b2" 
-                                val="2"
-                                checked={childImmunisationRecord?.hepatitis_b.includes("2")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
-                                  }));
+                                    if (!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
 
-                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="hepatitis_b"
+                                  type="checkbox"
+                                  id="hepatitis_b2"
+                                  val="2"
+                                  checked={childImmunisationRecord?.hepatitis_b.includes("2")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="hepatitis_b"
-                                type="checkbox" 
-                                id="hepatitis_b3"
-                                val="3" 
-                                checked={childImmunisationRecord?.hepatitis_b.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    if (!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="hepatitis_b"
+                                  type="checkbox"
+                                  id="hepatitis_b3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.hepatitis_b.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="hepatitis_b"
-                                type="checkbox" 
-                                id="hepatitis_b4"
-                                val="4" 
-                                checked={childImmunisationRecord?.hepatitis_b.includes("4")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    if (!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="hepatitis_b"
+                                  type="checkbox"
+                                  id="hepatitis_b4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.hepatitis_b.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="hepatitis_b"
-                                type="checkbox" 
-                                id="hepatitis_b5"
-                                val="5" 
-                                checked={childImmunisationRecord?.hepatitis_b.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    if (!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="hepatitis_b"
+                                  type="checkbox"
+                                  id="hepatitis_b5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.hepatitis_b.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="hepatitis_b"
-                                type="checkbox" 
-                                id="hepatitis_b6"
-                                val="6" 
-                                label="&nbsp;"
-                                checked={childImmunisationRecord?.hepatitis_b.includes("6")}
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    if (!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="hepatitis_b"
+                                  type="checkbox"
+                                  id="hepatitis_b6"
+                                  val="6"
+                                  label="&nbsp;"
+                                  checked={childImmunisationRecord?.hepatitis_b.includes("6")}
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="hepatitis_b"
-                                type="checkbox" 
-                                id="hepatitis_b7"
-                                val="7" 
-                                checked={childImmunisationRecord?.hepatitis_b.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                    if (!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="hepatitis_b"
+                                  type="checkbox"
+                                  id="hepatitis_b7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.hepatitis_b.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      hepatitis_b: childImmunisationRecord?.hepatitis_b.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.hepatitis_b.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.hepatitis_b, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                      
-                      <tr>
-                        <td align="left">Diphtheria, tetanus and acellular pertussis (DTPa)</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check
-                                name="diptheria" 
-                                type="checkbox" 
-                                id="diptheria1" 
-                                val="1"
-                                checked={childImmunisationRecord?.diptheria.includes("1")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    if (!childImmunisationRecord.log.includes("hepatitis_b")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "hepatitis_b"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td align="left">Diphtheria, tetanus and acellular pertussis (DTPa)</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="diptheria"
+                                  type="checkbox"
+                                  id="diptheria1"
+                                  val="1"
+                                  checked={childImmunisationRecord?.diptheria.includes("1")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                      diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="diptheria"
-                                type="checkbox" 
-                                id="diptheria2"
-                                checked={childImmunisationRecord?.diptheria.includes("2")}
-                                val="2" 
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    if (!childImmunisationRecord.log.includes("diptheria")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "diptheria"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="diptheria"
+                                  type="checkbox"
+                                  id="diptheria2"
+                                  checked={childImmunisationRecord?.diptheria.includes("2")}
+                                  val="2"
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                      diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check
-                                name="diptheria" 
-                                type="checkbox" 
-                                id="diptheria3"
-                                val="3" 
-                                checked={childImmunisationRecord?.diptheria.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    if (!childImmunisationRecord.log.includes("diptheria")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "diptheria"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="diptheria"
+                                  type="checkbox"
+                                  id="diptheria3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.diptheria.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                      diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check
-                                name="diptheria" 
-                                type="checkbox" 
-                                id="diptheria4"
-                                val="4" 
-                                checked={childImmunisationRecord?.diptheria.includes("4")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    if (!childImmunisationRecord.log.includes("diptheria")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "diptheria"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="diptheria"
+                                  type="checkbox"
+                                  id="diptheria4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.diptheria.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                      diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check
-                                name="diptheria"
-                                type="checkbox" 
-                                id="diptheria5" 
-                                val="5"
-                                checked={childImmunisationRecord?.diptheria.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    if (!childImmunisationRecord.log.includes("diptheria")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "diptheria"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="diptheria"
+                                  type="checkbox"
+                                  id="diptheria5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.diptheria.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                      diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check
-                                name="diptheria" 
-                                type="checkbox" 
-                                id="diptheria6"
-                                val="6" 
-                                checked={childImmunisationRecord?.diptheria.includes("6")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    if (!childImmunisationRecord.log.includes("diptheria")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "diptheria"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="diptheria"
+                                  type="checkbox"
+                                  id="diptheria6"
+                                  val="6"
+                                  checked={childImmunisationRecord?.diptheria.includes("6")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                      diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="diptheria"
-                                type="checkbox" 
-                                id="diptheria7"
-                                val="7" 
-                                checked={childImmunisationRecord?.diptheria.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("diptheria")) {
+                                    if (!childImmunisationRecord.log.includes("diptheria")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "diptheria"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="diptheria"
+                                  type="checkbox"
+                                  id="diptheria7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.diptheria.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "diptheria"]
+                                      diptheria: childImmunisationRecord?.diptheria.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.diptheria.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.diptheria, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                      
-                      <tr>
-                        <td align="left">Haemophilus influenza (Type B)</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                              <Form.Check 
-                                name="haemophilus"
-                                type="checkbox" 
-                                id="haemophilus1"
-                                val="1" 
-                                checked={childImmunisationRecord?.haemophilus.includes("1")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    if (!childImmunisationRecord.log.includes("diptheria")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "diptheria"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td align="left">Haemophilus influenza (Type B)</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="haemophilus"
+                                  type="checkbox"
+                                  id="haemophilus1"
+                                  val="1"
+                                  checked={childImmunisationRecord?.haemophilus.includes("1")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                      haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="haemophilus"
-                                type="checkbox" 
-                                id="haemophilus2"
-                                val="2" 
-                                checked={childImmunisationRecord?.haemophilus.includes("2")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    if (!childImmunisationRecord.log.includes("haemophilus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "haemophilus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="haemophilus"
+                                  type="checkbox"
+                                  id="haemophilus2"
+                                  val="2"
+                                  checked={childImmunisationRecord?.haemophilus.includes("2")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                      haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="haemophilus"
-                                type="checkbox" 
-                                id="haemophilus3"
-                                val="3" 
-                                checked={childImmunisationRecord?.haemophilus.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    if (!childImmunisationRecord.log.includes("haemophilus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "haemophilus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="haemophilus"
+                                  type="checkbox"
+                                  id="haemophilus3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.haemophilus.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                      haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="haemophilus"
-                                type="checkbox" 
-                                id="haemophilus4"
-                                val="4" 
-                                checked={childImmunisationRecord?.haemophilus.includes("4")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    if (!childImmunisationRecord.log.includes("haemophilus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "haemophilus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="haemophilus"
+                                  type="checkbox"
+                                  id="haemophilus4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.haemophilus.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                      haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="haemophilus"
-                                type="checkbox" 
-                                id="haemophilus5"
-                                val="5" 
-                                checked={childImmunisationRecord?.haemophilus.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    if (!childImmunisationRecord.log.includes("haemophilus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "haemophilus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="haemophilus"
+                                  type="checkbox"
+                                  id="haemophilus5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.haemophilus.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                      haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="haemophilus"
-                                type="checkbox" 
-                                id="haemophilus6"
-                                val="6" 
-                                checked={childImmunisationRecord?.haemophilus.includes("6")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    if (!childImmunisationRecord.log.includes("haemophilus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "haemophilus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="haemophilus"
+                                  type="checkbox"
+                                  id="haemophilus6"
+                                  val="6"
+                                  checked={childImmunisationRecord?.haemophilus.includes("6")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                      haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="haemophilus"
-                                type="checkbox" 
-                                id="haemophilus7"
-                                val="7" 
-                                checked={childImmunisationRecord?.haemophilus.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("haemophilus")) {
+                                    if (!childImmunisationRecord.log.includes("haemophilus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "haemophilus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="haemophilus"
+                                  type="checkbox"
+                                  id="haemophilus7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.haemophilus.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "haemophilus"]
+                                      haemophilus: childImmunisationRecord?.haemophilus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.haemophilus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.haemophilus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                      
-                      <tr>
-                        <td align="left">Inactivated poliomyelitis (IPV)</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="inactivated_poliomyelitis"
-                                type="checkbox" 
-                                id="inactivated_poliomyelitis1"
-                                val="1" 
-                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    if (!childImmunisationRecord.log.includes("haemophilus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "haemophilus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td align="left">Inactivated poliomyelitis (IPV)</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="inactivated_poliomyelitis"
+                                  type="checkbox"
+                                  id="inactivated_poliomyelitis1"
+                                  val="1"
+                                  checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="inactivated_poliomyelitis"
-                                type="checkbox" 
-                                id="inactivated_poliomyelitis2"
-                                val="2" 
-                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("2")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    if (!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="inactivated_poliomyelitis"
+                                  type="checkbox"
+                                  id="inactivated_poliomyelitis2"
+                                  val="2"
+                                  checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("2")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="inactivated_poliomyelitis"
-                                type="checkbox" 
-                                id="inactivated_poliomyelitis3"
-                                val="3" 
-                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    if (!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="inactivated_poliomyelitis"
+                                  type="checkbox"
+                                  id="inactivated_poliomyelitis3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="inactivated_poliomyelitis"
-                                type="checkbox" 
-                                id="inactivated_poliomyelitis4"
-                                val="4" 
-                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("4")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    if (!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="inactivated_poliomyelitis"
+                                  type="checkbox"
+                                  id="inactivated_poliomyelitis4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="inactivated_poliomyelitis"
-                                type="checkbox" 
-                                id="inactivated_poliomyelitis5"
-                                val="5" 
-                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    if (!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="inactivated_poliomyelitis"
+                                  type="checkbox"
+                                  id="inactivated_poliomyelitis5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="inactivated_poliomyelitis"
-                                type="checkbox" 
-                                id="inactivated_poliomyelitis6"
-                                val="6" 
-                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("6")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    if (!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="inactivated_poliomyelitis"
+                                  type="checkbox"
+                                  id="inactivated_poliomyelitis6"
+                                  val="6"
+                                  checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("6")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="inactivated_poliomyelitis"
-                                type="checkbox" 
-                                id="inactivated_poliomyelitis7"
-                                val="7" 
-                                checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                    if (!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="inactivated_poliomyelitis"
+                                  type="checkbox"
+                                  id="inactivated_poliomyelitis7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.inactivated_poliomyelitis.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      inactivated_poliomyelitis: childImmunisationRecord?.inactivated_poliomyelitis.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.inactivated_poliomyelitis.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.inactivated_poliomyelitis, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                      
-                      <tr>
-                        <td align="left">Pneumococcal Conjugate (7vPVC)</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="pneumococcal_conjugate"
-                                type="checkbox" 
-                                id="pneumococcal_conjugate1"
-                                val="1"  
-                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("1")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    if (!childImmunisationRecord.log.includes("inactivated_poliomyelitis")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "inactivated_poliomyelitis"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td align="left">Pneumococcal Conjugate (7vPVC)</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="pneumococcal_conjugate"
+                                  type="checkbox"
+                                  id="pneumococcal_conjugate1"
+                                  val="1"
+                                  checked={childImmunisationRecord?.pneumococcal_conjugate.includes("1")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="pneumococcal_conjugate"
-                                type="checkbox" 
-                                id="pneumococcal_conjugate2"
-                                val="2"   
-                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("2")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    if (!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="pneumococcal_conjugate"
+                                  type="checkbox"
+                                  id="pneumococcal_conjugate2"
+                                  val="2"
+                                  checked={childImmunisationRecord?.pneumococcal_conjugate.includes("2")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="pneumococcal_conjugate"
-                                type="checkbox" 
-                                id="pneumococcal_conjugate3"
-                                val="3"   
-                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    if (!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="pneumococcal_conjugate"
+                                  type="checkbox"
+                                  id="pneumococcal_conjugate3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.pneumococcal_conjugate.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="pneumococcal_conjugate"
-                                type="checkbox" 
-                                id="pneumococcal_conjugate4"
-                                val="4"   
-                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("4")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    if (!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="pneumococcal_conjugate"
+                                  type="checkbox"
+                                  id="pneumococcal_conjugate4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.pneumococcal_conjugate.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="pneumococcal_conjugate"
-                                type="checkbox" 
-                                id="pneumococcal_conjugate5"
-                                val="5"   
-                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    if (!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="pneumococcal_conjugate"
+                                  type="checkbox"
+                                  id="pneumococcal_conjugate5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.pneumococcal_conjugate.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="pneumococcal_conjugate"
-                                type="checkbox" 
-                                id="pneumococcal_conjugate6"
-                                val="6"   
-                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("6")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    if (!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="pneumococcal_conjugate"
+                                  type="checkbox"
+                                  id="pneumococcal_conjugate6"
+                                  val="6"
+                                  checked={childImmunisationRecord?.pneumococcal_conjugate.includes("6")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="pneumococcal_conjugate"
-                                type="checkbox" 
-                                id="pneumococcal_conjugate7"
-                                val="7"   
-                                checked={childImmunisationRecord?.pneumococcal_conjugate.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                    if (!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="pneumococcal_conjugate"
+                                  type="checkbox"
+                                  id="pneumococcal_conjugate7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.pneumococcal_conjugate.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      pneumococcal_conjugate: childImmunisationRecord?.pneumococcal_conjugate.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.pneumococcal_conjugate.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.pneumococcal_conjugate, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                      
-                      <tr>
-                        <td align="left">Rotavirus</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="rotavirus"
-                                type="checkbox" 
-                                id="rotavirus1"
-                                val="1"   
-                                checked={childImmunisationRecord?.rotavirus.includes("1")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    if (!childImmunisationRecord.log.includes("pneumococcal_conjugate")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "pneumococcal_conjugate"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td align="left">Rotavirus</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="rotavirus"
+                                  type="checkbox"
+                                  id="rotavirus1"
+                                  val="1"
+                                  checked={childImmunisationRecord?.rotavirus.includes("1")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                      rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="rotavirus"
-                                type="checkbox" 
-                                id="rotavirus2"
-                                val="2"   
-                                checked={childImmunisationRecord?.rotavirus.includes("2")} 
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    if (!childImmunisationRecord.log.includes("rotavirus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "rotavirus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="rotavirus"
+                                  type="checkbox"
+                                  id="rotavirus2"
+                                  val="2"
+                                  checked={childImmunisationRecord?.rotavirus.includes("2")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                      rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="rotavirus"
-                                type="checkbox" 
-                                id="rotavirus3"
-                                val="3"    
-                                checked={childImmunisationRecord?.rotavirus.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    if (!childImmunisationRecord.log.includes("rotavirus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "rotavirus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="rotavirus"
+                                  type="checkbox"
+                                  id="rotavirus3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.rotavirus.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                      rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="rotavirus"
-                                type="checkbox" 
-                                id="rotavirus4"
-                                val="4"    
-                                checked={childImmunisationRecord?.rotavirus.includes("4")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    if (!childImmunisationRecord.log.includes("rotavirus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "rotavirus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="rotavirus"
+                                  type="checkbox"
+                                  id="rotavirus4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.rotavirus.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                      rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="rotavirus"
-                                type="checkbox" 
-                                id="rotavirus5"
-                                val="5"    
-                                checked={childImmunisationRecord?.rotavirus.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    if (!childImmunisationRecord.log.includes("rotavirus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "rotavirus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="rotavirus"
+                                  type="checkbox"
+                                  id="rotavirus5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.rotavirus.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                      rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="rotavirus"
-                                type="checkbox" 
-                                id="rotavirus6"
-                                val="6"    
-                                checked={childImmunisationRecord?.rotavirus.includes("6")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    if (!childImmunisationRecord.log.includes("rotavirus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "rotavirus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="rotavirus"
+                                  type="checkbox"
+                                  id="rotavirus6"
+                                  val="6"
+                                  checked={childImmunisationRecord?.rotavirus.includes("6")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                      rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="rotavirus"
-                                type="checkbox" 
-                                id="rotavirus7"
-                                val="7"    
-                                checked={childImmunisationRecord?.rotavirus.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("rotavirus")) {
+                                    if (!childImmunisationRecord.log.includes("rotavirus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "rotavirus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="rotavirus"
+                                  type="checkbox"
+                                  id="rotavirus7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.rotavirus.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "rotavirus"]
+                                      rotavirus: childImmunisationRecord?.rotavirus.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.rotavirus.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.rotavirus, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                      
-                      <tr>
-                        <td align="left">Measules, mumps an rubella (MMR)</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="measules"
-                                type="checkbox" 
-                                id="measules1"
-                                val="1"     
-                                checked={childImmunisationRecord?.measules.includes("1")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    if (!childImmunisationRecord.log.includes("rotavirus")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "rotavirus"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td align="left">Measules, mumps an rubella (MMR)</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="measules"
+                                  type="checkbox"
+                                  id="measules1"
+                                  val="1"
+                                  checked={childImmunisationRecord?.measules.includes("1")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "measules"]
+                                      measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="measules"
-                                type="checkbox" 
-                                id="measules2"
-                                val="2"      
-                                checked={childImmunisationRecord?.measules.includes("2")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    if (!childImmunisationRecord.log.includes("measules")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "measules"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="measules"
+                                  type="checkbox"
+                                  id="measules2"
+                                  val="2"
+                                  checked={childImmunisationRecord?.measules.includes("2")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "measules"]
+                                      measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="measules"
-                                type="checkbox" 
-                                id="measules3"
-                                val="3"      
-                                checked={childImmunisationRecord?.measules.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    if (!childImmunisationRecord.log.includes("measules")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "measules"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="measules"
+                                  type="checkbox"
+                                  id="measules3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.measules.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "measules"]
+                                      measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="measules"
-                                type="checkbox" 
-                                id="measules4"
-                                val="4"      
-                                checked={childImmunisationRecord?.measules.includes("4")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    if (!childImmunisationRecord.log.includes("measules")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "measules"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="measules"
+                                  type="checkbox"
+                                  id="measules4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.measules.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "measules"]
+                                      measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="measules"
-                                type="checkbox" 
-                                id="measules5"
-                                val="5"      
-                                checked={childImmunisationRecord?.measules.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    if (!childImmunisationRecord.log.includes("measules")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "measules"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="measules"
+                                  type="checkbox"
+                                  id="measules5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.measules.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "measules"]
+                                      measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="measules"
-                                type="checkbox" 
-                                id="measules6"
-                                val="6"      
-                                checked={childImmunisationRecord?.measules.includes("6")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    if (!childImmunisationRecord.log.includes("measules")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "measules"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="measules"
+                                  type="checkbox"
+                                  id="measules6"
+                                  val="6"
+                                  checked={childImmunisationRecord?.measules.includes("6")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "measules"]
+                                      measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="measules"
-                                type="checkbox" 
-                                id="measules7"
-                                val="7"      
-                                checked={childImmunisationRecord?.measules.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("measules")) {
+                                    if (!childImmunisationRecord.log.includes("measules")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "measules"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="measules"
+                                  type="checkbox"
+                                  id="measules7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.measules.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "measules"]
+                                      measules: childImmunisationRecord?.measules.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.measules.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.measules, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                      
-                      <tr>
-                        <td align="left">Meningococcal C</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="meningococcal_c"
-                                type="checkbox" 
-                                id="meningococcal_c1"
-                                val="1"     
-                                checked={childImmunisationRecord?.meningococcal_c.includes("1")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    if (!childImmunisationRecord.log.includes("measules")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "measules"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td align="left">Meningococcal C</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="meningococcal_c"
+                                  type="checkbox"
+                                  id="meningococcal_c1"
+                                  val="1"
+                                  checked={childImmunisationRecord?.meningococcal_c.includes("1")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="meningococcal_c"
-                                type="checkbox" 
-                                id="meningococcal_c2"
-                                val="2"     
-                                checked={childImmunisationRecord?.meningococcal_c.includes("2")} 
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    if (!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="meningococcal_c"
+                                  type="checkbox"
+                                  id="meningococcal_c2"
+                                  val="2"
+                                  checked={childImmunisationRecord?.meningococcal_c.includes("2")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="meningococcal_c"
-                                type="checkbox" 
-                                id="meningococcal_c3"
-                                val="3"      
-                                checked={childImmunisationRecord?.meningococcal_c.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    if (!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="meningococcal_c"
+                                  type="checkbox"
+                                  id="meningococcal_c3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.meningococcal_c.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="meningococcal_c"
-                                type="checkbox" 
-                                id="meningococcal_c4"
-                                val="4"     
-                                checked={childImmunisationRecord?.meningococcal_c.includes("4")} 
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    if (!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="meningococcal_c"
+                                  type="checkbox"
+                                  id="meningococcal_c4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.meningococcal_c.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="meningococcal_c"
-                                type="checkbox" 
-                                id="meningococcal_c5"
-                                val="5"      
-                                checked={childImmunisationRecord?.meningococcal_c.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    if (!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="meningococcal_c"
+                                  type="checkbox"
+                                  id="meningococcal_c5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.meningococcal_c.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="meningococcal_c"
-                                type="checkbox" 
-                                id="meningococcal_c6"
-                                val="6"      
-                                checked={childImmunisationRecord?.meningococcal_c.includes("6")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    if (!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="meningococcal_c"
+                                  type="checkbox"
+                                  id="meningococcal_c6"
+                                  val="6"
+                                  checked={childImmunisationRecord?.meningococcal_c.includes("6")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="meningococcal_c"
-                                type="checkbox" 
-                                id="meningococcal_c7"
-                                val="7"      
-                                checked={childImmunisationRecord?.meningococcal_c.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                    if (!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="meningococcal_c"
+                                  type="checkbox"
+                                  id="meningococcal_c7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.meningococcal_c.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      meningococcal_c: childImmunisationRecord?.meningococcal_c.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.meningococcal_c.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.meningococcal_c, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                    
-                      <tr>
-                        <td align="left">Varicella (VZC)</td>
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="varicella"
-                                type="checkbox" 
-                                id="varicella1"
-                                val="1"       
-                                checked={childImmunisationRecord?.varicella.includes("1")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    if (!childImmunisationRecord.log.includes("meningococcal_c")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "meningococcal_c"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td align="left">Varicella (VZC)</td>
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="varicella"
+                                  type="checkbox"
+                                  id="varicella1"
+                                  val="1"
+                                  checked={childImmunisationRecord?.varicella.includes("1")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "varicella"]
+                                      varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="varicella"
-                                type="checkbox" 
-                                id="varicella2"
-                                val="2"        
-                                checked={childImmunisationRecord?.varicella.includes("2")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    if (!childImmunisationRecord.log.includes("varicella")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "varicella"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="varicella"
+                                  type="checkbox"
+                                  id="varicella2"
+                                  val="2"
+                                  checked={childImmunisationRecord?.varicella.includes("2")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "varicella"]
+                                      varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="varicella"
-                                type="checkbox" 
-                                id="varicella3"
-                                val="3"        
-                                checked={childImmunisationRecord?.varicella.includes("3")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    if (!childImmunisationRecord.log.includes("varicella")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "varicella"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="varicella"
+                                  type="checkbox"
+                                  id="varicella3"
+                                  val="3"
+                                  checked={childImmunisationRecord?.varicella.includes("3")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "varicella"]
+                                      varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="varicella"
-                                type="checkbox" 
-                                id="varicella4"
-                                val="4"        
-                                checked={childImmunisationRecord?.varicella.includes("4")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    if (!childImmunisationRecord.log.includes("varicella")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "varicella"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="varicella"
+                                  type="checkbox"
+                                  id="varicella4"
+                                  val="4"
+                                  checked={childImmunisationRecord?.varicella.includes("4")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "varicella"]
+                                      varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="varicella"
-                                type="checkbox" 
-                                id="varicella5"
-                                val="5"        
-                                checked={childImmunisationRecord?.varicella.includes("5")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    if (!childImmunisationRecord.log.includes("varicella")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "varicella"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="varicella"
+                                  type="checkbox"
+                                  id="varicella5"
+                                  val="5"
+                                  checked={childImmunisationRecord?.varicella.includes("5")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "varicella"]
+                                      varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="varicella"
-                                type="checkbox" 
-                                id="varicella6"
-                                val="6"        
-                                checked={childImmunisationRecord?.varicella.includes("6")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    if (!childImmunisationRecord.log.includes("varicella")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "varicella"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="varicella"
+                                  type="checkbox"
+                                  id="varicella6"
+                                  val="6"
+                                  checked={childImmunisationRecord?.varicella.includes("6")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "varicella"]
+                                      varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                        
-                        <td align="center">
-                          <Form.Group>
-                            <div className="btn-checkbox">
-                            <Form.Check 
-                                name="varicella"
-                                type="checkbox" 
-                                id="varicella7"
-                                val="7"        
-                                checked={childImmunisationRecord?.varicella.includes("7")}
-                                label="&nbsp;"
-                                onChange={(e) => {
-                                  setChildImmunisationRecord(prevState => ({
-                                    ...prevState,
-                                    varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
-                                  }));
 
-                                  if(!childImmunisationRecord.log.includes("varicella")) {
+                                    if (!childImmunisationRecord.log.includes("varicella")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "varicella"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+
+                          <td align="center">
+                            <Form.Group>
+                              <div className="btn-checkbox">
+                                <Form.Check
+                                  name="varicella"
+                                  type="checkbox"
+                                  id="varicella7"
+                                  val="7"
+                                  checked={childImmunisationRecord?.varicella.includes("7")}
+                                  label="&nbsp;"
+                                  onChange={(e) => {
                                     setChildImmunisationRecord(prevState => ({
                                       ...prevState,
-                                      log: [...childImmunisationRecord.log, "varicella"]
+                                      varicella: childImmunisationRecord?.varicella.includes(e.target.getAttribute('val')) ? childImmunisationRecord?.varicella.filter(d => parseInt(d) !== parseInt(e.target.getAttribute('val'))) : [...childImmunisationRecord?.varicella, e.target.getAttribute('val')]
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </td>
-                      </tr>
-                      
-                      <tr>
-                        <td colspan="8">
-                          Additional immunizations for Aboriginals and Torres Strait Islander Children (If required)
-                        </td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </div>
-              </>
-            }
+
+                                    if (!childImmunisationRecord.log.includes("varicella")) {
+                                      setChildImmunisationRecord(prevState => ({
+                                        ...prevState,
+                                        log: [...childImmunisationRecord.log, "varicella"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td colspan="8">
+                            Additional immunizations for Aboriginals and Torres Strait Islander Children (If required)
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </div>
+                </>
+              }
 
               {/* <h3 className="title-xs mt-4 mb-4">Please tick the type of care you require</h3>
 
@@ -2548,17 +2545,16 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               <div className="enrollment-form-sec">
                 <Form onSubmit={submitFormData}>
                   <div className="enrollment-form-column">
-                    <h2 className="title-xs mb-4">Child's Medical Information</h2>
-
+                    <h2 className="title-xs mb-4 mt-4">Child's Medical Information</h2>
                     <div className="grayback">
                       <div className="single-col">
                         <p>Does your child have any special needs?</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check 
-                              type="radio" 
-                              name="photo" 
-                              id="yesp" 
+                            <Form.Check
+                              type="radio"
+                              name="photo"
+                              id="yesp"
                               label="Yes"
                               checked={childMedicalInformation?.has_special_needs === true}
                               onChange={() => {
@@ -2567,39 +2563,39 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   has_special_needs: true
                                 }));
 
-                                if(!childMedicalInformation.log.includes("has_special_needs")) {
+                                if (!childMedicalInformation.log.includes("has_special_needs")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_special_needs"]
                                   }));
                                 }
                               }} />
-                            <Form.Check 
-                              type="radio" 
-                              name="photo" 
+                            <Form.Check
+                              type="radio"
+                              name="photo"
                               id="nop"
-                              defaultChecked 
+                              defaultChecked
                               checked={childMedicalInformation?.has_special_needs === false}
                               label="No"
                               onChange={() => {
+                                setChildMedicalInformation(prevState => ({
+                                  ...prevState,
+                                  has_special_needs: false,
+                                  special_need_details: "",
+                                  inclusion_support_form_of_special_needs: false
+                                }));
+
+                                if (!childMedicalInformation.log.includes("has_special_needs")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
-                                    has_special_needs: false,
-                                    special_need_details: "",
-                                    inclusion_support_form_of_special_needs: false
+                                    log: [...childMedicalInformation.log, "has_special_needs"]
                                   }));
-
-                                  if(!childMedicalInformation.log.includes("has_special_needs")) {
-                                    setChildMedicalInformation(prevState => ({
-                                      ...prevState,
-                                      log: [...childMedicalInformation.log, "has_special_needs"]
-                                    }));
-                                  } else {
-                                    setChildMedicalInformation(prevState => ({
-                                      ...prevState,
-                                      log: childMedicalInformation.log.filter(d => d !== "special_need_details" && d !== "inclusion_support_form_of_special_needs")
-                                    }));
-                                  }
+                                } else {
+                                  setChildMedicalInformation(prevState => ({
+                                    ...prevState,
+                                    log: childMedicalInformation.log.filter(d => d !== "special_need_details" && d !== "inclusion_support_form_of_special_needs")
+                                  }));
+                                }
                               }} />
                           </div>
                         </Form.Group>
@@ -2614,8 +2610,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           <Form.Group className="mb-3">
                             <Form.Label>Details of any special needs, early intervention service and any management procedure to be followed with respect to the special need.</Form.Label>
                             <Form.Control
-                              name="special_need_details" 
-                              as="textarea" 
+                              name="special_need_details"
+                              as="textarea"
                               rows={3}
                               value={childMedicalInformation?.special_need_details}
                               onChange={(e) => setChildMedicalInformation(prevState => ({
@@ -2623,7 +2619,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 [e.target.name]: e.target.value
                               }))}
                               onBlur={(e) => {
-                                if(!childMedicalInformation.log.includes("special_need_details")) {
+                                if (!childMedicalInformation.log.includes("special_need_details")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "special_need_details"]
@@ -2635,10 +2631,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <p>Inclusion Support Form (If applicable)</p>
                             <Form.Group className="ms-auto">
                               <div className="btn-radio inline-col mb-0">
-                                <Form.Check 
-                                  type="radio" 
-                                  name="support" 
-                                  id="yesss" 
+                                <Form.Check
+                                  type="radio"
+                                  name="support"
+                                  id="yesss"
                                   label="Yes"
                                   checked={childMedicalInformation?.inclusion_support_form_of_special_needs === true}
                                   onChange={() => {
@@ -2647,17 +2643,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                       inclusion_support_form_of_special_needs: true
                                     }));
 
-                                    if(!childMedicalInformation.log.includes("inclusion_support_form_of_special_needs")) {
+                                    if (!childMedicalInformation.log.includes("inclusion_support_form_of_special_needs")) {
                                       setChildMedicalInformation(prevState => ({
                                         ...prevState,
                                         log: [...childMedicalInformation.log, "inclusion_support_form_of_special_needs"]
                                       }));
                                     }
                                   }} />
-                                <Form.Check 
-                                  type="radio" 
-                                  name="support" 
-                                  id="noss" 
+                                <Form.Check
+                                  type="radio"
+                                  name="support"
+                                  id="noss"
                                   label="No"
                                   checked={childMedicalInformation?.inclusion_support_form_of_special_needs === false}
                                   defaultChecked
@@ -2667,7 +2663,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                       inclusion_support_form_of_special_needs: false
                                     }));
 
-                                    if(!childMedicalInformation.log.includes("inclusion_support_form_of_special_needs")) {
+                                    if (!childMedicalInformation.log.includes("inclusion_support_form_of_special_needs")) {
                                       setChildMedicalInformation(prevState => ({
                                         ...prevState,
                                         log: [...childMedicalInformation.log, "inclusion_support_form_of_special_needs"]
@@ -2684,10 +2680,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <p>Does Your Child have any senstivity</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check 
-                              type="radio" 
-                              name="senstivity" 
-                              id="yesa" 
+                            <Form.Check
+                              type="radio"
+                              name="senstivity"
+                              id="yesa"
                               label="Yes"
                               checked={childMedicalInformation?.has_sensitivity === true}
                               onChange={() => {
@@ -2696,17 +2692,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   has_sensitivity: true
                                 }));
 
-                                if(!childMedicalInformation.log.includes("has_sensitivity")) {
+                                if (!childMedicalInformation.log.includes("has_sensitivity")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_sensitivity"]
                                   }));
                                 }
                               }} />
-                            <Form.Check 
-                              type="radio" 
-                              name="senstivity" 
-                              id="noa" 
+                            <Form.Check
+                              type="radio"
+                              name="senstivity"
+                              id="noa"
                               label="No"
                               checked={childMedicalInformation?.has_sensitivity === false}
                               defaultChecked
@@ -2718,7 +2714,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   inclusion_support_form_of_allergies: false
                                 }));
 
-                                if(!childMedicalInformation.log.includes("has_sensitivity")) {
+                                if (!childMedicalInformation.log.includes("has_sensitivity")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_sensitivity"]
@@ -2729,7 +2725,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     log: childMedicalInformation.log.filter(d => d !== "details_of_allergies" && d !== "inclusion_support_form_of_allergies")
                                   }));
                                 }
-                            }} />
+                              }} />
                           </div>
                         </Form.Group>
                       </div>
@@ -2738,9 +2734,9 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <>
                           <Form.Group className="mb-3">
                             <Form.Label>If yes, please provide details of any allergies and any management procedure to be followed with respect to the allergy</Form.Label>
-                            <Form.Control 
+                            <Form.Control
                               name="details_of_allergies"
-                              as="textarea" 
+                              as="textarea"
                               value={childMedicalInformation?.details_of_allergies || ""}
                               rows={3}
                               onChange={(e) => {
@@ -2749,7 +2745,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   [e.target.name]: e.target.value
                                 }));
 
-                                if(!childMedicalInformation.log.includes("details_of_allergies")) {
+                                if (!childMedicalInformation.log.includes("details_of_allergies")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "details_of_allergies"]
@@ -2761,10 +2757,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <p>Inclusion Support Form (If applicable)</p>
                             <Form.Group className="ms-auto">
                               <div className="btn-radio inline-col mb-0">
-                                <Form.Check 
-                                  type="radio" 
-                                  name="applicable" 
-                                  id="yesdd" 
+                                <Form.Check
+                                  type="radio"
+                                  name="applicable"
+                                  id="yesdd"
                                   label="Yes"
                                   checked={childMedicalInformation?.inclusion_support_form_of_allergies === true}
                                   onChange={() => {
@@ -2773,17 +2769,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                       inclusion_support_form_of_allergies: true
                                     }));
 
-                                    if(!childMedicalInformation.log.includes("inclusion_support_form_of_allergies")) {
+                                    if (!childMedicalInformation.log.includes("inclusion_support_form_of_allergies")) {
                                       setChildMedicalInformation(prevState => ({
                                         ...prevState,
                                         log: [...childMedicalInformation.log, "inclusion_support_form_of_allergies"]
                                       }));
                                     }
                                   }} />
-                                <Form.Check 
-                                  type="radio" 
-                                  name="applicable" 
-                                  id="nodd" 
+                                <Form.Check
+                                  type="radio"
+                                  name="applicable"
+                                  id="nodd"
                                   label="No"
                                   checked={childMedicalInformation?.inclusion_support_form_of_allergies === false}
                                   defaultChecked
@@ -2793,7 +2789,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                       inclusion_support_form_of_allergies: false
                                     }));
 
-                                    if(!childMedicalInformation.log.includes("inclusion_support_form_of_allergies")) {
+                                    if (!childMedicalInformation.log.includes("inclusion_support_form_of_allergies")) {
                                       setChildMedicalInformation(prevState => ({
                                         ...prevState,
                                         log: [...childMedicalInformation.log, "inclusion_support_form_of_allergies"]
@@ -2810,10 +2806,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <p>Does your child have an auto injection device (e.g. EpiPen®)?</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check 
-                              type="radio" 
-                              name="injection" 
-                              id="yesin" 
+                            <Form.Check
+                              type="radio"
+                              name="injection"
+                              id="yesin"
                               label="Yes"
                               checked={childMedicalInformation?.has_autoinjection_device === true}
                               onChange={() => {
@@ -2822,17 +2818,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   has_autoinjection_device: true
                                 }));
 
-                                if(!childMedicalInformation.log.includes("has_autoinjection_device")) {
+                                if (!childMedicalInformation.log.includes("has_autoinjection_device")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_autoinjection_device"]
                                   }));
                                 }
                               }} />
-                            <Form.Check 
-                              type="radio" 
-                              name="injection" 
-                              id="noin" 
+                            <Form.Check
+                              type="radio"
+                              name="injection"
+                              id="noin"
                               label="No"
                               checked={childMedicalInformation?.has_autoinjection_device === false || childMedicalInformation?.has_autoinjection_device === null}
                               defaultChecked
@@ -2843,7 +2839,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   has_anaphylaxis_medical_plan_been_provided: false
                                 }));
 
-                                if(!childMedicalInformation.log.includes("has_autoinjection_device")) {
+                                if (!childMedicalInformation.log.includes("has_autoinjection_device")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_autoinjection_device"]
@@ -2864,10 +2860,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           <p>If yes, has the anaphylaxis medical management plan been provided to the service</p>
                           <Form.Group className="ms-auto">
                             <div className="btn-radio inline-col mb-0">
-                              <Form.Check 
-                                type="radio" 
-                                name="service" 
-                                id="yesm" 
+                              <Form.Check
+                                type="radio"
+                                name="service"
+                                id="yesm"
                                 label="Yes"
                                 checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === true}
                                 onChange={() => {
@@ -2876,17 +2872,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     has_anaphylaxis_medical_plan_been_provided: true
                                   }));
 
-                                  if(!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
+                                  if (!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
                                     setChildMedicalInformation(prevState => ({
                                       ...prevState,
                                       log: [...childMedicalInformation.log, "has_anaphylaxis_medical_plan_been_provided"]
                                     }));
-                                  }  
+                                  }
                                 }} />
-                              <Form.Check 
-                                type="radio" 
-                                name="service" 
-                                id="nom" 
+                              <Form.Check
+                                type="radio"
+                                name="service"
+                                id="nom"
                                 label="No"
                                 checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === false}
                                 defaultChecked
@@ -2896,7 +2892,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                     has_anaphylaxis_medical_plan_been_provided: false
                                   }));
 
-                                  if(!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
+                                  if (!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
                                     setChildMedicalInformation(prevState => ({
                                       ...prevState,
                                       log: [...childMedicalInformation.log, "has_anaphylaxis_medical_plan_been_provided"]
@@ -2911,10 +2907,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <p>Has a risk management plan been completed by the service in consultation with you</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check 
-                              type="radio" 
-                              name="management" 
-                              id="yese" 
+                            <Form.Check
+                              type="radio"
+                              name="management"
+                              id="yese"
                               label="Yes"
                               checked={childMedicalInformation?.risk_management_plan_completed === true}
                               onChange={() => {
@@ -2923,17 +2919,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   risk_management_plan_completed: true
                                 }));
 
-                                if(!childMedicalInformation.log.includes("risk_management_plan_completed")) {
+                                if (!childMedicalInformation.log.includes("risk_management_plan_completed")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "risk_management_plan_completed"]
                                   }));
                                 }
                               }} />
-                            <Form.Check 
-                              type="radio" 
-                              name="management" 
-                              id="noe" 
+                            <Form.Check
+                              type="radio"
+                              name="management"
+                              id="noe"
                               defaultChecked
                               label="No"
                               checked={childMedicalInformation?.risk_management_plan_completed === false || childMedicalInformation?.risk_management_plan_completed === null}
@@ -2943,7 +2939,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   risk_management_plan_completed: false
                                 }));
 
-                                if(!childMedicalInformation.log.includes("risk_management_plan_completed")) {
+                                if (!childMedicalInformation.log.includes("risk_management_plan_completed")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "risk_management_plan_completed"]
@@ -2958,10 +2954,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <p>Does your child have any other medical conditions? (e.g. asthma, epilepsy, and diabetes, etc. that are relevant to the care of your child)</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check 
-                              type="radio" 
-                              name="conditions" 
-                              id="yest" 
+                            <Form.Check
+                              type="radio"
+                              name="conditions"
+                              id="yest"
                               label="Yes"
                               checked={childMedicalInformation?.any_other_medical_condition === true}
                               onChange={() => {
@@ -2970,17 +2966,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   any_other_medical_condition: true
                                 }));
 
-                                if(!childMedicalInformation.log.includes("any_other_medical_condition")) {
+                                if (!childMedicalInformation.log.includes("any_other_medical_condition")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "any_other_medical_condition"]
                                   }));
                                 }
                               }} />
-                            <Form.Check 
-                              type="radio" 
-                              name="conditions" 
-                              id="not" 
+                            <Form.Check
+                              type="radio"
+                              name="conditions"
+                              id="not"
                               label="No"
                               checked={childMedicalInformation?.any_other_medical_condition === false}
                               defaultChecked
@@ -2991,7 +2987,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   detail_of_other_condition: ""
                                 }));
 
-                                if(!childMedicalInformation.log.includes("any_other_medical_condition")) {
+                                if (!childMedicalInformation.log.includes("any_other_medical_condition")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "any_other_medical_condition"]
@@ -3011,8 +3007,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <Form.Group className="mb-3">
                           <Form.Label>*If yes please provide details of any medical condition and any management procedure to be followed with respect to the medical condition</Form.Label>
                           <Form.Control
-                            name="detail_of_other_condition" 
-                            as="textarea" 
+                            name="detail_of_other_condition"
+                            as="textarea"
                             rows={3}
                             value={childMedicalInformation?.detail_of_other_condition || ""}
                             onChange={(e) => {
@@ -3020,10 +3016,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 ...prevState,
                                 [e.target.name]: e.target.value
                               }));
-                            }} 
+                            }}
 
                             onBlur={(e) => {
-                              if(!childMedicalInformation.log.includes("detail_of_other_condition")) {
+                              if (!childMedicalInformation.log.includes("detail_of_other_condition")) {
                                 setChildMedicalInformation(prevState => ({
                                   ...prevState,
                                   log: [...childMedicalInformation.log, "detail_of_other_condition"]
@@ -3036,10 +3032,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <p>Does the child have any dietary restrictions?</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
-                            <Form.Check 
-                              type="radio" 
-                              name="dietary" 
-                              id="yesh" 
+                            <Form.Check
+                              type="radio"
+                              name="dietary"
+                              id="yesh"
                               label="Yes"
                               checked={childMedicalInformation?.has_dietary_restrictions === true}
                               onChange={() => {
@@ -3048,17 +3044,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   has_dietary_restrictions: true
                                 }));
 
-                                if(!childMedicalInformation.log.includes("has_dietary_restrictions")) {
+                                if (!childMedicalInformation.log.includes("has_dietary_restrictions")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_dietary_restrictions"]
                                   }));
                                 }
                               }} />
-                            <Form.Check 
-                              type="radio" 
-                              name="dietary" 
-                              id="noh" 
+                            <Form.Check
+                              type="radio"
+                              name="dietary"
+                              id="noh"
                               label="No"
                               checked={childMedicalInformation?.has_dietary_restrictions === false}
                               defaultChecked
@@ -3069,7 +3065,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   details_of_restrictions: ""
                                 }));
 
-                                if(!childMedicalInformation.log.includes("has_dietary_restrictions")) {
+                                if (!childMedicalInformation.log.includes("has_dietary_restrictions")) {
                                   setChildMedicalInformation(prevState => ({
                                     ...prevState,
                                     log: [...childMedicalInformation.log, "has_dietary_restrictions"]
@@ -3088,9 +3084,9 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         childMedicalInformation.has_dietary_restrictions &&
                         <Form.Group className="mb-3">
                           <Form.Label>If yes, the following restrictions apply: </Form.Label>
-                          <Form.Control 
+                          <Form.Control
                             name="details_of_restrictions"
-                            as="textarea" 
+                            as="textarea"
                             rows={3}
                             value={childMedicalInformation?.details_of_restrictions || ""}
                             onChange={(e) => {
@@ -3098,15 +3094,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 ...prevState,
                                 [e.target.name]: e.target.value
                               }));
-                            }} 
+                            }}
                             onBlur={(e) => {
-                              if(!childMedicalInformation.log.includes("details_of_restrictions")) {
+                              if (!childMedicalInformation.log.includes("details_of_restrictions")) {
                                 setChildMedicalInformation(prevState => ({
                                   ...prevState,
                                   log: [...childMedicalInformation.log, "details_of_restrictions"]
                                 }));
                               }
-                            }}/>
+                            }} />
                         </Form.Group>
                       }
                     </div>
@@ -3119,15 +3115,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                 </Form>
               </div>
             </div>
-            <h2 className="title-xs mb-4">Medication Permission</h2>
+            <h2 className="title-xs mb-4 mt-4">Medication Permission</h2>
 
             <div className="grayback">
               <p>I give consent for the educator, assistant, approved provider, nominated supervisor & coordinator to administer prescribed Medication when needed. I understand that unless all the information required on the medication form is not completed or signed the medication will not be given to my child.  I understand my educator will contact me immediately if medication such as Panadol is required.</p>
               <Form.Group className="mb-3">
                 <div className="btn-checkbox">
-                  <Form.Check 
-                    type="checkbox" 
-                    id="accept" 
+                  <Form.Check
+                    type="checkbox"
+                    id="accept"
                     checked={parentData.i_give_medication_permission}
                     label="I have read and accept all the above points."
                     onChange={() => {
@@ -3135,8 +3131,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         ...prevState,
                         i_give_medication_permission: !parentData.i_give_medication_permission,
                       }));
-                      
-                      if(!parentData.log.includes("i_give_medication_permission")) {
+
+                      if (!parentData.log.includes("i_give_medication_permission")) {
                         setParentData(prevState => ({
                           ...prevState,
                           log: [...parentData.log, "i_give_medication_permission"]
