@@ -304,6 +304,10 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .user-list .user-pic-tow { flex:0 0 44px; max-width: 44px; margin-right: 1rem; overflow: hidden; border-radius: 0; min-height: 44px; }
 
 .user-list .user-name small { display: block; font-size:var(--fontsm); opacity: .5; }
+.user-list .user-name small.inactive, .user-list .user-name small.active, .user-list .user-name small.deleted { text-transform: capitalize; font-weight: bold; opacity: 1; }
+.user-list .user-name small.inactive { color: #fbac01; }
+.user-list .user-name small.active { color: #039e03; }
+.user-list .user-name small.deleted { color: #ff0000; }
 
 .extra-btn .ctaact { background-color: #f7f7f7; width: 45px; }
 .extra-btn .ctaact:hover, .extra-btn .ctaact:active, .extra-btn .show > .btn-primary.ctaact { background-color: var(--white); }
@@ -373,6 +377,12 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .activity-list .item .name { font-family: var(--fontrubik); font-weight: 500; flex: 0 0 60%; }
 .activity-list .item .separator { color:var(--purple); font-weight: 900; opacity: 1; margin: 0; flex: 0 0 25%; }
 .activity-list .item .num { flex: 0 0 15%; text-align: right; font-family: var(--fontmanrope); font-size: 30px; font-weight: 600; }
+
+.activitylist .item a { display:flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; background-color: var(--offwhite); border-radius: 16px; padding: 16px; color:var(--darkblue); }
+.activitylist .item:hover a { color:var(--purple); background-color: var(--yellow); }
+.activitylist .item .name { font-family: var(--fontrubik); font-weight: 500; flex: 0 0 60%; }
+.activitylist .item .separator { color:var(--purple); font-weight: 900; opacity: 1; margin: 0; flex: 0 0 25%; }
+.activitylist .item .num { flex: 0 0 15%; text-align: right; font-family: var(--fontmanrope); font-size: 30px; font-weight: 600; }
 
 .ads { opacity:.1; }
 .viewall { flex: 0 0 75px; text-align: right; color: var(--black); opacity: .5; }
@@ -649,7 +659,10 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .dropzone, .uploadfile { display: inline-block; overflow: hidden; }
 .fileinput { display: block; margin-top: -5px; margin-bottom: 10px; font-size: 10px; }
 
-
+.error_page_detail { max-width: 350px; }
+.error_page_detail span { display: block; ont-size: 16px; margin-bottom: 15px; }
+.error_page_detail h1 { font-size: 28px; color: var(--primary); }
+.error_page { margin: 100px 0; }
 
 
 

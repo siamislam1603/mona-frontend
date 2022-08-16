@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+
 const products = [
   {
     id: 1,
@@ -142,6 +143,43 @@ const CoordinatorDashboard = () => {
                             </div>
                           </div>
                         </div>
+                        
+                        <div className="Onboarding-sec pb-5">
+                          <header className="title-head mb-4 justify-content-between">
+                            <h4 className="title-sm mb-0"><strong>Onboarding</strong></h4>
+                          </header>
+                          <div className="activitylist relative two-col">
+                            <div className="item">
+                              <a href="/">
+                                <span className="name">Educators logged in</span>
+                                <span className="separator">|</span>
+                                <span className="num">{count.educatorsLoggedIn}</span>
+                              </a>
+                            </div>
+                            <div className="item">
+                              <a href="/">
+                                <span className="name">Overdue Forms</span>
+                                <span className="separator">|</span>
+                                <span className="num">{count.overdueForms}</span>
+                              </a>
+                            </div>
+                            <div className="item">
+                              <a href="/">
+                                <span className="name">Overdue Trainings</span>
+                                <span className="separator">|</span>
+                                <span className="num">{count.overdueTrainings}</span>
+                              </a>
+                            </div>
+                            <div className="item">
+                              <a href="/">
+                                <span className="name">New Enrolments</span>
+                                <span className="separator">|</span>
+                                <span className="num">{count.newEnrollments}</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                        
                         <div className="children-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Children</strong></h4>

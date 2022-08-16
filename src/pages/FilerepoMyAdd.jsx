@@ -13,8 +13,7 @@ import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
 import DragDropRepository from '../components/DragDropRepository';
 import axios from "axios";
-
-import VideoPop from "../components/VideoPop";
+import { useNavigate } from 'react-router-dom';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 
@@ -39,6 +38,7 @@ const selectRow = {
 };
 
 const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
+    const Navigate = useNavigate();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -75,6 +75,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             reader.onload = () => resolve(reader.result);
             reader.onerror = (error) => reject(error);
         });
+
+
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/role/franchisee`, {
@@ -156,7 +158,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
-
         // if (
         //     formSettingData.accessible_to_role === null ||
         //     formSettingData.accessible_to_role === undefined
@@ -207,6 +208,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         //     }
         // }
 
+// >>>>>>> master
 
         var requestOptions = {
             method: 'POST',
@@ -215,25 +217,25 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             redirect: 'follow',
         };
 
-        console.log("submitted",requestOptions)
+        console.log("submitted", requestOptions)
 
-        // fetch(`${BASE_URL}/fileRepo/`, requestOptions)
-        //     .then((response) => {
-        //         response.json()
-        //         console.log(response.statusText, "+++++++++++")
-        //         if (response.statusText === "Created") {
-        //             setLoaderFlag(false);
-        //             setShow(false);
-        //             this.props.history.push(`/file-repository`);
-        //         }
-        //     })
-        //     .then((result) => {
-        //         if (result) {
-        //             setLoaderFlag(false);
-        //             setShow(false);
-        //         }
-        //     })
-        //     .catch((error) => console.log('error', error));
+        fetch(`${BASE_URL}/fileRepo/`, requestOptions)
+            .then((response) => {
+                response.json()
+                console.log(response.statusText, "+++++++++++")
+                if (response.statusText === "Created") {
+                    setLoaderFlag(false);
+                    setShow(false);
+                    Navigate(`/file-repository`);
+                }
+            })
+            .then((result) => {
+                if (result) {
+                    setLoaderFlag(false);
+                    setShow(false);
+                }
+            })
+            .catch((error) => console.log('error', error));
     };
 
     const GetFile = async () => {
@@ -298,6 +300,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             .then((result) => setCategory(result.category))
             .catch((error) => console.log('error', error));
     };
+
     const getUser = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -313,8 +316,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         let response = await axios.get(`http://localhost:4000/auth/users/franchisees?franchiseeId=${franchiseeArr}`, request)
         if (response.status === 200) {
-           console.log(response.data.users,"respo")
-           setUser(response.data.users)
+            console.log(response.data.users, "respo")
+            setUser(response.data.users)
         }
     };
 
@@ -323,7 +326,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         getFileCategory();
         getUser();
         fetchFranchiseeList();
-    }, [trainingDeleteMessage,formSettings.franchisee])
+    }, [trainingDeleteMessage, formSettings.franchisee])
 
     const handleTrainingDelete = async (cell) => {
         console.log('DELETING THE TRAINING!');
@@ -722,6 +725,87 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         </Form.Group>
                                     </Col>
                                 </Row>
+                                <Row className="mt-4">
+                                    <Col lg={3} md={6}>
+                                        <Form.Group>
+                                            <Form.Label>Send to all franchisee:</Form.Label>
+                                            <div className="new-form-radio d-block">
+                                                <div className="new-form-radio-box">
+                                                    <label for="all">
+                                                        <input
+                                                            type="radio"
+                                                            checked={sendToAllFranchisee === 'all'}
+                                                            name="send_to_all_franchisee"
+                                                            id="all"
+                                                            onChange={() => {
+                                                                setFormSettings(prevState => ({
+                                                                    ...prevState,
+                                                                    assigned_franchisee: ['all']
+                                                                }));
+                                                                setSendToAllFranchisee('all')
+                                                            }}
+                                                        />
+                                                        <span className="radio-round"></span>
+                                                        <p>Yes</p>
+                                                    </label>
+                                                </div>
+                                                <div className="new-form-radio-box m-0 mt-3">
+                                                    <label for="none">
+                                                        <input
+                                                            type="radio"
+                                                            name="send_to_all_franchisee"
+                                                            checked={sendToAllFranchisee === 'none'}
+                                                            id="none"
+                                                            onChange={() => {
+                                                                setFormSettings(prevState => ({
+                                                                    ...prevState,
+                                                                    assigned_franchisee: []
+                                                                }));
+                                                                setSendToAllFranchisee('none')
+                                                            }}
+                                                        />
+                                                        <span className="radio-round"></span>
+                                                        <p>No</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </Form.Group>
+                                    </Col>
+
+                                    <Col lg={9} md={12}>
+                                        <Form.Group>
+                                            <Form.Label>Select Franchisee</Form.Label>
+                                            <div className="select-with-plus">
+
+                                                <Multiselect
+                                                    disable={sendToAllFranchisee === 'all'}
+                                                    placeholder={"Select User Names"}
+                                                    displayValue="key"
+                                                    className="multiselect-box default-arrow-select"
+                                                    onRemove={function noRefCheck(data) {
+                                                        setFormSettings((prevState) => ({
+                                                            ...prevState,
+                                                            assigned_franchisee: [...data.map(data => data.id)],
+                                                        }));
+                                                    }}
+
+                                                    onSelect={function noRefCheck(data) {
+                                                        setFormSettings((prevState) => ({
+                                                            ...prevState,
+                                                            assigned_franchisee: [...data.map((data) => data.id)],
+                                                        }));
+                                                    }}
+                                                    options={franchiseeList}
+                                                />
+                                            </div>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+
+
+
+
+
                                 <Row className="mt-4">
                                     <Col lg={3} md={6}>
                                         <Form.Group>

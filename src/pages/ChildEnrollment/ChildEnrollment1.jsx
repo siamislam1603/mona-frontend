@@ -31,9 +31,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     home_address: "",
     language: "",
     country_of_birth: "",
+    child_medical_no: "",
+    child_crn: "",
+    parent_crn_1: "",
+    parent_crn_2: "",
     gender: "M",
+    address_of_school: "",
+    name_of_school: "",
+    date_first_went_to_school: "",
     child_origin: "NATSI",
-    development_delay: false,
+    developmental_delay: false,
     another_service: false,
     school_status: "no-school",
     log: []
@@ -280,9 +287,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         country_of_birth: child?.country_of_birth,
         gender: child?.sex,
         child_origin: child?.child_origin,
-        development_delay: child?.developmental_delay,
+        developmental_delay: child?.developmental_delay,
         another_service: child?.using_another_service,
-        school_status: child?.school_status
+        school_status: child?.school_status,
+        child_medical_no: child?.child_medical_no,
+        child_crn: child?.child_crn,
+        parent_crn_1: child?.parent_crn_1,
+        parent_crn_2: child?.parent_crn_2,
+        date_first_went_to_school: child?.date_first_went_to_school,
+        name_of_school: child?.name_of_school,
+        address_of_school: child?.address_of_school
       }));
 
       setFormOneParentData(prevState => ({
@@ -338,7 +352,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Child’s Full Name</Form.Label>
+                    <Form.Label>Child’s Full Name *</Form.Label>
                     <Form.Control
                       type="text"
                       name="fullname"
@@ -346,21 +360,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       placeholder="Child’s Full Name"
                       value={formOneChildData?.fullname || ""}
                       onChange={(e) => {
-                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            fullname: e.target.value
-                          }));
-                          setChildFormErrors(prevState => ({
-                            ...prevState,
-                            fullname: null,
-                          })) 
-                        } else {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            fullname: e.target.value.slice(0, -1)
-                          }));
-                        }
+                        // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                        setFormOneChildData(prevState => ({
+                          ...prevState,
+                          fullname: e.target.value
+                        }));
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          fullname: null,
+                        })) 
+                        // } else {
+                        //   setFormOneChildData(prevState => ({
+                        //     ...prevState,
+                        //     fullname: e.target.value.slice(0, -1)
+                        //   }));
+                        // }
                       }}
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("fullname")) {
@@ -375,7 +389,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Family Name</Form.Label>
+                    <Form.Label>Family Name *</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Family Name"
@@ -384,21 +398,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       name="family_name"
                       value={formOneChildData?.family_name || ""}
                       onChange={(e) => {
-                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            family_name: e.target.value
-                          }));
-                          setChildFormErrors(prevState => ({
-                            ...prevState,
-                            family_name: null,
-                          })) 
-                        } else {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            family_name: e.target.value.slice(0, -1)
-                          }));
-                        }
+                        // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                        setFormOneChildData(prevState => ({
+                          ...prevState,
+                          family_name: e.target.value
+                        }));
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          family_name: null,
+                        })) 
+                        // } else {
+                        //   setFormOneChildData(prevState => ({
+                        //     ...prevState,
+                        //     family_name: e.target.value.slice(0, -1)
+                        //   }));
+                        // }
                       }}
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("family_name")) {
@@ -413,7 +427,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Usually Called</Form.Label>
+                    <Form.Label>Usually Called *</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Usually Called"
@@ -422,21 +436,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       name="usually_called"
                       value={formOneChildData?.usually_called || ""}
                       onChange={(e) => {
-                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            usually_called: e.target.value
-                          }));
-                          setChildFormErrors(prevState => ({
-                            ...prevState,
-                            usually_called: null,
-                          })) 
-                        } else {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            usually_called: e.target.value.slice(0, -1)
-                          }));
-                        }
+                        // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                        setFormOneChildData(prevState => ({
+                          ...prevState,
+                          usually_called: e.target.value
+                        }));
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          usually_called: null,
+                        })) 
+                        // } else {
+                        //   setFormOneChildData(prevState => ({
+                        //     ...prevState,
+                        //     usually_called: e.target.value.slice(0, -1)
+                        //   }));
+                        // }
                       }}
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("usually_called")) {
@@ -451,7 +465,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Date Of Birth</Form.Label>
+                    <Form.Label>Date Of Birth *</Form.Label>
                     <Form.Control
                       type="date"
                       placeholder=""
@@ -522,7 +536,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Home Address</Form.Label>
+                    <Form.Label>Home Address *</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
@@ -549,7 +563,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Language spoken in the home</Form.Label>
+                    <Form.Label>Language spoken in the home *</Form.Label>
                     <Select
                       placeholder={formOneChildData?.language || "Select"}
                       closeMenuOnSelect={true}
@@ -577,7 +591,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Country Of Birth</Form.Label>
+                    <Form.Label>Country Of Birth *</Form.Label>
                     <Select
                       placeholder={formOneChildData?.country_of_birth || "Select"}
                       closeMenuOnSelect={true}
@@ -604,7 +618,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Is the child of Aboriginal and/or Torres Strait Islander origin?</Form.Label>
+                    <Form.Label>Is the child of Aboriginal and/or Torres Strait Islander origin?</Form.Label>
                     <div className="btn-radio two-col">
                       <Form.Check
                         type="radio"
@@ -687,25 +701,25 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Does the child have a developmental delay or disability including intellectual, sensory or physical impairment?</Form.Label>
+                    <Form.Label>Does the child have a developmental delay or disability including intellectual, sensory or physical impairment?</Form.Label>
                     <div className="btn-radio inline-col">
                       <Form.Check
                         type="radio"
                         name="disability"
                         id="yesc"
                         className="ps-0"
-                        checked={formOneChildData?.development_delay === true}
+                        checked={formOneChildData?.developmental_delay === true}
                         label="Yes"
                         onChange={(event) => {
                           setFormOneChildData(prevState => ({
                             ...prevState,
-                            development_delay: true
+                            developmental_delay: true
                           }));
 
-                          if(!formOneChildData.log.includes("development_delay")) {
+                          if(!formOneChildData.log.includes("developmental_delay")) {
                             setFormOneChildData(prevState => ({
                               ...prevState,
-                              log: [...formOneChildData.log, "development_delay"]
+                              log: [...formOneChildData.log, "developmental_delay"]
                             }));
                           }
                         }} />
@@ -714,21 +728,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         name="disability"
                         id="noc"
                         label="No"
-                        checked={formOneChildData?.development_delay === false}
+                        checked={formOneChildData?.developmental_delay === false}
                         defaultChecked
                         onChange={(event) => {
                           setFormOneChildData(prevState => ({
                             ...prevState,
-                            development_delay: false,
-                            child_medicare_no: null,
+                            developmental_delay: false,
+                            child_medical_no: null,
                             child_crn: null,
                             parent_crn_1: null,
                             parent_crn_2: null
                           }));
-                          if(!formOneChildData.log.includes("development_delay")) {
+                          if(!formOneChildData.log.includes("developmental_delay")) {
                             setFormOneChildData(prevState => ({
                               ...prevState,
-                              log: [...formOneChildData.log, "development_delay"]
+                              log: [...formOneChildData.log, "developmental_delay"]
                             }));
                           }
                         }} />
@@ -739,53 +753,100 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 {
-                  formOneChildData.development_delay &&
+                  formOneChildData.developmental_delay &&
                   <>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Child Medical No.</Form.Label>
+                        <Form.Label>Child Medical No. *</Form.Label>
                         <Form.Control
                           type="text"
-                          name="child_medicare_no"
-                          value={formOneChildData.child_medicare_no || ""}
-                          onChange={handleChildData} />
+                          name="child_medical_no"
+                          placeholder="Child Medical No."
+                          value={formOneChildData.child_medical_no || ""}
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("child_medical_no")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "child_medical_no"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
+
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Child CRN</Form.Label>
+                        <Form.Label>Child CRN *</Form.Label>
                         <Form.Control
                           type="text"
                           name="child_crn"
+                          placeholder="Child CRN"
                           value={formOneChildData.child_crn || ""}
-                          onChange={handleChildData} />
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("child_crn")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "child_crn"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
+                    
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Parents CRN 1</Form.Label>
+                        <Form.Label>Parents CRN 1 *</Form.Label>
                         <Form.Control
                           type="text"
                           name="parent_crn_1"
+                          placeholder="Parent CRN I"
                           value={formOneChildData.parent_crn_1 || ""}
-                          onChange={handleChildData} />
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("parent_crn_1")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "parent_crn_1"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
+                    
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Parents CRN 2</Form.Label>
+                        <Form.Label>Parents CRN 2 *</Form.Label>
                         <Form.Control
                           type="text"
                           name="parent_crn_2"
+                          placeholder="Parent CRN II"
                           value={formOneChildData.parent_crn_2 || ""}
-                          onChange={handleChildData} />
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("parent_crn_2")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "parent_crn_2"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
                   </>
                 }
                 <Col md={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Is the child using another service?</Form.Label>
+                    <Form.Label>Is the child using another service?</Form.Label>
                     <div className="btn-radio inline-col">
                       <Form.Check
                         type="radio"
@@ -871,7 +932,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 <Col md={12}>
                   <Form.Group className="mb-3">
                     <div className="btn-radio inline-col">
-                      <Form.Label>*School Status :</Form.Label>
+                      <Form.Label>School Status :</Form.Label>
                       <Form.Check
                         type="radio"
                         name="school"
@@ -900,7 +961,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         onChange={(event) => {
                           setFormOneChildData(prevState => ({
                             ...prevState,
-                            school_status: "no-school"
+                            school_status: "no-school",
+                            date_first_went_to_school: null,
+                            name_of_school: null,
+                            address_of_school: null
                           }));
 
                           if(!formOneChildData.log.includes("school_status")) {
@@ -918,12 +982,28 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   <>
                     <Col md={4}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="py-3"> if at School, Date first went to School :</Form.Label>
+                        <Form.Label className="py-3"> if at School, Date first went to School : *</Form.Label>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Control type="date" placeholder="" name="dob" />
+                        <Form.Control 
+                          type="date"
+                          placeholder="" 
+                          name="date_first_went_to_school"
+                          max={new Date().toISOString().slice(0, 10)}
+                          value={formOneChildData?.date_first_went_to_school || ""}
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("date_first_went_to_school")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "date_first_went_to_school"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
                     <Col md={2}>
@@ -931,12 +1011,46 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Col>
                     <Col md={4}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="py-3">if at School, Name and address of School</Form.Label>
+                        <Form.Label className="py-3">if at School, Name and address of School *</Form.Label>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Control type="text" placeholder="" name="dob" />
+                        <Form.Control 
+                          type="text" 
+                          name="name_of_school"
+                          placeholder="Name of School"
+                          value={formOneChildData?.name_of_school || ""}
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("name_of_school")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "name_of_school"]
+                              }));
+                            }
+                          }} />
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Control 
+                          type="text" 
+                          placeholder="Address of School" 
+                          name="address_of_school"
+                          value={formOneChildData?.address_of_school || ""}
+                          onChange={(e) => {
+                            handleChildData(e);
+                          }} 
+                          onBlur={(e) => {
+                            if(!formOneChildData.log.includes("address_of_school")) {
+                              setFormOneChildData(prevState => ({
+                                ...prevState,
+                                log: [...formOneChildData.log, "address_of_school"]
+                              }));
+                            }
+                          }} />
                       </Form.Group>
                     </Col>
                     <Col md={2}>
@@ -1016,7 +1130,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                          <Form.Label>*Family Name</Form.Label>
+                          <Form.Label>Family Name *</Form.Label>
                           <Form.Control 
                             type="text" 
                             placeholder="Family Name"
@@ -1025,21 +1139,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             maxLength={50}
                             value={formOneParentData.family_name ||  ""}
                             onChange={(e) => {
-                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  family_name: e.target.value
-                                }));
-                                setParentFormErrors(prevState => ({
-                                  ...prevState,
-                                  family_name: null,
-                                })) 
-                              } else {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  family_name: e.target.value.slice(0, -1)
-                                }));
-                              }
+                              // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                              setFormOneParentData(prevState => ({
+                                ...prevState,
+                                family_name: e.target.value
+                              }));
+                              setParentFormErrors(prevState => ({
+                                ...prevState,
+                                family_name: null,
+                              })) 
+                              // } else {
+                              //   setFormOneParentData(prevState => ({
+                              //     ...prevState,
+                              //     family_name: e.target.value.slice(0, -1)
+                              //   }));
+                              // }
                             }}
 
                             onBlur={(e) => {
@@ -1055,7 +1169,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Given Name</Form.Label>
+                          <Form.Label>Given Name *</Form.Label>
                           <Form.Control 
                             type="text" 
                             placeholder="Given Name"
@@ -1064,21 +1178,21 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             maxLength={50}
                             value={formOneParentData.given_name || ""}
                             onChange={(e) => {
-                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true && format.test(e.target.value) === false) {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  given_name: e.target.value
-                                }));
-                                setParentFormErrors(prevState => ({
-                                  ...prevState,
-                                  given_name: null,
-                                })) 
-                              } else {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  given_name: e.target.value.slice(0, -1)
-                                }));
-                              }
+                              // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                              setFormOneParentData(prevState => ({
+                                ...prevState,
+                                given_name: e.target.value
+                              }));
+                              setParentFormErrors(prevState => ({
+                                ...prevState,
+                                given_name: null,
+                              })) 
+                              // } else {
+                              //   setFormOneParentData(prevState => ({
+                              //     ...prevState,
+                              //     given_name: e.target.value.slice(0, -1)
+                              //   }));
+                              // }
                             }}
                             onBlur={(e) => {
                               if(!formOneParentData.log.includes("given_name")) {
@@ -1093,7 +1207,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Date Of Birth</Form.Label>
+                          <Form.Label>Date Of Birth *</Form.Label>
                           <Form.Control 
                             type="date" 
                             placeholder="" 
@@ -1120,7 +1234,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Address As Per Child</Form.Label>
+                          <Form.Label>Address As Per Child *</Form.Label>
                           <Form.Control 
                             as="textarea" 
                             rows={3} 
@@ -1147,7 +1261,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Telephone</Form.Label>
+                          <Form.Label>Telephone *</Form.Label>
                           <Form.Control 
                             type="tel" 
                             placeholder="+3375005467"
@@ -1173,7 +1287,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Email Address</Form.Label>
+                          <Form.Label>Email Address *</Form.Label>
                           <Form.Control 
                             type="email" 
                             placeholder="Email Address"
@@ -1243,7 +1357,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Place Of Birth</Form.Label>
+                          <Form.Label>Place Of Birth *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.place_of_birth || "Select"}
                             closeMenuOnSelect={true}
@@ -1270,7 +1384,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Ethnicity</Form.Label>
+                          <Form.Label>Ethnicity *</Form.Label>
                           <Select
                              placeholder={formOneParentData?.ethnicity || "Select"}
                             closeMenuOnSelect={true}
@@ -1299,7 +1413,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                          <Form.Label>*Primary Language</Form.Label>
+                          <Form.Label>Primary Language *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.primary_language || "Select"}
                             closeMenuOnSelect={true}
@@ -1327,7 +1441,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Occupation</Form.Label>
+                          <Form.Label>Occupation *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.occupation || "Select"}
                             closeMenuOnSelect={true}

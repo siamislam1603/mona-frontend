@@ -57,6 +57,7 @@ import FileRpositoryList from '../pages/FileRpositoryList';
 import FilerepoMyAdd from '../pages/FilerepoMyAdd';
 import RepoEdit from '../pages/RepoEdit';
 import Noticefication from '../pages/Notification';
+import PageNotFound from '../pages/PageNotFound';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -516,7 +517,7 @@ const Main = () => {
         />
 
         <Route
-          path="/logs"
+          path="/log"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -634,6 +635,10 @@ const Main = () => {
             </Protected>
           }
         />
+     <Route path="*" element={
+      <PageNotFound/>
+     } />
+
 
       </Routes>
 

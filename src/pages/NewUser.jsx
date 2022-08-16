@@ -147,7 +147,17 @@ const NewUser = () => {
 
   const handleSubmit = async(event) => {
     event.preventDefault();
+    if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+      setFormData((prevState) => ({
+        ...prevState,
+        franchisee: selectedFranchisee,
+      }));
 
+      setFormErrors(prevState => ({
+        ...prevState,
+        franchisee: null
+      }));
+    }
     const errorObj = UserFormValidation(formData);
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
@@ -333,7 +343,7 @@ const NewUser = () => {
       let { franchiseeList } = response.data;
       setFranchiseeData(franchiseeList.map(franchisee => ({
         id: franchisee.id,
-        value: franchisee.franchisee_alias,
+        value: franchisee.franchisee_name,
         label: franchisee.franchisee_name
       })));  
     }
@@ -601,6 +611,22 @@ const NewUser = () => {
                               }}
                             />
                           </Form.Group>
+                          
+                          {
+                            formData && formData?.role === 'educator' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Nominated Assistant</Form.Label>
+                              <Form.Control
+                                type="text"
+                                name="nominated_assistant"
+                                placeholder="Enter Full Name"
+                                value={formData?.nominated_assistant}
+                                onChange={(e) => {
+                                  handleChange(e);
+                                }}
+                              />
+                            </Form.Group>
+                          }
                             
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
@@ -629,9 +655,9 @@ const NewUser = () => {
                               />
                             }
                             {
-                              (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') && 
+                              (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') && 
                               <Select
-                                placeholder={formData?.franchiseeObj?.label || "Which Franchisee?"}
+                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Which Franchisee?"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}

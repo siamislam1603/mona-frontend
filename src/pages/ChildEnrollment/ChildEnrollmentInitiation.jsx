@@ -76,8 +76,9 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   }
 
   useEffect(() => {
+    console.log('FETCHING EDUCATOR LIST!');
     fetchEducatorList();
-  }, [])
+  }, [selectedFranchisee])
   
   formOneChildData && console.log('CHILD DATA:', formOneChildData);
   educatorData && console.log('EDUCATOR DATA:', educatorData);

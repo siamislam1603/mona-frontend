@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import axios from 'axios';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import moment from 'moment';
 import Select from 'react-select';
 import UserSignature from '../InputFields/ConsentSignature';
@@ -20,10 +20,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   const [educatorData, setEducatorData] = useState(null);
   const [userSelectedEducators, setUserSelectedEducators] = useState(null);
+  const [signatureString, setSignatureString] = useState(null);
   const [consentData, setConsentData] = useState({
     parent_name: "",
     signature: "",
-    consent_date: ""
+    consent_date: null
   });
   const [parentConsentData, setParentConsentData] = useState({
     asked_for_consent: false,
@@ -43,18 +44,20 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
+      console.log('USER DATA:', users);
       setEducatorData(users.map(user => ({
         id: user.id,
         value: user.fullname,
-        label: user.fullname
+        label: user.fullname,
+        assistant: user.nominated_assistant
       })));
     }
   };
 
   const fetchChildDataAndPopulate = async () => {
     let token = localStorage.getItem('token');
-    // let enrolledChildId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.get(`${BASE_URL}/enrollment/child/14`, {
+    let enrolledChildId = localStorage.getItem('enrolled_child_id');
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -204,11 +207,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
             localStorage.removeItem('consent_comment');
             localStorage.removeItem('has_given_consent');
             let parent_id = localStorage.getItem('enrolled_parent_id');
-            window.location.href=`http://localhost:5000/children/${parent_id}`;
+            window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
           }
         } else {
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`http://localhost:5000/children/${parent_id}`;
+          window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
         }
       }
     } else if(response.status === 201 && response.data.status === "success") {
@@ -224,11 +227,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           localStorage.removeItem('consent_comment');
           localStorage.removeItem('has_given_consent');
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`http://localhost:5000/children/${parent_id}`;
+          window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
         }
       } else {
         let parent_id = localStorage.getItem('enrolled_parent_id');
-        window.location.href=`http://localhost:5000/children/${parent_id}`;
+        window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
       }
     }
   }
@@ -250,9 +253,15 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
-      console.log('SIGNATURE UPLOADED SUCCESSFULLY!');
-      fetchChildDataAndPopulate();
+    console.log('SIGNATURE RESPONSE:', response);
+    if(response.status === 201 && response.data.status === "success") {
+      let { signature: signatureURL } = response.data;
+      console.log('Signature:', signatureURL);
+      setSignatureString(signatureURL);
+      setConsentData(prevState => ({
+        ...prevState,
+        signature: signatureURL
+      }));
     }
   }
       
@@ -279,7 +288,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [])
 
-  // consentData && console.log('Consent Data:', consentData);
+  consentData && console.log('Consent Data => signature:', consentData.signature);
   // consentDetail && console.log('CONSENT DETAIL:', consentDetail);
   // parentConsentData && console.log('PARENT CONSENT DATA:', parentConsentData);
   // signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
@@ -307,10 +316,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     </Form.Group>
                   </Col>
                   <Form.Group className="mb-3 single-field">
-                    <Form.Label>to provide care and education to my child.; and nominated assistant/s</Form.Label>
+                    <Form.Label>to provide care and education to my child; and nominated assistant/s</Form.Label>
                     <Form.Control
                       type="text"
                       name="to_provide_care_and_education_to_my_child"
+                      value={educatorData?.filter(d => parseInt(d.id) === parseInt(consent.educator_id))[0].assistant}
                       // onChange={}
                     />
                   </Form.Group>
@@ -364,8 +374,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the consent form!</p>
                   }
                   {
-                    // fetchedSignatureImage &&
-                    <img src={fetchedSignatureImage} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    signatureString &&
+                    <img src={consentData?.signature} alt="parent signature" style={{ width: "80px", height: "80px" }} />
                   }
                 </Form.Group>
               </Col>
@@ -388,7 +398,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           </div>
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
-            <Button variant="primary" type="submit" onClick={handleDataSubmit}>Next</Button>
+            <Button 
+              disabled={consentData?.consent_date === null}
+              variant="primary" 
+              type="submit" 
+              onClick={handleDataSubmit}>Next</Button>
           </div>
         </Form>
       </div>

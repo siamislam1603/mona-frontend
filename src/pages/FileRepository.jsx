@@ -28,7 +28,7 @@ import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import { createFileRepoValidation } from '../helpers/validation';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import FileRepoShairWithme from './FileRepoShairWithme';
 import FileRepodAddbyMe from './FileRepodAddbyMe';
 
@@ -65,6 +65,8 @@ const selectRow = {
 
 const FileRepository = () => {
   let counter = 0;
+  const Navigate = useNavigate();
+
   const [count, setCount] = useState(0);
   const [show, setShow] = useState(false);
   const [groupFlag, setGroupFlag] = useState(false);
@@ -80,20 +82,22 @@ const FileRepository = () => {
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [loaderFlag, setLoaderFlag] = useState(false);
   const [tabLinkPath, setTabLinkPath] = useState("/available-Files");
+  const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
+  const [franchiseeList, setFranchiseeList] = useState();
   const [filterData, setFilterData] = useState({
     category_id: null,
     search: ""
   });
-
+  const [formSettings, setFormSettings] = useState({
+    assigned_franchisee: [],
+  });
+  console.log(formSettings, "formSettings")
   const [tabFlag, setTabFlag] = useState(true);
   const [fileRepoData, setFileRepoData] = useState([]);
   const [assigned_usersMeFileRepoData, setassigned_usersMeFileRepoData] = useState([]);
   const [errors, setErrors] = useState({});
   const [post, setPost] = React.useState([]);
-
-
   const [userData, setUserData] = useState([]);
-
   userData && console.log('USER DATA:', userData.map(data => data));
 
   const GetData = async () => {
@@ -120,13 +124,30 @@ const FileRepository = () => {
     }
   }
 
+  const fetchFranchiseeList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 200 && response.data.status === "success") {
+      setFranchiseeList(response.data.franchiseeList.map(data => ({
+        id: data.id,
+        cat: data.franchisee_alias,
+        key: `${data.franchisee_name}, ${data.city}`
+      })));
+    }
+  };
   useEffect(() => {
     GetData();
-    // getUserRoleAndFranchiseeData();
+    fetchFranchiseeList();
     getMyAddedFileRepoData();
     getFilesassigned_usersMeData();
     getFileCategory();
     getUser();
+    onSubmit();
   }, []);
 
   // if (!post) return null;
@@ -158,6 +179,7 @@ const FileRepository = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
+
     fetch(`${BASE_URL}/auth/users`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -193,11 +215,13 @@ const FileRepository = () => {
       reader.onerror = (error) => reject(error);
     });
 
+
   const onSubmit = async (e) => {
     e.preventDefault();
     selectedUser?.map((item) => {
       selectedFranchiseeId += item.id + ',';
     });
+
     setLoaderFlag(true);
 
     var myHeaders = new Headers();
@@ -206,19 +230,19 @@ const FileRepository = () => {
       'Authorization',
       'Bearer ' + localStorage.getItem('token')
     );
-    console.log(localStorage, "localStorage");
-
     const file = formSettingData.setting_files[0];
     console.log('file------->', file);
     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
     console.log('reader---->');
     var formdata = new FormData();
+
     formdata.append('image', blob, file.name);
     formdata.append('description', formSettingData.meta_description);
     formdata.append('title', 'abc');
     formdata.append('createdBy', localStorage.getItem('user_name'));
     formdata.append('userId', localStorage.getItem('user_id'));
     formdata.append('categoryId', formSettingData.file_category);
+    formdata.append('franchisee', formSettings.assigned_franchisee);
     if (
       formSettingData.accessible_to_role === null ||
       formSettingData.accessible_to_role === undefined
@@ -231,7 +255,8 @@ const FileRepository = () => {
         'accessibleToAll',
         true
       );
-    } else {
+    }
+    else {
       if (formSettingData.accessible_to_role === 1) {
         formdata.append(
           'user_roles',
@@ -268,13 +293,13 @@ const FileRepository = () => {
         );
       }
     }
-
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: formdata,
       redirect: 'follow',
     };
+
 
     fetch(`${BASE_URL}/fileRepo/`, requestOptions)
       .then((response) => {
@@ -283,17 +308,20 @@ const FileRepository = () => {
         if (response.statusText === "Created") {
           setLoaderFlag(false);
           setShow(false);
-          this.props.history.push(`/file-repository`);
+          Navigate(`/file-repository`);
         }
       })
       .then((result) => {
         if (result) {
           setLoaderFlag(false);
           setShow(false);
+          Navigate('/file-repository')
         }
       })
       .catch((error) => console.log('error', error));
   };
+
+  // { console.log(formSettingData.setting_files, ")>>>>>>>>>>") }
 
   const getFilesassigned_usersMeData = () => {
     var myHeaders = new Headers();
@@ -312,28 +340,6 @@ const FileRepository = () => {
     )
       .then((response) => response.json())
       .then((res) => {
-        // let repoData = [];
-
-        // res?.map((item) => {
-        //   if (item.filesPath.includes('/')) {
-        //     item.filesPath = item.filesPath.split('/');
-        //   }
-
-        //   if (item.filesPath.includes('\\')) {
-        //     console.log('Hello9009546546789875674');
-        //     item.filesPath = item.filesPath.split('\\');
-        //   }
-        //   repoData.push({
-        //     id: item.id,
-        //     name:
-        //       '../img/abstract-ico.png,' +
-        //       item.filesPath[item.filesPath.length - 1],
-        //     createdon: moment(item.createdAt).format('DD/MM/YYYY'),
-        //     createdby: item.creatorName + ',' + item.creatorRole,
-        //     sharing: '../img/sharing-ico.png, Shared',
-        //   });
-        // });
-        // console.log('repoData---->', repoData);
         setassigned_usersMeFileRepoData(res);
       })
       .catch((error) => console.log('error', error));
@@ -652,25 +658,7 @@ const FileRepository = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-                <div className="toggle-switch">
-                  {/* <Row>
-                    <Col md={12}>
-                      <div className="t-switch">
-                        <p>Enable Sharing</p>
-                        <div className="toogle-swich">
-                          <input
-                            className="switch"
-                            type="checkbox"
-                            name="enable_sharing"
-                            onChange={(e) => {
-                              setField(e.target.name, e.target.checked);
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </Col>
-                  </Row> */}
-                </div>
+
                 <div className="setting-heading">
                   <h2>Settings</h2>
                 </div>
@@ -697,7 +685,6 @@ const FileRepository = () => {
                 <Col lg={12}>
                   <Form.Group>
                     <Form.Label>File Category</Form.Label>
-
                     <Form.Select
                       name="file_category"
                       onChange={(e) => {
@@ -711,8 +698,81 @@ const FileRepository = () => {
                         );
                       })}
                     </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row className="mt-4">
+                <Col lg={3} md={6}>
+                  <Form.Group>
+                    <Form.Label>Send to all franchisee:</Form.Label>
+                    <div className="new-form-radio d-block">
+                      <div className="new-form-radio-box">
+                        <label for="all">
+                          <input
+                            type="radio"
+                            checked={sendToAllFranchisee === 'all'}
+                            name="send_to_all_franchisee"
+                            id="all"
+                            onChange={() => {
+                              setFormSettings(prevState => ({
+                                ...prevState,
+                                assigned_franchisee: ['all']
+                              }));
+                              setSendToAllFranchisee('all')
+                            }}
+                          />
+                          <span className="radio-round"></span>
+                          <p>Yes</p>
+                        </label>
+                      </div>
+                      <div className="new-form-radio-box m-0 mt-3">
+                        <label for="none">
+                          <input
+                            type="radio"
+                            name="send_to_all_franchisee"
+                            checked={sendToAllFranchisee === 'none'}
+                            id="none"
+                            onChange={() => {
+                              setFormSettings(prevState => ({
+                                ...prevState,
+                                assigned_franchisee: []
+                              }));
+                              setSendToAllFranchisee('none')
+                            }}
+                          />
+                          <span className="radio-round"></span>
+                          <p>No</p>
+                        </label>
+                      </div>
+                    </div>
+                  </Form.Group>
+                </Col>
 
+                <Col lg={9} md={12}>
+                  <Form.Group>
+                    <Form.Label>Select Franchisee</Form.Label>
+                    <div className="select-with-plus">
+                      <Multiselect
+                        disable={sendToAllFranchisee === 'all'}
+                        placeholder={"Select User Names"}
+                        displayValue="key"
+                        className="multiselect-box default-arrow-select"
+                        onRemove={function noRefCheck(data) {
+                          setFormSettings((prevState) => ({
+                            ...prevState,
+                            assigned_franchisee: [...data.map(data => data.id)],
+                          }));
+                        }}
 
+                        onSelect={function noRefCheck(data) {
+                          setFormSettings((prevState) => ({
+                            ...prevState,
+                            assigned_franchisee: [...data.map((data) => data.id)],
+                          }));
+                        }}
+                        options={franchiseeList}
+                      />
+                    </div>
                   </Form.Group>
                 </Col>
               </Row>
@@ -757,6 +817,7 @@ const FileRepository = () => {
                   </Form.Group>
                 </Col>
                 <Col lg={9} md={12}>
+                  {console.log(formSettingData, "{console.log(...formSettingData)}")}
                   {formSettingData.accessible_to_role === 1 ? (
                     <Form.Group>
                       <Form.Label>Select User Roles</Form.Label>

@@ -143,7 +143,7 @@ const Announcements =  () => {
     }
   }
   const myDataCount = async() =>{
-    let api_url = ' '
+    try { let api_url = ' '
     let franhiseAlias = "all"
     let userId = localStorage.getItem("user_id")
 
@@ -160,6 +160,14 @@ const Announcements =  () => {
     console.log("The reponse for count In My announcement",response.data.result)
     //  console.log("THE COUNT OF MY DATA",response.data.data)
      setMyCount(response.data.result.count)
+      
+    } catch (error) {
+      console.log("MY COUNT ERROR",error)
+      setMyCount(0)
+      setMyDataLength(0)
+      
+    }
+
   }
   const handelLoadMore = (e) =>{
     e.preventDefault()
@@ -391,6 +399,8 @@ const Announcements =  () => {
      catch (error) {
       console.log("There is no data",error)
       setTheMyAnnoucemenet([])
+      setMyCount(0)
+      setMyDataLength(0)
     }
   }
   const myAnnnoucementData = async(e) =>{
@@ -614,9 +624,16 @@ useEffect(() =>{
   },[loadMoreEvent])
   
 
-  // console.log("THE LENGHT LOAD MORE DATA",loadMoreData)
-  // console.log("The page NUMBER",page)
-   console.log("THE COUNT AND COMMON",theCount,theCommon)
+  // console.log("USER ROLE",userRole)
+  console.log("THE COUNT AND COMMON",theCount,theCommon)
+  console.log("MY COUNT AND MY data lenght",myCount,myDataLength,)
+  // console.log("THE LOAD MORE MY DATA",theMyAnnouncement)
+  console.log("PAGE page and Mypage",page,mypage)
+  console.log("THE New Load More adat,",loadMoreData)
+  console.log("THE LOAD MRE EVENT",loadMoreEvent)
+  console.log("PERMISSION",verifyPermission("announcements", "add"));
+
+  
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)
   // console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,loadMoreData)
@@ -650,19 +667,19 @@ useEffect(() =>{
                                   />
                           </label>
                         </div>
-                        {/* {
-                          verifyPermission("Announcements", "add") && 
-                        <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
-                        } */}
+                        {
+                          verifyPermission("announcements", "add") && 
+                          <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
+                        }
                            {/* {
                           verifyPermission("training_files", "add") &&
                           <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
                         } */}
-                        {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
+                        {/* {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
                         <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
                         ): (
                           null
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </header>
@@ -670,7 +687,15 @@ useEffect(() =>{
                     <ul>
                       <li><a onClick={handleLinkClick}  path="/all-announcements" className={`${tabLinkPath === "/all-announcements" ? "active" : ""}`}>All Announcements</a></li>
                       <li><a onClick={handleLinkClick} path="/all-events" className={`${tabLinkPath === "/all-events" ? "active" : ""}`} >All Events</a></li>
-                      <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements And Events</a></li>
+                      {
+                        localStorage.getItem('user_role') === 'franchisor_admin' ||localStorage.getItem('user_role') === 'franchisee_admin'  ? (
+                          <li><a onClick={handleLinkClick} path="/my-announcements" className={`${tabLinkPath === "/my-announcements" ? "active" : ""}`} >My Announcements And Events</a></li>
+
+                        )
+                        :(
+                          null
+                        )
+                      }
                   
                     </ul>
                   </div>
