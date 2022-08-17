@@ -144,7 +144,7 @@ const EditTraining = () => {
     console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-
+      console.log('TRAINING:', training);
       copyDataToStates(training);
     }
   };
@@ -368,6 +368,8 @@ const EditTraining = () => {
   // trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   // fetchedFranchiseeUsers && console.log('Fetched franchisee USERS:', fetchedFranchiseeUsers);
   // fetchedFranchiseeUsers && console.log('POPULATED USERS:', fetchedFranchiseeUsers?.map(d => trainingSettings?.d.id));
+  fetchedVideoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', fetchedVideoTutorialFiles);
+  fetchedRelatedFiles && console.log('RELATED FILES:', fetchedRelatedFiles);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
