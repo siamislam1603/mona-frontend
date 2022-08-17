@@ -7,11 +7,9 @@ import Multiselect from 'multiselect-react-dropdown';
 import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import DropOneFile from '../components/DragDrop';
 import Select from 'react-select';
-import { useParams } from 'react-router-dom';
-import { EditFleRepo } from '../helpers/validation'
 // import { TrainingFormValidation } from '../helpers/validation';
 const animatedComponents = makeAnimated();
 let selectedUserId = '';
@@ -216,7 +214,7 @@ const RepoEdit = () => {
             });
         }
     };
-    
+
 
     useEffect(() => {
         GetData();
@@ -618,7 +616,7 @@ const RepoEdit = () => {
                                                     </Col>
                                                     <div className="d-flex justify-content-center my-5">
                                                         <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                            <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} >Cancel</Button>
+                                                            <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={navigate.goBack} >Cancel</Button>
                                                             <Button type="submit" onClick={handleDataSubmit} > Save Details</Button>
                                                         </Form.Group>
                                                     </div>
