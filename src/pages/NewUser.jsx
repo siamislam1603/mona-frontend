@@ -120,38 +120,32 @@ const NewUser = () => {
 
   const getEngagebayDetail = async (event) => {
     const { value } = event.target;
-    if(value) {
-      const response = await axios.get(`${BASE_URL}/contacts/${value}`);
 
-      console.log('RESPONSE:', response);
-
-      if(response.status === 200 && response.data.status === "success") {
+    const response = await axios.get(`${BASE_URL}/contacts/${value}`);
+    if(response.status === 200 && response.data.status === "success") {
+    
+      const {data} = response.data;
+      let { properties } = data;
       
-        const {data} = response.data;
-        let { properties } = data;
-        properties.forEach(d => {
-          setEngagebayDataObj(prevState => ({
-            ...prevState,
-            [d.name]: [d.value][0]
-          }))
-        });
-        console.log('PROPERTY MAP:', engagebayDataObj);
-        setFormData(prevState => ({
-          ...prevState,
-          fullname: engagebayDataObj?.fullname,
-          phone: engagebayDataObj?.phone,
-          role: engagebayDataObj?.role,
-          address: engagebayDataObj?.address,
-          city: engagebayDataObj?.city,
-          postalCode: engagebayDataObj?.postalCode
-        }));
+      let tempDataObj = {}
+      properties.map(d => {
+        let obj = { [d.name]: [d.value][0] };
+        tempDataObj = {...tempDataObj, ...obj};
+      });
 
-      }
+      setFormData(prevState => ({
+        ...prevState,
+        fullname: tempDataObj?.fullname,
+        phone: tempDataObj?.phone,
+        role: tempDataObj?.role,
+        address: tempDataObj?.address,
+        city: tempDataObj?.city,
+        postalCode: tempDataObj?.postalCode
+      }));
+
     }
 
   };
-
-  
 
 
   const toBase64 = (file) =>
@@ -515,7 +509,7 @@ const NewUser = () => {
                               type="email"
                               name="email"
                               placeholder="Enter Your Email ID"
-                              value={formData.email ?? ''}
+                              value={formData?.email}
                               onChange={(e) => {
                                 handleChange(e);
                                 setFormErrors(prevState => ({

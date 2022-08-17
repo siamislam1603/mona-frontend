@@ -512,6 +512,7 @@ const EditTraining = () => {
                             <Form.Label>Upload Video Tutorial Here :</Form.Label>
                             <DropAllFile
                               title="Videos"
+                              type="video"
                               onSave={setVideoTutorialFiles}
                             />
                             <small className="fileinput">(mp4, flv & mkv)</small>
@@ -899,7 +900,7 @@ const EditTraining = () => {
           }
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="transparent" onClick={handleClose}>
+          <Button variant="transparent" onClick={() => setSettingsModalPopup(false)}>
             Cancel
           </Button>
           <Button variant="primary" onClick={() => {

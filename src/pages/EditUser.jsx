@@ -65,6 +65,7 @@ const EditUser = () => {
   const [signatureUploaded, setSignatureUploaded] = useState(false);
   const [loader, setLoader] = useState(false);
   const [createUserModal, setCreateUserModal] = useState(false);
+  const [currentRole, setCurrentRole] = useState(null);
 
   // ERROR HANDLING
   const [errors, setErrors] = useState({});
@@ -91,6 +92,7 @@ const EditUser = () => {
   };
 
   const copyDataToState = (user) => {
+    setCurrentRole(user?.role);
     setFormData(prevState => ({
       id: user?.id,
       fullname: user?.fullname,
@@ -299,20 +301,22 @@ const EditUser = () => {
     });
     if (response.status === 200) {
       const { userRoleList } = response.data;
-      let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
+      // let newRoleList = userRoleList.filter(role => role.role_name === 'franchisor_admin');
       
-      newRoleList = newRoleList.map(d => ({
+      let newRoleList = userRoleList.map(d => ({
+        id: d.id,
         value: d.role_name,
         label: d.role_label,
+        sequence: d.role_sequence
       }));
 
-      if(localStorage.getItem('user_role') === 'franchisee_admin') {
-        newRoleList = newRoleList.filter(role => role.label !== 'Franchisee Admin');
-      }
+      // if(localStorage.getItem('user_role') === 'franchisee_admin') {
+      //   newRoleList = newRoleList.filter(role => role.label !== 'Franchisor Admin');
+      // }
 
-      if(localStorage.getItem('user_role')) {
-        newRoleList = newRoleList.filter(role => role.role_name !== 'Franchisee Admin' && role.role_name !== 'Coordinator');
-      }
+      // if(localStorage.getItem('user_role')) {
+      //   newRoleList = newRoleList.filter(role => role.role_name !== 'Franchisee Admin' && role.role_name !== 'Coordinator');
+      // }
       setUserRoleData(
         newRoleList
       );
@@ -444,6 +448,32 @@ const EditUser = () => {
     }
   }
 
+  const trimRoleList = () => {
+    console.log('TRIMMING ROLE!');
+    let newRoleList = userRoleData;
+    console.log('NEW ROLE LIST:', newRoleList);
+
+    if(currentRole === "educator") {
+      newRoleList = newRoleList.filter(role => role.sequence < 5);
+      setUserRoleData(newRoleList);
+    }
+
+    if(currentRole === "coordinator") {
+      newRoleList = newRoleList.filter(role => role.sequence < 4);
+      setUserRoleData(newRoleList);
+    }
+
+    if(currentRole === "franchisee_admin") {
+      newRoleList = newRoleList.filter(role => role.sequence < 3);
+      setUserRoleData(newRoleList);
+    }
+
+    if(currentRole === "guardian") {
+      newRoleList = newRoleList.filter(role => role.sequence === 5);
+      setUserRoleData(newRoleList);
+    }
+  }
+
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
@@ -467,10 +497,17 @@ const EditUser = () => {
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
+  useEffect(() => {
+    console.log('CURRENT ROLE HAS BEEN LOADED!');
+    trimRoleList();
+  }, [currentRole]);
+
   // editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
-  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-  formData && console.log('FORM DATA:', formData);
+  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
+  // formData && console.log('FORM DATA:', formData);
+  // userRoleData && console.log('USER ROLE DATA:', userRoleData);
+  currentRole && console.log('Current Role:', currentRole);
   return (
     <>
       <div id="main">
@@ -531,7 +568,7 @@ const EditUser = () => {
                             <Select
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
-                              isDisabled={localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator'}
+                              isDisabled={localStorage.getItem('user_role') === 'educator' || localStorage.getItem('user_role') === 'guardian'}
                               value={userRoleData.filter(d => d.value === formData?.role) || ""}
                               options={userRoleData}
                               onChange={(e) =>
