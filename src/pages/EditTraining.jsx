@@ -75,6 +75,7 @@ const EditTraining = () => {
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
 
   const [fileDeleteResponse, setFileDeleteResponse] = useState();
+  const [trainingFormData, setTrainingFormData] = useState([]);
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
@@ -162,6 +163,7 @@ const EditTraining = () => {
       meta_description: training?.meta_description,
       time_unit: training?.completion_time?.split(" ")[1],
       time_required_to_complete: training?.completion_time?.split(" ")[0],
+      training_form_id: training?.training_form_id
     }));
     setTrainingSettings(prevState => ({
       ...prevState,
@@ -248,6 +250,20 @@ const EditTraining = () => {
       }, 3000)
     }
   };
+
+  // FETCHING TRAINING FORM DATA
+  const fetchTrainingFormData = async () => {
+    const response = await axios.get(`${BASE_URL}/training/forms/training`);
+
+    if(response.status === 200 && response.data.status === "success") {
+      const { formData } = response.data;
+      setTrainingFormData(formData.map(d => ({
+        id: d.id,
+        label: d.form_name,
+        value: d.form_name
+      })));
+    } 
+  }
 
   // FETCHING TRAINING CATEGORIES
   const fetchTrainingCategories = async () => {
@@ -356,6 +372,7 @@ const EditTraining = () => {
     fetchTrainingCategories();
     fetchTrainingData();
     fetchFranchiseeList();
+    fetchTrainingFormData();
   }, []);
 
   useEffect(() => {
@@ -488,6 +505,30 @@ const EditTraining = () => {
                             {errors && errors.time_required_to_complete && <span className="error">{errors.time_required_to_complete}</span>}
                           </Form.Group>
                         </Col>
+
+                        <Col md={6} className="mb-3">
+                        <Form.Group>
+                          <Form.Label>Select Training Form*</Form.Label>
+                          <Select
+                            closeMenuOnSelect={true}
+                            components={animatedComponents}
+                            options={trainingFormData}
+                            value={trainingFormData?.filter(d => parseInt(d.id) === trainingData?.training_form_id)}
+                            onChange={(event) => {
+                              setTrainingData((prevState) => ({
+                                ...prevState,
+                                training_form_id: event.id,
+                              }));
+
+                              setErrors(prevState => ({
+                                ...prevState,
+                                training_form_id: null
+                              }));
+                            }}
+                          />
+                          { errors.training_form_id && <span className="error">{errors.training_form_id}</span> }
+                        </Form.Group>
+                      </Col>
                       </Row>
                       <Row>
 

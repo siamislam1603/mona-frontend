@@ -3,9 +3,10 @@ import { Button, Col, Container, Row, Form, Dropdown,Modal } from "react-bootstr
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import  {useNavigate} from 'react-router';
 
 const CoparentAssignPopup = (props) => {
-    
+    const navigate = useNavigate();
 //   const [show, setShow] = useState(false);
 
   const [selectedParents, setSelectedParents] = useState([])
@@ -99,7 +100,7 @@ const PopColumns = [
           <Modal size="lg" show={props.show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Select Co-Parent</Modal.Title>
-                    <Button variant="outline-secondary" onClick={handleClose} style={{ position: 'absolute', right: '80px' }}>
+                    <Button variant="outline-secondary" onClick={()=>(navigate("/new-user"))} style={{ position: 'absolute', right: '80px' }}>
                         Add New
                     </Button>
                 </Modal.Header>

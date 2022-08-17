@@ -333,21 +333,21 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="activity-list">
                             <div className="listing">
-                              <a href="/all-franchisees" className="item">
+                              <Link to="/all-franchisees" className="item">
                                 <span className="name">Total Franchises</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalFranchisees}</span>
-                              </a>
+                              </Link>
                             </div>
                             <div className="listing">
-                              <a href="/user-management" className="item">
+                              <Link to="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalUsers}</span>
-                              </a>
+                              </Link>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalChildren}</span>
@@ -361,14 +361,14 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                            <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                            <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Users yet to log in</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.usersYetToLogin}</span>

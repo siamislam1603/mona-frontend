@@ -443,28 +443,32 @@ const FranchiseeDashboard = () => {
                           </header>
                           <div className="activity-list">
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
+<<<<<<< HEAD
                               <a href="/user-management?role=educator" className="item">
+=======
+                               <a className="item" style={{cursor:"not-allowed"}}>
+>>>>>>> 634518277e683ce3b3dc7afab8231d093197e6c8
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.auditForms}</span>

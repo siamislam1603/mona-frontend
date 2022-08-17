@@ -3,10 +3,11 @@ import { Container, Col, Row, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
-import { BASE_URL } from "../components/App";
+import { BASE_URL, FRONT_BASE_URL } from "../components/App";
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import VideoPop from "../components/VideoPop";
+import { Modal } from "react-bootstrap";
 
 
 const TrainingDetail = () => {
@@ -23,6 +24,7 @@ const TrainingDetail = () => {
   const [trainingFinishedDate, setTrainingFinishedDate] = useState(null);
   const [users, setUsers] = useState();
   const [relatedForms, setRelatedForms] = useState();
+  const [showSurveyForm, setShowSurveyForm] = useState(false);
 
   // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
@@ -45,6 +47,11 @@ const TrainingDetail = () => {
   const handleFinishTraining = (event) => {
     updateFinishTraining();
   };
+
+  const handleSurveyTransition = () => {
+    console.log('handling survey transition!');
+    window.location.href = `${FRONT_BASE_URL}/form/dynamic/${relatedForms.form_name}`;
+  }
 
   // FETCHING THE LIST OF USERS WHO FINISHED THIS TRAINING
   const fetchUsersWithFinishTraining = async () => {
@@ -80,6 +87,18 @@ const TrainingDetail = () => {
     if (response.status === 200 && response.data.status === "success") {
       setTrainingFinishedDate(response.data.finished_date);
       setHideTrainingFinishButton(true);
+      setTimeout(() => {
+        setShowSurveyForm(true);
+      }, 5000);
+    }
+  };
+
+  const fetchTrainingFormDetails = async (id) => {
+    const response = await axios.get(`${BASE_URL}/training/form/training/${id}`);
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { formData } = response.data;
+      setRelatedForms(formData);
     }
   };
 
@@ -109,8 +128,13 @@ const TrainingDetail = () => {
     fetchUsersWithFinishTraining();
   }, []);
 
-  trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
+  useEffect(() => {
+    if(trainingDetails?.training_form_id)
+      fetchTrainingFormDetails(trainingDetails?.training_form_id);
+  }, [trainingDetails])
 
+  trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
+  relatedForms && console.log('RELATED FORMS:', relatedForms);
   return (
     <>
       <div id="main">
@@ -217,77 +241,7 @@ const TrainingDetail = () => {
                               <div className="column-list files-list three-col">
                                 <div className="item">
                                   <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">Survey 1</a></div>
-                                  <div className="cta-col">
-                                    <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  </div>
-                                </div>
-                                <div className="item">
-                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">Survey 1</a></div>
-                                  <div className="cta-col">
-                                    <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  </div>
-                                </div>
-                                <div className="item">
-                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">Survey 1</a></div>
-                                  <div className="cta-col">
-                                    <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  </div>
-                                </div>
-                                <div className="item">
-                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">Survey 1</a></div>
-                                  <div className="cta-col">
-                                    <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  </div>
-                                </div>
-                                <div className="item">
-                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">Survey 1</a></div>
-                                  <div className="cta-col">
-                                    <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  </div>
-                                </div>
-                                <div className="item">
-                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">Survey 1</a></div>
+                                  <div className="name"><a href="">{relatedForms.form_name}</a></div>
                                   <div className="cta-col">
                                     <Dropdown>
                                       <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -353,6 +307,27 @@ const TrainingDetail = () => {
           </Container>
         </section>
       </div>
+
+      {
+        <Modal 
+          show={showSurveyForm}>
+          <Modal.Header>
+            <Modal.Title>Congratuations!</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <p>You've finished this training successfully.</p>
+              <p>Click on <strong>Next</strong> to fill the survey form.</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleSurveyTransition()}>Next</button>
+          </Modal.Footer>
+        </Modal>
+      }
     </>
   );
 };
