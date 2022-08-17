@@ -142,13 +142,13 @@ const Children = () => {
         });
         if (response.status === 200) {
             let defaultparents = response.data?.parentData.map((parent)=>{
-                return parent.id
+                return parent.user_parent_id
             })
-            
+
             localStorage.setItem("DefaultParents",JSON.stringify(defaultparents))
         }
 
-        // let response = await axios.get(`${BASE_URL}/user-group/users/guardian`, {
+        // let response = await axios.get(`${BASE_URL}/user-group/users/guardian`, {    
         //     headers: {
         //         "Authorization": `Bearer ${localStorage.getItem('token')}`
         //     }
