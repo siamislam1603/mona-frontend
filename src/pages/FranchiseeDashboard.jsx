@@ -101,7 +101,10 @@ const columns1 = [
     text: 'Child Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+      return (<>
+      <div className="user-list">
+        <span className="user-pic">
+          <img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
     },
   },
   {
