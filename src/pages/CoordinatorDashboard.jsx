@@ -187,28 +187,28 @@ const CoordinatorDashboard = () => {
                           </header>
                           <div className="activitylist relative two-col">
                             <div className="item">
-                              <a href="/">
+                            <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Educators logged in</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.educatorsLoggedIn}</span>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Overdue Forms</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueForms}</span>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Overdue Trainings</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueTrainings}</span>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">New Enrolments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.newEnrollments}</span>
@@ -344,28 +344,28 @@ const CoordinatorDashboard = () => {
                           </header>
                           <div className="activity-list relative">
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Educators logged in</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.educatorsLoggedIn}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Overdue Forms</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueForms}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Overdue Trainings</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueTrainings}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">New Enrolments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.newEnrollments}</span>

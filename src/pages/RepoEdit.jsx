@@ -60,7 +60,7 @@ const RepoEdit = () => {
 
     }
     // setimg(coverImage)
-    // console.log(">>>>>>>>>>>>>", img)
+    console.log(">>>>>>>>>>>>>", data)
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
@@ -69,16 +69,14 @@ const RepoEdit = () => {
             description: data?.description,
             title: data?.title,
             categoryId: data?.repository_files[0].categoryId,
-            image: data?.repository_files[0].filesPath,
+            // imag: data?.repository_files[0].filesPath,
+            image: data?.repository_files[0].filesPath[0],
             franchise: data?.repository_shares[0].franchisee,
             accessibleToRole: data?.repository_shares[0].accessibleToRole,
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
         }));
-
-        setCoverImage(data?.repository_files[0].filesPath);
-        setFetchedCoverImage(data?.repository_files[0].filesPath);
     }
     console.log(coverImage, "coverImage")
     // FUNCTION TO SAVE TRAINING SETTINGS
@@ -202,7 +200,7 @@ const RepoEdit = () => {
 
     const setField = (field, value) => {
         if (value === null || value === undefined) {
-            setData({ ...data, setting_files: field });
+            setData({ ...data, image: field });
 
         } else {
             setData({ ...data, [field]: value });
@@ -619,8 +617,6 @@ const RepoEdit = () => {
                                                     </Col>
                                                     <div className="d-flex justify-content-center my-5">
                                                         <Form.Group className="mb-3" controlId="formBasicPassword">
-
-                                                            {/* <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={handleTrainingCancel}>Cancel</Button> */}
                                                             <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => navigate(-1)}>Cancel</Button>
                                                             <Button type="submit" onClick={handleDataSubmit} > Save Details</Button>
                                                         </Form.Group>
