@@ -1,7 +1,11 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { Dropdown } from 'react-bootstrap';
+import { Dropdown, Form, Button } from 'react-bootstrap';
 import { BASE_URL } from './App';
+import { Link } from "react-router-dom";
+import $ from "jquery";
+
+
 
 let temp = () => { }
 
@@ -69,6 +73,8 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   //     );
   //   }
   // };
+  
+  
 
   const logout = async () => {
     const response = await axios.get(`${BASE_URL}/auth/logout`);
@@ -127,6 +133,36 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       setNotifData(filteredData);
     }
   };
+  
+  useEffect(() => {
+    let ths = this;
+    $(".topsearch").focus(function () {
+      $(".tipsearch").hide();
+      var i = 0;
+
+      $(".topsearch").each(function () {
+        if ($(this).is(":focus")) {
+          $($(".tipsearch")[i]).show();
+        }
+        i++;
+      });
+
+      $(document).bind("focusin.tipsearch click.tipsearch", function (e) {
+        if ($(e.target).closest(".tipsearch, .topsearch").length) return;
+        $(document).unbind(".tipsearch");
+        $(".tipsearch").fadeOut("medium");
+      });
+    });
+    
+    $(".search-col").on("click", function () {
+      $(".search-bar").addClass("show");
+    });
+    $(".search-close").on("click", function () {
+      $(".search-bar").removeClass("show");
+    });
+    
+    $(".tipsearch").hide();
+  }, []);
 
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'franchisor_admin') {
@@ -211,13 +247,75 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
             </Dropdown>
           </div>
         </div>
+        
         <div className="rpanel ms-auto">
+          <div className="search-bar">
+            <Form action="SearchResult">
+              <Form.Group className="form-group" controlId="formBasicSearch">
+                <Form.Control
+                  type="text"
+                  className="topsearch"
+                  placeholder="Type here to search..."
+                  name="query"
+                />
+                <div className="tipsearch">
+                  <div className="searchlisting cus-scr">
+                    <ul>
+                      <li>
+                        <a href="/" class="d-flex">
+                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/" class="d-flex">
+                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/" class="d-flex">
+                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/" class="d-flex">
+                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/" class="d-flex">
+                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/" class="d-flex">
+                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/" class="d-flex">
+                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/" class="d-flex">
+                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <Link className="search-close" to="#">
+                  <img alt="" src="/img/cross.png" />
+                </Link>
+              </Form.Group>
+            </Form>
+          </div>
           <div className="user-sec">
             <ul>
               <li>
-                <a href="/">
+                <span className="search-col cursor">
                   <img alt="" src="/img/search-icon.svg" />
-                </a>
+                </span>
               </li>
               <li>
                 <a href={userDashboardLink}>
