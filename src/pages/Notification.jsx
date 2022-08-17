@@ -43,13 +43,49 @@ useEffect(() => {
   AllAnnouncementData()
 }, [])
 
-useEffect(() =>{
-    if(props.allAnnouncement){
-      setNotificationDetail(props.allAnnouncement)
-      console.log("THE Annoncement all props",props.allAnnouncement)
+
+const handleLinkClick = notificationId => {
+  console.log("event eventeventeventevent",  notificationId)
+
+  if(notificationId){
+
+    const token = localStorage.getItem('token');
+    const response = axios.put(
+      `${BASE_URL}/notification/${notificationId}`,{}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
     }
-},[props.allAnnouncement])
-// notificationDetails && console.log('NOTIFICATION DETAILS:', notificationDetails);
+    );
+
+    console.log('notification read status updated', response);
+
+
+
+    if (response.status === 200) {  
+      console.log('notification read status updated', response.msg);
+
+
+    }else{
+
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+
+    }
+
+
+  }
+
+  // let path = event.target.getAttribute('path');
+  // setTabLinkPath(path);
+}
+
+
+// useEffect(() =>{
+//     if(props.allAnnouncement){
+//       setNotificationDetail(props.allAnnouncement)
+//       console.log("THE Annoncement all props",props.allAnnouncement)
+//     }
+// },[props.allAnnouncement])
 
   return (
     <div className="announcement-accordion">
@@ -76,10 +112,10 @@ useEffect(() =>{
                            <Accordion.Item  eventKey={index}>
                                <div className="head-title">
                                  <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                                 <div className="title-xxs"
+                                 <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
                                  dangerouslySetInnerHTML={{
-                          __html: `${details.title}`,
-                        }}/>
+                                      __html: `${details.title}`,
+                                    }}/>
                                </div>
                            </Accordion.Item>
                            

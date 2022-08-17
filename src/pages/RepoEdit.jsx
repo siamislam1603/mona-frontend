@@ -32,6 +32,7 @@ const RepoEdit = () => {
     const [franchiseeList, setFranchiseeList] = useState();
     const [img, setimg] = useState();
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
+    const [croppedImage, setCroppedImage] = useState(null);
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -61,7 +62,8 @@ const RepoEdit = () => {
     }
     // setimg(coverImage)
     console.log(">>>>>>>>>>>>>", data)
-    const copyFetchedData = (data) => {
+    const copyFetchedData = async (data) => {
+
         setData(prevState => ({
             ...prevState,
             id: Params.id,
@@ -69,15 +71,19 @@ const RepoEdit = () => {
             description: data?.description,
             title: data?.title,
             categoryId: data?.repository_files[0].categoryId,
-            // imag: data?.repository_files[0].filesPath,
-            image: data?.repository_files[0].filesPath[0],
+            image: data?.repository_files[0].filesPath,
             franchise: data?.repository_shares[0].franchisee,
             accessibleToRole: data?.repository_shares[0].accessibleToRole,
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
+
         }));
+        console.log(data.image, "blobblobblobblob")
+        // setCroppedImage(data?.repository_files[0].filesPath);
+
     }
+
     console.log(coverImage, "coverImage")
     // FUNCTION TO SAVE TRAINING SETTINGS
 
@@ -102,19 +108,22 @@ const RepoEdit = () => {
 
     const handleDataSubmit = async (event) => {
         event.preventDefault();
+
+
         const token = localStorage.getItem('token');
         const response = await axios.put(`${BASE_URL}/fileRepo/`, data, {
             headers: {
                 "Authorization": "Bearer " + token
             }
         }
+
         );
         if (response.status === 200) {
             navigate("/file-repository")
-            console.log(response.message, "<<<<<<<<<<<message>>>>>>>>>>")
-            console.log(response.data, "<<<<<<<<<<<data>>>>>>>>>>")
         }
     }
+
+
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/role/franchisee`, {
@@ -131,9 +140,6 @@ const RepoEdit = () => {
             })));
         }
     };
-
-
-
 
     const getFileCategory = async () => {
         const token = localStorage.getItem('token');
@@ -198,14 +204,21 @@ const RepoEdit = () => {
 
     }
 
-    const setField = (field, value) => {
+    const setField = async (field, value) => {
         if (value === null || value === undefined) {
-            setData({ ...data, image: field });
-
+            let blob
+            console.log(typeof field, "valuevalue")
+            if (typeof field === "object") {
+                setData({ ...data, image: JSON.stringify({ field }) });
+            } else {
+                console.log('Image Type: String');
+                blob = field
+                data.append('profile_photo', blob);
+            }
+            console.log(typeof field, "valuevalue")
         } else {
-            setData({ ...data, [field]: value });
+            setData({ ...data, field: value });
         }
-
         if (!!errors[field]) {
             setErrors({
                 ...errors,
@@ -270,8 +283,22 @@ const RepoEdit = () => {
                                                         <Col md={6}></Col>
                                                         <Form.Group>
                                                             <DragDropRepository onChange={setField} />
-                                                            <p className="error">{errors.setting_files}</p>
+                                                            <p className="error">{errors.setting_files}</p> {/* <img src={data.image} alt="smkdjh" /> */}
+                                                            {/* <img className="cover-image-style" src={data.image} alt="training cover image" /> */}
+                                                            {/* {
+                                                                data &&
+                                                                <>
+                                                                    <img className="cover-image-style" src={data.image} alt="training cover image" />
+                                                                    <div className="showfiles">
+                                                                        <ul>{data.image}</ul>
+                                                                    </div>
+                                                                </>
+                                                            } */}
+
+                                                            {errors && errors.setField && <span className="error mt-2">{errors.coverImage}</span>}
+
                                                         </Form.Group>
+
                                                     </Row>
                                                     <div className="toggle-switch">
 

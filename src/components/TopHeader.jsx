@@ -323,7 +323,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
                 </a>
               </li>
               <li>
-                <a href="/">
+                <a href="/notifications">
                   <img 
                     alt=""
                     // onMouseEnter={() => setNotificationDialog(true)} 
