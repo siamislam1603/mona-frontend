@@ -363,7 +363,7 @@ console.log("Childeren data",childrenData)
                         <div className="training-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Training</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/training" className="viewall">View All</Link>
                           </header>
                           <Row>
                             <Col md={12}>
@@ -438,7 +438,7 @@ console.log("Childeren data",childrenData)
                         <div className="announcements-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
                             <div className="listing">

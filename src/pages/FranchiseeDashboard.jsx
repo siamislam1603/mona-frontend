@@ -6,8 +6,9 @@ import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
-
-import moment from 'moment';
+import moment from 'moment'
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 const products = [
   {
     id: 1,
@@ -30,19 +31,29 @@ const products = [
     educator: "Ms. Shelby Goode",
   },
 ];
+const selectRow = {
+  mode: 'checkbox',
+  clickToSelect: true,
+};
+// name: `${dt.fullname}, ${dt.profile_photo}`,
 const columns = [
   {
     dataField: 'name',
     text: 'Child Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
     },
   },
   {
-    dataField: 'educator',
+    dataField: 'name',
     text: 'Educator',
+    formatter: (cell) => {
+      cell = cell.split(",");
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+    },
   },
+
   {
     dataField: "action",
     text: "",
@@ -86,19 +97,19 @@ const products1 = [
 ];
 const columns1 = [
   {
-    dataField: 'formname',
+    dataField: 'name',
     text: 'Child Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
     },
   },
   {
-    dataField: 'educatorname',
+    dataField: 'name',
     text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
     },
   },
   {
@@ -121,8 +132,8 @@ const columns1 = [
 
 const FranchiseeDashboard = () => {
   const [countUser, setcountUser] = React.useState(null);
-
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+  const [additional, setAdditional] = React.useState([]);
 
   const announcement = () => {
     let token = localStorage.getItem('token');
@@ -137,8 +148,40 @@ const FranchiseeDashboard = () => {
       console.log("Error", e);
     })
   }
+  const [user, setUser] = useState([]);
+  const [userData, setUserData] = useState([]);
 
-  console.log(latest_announcement[0], "latest_announcement")
+  const Additional_Needs = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    let response = await fetch(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, requestOptions)
+    response = await response.json();
+    setUser(response.data)
+
+    const users = response.childrenEnrolled[0].users;
+    console.log(users, ">>>>>>>>>response");
+    let tempData = users.map((dt) => ({
+      name: `${dt.fullname}, ${dt.profile_photo}`,
+      // createdAt: dt.createdAt,
+      // creatorName: dt.creatorName + "," + dt.creatorRole,
+      // Shaired: dt.repository.repository_shares.length,
+      // categoryId: dt.categoryId
+    }));
+
+    console.log('tempData', tempData)
+    setUserData(tempData);
+  }
+
+
+  console.log(additional, "additional")
   const count_User_Api = () => {
     let token = localStorage.getItem('token');
 
@@ -158,11 +201,13 @@ const FranchiseeDashboard = () => {
   React.useEffect(() => {
     count_User_Api();
     announcement();
+    Additional_Needs();
   }, []);
 
   const count_Api = async () => {
     const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
     var myHeaders = new Headers();
+
     myHeaders.append(
       'authorization',
       'Bearer ' + localStorage.getItem('token')
@@ -187,21 +232,21 @@ const FranchiseeDashboard = () => {
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [day, month, year].join('/');
+    let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-     console.log("THE Date1",Added,datae)
-     if(datae === Added){
+    console.log("THE Date1", Added, datae)
+    if (datae === Added) {
       return "Added today"
-     }
-     else if(Added<datae){
+    }
+    else if (Added < datae) {
       return Added
-     }
-     else {
+    }
+    else {
       return Added
-     }
+    }
     // return Added
-  
+
   }
 
   React.useEffect(() => {
@@ -337,11 +382,20 @@ const FranchiseeDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            <BootstrapTable
+                            <ToolkitProvider
                               keyField="name"
-                              data={products1}
+                              data={userData}
                               columns={columns1}
-                            />
+                              search
+                            >
+                              {(props) => (
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                  // selectRow={selectRow}
+                                  pagination={paginationFactory()}
+                                />
+                              )}
+                            </ToolkitProvider>
                           </div>
                         </div>
                       </div>
