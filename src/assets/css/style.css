@@ -625,7 +625,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .audit-form { border-radius:15px; padding: 25px; background-color: var(--yellow); display: flex; align-items: center; justify-content: center; }
 .audit-form p { margin: 0; line-height: normal; text-align: center; font-size: var(--fontxl); }
-.audit-form .totalaudit { background-color: var(--purple); width: 100px; height: 100px; border-radius: 100%; display: flex; align-items: center; justify-content: center; margin-left: 1rem; color: var(--white); font-weight: 700; font-size: 1.7rem; }
+.audit-form .totalaudit { background-color: var(--purple); min-width: 100px; max-width: 100px; height: 100px; border-radius: 100%; display: flex; align-items: center; justify-content: center; margin-left: 1rem; color: var(--white); font-weight: 700; font-size: 1.7rem; }
 
 .change-pass-sec { max-width:700px; margin: auto; }
 
@@ -665,7 +665,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .error_page { margin: 100px 0; }
 
 .search-bar .form-group{background-color:#f7f7f7;padding:0 40px 0 15px;margin:0;border-radius:75px;position:relative;}
-.search-bar .search-close{position:absolute;top:10px;right:8px;}
+.search-bar .search-close{position:absolute;top:10px;right:8px;z-index: 5;}
 .search-bar .form-control{background-color:transparent;border:none;min-width:300px;height:45px;position:relative;z-index:2;}
 .search-bar .tipsearch{position:absolute;background:var(--white);border:1px solid #f7f7f7;width:100%;left:0;padding:15px;top:55px;z-index:1;border-radius:5px;box-shadow:0 5px 5px 0 rgba(0, 0, 0, 0.2);}
 .search-bar .tipsearch:before{position:absolute;content:'';width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:6px solid #ccc;top:-4px;left:50%;transform:translateY(-50%);opacity:0.5;}
@@ -784,7 +784,8 @@ body, .btn { font-size: var(--fontsm); }
 .responses-content-answer p { font-size: 14px; }
 .topheader { padding-left: 0; display: block; }
 .topheader .lpanel { display: block; }
-.topheader .rpanel { position: absolute; top:15px; right:15px; z-index:5; }
+.topheader .rpanel { position: absolute; top:-80px; right:0; z-index:5; }
+.search-bar { right: 85px; }
 .selectdropdown .dropdown .btn-primary, .selectdropdown .dropdown .btn-primary:active { min-width: 100%; }
 .topheader .rpanel .user-sec .dropdown .user-name { display: none; }
 .topheader .rpanel .user-sec .dropdown .btn-primary { padding-right: 22px; }
@@ -816,4 +817,8 @@ body, .btn { font-size: var(--fontsm); }
 @media only screen and (max-width: 480px) {
 .two-col .item, .three-col .item { flex: 0 0 100%; margin-right: 0; }
 .column-list.access-list .item .name { text-align: left; }
+.search-bar { right: 0; max-width: 315px; }
+.search-bar.show { top: 60px; }
+.audit-form .totalaudit { max-width: 80px; height: 80px; min-width: 80px; }
+.audit-form p { font-size: var(--fontlg); }
 }

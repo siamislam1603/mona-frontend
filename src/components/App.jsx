@@ -7,6 +7,7 @@ const BASE_URL = "http://3.26.39.12:4000";
 // const FRONT_BASE_URL = "http://localhost:5000";
 const FRONT_BASE_URL = "http://3.26.240.23:5000";
 
+
 function App() {
   return (
     <div id="main">
