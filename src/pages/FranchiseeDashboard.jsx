@@ -445,16 +445,13 @@ const FranchiseeDashboard = () => {
                             <div className="listing">
                               <a href="/user-management" className="item">
                                 <span className="name">Total Users</span>
-                                <span className="separator">|</span>
+                               
+                               <span className="separator">|</span>
                                 <span className="num">{countUser.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
-<<<<<<< HEAD
-                              <a href="/user-management?role=educator" className="item">
-=======
                                <a className="item" style={{cursor:"not-allowed"}}>
->>>>>>> 634518277e683ce3b3dc7afab8231d093197e6c8
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
