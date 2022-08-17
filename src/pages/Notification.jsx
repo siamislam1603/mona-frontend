@@ -48,7 +48,7 @@ useEffect(() =>{
       console.log("THE Annoncement all props",props.allAnnouncement)
     }
 },[props.allAnnouncement])
-
+// notificationDetails && console.log('NOTIFICATION DETAILS:', notificationDetails);
   return (
     <div className="announcement-accordion">
 
@@ -68,7 +68,7 @@ useEffect(() =>{
                         notificationDetails.length !==0 ? (
                           notificationDetails.map((details,index) => (
                             <div key={index}>
-                               
+                            
                            <Accordion.Item  eventKey={index}>
                                <div className="head-title">
                                  <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
