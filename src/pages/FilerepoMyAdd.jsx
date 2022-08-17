@@ -1278,7 +1278,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                                                         <Form.Check
                                                             type="checkbox"
-                                                            label="Guardians"
+                                                            label="Parents"
                                                             checked={formSettings.assigned_role.includes("guardian")}
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("guardian")) {
@@ -1303,7 +1303,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             label="All Roles"
                                                             checked={formSettings.assigned_role.length === 3}
                                                             onChange={() => {
-                                                                if (formSettings.assigned_role.includes("coordinator")
+                                                                 if (formSettings.assigned_role.includes("coordinator")
                                                                     && formSettings.assigned_role.includes("educator")
                                                                     && formSettings.assigned_role.includes("guardian")) {
                                                                     setFormSettings(prevState => ({

@@ -3,14 +3,15 @@ import { Button, Container, Form, Dropdown, Accordion, Row, Col } from "react-bo
 import { BASE_URL } from "../components/App";
 import axios from "axios";
 import LeftNavbar from "../components/LeftNavbar";
+import TopHeader from "../components/TopHeader";
 
 
 const Noticefication = (props) => {
 
 const userName = localStorage.getItem("user_name");
 const [notificationDetails,setNotificationDetail] = useState([])
-const [show, setShow] = useState(false);
-const handleClose = () => setShow(false);
+// const [show, setShow] = useState(false);
+// const handleClose = () => setShow(false);
  
   const AllAnnouncementData = async () =>{
     try {
@@ -49,6 +50,7 @@ useEffect(() =>{
     }
 },[props.allAnnouncement])
 // notificationDetails && console.log('NOTIFICATION DETAILS:', notificationDetails);
+
   return (
     <div className="announcement-accordion">
 
@@ -57,12 +59,14 @@ useEffect(() =>{
               <aside className="app-sidebar">
               <LeftNavbar />
               </aside>
+              <div className="sec-column">
+                <TopHeader 
+                  notificationType='Child Enrollment'/>
 
               <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Notifications</h1>
                     </header>
-                  
                     <Accordion defaultActiveKey="0">
                       { notificationDetails &&
                         notificationDetails.length !==0 ? (
@@ -87,6 +91,7 @@ useEffect(() =>{
                         )
                       }
                     </Accordion>
+                    </div>
                     </div>
                     </div>
                     </Container>
