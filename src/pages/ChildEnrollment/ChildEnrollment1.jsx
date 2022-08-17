@@ -352,7 +352,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Child’s Full Name</Form.Label>
+                    <Form.Label>Child’s Full Name *</Form.Label>
                     <Form.Control
                       type="text"
                       name="fullname"
@@ -389,7 +389,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Family Name</Form.Label>
+                    <Form.Label>Family Name *</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Family Name"
@@ -427,7 +427,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Usually Called</Form.Label>
+                    <Form.Label>Usually Called *</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Usually Called"
@@ -465,7 +465,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Date Of Birth</Form.Label>
+                    <Form.Label>Date Of Birth *</Form.Label>
                     <Form.Control
                       type="date"
                       placeholder=""
@@ -536,7 +536,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Home Address</Form.Label>
+                    <Form.Label>Home Address *</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
@@ -563,7 +563,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Language spoken in the home</Form.Label>
+                    <Form.Label>Language spoken in the home *</Form.Label>
                     <Select
                       placeholder={formOneChildData?.language || "Select"}
                       closeMenuOnSelect={true}
@@ -591,7 +591,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Country Of Birth</Form.Label>
+                    <Form.Label>Country Of Birth *</Form.Label>
                     <Select
                       placeholder={formOneChildData?.country_of_birth || "Select"}
                       closeMenuOnSelect={true}
@@ -618,7 +618,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Is the child of Aboriginal and/or Torres Strait Islander origin?</Form.Label>
+                    <Form.Label>Is the child of Aboriginal and/or Torres Strait Islander origin?</Form.Label>
                     <div className="btn-radio two-col">
                       <Form.Check
                         type="radio"
@@ -701,7 +701,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Does the child have a developmental delay or disability including intellectual, sensory or physical impairment?</Form.Label>
+                    <Form.Label>Does the child have a developmental delay or disability including intellectual, sensory or physical impairment?</Form.Label>
                     <div className="btn-radio inline-col">
                       <Form.Check
                         type="radio"
@@ -757,7 +757,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   <>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Child Medical No.</Form.Label>
+                        <Form.Label>Child Medical No. *</Form.Label>
                         <Form.Control
                           type="text"
                           name="child_medical_no"
@@ -779,7 +779,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Child CRN</Form.Label>
+                        <Form.Label>Child CRN *</Form.Label>
                         <Form.Control
                           type="text"
                           name="child_crn"
@@ -801,7 +801,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Parents CRN 1</Form.Label>
+                        <Form.Label>Parents CRN 1 *</Form.Label>
                         <Form.Control
                           type="text"
                           name="parent_crn_1"
@@ -823,7 +823,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Parents CRN 2</Form.Label>
+                        <Form.Label>Parents CRN 2 *</Form.Label>
                         <Form.Control
                           type="text"
                           name="parent_crn_2"
@@ -846,7 +846,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 }
                 <Col md={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Is the child using another service?</Form.Label>
+                    <Form.Label>Is the child using another service?</Form.Label>
                     <div className="btn-radio inline-col">
                       <Form.Check
                         type="radio"
@@ -932,7 +932,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 <Col md={12}>
                   <Form.Group className="mb-3">
                     <div className="btn-radio inline-col">
-                      <Form.Label>*School Status :</Form.Label>
+                      <Form.Label>School Status :</Form.Label>
                       <Form.Check
                         type="radio"
                         name="school"
@@ -982,7 +982,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   <>
                     <Col md={4}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="py-3"> if at School, Date first went to School :</Form.Label>
+                        <Form.Label className="py-3"> if at School, Date first went to School : *</Form.Label>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -1011,7 +1011,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Col>
                     <Col md={4}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="py-3">if at School, Name and address of School</Form.Label>
+                        <Form.Label className="py-3">if at School, Name and address of School *</Form.Label>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -1130,7 +1130,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                          <Form.Label>*Family Name</Form.Label>
+                          <Form.Label>Family Name *</Form.Label>
                           <Form.Control 
                             type="text" 
                             placeholder="Family Name"
@@ -1169,7 +1169,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Given Name</Form.Label>
+                          <Form.Label>Given Name *</Form.Label>
                           <Form.Control 
                             type="text" 
                             placeholder="Given Name"
@@ -1207,7 +1207,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Date Of Birth</Form.Label>
+                          <Form.Label>Date Of Birth *</Form.Label>
                           <Form.Control 
                             type="date" 
                             placeholder="" 
@@ -1234,7 +1234,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Address As Per Child</Form.Label>
+                          <Form.Label>Address As Per Child *</Form.Label>
                           <Form.Control 
                             as="textarea" 
                             rows={3} 
@@ -1261,7 +1261,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Telephone</Form.Label>
+                          <Form.Label>Telephone *</Form.Label>
                           <Form.Control 
                             type="tel" 
                             placeholder="+3375005467"
@@ -1287,7 +1287,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Email Address</Form.Label>
+                          <Form.Label>Email Address *</Form.Label>
                           <Form.Control 
                             type="email" 
                             placeholder="Email Address"
@@ -1357,7 +1357,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Place Of Birth</Form.Label>
+                          <Form.Label>Place Of Birth *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.place_of_birth || "Select"}
                             closeMenuOnSelect={true}
@@ -1384,7 +1384,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Ethnicity</Form.Label>
+                          <Form.Label>Ethnicity *</Form.Label>
                           <Select
                              placeholder={formOneParentData?.ethnicity || "Select"}
                             closeMenuOnSelect={true}
@@ -1413,7 +1413,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                          <Form.Label>*Primary Language</Form.Label>
+                          <Form.Label>Primary Language *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.primary_language || "Select"}
                             closeMenuOnSelect={true}
@@ -1441,7 +1441,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>*Occupation</Form.Label>
+                          <Form.Label>Occupation *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.occupation || "Select"}
                             closeMenuOnSelect={true}

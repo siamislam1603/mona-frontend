@@ -466,16 +466,16 @@ const EditUser = () => {
                             <Select
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
-                              isDisabled={true}
+                              isDisabled={localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator'}
                               value={userRoleData.filter(d => d.value === formData?.role) || ""}
                               options={userRoleData}
-                              // onChange={(e) =>
-                              //   setFormData((prevState) => ({
-                              //     ...prevState,
-                              //     role: e.value,
-                              //     roleObj: e
-                              //   }))
-                              // }
+                              onChange={(e) =>
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  role: e.value,
+                                  roleObj: e
+                                }))
+                              }
                             />
                             <span className="error">
                               {!formData.role && formErrors.role}
@@ -699,7 +699,7 @@ const EditUser = () => {
                               type="date"
                               disabled={true}
                               name="terminationDate"
-                              value={formData?.terminationDate}
+                              value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
                               onChange={handleChange}
                             />
                             {

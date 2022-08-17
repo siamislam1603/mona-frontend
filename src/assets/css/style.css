@@ -304,6 +304,10 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .user-list .user-pic-tow { flex:0 0 44px; max-width: 44px; margin-right: 1rem; overflow: hidden; border-radius: 0; min-height: 44px; }
 
 .user-list .user-name small { display: block; font-size:var(--fontsm); opacity: .5; }
+.user-list .user-name small.inactive, .user-list .user-name small.active, .user-list .user-name small.deleted { text-transform: capitalize; font-weight: bold; opacity: 1; }
+.user-list .user-name small.inactive { color: #fbac01; }
+.user-list .user-name small.active { color: #039e03; }
+.user-list .user-name small.deleted { color: #ff0000; }
 
 .extra-btn .ctaact { background-color: #f7f7f7; width: 45px; }
 .extra-btn .ctaact:hover, .extra-btn .ctaact:active, .extra-btn .show > .btn-primary.ctaact { background-color: var(--white); }

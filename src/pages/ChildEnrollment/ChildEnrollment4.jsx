@@ -333,7 +333,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Name</Form.Label>
+                    <Form.Label>Name *</Form.Label>
                     <Form.Control
                       name="name" 
                       type="text"
@@ -358,7 +358,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>*Address</Form.Label>
+                    <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
                       as="textarea" 
@@ -384,7 +384,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
                   
                   <Form.Group className="mb-3">
-                    <Form.Label>*Telephone</Form.Label>
+                    <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
                       value={emergencyContactData?.telephone || ""}
@@ -408,7 +408,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     { emergencyContactError?.telephone !== null && <span className="error">{emergencyContactError?.telephone}</span> }
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Relationship To The Child</Form.Label>
+                    <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child" 
                       type="text"
@@ -461,7 +461,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Name</Form.Label>
+                    <Form.Label>Name *</Form.Label>
                     <Form.Control
                       name="name" 
                       type="text"
@@ -486,7 +486,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>*Address</Form.Label>
+                    <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
                       as="textarea" 
@@ -512,7 +512,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
                   
                   <Form.Group className="mb-3">
-                    <Form.Label>*Telephone</Form.Label>
+                    <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
                       type="tel"
@@ -537,7 +537,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
                   
                   <Form.Group className="mb-3">
-                    <Form.Label>*Relationship To The Child</Form.Label>
+                    <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child" 
                       type="text"
@@ -592,7 +592,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Name</Form.Label>
+                    <Form.Label>Name *</Form.Label>
                     <Form.Control
                       name="name" 
                       type="text"
@@ -617,7 +617,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>*Address</Form.Label>
+                    <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
                       as="textarea" 
@@ -643,7 +643,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
                   
                   <Form.Group className="mb-3">
-                    <Form.Label>*Telephone</Form.Label>
+                    <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
                       value={authorizedPersonData?.telephone || ""}
@@ -668,7 +668,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
                   
                   <Form.Group className="mb-3">
-                    <Form.Label>*Relationship To The Child</Form.Label>
+                    <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child" 
                       type="text"
@@ -721,7 +721,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>*Name</Form.Label>
+                    <Form.Label>Name *</Form.Label>
                     <Form.Control
                       name="name" 
                       type="text"
@@ -746,7 +746,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>*Address</Form.Label>
+                    <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
                       as="textarea" 
@@ -772,7 +772,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
                   
                   <Form.Group className="mb-3">
-                    <Form.Label>*Telephone</Form.Label>
+                    <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
                       value={otherAuthorizedPersonData?.telephone || ""}
@@ -797,7 +797,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
                   
                   <Form.Group className="mb-3">
-                    <Form.Label>*Relationship To The Child</Form.Label>
+                    <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child"
                       value={otherAuthorizedPersonData?.relationship_to_the_child || ""} 
