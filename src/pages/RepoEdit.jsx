@@ -7,17 +7,17 @@ import Multiselect from 'multiselect-react-dropdown';
 import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
 import DropOneFile from '../components/DragDrop';
 import Select from 'react-select';
-import { useParams } from 'react-router-dom';
-import { EditFleRepo } from '../helpers/validation'
 // import { TrainingFormValidation } from '../helpers/validation';
 const animatedComponents = makeAnimated();
 let selectedUserId = '';
 
 const RepoEdit = () => {
-    const Params = useParams();
 
+    const Params = useParams();
+    const navigate = useNavigate();
     const [settingsModalPopup, setSettingsModalPopup] = useState(false);
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
@@ -27,9 +27,16 @@ const RepoEdit = () => {
     const [selectedUser, setSelectedUser] = useState([]);
     const [user, setUser] = useState([]);
     const [data, setData] = useState([])
-    const [coverImage, setCoverImage] = useState({});
+    const [coverImage, setCoverImage] = useState("");
     const [fetchedCoverImage, setFetchedCoverImage] = useState();
-
+    const [franchiseeList, setFranchiseeList] = useState();
+    const [img, setimg] = useState();
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
+    const [formSettings, setFormSettings] = useState({
+        assigned_role: [],
+        franchisee: [],
+        assigned_users: []
+    });
     const toBase64 = (file) =>
         new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -52,26 +59,30 @@ const RepoEdit = () => {
         }
 
     }
-    console.log(">>>>>>>>>>>>>data", data)
+    // setimg(coverImage)
+    // console.log(">>>>>>>>>>>>>", img)
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
+            id: Params.id,
             createdAt: data?.createdAt,
             description: data?.description,
-            meta_description: data?.meta_description,
             title: data?.title,
             categoryId: data?.repository_files[0].categoryId,
-            filesPath: data?.repository_files[0].filesPath,
-            repository_shares: data?.repository_shares[0].franchisee,
+            image: data?.repository_files[0].filesPath,
+            franchise: data?.repository_shares[0].franchisee,
             accessibleToRole: data?.repository_shares[0].accessibleToRole,
+            accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
-            assigned_roles: data?.repository_shares[0].assigned_roles,
+            user_roles: data?.repository_shares[0].assigned_roles,
         }));
+
         setCoverImage(data?.repository_files[0].filesPath);
         setFetchedCoverImage(data?.repository_files[0].filesPath);
-
     }
+    console.log(coverImage, "coverImage")
     // FUNCTION TO SAVE TRAINING SETTINGS
+
     const handleDiscriptionSettings = (event) => {
         const { name, value } = event.target;
         setData((prevState) => ({
@@ -91,41 +102,37 @@ const RepoEdit = () => {
 
     // Update API For File Repo
 
-    const updatefile = async () => {
+    const handleDataSubmit = async (event) => {
+        event.preventDefault();
         const token = localStorage.getItem('token');
-        const response = await axios.put(`${BASE_URL}/fileRepo/${Params.id}`, { data }, {
+        const response = await axios.put(`${BASE_URL}/fileRepo/`, data, {
             headers: {
                 "Authorization": "Bearer " + token
             }
         }
         );
-        console.log(response, "<<<<<<<<<<<>>>>>>>>");
-    }
-
-
-
-
-    const handleDataSubmit = event => {
-        event.preventDefault();
-        let errorObj = EditFleRepo(data, coverImage);
-        if (Object.keys(errorObj).length > 0) {
-            setErrors(errorObj);
-        } else {
-            if (settingsModalPopup === false && data && coverImage) {
-                let data = new FormData();
-                for (let [key, values] of Object.entries(data)) {
-                    data.append(`${key}`, values);
-                }
-                for (let [key, values] of Object.entries(data)) {
-                    data.append(`${key}`, values)
-                }
-
-                window.scrollTo(0, 0);
-                updatefile(data);
-            }
+        if (response.status === 200) {
+            navigate("/file-repository")
+            console.log(response.message, "<<<<<<<<<<<message>>>>>>>>>>")
+            console.log(response.data, "<<<<<<<<<<<data>>>>>>>>>>")
         }
     }
+    const fetchFranchiseeList = async () => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
 
+        if (response.status === 200 && response.data.status === "success") {
+            setFranchiseeList(response.data.franchiseeList.map(data => ({
+                id: data.id,
+                cat: data.franchisee_alias,
+                key: `${data.franchisee_name}, ${data.city}`
+            })));
+        }
+    };
 
 
 
@@ -195,10 +202,10 @@ const RepoEdit = () => {
 
     const setField = (field, value) => {
         if (value === null || value === undefined) {
-            setFormSettingData({ ...formSettingData, setting_files: field });
+            setData({ ...data, setting_files: field });
 
         } else {
-            setFormSettingData({ ...formSettingData, [field]: value });
+            setData({ ...data, [field]: value });
         }
 
         if (!!errors[field]) {
@@ -209,13 +216,16 @@ const RepoEdit = () => {
         }
     };
 
+
     useEffect(() => {
         GetData();
         getFileCategory();
         getUser();
-        updatefile();
+        fetchFranchiseeList();
     }, []);
-
+    const handleTrainingCancel = () => {
+        window.location.href = "/file-repository";
+    };
 
 
     return (
@@ -245,27 +255,25 @@ const RepoEdit = () => {
                                             <div className="modal-top">
                                                 <div className="modal-top-containt">
                                                     <Row>
-                                                        <Col md={6}>
-                                                            {/* <div className="repositorydrag"> */}
+                                                        {/* <Col md={6}>
+                                                           
                                                             <DropOneFile
                                                                 onSave={setCoverImage}
                                                                 title="Image"
                                                                 setErrors={setErrors}
                                                                 setFetchedCoverImage={setFetchedCoverImage}
-                                                            // setTrainingData={setTraining}
+                                                            setTrainingData={setTraining}?
                                                             />
                                                             <small className="fileinput">(png, jpg & jpeg)</small>
                                                             {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
                                                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
-                                                            {/* </div> */}
-                                                        </Col>
+                                                            
+                                                        </Col> */}
                                                         <Col md={6}></Col>
-                                                        {/* <Form.Group>
-                                                                <DragDropRepository value={data.filesPath} onChange={data.filesPath} />
-                                                                <p className="error">{errors.setting_files}</p>
-                                                                <img src={data.filesPath} alt="" width="100px" height="100px" />
-                                                                {console.log(data.filesPath)}
-                                                            </Form.Group> */}
+                                                        <Form.Group>
+                                                            <DragDropRepository onChange={setField} />
+                                                            <p className="error">{errors.setting_files}</p>
+                                                        </Form.Group>
                                                     </Row>
                                                     <div className="toggle-switch">
 
@@ -330,6 +338,103 @@ const RepoEdit = () => {
                                                 <Row className="mt-4">
                                                     <Col lg={3} md={6}>
                                                         <Form.Group>
+                                                            <Form.Label>Send to all franchisee:</Form.Label>
+                                                            <div className="new-form-radio d-block">
+                                                                <div className="new-form-radio-box">
+                                                                    <label for="all">
+                                                                        <input
+                                                                            type="radio"
+                                                                            checked={sendToAllFranchisee === 'all'}
+                                                                            name="send_to_all_franchisee"
+                                                                            id="all"
+                                                                            onChange={() => {
+                                                                                setFormSettings(prevState => ({
+                                                                                    ...prevState,
+                                                                                    assigned_franchisee: ['all']
+                                                                                }));
+                                                                                setSendToAllFranchisee('all')
+                                                                            }}
+                                                                        />
+                                                                        <span className="radio-round"></span>
+                                                                        <p>Yes</p>
+                                                                    </label>
+                                                                </div>
+                                                                <div className="new-form-radio-box m-0 mt-3">
+                                                                    <label for="none">
+                                                                        <input
+                                                                            type="radio"
+                                                                            name="send_to_all_franchisee"
+                                                                            checked={sendToAllFranchisee === 'none'}
+                                                                            id="none"
+                                                                            onChange={() => {
+                                                                                setFormSettings(prevState => ({
+                                                                                    ...prevState,
+                                                                                    assigned_franchisee: []
+                                                                                }));
+                                                                                setSendToAllFranchisee('none')
+                                                                            }}
+                                                                        />
+                                                                        <span className="radio-round"></span>
+                                                                        <p>No</p>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col lg={9} md={12}>
+                                                        <Form.Group>
+                                                            <Form.Label>Select Franchisee</Form.Label>
+                                                            <div className="select-with-plus">
+                                                                {/* <Multiselect
+                                                                   
+                                                                    placeholder={"Select User Names"}
+                                                                    displayValue="key"
+                                                                    selectedValues={franchiseeList?.filter(d => parseInt(data?.franchise) === d.id)}
+                                                                    className="multiselect-box default-arrow-select"
+                                                                    onKeyPressFn={function noRefCheck() { }}
+                                                                    onRemove={function noRefCheck(data) {
+                                                                        setData((prevState) => ({
+                                                                            ...prevState,
+                                                                            franchise: [...data.map(data => data.id)],
+                                                                        }));
+                                                                    }}
+                                                                    onSelect={function noRefCheck(data) {
+                                                                        setData((prevState) => ({
+                                                                            ...prevState,
+                                                                            franchise: [...data.map((data) => data.id)],
+                                                                        }));
+                                                                    }}
+                                                                    options={franchiseeList}
+                                                                /> */}
+                                                                <Multiselect
+                                                                    disable={sendToAllFranchisee === 'all'}
+                                                                    placeholder={"Select User Names"}
+                                                                    displayValue="key"
+                                                                    className="multiselect-box default-arrow-select"
+                                                                    onRemove={function noRefCheck(data) {
+                                                                        setFormSettings((prevState) => ({
+                                                                            ...prevState,
+                                                                            franchise: [...data.map(data => data.id)],
+                                                                        }));
+                                                                    }}
+                                                                    selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
+                                                                    onSelect={(selectedOptions) => {
+                                                                        setData((prevState) => ({
+                                                                            ...prevState,
+                                                                            franchise: [...selectedOptions.map(option => option.id + "")]
+                                                                        }));
+                                                                    }}
+                                                                    options={franchiseeList}
+                                                                />
+                                                            </div>
+                                                        </Form.Group>
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mt-4">
+                                                    <Col lg={3} md={6}>
+                                                        <Form.Group>
                                                             <Form.Label>Accessible to:</Form.Label>
                                                             <div className="new-form-radio d-block">
                                                                 <div className="new-form-radio-box">
@@ -388,20 +493,20 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="coordinator"
-                                                                            checked={data?.assigned_roles?.toString().includes('coordinator')}
+                                                                            checked={data?.user_roles?.toString().includes('coordinator')}
                                                                             onChange={() => {
-                                                                                if (data.assigned_roles?.includes("coordinator")) {
-                                                                                    let Data = data.assigned_roles.filter(t => t !== "coordinator");
+                                                                                if (data.user_roles?.includes("coordinator")) {
+                                                                                    let Data = data.user_roles.filter(t => t !== "coordinator");
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        assigned_roles: [...Data]
+                                                                                        user_roles: [...Data]
                                                                                     }));
                                                                                 }
 
-                                                                                if (!data.assigned_roles?.includes("coordinator"))
+                                                                                if (!data.user_roles?.includes("coordinator"))
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        assigned_roles: [...data.assigned_roles, "coordinator"]
+                                                                                        user_roles: [...data.user_roles, "coordinator"]
                                                                                     }))
                                                                             }}
                                                                         />
@@ -413,20 +518,20 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="educator"
-                                                                            checked={data?.assigned_roles?.toString().includes('educator')}
+                                                                            checked={data?.user_roles?.toString().includes('educator')}
                                                                             onChange={() => {
-                                                                                if (data.assigned_roles?.includes("educator")) {
-                                                                                    let Data = data.assigned_roles.filter(t => t !== "educator");
+                                                                                if (data.user_roles?.includes("educator")) {
+                                                                                    let Data = data.user_roles.filter(t => t !== "educator");
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        assigned_roles: [...Data]
+                                                                                        user_roles: [...Data]
                                                                                     }));
                                                                                 }
 
-                                                                                if (!data.assigned_roles?.includes("educator"))
+                                                                                if (!data.user_roles?.includes("educator"))
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        assigned_roles: [...data.assigned_roles, "educator"]
+                                                                                        user_roles: [...data.user_roles, "educator"]
                                                                                     }))
                                                                             }}
 
@@ -439,23 +544,21 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="parent"
-                                                                            checked={data?.assigned_roles.includes('parent')}
+                                                                            checked={data?.user_roles.includes('parent')}
                                                                             onChange={() => {
-                                                                                if (data.assigned_roles?.includes("parent")) {
-                                                                                    let Data = data.assigned_roles.filter(t => t !== "parent");
+                                                                                if (data.user_roles?.includes("parent")) {
+                                                                                    let Data = data.user_roles.filter(t => t !== "parent");
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        assigned_roles: [...Data]
+                                                                                        user_roles: [...Data]
                                                                                     }));
                                                                                 }
-
-                                                                                if (!data.assigned_roles?.includes("parent"))
+                                                                                if (!data.user_roles?.includes("parent"))
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        assigned_roles: [...data.assigned_roles, "parent"]
+                                                                                        user_roles: [...data.user_roles, "parent"]
                                                                                     }))
                                                                             }}
-
                                                                         />
                                                                         <span className="checkmark"></span>
                                                                     </label>
@@ -465,23 +568,23 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="all_roles"
-                                                                            checked={data?.assigned_roles?.includes('all')}
+                                                                            checked={data?.user_roles?.includes('all')}
                                                                             onChange={() => {
-                                                                                if (data.assigned_roles?.includes("coordinator")
-                                                                                    && data.assigned_roles.includes("educator")
-                                                                                    && data.assigned_roles.includes("parent")) {
+                                                                                if (data.user_roles?.includes("coordinator")
+                                                                                    && data.user_roles.includes("educator")
+                                                                                    && data.user_roles.includes("parent")) {
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        assigned_roles: [],
+                                                                                        user_roles: [],
                                                                                     }));
                                                                                 }
-                                                                                if (!data.assigned_roles?.includes("coordinator")
-                                                                                    && !data.assigned_roles.includes("educator")
-                                                                                    && !data.assigned_roles.includes("parent")
+                                                                                if (!data.user_roles?.includes("coordinator")
+                                                                                    && !data.user_roles.includes("educator")
+                                                                                    && !data.user_roles.includes("parent")
                                                                                 )
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        assigned_roles: ["coordinator", "educator", "parent"]
+                                                                                        user_roles: ["coordinator", "educator", "parent"]
                                                                                     })
                                                                                     )
                                                                             }} />
@@ -514,10 +617,14 @@ const RepoEdit = () => {
                                                             </Form.Group>
                                                         ) : null}
                                                     </Col>
-                                                    <Form.Group className="mb-3" controlId="formBasicPassword" align-items-center>
-                                                        <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} >Cancel</Button>
-                                                        <Button type="submit" onClick={updatefile} > Save Details</Button>
-                                                    </Form.Group>
+                                                    <div className="d-flex justify-content-center my-5">
+                                                        <Form.Group className="mb-3" controlId="formBasicPassword">
+
+                                                            {/* <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={handleTrainingCancel}>Cancel</Button> */}
+                                                            <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => navigate(-1)}>Cancel</Button>
+                                                            <Button type="submit" onClick={handleDataSubmit} > Save Details</Button>
+                                                        </Form.Group>
+                                                    </div>
                                                 </Row>
                                             </div>
                                         </div>

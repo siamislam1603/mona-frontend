@@ -28,7 +28,7 @@ import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import { createFileRepoValidation } from '../helpers/validation';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import FileRepoShairWithme from './FileRepoShairWithme';
 import FileRepodAddbyMe from './FileRepodAddbyMe';
 
@@ -65,6 +65,7 @@ const selectRow = {
 
 const FileRepository = () => {
   let counter = 0;
+  const Navigate = useNavigate();
   const [count, setCount] = useState(0);
   const [show, setShow] = useState(false);
   const [groupFlag, setGroupFlag] = useState(false);
@@ -87,11 +88,9 @@ const FileRepository = () => {
     search: ""
   });
   const [formSettings, setFormSettings] = useState({
-    user_roles: [],
     assigned_franchisee: [],
-    assigned_users: []
   });
-
+  console.log(formSettings, "formSettings")
   const [tabFlag, setTabFlag] = useState(true);
   const [fileRepoData, setFileRepoData] = useState([]);
   const [assigned_usersMeFileRepoData, setassigned_usersMeFileRepoData] = useState([]);
@@ -147,6 +146,7 @@ const FileRepository = () => {
     getFilesassigned_usersMeData();
     getFileCategory();
     getUser();
+    onSubmit();
   }, []);
 
   // if (!post) return null;
@@ -178,6 +178,7 @@ const FileRepository = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
+
     fetch(`${BASE_URL}/auth/users`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -213,11 +214,13 @@ const FileRepository = () => {
       reader.onerror = (error) => reject(error);
     });
 
+
   const onSubmit = async (e) => {
     e.preventDefault();
     selectedUser?.map((item) => {
       selectedFranchiseeId += item.id + ',';
     });
+
     setLoaderFlag(true);
 
     var myHeaders = new Headers();
@@ -226,19 +229,19 @@ const FileRepository = () => {
       'Authorization',
       'Bearer ' + localStorage.getItem('token')
     );
-    console.log(localStorage, "localStorage");
-
     const file = formSettingData.setting_files[0];
     console.log('file------->', file);
     const blob = await fetch(await toBase64(file)).then((res) => res.blob());
     console.log('reader---->');
     var formdata = new FormData();
+
     formdata.append('image', blob, file.name);
     formdata.append('description', formSettingData.meta_description);
     formdata.append('title', 'abc');
     formdata.append('createdBy', localStorage.getItem('user_name'));
     formdata.append('userId', localStorage.getItem('user_id'));
     formdata.append('categoryId', formSettingData.file_category);
+    formdata.append('franchisee', formSettings.assigned_franchisee);
     if (
       formSettingData.accessible_to_role === null ||
       formSettingData.accessible_to_role === undefined
@@ -251,7 +254,8 @@ const FileRepository = () => {
         'accessibleToAll',
         true
       );
-    } else {
+    }
+    else {
       if (formSettingData.accessible_to_role === 1) {
         formdata.append(
           'user_roles',
@@ -288,13 +292,13 @@ const FileRepository = () => {
         );
       }
     }
-
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: formdata,
       redirect: 'follow',
     };
+
 
     fetch(`${BASE_URL}/fileRepo/`, requestOptions)
       .then((response) => {
@@ -303,17 +307,20 @@ const FileRepository = () => {
         if (response.statusText === "Created") {
           setLoaderFlag(false);
           setShow(false);
-          this.props.history.push(`/file-repository`);
+          Navigate(`/file-repository`);
         }
       })
       .then((result) => {
         if (result) {
           setLoaderFlag(false);
           setShow(false);
+          Navigate('/file-repository')
         }
       })
       .catch((error) => console.log('error', error));
   };
+
+  // { console.log(formSettingData.setting_files, ")>>>>>>>>>>") }
 
   const getFilesassigned_usersMeData = () => {
     var myHeaders = new Headers();
@@ -693,8 +700,6 @@ const FileRepository = () => {
                   </Form.Group>
                 </Col>
               </Row>
-
-
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
@@ -811,6 +816,7 @@ const FileRepository = () => {
                   </Form.Group>
                 </Col>
                 <Col lg={9} md={12}>
+                  {console.log(formSettingData, "{console.log(...formSettingData)}")}
                   {formSettingData.accessible_to_role === 1 ? (
                     <Form.Group>
                       <Form.Label>Select User Roles</Form.Label>

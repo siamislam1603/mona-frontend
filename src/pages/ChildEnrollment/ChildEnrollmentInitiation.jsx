@@ -76,6 +76,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   }
 
   useEffect(() => {
+    console.log('FETCHING EDUCATOR LIST!');
     fetchEducatorList();
   }, [selectedFranchisee])
   

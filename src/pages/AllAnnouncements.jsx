@@ -90,29 +90,52 @@ const getRelatedFileName = (str) => {
   let name = fileName.concat(".",ext)
   return name;
 }
+// const getAddedTime = (str) =>{
+//   // const Added= moment(str).format('YYYY-MM-DD')
+//   // console.log("THe astring",str)
+//   const Added= moment(str).format('DD/MM/YYYY')
+//   // console.log("THe data",dateww)
+//   var today = new Date();
+//   let d = new Date(today);
+//   let month = (d.getMonth() + 1).toString().padStart(2, '0');
+//   let day = d.getDate().toString().padStart(2, '0');
+//   let year = d.getFullYear();
+//    let datae =  [day, month, year].join('/');
+//   //  console.log("THE DATE",datae,Added)
+//    let temp;
+//    if(datae === Added){
+//     temp = "Added today";
+//    }
+
+//    if(Added < datae){
+//     temp = Added;
+//     // console.log("THE added date i smaller",typeof Added, typeof datae);
+//    }
+
+//    return temp;
+// }
 const getAddedTime = (str) =>{
-  // const Added= moment(str).format('YYYY-MM-DD')
-  // console.log("THe astring",str)
   const Added= moment(str).format('DD/MM/YYYY')
-  // console.log("THe data",dateww)
   var today = new Date();
   let d = new Date(today);
   let month = (d.getMonth() + 1).toString().padStart(2, '0');
   let day = d.getDate().toString().padStart(2, '0');
   let year = d.getFullYear();
    let datae =  [day, month, year].join('/');
-  //  console.log("THE DATE",datae,Added)
-   let temp;
+  //  const date1 = new Date(datae);
+  //  const date2 = new Date(str);
+   console.log("THE Date1",Added,datae)
    if(datae === Added){
-    temp = "Added today";
+    return "Added today"
    }
-
-   if(Added < datae){
-    temp = Added;
-    // console.log("THE added date i smaller",typeof Added, typeof datae);
+   else if(Added<datae){
+    return Added
    }
+   else {
+    return Added
+   }
+  // return Added
 
-   return temp;
 }
 useEffect(() => {
   AllAnnouncementData()
@@ -272,11 +295,11 @@ useEffect(() =>{
                                      </div>
                                    </div>
    
-                                  {details?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+
+                          {details?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
                                      <div className="cont">
                                      <div className="related-files">
                                        {details?.announcement_files?.map((detail,index) =>(
-                                         
                                               <>
                                                
                                               {detail.fileType !== ".mp4" && !detail.is_deleted ?(

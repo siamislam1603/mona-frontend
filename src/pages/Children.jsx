@@ -315,7 +315,7 @@ const Children = () => {
                                     View Enrolment
                                 </button>
                                 {
-                                    (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId) &&
+                                    (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && (parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId)) && localStorage.getItem('user_role') !== 'guardian' &&
                                     <p style={{ fontSize: "12px", color: "red", textAlign: 'center', marginTop:   "3px" }}>Pending for consent!</p>
                                 }
                             </div>

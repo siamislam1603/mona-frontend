@@ -80,8 +80,13 @@ const EditUser = () => {
     console.log("The reponse", response)
     if(response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
-      console.log('USER:', user);
-      copyDataToState(user);
+
+      if(Object.keys(user).length > 0) {
+        copyDataToState(user);
+      } else {
+        localStorage.setItem('success_msg', 'User doesn\'t exist!');
+        window.location.href="/user-management";
+      }
     }
   };
 
@@ -134,6 +139,8 @@ const EditUser = () => {
         });
 
         if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
+          console.log('WE ARE DONE HERE: I');
+          updateEngageBayContactList(formData);
           setCreateUserModal(false);
           setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
@@ -145,13 +152,76 @@ const EditUser = () => {
       }
 
       if(signatureUploaded !== true) {
-        localStorage.setItem('success_msg', 'User updated successfully!');
-        window.location.href = '/user-management';
+        console.log('WE ARE DONE HERE: II')
+        updateEngageBayContactList(formData);
       }
     } else if (response.status === 200 && response.data.status === 'fail') {
       setTopErrorMessage(response.data.msg);
     }
   };
+
+  const updateEngageBayContactList = async (data) => {
+    // PAYLOAD TO BE USED WHILE CREATING OR UPDATING
+    let payload = {
+      email: data.email,
+      role: data.role,
+      fullname: data.fullname,
+      city: data.city,
+      postalCode: data.postalCode,
+      firstname: data.fullname.split(" ")[0],
+      lastname: data.fullname.split(" ")[1],
+      address: data.address,
+      phone: data.phone
+    };
+
+    console.log('ENGAGEBAY PAYLOAD:', payload);
+
+    // CHECKING WHETHER THE RECORD WITH GIVEN MAIL EXISTS OR NOT
+    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`);
+
+    if(response.status === 200 && response.data.isRecordFetched === 0) {
+
+      // RECORD WITH THE AFOREMENTIONED EMAIL DOESN'T EXIST, 
+      // HENCE, CREATING A NEW RECORD INSIDE ENGAGEBAY
+      // WITH THE GIVEN DETAILS
+      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload);
+  
+      if(createResponse.status === 200 && createResponse.data.status === "success") {
+        console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
+        localStorage.setItem('success_msg', 'User updated successfully!');
+        window.location.href = '/user-management';
+      } else {
+        console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
+      }
+
+    } else if(response.status === 200 && response.data.isRecordFetched === 1) {
+
+      // RECORD WITH THE AFOREMENTIONED EMAIL ALREADY EXISTS, 
+      // HENCE, UPDATING THE RECORD
+      // WITH THE GIVEN DETAILS
+      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload);
+
+      if(updateResponse.status === 201 && updateResponse.data.status === "success") {
+        
+        console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
+        localStorage.setItem('success_msg', 'User updated successfully!');
+        window.location.href = '/user-management';
+        // setLoader(false);
+        // setCreateUserModal(false);
+        // localStorage.setItem('success_msg', 'User created successfully!');
+
+        // if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+        //   window.location.href=`/children/${data.id}`;
+        // } else {
+        //   window.location.href="/user-management";
+        // }
+
+      } else {
+        console.log('COULDN\'T UPDATE THE ENGAGEBAY CONTACT!');
+      }
+    }
+
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -461,6 +531,7 @@ const EditUser = () => {
                             <Select
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
+                              isDisabled={localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator'}
                               value={userRoleData.filter(d => d.value === formData?.role) || ""}
                               options={userRoleData}
                               onChange={(e) =>
@@ -608,13 +679,8 @@ const EditUser = () => {
                                 value={formData?.nominated_assistant || ""}
                                 onChange={(e) => {
                                   handleChange(e);
-                                  setFormErrors(prevState => ({
-                                    ...prevState,
-                                    nominated_assistant: null
-                                  }));
                                 }}
                               />
-                              { formErrors.nominated_assistant !== null && <span className="error">{formErrors.nominated_assistant}</span> }
                             </Form.Group>
                           }
                           
@@ -698,7 +764,7 @@ const EditUser = () => {
                               type="date"
                               disabled={true}
                               name="terminationDate"
-                              value={formData?.terminationDate}
+                              value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
                               onChange={handleChange}
                             />
                             {

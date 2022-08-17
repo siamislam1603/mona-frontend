@@ -131,7 +131,11 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
           </div>
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
-            <Button variant="primary" type="submit" onClick={handleDataSubmit}>Next</Button>
+            <Button
+              disabled={acceptedAllPoints === false} 
+              variant="primary" 
+              type="submit" 
+              onClick={handleDataSubmit}>Next</Button>
           </div>
         </Form>
       </div>

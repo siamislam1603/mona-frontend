@@ -185,9 +185,10 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   //   }
   // }, [formSettings?.assigned_franchisee]);
 
-  formSettings && console.log('FORM SETTINGS:', formSettings);
-  fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
-  // otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
+  // formSettings && console.log('FORM SETTINGS:', formSettings);
+  // fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
+  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
+  myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
   return (
     <>
       <div id="main">

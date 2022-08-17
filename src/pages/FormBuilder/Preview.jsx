@@ -40,8 +40,11 @@ const Preview = (props) => {
     };
 
     fetch(
-      `${BASE_URL}/field?form_name=${location.pathname.split('/')[location.pathname.split('/').length - 1]
-      }`,
+      `${BASE_URL}/field?form_name=${encodeURIComponent(
+        location.pathname
+          .split('/')
+          [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+      )}`,
       requestOptions
     )
       .then((response) => response.text())
@@ -71,16 +74,22 @@ const Preview = (props) => {
                     <Button
                       onClick={() => {
                         navigate('/form/field/add', {
-                          state: { id: location?.state?.id, form_name: location?.state?.form_name, }
+                          state: {
+                            id: location?.state?.id,
+                            form_name: location?.state?.form_name,
+                          },
                         });
                       }}
                     >
                       <img src="../../img/back-arrow.svg" />
                     </Button>
-                    <h4 className="mynewForm">{`Preview - ${location.pathname.split('/')[
-                      location.pathname.split('/').length - 1
-                      ]
-                      }`}</h4>
+                    <h4 className="mynewForm text-capitalize">{`Preview - ${location.pathname
+                        .split('/')
+                        [location.pathname.split('/').length - 1].replaceAll(
+                          '%20',
+                          ' '
+                        )
+                    }`}</h4>
                   </div>
                   <div className="userBox">
                     <p>Created by:</p>
