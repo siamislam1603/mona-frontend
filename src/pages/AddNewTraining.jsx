@@ -64,7 +64,8 @@ const AddNewTraining = () => {
     description: "",
     meta_description: "",
     category_id: "",
-    time_required_to_complete: "" 
+    time_required_to_complete: "",
+    training_form_id: "" 
   });
   const [trainingSettings, setTrainingSettings] = useState({ 
     start_date: "", 
@@ -85,6 +86,7 @@ const AddNewTraining = () => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
+  const [trainingFormData, setTrainingFormData] = useState([]);
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
@@ -212,6 +214,20 @@ const AddNewTraining = () => {
     }
   };
 
+  // FETCHING TRAINING FORM DATA
+  const fetchTrainingFormData = async () => {
+    const response = await axios.get(`${BASE_URL}/training/forms/training`);
+
+    if(response.status === 200 && response.data.status === "success") {
+      const { formData } = response.data;
+      setTrainingFormData(formData.map(d => ({
+        id: d.id,
+        label: d.form_name,
+        value: d.form_name
+      })));
+    } 
+  }
+
   // FETCHING TRAINING CATEGORIES
   const fetchTrainingCategories = async () => {
     const token = localStorage.getItem('token');
@@ -303,6 +319,7 @@ const AddNewTraining = () => {
     fetchUserRoles();
     fetchTrainingCategories();
     fetchFranchiseeList();
+    fetchTrainingFormData();
   }, []);
 
 
@@ -490,6 +507,29 @@ const AddNewTraining = () => {
                         {/* <Form.Control.Feedback type="invalid">
                             {errors.select_hour}
                           </Form.Control.Feedback> */}
+                      </Col>
+
+                      <Col md={6} className="mb-3">
+                        <Form.Group>
+                          <Form.Label>Select Training Form*</Form.Label>
+                          <Select
+                            closeMenuOnSelect={true}
+                            components={animatedComponents}
+                            options={trainingFormData}
+                            onChange={(event) => {
+                              setTrainingData((prevState) => ({
+                                ...prevState,
+                                training_form_id: event.id,
+                              }));
+
+                              setErrors(prevState => ({
+                                ...prevState,
+                                training_form_id: null
+                              }));
+                            }}
+                          />
+                          { errors.training_form_id && <span className="error">{errors.training_form_id}</span> }
+                        </Form.Group>
                       </Col>
                     </Row>
                     <Row>
