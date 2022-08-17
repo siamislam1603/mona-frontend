@@ -6,6 +6,7 @@ import axios from "axios";
 import AnnouncementVideo from "./AnnouncementVideo";
 import { debounce } from 'lodash';
 import moment from 'moment';
+import { verifyPermission } from "../helpers/roleBasedAccess";
 const AllEvent = (props) => {
   const [allEventData,setAllEventData] = useState([])
   const [show, setShow] = useState(false);
@@ -54,15 +55,38 @@ const getAddedTime = (str) =>{
   let month = (d.getMonth() + 1).toString().padStart(2, '0');
   let day = d.getDate().toString().padStart(2, '0');
   let year = d.getFullYear();
-   let datae =  [year, month, day].join('/');
-   
-   if(datae == Added){
+   let datae =  [day, month, year].join('/');
+  //  const date1 = new Date(datae);
+  //  const date2 = new Date(str);
+   console.log("THE Date1",Added,datae)
+   if(datae === Added){
     return "Added today"
    }
-   if(Added<datae){
+   else if(Added<datae){
     return Added
    }
+   else {
+    return Added
+   }
+  // return Added
+
 }
+// const getAddedTime = (str) =>{
+//   const Added= moment(str).format('DD/MM/YYYY')
+//   var today = new Date();
+//   let d = new Date(today);
+//   let month = (d.getMonth() + 1).toString().padStart(2, '0');
+//   let day = d.getDate().toString().padStart(2, '0');
+//   let year = d.getFullYear();
+//    let datae =  [year, month, day].join('/');
+   
+//    if(datae == Added){
+//     return "Added today"
+//    }
+//    if(Added<datae){
+//     return Added
+//    }
+// }
 const deleteAnnouncement = async (id) =>{
   const token = localStorage.getItem('token');
   const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
@@ -125,20 +149,25 @@ console.log("THE EVENT PROPS",props.allEvent)
                         <img src="../img/dot-ico.svg" alt=""/>
                       </NavLink>
                    </Dropdown.Toggle> */}
-                     <Dropdown>
-                                  <Dropdown.Toggle id="extrabtn" className="ctaact">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                  {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
-                                    <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
-                                          ): (
-                                            null
-                                          )}
-                                    
-                                    <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
+                   {
+                    userRole === "franchisor_admin" || userRole === "franchisee_admin" ?
+                    (
+                      <Dropdown>
+                      <Dropdown.Toggle id="extrabtn" className="ctaact">
+                        <img src="../img/dot-ico.svg" alt=""/>
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
+                           
+                      
+                        <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    ):(
+                      null
+                    )
+                   }
+                  
                 
             </div>
             </div>
