@@ -63,7 +63,8 @@ const NewUser = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [loader, setLoader] = useState(false);
   const [createUserModal, setCreateUserModal] = useState(false);
-  const [engagebayDataObj, setEngagebayDataObj] = useState(null);
+  const [userActiveStatus, setUserActiveStatus] = useState(null);
+  const [statusPopup, setStatusPopup] = useState(true);
 
 
   // LOADER STATES
@@ -118,10 +119,8 @@ const NewUser = () => {
     }));
   };
 
-  const getEngagebayDetail = async (event) => {
-    const { value } = event.target;
-
-    const response = await axios.get(`${BASE_URL}/contacts/${value}`);
+  const getEngagebayDetail = async (email) => {
+    const response = await axios.get(`${BASE_URL}/contacts/${email}`);
     if(response.status === 200 && response.data.status === "success") {
     
       const {data} = response.data;
@@ -147,6 +146,17 @@ const NewUser = () => {
 
   };
 
+  const checkIfUserExistsAndDeactivated = async (email) => {
+    const response = await axios.get(`${BASE_URL}/auth/user/checkIfExists/${email}`);
+
+    if(response.status === 200 && response.data.isPresentAndDeactivated === 1) {
+      const { active_status } = response.data;
+      setUserActiveStatus(active_status);
+      setStatusPopup(true);
+    } else {
+      getEngagebayDetail(email);
+    }
+  }
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -518,7 +528,7 @@ const NewUser = () => {
                                 }));
                               }}
                               onBlur={(e) => {
-                                getEngagebayDetail(e);
+                                checkIfUserExistsAndDeactivated(e.target.value);;
                               }}
                             />
                             { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
@@ -852,6 +862,30 @@ const NewUser = () => {
                 </Modal>
             }
       </div>
+      <Modal
+        show={statusPopup}
+        onHide={() => setStatusPopup(false)}>
+        <Modal.Header>
+          <Modal.Title>Attention!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <div>
+              <p>A {userActiveStatus === "deleted" ? "Deleted" : "Deactivated"} User with this email already exists.</p>
+              <p>Contact your administrator to reactivate him/her.</p>
+            </div>
+        </Modal.Body>
+        <Modal.Footer>
+        <button 
+              className="modal-button"
+              onClick={() => {
+                setFormData(prevState => ({
+                  ...prevState,
+                  email: ""
+                }));
+                setStatusPopup(false)
+              }}>Okay</button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
