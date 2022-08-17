@@ -164,7 +164,17 @@ const NewUser = () => {
 
   const handleSubmit = async(event) => {
     event.preventDefault();
+    if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+      setFormData((prevState) => ({
+        ...prevState,
+        franchisee: selectedFranchisee,
+      }));
 
+      setFormErrors(prevState => ({
+        ...prevState,
+        franchisee: null
+      }));
+    }
     const errorObj = UserFormValidation(formData);
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
@@ -688,9 +698,9 @@ const NewUser = () => {
                               />
                             }
                             {
-                              (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') && 
+                              (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') && 
                               <Select
-                                placeholder={formData?.franchiseeObj?.label || "Which Franchisee?"}
+                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Which Franchisee?"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}

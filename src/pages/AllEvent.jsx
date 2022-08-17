@@ -185,7 +185,7 @@ console.log("THE EVENT PROPS",props.allEvent)
                     <div className="related-images">
               
                       {/* <div className="item"><a href="/"><img src="../img/related-pic4.png" alt=""/></a></div> */}
-                      <div className="item"><a href="/"><img src={data.coverImage} alt=""/></a></div>
+                      <div className="item"><a href="/"><img src={data?.coverImage} alt=""/></a></div>
                     
                     </div>
                   </div>

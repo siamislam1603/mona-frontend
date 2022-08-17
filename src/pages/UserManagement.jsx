@@ -47,38 +47,92 @@ const UserManagement = () => {
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
   const [deleteResponse, setDeleteResponse] = useState(null);
+  
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       if (e.target.text === 'Delete') {
 
         async function deleteUserFromDB() {
           const response = await axios.patch(
-            `${BASE_URL}/auth/user/delete/${row.userID}`,
+            `${BASE_URL}/auth/user/status/${row.userID}`,
             {
-              is_deleted: 1,
+              is_active: 2,
             }, {
             headers: {
               "Authorization": `Bearer ${localStorage.getItem('token')}`
             }
+          });
+
+          if(response.status === 201 && response.data.status === "success") {
+            fetchUserDetails();
           }
-          );
-          if (response.status === 200 && response.data.status === "success")
-            setDeleteResponse(response);
         }
 
-        if (window.confirm('Are you sure you want to delete?')) {
-
+        if (window.confirm('Are you sure you want to delete this user?')) {
           deleteUserFromDB();
-
         }
 
-        fetchUserDetails();
+        // fetchUserDetails();
       }
+
+      if(e.target.text === "Deactivate") {
+
+        async function deactivateUserFromDB() {
+          const response = await axios.patch(
+            `${BASE_URL}/auth/user/status/${row.userID}`,
+            {
+              is_active: 0,
+            }, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+
+          if(response.status === 201 && response.data.status === "success") {
+            fetchUserDetails();
+          }
+        }
+
+        if (window.confirm('Are you sure you want to deactivate this user?')) {
+          deactivateUserFromDB();
+        }
+
+        // fetchUserDetails();
+      }
+
+      if(e.target.text === "Activate") {
+        console.log('ACTIVATING USER!')
+
+        async function activateUserFromDB() {
+          const response = await axios.patch(
+            `${BASE_URL}/auth/user/status/${row.userID}`,
+            {
+              is_active: 1,
+            }, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+
+          if(response.status === 201 && response.data.status === "success") {
+            fetchUserDetails();
+          }
+        }
+
+        if (window.confirm('Are you sure you want to activate this user?')) {
+          activateUserFromDB();
+        }
+
+        // fetchUserDetails();
+      }
+
       if (e.target.text === "Edit") {
         navigate(`/edit-user/${row.userID}`);
       }
-    },
-  };
+      
+    }
+  }
+
   const selectRow = {
 
     mode: 'checkbox',
@@ -132,7 +186,16 @@ const UserManagement = () => {
       text: 'Name',
       sort: true,
       formatter: (cell) => {
+        let status = null;
         cell = cell.split(',');
+        if(parseInt(cell[3]) === 0) {
+          status = "inactive"
+        } else if(parseInt(cell[3]) === 1) {
+          status = "active"
+        } else if(parseInt(cell[3]) === 2) {
+          status = "deleted"
+        }
+        console.log('BIG STATUS:', status);
         return (
           <>
             <div className="user-list">
@@ -140,7 +203,7 @@ const UserManagement = () => {
                 <img src={cell[0]} alt="" />
               </span>
               <span className="user-name">
-                {cell[1]} <small>{cell[2]}</small>
+                {cell[1]} <small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
               </span>
             </div>
           </>
@@ -166,21 +229,21 @@ const UserManagement = () => {
       dataField: 'roleDetail',
       text: 'Action',
       formatter: (cell) => {
-        console.log('CELL:', cell);
         cell = cell.split(',');
         return (
           <>
-            {
-              (cell[0] === "guardian" && cell[1] == 0) ? (
-                  <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
-                  New Children
-                  </button>
-                ) : (cell[0] === "guardian" && cell[1] != 0) ?
-                (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
-                View Children
-              </button>
-              ) : ""
-            }
+            { 
+              (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === "franchisee_admin" || localStorage.getItem('user_role') === 'coordinator') &&
+                (cell[0] === "guardian" && cell[1] == 0) ? (
+                    <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
+                    New Children
+                    </button>
+                  ) : (cell[0] === "guardian" && cell[1] != 0) ?
+                  (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
+                  View Children
+                </button>
+                ) : ""
+              }
           </>
         );
       },
@@ -189,6 +252,15 @@ const UserManagement = () => {
       dataField: 'action',
       text: '',
       formatter: (cell) => {
+        let button = null;
+
+        if(cell === 1) {
+          button = "Deactivate";
+        } else if(cell === 2) {
+          button = "Activate";
+        } else if(cell === 0) {
+          button = "Activate"
+        }
         return (
           <>
             <div className="cta-col">
@@ -197,8 +269,9 @@ const UserManagement = () => {
                   <img src="../img/dot-ico.svg" alt="" />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                  <Dropdown.Item href="#">Edit</Dropdown.Item>
+                  {cell !== 2 && <Dropdown.Item href="#">Delete</Dropdown.Item>}
+                  <Dropdown.Item href="#">{button}</Dropdown.Item>
+                  {cell === 1 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -240,13 +313,14 @@ const UserManagement = () => {
         name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
-          .join(' ')}`,
+          .join(' ')}, ${dt.is_active}`,
         email: dt.email,
         number: dt.phone.slice(1),
         location: dt.city,
         is_deleted: dt.is_deleted,
         userID: dt.id,
-        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id
+        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
+        action: dt.is_active
       }));
 
       tempData = tempData.filter((data) => data.is_deleted === 0);

@@ -17,15 +17,16 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
     });
 
   const Delete = () => {
-    files = ""
+   return acceptedFiles = ""
   }
+
   const files = acceptedFiles.map(file => (
     <>
       <li className="mt-3" key={file.path}>
         {file.path} - {file.size} bytes
       </li>
       <span className="ms-2">
-        <a href="javascipt:void(0)">
+        <a href="javascipt:void(0)" onClick={Delete}>
           <img src="../img/removeIcon.svg" alt="" />
         </a>
       </span >
