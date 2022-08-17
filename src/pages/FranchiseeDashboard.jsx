@@ -101,7 +101,10 @@ const columns1 = [
     text: 'Child Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+      return (<>
+      <div className="user-list">
+        <span className="user-pic">
+          <img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
     },
   },
   {
@@ -408,28 +411,28 @@ const FranchiseeDashboard = () => {
                           </header>
                           <div className="activity-list">
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                               <a className="item" style={{cursor:"not-allowed"}}>
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.auditForms}</span>
