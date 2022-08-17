@@ -25,11 +25,11 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
       <li className="mt-3" key={file.path}>
         {file.path} - {file.size} bytes
       </li>
-      <span className="ms-2">
+      {/* <span className="ms-2">
         <a href="javascipt:void(0)" onClick={Delete}>
           <img src="../img/removeIcon.svg" alt="" />
         </a>
-      </span >
+      </span > */}
     </>
   ));
 

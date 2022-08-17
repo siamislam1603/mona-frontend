@@ -112,16 +112,6 @@
     padding: 3px;
 }
 
-
-a {
-    text-decoration: none;
-    color: white;
-}
-
-a div {
-    padding: 2px;
-}
-
 .forms-managment-section {
     display: flex;
     padding: 40px 0;
