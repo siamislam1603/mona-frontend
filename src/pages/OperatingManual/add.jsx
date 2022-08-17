@@ -257,8 +257,20 @@ const AddOperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          setOperatingManualData(res?.result);
-          setFormSettingFlag(true);
+          console.log("res---->",res);
+          if(res?.success===false)
+          {
+            let errorData={...errors};
+            errorData["title"]=res?.message;
+            setErrors(errorData)
+          }
+          else
+          {
+            setOperatingManualData(res?.result);
+            setFormSettingFlag(true);
+            setErrors([])
+          }
+          
           // navigate('/operatingmanual');
         });
     }
@@ -862,6 +874,40 @@ const AddOperatingManual = () => {
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
+                  <label className="container">
+                      Franchisee Admin
+                      <input
+                        type="checkbox"
+                        name="shared_role"
+                        id="franchisee_admin"
+                        onClick={(e) => {
+                          let data = { ...formSettingData };
+                          if (
+                            !data['shared_role']
+                              .toString()
+                              .includes(e.target.id)
+                          ) {
+                            data['shared_role'] += e.target.id + ',';
+                          } else {
+                            data['shared_role'] = data['shared_role'].replace(
+                              e.target.id + ',',
+                              ''
+                            );
+                            if (data['shared_role'].includes('all')) {
+                              data['shared_role'] = data['shared_role'].replace(
+                                'all,',
+                                ''
+                              );
+                            }
+                          }
+                          setFormSettingData(data);
+                        }}
+                        checked={formSettingData?.shared_role
+                          ?.toString()
+                          .includes('franchisee_admin')}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
                     <label className="container">
                       Co-ordinators
                       <input
@@ -996,6 +1042,13 @@ const AddOperatingManual = () => {
                                 .includes('coordinator')
                             ) {
                               data['shared_role'] += 'coordinator,';
+                            }
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes('franchisee_admin')
+                            ) {
+                              data['shared_role'] += 'franchisee_admin,';
                             }
                             if (
                               !data['shared_role'].toString().includes('all')

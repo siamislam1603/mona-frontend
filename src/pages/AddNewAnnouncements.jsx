@@ -57,7 +57,8 @@ const fetchUserRoles = async () => {
 };
 
 const createAnnouncement = async (data) => {
-  console.log('CREATING THE ANNOUNCEMENT');
+  try {
+    console.log('CREATING THE ANNOUNCEMENT');
   const token = localStorage.getItem('token');
   const response = await axios.post(
     `${BASE_URL}/announcement/`, data, {
@@ -66,12 +67,14 @@ const createAnnouncement = async (data) => {
       }
     }
   );
-  console.log(response);
+  console.log("ADde anncunement response",response);
   console.log("jjjjjjjjjjjjjjjjjjjj");
   if(response.status === 200 && response.data.status === "fail"){
     setAddnewAnnouncement(false)
+    console.log("TITLE ALREADY EXIT")
     setTitleError("Title already exit")
   }
+  
 
   if(response.status === 201 && response.data.status === "success" && coverImage.length > 0) {
     console.log(typeof(coverImage));
@@ -104,35 +107,48 @@ const createAnnouncement = async (data) => {
         } else {
       
           console.log('ERROR RESPONSE!');
-          setTopErrorMessage("unable to save cover image!");
+          setTopErrorMessage("Unable to save cover image!");
+          setLoader(false)
+    setAddnewAnnouncement(false)
+
+
           setTimeout(() => {
             setTopErrorMessage(null);
           }, 3000)
         
         }
+
       
-
-        
-    
-       
     } 
+    
 
+    else if(response.status === 403 && response.data.status === "fail"){
+      console.log('ERROR RESPONSE! Permission Denied');
+      setTopErrorMessage("Permission Denied");
+      setLoader(false)
+    setAddnewAnnouncement(false)
+
+      setTimeout(() => {
+        setTopErrorMessage(null);
+      }, 3000)
+    }
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
     window.location.href="/announcements";
         
     }
+   } catch (error) {
+    console.log("ERROR ADD ANNOUNCEMNT",error)
+    if(error.response.status === 403 && error.response.data.status === "fail")
+    console.log('ERROR RESPONSE! Permission Denied');
+    setTopErrorMessage("Permission Denied");
+    setAddnewAnnouncement(false)
 
-    // else if(response.status === 200 && response.data.status === "fail") {
-    //   console.log('ERROR RESPONSE!');
-    //   const { msg } = response.data;
-    //   console.log("Annoncement Already exit",msg)
-    //   setTopErrorMessage(msg);
-    //   setTimeout(() => {
-    //     setTopErrorMessage(null);
-    //   }, 3000)
-    // }
-    // window.location.href="/announcements";
-    };  
+    setLoader(false)
+    setTimeout(() => {
+      setTopErrorMessage(null);
+    }, 3000)
+   }
+}
 
     const fetchFranchiseeUsers = async (franchisee_name) => {
       const response = await axios.get(`${BASE_URL}/role/user/${franchisee_name.split(",")[0].split(" ").map(dt => dt.charAt(0).toLowerCase() + dt.slice(1)).join("_")}`);
@@ -249,7 +265,7 @@ const createAnnouncement = async (data) => {
           });
           setAddnewAnnouncement(true)
           setLoader(true);
-        createAnnouncement(data);
+          createAnnouncement(data);
         console.log("The data",data)
        }
       }
@@ -323,6 +339,7 @@ console.log("THE handle ",announcementData)
   return (
     
     <>
+    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
      
       <div id="main">
         <section className="mainsection ">
