@@ -67,6 +67,7 @@ const MyAnnouncements = (props) => {
     let name = fileName.concat(".",ext)
     return name;
   }
+
   const getAddedTime = (str) =>{
     const Added= moment(str).format('DD/MM/YYYY')
     var today = new Date();
@@ -74,15 +75,38 @@ const MyAnnouncements = (props) => {
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [year, month, day].join('/');
-     
-     if(datae == Added){
+     let datae =  [day, month, year].join('/');
+    //  const date1 = new Date(datae);
+    //  const date2 = new Date(str);
+     console.log("THE Date1",Added,datae)
+     if(datae === Added){
       return "Added today"
      }
-     if(Added<datae){
+     else if(Added<datae){
       return Added
      }
+     else {
+      return Added
+     }
+    // return Added
+  
   }
+  // const getAddedTime = (str) =>{
+  //   const Added= moment(str).format('DD/MM/YYYY')
+  //   var today = new Date();
+  //   let d = new Date(today);
+  //   let month = (d.getMonth() + 1).toString().padStart(2, '0');
+  //   let day = d.getDate().toString().padStart(2, '0');
+  //   let year = d.getFullYear();
+  //    let datae =  [year, month, day].join('/');
+     
+  //    if(datae == Added){
+  //     return "Added today"
+  //    }
+  //    if(Added<datae){
+  //     return Added
+  //    }
+  // }
   useEffect(() =>{
     myAnnouncementData()
     const user_role = localStorage.getItem("user_role")
