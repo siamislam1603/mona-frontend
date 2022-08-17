@@ -6,6 +6,7 @@ import axios from "axios";
 import AnnouncementVideo from "./AnnouncementVideo";
 import { debounce } from 'lodash';
 import moment from 'moment';
+import { verifyPermission } from "../helpers/roleBasedAccess";
 const AllEvent = (props) => {
   const [allEventData,setAllEventData] = useState([])
   const [show, setShow] = useState(false);
@@ -148,20 +149,25 @@ console.log("THE EVENT PROPS",props.allEvent)
                         <img src="../img/dot-ico.svg" alt=""/>
                       </NavLink>
                    </Dropdown.Toggle> */}
-                     <Dropdown>
-                                  <Dropdown.Toggle id="extrabtn" className="ctaact">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                  {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
-                                    <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
-                                          ): (
-                                            null
-                                          )}
-                                    
-                                    <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
+                   {
+                    userRole === "franchisor_admin" || userRole === "franchisee_admin" ?
+                    (
+                      <Dropdown>
+                      <Dropdown.Toggle id="extrabtn" className="ctaact">
+                        <img src="../img/dot-ico.svg" alt=""/>
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
+                           
+                      
+                        <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    ):(
+                      null
+                    )
+                   }
+                  
                 
             </div>
             </div>
@@ -208,7 +214,7 @@ console.log("THE EVENT PROPS",props.allEvent)
                     <div className="related-images">
               
                       {/* <div className="item"><a href="/"><img src="../img/related-pic4.png" alt=""/></a></div> */}
-                      <div className="item"><a href="/"><img src={data.coverImage} alt=""/></a></div>
+                      <div className="item"><a href="/"><img src={data?.coverImage} alt=""/></a></div>
                     
                     </div>
                   </div>

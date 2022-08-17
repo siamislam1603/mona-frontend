@@ -139,6 +139,8 @@ const EditUser = () => {
         });
 
         if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
+          console.log('WE ARE DONE HERE: I');
+          updateEngageBayContactList(formData);
           setCreateUserModal(false);
           setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
@@ -150,13 +152,76 @@ const EditUser = () => {
       }
 
       if(signatureUploaded !== true) {
-        localStorage.setItem('success_msg', 'User updated successfully!');
-        window.location.href = '/user-management';
+        console.log('WE ARE DONE HERE: II')
+        updateEngageBayContactList(formData);
       }
     } else if (response.status === 200 && response.data.status === 'fail') {
       setTopErrorMessage(response.data.msg);
     }
   };
+
+  const updateEngageBayContactList = async (data) => {
+    // PAYLOAD TO BE USED WHILE CREATING OR UPDATING
+    let payload = {
+      email: data.email,
+      role: data.role,
+      fullname: data.fullname,
+      city: data.city,
+      postalCode: data.postalCode,
+      firstname: data.fullname.split(" ")[0],
+      lastname: data.fullname.split(" ")[1],
+      address: data.address,
+      phone: data.phone
+    };
+
+    console.log('ENGAGEBAY PAYLOAD:', payload);
+
+    // CHECKING WHETHER THE RECORD WITH GIVEN MAIL EXISTS OR NOT
+    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`);
+
+    if(response.status === 200 && response.data.isRecordFetched === 0) {
+
+      // RECORD WITH THE AFOREMENTIONED EMAIL DOESN'T EXIST, 
+      // HENCE, CREATING A NEW RECORD INSIDE ENGAGEBAY
+      // WITH THE GIVEN DETAILS
+      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload);
+  
+      if(createResponse.status === 200 && createResponse.data.status === "success") {
+        console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
+        localStorage.setItem('success_msg', 'User updated successfully!');
+        window.location.href = '/user-management';
+      } else {
+        console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
+      }
+
+    } else if(response.status === 200 && response.data.isRecordFetched === 1) {
+
+      // RECORD WITH THE AFOREMENTIONED EMAIL ALREADY EXISTS, 
+      // HENCE, UPDATING THE RECORD
+      // WITH THE GIVEN DETAILS
+      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload);
+
+      if(updateResponse.status === 201 && updateResponse.data.status === "success") {
+        
+        console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
+        localStorage.setItem('success_msg', 'User updated successfully!');
+        window.location.href = '/user-management';
+        // setLoader(false);
+        // setCreateUserModal(false);
+        // localStorage.setItem('success_msg', 'User created successfully!');
+
+        // if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+        //   window.location.href=`/children/${data.id}`;
+        // } else {
+        //   window.location.href="/user-management";
+        // }
+
+      } else {
+        console.log('COULDN\'T UPDATE THE ENGAGEBAY CONTACT!');
+      }
+    }
+
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -234,15 +299,15 @@ const EditUser = () => {
     });
     if (response.status === 200) {
       const { userRoleList } = response.data;
-      let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
+      // let newRoleList = userRoleList.filter(role => role.role_name === 'franchisor_admin');
       
-      newRoleList = newRoleList.map(d => ({
+      let newRoleList = userRoleList.map(d => ({
         value: d.role_name,
         label: d.role_label,
       }));
 
       if(localStorage.getItem('user_role') === 'franchisee_admin') {
-        newRoleList = newRoleList.filter(role => role.label !== 'Franchisee Admin');
+        newRoleList = newRoleList.filter(role => role.label !== 'Franchisor Admin');
       }
 
       if(localStorage.getItem('user_role')) {
@@ -404,8 +469,9 @@ const EditUser = () => {
 
   // editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
-  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
+  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
   formData && console.log('FORM DATA:', formData);
+  userRoleData && console.log('USER ROLE DATA:', userRoleData);
   return (
     <>
       <div id="main">
@@ -466,16 +532,16 @@ const EditUser = () => {
                             <Select
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
-                              isDisabled={true}
+                              isDisabled={localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator'}
                               value={userRoleData.filter(d => d.value === formData?.role) || ""}
                               options={userRoleData}
-                              // onChange={(e) =>
-                              //   setFormData((prevState) => ({
-                              //     ...prevState,
-                              //     role: e.value,
-                              //     roleObj: e
-                              //   }))
-                              // }
+                              onChange={(e) =>
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  role: e.value,
+                                  roleObj: e
+                                }))
+                              }
                             />
                             <span className="error">
                               {!formData.role && formErrors.role}
@@ -699,7 +765,7 @@ const EditUser = () => {
                               type="date"
                               disabled={true}
                               name="terminationDate"
-                              value={formData?.terminationDate}
+                              value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
                               onChange={handleChange}
                             />
                             {

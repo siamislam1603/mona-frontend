@@ -6,6 +6,7 @@ import Select from "./InputFields/Select";
 import Signature from "./InputFields/Signature";
 import FileUpload from "./InputFields/FileUpload";
 import ImageUpload from "./InputFields/ImageUpload";
+import Headings from "./InputFields/Headings";
 
 const InputFields = (props) => {
   let inputElement = null;
@@ -15,6 +16,9 @@ const InputFields = (props) => {
   switch (controls.field_type) {
     case "radio":
       inputElement = <Radio {...controls} />;
+      break;
+    case "headings":
+      inputElement = <Headings {...controls} />;
       break;
     case "checkbox":
       inputElement = <Checkbox {...controls} />;

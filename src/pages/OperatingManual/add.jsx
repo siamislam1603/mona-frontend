@@ -266,24 +266,39 @@ const AddOperatingManual = () => {
   const OnCategorySubmit = (e) => {
     e.preventDefault();
     const newErrors = createCategoryValidation(categoryData);
+
     if (Object.keys(newErrors).length > 0) {
       setCategoryError(newErrors);
     } else {
-      var myHeaders = new Headers();
-      myHeaders.append('Content-Type', 'application/json');
-      fetch(`${BASE_URL}/operating_manual/category/add`, {
-        method: 'post',
-        body: JSON.stringify(categoryData),
-        headers: myHeaders,
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          setCategory(res?.result);
-          setCategoryModalFlag(false);
-          let data = operatingManualData;
-          data['category_name'] = categoryData?.category_name;
-          setOperatingManualData(data);
-        });
+      let flag = false;
+      category.map((item) => {
+        if (
+          item.category_name.toLowerCase() ===
+          categoryData?.category_name.toLowerCase()
+        ) {
+          let categoryErrorData = { ...categoryError };
+          categoryErrorData['category_name'] = 'Module already exists';
+          setCategoryError(categoryErrorData);
+          flag = true;
+        }
+      });
+      if (!flag) {
+        var myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        fetch(`${BASE_URL}/operating_manual/category/add`, {
+          method: 'post',
+          body: JSON.stringify(categoryData),
+          headers: myHeaders,
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            setCategory(res?.result);
+            setCategoryModalFlag(false);
+            let data = operatingManualData;
+            data['category_name'] = categoryData?.category_name;
+            setOperatingManualData(data);
+          });
+      }
     }
   };
 
@@ -575,11 +590,21 @@ const AddOperatingManual = () => {
                           <Form.Label className="formlabel">
                             Description
                           </Form.Label>
-                            {console.log("operatingManualData--->",operatingManualData)}
-                            {console.log("location?.state?.id---->",location?.state?.id)}
-                            {console.log("location?.state?.category_name---->",location?.state?.category_name)}
+                          {console.log(
+                            'operatingManualData--->',
+                            operatingManualData
+                          )}
+                          {console.log(
+                            'location?.state?.id---->',
+                            location?.state?.id
+                          )}
+                          {console.log(
+                            'location?.state?.category_name---->',
+                            location?.state?.category_name
+                          )}
                           {location?.state?.id &&
-                          location?.state?.category_name && operatingManualData?.description ? (
+                          location?.state?.category_name &&
+                          operatingManualData?.description ? (
                             <MyEditor
                               name="description"
                               operatingManual={{ ...operatingManualData }}
@@ -644,7 +669,7 @@ const AddOperatingManual = () => {
                             <Button
                               variant="link"
                               onClick={() => {
-                                setImageUrl("");
+                                setImageUrl('');
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -704,8 +729,8 @@ const AddOperatingManual = () => {
                               variant="link"
                               className="remove_bin"
                               onClick={() => {
-                                setVideoUrl("");
-                                setVideoThumbnailUrl("");
+                                setVideoUrl('');
+                                setVideoThumbnailUrl('');
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -1041,7 +1066,7 @@ const AddOperatingManual = () => {
             id="contained-modal-title-vcenter"
             className="modal-heading"
           >
-            Add Category
+            Add Module
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -1049,7 +1074,7 @@ const AddOperatingManual = () => {
             <Row>
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label>Category Name</Form.Label>
+                  <Form.Label>Module Name</Form.Label>
                   <Form.Control
                     type="text"
                     name="category_name"

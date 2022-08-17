@@ -195,7 +195,25 @@ const MyAnnouncements = (props) => {
                         <img src="../img/dot-ico.svg" alt=""/>
                       </NavLink>
                    </Dropdown.Toggle> */}
-                     <Dropdown>
+                      {
+                    userRole === "franchisor_admin" || userRole === "franchisee_admin" ?
+                    (
+                      <Dropdown>
+                      <Dropdown.Toggle id="extrabtn" className="ctaact">
+                        <img src="../img/dot-ico.svg" alt=""/>
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
+                           
+                      
+                        <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    ):(
+                      null
+                    )
+                   }
+                     {/* <Dropdown>
                                   <Dropdown.Toggle id="extrabtn" className="ctaact">
                                     <img src="../img/dot-ico.svg" alt=""/>
                                   </Dropdown.Toggle>
@@ -207,7 +225,7 @@ const MyAnnouncements = (props) => {
                                     )}
                                     <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
                                   </Dropdown.Menu>
-                                </Dropdown>
+                                </Dropdown> */}
                 
             </div>
             </div>

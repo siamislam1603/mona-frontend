@@ -142,13 +142,13 @@ const Children = () => {
         });
         if (response.status === 200) {
             let defaultparents = response.data?.parentData.map((parent)=>{
-                return parent.id
+                return parent.user_parent_id
             })
-            
+
             localStorage.setItem("DefaultParents",JSON.stringify(defaultparents))
         }
 
-        // let response = await axios.get(`${BASE_URL}/user-group/users/guardian`, {
+        // let response = await axios.get(`${BASE_URL}/user-group/users/guardian`, {    
         //     headers: {
         //         "Authorization": `Bearer ${localStorage.getItem('token')}`
         //     }
@@ -315,7 +315,7 @@ const Children = () => {
                                     View Enrolment
                                 </button>
                                 {
-                                    (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId) &&
+                                    (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && (parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId)) && localStorage.getItem('user_role') !== 'guardian' &&
                                     <p style={{ fontSize: "12px", color: "red", textAlign: 'center', marginTop:   "3px" }}>Pending for consent!</p>
                                 }
                             </div>

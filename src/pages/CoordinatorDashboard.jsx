@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import paginationFactory from 'react-bootstrap-table2-paginator';
 const products = [
   {
     id: 1,
@@ -34,15 +36,15 @@ const columns = [
     text: 'Child Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
     },
   },
   {
-    dataField: 'educator',
+    dataField: 'name',
     text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
     },
   },
   {
@@ -66,10 +68,46 @@ const columns = [
 const CoordinatorDashboard = () => {
   const [count, setcount] = React.useState();
 
+  const [user, setUser] = useState([]);
+  const [userData, setUserData] = useState([]);
 
+  const Additional_Needs = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+
+    let response = await fetch(`${BASE_URL}/dashboard/coordinator/children-enrolled`, requestOptions)
+    response = await response.json();
+    setUser(response.data)
+
+    const users = response.childrenEnrolled[0].users;
+
+    console.log(users, ">>>>>>>>>");
+    let tempData = users.map((dt) => ({
+      name: `${dt.fullname}, ${dt.profile_photo}`,
+      // createdAt: dt.createdAt,
+      // creatorName: dt.creatorName + "," + dt.creatorRole,
+      // Shaired: dt.repository.repository_shares.length,
+      // categoryId: dt.categoryId
+    }));
+
+    console.log('tempData', tempData)
+    setUserData(tempData);
+  }
+
+  useEffect(() => {
+    Additional_Needs()
+  }, [])
   const count_Api = () => {
-  const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
-  let token = localStorage.getItem('token');
+    const countUrl = `${BASE_URL}/dashboard/coordinator/onboarding-count`;
+    let token = localStorage.getItem('token');
 
     axios.get(countUrl, {
       headers: {
@@ -142,7 +180,7 @@ const CoordinatorDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="Onboarding-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Onboarding</strong></h4>
@@ -178,18 +216,29 @@ const CoordinatorDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="children-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Children</strong></h4>
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            <BootstrapTable
+
+                            <ToolkitProvider
                               keyField="name"
-                              data={products}
+                              data={userData}
                               columns={columns}
-                            />
+                              search
+                            >
+                              {(props) => (
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                  pagination={paginationFactory()}
+                                />
+                              )}
+                            </ToolkitProvider>
+
+
                           </div>
                         </div>
                         {/*<div className="files-sec pb-5">

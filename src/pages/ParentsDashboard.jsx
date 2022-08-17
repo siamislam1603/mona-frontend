@@ -49,7 +49,7 @@ const ParentsDashboard = () => {
 
   const events = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard//parent/quick-access-events`, {
+    const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-events`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -64,7 +64,7 @@ const ParentsDashboard = () => {
 
   const Userannouncements = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard//parent/quick-access-announcements`, {
+    const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-announcements`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -90,28 +90,30 @@ const ParentsDashboard = () => {
     }
 
   }
-  const getAddedTime = (str) =>{
-    const Added= moment(str).format('DD/MM/YYYY')
+
+  const getAddedTime = (str) => {
+    const Added = moment(str).format('DD/MM/YYYY')
+    console.log(Added, "Added")
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [day, month, year].join('/');
+    let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-     console.log("THE Date1",Added,datae)
-     if(datae === Added){
+    console.log("THE Date1", Added, datae)
+    if (datae === Added) {
       return "Added today"
-     }
-     else if(Added<datae){
+    }
+    else if (Added < datae) {
       return Added
-     }
-     else {
+    }
+    else {
       return Added
-     }
+    }
     // return Added
-  
+
   }
   // const getAddedTime = (str) =>{
   //   // const Added= moment(str).format('YYYY-MM-DD')
@@ -129,12 +131,12 @@ const ParentsDashboard = () => {
   //    if(datae === Added){
   //     temp = "Added today";
   //    }
-  
+
   //    if(Added < datae){
   //     temp = Added;
   //     // console.log("THE added date i smaller",typeof Added, typeof datae);
   //    }
-  
+
   //    return temp;
   // }
   console.log(editTrainingData, "<<<<<<<<<<response")
@@ -229,7 +231,7 @@ const ParentsDashboard = () => {
                               return <>
                                 {!item.title ? "" : <div className="item">
                                   <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">{item.title}</a> <span className="date">{item.scheduled_date}</span></div>
+                                  <div className="name"><a href="">{item.title}</a> <span className="date">{getAddedTime(item.scheduled_date)}</span></div>
                                   <div className="cta-col">
                                     <Dropdown>
                                       <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -481,7 +483,7 @@ const ParentsDashboard = () => {
                         <div className="announcements-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
                             {announcements.map((item) => {
@@ -490,13 +492,11 @@ const ParentsDashboard = () => {
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                     <div className="name">{item.title}
-                       
                                       <div>
-                                      <span className="timesec">{getAddedTime(item?.createdAt)}</span>
+                                        <span className="timesec">{getAddedTime(item?.createdAt)}</span>
+                                      </div>
+                                    </div>
 
-                                      </div>
-                                      </div>
-                                                                                                          
                                   </a>
                                 </div>
                               </>

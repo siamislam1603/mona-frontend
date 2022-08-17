@@ -13,15 +13,23 @@ const CoparentAssignPopup = (props) => {
     const assignParents = async() => {
         console.log(selectedParents,"selPar")
         let childId = localStorage.getItem("SelectedChild")
-        let response =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds: selectedParents}, {
+        let clearMapping =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds: []}, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         });
-        if (response.status === 201) {
-            handleClose()
-            window.location.reload()
-        }
+       
+        selectedParents.map(async(parent)=>{
+            let response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: parent, childId: childId}, {
+                headers: {
+                  "Authorization": `Bearer ${localStorage.getItem('token')}`
+                }
+              });
+              if (response.status === 201) {
+                handleClose()
+                window.location.reload()
+            }
+        })
         
     }
 
@@ -63,10 +71,10 @@ const selectRow = {
 };
 
 const products = props.parents.map((parent)=>({
-    id: parent.parent.parentId,
+    id: parent.id,
     name: parent.fullname + "," + (parent.profile_photo ? parent.profile_photo : "../img/user.png"),
     Location: parent.city,
-    parentId:parent.parent.parentId
+    parentId:parent.id
 }))
 
 const PopColumns = [
