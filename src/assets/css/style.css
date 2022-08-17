@@ -32,7 +32,7 @@ body{font-family: 'Noto Sans', sans-serif;font-size: var(--fontlg); color:var(--
 img{max-width:100%;height:auto;}
 b,strong{font-weight:700;}
 a,button,input[type='submit']{text-decoration:none;-webkit-transition:all ease 0.3s;-moz-transition:all ease 0.3s;-o-transition:all ease 0.3s;-ms-transition:all ease 0.3s;transition:all ease 0.3s;position:relative;display:inline-block;}
-a,.btn-link{color:var(--red);}
+a,.btn-link{color:var(--primary);}
 a:hover,a:focus{color:var(--primary);}
 ul,ol{margin-bottom:2rem;}
 li{margin-bottom:0.5rem;}
