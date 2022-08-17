@@ -299,15 +299,15 @@ const EditUser = () => {
     });
     if (response.status === 200) {
       const { userRoleList } = response.data;
-      let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
+      // let newRoleList = userRoleList.filter(role => role.role_name === 'franchisor_admin');
       
-      newRoleList = newRoleList.map(d => ({
+      let newRoleList = userRoleList.map(d => ({
         value: d.role_name,
         label: d.role_label,
       }));
 
       if(localStorage.getItem('user_role') === 'franchisee_admin') {
-        newRoleList = newRoleList.filter(role => role.label !== 'Franchisee Admin');
+        newRoleList = newRoleList.filter(role => role.label !== 'Franchisor Admin');
       }
 
       if(localStorage.getItem('user_role')) {
@@ -469,8 +469,9 @@ const EditUser = () => {
 
   // editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
-  coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
+  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
   formData && console.log('FORM DATA:', formData);
+  userRoleData && console.log('USER ROLE DATA:', userRoleData);
   return (
     <>
       <div id="main">
