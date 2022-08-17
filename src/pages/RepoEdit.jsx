@@ -15,6 +15,7 @@ const animatedComponents = makeAnimated();
 let selectedUserId = '';
 
 const RepoEdit = () => {
+
     const Params = useParams();
     const navigate = useNavigate();
     const [settingsModalPopup, setSettingsModalPopup] = useState(false);
@@ -222,7 +223,9 @@ const RepoEdit = () => {
         getUser();
         fetchFranchiseeList();
     }, []);
-
+    const handleTrainingCancel = () => {
+        window.location.href = "/file-repository";
+    };
 
 
     return (
@@ -616,7 +619,9 @@ const RepoEdit = () => {
                                                     </Col>
                                                     <div className="d-flex justify-content-center my-5">
                                                         <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                            <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={navigate.goBack} >Cancel</Button>
+
+                                                            {/* <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={handleTrainingCancel}>Cancel</Button> */}
+                                                            <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => navigate(-1)}>Cancel</Button>
                                                             <Button type="submit" onClick={handleDataSubmit} > Save Details</Button>
                                                         </Form.Group>
                                                     </div>
