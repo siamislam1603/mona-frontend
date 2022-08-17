@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import TopHeader from '../../components/TopHeader';
 import LeftNavbar from '../../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
@@ -204,6 +204,7 @@ const AddOperatingManual = () => {
         data['shared_with'] = selectedUserId
           ? selectedUserId.slice(0, -1)
           : null;
+        data['link']=FRONT_BASE_URL+"/operating_manual?select=";
         // data['shared_role'] = null;
         // data['accessible_to_role'] = formSettingData.accessible_to_role;
         // data['accessible_to_all'] = false;
@@ -217,7 +218,7 @@ const AddOperatingManual = () => {
       upperRoleUser = getUpperRoleUser();
       data['upper_role'] = upperRoleUser;
       data['franchisee_id'] = selectedFranchiseeId;
-      console.log('Hello---->', data);
+      console.log('Hello---->datadfdsfdsfdsffdsfsd', data);
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -247,6 +248,7 @@ const AddOperatingManual = () => {
       data['cover_image'] = imageUrl;
       data['video_thumbnail'] = videoThumbnailUrl;
       data['reference_video'] = videoUrl;
+      data['link']=FRONT_BASE_URL+"/operating_manual?select=";
       data.created_by = localStorage.getItem('user_id');
       data.upper_role = upperRoleUser;
       console.log('data---->', data);
@@ -1149,6 +1151,9 @@ const AddOperatingManual = () => {
             className="back"
             onClick={() => {
               setCategoryModalFlag(false);
+              let data={...categoryData};
+              data["category_name"]="";
+              setCategoryData(data);
             }}
           >
             Cancel
