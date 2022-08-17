@@ -9,28 +9,7 @@ import { BASE_URL } from '../components/App';
 import moment from 'moment'
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-const products = [
-  {
-    id: 1,
-    name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
-  },
-  {
-    id: 2,
-    name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
-  },
-  {
-    id: 3,
-    name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
-  },
-  {
-    id: 4,
-    name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
-  },
-];
+
 const selectRow = {
   mode: 'checkbox',
   clickToSelect: true,
@@ -41,19 +20,42 @@ const columns = [
     dataField: 'name',
     text: 'Child Name',
     formatter: (cell) => {
-      cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+      return (<>
+        <div className="user-list">
+          <span className="user-pic">
+            <img src="../img/audit-form.png" alt="" />
+          </span><span className="user-name">
+            {cell}
+          </span>
+        </div></>)
     },
   },
   {
-    dataField: 'name',
-    text: 'Educator',
+    dataField: 'educatatoName',
+    text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+      return (<>
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[1]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[0]}
+          </span>
+        </div> <br />
+
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[3]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[2]}
+          </span>
+        </div>
+      </>)
     },
   },
-
   {
     dataField: "action",
     text: "",
@@ -72,47 +74,45 @@ const columns = [
   }
 ];
 
-const products1 = [
-  {
-    id: 1,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 2,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 3,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 4,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-
-];
 const columns1 = [
   {
     dataField: 'name',
     text: 'Child Name',
     formatter: (cell) => {
-      cell = cell.split(",");
       return (<>
-      <div className="user-list">
-        <span className="user-pic">
-          <img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+        <div className="user-list">
+          <span className="user-pic">
+            <img src="../img/audit-form.png" alt="" />
+          </span><span className="user-name">
+            {cell}
+          </span>
+        </div></>)
     },
   },
   {
-    dataField: 'name',
+    dataField: 'educatatoName',
     text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+      return (<>
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[1]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[0]}
+          </span>
+        </div> <br />
+
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[3]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[2]}
+          </span>
+        </div>
+      </>)
     },
   },
   {
@@ -132,11 +132,11 @@ const columns1 = [
     },
   }
 ];
-
 const FranchiseeDashboard = () => {
   const [countUser, setcountUser] = React.useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
-  const [additional, setAdditional] = React.useState([]);
+  const [enrollments, setEnrollments] = useState()
+  const [enrollmentssetUser, setEnrollmentssetUser] = useState()
 
   const announcement = () => {
     let token = localStorage.getItem('token');
@@ -168,23 +168,53 @@ const FranchiseeDashboard = () => {
     let response = await fetch(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, requestOptions)
     response = await response.json();
     setUser(response.data)
-
-    const users = response.childrenEnrolled[0].users;
-    console.log(users, ">>>>>>>>>response");
+    const users = response.childrenEnrolled;
     let tempData = users.map((dt) => ({
-      name: `${dt.fullname}, ${dt.profile_photo}`,
+      name: `${dt.fullname}`,
       // createdAt: dt.createdAt,
-      // creatorName: dt.creatorName + "," + dt.creatorRole,
+      educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
       // Shaired: dt.repository.repository_shares.length,
       // categoryId: dt.categoryId
     }));
-
-    console.log('tempData', tempData)
     setUserData(tempData);
   }
 
 
-  console.log(additional, "additional")
+  const Enrollments = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    let response = await fetch(`${BASE_URL}/dashboard/franchisee/new-enrollments`, requestOptions)
+    // let response = fetch(`${BASE_URL}/dashboard/franchisee/new-enrollments`, requestOptions)
+
+    response = await response.json();
+
+    setEnrollmentssetUser(response.data)
+
+    const users = response.newEnrollments;
+
+    let tempData = users.map((dt) => ({
+      name: `${dt.fullname}`,
+      // createdAt: dt.createdAt,
+      educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
+      // Shaired: dt.repository.repository_shares.length,
+      // categoryId: dt.categoryId
+    }));
+
+    setEnrollments(tempData);
+    console.log('tempData>>>>>>>>>>>>>', tempData)
+    console.log("response", response)
+  }
+
+
   const count_User_Api = () => {
     let token = localStorage.getItem('token');
 
@@ -210,7 +240,6 @@ const FranchiseeDashboard = () => {
   const count_Api = async () => {
     const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
     var myHeaders = new Headers();
-
     myHeaders.append(
       'authorization',
       'Bearer ' + localStorage.getItem('token')
@@ -252,9 +281,12 @@ const FranchiseeDashboard = () => {
 
   }
 
+
+
   React.useEffect(() => {
     announcement();
     count_Api();
+    Enrollments();
   }, []);
   if (!countUser) return null;
   return (
@@ -394,8 +426,8 @@ const FranchiseeDashboard = () => {
                               {(props) => (
                                 <BootstrapTable
                                   {...props.baseProps}
-                                  // selectRow={selectRow}
-                                  pagination={paginationFactory()}
+                                // selectRow={selectRow}
+                                // pagination={paginationFactory()}
                                 />
                               )}
                             </ToolkitProvider>
@@ -418,7 +450,7 @@ const FranchiseeDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/user-management?role=educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
@@ -446,11 +478,18 @@ const FranchiseeDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            <BootstrapTable
+                            <ToolkitProvider
                               keyField="name"
-                              data={products}
+                              data={enrollments}
                               columns={columns}
-                            />
+                              search
+                            >
+                              {(props) => (
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                />
+                              )}
+                            </ToolkitProvider>
                           </div>
                         </div>
                         <div className="announcements-sec pb-5">
@@ -462,7 +501,7 @@ const FranchiseeDashboard = () => {
                             {latest_announcement.map((data) => {
                               return (
                                 <div className="listing">
-                                  <a href="/" className="item">
+                                  <a href="/announcements" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                     <div className="name">{!data.title ? "No Announcement" : data.title}
                                       <div>

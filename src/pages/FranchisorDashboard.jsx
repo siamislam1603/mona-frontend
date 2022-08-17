@@ -77,8 +77,30 @@ const FranchisorDashboard = () => {
   const [state, setstate] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+  const [forms_count, setForms_count] = React.useState([])
+
 
   let token = localStorage.getItem('token');
+
+  const Forms_count = () => {
+    let token = localStorage.getItem('token');
+    const countUrl = `${BASE_URL}/dashboard/franchisor/audit-forms-count`;
+
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
+      setForms_count(response.data.totalNumberOfAuditFormsInLast30Days);
+
+    }).catch((e) => {
+      console.log("Error", e);
+    })
+  }
+
+
+
+
   console.log("alsoidjh", latest_announcement[0].scheduled_date)
 
 
@@ -113,37 +135,38 @@ const FranchisorDashboard = () => {
     })
   }
 
-  const getAddedTime = (str) =>{
-    const Added= moment(str).format('DD/MM/YYYY')
+  const getAddedTime = (str) => {
+    const Added = moment(str).format('DD/MM/YYYY')
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [day, month, year].join('/');
+    let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-     console.log("THE Date1",Added,datae)
-     if(datae === Added){
+    console.log("THE Date1", Added, datae)
+    if (datae === Added) {
       return "Added today"
-     }
-     else if(Added<datae){
+    }
+    else if (Added < datae) {
       return Added
-     }
-     else {
+    }
+    else {
       return Added
-     }
+    }
     // return Added
-  
+
   }
 
   React.useEffect(() => {
     count_Api();
     announcement();
+    Forms_count();
   }, []);
 
   selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
-  console.log("The latest Announcement",latest_announcement)
+  console.log("The latest Announcement", latest_announcement)
   if (!count) return null;
   return (
     <>
@@ -206,7 +229,7 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="audit-form">
                             <p>Total Number of Audit Forms <br />in Last 30 Days</p>
-                            <span className="totalaudit">70</span>
+                            <span className="totalaudit">{forms_count}</span>
                           </div>
                         </div>
                         {/*<div className="record-column">
@@ -310,14 +333,14 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="activity-list">
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/all-franchisees" className="item">
                                 <span className="name">Total Franchises</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalFranchisees}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalUsers}</span>
@@ -331,7 +354,7 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/user-management?role=educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalLocations}</span>
@@ -364,13 +387,13 @@ const FranchisorDashboard = () => {
                                 <div className="listing">
                                   <a href="/" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}  
-                                    <div>
-                                      <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}
+                                      <div>
+                                        <span className="timesec">{getAddedTime(data?.createdAt)}</span>
 
                                       </div>
-                                     
-                                     </div>
+
+                                    </div>
                                   </a>
                                 </div>
                               );
