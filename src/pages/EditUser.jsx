@@ -139,6 +139,8 @@ const EditUser = () => {
         });
 
         if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
+          console.log('WE ARE DONE HERE: I');
+          updateEngageBayContactList(formData);
           setCreateUserModal(false);
           setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
@@ -150,13 +152,76 @@ const EditUser = () => {
       }
 
       if(signatureUploaded !== true) {
-        localStorage.setItem('success_msg', 'User updated successfully!');
-        window.location.href = '/user-management';
+        console.log('WE ARE DONE HERE: II')
+        updateEngageBayContactList(formData);
       }
     } else if (response.status === 200 && response.data.status === 'fail') {
       setTopErrorMessage(response.data.msg);
     }
   };
+
+  const updateEngageBayContactList = async (data) => {
+    // PAYLOAD TO BE USED WHILE CREATING OR UPDATING
+    let payload = {
+      email: data.email,
+      role: data.role,
+      fullname: data.fullname,
+      city: data.city,
+      postalCode: data.postalCode,
+      firstname: data.fullname.split(" ")[0],
+      lastname: data.fullname.split(" ")[1],
+      address: data.address,
+      phone: data.phone
+    };
+
+    console.log('ENGAGEBAY PAYLOAD:', payload);
+
+    // CHECKING WHETHER THE RECORD WITH GIVEN MAIL EXISTS OR NOT
+    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`);
+
+    if(response.status === 200 && response.data.isRecordFetched === 0) {
+
+      // RECORD WITH THE AFOREMENTIONED EMAIL DOESN'T EXIST, 
+      // HENCE, CREATING A NEW RECORD INSIDE ENGAGEBAY
+      // WITH THE GIVEN DETAILS
+      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload);
+  
+      if(createResponse.status === 200 && createResponse.data.status === "success") {
+        console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
+        localStorage.setItem('success_msg', 'User updated successfully!');
+        window.location.href = '/user-management';
+      } else {
+        console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
+      }
+
+    } else if(response.status === 200 && response.data.isRecordFetched === 1) {
+
+      // RECORD WITH THE AFOREMENTIONED EMAIL ALREADY EXISTS, 
+      // HENCE, UPDATING THE RECORD
+      // WITH THE GIVEN DETAILS
+      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload);
+
+      if(updateResponse.status === 201 && updateResponse.data.status === "success") {
+        
+        console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
+        localStorage.setItem('success_msg', 'User updated successfully!');
+        window.location.href = '/user-management';
+        // setLoader(false);
+        // setCreateUserModal(false);
+        // localStorage.setItem('success_msg', 'User created successfully!');
+
+        // if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+        //   window.location.href=`/children/${data.id}`;
+        // } else {
+        //   window.location.href="/user-management";
+        // }
+
+      } else {
+        console.log('COULDN\'T UPDATE THE ENGAGEBAY CONTACT!');
+      }
+    }
+
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;

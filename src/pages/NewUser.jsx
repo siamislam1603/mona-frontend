@@ -89,15 +89,15 @@ const NewUser = () => {
       updateEngageBayContactList(data);
       setLoaderMessage("Wrapping Up");
 
-      setLoader(false);
-      setCreateUserModal(false);
-      localStorage.setItem('success_msg', 'User created successfully!');
+      // setLoader(false);
+      // setCreateUserModal(false);
+      // localStorage.setItem('success_msg', 'User created successfully!');
 
-      if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
-        window.location.href=`/children/${data.id}`;
-      } else {
-        window.location.href="/user-management";
-      }
+      // if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+      //   window.location.href=`/children/${data.id}`;
+      // } else {
+      //   window.location.href="/user-management";
+      // }
 
     } else if(response.status === 200 && response.data.status === "fail") {
       setLoader(false);
@@ -251,7 +251,18 @@ const NewUser = () => {
       let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload);
   
       if(createResponse.status === 200 && createResponse.data.status === "success") {
+        
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
+        setLoader(false);
+        setCreateUserModal(false);
+        localStorage.setItem('success_msg', 'User created successfully!');
+
+        if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+          window.location.href=`/children/${data.id}`;
+        } else {
+          window.location.href="/user-management";
+        }
+      
       } else {
         console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
       }
@@ -264,7 +275,18 @@ const NewUser = () => {
       let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload);
 
       if(updateResponse.status === 201 && updateResponse.data.status === "success") {
+        
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
+        setLoader(false);
+        setCreateUserModal(false);
+        localStorage.setItem('success_msg', 'User created successfully!');
+
+        if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+          window.location.href=`/children/${data.id}`;
+        } else {
+          window.location.href="/user-management";
+        }
+
       } else {
         console.log('COULDN\'T UPDATE THE ENGAGEBAY CONTACT!');
       }
