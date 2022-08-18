@@ -9,8 +9,7 @@ import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import moment from 'moment';
-
-
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 
 const products1 = [
@@ -42,7 +41,7 @@ const columns1 = [
     text: 'Form Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src='../img/audit-form.png' alt='' /></span><span className="user-name">{cell[0]} <small>{cell[1]}</small></span></div></>)
     },
   },
   {
@@ -73,12 +72,12 @@ const columns1 = [
 
 
 const FranchisorDashboard = () => {
+
   const [count, setcount] = React.useState(null);
   const [state, setstate] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
-
 
   let token = localStorage.getItem('token');
 
@@ -158,11 +157,42 @@ const FranchisorDashboard = () => {
     // return Added
 
   }
+  // const [auditforms, setAuditforms] = useState({})
+  // const [user, setUser] = useState([]);
+  // const [userData, setUserData] = useState([]);
+
+
+  // const auditformsData = async () => {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append(
+  //     'authorization',
+  //     'Bearer ' + localStorage.getItem('token')
+  //   );
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //     headers: myHeaders,
+  //   };
+  //   let response = await fetch(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, requestOptions)
+  //   response = await response.json();
+  //   setUser(response.data)
+  //   const users = response.data.formData[0];
+
+  //   let tempData = users.map((dt) => ({
+  //     name: `${dt.formData} , ${dt.audited_on}`,
+  //     educatatoName: dt.user + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
+  //   }));
+  //   setUserData(tempData);
+  //   console.log(tempData, "usersusersusersusers+++++")
+  // }
+  // console.log(userData, "usersusersusersusers+++++userData", user)
+
 
   React.useEffect(() => {
     count_Api();
     announcement();
     Forms_count();
+    // auditformsData();
   }, []);
 
   selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
@@ -316,11 +346,22 @@ const FranchisorDashboard = () => {
                           </div>*/}
                         <div className="enrollments-sec pb-5">
                           <div className="column-table user-management-sec">
+                            {/* <ToolkitProvider
+                              keyField="name"
+                              data={products1}
+                              columns={columns1}
+                              search
+                            >
+                              {(props) => ( */}
                             <BootstrapTable
                               keyField="name"
                               data={products1}
                               columns={columns1}
+                            // selectRow={selectRow}
+                            // pagination={paginationFactory()}
                             />
+                            {/* )}
+                            </ToolkitProvider> */}
                           </div>
                         </div>
                       </div>
@@ -347,7 +388,7 @@ const FranchisorDashboard = () => {
                               </Link>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalChildren}</span>
@@ -361,14 +402,14 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                            <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>
                               </a>
                             </div>
                             <div className="listing">
-                            <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Users yet to log in</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.usersYetToLogin}</span>
@@ -376,6 +417,7 @@ const FranchisorDashboard = () => {
                             </div>
                           </div>
                         </div>
+
                         <div className="announcements-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
@@ -385,7 +427,7 @@ const FranchisorDashboard = () => {
                             {latest_announcement.map((data) => {
                               return (
                                 <div className="listing">
-                                  <a href="/" className="item">
+                                  <a href="/announcements" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                     <div className="name">{!data.title ? "No Announcement" : data.title}
                                       <div>
