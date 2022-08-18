@@ -64,7 +64,7 @@ const NewUser = () => {
   const [loader, setLoader] = useState(false);
   const [createUserModal, setCreateUserModal] = useState(false);
   const [userActiveStatus, setUserActiveStatus] = useState(null);
-  const [statusPopup, setStatusPopup] = useState(true);
+  const [statusPopup, setStatusPopup] = useState(false);
 
 
   // LOADER STATES
