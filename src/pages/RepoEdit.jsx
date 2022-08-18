@@ -107,12 +107,14 @@ const RepoEdit = () => {
         console.log('DATA:', data);
         let dataObj = new FormData();
         for(let[key, value] of Object.entries(data)) {
+            console.log(key, value);
             dataObj.append(key, value);
         }
 
-        if(typeof data.image === 'object') {
-            dataObj.append("image", data.image);
-        }
+        // if(typeof data.image === 'object') {
+        //     console.log('IMAGE:', data.image);
+        //     dataObj.append("image", data.image);
+        // }
 
         saveDataToServer(dataObj);
     }
@@ -136,8 +138,26 @@ const RepoEdit = () => {
                     console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
                     window.location.href = '/file-repository';
                 }
+            } else if(typeof data.image === 'object') {
+                let dataObj = new FormData();
+                dataObj.append("image", data.image);
+                dataObj.append("id", Params.id);
+                dataObj.append("title", data.title);
+                dataObj.append("description", data.description);
+
+                response = await axios.post(`${BASE_URL}/fileRepo/data/saveImageData`, dataObj, {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                console.log('SOLO IMAGE SAVE RESPONSE:', response);
+                if (response.status === 200 && response.data.status === "success") {
+                    console.log('DATA UPDATED SUCCESSFULLT => type: object');
+                    window.location.href='/file-repository';
+                }
             }
-            console.log('DATA UPDATED SUCCESSFULLT => type:object');
+            console.log('DATA UPDATED SUCCESSFULLT');
             window.location.href='/file-repository';
         }
     }
