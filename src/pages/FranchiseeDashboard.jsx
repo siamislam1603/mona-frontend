@@ -444,8 +444,7 @@ const FranchiseeDashboard = () => {
                           <div className="activity-list">
                             <div className="listing">
                               <a href="/user-management" className="item">
-                                <span className="name">Total Users</span>
-                               
+                                <span className="name">Total Users</span>    
                                <span className="separator">|</span>
                                 <span className="num">{countUser.totalUsers}</span>
                               </a>

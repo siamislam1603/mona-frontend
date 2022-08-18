@@ -63,7 +63,7 @@ const RepoEdit = () => {
     // setimg(coverImage)
     console.log(">>>>>>>>>>>>>", data)
     const copyFetchedData = async (data) => {
-
+        
         setData(prevState => ({
             ...prevState,
             id: Params.id,
@@ -108,8 +108,6 @@ const RepoEdit = () => {
 
     const handleDataSubmit = async (event) => {
         event.preventDefault();
-
-
         const token = localStorage.getItem('token');
         const response = await axios.put(`${BASE_URL}/fileRepo/`, data, {
             headers: {
@@ -214,7 +212,6 @@ const RepoEdit = () => {
         }
     };
 
-
     useEffect(() => {
         GetData();
         getFileCategory();
@@ -224,6 +221,8 @@ const RepoEdit = () => {
     const handleTrainingCancel = () => {
         window.location.href = "/file-repository";
     };
+    data && console.log('+++++++++++++', data.image);
+    data && console.log('+++++++++++++', typeof data.image);
 
     data && console.log('IMAGE DATA:', data.image);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
@@ -273,7 +272,7 @@ const RepoEdit = () => {
                                                         <Form.Group>
                                                             <DragDropRepository onChange={setField} />
                                                             <p className="error">{errors.setting_files}</p> {/* <img src={data.image} alt="smkdjh" /> */}
-                                                            {/* <img className="cover-image-style" src={data.image} alt="training cover image" /> */}
+                                                            <img className="cover-image-style" src={data.image} alt="training cover image" />
                                                             {/* {
                                                                 data &&
                                                                 <>
