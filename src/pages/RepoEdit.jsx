@@ -21,7 +21,6 @@ const RepoEdit = () => {
     const [settingsModalPopup, setSettingsModalPopup] = useState(false);
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
-    console.log(formSettingData, "formSettingData")
     const [errors, setErrors] = useState({});
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
@@ -54,19 +53,20 @@ const RepoEdit = () => {
         })
         console.log(response, "response")
         if (response.status === 200 && response.data.status === "success") {
-            const FileResult = response.data.file;
-            console.log('result>>>>>>>', FileResult)
-            copyFetchedData(FileResult);
+            console.log('RESPONSE IS SUCCESS');
+            const {file} = response.data;
+            console.log('result>>>>>>>', file)
+            copyFetchedData(file);
         }
 
     }
-    // setimg(coverImage)
-    console.log(">>>>>>>>>>>>>", data)
-    const copyFetchedData = async (data) => {
 
+    const copyFetchedData = (data) => {
+        console.log('COPYING FETCHED DATA:', data);
+        
         setData(prevState => ({
             ...prevState,
-            id: Params.id,
+            id: data.id,
             createdAt: data?.createdAt,
             description: data?.description,
             title: data?.title,
@@ -79,12 +79,8 @@ const RepoEdit = () => {
             user_roles: data?.repository_shares[0].assigned_roles,
 
         }));
-        console.log(data.image, "blobblobblobblob")
-        // setCroppedImage(data?.repository_files[0].filesPath);
 
     }
-
-    console.log(coverImage, "coverImage")
     // FUNCTION TO SAVE TRAINING SETTINGS
 
     const handleDiscriptionSettings = (event) => {
@@ -108,18 +104,61 @@ const RepoEdit = () => {
 
     const handleDataSubmit = async (event) => {
         event.preventDefault();
+        console.log('DATA:', data);
+        let dataObj = new FormData();
+        for(let[key, value] of Object.entries(data)) {
+            console.log(key, value);
+            dataObj.append(key, value);
+        }
 
+        // if(typeof data.image === 'object') {
+        //     console.log('IMAGE:', data.image);
+        //     dataObj.append("image", data.image);
+        // }
 
+        saveDataToServer(dataObj);
+    }
+
+    const saveDataToServer = async () => {
+        console.log('SAVING DATA TO SERVER');
         const token = localStorage.getItem('token');
-        const response = await axios.put(`${BASE_URL}/fileRepo/`, data, {
+        let response = await axios.put(`${BASE_URL}/fileRepo`, data, {
             headers: {
                 "Authorization": "Bearer " + token
             }
-        }
+        });
 
-        );
-        if (response.status === 200) {
-            navigate("/file-repository")
+        console.log('DATA UPDATE RESPONSE:', response);
+        if (response.status === 200 && response.data.status === "success") {
+            if(typeof data.image === 'string') {
+                response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
+
+                console.log('IMAGE UPDATE RESPONSE:', response);
+                if(response.status === 201 && response.data.status === "success") {
+                    console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
+                    window.location.href = '/file-repository';
+                }
+            } else if(typeof data.image === 'object') {
+                let dataObj = new FormData();
+                dataObj.append("image", data.image);
+                dataObj.append("id", Params.id);
+                dataObj.append("title", data.title);
+                dataObj.append("description", data.description);
+
+                response = await axios.post(`${BASE_URL}/fileRepo/data/saveImageData`, dataObj, {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                console.log('SOLO IMAGE SAVE RESPONSE:', response);
+                if (response.status === 200 && response.data.status === "success") {
+                    console.log('DATA UPDATED SUCCESSFULLT => type: object');
+                    window.location.href='/file-repository';
+                }
+            }
+            console.log('DATA UPDATED SUCCESSFULLT');
+            window.location.href='/file-repository';
         }
     }
 
@@ -152,7 +191,6 @@ const RepoEdit = () => {
         );
         if (response.status === 200 && response.data.status === "success") {
             const categoryList = response.data.category;
-            console.log('CATEGORY:', categoryList)
             setCategory([
                 ...categoryList.map((data) => ({
                     id: data.id,
@@ -205,20 +243,7 @@ const RepoEdit = () => {
     }
 
     const setField = async (field, value) => {
-        if (value === null || value === undefined) {
-            let blob
-            console.log(typeof field, "valuevalue")
-            if (typeof field === "object") {
-                setData({ ...data, image: JSON.stringify({ field }) });
-            } else {
-                console.log('Image Type: String');
-                blob = field
-                data.append('profile_photo', blob);
-            }
-            console.log(typeof field, "valuevalue")
-        } else {
-            setData({ ...data, field: value });
-        }
+        setData({ ...data, image: field[0] })
         if (!!errors[field]) {
             setErrors({
                 ...errors,
@@ -226,7 +251,6 @@ const RepoEdit = () => {
             });
         }
     };
-
 
     useEffect(() => {
         GetData();
@@ -238,6 +262,8 @@ const RepoEdit = () => {
         window.location.href = "/file-repository";
     };
 
+    data && console.log('IMAGE DATA:', data.image);
+    data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
 
     return (
         <div style={{ position: "relative", overflow: "hidden" }}>
@@ -284,7 +310,7 @@ const RepoEdit = () => {
                                                         <Form.Group>
                                                             <DragDropRepository onChange={setField} />
                                                             <p className="error">{errors.setting_files}</p> {/* <img src={data.image} alt="smkdjh" /> */}
-                                                            {/* <img className="cover-image-style" src={data.image} alt="training cover image" /> */}
+                                                            <img className="cover-image-style" src={data.image} alt="training cover image" />
                                                             {/* {
                                                                 data &&
                                                                 <>
@@ -636,7 +662,6 @@ const RepoEdit = () => {
                                                                         }}
                                                                         options={user}
                                                                     />
-                                                                    {console.log(data, "????????????????????a")}
                                                                 </div>
                                                                 <p className="error">{errors.franchisee}</p>
                                                             </Form.Group>

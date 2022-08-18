@@ -163,7 +163,8 @@ const EditTraining = () => {
       meta_description: training?.meta_description,
       time_unit: training?.completion_time?.split(" ")[1],
       time_required_to_complete: training?.completion_time?.split(" ")[0],
-      training_form_id: training?.training_form_id
+      training_form_id: training?.training_form_id,
+      addedBy: training?.addedBy
     }));
     setTrainingSettings(prevState => ({
       ...prevState,
@@ -381,13 +382,13 @@ const EditTraining = () => {
     }
   }, [trainingSettings?.assigned_franchisee]);
 
-  // trainingData && console.log('TRAINING DATA:', trainingData);
+  trainingData && console.log('TRAINING DATA:', trainingData);
   // trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   // fetchedFranchiseeUsers && console.log('Fetched franchisee USERS:', fetchedFranchiseeUsers);
   // fetchedFranchiseeUsers && console.log('POPULATED USERS:', fetchedFranchiseeUsers?.map(d => trainingSettings?.d.id));
   fetchedVideoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', fetchedVideoTutorialFiles);
   fetchedRelatedFiles && console.log('RELATED FILES:', fetchedRelatedFiles);
-
+  console.log('COVER IMAGE:', coverImage);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -840,7 +841,29 @@ const EditTraining = () => {
                   <div className={`custom-checkbox ${trainingSettings?.applicable_to === 'users' ? "d-none" : ""}`}>
                     <Form.Label className="d-block">Select User Roles</Form.Label>
                     <div className="btn-checkbox d-block">
-                      <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                      <Form.Check
+                          type="checkbox"
+                          checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
+                          label="Franchisee Admin"
+                          onChange={() => {
+                            if (trainingSettings.assigned_roles?.includes("franchisee_admin")) {
+                              let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                assigned_roles: [...data]
+                              }));
+                            }
+
+                            if (!trainingSettings.assigned_roles?.includes("franchisee_admin"))
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                assigned_roles: [...trainingSettings.assigned_roles, "franchisee_admin"]
+                              }))
+                          }} />
+                      </Form.Group>
+
+                      <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
                         <Form.Check
                           type="checkbox"
                           checked={trainingSettings.assigned_roles?.includes("coordinator")}
@@ -861,7 +884,7 @@ const EditTraining = () => {
                               }))
                           }} />
                       </Form.Group>
-                      <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                      <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                         <Form.Check
                           type="checkbox"
                           label="Educator"
@@ -886,9 +909,10 @@ const EditTraining = () => {
                         <Form.Check
                           type="checkbox"
                           label="All Roles"
-                          checked={trainingSettings.assigned_roles?.length === 2}
+                          checked={trainingSettings.assigned_roles?.length === 3}
                           onChange={() => {
-                            if (trainingSettings.assigned_roles?.includes("coordinator")
+                            if (trainingSettings.assigned_roles?.includes("franchisee_admin")
+                              && trainingSettings.assigned_roles.includes("coordinator")
                               && trainingSettings.assigned_roles.includes("educator")) {
                               setTrainingSettings(prevState => ({
                                 ...prevState,
@@ -896,11 +920,12 @@ const EditTraining = () => {
                               }));
                             }
 
-                            if (!trainingSettings.assigned_roles?.includes("coordinator")
+                            if (!trainingSettings.assigned_roles.includes("franchisee_admin")
+                              && !trainingSettings.assigned_roles?.includes("coordinator")
                               && !trainingSettings.assigned_roles.includes("educator"))
                               setTrainingSettings(prevState => ({
                                 ...prevState,
-                                assigned_roles: ["coordinator", "educator"]
+                                assigned_roles: ["franchisee_admin", "coordinator", "educator"]
                               })
                               )
                           }} />

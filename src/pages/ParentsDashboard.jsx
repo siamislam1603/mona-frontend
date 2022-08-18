@@ -224,7 +224,7 @@ const ParentsDashboard = () => {
                         <div className="event-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Events</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list event-list">
                             {event.map((item) => {
@@ -243,10 +243,8 @@ const ParentsDashboard = () => {
                                     </Dropdown>
                                   </div>
                                 </div>}
-
                               </>
                             })}
-
                             {/* <div className="item">
                               <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
                               <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
@@ -489,7 +487,7 @@ const ParentsDashboard = () => {
                             {announcements.map((item) => {
                               return <>
                                 <div className="listing">
-                                  <a href="/" className="item">
+                                  <a href="/announcements" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                     <div className="name">{item.title}
                                       <div>

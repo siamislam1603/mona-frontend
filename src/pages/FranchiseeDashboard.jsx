@@ -203,21 +203,18 @@ const FranchiseeDashboard = () => {
 
     let tempData = users.map((dt) => ({
       name: `${dt.fullname}`,
-      // createdAt: dt.createdAt,
       educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
-      // Shaired: dt.repository.repository_shares.length,
-      // categoryId: dt.categoryId
     }));
 
     setEnrollments(tempData);
     console.log('tempData>>>>>>>>>>>>>', tempData)
     console.log("response", response)
+
   }
 
 
   const count_User_Api = () => {
     let token = localStorage.getItem('token');
-
     const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
     axios.get(countUrl, {
       headers: {
@@ -237,26 +234,28 @@ const FranchiseeDashboard = () => {
     Additional_Needs();
   }, []);
 
-  const count_Api = async () => {
-    const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
+  // const count_Api = async () => {
+  //   const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
+  //   var myHeaders = new Headers();
+  //   myHeaders.append(
+  //     'authorization',
+  //     'Bearer ' + localStorage.getItem('token')
+  //   );
 
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    await axios(countUrl, requestOptions).then((response) => {
-      setcountUser(response.data);
-    }).catch((e) => {
-      console.log(e);
-    })
-    console.log(countUser, ":lksjdgcasjhgjhjchvs")
-  }
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //     headers: myHeaders,
+  //   };
+  //   await axios(countUrl, requestOptions).then((response) => {
+  //     setcountUser(response.data);
+  //   }).catch((e) => {
+  //     console.log(e);
+  //   })
+  //   console.log(countUser, ":lksjdgcasjhgjhjchvs")
+  // }
+
+
   const getAddedTime = (str) => {
     const Added = moment(str).format('DD/MM/YYYY')
     var today = new Date();
@@ -285,7 +284,7 @@ const FranchiseeDashboard = () => {
 
   React.useEffect(() => {
     announcement();
-    count_Api();
+    // count_Api();
     Enrollments();
   }, []);
   if (!countUser) return null;
@@ -417,20 +416,25 @@ const FranchiseeDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            <ToolkitProvider
-                              keyField="name"
-                              data={userData}
-                              columns={columns1}
-                              search
-                            >
-                              {(props) => (
-                                <BootstrapTable
-                                  {...props.baseProps}
-                                // selectRow={selectRow}
-                                // pagination={paginationFactory()}
-                                />
-                              )}
-                            </ToolkitProvider>
+                            {ToolkitProvider ? (<>
+
+                              <ToolkitProvider
+                                keyField="name"
+                                data={userData}
+                                columns={columns1}
+                                search
+                              >
+                                {(props) => (
+                                  <BootstrapTable
+                                    {...props.baseProps}
+                                  // selectRow={selectRow}
+                                  // pagination={paginationFactory()}
+                                  />
+                                )}
+                              </ToolkitProvider>
+
+                            </>) : (<><div className="text-center mb-5 mt-5"><strong>No Data</strong></div></>)}
+
                           </div>
                         </div>
                       </div>
@@ -445,27 +449,26 @@ const FranchiseeDashboard = () => {
                             <div className="listing">
                               <a href="/user-management" className="item">
                                 <span className="name">Total Users</span>
-                               
-                               <span className="separator">|</span>
+                                <span className="separator">|</span>
                                 <span className="num">{countUser.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
-                               <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
-                               <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
-                               <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.auditForms}</span>
@@ -479,18 +482,20 @@ const FranchiseeDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            <ToolkitProvider
-                              keyField="name"
-                              data={enrollments}
-                              columns={columns}
-                              search
-                            >
-                              {(props) => (
-                                <BootstrapTable
-                                  {...props.baseProps}
-                                />
-                              )}
-                            </ToolkitProvider>
+                            {enrollments ? (<>
+                              <ToolkitProvider
+                                keyField="name"
+                                data={enrollments}
+                                columns={columns}
+                                search
+                              >
+                                {(props) => (
+                                  <BootstrapTable
+                                    {...props.baseProps}
+                                  />
+                                )}
+                              </ToolkitProvider></>) : (<><div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div></>)}
+
                           </div>
                         </div>
                         <div className="announcements-sec pb-5">
