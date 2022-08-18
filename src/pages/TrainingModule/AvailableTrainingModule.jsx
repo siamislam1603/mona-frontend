@@ -369,7 +369,29 @@ const AvailableTraining = ({ filter }) => {
                       <>
                         <Form.Label className="d-block">Select User Roles</Form.Label>
                         <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
-                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                        <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                            <Form.Check
+                              type="checkbox"
+                              checked={formSettings?.assigned_roles?.includes("franchisee_admin")}
+                              label="Franchisee Admin"
+                              onChange={() => {
+                                if (formSettings.assigned_roles.includes("franchisee_admin")) {
+                                  let data = formSettings.assigned_roles.filter(t => t !== "franchisee_admin");
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [...data]
+                                  }));
+                                }
+
+                                if (!formSettings.assigned_roles.includes("franchisee_admin"))
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: [...formSettings.assigned_roles, "franchisee_admin"]
+                                  }))
+                              }} />
+                          </Form.Group>
+                          
+                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
                             <Form.Check
                               type="checkbox"
                               checked={formSettings?.assigned_roles?.includes("coordinator")}
@@ -391,7 +413,7 @@ const AvailableTraining = ({ filter }) => {
                               }} />
                           </Form.Group>
 
-                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                             <Form.Check
                               type="checkbox"
                               label="Educators"
@@ -413,7 +435,7 @@ const AvailableTraining = ({ filter }) => {
                               }} />
                           </Form.Group>
 
-                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
+                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
                             <Form.Check
                               type="checkbox"
                               label="Guardians"
@@ -441,21 +463,21 @@ const AvailableTraining = ({ filter }) => {
                               label="All Roles"
                               checked={formSettings.assigned_roles.length === 3}
                               onChange={() => {
-                                if (formSettings.assigned_roles.includes("coordinator")
-                                  && formSettings.assigned_roles.includes("educator")
-                                  && formSettings.assigned_roles.includes("guardian")) {
+                                if (formSettings.assigned_roles.includes("franchisee_admin")
+                                  && formSettings.assigned_roles.includes("coordinator")
+                                  && formSettings.assigned_roles.includes("educator")) {
                                   setFormSettings(prevState => ({
                                     ...prevState,
                                     assigned_roles: [],
                                   }));
                                 }
 
-                                if (!formSettings.assigned_roles.includes("coordinator")
-                                  && !formSettings.assigned_roles.includes("educator")
-                                  && !formSettings.assigned_roles.includes("guardian"))
+                                if (!formSettings.assigned_roles.includes("franchisee_admin")
+                                  && !formSettings.assigned_roles.includes("coordinator")
+                                  && !formSettings.assigned_roles.includes("educator"))
                                   setFormSettings(prevState => ({
                                     ...prevState,
-                                    assigned_roles: ["coordinator", "educator", "guardian"]
+                                    assigned_roles: ["franchisee_admin", "coordinator", "educator"]
                                   })
                                   )
                               }} />
