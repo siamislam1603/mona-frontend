@@ -108,15 +108,12 @@ const RepoEdit = () => {
 
     const handleDataSubmit = async (event) => {
         event.preventDefault();
-
-
         const token = localStorage.getItem('token');
         const response = await axios.put(`${BASE_URL}/fileRepo/`, data, {
             headers: {
                 "Authorization": "Bearer " + token
             }
         }
-
         );
         if (response.status === 200) {
             navigate("/file-repository")
@@ -207,16 +204,16 @@ const RepoEdit = () => {
     const setField = async (field, value) => {
         if (value === null || value === undefined) {
             let blob
-            console.log(typeof field, "valuevalue")
             if (typeof field === "object") {
-                setData({ ...data, image: JSON.stringify({ field }) });
+                setData({ ...data, image: JSON.stringify(field[0].path) });
+                console.log('Image Type: String', field, JSON.stringify(field[0].path));
             } else {
-                console.log('Image Type: String');
                 blob = field
                 data.append('profile_photo', blob);
             }
             console.log(typeof field, "valuevalue")
-        } else {
+        }
+        else {
             setData({ ...data, field: value });
         }
         if (!!errors[field]) {
@@ -227,7 +224,6 @@ const RepoEdit = () => {
         }
     };
 
-
     useEffect(() => {
         GetData();
         getFileCategory();
@@ -237,6 +233,8 @@ const RepoEdit = () => {
     const handleTrainingCancel = () => {
         window.location.href = "/file-repository";
     };
+    data && console.log('+++++++++++++', data.image);
+    data && console.log('+++++++++++++', typeof data.image);
 
 
     return (
@@ -284,7 +282,7 @@ const RepoEdit = () => {
                                                         <Form.Group>
                                                             <DragDropRepository onChange={setField} />
                                                             <p className="error">{errors.setting_files}</p> {/* <img src={data.image} alt="smkdjh" /> */}
-                                                            {/* <img className="cover-image-style" src={data.image} alt="training cover image" /> */}
+                                                            <img className="cover-image-style" src={data.image} alt="training cover image" />
                                                             {/* {
                                                                 data &&
                                                                 <>
