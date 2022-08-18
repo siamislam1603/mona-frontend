@@ -227,7 +227,8 @@ const FileRpositoryList = () => {
             redirect: 'follow',
             headers: myHeaders,
         };
-        let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
+        // let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
+        let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}`, requestOptions)
         response = await response.json();
         setUser(response.result)
 
@@ -474,7 +475,7 @@ const FileRpositoryList = () => {
                                                             <span className="user-name">
                                                                 {Params.id === "1" ? "Daily Use" :
                                                                     Params.id === "2" ? "Business Management" :
-                                                                        Params.id === "3" ? "Employeement" :
+                                                                        Params.id === "3" ? "Employment" :
                                                                             Params.id === "4" ? "Compliance" :
                                                                                 Params.id === "5" ? "Care Giving" :
                                                                                     Params.id === "6" ? "Curriculum & Planning" :

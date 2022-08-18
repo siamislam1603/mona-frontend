@@ -245,6 +245,8 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .topheader .rpanel .user-sec ul, .topheader .rpanel .user-sec li { margin: 0; padding: 0; list-style: none; display: inline-block; vertical-align: middle; }
 .topheader .rpanel .user-sec li { margin-right: 25px; }
 .topheader .rpanel .user-sec li:last-child { margin-right: 0; }
+.topheader .rpanel .user-sec li .chat-meg { position: relative; }
+.topheader .rpanel .user-sec li .tag{position:absolute;top:-5px;right:-3px;width:20px;height:20px;border:1px solid var(--white);background-color:var(--red);border-radius:100px;color:var(--white);text-align:center;font-size:12px;font-weight:600;line-height:18px;}
 .topheader .rpanel .user-sec .dropdown .btn-primary { background-color: #f7f7f7; border: none; border-radius: 12px; padding: 10px; display: flex; align-items: center; min-width: 240px; }
 .topheader .rpanel .user-sec .dropdown .btn-primary:focus { outline:none; box-shadow: none; }
 .topheader .rpanel .user-sec .dropdown .btn-primary.dropdown-toggle::after { background:url("../img/select-icon.png") no-repeat; border:none; width: 14px; height: 8px; position: absolute; top:50%; transform: translateY(-50%); right:10px; }
@@ -326,7 +328,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .user-management-sec .table tr { position: relative; background-color: transparent; }
 .user-management-sec .table tr:before { position: absolute; top:50%; transform: translateY(-50%); left:0; width: 100%; height:85%; box-shadow: 0 0 10px 0 rgba(0,0,0,.1); content: ''; background-color: var(--white); border-radius: 12px; z-index: -1; }
 .user-management-sec .table thead tr:before { opacity: 0; }
-.user-management-sec .table tr td .btn-outline-danger { min-width: inherit; white-space: nowrap; padding: 5px 15px; line-height: 30px; }
+.user-management-sec .table tr td .btn-outline-danger, .user-management-sec .table tr td .btn-outline-secondary { min-width: inherit; white-space: nowrap; padding: 5px 15px; line-height: 30px; }
 .user-management-sec .table tr td:first-child { width: 5%; }
 .user-management-sec .table tr td:nth-child(2n) { width: 30%; }
 .user-management-sec .table tr td:nth-child(3n) { width: 25%; }
@@ -690,6 +692,52 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .search-bar { position: absolute; top: -90px; right: 255px; z-index: 9; transition-duration: .3s; }
 .search-bar.show { top: 7px; }
+
+/*Notification Popup*/
+.notificationpopup{width:100%;max-width:400px;height:400px;}
+.notificationpopup .popover-body{position:relative;height:calc(100% - 110px);overflow:auto;padding:0;}
+.notificationpopup .totalmsg{text-align:center;padding:5px 10px;}
+.notificationpopup .totalreadmsg{border-bottom-left-radius:calc(0.3rem - 1px);border-bottom-right-radius:calc(0.3rem - 1px);color:var(--primary);cursor:pointer;text-align:center;padding:10px;background-color:var(--gray);font-weight:bold;}
+.notificationpopup .notification-time{text-align:right;color:var(--black);font-size:13px;}
+.notificationpopup .notifimg{position:relative;}
+.notificationpopup .notifimg .notilink{position:relative;display:flex;align-items:center;color:var(--black);}
+.notificationpopup .notifimg .notilink .notifpic{border-radius:100%;max-width:40px;min-width:40px;height:40px;overflow:hidden;margin-right:10px;position:relative;}
+.notificationpopup .notifimg .notilink .notifpic img{width:40px;height:40px;}
+.notificationpopup .notifitem{position:relative;padding:10px 15px;background-color:var(--white);border-bottom:1px solid rgba(0, 0, 0, 0.1);}
+.notificationpopup .notifitem:hover{background-color:var(--black);}
+.notificationpopup .notifitem:hover .notilink{color:var(--red);}
+.notificationpopup .notifitem .gdot{position:absolute;width:10px;height:10px;border-radius:100%;background-color:green;border:1px solid var(--ms-white);left:30px;bottom:0;z-index:2;}
+.notificationpopup .notifitem.unread{font-weight:bold;background-color:var(--gray);}
+.notification-popup{position:absolute;z-index:7;padding:0 0 50px 0;top:-500px;right:0;width:100%;max-width:400px;height:400px;border-radius:10px;background-color:var(--black);box-shadow:0 10px 10px 0 rgba(0, 0, 0, 0.2);transition-duration:0.3s;}
+.notification-popup:before{position:absolute;content:'';width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:8px solid var(--red);top:-8px;left:152px;}
+.notification-popup.show{top:75px;}
+.notification-popup .title-xxs{padding:15px;margin:0;}
+.notification-popup .cta{position:absolute;width:100%;left:0;bottom:0;z-index:5;}
+.notification-popup .cta a{margin:auto;display:inherit;text-decoration:none;color:var(--red);}
+.notification-popup .cta a:hover{color:var(--black);}
+.notification-col{position:relative;height:calc(100% - 50px);overflow:auto;}
+.notification-col .item{position:relative;padding:10px 15px;background-color:var(--ms-white);border-top:1px solid rgba(0, 0, 0, 0.1);}
+.notification-col .item .notification-time{text-align:right;color:var(--black);font-size:13px;}
+/*.notification-col .item .notification-time{position:absolute;top:50%;transform:translateY(-50%);right:20px;color:var(--black);opacity:.5;}
+*/
+.notification-col .item .figure{display:flex;align-items:center;font-weight:600;overflow:hidden;}
+.notification-col .item .figure .figure-img{margin-right:1rem;position:relative;z-index:2;border-radius:100%;width:45px;height:45px;}
+.notification-col .item p{margin:0;}
+.notification-col .item a{display:block;color:var(--black);}
+.notification-col .item:hover{background-color:var(--black);}
+/*Notification Popup*/
+/*Notification page*/
+.notification-sec .entry-title{max-width:inherit;border-bottom:1px solid rgba(76, 76, 76, 0.3);color:var(--black);display:flex;align-items:center;margin-bottom:0;padding-bottom:1rem;}
+.notification-sec .entry-title .title-xs{margin:0;display:flex;align-items:center;}
+.notificationlisting--col .notification-time{position:absolute;top:0;right:0;font-size:14px;color:var(--black);opacity:0.5;}
+.notificationlisting--col .notification-event{position:absolute;top:25px;right:0;font-size:14px;color:var(--red);padding:5px 10px;border-radius:5px;border:1px solid var(--red);}
+.notificationlisting--col .applicant-name{padding-right:105px;}
+.notificationlisting--col .title-xxs{font-size:16px;}
+.notificationlisting--col a{display:block;}
+/*Notification page*/
+
+.notofication-listing-sec.notificationpopup { height: auto; max-width: 100%; }
+.notofication-listing-sec.notificationpopup .notifitem.unread, .notofication-listing-sec.notificationpopup .notifitem { background-color: transparent; }
 
 
 

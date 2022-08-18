@@ -41,14 +41,16 @@ const columns1 = [
     dataField: 'formname',
     text: 'Form Name',
     formatter: (cell) => {
+      console.log("CELL", cell)
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">{cell[0]} <small>{moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
     },
   },
   {
     dataField: 'educatorname',
-    text: 'Educator Name',
+    text: 'Name',
     formatter: (cell) => {
+      console.log("EDUCATIN CELL", cell)
       cell = cell.split(",");
       return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
     },
@@ -73,12 +75,13 @@ const columns1 = [
 
 
 const FranchisorDashboard = () => {
+
   const [count, setcount] = React.useState(null);
   const [state, setstate] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
-
+  const [formData, setFormData] = useState([])
 
   let token = localStorage.getItem('token');
 
@@ -158,11 +161,31 @@ const FranchisorDashboard = () => {
     // return Added
 
   }
+  const FormData = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("FORM Data", response)
+    if (response.status == 200) {
+      let data = response.data.data.formData;
+      let tempData = data.map((dt) => ({
+        formname: `${dt.form_name}, ${dt.audited_on}`,
+        educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
+        // console.log("THe dt",)
+
+      }))
+      setFormData(tempData);
+    }
+  }
 
   React.useEffect(() => {
     count_Api();
     announcement();
     Forms_count();
+    FormData();
   }, []);
 
   selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
@@ -316,11 +339,30 @@ const FranchisorDashboard = () => {
                           </div>*/}
                         <div className="enrollments-sec pb-5">
                           <div className="column-table user-management-sec">
-                            <BootstrapTable
+                            {/* <ToolkitProvider
                               keyField="name"
                               data={products1}
                               columns={columns1}
-                            />
+                              search
+                            >
+                              {(props) => ( */}
+                            {
+                              formData?.length > 0 ?
+                                (
+                                  <BootstrapTable
+                                    keyField="name"
+                                    data={formData}
+                                    columns={columns1}
+                                  />
+                                ) : (
+                                  <div className="text-center mb-5 mt-5"><strong>
+                                    No forms present!
+                                  </strong></div>
+
+                                )
+                            }
+                            {/* )}
+                            </ToolkitProvider> */}
                           </div>
                         </div>
                       </div>
@@ -347,7 +389,7 @@ const FranchisorDashboard = () => {
                               </Link>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalChildren}</span>
@@ -361,14 +403,14 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                            <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>
                               </a>
                             </div>
                             <div className="listing">
-                            <a className="item" style={{cursor:"not-allowed"}}>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Users yet to log in</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.usersYetToLogin}</span>
@@ -385,7 +427,7 @@ const FranchisorDashboard = () => {
                             {latest_announcement.map((data) => {
                               return (
                                 <div className="listing">
-                                  <a href="/" className="item">
+                                  <a href="/announcements" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                     <div className="name">{!data.title ? "No Announcement" : data.title}
                                       <div>
