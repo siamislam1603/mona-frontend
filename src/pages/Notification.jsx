@@ -24,10 +24,10 @@ const [notificationDetails,setNotificationDetail] = useState([])
         }
       });
       // console.log("The All Announcement",response.data.result);
-      console.log(response);
+      console.log("response responseresponseresponseresponseresponse", response.data.notification);
       
       if(response.status === 200 && response.data.status === "success") {
-          setNotificationDetail(response.data.notification);
+          setNotificationDetail(response.data.notification.rows);
       }
     } catch (error) {
         if(error.response.status === 404){
@@ -146,8 +146,7 @@ const handleLinkClick = notificationId => {
                   
                   
                     <Accordion defaultActiveKey="0">
-                      { notificationDetails &&
-                        notificationDetails.length !==0 ? (
+                      { notificationDetails && notificationDetails.length !==0 ? (
                           notificationDetails.map((details,index) => (
                             <div key={index}>
                             
