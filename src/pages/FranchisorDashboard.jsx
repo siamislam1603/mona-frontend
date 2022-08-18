@@ -41,14 +41,16 @@ const columns1 = [
     dataField: 'formname',
     text: 'Form Name',
     formatter: (cell) => {
+      console.log("CELL",cell)
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png"/></span><span className="user-name">{cell[0]} <small>{moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
     },
   },
   {
     dataField: 'educatorname',
     text: 'Educator Name',
     formatter: (cell) => {
+      console.log("EDUCATIN CELL",cell)
       cell = cell.split(",");
       return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
     },
@@ -78,7 +80,7 @@ const FranchisorDashboard = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
-
+  const [formData, setFormData] = useState([])
 
   let token = localStorage.getItem('token');
 
@@ -158,11 +160,31 @@ const FranchisorDashboard = () => {
     // return Added
 
   }
+  const FormData = async() =>{
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`,{
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("FORM Data",response)
+    if(response.status == 200){
+      let data = response.data.data.formData;
+      let tempData = data.map((dt) =>({
+        formname: `${dt.form_name}, ${dt.audited_on}`,
+        educatorname : `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
+        // console.log("THe dt",)
+    
+      }))
+      setFormData(tempData);
+    }
+  }
 
   React.useEffect(() => {
     count_Api();
     announcement();
     Forms_count();
+    FormData();
   }, []);
 
   selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
@@ -318,7 +340,7 @@ const FranchisorDashboard = () => {
                           <div className="column-table user-management-sec">
                             <BootstrapTable
                               keyField="name"
-                              data={products1}
+                              data={formData}
                               columns={columns1}
                             />
                           </div>
