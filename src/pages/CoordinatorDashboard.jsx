@@ -43,37 +43,42 @@ const columns = [
     dataField: 'educatorname',
     text: 'Educator Name',
     formatter: (cell) => {
-      console.log("THE ECUTOR",cell)
+      console.log("THE ECUTOR", cell)
       cell = cell.split(",");
       return (<>
         <div className="user-list">
           <span className="user-pic">
-            <img src={cell[2] ? (
+            {console.log(cell[2], "cell[2].length")}
+            {cell[2] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[2]} alt="" /></>)}
+            {/* <img src={cell[2] ? (
               cell[2]
-            ):(
+            ) : (
               "../img/upload.jpg"
-            )} alt='' />
+            )} alt='' /> */}
           </span>
           <span className="user-name">
             {cell[0]}
           </span>
         </div> <br />
         {
-          cell[1] === "undefined" || cell[1] === "null"? (
+          cell[1] === "undefined" || cell[1] === "null" ? (
             <>
-           
+
             </>
-          ):(
+          ) : (
             <>
-            <div className="user-list">
-          <span className="user-pic">
-            <img src={cell[3]} alt='' />
-          </span>
-          <span className="user-name">
-            {cell[1] === " " || cell[1] ===  "undefined" ? (null) :(cell[1]) }
-            bhjvhkbk
-          </span>
-        </div>
+              <div className="user-list">
+                <span className="user-pic">
+
+                  {/* <img src={cell[3]} alt='' /> */}
+            {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
+
+                </span>
+                <span className="user-name">
+                  {cell[1] === " " || cell[1] === "undefined" ? (null) : (cell[1])}
+
+                </span>
+              </div>
             </>
           )
         }
@@ -131,14 +136,14 @@ const CoordinatorDashboard = () => {
     // console.log("The data",response)
 
     // const users = response.childrenEnrolled[0].users;
-    if (response.status ===  "pass") {
-    console.log("The data",response)
+    if (response.status === "pass") {
+      console.log("The data", response)
 
       let data = response.childrenEnrolled;
       let tempData = data.map((dt) => ({
         name: `${dt.fullname}`,
         educatorname: `${dt?.users[0]?.fullname},${dt?.users[1]?.fullname},${dt?.users[0]?.profile_photo},${dt?.users[1]?.profile_photo}`,
-        
+
         // educatorname: `${dt.users[0].fullname}`,
 
         // formname: `${dt.form_name}, ${dt.audited_on}`,
@@ -147,13 +152,13 @@ const CoordinatorDashboard = () => {
         // let data =  
 
       }))
-      console.log("THE TEMPDATA",tempData)
+      console.log("THE TEMPDATA", tempData)
       setUserData(tempData);
     }
     // console.log(users, ">>>>>>>>>");
     // let data = response.data.data.formData;
     // let tempData = users.map((dt) => ({
-      // name: `${dt.fullname}`,
+    // name: `${dt.fullname}`,
     //   // educatorname : `${dt.users.profile_photo}, ${dt.users.fullname}`
     //   // createdAt: dt.createdAt,
     //   // creatorName: dt.creatorName + "," + dt.creatorRole,
@@ -208,7 +213,7 @@ const CoordinatorDashboard = () => {
   React.useEffect(() => {
     count_Api();
   }, []);
-console.log("USERDATA",userData)
+  console.log("USERDATA", userData)
   if (!count) return null;
   return (
     <>

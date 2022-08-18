@@ -36,17 +36,23 @@ function ViewFormBuilder(props) {
   useEffect(() => {
     getFormData('');
   }, []);
-  const deleteForm= (id)=>{
+  const deleteForm = (id) => {
     var requestOptions = {
       method: 'DELETE',
-      redirect: 'follow'
+      redirect: 'follow',
     };
-    
-    fetch(`${BASE_URL}/form/${id}?user_id=${localStorage.getItem('user_id')}`, requestOptions)
-      .then(response => response.json())
-      .then(result => {alert(result?.message);getFormData('');})
-      .catch(error => console.log('error', error));
-  }
+
+    fetch(
+      `${BASE_URL}/form/${id}?user_id=${localStorage.getItem('user_id')}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        alert(result?.message);
+        getFormData('');
+      })
+      .catch((error) => console.log('error', error));
+  };
   const getFormData = (search) => {
     var requestOptions = {
       method: 'GET',
@@ -225,12 +231,25 @@ function ViewFormBuilder(props) {
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
+                                      {console.log("inner_item--->",inner_item.form_filled_user)}
                                       return inner_item.end_date &&
-                                        !inner_item?.form_filled_user?.includes(
-                                          localStorage.getItem('user_id')
-                                        ) && inner_item.form_permissions[0]?.fill_access_users?.includes(localStorage.getItem("user_role"))  ? (
+                                      !((inner_item?.form_filled_user || []).includes(
+                                        localStorage.getItem('user_id')
+                                      )) 
+                                      &&
+                                      (
+                                        (inner_item.form_permissions[0]?.fill_access_users || []).includes(
+                                        localStorage.getItem('user_role')) ||
+                                        (inner_item.form_permissions[0]?.fill_access_users || []).includes(
+                                            localStorage.getItem('user_id')) ||
+                                        (inner_item.upper_role || []).includes(localStorage.getItem('user_role')) ||
+                                          inner_item.created_by===parseInt(localStorage.getItem('user_id')) ||
+                                          localStorage.getItem('user_role')==="franchisor_admin"
+                                          
+                                      )
+                                         ? (
                                         <>
-                                          {console.log("Hello--->",inner_item)}
+                                          {console.log('Hello--->', inner_item)}
                                           {/* {(hrFlag = true)} */}
                                           {inner_index === 0 && (
                                             <Row>
@@ -337,10 +356,22 @@ function ViewFormBuilder(props) {
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
-                                      return inner_item.end_date === null &&
-                                        !inner_item?.form_filled_user?.includes(
+                                     return inner_item.end_date === null &&
+                                        !((inner_item?.form_filled_user || []).includes(
                                           localStorage.getItem('user_id')
-                                        ) && inner_item.form_permissions[0]?.fill_access_users?.includes(localStorage.getItem("user_role")) ? (
+                                        )) 
+                                        &&
+                                        (
+                                          (inner_item.form_permissions[0]?.fill_access_users || []).includes(
+                                          localStorage.getItem('user_role')) ||
+                                          (inner_item.form_permissions[0]?.fill_access_users || []).includes(
+                                              localStorage.getItem('user_id')) ||
+                                          (inner_item.upper_role || []).includes(localStorage.getItem('user_role')) ||
+                                            inner_item.created_by===parseInt(localStorage.getItem('user_id')) ||
+                                            localStorage.getItem('user_role')==="franchisor_admin"
+                                            
+                                        )
+                                         ? (
                                         <>
                                           {inner_index === 0 && (
                                             <Row>
@@ -463,22 +494,42 @@ function ViewFormBuilder(props) {
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
-                                      return inner_item?.form_filled_user?.includes(
+                                      return (inner_item?.form_filled_user || []).includes(
                                         localStorage.getItem('user_id')
+                                      )
+                                      &&
+                                      (
+                                        (inner_item.form_permissions[0]?.fill_access_users || []).includes(
+                                        localStorage.getItem('user_role')) ||
+                                        (inner_item.form_permissions[0]?.fill_access_users || []).includes(
+                                            localStorage.getItem('user_id')) ||
+                                        (inner_item.upper_role || []).includes(localStorage.getItem('user_role')) ||
+                                          inner_item.created_by===parseInt(localStorage.getItem('user_id')) ||
+                                          localStorage.getItem('user_role')==="franchisor_admin"
+                                          
                                       ) ? (
                                         <>
-                                          {inner_index===0 && (<Row>
-                                            <div className="col-lg-12">
-                                              <h2 className="page_title">
-                                                {item.category}
-                                              </h2>
-                                            </div>
-                                          </Row>)}
+                                          {inner_index === 0 && (
+                                            <Row>
+                                              <div className="col-lg-12">
+                                                <h2 className="page_title">
+                                                  {item.category}
+                                                </h2>
+                                              </div>
+                                            </Row>
+                                          )}
                                           <Col lg={4}>
                                             <div className="forms-content create-other">
-                                              <div className="content-icon-section" onClick={()=>{
-                                                navigate("/form/response",{state:{id: inner_item.id}})
-                                              }}>
+                                              <div
+                                                className="content-icon-section"
+                                                onClick={() => {
+                                                  navigate('/form/response', {
+                                                    state: {
+                                                      id: inner_item.id,
+                                                    },
+                                                  });
+                                                }}
+                                              >
                                                 <img
                                                   src={
                                                     item.category ===
@@ -506,9 +557,16 @@ function ViewFormBuilder(props) {
                                                   }
                                                 />
                                               </div>
-                                              <div className="content-title-section" onClick={()=>{
-                                                navigate("/form/response",{state:{id: inner_item.id}})
-                                              }}>
+                                              <div
+                                                className="content-title-section"
+                                                onClick={() => {
+                                                  navigate('/form/response', {
+                                                    state: {
+                                                      id: inner_item.id,
+                                                    },
+                                                  });
+                                                }}
+                                              >
                                                 <h6>{inner_item.form_name}</h6>
                                                 <h4>
                                                   Created on:{' '}
@@ -529,7 +587,9 @@ function ViewFormBuilder(props) {
                                                   <Dropdown.Menu>
                                                     <Dropdown.Item
                                                       onClick={() => {
-                                                        navigate(`/form/dynamic/${inner_item.form_name}`);
+                                                        navigate(
+                                                          `/form/dynamic/${inner_item.form_name}`
+                                                        );
                                                       }}
                                                     >
                                                       <FontAwesomeIcon
@@ -537,11 +597,10 @@ function ViewFormBuilder(props) {
                                                       />{' '}
                                                       Add Response
                                                     </Dropdown.Item>
-                                                    
                                                   </Dropdown.Menu>
                                                 </Dropdown>
                                               </div>
-                                             {/* )} */}
+                                              {/* )} */}
                                             </div>
                                           </Col>
                                         </>
@@ -670,8 +729,7 @@ function ViewFormBuilder(props) {
                                                             }}
                                                           >
                                                             {
-                                                              inner_item
-                                                                ?.seen_count
+                                                              inner_item?.seen_count
                                                             }
                                                           </span>
                                                         </div>
@@ -702,9 +760,13 @@ function ViewFormBuilder(props) {
                                                               />{' '}
                                                               Edit
                                                             </Dropdown.Item>
-                                                            <Dropdown.Item onClick={()=>{
-                                                                deleteForm(inner_item.id);
-                                                              }}>
+                                                            <Dropdown.Item
+                                                              onClick={() => {
+                                                                deleteForm(
+                                                                  inner_item.id
+                                                                );
+                                                              }}
+                                                            >
                                                               <FontAwesomeIcon
                                                                 icon={faRemove}
                                                               />{' '}
@@ -840,50 +902,58 @@ function ViewFormBuilder(props) {
                                                               }}
                                                             >
                                                               {
-                                                                inner_item
-                                                                  ?.seen_count
+                                                                inner_item?.seen_count
                                                               }
                                                             </span>
                                                           </div>
-                                                          {localStorage.getItem("user_role")==="franchisor_admin" && (<Dropdown>
-                                                            <Dropdown.Toggle id="dropdown-basic1">
-                                                              <FontAwesomeIcon
-                                                                icon={
-                                                                  faEllipsisVertical
-                                                                }
-                                                              />
-                                                            </Dropdown.Toggle>
-
-                                                            <Dropdown.Menu>
-                                                              <Dropdown.Item
-                                                                onClick={() => {
-                                                                  navigate(
-                                                                    '/form/add',
-                                                                    {
-                                                                      state: {
-                                                                        id: inner_item.id,
-                                                                      },
-                                                                    }
-                                                                  );
-                                                                }}
-                                                              >
-                                                                <FontAwesomeIcon
-                                                                  icon={faPen}
-                                                                />{' '}
-                                                                Edit
-                                                              </Dropdown.Item>
-                                                              <Dropdown.Item onClick={()=>{
-                                                                deleteForm(inner_item.id);
-                                                              }}>
+                                                          {localStorage.getItem(
+                                                            'user_role'
+                                                          ) ===
+                                                            'franchisor_admin' && (
+                                                            <Dropdown>
+                                                              <Dropdown.Toggle id="dropdown-basic1">
                                                                 <FontAwesomeIcon
                                                                   icon={
-                                                                    faRemove
+                                                                    faEllipsisVertical
                                                                   }
-                                                                />{' '}
-                                                                Remove
-                                                              </Dropdown.Item>
-                                                            </Dropdown.Menu>
-                                                          </Dropdown>)}
+                                                                />
+                                                              </Dropdown.Toggle>
+
+                                                              <Dropdown.Menu>
+                                                                <Dropdown.Item
+                                                                  onClick={() => {
+                                                                    navigate(
+                                                                      '/form/add',
+                                                                      {
+                                                                        state: {
+                                                                          id: inner_item.id,
+                                                                        },
+                                                                      }
+                                                                    );
+                                                                  }}
+                                                                >
+                                                                  <FontAwesomeIcon
+                                                                    icon={faPen}
+                                                                  />{' '}
+                                                                  Edit
+                                                                </Dropdown.Item>
+                                                                <Dropdown.Item
+                                                                  onClick={() => {
+                                                                    deleteForm(
+                                                                      inner_item.id
+                                                                    );
+                                                                  }}
+                                                                >
+                                                                  <FontAwesomeIcon
+                                                                    icon={
+                                                                      faRemove
+                                                                    }
+                                                                  />{' '}
+                                                                  Remove
+                                                                </Dropdown.Item>
+                                                              </Dropdown.Menu>
+                                                            </Dropdown>
+                                                          )}
                                                         </div>
                                                       </div>
                                                       <div className="create-by">
@@ -1018,7 +1088,12 @@ function ViewFormBuilder(props) {
                           <div className="user_name">
                             <div className="user_profile">
                               <img src="../img/user_img.png" alt="" />
-                              <h4 className={item[0]?.seen_flag===false && 'bold-user-info'}>
+                              <h4
+                                className={
+                                  item[0]?.seen_flag === false &&
+                                  'bold-user-info'
+                                }
+                              >
                                 {
                                   MeFormData[Index]?.forms[innerIndex]?.user
                                     ?.fullname
@@ -1028,7 +1103,13 @@ function ViewFormBuilder(props) {
                           </div>
                           <div className="user_role">
                             <div className="user_detail">
-                              <h4 className={item[0]?.seen_flag===false ? "bold-user-info text-capitalize" : "text-capitalize"}>
+                              <h4
+                                className={
+                                  item[0]?.seen_flag === false
+                                    ? 'bold-user-info text-capitalize'
+                                    : 'text-capitalize'
+                                }
+                              >
                                 {MeFormData[Index]?.forms[
                                   innerIndex
                                 ]?.user?.role
@@ -1039,7 +1120,12 @@ function ViewFormBuilder(props) {
                           </div>
                           <div className="date">
                             <div className="user_detail">
-                              <h4 className={item[0]?.seen_flag===false && 'bold-user-info'}>
+                              <h4
+                                className={
+                                  item[0]?.seen_flag === false &&
+                                  'bold-user-info'
+                                }
+                              >
                                 {moment(item.createdAt).format('DD/MM/YYYY')} -
                                 {moment(item.createdAt).format('HH:MM:SS')}
                               </h4>
@@ -1066,23 +1152,46 @@ function ViewFormBuilder(props) {
                     (item, index) => {
                       return (
                         <div className="user_box">
-                          {console.log("item?.seen_flag--->",item[0]?.seen_flag,"index--->",index)}
+                          {console.log(
+                            'item?.seen_flag--->',
+                            item[0]?.seen_flag,
+                            'index--->',
+                            index
+                          )}
                           <div className="user_name">
                             <div className="user_profile">
                               <img src="../img/user_img.png" alt="" />
-                              <h4 className={item[0]?.seen_flag===false && 'bold-user-info'}>{item[0]?.user?.fullname}</h4>
+                              <h4
+                                className={
+                                  item[0]?.seen_flag === false &&
+                                  'bold-user-info'
+                                }
+                              >
+                                {item[0]?.user?.fullname}
+                              </h4>
                             </div>
                           </div>
                           <div className="user_role">
                             <div className="user_detail">
-                              <h4 className={item[0]?.seen_flag===false ? "bold-user-info text-capitalize" : "text-capitalize"}>
+                              <h4
+                                className={
+                                  item[0]?.seen_flag === false
+                                    ? 'bold-user-info text-capitalize'
+                                    : 'text-capitalize'
+                                }
+                              >
                                 {item[0]?.user?.role.split('_').join(' ')}
                               </h4>
                             </div>
                           </div>
                           <div className="date">
                             <div className="user_detail">
-                              <h4 className={item[0]?.seen_flag===false && 'bold-user-info'}>
+                              <h4
+                                className={
+                                  item[0]?.seen_flag === false &&
+                                  'bold-user-info'
+                                }
+                              >
                                 {moment(item.createdAt).format('DD/MM/YYYY')}
                               </h4>
                               <button

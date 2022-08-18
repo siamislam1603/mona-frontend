@@ -1413,6 +1413,7 @@ li.branch {
     gap: 20px;
     justify-content: end;
     margin-bottom: 10px;
+    margin-top: -50px;
 }
 
 .create_model_bar {
