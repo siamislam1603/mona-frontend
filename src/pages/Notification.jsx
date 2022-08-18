@@ -102,7 +102,49 @@ const handleLinkClick = notificationId => {
               <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Notifications</h1>
-                    </header>
+                  </header>
+                  
+                  <div className="notofication-listing-sec notificationpopup mb-5">
+                    <div className="notifitem unread">
+                      <div className="notifimg">
+                        <a className="notilink" href="/wfc/Notifications">
+                          <span className="gdot"></span>
+                            <div className="notifpic">
+                              <img src="https://wfc-development.s3.ap-south-1.amazonaws.com/documents/629449f083201e1dcc1407dd/f967f4bb-229e-4fe2-96c3-86dd9fdee960.jpeg" className="logo-circle rounded-circle"/>
+                            </div>
+                          <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
+                        </a>
+                      </div>
+                      <div className="notification-time">21 hours ago</div>
+                    </div>
+                    <div className="notifitem unread">
+                      <div className="notifimg">
+                        <a className="notilink" href="/wfc/Notifications">
+                          <span className="gdot"></span>
+                            <div className="notifpic">
+                              <img src="https://wfc-development.s3.ap-south-1.amazonaws.com/documents/629449f083201e1dcc1407dd/f967f4bb-229e-4fe2-96c3-86dd9fdee960.jpeg" className="logo-circle rounded-circle"/>
+                            </div>
+                          <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
+                        </a>
+                      </div>
+                      <div className="notification-time">21 hours ago</div>
+                    </div>
+                    <div className="notifitem">
+                      <div className="notifimg">
+                        <a className="notilink" href="/wfc/Notifications">
+                          <span className="gdot"></span>
+                            <div className="notifpic">
+                              <img src="https://wfc-development.s3.ap-south-1.amazonaws.com/documents/629449f083201e1dcc1407dd/f967f4bb-229e-4fe2-96c3-86dd9fdee960.jpeg" className="logo-circle rounded-circle"/>
+                            </div>
+                          <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
+                        </a>
+                      </div>
+                      <div className="notification-time">21 hours ago</div>
+                    </div>
+                  </div>
+                  
+                  
+                  
                     <Accordion defaultActiveKey="0">
                       { notificationDetails &&
                         notificationDetails.length !==0 ? (

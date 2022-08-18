@@ -68,7 +68,7 @@ const FileRepodAddbyMe = () => {
                             <span className="user-name">
                                 {cell[0] === "1" ? "Daily Use" :
                                     cell[0] === "2" ? "Business Management" :
-                                        cell[0] === "3" ? "Employeement" :
+                                        cell[0] === "3" ? "Employment" :
                                             cell[0] === "4" ? "Compliance" :
                                                 cell[0] === "5" ? "Care Giving" :
                                                     cell[0] === "6" ? "Curriculum & Planning" :

@@ -475,7 +475,7 @@ const FileRpositoryList = () => {
                                                             <span className="user-name">
                                                                 {Params.id === "1" ? "Daily Use" :
                                                                     Params.id === "2" ? "Business Management" :
-                                                                        Params.id === "3" ? "Employeement" :
+                                                                        Params.id === "3" ? "Employment" :
                                                                             Params.id === "4" ? "Compliance" :
                                                                                 Params.id === "5" ? "Care Giving" :
                                                                                     Params.id === "6" ? "Curriculum & Planning" :
