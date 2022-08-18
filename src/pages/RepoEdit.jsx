@@ -63,7 +63,7 @@ const RepoEdit = () => {
     // setimg(coverImage)
     console.log(">>>>>>>>>>>>>", data)
     const copyFetchedData = async (data) => {
-
+        
         setData(prevState => ({
             ...prevState,
             id: Params.id,
@@ -114,6 +114,7 @@ const RepoEdit = () => {
                 "Authorization": "Bearer " + token
             }
         }
+
         );
         if (response.status === 200) {
             navigate("/file-repository")
@@ -205,8 +206,7 @@ const RepoEdit = () => {
         if (value === null || value === undefined) {
             let blob
             if (typeof field === "object") {
-                setData({ ...data, image: JSON.stringify(field[0].path) });
-                console.log('Image Type: String', field, JSON.stringify(field[0].path));
+                setData({ ...data, image: field[0] });
             } else {
                 blob = field
                 data.append('profile_photo', blob);
