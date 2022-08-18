@@ -387,7 +387,7 @@ const EditTraining = () => {
   // fetchedFranchiseeUsers && console.log('POPULATED USERS:', fetchedFranchiseeUsers?.map(d => trainingSettings?.d.id));
   fetchedVideoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', fetchedVideoTutorialFiles);
   fetchedRelatedFiles && console.log('RELATED FILES:', fetchedRelatedFiles);
-
+  console.log('COVER IMAGE:', coverImage);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
