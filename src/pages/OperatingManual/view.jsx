@@ -17,7 +17,7 @@ import {
   Row,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
 import PdfComponent from '../PrintPDF/PdfComponent';
@@ -352,6 +352,7 @@ const OperatingManual = () => {
       }
       // data['created_by'] = localStorage.getItem('user_id');
       data['shared_by'] = localStorage.getItem('user_id');
+      data['link']=FRONT_BASE_URL+"/operatingmanual?select=";
       upperRoleUser = getUpperRoleUser();
       data['upper_role'] = upperRoleUser;
       data['franchisee_id'] = selectedFranchiseeId;
