@@ -205,20 +205,7 @@ const RepoEdit = () => {
     }
 
     const setField = async (field, value) => {
-        if (value === null || value === undefined) {
-            let blob
-            console.log(typeof field, "valuevalue")
-            if (typeof field === "object") {
-                setData({ ...data, image: JSON.stringify({ field }) });
-            } else {
-                console.log('Image Type: String');
-                blob = field
-                data.append('profile_photo', blob);
-            }
-            console.log(typeof field, "valuevalue")
-        } else {
-            setData({ ...data, field: value });
-        }
+        setData({ ...data, image: field[0] })
         if (!!errors[field]) {
             setErrors({
                 ...errors,
@@ -238,6 +225,8 @@ const RepoEdit = () => {
         window.location.href = "/file-repository";
     };
 
+    data && console.log('IMAGE DATA:', data.image);
+    data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
 
     return (
         <div style={{ position: "relative", overflow: "hidden" }}>
