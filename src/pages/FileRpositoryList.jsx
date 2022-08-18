@@ -32,6 +32,7 @@ const training = [
         label: 'Melbourne',
     },
 ];
+
 const selectRow = {
     mode: 'checkbox',
     clickToSelect: true,

@@ -50,7 +50,8 @@ const TrainingDetail = () => {
 
   const handleSurveyTransition = () => {
     console.log('handling survey transition!');
-    window.location.href = `${FRONT_BASE_URL}/form/dynamic/${relatedForms.form_name}`;
+    console.log('LINK:', `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`);
+    window.location.href = `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`;
   }
 
   // FETCHING THE LIST OF USERS WHO FINISHED THIS TRAINING
