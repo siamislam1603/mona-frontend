@@ -329,7 +329,7 @@ const AddNewTraining = () => {
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   trainingData && console.log('TRAINING DATA:', trainingData);
-  
+  trainingFormData && console.log('TRAINING FORM DATA:', trainingFormData);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
