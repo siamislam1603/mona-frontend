@@ -88,6 +88,7 @@ const AvailableTraining = ({ filter }) => {
   };
 
   const copyDataToStates = (training) => {
+    console.log('COPYING DATA TO STATES:');
     setFormSettings(prevState => ({
       ...prevState,
       assigned_users: training?.shares[0]?.assigned_users,
@@ -170,8 +171,7 @@ const AvailableTraining = ({ filter }) => {
     console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
-  formSettings && console.log('FRANCHISEE LISTING:', franchiseeList?.filter(d => parseInt(formSettings?.assigned_franchisee) === parseInt(d.id)));
-  franchiseeList && console.log('FRANCHISEE LONG:', franchiseeList);
+  formSettings && console.log('FORM SETTINGS:', formSettings);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -194,17 +194,19 @@ const AvailableTraining = ({ filter }) => {
                           </div>
                         </div>
                         <div className="cta-col">
-                        <Dropdown>
-                          <Dropdown.Toggle variant="transparent" id="ctacol">
-                            <img src="../img/dot-ico.svg" alt="" />
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#" onClick={() => {
-                              setSaveTrainingId(item.id);
-                              setShowModal(true)
-                            }}>Share</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
+                        { localStorage.getItem('user_role') !== 'educator' &&
+                          <Dropdown>
+                            <Dropdown.Toggle variant="transparent" id="ctacol">
+                              <img src="../img/dot-ico.svg" alt="" />
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item href="#" onClick={() => {
+                                setSaveTrainingId(item.id);
+                                setShowModal(true)
+                              }}>Share</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        }
                         </div>
                       </div>
                     </div>

@@ -7,22 +7,20 @@ import Multiselect from 'multiselect-react-dropdown';
 import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import DropOneFile from '../components/DragDrop';
 import Select from 'react-select';
-import { useParams } from 'react-router-dom';
-import { EditFleRepo } from '../helpers/validation'
 // import { TrainingFormValidation } from '../helpers/validation';
 const animatedComponents = makeAnimated();
 let selectedUserId = '';
 
 const RepoEdit = () => {
+
     const Params = useParams();
     const navigate = useNavigate();
     const [settingsModalPopup, setSettingsModalPopup] = useState(false);
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
-    console.log(formSettingData, "formSettingData")
     const [errors, setErrors] = useState({});
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
@@ -33,6 +31,7 @@ const RepoEdit = () => {
     const [franchiseeList, setFranchiseeList] = useState();
     const [img, setimg] = useState();
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
+    const [croppedImage, setCroppedImage] = useState(null);
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -54,18 +53,20 @@ const RepoEdit = () => {
         })
         console.log(response, "response")
         if (response.status === 200 && response.data.status === "success") {
-            const FileResult = response.data.file;
-            console.log('result>>>>>>>', FileResult)
-            copyFetchedData(FileResult);
+            console.log('RESPONSE IS SUCCESS');
+            const {file} = response.data;
+            console.log('result>>>>>>>', file)
+            copyFetchedData(file);
         }
 
     }
-    // setimg(coverImage)
-    // console.log(">>>>>>>>>>>>>", img)
+
     const copyFetchedData = (data) => {
+        console.log('COPYING FETCHED DATA:', data);
+        
         setData(prevState => ({
             ...prevState,
-            id: Params.id,
+            id: data.id,
             createdAt: data?.createdAt,
             description: data?.description,
             title: data?.title,
@@ -76,12 +77,10 @@ const RepoEdit = () => {
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
+
         }));
 
-        setCoverImage(data?.repository_files[0].filesPath);
-        setFetchedCoverImage(data?.repository_files[0].filesPath);
     }
-    console.log(coverImage, "coverImage")
     // FUNCTION TO SAVE TRAINING SETTINGS
 
     const handleDiscriptionSettings = (event) => {
@@ -105,19 +104,65 @@ const RepoEdit = () => {
 
     const handleDataSubmit = async (event) => {
         event.preventDefault();
+        console.log('DATA:', data);
+        let dataObj = new FormData();
+        for(let[key, value] of Object.entries(data)) {
+            console.log(key, value);
+            dataObj.append(key, value);
+        }
+
+        // if(typeof data.image === 'object') {
+        //     console.log('IMAGE:', data.image);
+        //     dataObj.append("image", data.image);
+        // }
+
+        saveDataToServer(dataObj);
+    }
+
+    const saveDataToServer = async () => {
+        console.log('SAVING DATA TO SERVER');
         const token = localStorage.getItem('token');
-        const response = await axios.put(`${BASE_URL}/fileRepo/`, data, {
+        let response = await axios.put(`${BASE_URL}/fileRepo`, data, {
             headers: {
                 "Authorization": "Bearer " + token
             }
-        }
-        );
-        if (response.status === 200) {
-            navigate("/file-repository")
-            console.log(response.message, "<<<<<<<<<<<message>>>>>>>>>>")
-            console.log(response.data, "<<<<<<<<<<<data>>>>>>>>>>")
+        });
+
+        console.log('DATA UPDATE RESPONSE:', response);
+        if (response.status === 200 && response.data.status === "success") {
+            if(typeof data.image === 'string') {
+                response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
+
+                console.log('IMAGE UPDATE RESPONSE:', response);
+                if(response.status === 201 && response.data.status === "success") {
+                    console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
+                    window.location.href = '/file-repository';
+                }
+            } else if(typeof data.image === 'object') {
+                let dataObj = new FormData();
+                dataObj.append("image", data.image);
+                dataObj.append("id", Params.id);
+                dataObj.append("title", data.title);
+                dataObj.append("description", data.description);
+
+                response = await axios.post(`${BASE_URL}/fileRepo/data/saveImageData`, dataObj, {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                console.log('SOLO IMAGE SAVE RESPONSE:', response);
+                if (response.status === 200 && response.data.status === "success") {
+                    console.log('DATA UPDATED SUCCESSFULLT => type: object');
+                    window.location.href='/file-repository';
+                }
+            }
+            console.log('DATA UPDATED SUCCESSFULLT');
+            window.location.href='/file-repository';
         }
     }
+
+
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/role/franchisee`, {
@@ -135,9 +180,6 @@ const RepoEdit = () => {
         }
     };
 
-
-
-
     const getFileCategory = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(
@@ -149,7 +191,6 @@ const RepoEdit = () => {
         );
         if (response.status === 200 && response.data.status === "success") {
             const categoryList = response.data.category;
-            console.log('CATEGORY:', categoryList)
             setCategory([
                 ...categoryList.map((data) => ({
                     id: data.id,
@@ -201,14 +242,8 @@ const RepoEdit = () => {
 
     }
 
-    const setField = (field, value) => {
-        if (value === null || value === undefined) {
-            setData({ ...data, setting_files: field });
-
-        } else {
-            setData({ ...data, [field]: value });
-        }
-
+    const setField = async (field, value) => {
+        setData({ ...data, image: field[0] })
         if (!!errors[field]) {
             setErrors({
                 ...errors,
@@ -216,7 +251,6 @@ const RepoEdit = () => {
             });
         }
     };
-    
 
     useEffect(() => {
         GetData();
@@ -224,8 +258,12 @@ const RepoEdit = () => {
         getUser();
         fetchFranchiseeList();
     }, []);
+    const handleTrainingCancel = () => {
+        window.location.href = "/file-repository";
+    };
 
-
+    data && console.log('IMAGE DATA:', data.image);
+    data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
 
     return (
         <div style={{ position: "relative", overflow: "hidden" }}>
@@ -271,8 +309,22 @@ const RepoEdit = () => {
                                                         <Col md={6}></Col>
                                                         <Form.Group>
                                                             <DragDropRepository onChange={setField} />
-                                                            <p className="error">{errors.setting_files}</p>
+                                                            <p className="error">{errors.setting_files}</p> {/* <img src={data.image} alt="smkdjh" /> */}
+                                                            <img className="cover-image-style" src={data.image} alt="training cover image" />
+                                                            {/* {
+                                                                data &&
+                                                                <>
+                                                                    <img className="cover-image-style" src={data.image} alt="training cover image" />
+                                                                    <div className="showfiles">
+                                                                        <ul>{data.image}</ul>
+                                                                    </div>
+                                                                </>
+                                                            } */}
+
+                                                            {errors && errors.setField && <span className="error mt-2">{errors.coverImage}</span>}
+
                                                         </Form.Group>
+
                                                     </Row>
                                                     <div className="toggle-switch">
 
@@ -610,7 +662,6 @@ const RepoEdit = () => {
                                                                         }}
                                                                         options={user}
                                                                     />
-                                                                    {console.log(data, "????????????????????a")}
                                                                 </div>
                                                                 <p className="error">{errors.franchisee}</p>
                                                             </Form.Group>
@@ -618,7 +669,7 @@ const RepoEdit = () => {
                                                     </Col>
                                                     <div className="d-flex justify-content-center my-5">
                                                         <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                            <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} >Cancel</Button>
+                                                            <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => navigate(-1)}>Cancel</Button>
                                                             <Button type="submit" onClick={handleDataSubmit} > Save Details</Button>
                                                         </Form.Group>
                                                     </div>

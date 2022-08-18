@@ -3,9 +3,10 @@ import { Button, Col, Container, Row, Form, Dropdown,Modal } from "react-bootstr
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import  {useNavigate} from 'react-router';
 
 const CoparentAssignPopup = (props) => {
-    
+    const navigate = useNavigate();
 //   const [show, setShow] = useState(false);
 
   const [selectedParents, setSelectedParents] = useState([])
@@ -13,15 +14,23 @@ const CoparentAssignPopup = (props) => {
     const assignParents = async() => {
         console.log(selectedParents,"selPar")
         let childId = localStorage.getItem("SelectedChild")
-        let response =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds: selectedParents}, {
+        let clearMapping =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds: []}, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         });
-        if (response.status === 201) {
-            handleClose()
-            window.location.reload()
-        }
+       
+        selectedParents.map(async(parent)=>{
+            let response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: parent, childId: childId}, {
+                headers: {
+                  "Authorization": `Bearer ${localStorage.getItem('token')}`
+                }
+              });
+              if (response.status === 201) {
+                handleClose()
+                window.location.reload()
+            }
+        })
         
     }
 
@@ -63,10 +72,10 @@ const selectRow = {
 };
 
 const products = props.parents.map((parent)=>({
-    id: parent.parent.parentId,
+    id: parent.id,
     name: parent.fullname + "," + (parent.profile_photo ? parent.profile_photo : "../img/user.png"),
     Location: parent.city,
-    parentId:parent.parent.parentId
+    parentId:parent.id
 }))
 
 const PopColumns = [
@@ -91,7 +100,7 @@ const PopColumns = [
           <Modal size="lg" show={props.show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Select Co-Parent</Modal.Title>
-                    <Button variant="outline-secondary" onClick={handleClose} style={{ position: 'absolute', right: '80px' }}>
+                    <Button variant="outline-secondary" onClick={()=>(navigate("/new-user"))} style={{ position: 'absolute', right: '80px' }}>
                         Add New
                     </Button>
                 </Modal.Header>

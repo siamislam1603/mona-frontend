@@ -126,18 +126,18 @@ const Main = () => {
           }
         />
 
-        <Route 
-          path="/notifications"
+        <Route
+          path="/notification"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <ChildNotifications />
             </Protected>
           }
-          />
+        />
 
 
-<Route 
+        <Route
           path="/child-enrollment/notification"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -145,7 +145,7 @@ const Main = () => {
               <ChildNotifications />
             </Protected>
           }
-          />
+        />
 
         <Route
           path="/child-enrollment"
@@ -517,7 +517,7 @@ const Main = () => {
         />
 
         <Route
-          path="/log"
+          path="/notifications"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -635,9 +635,9 @@ const Main = () => {
             </Protected>
           }
         />
-     <Route path="*" element={
-      <PageNotFound/>
-     } />
+        <Route path="*" element={
+          <PageNotFound />
+        } />
 
 
       </Routes>

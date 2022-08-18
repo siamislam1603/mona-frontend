@@ -17,7 +17,7 @@ import {
   Row,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
 import PdfComponent from '../PrintPDF/PdfComponent';
@@ -352,6 +352,7 @@ const OperatingManual = () => {
       }
       // data['created_by'] = localStorage.getItem('user_id');
       data['shared_by'] = localStorage.getItem('user_id');
+      data['link']=FRONT_BASE_URL+"/operatingmanual?select=";
       upperRoleUser = getUpperRoleUser();
       data['upper_role'] = upperRoleUser;
       data['franchisee_id'] = selectedFranchiseeId;
@@ -504,6 +505,7 @@ const OperatingManual = () => {
                                           setInnerIndex(inner_index);
                                         }}
                                       >
+                                        {console.log("inner_item---->1111111",inner_item)}
                                         <a
                                           className={
                                             index === Index &&
@@ -833,6 +835,40 @@ const OperatingManual = () => {
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
+                  <label className="container">
+                      Franchisee Admin
+                      <input
+                        type="checkbox"
+                        name="shared_role"
+                        id="franchisee_admin"
+                        onClick={(e) => {
+                          let data = { ...formSettingData };
+                          if (
+                            !data['shared_role']
+                              .toString()
+                              .includes(e.target.id)
+                          ) {
+                            data['shared_role'] += e.target.id + ',';
+                          } else {
+                            data['shared_role'] = data['shared_role'].replace(
+                              e.target.id + ',',
+                              ''
+                            );
+                            if (data['shared_role'].includes('all')) {
+                              data['shared_role'] = data['shared_role'].replace(
+                                'all,',
+                                ''
+                              );
+                            }
+                          }
+                          setFormSettingData(data);
+                        }}
+                        checked={formSettingData?.shared_role
+                          ?.toString()
+                          .includes('franchisee_admin')}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
                     <label className="container">
                       Co-ordinators
                       <input
@@ -963,6 +999,13 @@ const OperatingManual = () => {
                                 .includes('coordinator')
                             ) {
                               data['shared_role'] += 'coordinator,';
+                            }
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes('franchisee_admin')
+                            ) {
+                              data['shared_role'] += 'franchisee_admin,';
                             }
                             if (
                               !data['shared_role'].toString().includes('all')

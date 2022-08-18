@@ -6,99 +6,54 @@ import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import moment from 'moment'
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
-import moment from 'moment';
-const products = [
-  {
-    id: 1,
-    name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
-  },
-  {
-    id: 2,
-    name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
-  },
-  {
-    id: 3,
-    name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
-  },
-  {
-    id: 4,
-    name: "../img/user.png, James Smith",
-    educator: "Ms. Shelby Goode",
-  },
-];
+const selectRow = {
+  mode: 'checkbox',
+  clickToSelect: true,
+};
+// name: `${dt.fullname}, ${dt.profile_photo}`,
 const columns = [
   {
     dataField: 'name',
     text: 'Child Name',
     formatter: (cell) => {
-      cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+      return (<>
+        <div className="user-list">
+          <span className="user-pic">
+            <img src="../img/audit-form.png" alt="" />
+          </span><span className="user-name">
+            {cell}
+          </span>
+        </div></>)
     },
   },
   {
-    dataField: 'educator',
-    text: 'Educator',
-  },
-  {
-    dataField: "action",
-    text: "",
-    formatter: (cell) => {
-      return (<><div className="cta-col">
-        <Dropdown>
-          <Dropdown.Toggle variant="transparent" id="ctacol">
-            <img src="../img/dot-ico.svg" alt="" />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div></>)
-    },
-  }
-];
-
-const products1 = [
-  {
-    id: 1,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 2,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 3,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 4,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-
-];
-const columns1 = [
-  {
-    dataField: 'formname',
-    text: 'Child Name',
-    formatter: (cell) => {
-      cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
-    },
-  },
-  {
-    dataField: 'educatorname',
+    dataField: 'educatatoName',
     text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} </span></div></>)
+      return (<>
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[1]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[0]}
+          </span>
+        </div> <br />
+
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[3]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[2]}
+          </span>
+        </div>
+      </>)
     },
   },
   {
@@ -119,10 +74,69 @@ const columns1 = [
   }
 ];
 
+const columns1 = [
+  {
+    dataField: 'name',
+    text: 'Child Name',
+    formatter: (cell) => {
+      return (<>
+        <div className="user-list">
+          <span className="user-pic">
+            <img src="../img/audit-form.png" alt="" />
+          </span><span className="user-name">
+            {cell}
+          </span>
+        </div></>)
+    },
+  },
+  {
+    dataField: 'educatatoName',
+    text: 'Educator Name',
+    formatter: (cell) => {
+      cell = cell.split(",");
+      return (<>
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[1]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[0]}
+          </span>
+        </div> <br />
+
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[3]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[2]}
+          </span>
+        </div>
+      </>)
+    },
+  },
+  {
+    dataField: "action",
+    text: "",
+    formatter: (cell) => {
+      return (<><div className="cta-col">
+        <Dropdown>
+          <Dropdown.Toggle variant="transparent" id="ctacol">
+            <img src="../img/dot-ico.svg" alt="" />
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item href="#">Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </div></>)
+    },
+  }
+];
 const FranchiseeDashboard = () => {
   const [countUser, setcountUser] = React.useState(null);
-
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+  const [enrollments, setEnrollments] = useState()
+  const [enrollmentssetUser, setEnrollmentssetUser] = useState()
 
   const announcement = () => {
     let token = localStorage.getItem('token');
@@ -137,11 +151,70 @@ const FranchiseeDashboard = () => {
       console.log("Error", e);
     })
   }
+  const [user, setUser] = useState([]);
+  const [userData, setUserData] = useState([]);
 
-  console.log(latest_announcement[0], "latest_announcement")
+  const Additional_Needs = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    let response = await fetch(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, requestOptions)
+    response = await response.json();
+    setUser(response.data)
+    const users = response.childrenEnrolled;
+    let tempData = users.map((dt) => ({
+      name: `${dt.fullname}`,
+      // createdAt: dt.createdAt,
+      educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
+      // Shaired: dt.repository.repository_shares.length,
+      // categoryId: dt.categoryId
+    }));
+    setUserData(tempData);
+  }
+
+
+  const Enrollments = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    let response = await fetch(`${BASE_URL}/dashboard/franchisee/new-enrollments`, requestOptions)
+    // let response = fetch(`${BASE_URL}/dashboard/franchisee/new-enrollments`, requestOptions)
+
+    response = await response.json();
+
+    setEnrollmentssetUser(response.data)
+
+    const users = response.newEnrollments;
+
+    let tempData = users.map((dt) => ({
+      name: `${dt.fullname}`,
+      educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
+    }));
+
+    setEnrollments(tempData);
+    console.log('tempData>>>>>>>>>>>>>', tempData)
+    console.log("response", response)
+
+  }
+
+
   const count_User_Api = () => {
     let token = localStorage.getItem('token');
-
     const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
     axios.get(countUrl, {
       headers: {
@@ -158,28 +231,31 @@ const FranchiseeDashboard = () => {
   React.useEffect(() => {
     count_User_Api();
     announcement();
+    Additional_Needs();
   }, []);
 
-  const count_Api = async () => {
-    const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
+  // const count_Api = async () => {
+  //   const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
+  //   var myHeaders = new Headers();
+  //   myHeaders.append(
+  //     'authorization',
+  //     'Bearer ' + localStorage.getItem('token')
+  //   );
 
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    await axios(countUrl, requestOptions).then((response) => {
-      setcountUser(response.data);
-    }).catch((e) => {
-      console.log(e);
-    })
-    console.log(countUser, ":lksjdgcasjhgjhjchvs")
-  }
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //     headers: myHeaders,
+  //   };
+  //   await axios(countUrl, requestOptions).then((response) => {
+  //     setcountUser(response.data);
+  //   }).catch((e) => {
+  //     console.log(e);
+  //   })
+  //   console.log(countUser, ":lksjdgcasjhgjhjchvs")
+  // }
+
+
   const getAddedTime = (str) => {
     const Added = moment(str).format('DD/MM/YYYY')
     var today = new Date();
@@ -187,26 +263,29 @@ const FranchiseeDashboard = () => {
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [day, month, year].join('/');
+    let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-     console.log("THE Date1",Added,datae)
-     if(datae === Added){
+    console.log("THE Date1", Added, datae)
+    if (datae === Added) {
       return "Added today"
-     }
-     else if(Added<datae){
+    }
+    else if (Added < datae) {
       return Added
-     }
-     else {
+    }
+    else {
       return Added
-     }
+    }
     // return Added
-  
+
   }
+
+
 
   React.useEffect(() => {
     announcement();
-    count_Api();
+    // count_Api();
+    Enrollments();
   }, []);
   if (!countUser) return null;
   return (
@@ -337,11 +416,25 @@ const FranchiseeDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            <BootstrapTable
-                              keyField="name"
-                              data={products1}
-                              columns={columns1}
-                            />
+                            {ToolkitProvider ? (<>
+
+                              <ToolkitProvider
+                                keyField="name"
+                                data={userData}
+                                columns={columns1}
+                                search
+                              >
+                                {(props) => (
+                                  <BootstrapTable
+                                    {...props.baseProps}
+                                  // selectRow={selectRow}
+                                  // pagination={paginationFactory()}
+                                  />
+                                )}
+                              </ToolkitProvider>
+
+                            </>) : (<><div className="text-center mb-5 mt-5"><strong>No Data</strong></div></>)}
+
                           </div>
                         </div>
                       </div>
@@ -354,28 +447,28 @@ const FranchiseeDashboard = () => {
                           </header>
                           <div className="activity-list">
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.auditForms}</span>
@@ -389,11 +482,20 @@ const FranchiseeDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            <BootstrapTable
-                              keyField="name"
-                              data={products}
-                              columns={columns}
-                            />
+                            {enrollments ? (<>
+                              <ToolkitProvider
+                                keyField="name"
+                                data={enrollments}
+                                columns={columns}
+                                search
+                              >
+                                {(props) => (
+                                  <BootstrapTable
+                                    {...props.baseProps}
+                                  />
+                                )}
+                              </ToolkitProvider></>) : (<><div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div></>)}
+
                           </div>
                         </div>
                         <div className="announcements-sec pb-5">
@@ -405,7 +507,7 @@ const FranchiseeDashboard = () => {
                             {latest_announcement.map((data) => {
                               return (
                                 <div className="listing">
-                                  <a href="/" className="item">
+                                  <a href="/announcements" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                     <div className="name">{!data.title ? "No Announcement" : data.title}
                                       <div>

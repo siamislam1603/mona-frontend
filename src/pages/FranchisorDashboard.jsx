@@ -41,14 +41,16 @@ const columns1 = [
     dataField: 'formname',
     text: 'Form Name',
     formatter: (cell) => {
+      console.log("CELL",cell)
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png"/></span><span className="user-name">{cell[0]} <small>{moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
     },
   },
   {
     dataField: 'educatorname',
     text: 'Educator Name',
     formatter: (cell) => {
+      console.log("EDUCATIN CELL",cell)
       cell = cell.split(",");
       return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
     },
@@ -73,12 +75,35 @@ const columns1 = [
 
 
 const FranchisorDashboard = () => {
+
   const [count, setcount] = React.useState(null);
   const [state, setstate] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+  const [forms_count, setForms_count] = React.useState([])
+  const [formData, setFormData] = useState([])
 
   let token = localStorage.getItem('token');
+
+  const Forms_count = () => {
+    let token = localStorage.getItem('token');
+    const countUrl = `${BASE_URL}/dashboard/franchisor/audit-forms-count`;
+
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
+      setForms_count(response.data.totalNumberOfAuditFormsInLast30Days);
+
+    }).catch((e) => {
+      console.log("Error", e);
+    })
+  }
+
+
+
+
   console.log("alsoidjh", latest_announcement[0].scheduled_date)
 
 
@@ -113,37 +138,58 @@ const FranchisorDashboard = () => {
     })
   }
 
-  const getAddedTime = (str) =>{
-    const Added= moment(str).format('DD/MM/YYYY')
+  const getAddedTime = (str) => {
+    const Added = moment(str).format('DD/MM/YYYY')
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [day, month, year].join('/');
+    let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-     console.log("THE Date1",Added,datae)
-     if(datae === Added){
+    console.log("THE Date1", Added, datae)
+    if (datae === Added) {
       return "Added today"
-     }
-     else if(Added<datae){
+    }
+    else if (Added < datae) {
       return Added
-     }
-     else {
+    }
+    else {
       return Added
-     }
+    }
     // return Added
-  
+
+  }
+  const FormData = async() =>{
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`,{
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("FORM Data",response)
+    if(response.status == 200){
+      let data = response.data.data.formData;
+      let tempData = data.map((dt) =>({
+        formname: `${dt.form_name}, ${dt.audited_on}`,
+        educatorname : `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
+        // console.log("THe dt",)
+    
+      }))
+      setFormData(tempData);
+    }
   }
 
   React.useEffect(() => {
     count_Api();
     announcement();
+    Forms_count();
+    FormData();
   }, []);
 
   selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
-  console.log("The latest Announcement",latest_announcement)
+  console.log("The latest Announcement", latest_announcement)
   if (!count) return null;
   return (
     <>
@@ -206,7 +252,7 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="audit-form">
                             <p>Total Number of Audit Forms <br />in Last 30 Days</p>
-                            <span className="totalaudit">70</span>
+                            <span className="totalaudit">{forms_count}</span>
                           </div>
                         </div>
                         {/*<div className="record-column">
@@ -293,11 +339,30 @@ const FranchisorDashboard = () => {
                           </div>*/}
                         <div className="enrollments-sec pb-5">
                           <div className="column-table user-management-sec">
-                            <BootstrapTable
+                            {/* <ToolkitProvider
                               keyField="name"
                               data={products1}
                               columns={columns1}
+                              search
+                            >
+                              {(props) => ( */}
+                           {
+                            formData?.length>0 ?
+                            (
+                              <BootstrapTable
+                              keyField="name"
+                              data={formData}
+                              columns={columns1}
                             />
+                            ):(
+                              <div className="text-center mb-5 mt-5"><strong>
+                              No forms present!
+                              </strong></div>
+
+                            )
+                           }
+                            {/* )}
+                            </ToolkitProvider> */}
                           </div>
                         </div>
                       </div>
@@ -310,42 +375,42 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="activity-list">
                             <div className="listing">
-                              <a href="/" className="item">
+                              <Link to="/all-franchisees" className="item">
                                 <span className="name">Total Franchises</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalFranchisees}</span>
-                              </a>
+                              </Link>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <Link to="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalUsers}</span>
-                              </a>
+                              </Link>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalChildren}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/user-management?role=educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Users yet to log in</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.usersYetToLogin}</span>
@@ -362,15 +427,15 @@ const FranchisorDashboard = () => {
                             {latest_announcement.map((data) => {
                               return (
                                 <div className="listing">
-                                  <a href="/" className="item">
+                                  <a href="/announcements" className="item">
                                     <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}  
-                                    <div>
-                                      <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}
+                                      <div>
+                                        <span className="timesec">{getAddedTime(data?.createdAt)}</span>
 
                                       </div>
-                                     
-                                     </div>
+
+                                    </div>
                                   </a>
                                 </div>
                               );

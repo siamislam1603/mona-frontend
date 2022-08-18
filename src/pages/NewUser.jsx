@@ -63,6 +63,12 @@ const NewUser = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [loader, setLoader] = useState(false);
   const [createUserModal, setCreateUserModal] = useState(false);
+  const [userActiveStatus, setUserActiveStatus] = useState(null);
+  const [statusPopup, setStatusPopup] = useState(false);
+
+
+  // LOADER STATES
+  const [loaderMessage, setLoaderMessage] = useState(null);
 
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
@@ -79,15 +85,20 @@ const NewUser = () => {
 
     if(response.status === 201 && response.data.status === "success") {
       let { data } = response.data;
-      setLoader(false);
-      setCreateUserModal(false);
-      localStorage.setItem('success_msg', 'User created successfully!');
+      
+      setLoaderMessage("Adding the User details to Engagebay Contacts")
+      updateEngageBayContactList(data);
+      setLoaderMessage("Wrapping Up");
 
-      if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
-        window.location.href=`/children/${data.id}`;
-      } else {
-        window.location.href="/user-management";
-      }
+      // setLoader(false);
+      // setCreateUserModal(false);
+      // localStorage.setItem('success_msg', 'User created successfully!');
+
+      // if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+      //   window.location.href=`/children/${data.id}`;
+      // } else {
+      //   window.location.href="/user-management";
+      // }
 
     } else if(response.status === 200 && response.data.status === "fail") {
       setLoader(false);
@@ -108,34 +119,44 @@ const NewUser = () => {
     }));
   };
 
-  const getEngagebayDetail = async (event) => {
-    const { name, value } = event.target;
-  if(value){
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/contacts/${value}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
+  const getEngagebayDetail = async (email) => {
+    const response = await axios.get(`${BASE_URL}/contacts/${email}`);
+    if(response.status === 200 && response.data.status === "success") {
+    
+      const {data} = response.data;
+      let { properties } = data;
+      
+      let tempDataObj = {}
+      properties.map(d => {
+        let obj = { [d.name]: [d.value][0] };
+        tempDataObj = {...tempDataObj, ...obj};
       });
 
-      console.log('RESPONSE:', response);
+      setFormData(prevState => ({
+        ...prevState,
+        fullname: tempDataObj?.fullname,
+        phone: tempDataObj?.phone,
+        role: tempDataObj?.role,
+        address: tempDataObj?.address,
+        city: tempDataObj?.city,
+        postalCode: tempDataObj?.postalCode
+      }));
 
-      if(response.status == 200) {
-      
-        const {data} = response.data;
-        setFormData(prevState => ({
-          ...prevState,
-          fullname: data?.fullname,
-          phone: data?.fullname,
-        }));
-
-      }
     }
 
   };
 
-  
+  const checkIfUserExistsAndDeactivated = async (email) => {
+    const response = await axios.get(`${BASE_URL}/auth/user/checkIfExists/${email}`);
 
+    if(response.status === 200 && response.data.isPresentAndDeactivated === 1) {
+      const { active_status } = response.data;
+      setUserActiveStatus(active_status);
+      setStatusPopup(true);
+    } else {
+      getEngagebayDetail(email);
+    }
+  }
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -200,6 +221,7 @@ const NewUser = () => {
       } else {
           console.log('CREATING USER!');
           setCreateUserModal(true);
+          setLoaderMessage("Creating New User")
           setLoader(true)
           createUser(data);
       }
@@ -207,6 +229,74 @@ const NewUser = () => {
       createUser(data);
     }
   };
+
+  const updateEngageBayContactList = async (data) => {
+    // PAYLOAD TO BE USED WHILE CREATING OR UPDATING
+    let payload = {
+      email: data.email,
+      role: data.role,
+      fullname: data.name,
+      city: data.city,
+      postalCode: data.postalCode,
+      firstname: data.name.split(" ")[0],
+      lastname: data.name.split(" ")[1],
+      address: data.address,
+      phone: data.phone.split("-")[1]
+    };
+
+    // CHECKING WHETHER THE RECORD WITH GIVEN MAIL EXISTS OR NOT
+    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`);
+
+    if(response.status === 200 && response.data.isRecordFetched === 0) {
+
+      // RECORD WITH THE AFOREMENTIONED EMAIL DOESN'T EXIST, 
+      // HENCE, CREATING A NEW RECORD INSIDE ENGAGEBAY
+      // WITH THE GIVEN DETAILS
+      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload);
+  
+      if(createResponse.status === 200 && createResponse.data.status === "success") {
+        
+        console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
+        setLoader(false);
+        setCreateUserModal(false);
+        localStorage.setItem('success_msg', 'User created successfully!');
+
+        if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+          window.location.href=`/children/${data.id}`;
+        } else {
+          window.location.href="/user-management";
+        }
+      
+      } else {
+        console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
+      }
+
+    } else if(response.status === 200 && response.data.isRecordFetched === 1) {
+
+      // RECORD WITH THE AFOREMENTIONED EMAIL ALREADY EXISTS, 
+      // HENCE, UPDATING THE RECORD
+      // WITH THE GIVEN DETAILS
+      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload);
+
+      if(updateResponse.status === 201 && updateResponse.data.status === "success") {
+        
+        console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
+        setLoader(false);
+        setCreateUserModal(false);
+        localStorage.setItem('success_msg', 'User created successfully!');
+
+        if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+          window.location.href=`/children/${data.id}`;
+        } else {
+          window.location.href="/user-management";
+        }
+
+      } else {
+        console.log('COULDN\'T UPDATE THE ENGAGEBAY CONTACT!');
+      }
+    }
+
+  }
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');
@@ -382,8 +472,9 @@ const NewUser = () => {
   }, [franchiseeData]);
 
   formData && console.log('FORM ERRORS:', formData);
-  franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
-  formErrors && console.log('FORM ERRORS:', formErrors);
+  // franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
+  // formErrors && console.log('FORM ERRORS:', formErrors);
+  formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
 
   return (
     <>
@@ -428,7 +519,7 @@ const NewUser = () => {
                               type="email"
                               name="email"
                               placeholder="Enter Your Email ID"
-                              value={formData.email ?? ''}
+                              value={formData?.email}
                               onChange={(e) => {
                                 handleChange(e);
                                 setFormErrors(prevState => ({
@@ -437,7 +528,7 @@ const NewUser = () => {
                                 }));
                               }}
                               onBlur={(e) => {
-                                getEngagebayDetail(e);
+                                checkIfUserExistsAndDeactivated(e.target.value);;
                               }}
                             />
                             { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
@@ -449,6 +540,7 @@ const NewUser = () => {
                               placeholder="Which Role?"
                               closeMenuOnSelect={true}
                               options={userRoleData}
+                              value={userRoleData?.filter(d => d.value === formData?.role)}
                               onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -488,6 +580,7 @@ const NewUser = () => {
                               placeholder="Which Suburb?"
                               closeMenuOnSelect={true}
                               options={cityData}
+                              value={cityData?.filter(d => d.label === formData?.city)}
                               onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -754,7 +847,7 @@ const NewUser = () => {
 
                     <Modal.Body>
                         <div className="create-training-modal" style={{ textAlign: 'center' }}>
-                        <p>User is being created!</p>
+                        <p>{loaderMessage}</p>
                         <p>Please Wait...</p>
                         </div>
                     </Modal.Body>
@@ -769,6 +862,30 @@ const NewUser = () => {
                 </Modal>
             }
       </div>
+      <Modal
+        show={statusPopup}
+        onHide={() => setStatusPopup(false)}>
+        <Modal.Header>
+          <Modal.Title>Attention!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <div>
+              <p>A {userActiveStatus === "deleted" ? "Deleted" : "Deactivated"} User with this email already exists.</p>
+              <p>Contact your administrator to reactivate him/her.</p>
+            </div>
+        </Modal.Body>
+        <Modal.Footer>
+        <button 
+              className="modal-button"
+              onClick={() => {
+                setFormData(prevState => ({
+                  ...prevState,
+                  email: ""
+                }));
+                setStatusPopup(false)
+              }}>Okay</button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

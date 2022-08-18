@@ -66,7 +66,6 @@ const selectRow = {
 const FileRepository = () => {
   let counter = 0;
   const Navigate = useNavigate();
-
   const [count, setCount] = useState(0);
   const [show, setShow] = useState(false);
   const [groupFlag, setGroupFlag] = useState(false);
@@ -221,6 +220,11 @@ const FileRepository = () => {
     selectedUser?.map((item) => {
       selectedFranchiseeId += item.id + ',';
     });
+
+    if(!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category){
+      window.alert("Please fill required Fields!")
+      return
+    }
 
     setLoaderFlag(true);
 
@@ -609,7 +613,7 @@ const FileRepository = () => {
                             <ul>
                               <li><a onClick={handleLinkClick} path="/available-Files" className={`${tabLinkPath === "/available-Files" ? "active" : ""}`}>Files shared with me</a></li>
                               {
-                                verifyPermission("training_files", "add") &&
+                                verifyPermission("file_repository","add") &&
                                 <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My added files</a></li>
                               }
                             </ul>
@@ -654,6 +658,7 @@ const FileRepository = () => {
                   <Col md={12}>
                     <Form.Group>
                       <DragDropRepository onChange={setField} />
+                      <p> <small className='text-danger'>*required</small></p>
                       <p className="error">{errors.setting_files}</p>
                     </Form.Group>
                   </Col>
@@ -670,7 +675,7 @@ const FileRepository = () => {
                 <Col lg={12}>
                   <div className="metadescription">
                     <Form.Group className="mb-3">
-                      <Form.Label>Meta Description</Form.Label>
+                      <Form.Label>Meta Description <small className='text-danger'>*required</small></Form.Label>
                       <Form.Control
                         as="textarea"
                         rows={2}
@@ -684,7 +689,7 @@ const FileRepository = () => {
                 </Col>
                 <Col lg={12}>
                   <Form.Group>
-                    <Form.Label>File Category</Form.Label>
+                    <Form.Label>File Category <small className='text-danger'>*required</small></Form.Label>
                     <Form.Select
                       name="file_category"
                       onChange={(e) => {

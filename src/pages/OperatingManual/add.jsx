@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import TopHeader from '../../components/TopHeader';
 import LeftNavbar from '../../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
@@ -204,6 +204,7 @@ const AddOperatingManual = () => {
         data['shared_with'] = selectedUserId
           ? selectedUserId.slice(0, -1)
           : null;
+        data['link']=FRONT_BASE_URL+"/operatingmanual?select=";
         // data['shared_role'] = null;
         // data['accessible_to_role'] = formSettingData.accessible_to_role;
         // data['accessible_to_all'] = false;
@@ -217,7 +218,7 @@ const AddOperatingManual = () => {
       upperRoleUser = getUpperRoleUser();
       data['upper_role'] = upperRoleUser;
       data['franchisee_id'] = selectedFranchiseeId;
-      console.log('Hello---->', data);
+      console.log('Hello---->datadfdsfdsfdsffdsfsd', data);
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -247,6 +248,7 @@ const AddOperatingManual = () => {
       data['cover_image'] = imageUrl;
       data['video_thumbnail'] = videoThumbnailUrl;
       data['reference_video'] = videoUrl;
+      data['link']=FRONT_BASE_URL+"/operating_manual?select=";
       data.created_by = localStorage.getItem('user_id');
       data.upper_role = upperRoleUser;
       console.log('data---->', data);
@@ -257,8 +259,20 @@ const AddOperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          setOperatingManualData(res?.result);
-          setFormSettingFlag(true);
+          console.log("res---->",res);
+          if(res?.success===false)
+          {
+            let errorData={...errors};
+            errorData["title"]=res?.message;
+            setErrors(errorData)
+          }
+          else
+          {
+            setOperatingManualData(res?.result);
+            setFormSettingFlag(true);
+            setErrors([])
+          }
+          
           // navigate('/operatingmanual');
         });
     }
@@ -266,24 +280,39 @@ const AddOperatingManual = () => {
   const OnCategorySubmit = (e) => {
     e.preventDefault();
     const newErrors = createCategoryValidation(categoryData);
+
     if (Object.keys(newErrors).length > 0) {
       setCategoryError(newErrors);
     } else {
-      var myHeaders = new Headers();
-      myHeaders.append('Content-Type', 'application/json');
-      fetch(`${BASE_URL}/operating_manual/category/add`, {
-        method: 'post',
-        body: JSON.stringify(categoryData),
-        headers: myHeaders,
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          setCategory(res?.result);
-          setCategoryModalFlag(false);
-          let data = operatingManualData;
-          data['category_name'] = categoryData?.category_name;
-          setOperatingManualData(data);
-        });
+      let flag = false;
+      category.map((item) => {
+        if (
+          item.category_name.toLowerCase() ===
+          categoryData?.category_name.toLowerCase()
+        ) {
+          let categoryErrorData = { ...categoryError };
+          categoryErrorData['category_name'] = 'Module already exists';
+          setCategoryError(categoryErrorData);
+          flag = true;
+        }
+      });
+      if (!flag) {
+        var myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        fetch(`${BASE_URL}/operating_manual/category/add`, {
+          method: 'post',
+          body: JSON.stringify(categoryData),
+          headers: myHeaders,
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            setCategory(res?.result);
+            setCategoryModalFlag(false);
+            let data = operatingManualData;
+            data['category_name'] = categoryData?.category_name;
+            setOperatingManualData(data);
+          });
+      }
     }
   };
 
@@ -575,11 +604,21 @@ const AddOperatingManual = () => {
                           <Form.Label className="formlabel">
                             Description
                           </Form.Label>
-                            {console.log("operatingManualData--->",operatingManualData)}
-                            {console.log("location?.state?.id---->",location?.state?.id)}
-                            {console.log("location?.state?.category_name---->",location?.state?.category_name)}
+                          {console.log(
+                            'operatingManualData--->',
+                            operatingManualData
+                          )}
+                          {console.log(
+                            'location?.state?.id---->',
+                            location?.state?.id
+                          )}
+                          {console.log(
+                            'location?.state?.category_name---->',
+                            location?.state?.category_name
+                          )}
                           {location?.state?.id &&
-                          location?.state?.category_name && operatingManualData?.description ? (
+                          location?.state?.category_name &&
+                          operatingManualData?.description ? (
                             <MyEditor
                               name="description"
                               operatingManual={{ ...operatingManualData }}
@@ -644,7 +683,7 @@ const AddOperatingManual = () => {
                             <Button
                               variant="link"
                               onClick={() => {
-                                setImageUrl("");
+                                setImageUrl('');
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -704,8 +743,8 @@ const AddOperatingManual = () => {
                               variant="link"
                               className="remove_bin"
                               onClick={() => {
-                                setVideoUrl("");
-                                setVideoThumbnailUrl("");
+                                setVideoUrl('');
+                                setVideoThumbnailUrl('');
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
@@ -837,6 +876,40 @@ const AddOperatingManual = () => {
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
+                  <label className="container">
+                      Franchisee Admin
+                      <input
+                        type="checkbox"
+                        name="shared_role"
+                        id="franchisee_admin"
+                        onClick={(e) => {
+                          let data = { ...formSettingData };
+                          if (
+                            !data['shared_role']
+                              .toString()
+                              .includes(e.target.id)
+                          ) {
+                            data['shared_role'] += e.target.id + ',';
+                          } else {
+                            data['shared_role'] = data['shared_role'].replace(
+                              e.target.id + ',',
+                              ''
+                            );
+                            if (data['shared_role'].includes('all')) {
+                              data['shared_role'] = data['shared_role'].replace(
+                                'all,',
+                                ''
+                              );
+                            }
+                          }
+                          setFormSettingData(data);
+                        }}
+                        checked={formSettingData?.shared_role
+                          ?.toString()
+                          .includes('franchisee_admin')}
+                      />
+                      <span className="checkmark"></span>
+                    </label>
                     <label className="container">
                       Co-ordinators
                       <input
@@ -973,6 +1046,13 @@ const AddOperatingManual = () => {
                               data['shared_role'] += 'coordinator,';
                             }
                             if (
+                              !data['shared_role']
+                                .toString()
+                                .includes('franchisee_admin')
+                            ) {
+                              data['shared_role'] += 'franchisee_admin,';
+                            }
+                            if (
                               !data['shared_role'].toString().includes('all')
                             ) {
                               data['shared_role'] += 'all,';
@@ -1041,7 +1121,7 @@ const AddOperatingManual = () => {
             id="contained-modal-title-vcenter"
             className="modal-heading"
           >
-            Add Category
+            Add Module
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -1049,7 +1129,7 @@ const AddOperatingManual = () => {
             <Row>
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label>Category Name</Form.Label>
+                  <Form.Label>Module Name</Form.Label>
                   <Form.Control
                     type="text"
                     name="category_name"
@@ -1071,6 +1151,9 @@ const AddOperatingManual = () => {
             className="back"
             onClick={() => {
               setCategoryModalFlag(false);
+              let data={...categoryData};
+              data["category_name"]="";
+              setCategoryData(data);
             }}
           >
             Cancel

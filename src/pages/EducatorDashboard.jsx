@@ -38,7 +38,7 @@ const columns = [
     text: 'Child Name',
 
     formatter: (cell) => {
-      console.log("The cell",cell)
+      console.log("The cell", cell)
       cell = cell?.split(",");
       return (<><div className="user-list"><span className="user-pic"><img src="../img/upload.jpg" alt='' /></span><span className="user-name">{cell} </span></div></>)
     },
@@ -47,13 +47,13 @@ const columns = [
     dataField: 'specialneed',
     text: 'Child with special needs',
     formatter: (cell) => {
-      console.log("The cell",cell)
+      console.log("The cell", cell)
       // cell = cell.split(",");
       return (<>
-      <div className="user-list">
-        {/* <span className="user-pic"><img src={cell} alt='' /></span> */}
-        <span className="user-name">{cell === "false" ? "No": "Yes"} </span>
-      </div>
+        <div className="user-list">
+          {/* <span className="user-pic"><img src={cell} alt='' /></span> */}
+          <span className="user-name">{cell === "false" ? "No" : "Yes"} </span>
+        </div>
       </>)
     },
   },
@@ -79,7 +79,7 @@ const EducatorDashboard = () => {
   const [announcements, setannouncements] = useState([{}]);
   const [training, setTraining] = useState([])
   const [coordinator, setCoordinator] = useState([])
-  const [childrenData,setChildrenData]= useState([])
+  const [childrenData, setChildrenData] = useState([])
   const Userannouncements = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/educator/quick-access-announcements`, {
@@ -93,24 +93,24 @@ const EducatorDashboard = () => {
       setannouncements(training);
     }
   };
-  const Children = async() =>{
+  const Children = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/educator/children-with-special-needs`, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
-    if(response.status === 200){
+    if (response.status === 200) {
       let data = response.data.childrenWithSpecialNeeds;
-      let tempData  = data.map((dt) =>({
-        name:`${dt.fullname}`,
-        specialneed : `${dt.child_medical_information.has_special_needs}`
+      let tempData = data.map((dt) => ({
+        name: `${dt.fullname}`,
+        specialneed: `${dt.child_medical_information.has_special_needs}`
 
       }))
-      console.log("THE TEM",tempData)
+      console.log("THE TEM", tempData)
       setChildrenData(tempData)
     }
-    console.log("THE CHILDER REPONSE",response)
+    console.log("THE CHILDER REPONSE", response)
 
   }
 
@@ -143,29 +143,29 @@ const EducatorDashboard = () => {
   }
   console.log(training, "response")
 
-  
-  const getAddedTime = (str) =>{
-    const Added= moment(str).format('DD/MM/YYYY')
+
+  const getAddedTime = (str) => {
+    const Added = moment(str).format('DD/MM/YYYY')
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
-     let datae =  [day, month, year].join('/');
+    let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-     console.log("THE Date1",Added,datae)
-     if(datae === Added){
+    console.log("THE Date1", Added, datae)
+    if (datae === Added) {
       return "Added today"
-     }
-     else if(Added<datae){
+    }
+    else if (Added < datae) {
       return Added
-     }
-     else {
+    }
+    else {
       return Added
-     }
+    }
     // return Added
-  
+
   }
 
   useEffect(() => {
@@ -175,7 +175,7 @@ const EducatorDashboard = () => {
     Children();
   }, [])
 
-console.log("Childeren data",childrenData)
+  console.log("Childeren data", childrenData)
   return (
     <>
       <div id="main">
@@ -246,13 +246,13 @@ console.log("Childeren data",childrenData)
                               columns={columns}
                             /> */}
                             {
-                              childrenData?.length>0 ? (
+                              childrenData?.length > 0 ? (
                                 <BootstrapTable
-                                keyField="name"
-                                data={childrenData}
-                                columns={columns}
-                              />
-                              ): (
+                                  keyField="name"
+                                  data={childrenData}
+                                  columns={columns}
+                                />
+                              ) : (
                                 <div className="text-center mb-5 mt-5"><strong>No children enrolled yet !</strong></div>
 
                               )
@@ -363,7 +363,7 @@ console.log("Childeren data",childrenData)
                         <div className="training-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Training</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/training" className="viewall">View All</Link>
                           </header>
                           <Row>
                             <Col md={12}>
@@ -372,7 +372,7 @@ console.log("Childeren data",childrenData)
                                   training.map((item) => {
                                     return <>
                                       <div className="item">
-                                        <div className="pic"><a href="/"><img src={item.coverImage} alt="" /></a></div>
+                                        <div className="pic"><a href="/training"><img src={item.coverImage} alt="" /></a></div>
                                         <div className="fixcol">
                                           <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
                                           <div className="iconame">
@@ -438,7 +438,7 @@ console.log("Childeren data",childrenData)
                         <div className="announcements-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
                             <div className="listing">
@@ -447,16 +447,16 @@ console.log("Childeren data",childrenData)
                                 (announcements.map((item) => {
                                   return <>
                                     <div className="listing">
-                                      <a href="/" className="item">
+                                      <a href="/announcements" className="item">
                                         <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                        <div className="name">{item.title} 
-                                        
-                                        <div>
-                                      <span className="timesec">{getAddedTime(item?.createdAt)}</span>
+                                        <div className="name">{item.title}
 
-                                      </div>
-                                      </div>
-                                                                              {/* {console.log("THE TIME",item.scheduled_date,getAddedTime(item.scheduled_date))} */}
+                                          <div>
+                                            <span className="timesec">{getAddedTime(item?.createdAt)}</span>
+
+                                          </div>
+                                        </div>
+                                        {/* {console.log("THE TIME",item.scheduled_date,getAddedTime(item.scheduled_date))} */}
                                       </a>
                                     </div>
                                   </>

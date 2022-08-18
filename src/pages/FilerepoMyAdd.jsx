@@ -54,7 +54,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [selectedUser, setSelectedUser] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
     console.log("userData", userData.length)
-    const [saveTrainingId, setSaveTrainingId] = useState(null);
+    const [saveFileId, setSaveFileId] = useState(null);
     const [user, setUser] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
@@ -96,7 +96,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         let user_id = localStorage.getItem('user_id')
-        const response = await axios.put(`${BASE_URL}/fileRepo/${saveTrainingId}`, {
+        const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
             // shared_by: user_id,
             // is_applicable_to_all: applicableToAll
@@ -208,7 +208,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         //     }
         // }
 
-// >>>>>>> master
+        // >>>>>>> master
 
         var requestOptions = {
             method: 'POST',
@@ -325,8 +325,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         GetFile();
         getFileCategory();
         getUser();
-        fetchFranchiseeList();
     }, [trainingDeleteMessage, formSettings.franchisee])
+
+
+    useEffect(() => {
+        fetchFranchiseeList();
+    }, [])
 
     const handleTrainingDelete = async (cell) => {
         console.log('DELETING THE TRAINING!');
@@ -346,6 +350,37 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
     }
 
+    // FETCH FILE DATA
+    const fetchFileData = async (fileId) => {
+        console.log('TRAINING ID:', fileId);
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${fileId}`, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if (response.status === 200 && response.data.status === "success") {
+            const { file } = response.data;
+            console.log('FILE:', file);
+            copyDataToStates(file);
+        }
+    };
+
+    const copyDataToStates = (file) => {
+        setFormSettings(prevState => ({
+            ...prevState,
+            assigned_users: file?.repository_shares[0]?.assigned_users,
+            assigned_role: file?.repository_shares[0]?.assigned_roles,
+            franchisee: file?.repository_shares[0]?.franchisee
+        }));
+    }
+
+    useEffect(() => {
+        fetchFileData(saveFileId);
+        console.log('SAVE TRAINING ID:', saveFileId);
+    }, [saveFileId]);
+
     const [columns, setColumns] = useState([
         {
             dataField: 'name',
@@ -357,7 +392,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     <>
 
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" ?
+                            {cell[0] === "image/jpeg" || cell[0] === "image/png" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -475,7 +510,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     }}>Delete</Dropdown.Item>
                                     <Dropdown.Item href={`/file-repository-Edit/${cell}`}>Edit</Dropdown.Item>
                                     <Dropdown.Item href="#" onClick={() => {
-                                        setSaveTrainingId(cell);
+                                        setSaveFileId(cell);
                                         setShowModal(true)
                                     }}>Share</Dropdown.Item>
                                 </Dropdown.Menu>
@@ -516,7 +551,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             <span className="user-name">
                                                                 {Params.id === "1" ? "Daily Use" :
                                                                     Params.id === "2" ? "Business Management" :
-                                                                        Params.id === "3" ? "Employeement" :
+                                                                        Params.id === "3" ? "Employment" :
                                                                             Params.id === "4" ? "Compliance" :
                                                                                 Params.id === "5" ? "Care Giving" :
                                                                                     Params.id === "6" ? "Curriculum & Planning" :
@@ -740,7 +775,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             onChange={() => {
                                                                 setFormSettings(prevState => ({
                                                                     ...prevState,
-                                                                    assigned_franchisee: ['all']
+                                                                    franchisee: ['all']
                                                                 }));
                                                                 setSendToAllFranchisee('all')
                                                             }}
@@ -759,7 +794,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             onChange={() => {
                                                                 setFormSettings(prevState => ({
                                                                     ...prevState,
-                                                                    assigned_franchisee: []
+                                                                    franchisee: []
                                                                 }));
                                                                 setSendToAllFranchisee('none')
                                                             }}
@@ -785,14 +820,14 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     onRemove={function noRefCheck(data) {
                                                         setFormSettings((prevState) => ({
                                                             ...prevState,
-                                                            assigned_franchisee: [...data.map(data => data.id)],
+                                                            franchisee: [...data.map(data => data.id)],
                                                         }));
                                                     }}
-
+                                                    selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.franchisee) === d.id)}
                                                     onSelect={function noRefCheck(data) {
                                                         setFormSettings((prevState) => ({
                                                             ...prevState,
-                                                            assigned_franchisee: [...data.map((data) => data.id)],
+                                                            franchisee: [...data.map((data) => data.id)],
                                                         }));
                                                     }}
                                                     options={franchiseeList}
@@ -1243,7 +1278,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                                                         <Form.Check
                                                             type="checkbox"
-                                                            label="Guardians"
+                                                            label="Parents"
                                                             checked={formSettings.assigned_role.includes("guardian")}
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("guardian")) {
