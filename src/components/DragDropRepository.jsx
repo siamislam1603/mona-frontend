@@ -1,6 +1,6 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
-
+import { Link } from "react-router-dom";
 export default function DragDropRepository({ onChange, setPopupVisible, imageToCrop }) {
   const { acceptedFiles, getRootProps, getInputProps } =
     useDropzone({
@@ -16,8 +16,8 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
       useFsAccessApi: false,
     });
 
-  const Delete = () => {
-   return acceptedFiles = ""
+  const Delete = ({ file }) => {
+    return acceptedFiles = ""
   }
 
   const files = acceptedFiles.map(file => (
@@ -25,14 +25,14 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
       <li className="mt-3" key={file.path}>
         {file.path} - {file.size} bytes
       </li>
-      {/* <span className="ms-2">
-        <a href="javascipt:void(0)" onClick={Delete}>
-          <img src="../img/removeIcon.svg" alt="" />
-        </a>
-      </span > */}
+      <Link to="#" onClick={() => handleFileDelete(file)}>
+        <img src="../img/removeIcon.svg" alt="" />
+      </Link>
     </>
   ));
-
+  const handleFileDelete = (file) => {
+    alert('Delete', acceptedFiles, file)
+  }
   return (
     <div className="repositorydrag text-center">
       <div {...getRootProps({ className: "dropzone d-block" })} >
