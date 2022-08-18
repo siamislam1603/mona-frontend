@@ -232,15 +232,16 @@ const FileRpositoryList = () => {
         response = await response.json();
         setUser(response.result)
 
-        const users = response.files;
-        console.log("responseresponse", users, "response")
+        const users = response.result.files;
+        console.log("+++++++++++++++++++++++++", users, "response")
         let tempData = users.map((dt) => ({
-            name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+            // name: `${dt.repository},${dt.fileName},${dt.filesPath}`,
+            name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
             createdAt: dt.createdAt,
-            // userID: dt.id,
-            creatorName: dt.creatorName + "," + dt.creatorRole,
-            Shaired: dt.repository.repository_shares.length,
-            categoryId: dt.categoryId
+            userID: dt.id,
+            creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
+            Shaired: dt.repository.repository_files[0].length,
+            // categoryId: dt.categoryId
         }));
         // tempData = tempData.filter((data) => data.is_deleted === 0);
         // console.log(users.repository.repository, "success")
@@ -475,7 +476,7 @@ const FileRpositoryList = () => {
                                                             <span className="user-name">
                                                                 {Params.id === "1" ? "Daily Use" :
                                                                     Params.id === "2" ? "Business Management" :
-                                                                        Params.id === "3" ? "Employeement" :
+                                                                        Params.id === "3" ? "Employment" :
                                                                             Params.id === "4" ? "Compliance" :
                                                                                 Params.id === "5" ? "Care Giving" :
                                                                                     Params.id === "6" ? "Curriculum & Planning" :

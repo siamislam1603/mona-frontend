@@ -736,6 +736,9 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .notificationlisting--col a{display:block;}
 /*Notification page*/
 
+.notofication-listing-sec.notificationpopup { height: auto; max-width: 100%; }
+.notofication-listing-sec.notificationpopup .notifitem.unread, .notofication-listing-sec.notificationpopup .notifitem { background-color: transparent; }
+
 
 
 /* Responsive */
