@@ -36,15 +36,57 @@ const columns = [
     text: 'Child Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src="../img/upload.jpg" alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
     },
   },
   {
-    dataField: 'name',
+    dataField: 'educatorname',
     text: 'Educator Name',
     formatter: (cell) => {
+      console.log("THE ECUTOR",cell)
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[1]} alt='' /></span><span className="user-name">{cell[0]} </span></div></>)
+      return (<>
+        <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[2] ? (
+              cell[2]
+            ):(
+              "../img/upload.jpg"
+            )} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[0]}
+          </span>
+        </div> <br />
+        {
+          cell[1] === "undefined" || cell[1] === "null"? (
+            <>
+           
+            </>
+          ):(
+            <>
+            <div className="user-list">
+          <span className="user-pic">
+            <img src={cell[3]} alt='' />
+          </span>
+          <span className="user-name">
+            {cell[1] === " " || cell[1] ===  "undefined" ? (null) :(cell[1]) }
+            bhjvhkbk
+          </span>
+        </div>
+            </>
+          )
+        }
+
+        {/* {
+          cell[1]? (
+            
+          )
+          :(
+           <></>
+          )
+        } */}
+      </>)
     },
   },
   {
@@ -85,21 +127,42 @@ const CoordinatorDashboard = () => {
 
     let response = await fetch(`${BASE_URL}/dashboard/coordinator/children-enrolled`, requestOptions)
     response = await response.json();
-    setUser(response.data)
+    // setUser(response)
+    // console.log("The data",response)
 
-    const users = response.childrenEnrolled[0].users;
+    // const users = response.childrenEnrolled[0].users;
+    if (response.status ===  "pass") {
+    console.log("The data",response)
 
-    console.log(users, ">>>>>>>>>");
-    let tempData = users.map((dt) => ({
-      name: `${dt.fullname}, ${dt.profile_photo}`,
-      // createdAt: dt.createdAt,
-      // creatorName: dt.creatorName + "," + dt.creatorRole,
-      // Shaired: dt.repository.repository_shares.length,
-      // categoryId: dt.categoryId
-    }));
+      let data = response.childrenEnrolled;
+      let tempData = data.map((dt) => ({
+        name: `${dt.fullname}`,
+        educatorname: `${dt?.users[0]?.fullname},${dt?.users[1]?.fullname},${dt?.users[0]?.profile_photo},${dt?.users[1]?.profile_photo}`,
+        
+        // educatorname: `${dt.users[0].fullname}`,
 
-    console.log('tempData', tempData)
-    setUserData(tempData);
+        // formname: `${dt.form_name}, ${dt.audited_on}`,
+        // educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
+        // console.log("THe dt",)
+        // let data =  
+
+      }))
+      console.log("THE TEMPDATA",tempData)
+      setUserData(tempData);
+    }
+    // console.log(users, ">>>>>>>>>");
+    // let data = response.data.data.formData;
+    // let tempData = users.map((dt) => ({
+      // name: `${dt.fullname}`,
+    //   // educatorname : `${dt.users.profile_photo}, ${dt.users.fullname}`
+    //   // createdAt: dt.createdAt,
+    //   // creatorName: dt.creatorName + "," + dt.creatorRole,
+    //   // Shaired: dt.repository.repository_shares.length,
+    //   // categoryId: dt.categoryId
+    // }));
+
+    // console.log('tempData', tempData)
+    // setUserData(tempData);
   }
   const [onboarding, setonboarding] = useState([]);
 
@@ -145,7 +208,7 @@ const CoordinatorDashboard = () => {
   React.useEffect(() => {
     count_Api();
   }, []);
-
+console.log("USERDATA",userData)
   if (!count) return null;
   return (
     <>
