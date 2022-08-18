@@ -101,8 +101,27 @@ const CoordinatorDashboard = () => {
     console.log('tempData', tempData)
     setUserData(tempData);
   }
+  const [onboarding, setonboarding] = useState([]);
+
+  const newonboarding = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+
+    let response = await fetch(`${BASE_URL}/dashboard/coordinator/new-onboarding`, requestOptions)
+    response = await response.json();
+    setonboarding(response)
+  }
 
   useEffect(() => {
+    newonboarding();
     Additional_Needs()
   }, [])
   const count_Api = () => {
@@ -186,32 +205,33 @@ const CoordinatorDashboard = () => {
                             <h4 className="title-sm mb-0"><strong>Onboarding</strong></h4>
                           </header>
                           <div className="activitylist relative two-col">
-                            <div className="item">
-                              <a href="/">
-                                <span className="name">Educators logged in</span>
+                            {onboarding.newEducators === 0 ? (<></>) : (<><div className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
+                                <span className="name">New Educator Enrolled</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.educatorsLoggedIn}</span>
+                                <span className="num">{onboarding.newEducators}</span>
+                              </a>
+                            </div></>)}
+
+                            <div className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
+                                <span className="name">New Parents Enrolled</span>
+                                <span className="separator">|</span>
+                                <span className="num">{onboarding.newParents}</span>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/">
-                                <span className="name">Overdue Forms</span>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
+                                <span className="name">New Forms Submitted</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.overdueForms}</span>
+                                <span className="num">{onboarding.newForms}</span>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/">
-                                <span className="name">Overdue Trainings</span>
+                              <a className="item" style={{ cursor: "not-allowed" }}>
+                                <span className="name"> New Files</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.overdueTrainings}</span>
-                              </a>
-                            </div>
-                            <div className="item">
-                              <a href="/">
-                                <span className="name">New Enrolments</span>
-                                <span className="separator">|</span>
-                                <span className="num">{count.newEnrollments}</span>
+                                <span className="num">{onboarding.newFiles}</span>
                               </a>
                             </div>
                           </div>
@@ -223,22 +243,23 @@ const CoordinatorDashboard = () => {
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-
-                            <ToolkitProvider
-                              keyField="name"
-                              data={userData}
-                              columns={columns}
-                              search
-                            >
-                              {(props) => (
-                                <BootstrapTable
-                                  {...props.baseProps}
-                                  pagination={paginationFactory()}
-                                />
-                              )}
-                            </ToolkitProvider>
-
-
+                            {userData.length > 0 ? (<>
+                              <ToolkitProvider
+                                keyField="name"
+                                data={userData}
+                                columns={columns}
+                                search
+                              >
+                                {(props) => (
+                                  <BootstrapTable
+                                    {...props.baseProps}
+                                  // pagination={paginationFactory()}
+                                  />
+                                )}
+                              </ToolkitProvider>
+                            </>) : (<>
+                              <div className="text-center mb-5 mt-5"><strong>No children enrolled yet !</strong></div>
+                            </>)}
                           </div>
                         </div>
                         {/*<div className="files-sec pb-5">
@@ -340,32 +361,32 @@ const CoordinatorDashboard = () => {
                       <aside className="rightcolumn">
                         <div className="activity-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
-                            <h4 className="title-sm mb-0"><strong>Onboarding</strong></h4>
+                            <h4 className="title-sm mb-0"><strong>Activity</strong></h4>
                           </header>
                           <div className="activity-list relative">
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a href="/user-management?role=educator" className="item">
                                 <span className="name">Educators logged in</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.educatorsLoggedIn}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" href="/form">
                                 <span className="name">Overdue Forms</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueForms}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" href="/training">
                                 <span className="name">Overdue Trainings</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueTrainings}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/" className="item">
+                              <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">New Enrolments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.newEnrollments}</span>

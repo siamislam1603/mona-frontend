@@ -228,8 +228,9 @@ function ViewFormBuilder(props) {
                                       return inner_item.end_date &&
                                         !inner_item?.form_filled_user?.includes(
                                           localStorage.getItem('user_id')
-                                        ) ? (
+                                        ) && inner_item.form_permissions[0]?.fill_access_users?.includes(localStorage.getItem("user_role"))  ? (
                                         <>
+                                          {console.log("Hello--->",inner_item)}
                                           {/* {(hrFlag = true)} */}
                                           {inner_index === 0 && (
                                             <Row>
@@ -339,7 +340,7 @@ function ViewFormBuilder(props) {
                                       return inner_item.end_date === null &&
                                         !inner_item?.form_filled_user?.includes(
                                           localStorage.getItem('user_id')
-                                        ) ? (
+                                        ) && inner_item.form_permissions[0]?.fill_access_users?.includes(localStorage.getItem("user_role")) ? (
                                         <>
                                           {inner_index === 0 && (
                                             <Row>

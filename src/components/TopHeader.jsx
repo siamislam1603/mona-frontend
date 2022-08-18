@@ -1,10 +1,10 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { Dropdown, Form, Button } from 'react-bootstrap';
+import { Dropdown, Form, Button, Popover, OverlayTrigger, Image } from 'react-bootstrap';
 import { BASE_URL } from './App';
 import { Link } from "react-router-dom";
 import $ from "jquery";
-
+import moment from "moment";
 
 
 let temp = () => { }
@@ -95,6 +95,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       localStorage.removeItem("DefaultParents")  
       localStorage.removeItem('has_given_consent');
       window.location.href = '/';
+      
     }
   };
 
@@ -112,6 +113,43 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       setSelectedFranchisee(e);
     }
   };
+  
+  const popover = (
+  <Popover id="popover-basic" className="notificationpopup">
+    <Popover.Header as="h3">
+      Your Notifications{" "}
+      <Link style={{ marginLeft: 10 }} to="/Notifications">
+        View All
+      </Link>
+    </Popover.Header>
+    <Popover.Body>
+      <div className="notifitem unread">
+        <div className="notifimg">
+          <Link className="notilink" to="/">
+            <span className="gdot">&nbsp;</span>
+            <div className="notifpic">
+              <Image
+                src="https://wfc-development.s3.ap-south-1.amazonaws.com/documents/629449f083201e1dcc1407dd/f967f4bb-229e-4fe2-96c3-86dd9fdee960.jpeg"
+                roundedCircle
+                className="logo-circle"
+              />
+            </div>
+            <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
+          </Link>
+        </div>
+        <div className="notification-time">
+          18 hours ago
+        </div>
+      </div>
+    </Popover.Body>
+    <div className="totalmsg">
+      You have 19 unread notifications from 335
+    </div>
+    <div className="totalreadmsg">
+      Mark to Read All
+    </div>
+  </Popover>
+);
 
   const fetchNotificationData = async () => {
     const response = await axios.get(`${BASE_URL}/notification/data/${notifType}`, {
@@ -159,6 +197,9 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
     });
     $(".search-close").on("click", function () {
       $(".search-bar").removeClass("show");
+    });
+    $(".notofication-meg").on("click", function () {
+      $(".notification-popup").toggleClass("show");
     });
     
     $(".tipsearch").hide();
@@ -211,6 +252,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
 
   notifData && console.log('DATA=>:', notifData);
   notifType && console.log('TYPE=>:', notifType);
+  
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
@@ -323,13 +365,16 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
                 </a>
               </li>
               <li>
-                <a href="/">
+                <OverlayTrigger rootClose={true} trigger="click" placement="bottom-end" overlay={popover}>
+                <div className="chat-meg cursor">
                   <img 
                     alt=""
                     // onMouseEnter={() => setNotificationDialog(true)} 
                     // onMouseLeave={() => setNotificationDialog(false)} 
                     src="/img/notification-icon.svg" />
-                </a>
+                    <span class="tag">19</span>
+                </div>
+                </OverlayTrigger>
               </li>
               <li className="user-col">
                 <Dropdown>

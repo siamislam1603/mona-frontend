@@ -32,6 +32,7 @@ const training = [
         label: 'Melbourne',
     },
 ];
+
 const selectRow = {
     mode: 'checkbox',
     clickToSelect: true,
@@ -226,7 +227,8 @@ const FileRpositoryList = () => {
             redirect: 'follow',
             headers: myHeaders,
         };
-        let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
+        // let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
+        let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}`, requestOptions)
         response = await response.json();
         setUser(response.result)
 
