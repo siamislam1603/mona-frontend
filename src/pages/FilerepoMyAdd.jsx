@@ -208,7 +208,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         //     }
         // }
 
-// >>>>>>> master
+        // >>>>>>> master
 
         var requestOptions = {
             method: 'POST',
@@ -325,12 +325,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         GetFile();
         getFileCategory();
         getUser();
-    }, [trainingDeleteMessage,formSettings.franchisee])
+    }, [trainingDeleteMessage, formSettings.franchisee])
 
 
     useEffect(() => {
         fetchFranchiseeList();
-      }, [])
+    }, [])
 
     const handleTrainingDelete = async (cell) => {
         console.log('DELETING THE TRAINING!');
@@ -350,36 +350,36 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
     }
 
-      // FETCH FILE DATA
-  const fetchFileData = async (fileId) => {
-    console.log('TRAINING ID:', fileId);
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${fileId}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
+    // FETCH FILE DATA
+    const fetchFileData = async (fileId) => {
+        console.log('TRAINING ID:', fileId);
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${fileId}`, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
 
-    if (response.status === 200 && response.data.status === "success") {
-      const { file } = response.data;
-      console.log('FILE:', file);
-      copyDataToStates(file);
+        if (response.status === 200 && response.data.status === "success") {
+            const { file } = response.data;
+            console.log('FILE:', file);
+            copyDataToStates(file);
+        }
+    };
+
+    const copyDataToStates = (file) => {
+        setFormSettings(prevState => ({
+            ...prevState,
+            assigned_users: file?.repository_shares[0]?.assigned_users,
+            assigned_role: file?.repository_shares[0]?.assigned_roles,
+            franchisee: file?.repository_shares[0]?.franchisee
+        }));
     }
-  };
 
-  const copyDataToStates = (file) => {
-    setFormSettings(prevState => ({
-      ...prevState,
-      assigned_users: file?.repository_shares[0]?.assigned_users,
-      assigned_role: file?.repository_shares[0]?.assigned_roles,
-      franchisee: file?.repository_shares[0]?.franchisee
-    }));  
-  }
-
-  useEffect(() => {
-    fetchFileData(saveFileId);
-    console.log('SAVE TRAINING ID:', saveFileId);
-  }, [saveFileId]);
+    useEffect(() => {
+        fetchFileData(saveFileId);
+        console.log('SAVE TRAINING ID:', saveFileId);
+    }, [saveFileId]);
 
     const [columns, setColumns] = useState([
         {
@@ -392,7 +392,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     <>
 
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" ?
+                            {cell[0] === "image/jpeg" || cell[0] === "image/png" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -551,7 +551,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             <span className="user-name">
                                                                 {Params.id === "1" ? "Daily Use" :
                                                                     Params.id === "2" ? "Business Management" :
-                                                                        Params.id === "3" ? "Employeement" :
+                                                                        Params.id === "3" ? "Employment" :
                                                                             Params.id === "4" ? "Compliance" :
                                                                                 Params.id === "5" ? "Care Giving" :
                                                                                     Params.id === "6" ? "Curriculum & Planning" :
@@ -1303,7 +1303,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             label="All Roles"
                                                             checked={formSettings.assigned_role.length === 3}
                                                             onChange={() => {
-                                                                 if (formSettings.assigned_role.includes("coordinator")
+                                                                if (formSettings.assigned_role.includes("coordinator")
                                                                     && formSettings.assigned_role.includes("educator")
                                                                     && formSettings.assigned_role.includes("guardian")) {
                                                                     setFormSettings(prevState => ({
