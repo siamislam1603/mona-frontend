@@ -174,7 +174,8 @@ function ViewFormBuilder(props) {
                       {(localStorage.getItem('user_role') ===
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
-                          'franchisor_admin') && (
+                          'franchisor_admin' || localStorage.getItem('user_role') ===
+                          'coordinator') && (
                         <div className="forms-create">
                           <Button
                             variant="primary"
@@ -616,7 +617,9 @@ function ViewFormBuilder(props) {
                       {(localStorage.getItem('user_role') ===
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
-                          'franchisor_admin') && (
+                          'franchisor_admin' ||
+                          localStorage.getItem('user_role') ===
+                          'coordinator') && (
                         <Tab eventKey="form-templates" title="Form Templates">
                           <div className="tab-created">
                             <Tabs

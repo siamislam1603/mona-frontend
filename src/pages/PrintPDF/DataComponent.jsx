@@ -16,6 +16,7 @@ class DataComponent extends React.Component {
                     
                 } alt="" />`} 
                 </div>
+                ${this.props.cover_image && `<br />`}
                 <div class="module_title">
                   <h3>
                    ${this.props.category}
