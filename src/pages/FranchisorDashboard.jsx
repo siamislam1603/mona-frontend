@@ -9,7 +9,8 @@ import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import moment from 'moment';
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+
+
 
 
 const products1 = [
@@ -40,14 +41,16 @@ const columns1 = [
     dataField: 'formname',
     text: 'Form Name',
     formatter: (cell) => {
+      console.log("CELL",cell)
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src='../img/audit-form.png' alt='' /></span><span className="user-name">{cell[0]} <small>{cell[1]}</small></span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png"/></span><span className="user-name">{cell[0]} <small>{moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
     },
   },
   {
     dataField: 'educatorname',
     text: 'Educator Name',
     formatter: (cell) => {
+      console.log("EDUCATIN CELL",cell)
       cell = cell.split(",");
       return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
     },
@@ -78,6 +81,7 @@ const FranchisorDashboard = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
+  const [formData, setFormData] = useState([])
 
   let token = localStorage.getItem('token');
 
@@ -157,42 +161,31 @@ const FranchisorDashboard = () => {
     // return Added
 
   }
-  // const [auditforms, setAuditforms] = useState({})
-  // const [user, setUser] = useState([]);
-  // const [userData, setUserData] = useState([]);
-
-
-  // const auditformsData = async () => {
-  //   var myHeaders = new Headers();
-  //   myHeaders.append(
-  //     'authorization',
-  //     'Bearer ' + localStorage.getItem('token')
-  //   );
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     redirect: 'follow',
-  //     headers: myHeaders,
-  //   };
-  //   let response = await fetch(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, requestOptions)
-  //   response = await response.json();
-  //   setUser(response.data)
-  //   const users = response.data.formData[0];
-
-  //   let tempData = users.map((dt) => ({
-  //     name: `${dt.formData} , ${dt.audited_on}`,
-  //     educatatoName: dt.user + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
-  //   }));
-  //   setUserData(tempData);
-  //   console.log(tempData, "usersusersusersusers+++++")
-  // }
-  // console.log(userData, "usersusersusersusers+++++userData", user)
-
+  const FormData = async() =>{
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`,{
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("FORM Data",response)
+    if(response.status == 200){
+      let data = response.data.data.formData;
+      let tempData = data.map((dt) =>({
+        formname: `${dt.form_name}, ${dt.audited_on}`,
+        educatorname : `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
+        // console.log("THe dt",)
+    
+      }))
+      setFormData(tempData);
+    }
+  }
 
   React.useEffect(() => {
     count_Api();
     announcement();
     Forms_count();
-    // auditformsData();
+    FormData();
   }, []);
 
   selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
@@ -353,13 +346,21 @@ const FranchisorDashboard = () => {
                               search
                             >
                               {(props) => ( */}
-                            <BootstrapTable
+                           {
+                            formData?.length>0 ?
+                            (
+                              <BootstrapTable
                               keyField="name"
-                              data={products1}
+                              data={formData}
                               columns={columns1}
-                            // selectRow={selectRow}
-                            // pagination={paginationFactory()}
                             />
+                            ):(
+                              <div className="text-center mb-5 mt-5"><strong>
+                              No forms present!
+                              </strong></div>
+
+                            )
+                           }
                             {/* )}
                             </ToolkitProvider> */}
                           </div>
@@ -417,7 +418,6 @@ const FranchisorDashboard = () => {
                             </div>
                           </div>
                         </div>
-
                         <div className="announcements-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
