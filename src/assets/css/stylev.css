@@ -1413,7 +1413,7 @@ li.branch {
     gap: 20px;
     justify-content: end;
     margin-bottom: 10px;
-    margin-top: -50px;
+    margin-top: -32px;
 }
 
 .create_model_bar {
@@ -1447,7 +1447,7 @@ li.branch {
     display: flex;
     align-items: center;
     margin-bottom: 12px;
-    margin-top: 21px;
+    /* margin-top: 21px; */
 }
 
 .module_title h3 {
@@ -2919,4 +2919,4 @@ h6.text-capitalize {
     font-weight: 900 !important;
     color: black !important;
 }   
-    
+        
