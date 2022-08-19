@@ -204,7 +204,7 @@ const AddOperatingManual = () => {
         data['shared_with'] = selectedUserId
           ? selectedUserId.slice(0, -1)
           : null;
-        data['link']=FRONT_BASE_URL+"/operatingmanual?select=";
+        data['link']=FRONT_BASE_URL+"/operatingmanual";
         // data['shared_role'] = null;
         // data['accessible_to_role'] = formSettingData.accessible_to_role;
         // data['accessible_to_all'] = false;
