@@ -41,7 +41,7 @@ function ViewFormBuilder(props) {
       method: 'DELETE',
       redirect: 'follow',
     };
-    
+
     fetch(
       `${BASE_URL}/form/${id}?user_id=${localStorage.getItem('user_id')}`,
       requestOptions
@@ -174,7 +174,8 @@ function ViewFormBuilder(props) {
                       {(localStorage.getItem('user_role') ===
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
-                          'franchisor_admin' || localStorage.getItem('user_role') ===
+                          'franchisor_admin' ||
+                        localStorage.getItem('user_role') ===
                           'coordinator') && (
                         <div className="forms-create">
                           <Button
@@ -232,23 +233,41 @@ function ViewFormBuilder(props) {
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
-                                      {console.log("inner_item--->",inner_item.form_filled_user)}
+                                      {
+                                        console.log(
+                                          'inner_item--->',
+                                          inner_item.form_filled_user
+                                        );
+                                      }
                                       return inner_item.end_date &&
-                                      !((inner_item?.form_filled_user || []).includes(
-                                        localStorage.getItem('user_id')
-                                      )) 
-                                      &&
-                                      (
-                                        (inner_item.form_permissions[0]?.fill_access_users || []).includes(
-                                        localStorage.getItem('user_role')) ||
-                                        (inner_item.form_permissions[0]?.fill_access_users || []).includes(
-                                            localStorage.getItem('user_id')) ||
-                                        (inner_item.upper_role || []).includes(localStorage.getItem('user_role')) ||
-                                          inner_item.created_by===parseInt(localStorage.getItem('user_id')) ||
-                                          localStorage.getItem('user_role')==="franchisor_admin"
-                                          
-                                      )
-                                         ? (
+                                        !(
+                                          inner_item?.form_filled_user || []
+                                        ).includes(
+                                          localStorage.getItem('user_id')
+                                        ) &&
+                                        ((
+                                          inner_item.form_permissions[0]
+                                            ?.fill_access_users || []
+                                        ).includes(
+                                          localStorage.getItem('user_role')
+                                        ) ||
+                                          (
+                                            inner_item.form_permissions[0]
+                                              ?.fill_access_users || []
+                                          ).includes(
+                                            localStorage.getItem('user_id')
+                                          ) ||
+                                          (
+                                            inner_item.upper_role || []
+                                          ).includes(
+                                            localStorage.getItem('user_role')
+                                          ) ||
+                                          inner_item.created_by ===
+                                            parseInt(
+                                              localStorage.getItem('user_id')
+                                            ) ||
+                                          localStorage.getItem('user_role') ===
+                                            'franchisor_admin') ? (
                                         <>
                                           {console.log('Hello--->', inner_item)}
                                           {/* {(hrFlag = true)} */}
@@ -266,9 +285,33 @@ function ViewFormBuilder(props) {
                                               <div
                                                 className="content-icon-section"
                                                 onClick={() => {
-                                                  navigate(
-                                                    `/form/dynamic/${inner_item.form_name}`
-                                                  );
+                                                  if (
+                                                    inner_item.end_date
+                                                  ) {
+                                                    let todayDate =
+                                                      new Date();
+                                                    let endDate =
+                                                      new Date(
+                                                        inner_item.end_date
+                                                      );
+                                                    if (
+                                                      todayDate.getTime() >
+                                                      endDate.getTime()
+                                                    )
+                                                      alert(
+                                                        'Your form was expired on ' +
+                                                          inner_item.end_date +
+                                                          '.'
+                                                      );
+                                                    else
+                                                      navigate(
+                                                        `/form/dynamic/${inner_item.form_name}`
+                                                      );
+                                                  }
+                                                  else
+                                                    navigate(
+                                                      `/form/dynamic/${inner_item.form_name}`
+                                                    );
                                                 }}
                                               >
                                                 <img
@@ -301,9 +344,33 @@ function ViewFormBuilder(props) {
                                               <div
                                                 className="content-title-section"
                                                 onClick={() => {
-                                                  navigate(
-                                                    `/form/dynamic/${inner_item.form_name}`
-                                                  );
+                                                  if (
+                                                    inner_item.end_date
+                                                  ) {
+                                                    let todayDate =
+                                                      new Date();
+                                                    let endDate =
+                                                      new Date(
+                                                        inner_item.end_date
+                                                      );
+                                                    if (
+                                                      todayDate.getTime() >
+                                                      endDate.getTime()
+                                                    )
+                                                      alert(
+                                                        'Your form was expired on ' +
+                                                          inner_item.end_date +
+                                                          '.'
+                                                      );
+                                                    else
+                                                      navigate(
+                                                        `/form/dynamic/${inner_item.form_name}`
+                                                      );
+                                                  }
+                                                  else
+                                                    navigate(
+                                                      `/form/dynamic/${inner_item.form_name}`
+                                                    );
                                                 }}
                                               >
                                                 <h6>{inner_item.form_name}</h6>
@@ -357,22 +424,35 @@ function ViewFormBuilder(props) {
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
-                                     return inner_item.end_date === null &&
-                                        !((inner_item?.form_filled_user || []).includes(
+                                      return inner_item.end_date === null &&
+                                        !(
+                                          inner_item?.form_filled_user || []
+                                        ).includes(
                                           localStorage.getItem('user_id')
-                                        )) 
-                                        &&
-                                        (
-                                          (inner_item.form_permissions[0]?.fill_access_users || []).includes(
-                                          localStorage.getItem('user_role')) ||
-                                          (inner_item.form_permissions[0]?.fill_access_users || []).includes(
-                                              localStorage.getItem('user_id')) ||
-                                          (inner_item.upper_role || []).includes(localStorage.getItem('user_role')) ||
-                                            inner_item.created_by===parseInt(localStorage.getItem('user_id')) ||
-                                            localStorage.getItem('user_role')==="franchisor_admin"
-                                            
-                                        )
-                                         ? (
+                                        ) &&
+                                        ((
+                                          inner_item.form_permissions[0]
+                                            ?.fill_access_users || []
+                                        ).includes(
+                                          localStorage.getItem('user_role')
+                                        ) ||
+                                          (
+                                            inner_item.form_permissions[0]
+                                              ?.fill_access_users || []
+                                          ).includes(
+                                            localStorage.getItem('user_id')
+                                          ) ||
+                                          (
+                                            inner_item.upper_role || []
+                                          ).includes(
+                                            localStorage.getItem('user_role')
+                                          ) ||
+                                          inner_item.created_by ===
+                                            parseInt(
+                                              localStorage.getItem('user_id')
+                                            ) ||
+                                          localStorage.getItem('user_role') ===
+                                            'franchisor_admin') ? (
                                         <>
                                           {inner_index === 0 && (
                                             <Row>
@@ -495,20 +575,34 @@ function ViewFormBuilder(props) {
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
-                                      return (inner_item?.form_filled_user || []).includes(
+                                      return (
+                                        inner_item?.form_filled_user || []
+                                      ).includes(
                                         localStorage.getItem('user_id')
-                                      )
-                                      &&
-                                      (
-                                        (inner_item.form_permissions[0]?.fill_access_users || []).includes(
-                                        localStorage.getItem('user_role')) ||
-                                        (inner_item.form_permissions[0]?.fill_access_users || []).includes(
-                                            localStorage.getItem('user_id')) ||
-                                        (inner_item.upper_role || []).includes(localStorage.getItem('user_role')) ||
-                                          inner_item.created_by===parseInt(localStorage.getItem('user_id')) ||
-                                          localStorage.getItem('user_role')==="franchisor_admin"
-                                          
-                                      ) ? (
+                                      ) &&
+                                        ((
+                                          inner_item.form_permissions[0]
+                                            ?.fill_access_users || []
+                                        ).includes(
+                                          localStorage.getItem('user_role')
+                                        ) ||
+                                          (
+                                            inner_item.form_permissions[0]
+                                              ?.fill_access_users || []
+                                          ).includes(
+                                            localStorage.getItem('user_id')
+                                          ) ||
+                                          (
+                                            inner_item.upper_role || []
+                                          ).includes(
+                                            localStorage.getItem('user_role')
+                                          ) ||
+                                          inner_item.created_by ===
+                                            parseInt(
+                                              localStorage.getItem('user_id')
+                                            ) ||
+                                          localStorage.getItem('user_role') ===
+                                            'franchisor_admin') ? (
                                         <>
                                           {inner_index === 0 && (
                                             <Row>
@@ -588,9 +682,33 @@ function ViewFormBuilder(props) {
                                                   <Dropdown.Menu>
                                                     <Dropdown.Item
                                                       onClick={() => {
-                                                        navigate(
-                                                          `/form/dynamic/${inner_item.form_name}`
-                                                        );
+                                                        if (
+                                                          inner_item.end_date
+                                                        ) {
+                                                          let todayDate =
+                                                            new Date();
+                                                          let endDate =
+                                                            new Date(
+                                                              inner_item.end_date
+                                                            );
+                                                          if (
+                                                            todayDate.getTime() >
+                                                            endDate.getTime()
+                                                          )
+                                                            alert(
+                                                              'Your form was expired on ' +
+                                                                inner_item.end_date +
+                                                                '.'
+                                                            );
+                                                          else
+                                                            navigate(
+                                                              `/form/dynamic/${inner_item.form_name}`
+                                                            );
+                                                        }
+                                                        else
+                                                          navigate(
+                                                            `/form/dynamic/${inner_item.form_name}`
+                                                          );
                                                       }}
                                                     >
                                                       <FontAwesomeIcon
@@ -618,7 +736,7 @@ function ViewFormBuilder(props) {
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
                           'franchisor_admin' ||
-                          localStorage.getItem('user_role') ===
+                        localStorage.getItem('user_role') ===
                           'coordinator') && (
                         <Tab eventKey="form-templates" title="Form Templates">
                           <div className="tab-created">
