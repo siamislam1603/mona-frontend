@@ -87,7 +87,6 @@ const handleLinkClick = notificationId => {
   console.log("event eventeventeventevent",  notificationId)
 
   if(notificationId){
-
     const response = axios.put(
       `${BASE_URL}/notification/${notificationId}`,{}, {
       headers: {
@@ -96,16 +95,9 @@ const handleLinkClick = notificationId => {
     }
     );
 
-    console.log('notification read status updated', response);
-
-
-
     if (response.status === 200) {  
       console.log('notification read status updated', response.msg);
-
-
     }else{
-
       console.log('TYPE OF COVER IMAGE:', response.msg);
 
     }
@@ -117,31 +109,21 @@ const handleLinkClick = notificationId => {
   // setTabLinkPath(path);
 }
 
-const handleMarkRearAll = notificationId => {
-alert("dddddddddddddddd")
+const handleMarkRearAll = async notificationId => {
 
     let userID = localStorage.getItem('user_id');
-
-    const response = axios.put(`${BASE_URL}/notification/unread/${userID}`,{}, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-    });
-    console.log('notification read status updated', response);
-
-    if (response.status === 200) {  
-      console.log('notification read status updated', response.msg);
-
+    const response = await axios.put(`${BASE_URL}/notification/unread/${userID}`,{}, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+      });
+    if (response.status == 200) {  
+      setTopHeaderNotificationCount(0);
     }else{
       console.log('TYPE OF COVER IMAGE:', response.msg);
-
     }
 
-
 }
-
-  
-
 
 
   // const fetchAndPopulateFranchiseeDetails = async () => {
@@ -213,7 +195,7 @@ alert("dddddddddddddddd")
       topHeaderNotification.length !==0 ? (
         topHeaderNotification.map((details,index) => (
           
-              <div className="notifitem unread">
+              <div className={topHeaderNotificationCount?"notifitem unread":"notifitem"}>
                 <div className="notifimg">
                   <Link className="notilink" to="/">
                     <div className="notifpic">
