@@ -651,6 +651,7 @@ const FileRepository = () => {
                 <Row>
                   <Col md={12}>
                     <Form.Group>
+                    <Form.Label>Upload File:*</Form.Label>
                       <DragDropRepository onChange={setField} />
                       {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                       <p className="error">{errors.setting_files}</p>

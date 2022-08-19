@@ -58,6 +58,7 @@ import FilerepoMyAdd from '../pages/FilerepoMyAdd';
 import RepoEdit from '../pages/RepoEdit';
 import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
+import SearchResult from '../pages/SearchResult';
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -405,6 +406,16 @@ const Main = () => {
             </Protected>
           }
         />
+          <Route
+          path="/SearchResult/"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <SearchResult />
+            </Protected>
+          }
+        />
+
 
         <Route
           path="/form/response"
