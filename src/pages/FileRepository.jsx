@@ -138,8 +138,8 @@ const FileRepository = () => {
   useEffect(() => {
     GetData();
     fetchFranchiseeList();
-    getMyAddedFileRepoData();
-    getFilesassigned_usersMeData();
+    // getMyAddedFileRepoData();
+    // getFilesassigned_usersMeData();
     getFileCategory();
     getUser();
     onSubmit();
@@ -324,88 +324,69 @@ const FileRepository = () => {
 
   // { console.log(formSettingData.setting_files, ")>>>>>>>>>>") }
 
-  const getFilesassigned_usersMeData = () => {
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    fetch(
-      `${BASE_URL}/uploads/assigned_usersMe/${localStorage.getItem('user_id')}`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((res) => {
-        setassigned_usersMeFileRepoData(res);
-      })
-      .catch((error) => console.log('error', error));
-  };
+  // const getFilesassigned_usersMeData = () => {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append(
+  //     'authorization',
+  //     'Bearer ' + localStorage.getItem('token')
+  //   );
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //     headers: myHeaders,
+  //   };
+  //   fetch(
+  //     `${BASE_URL}/uploads/assigned_usersMe/${localStorage.getItem('user_id')}`,
+  //     requestOptions
+  //   )
+  //     .then((response) => response.json())
+  //     .then((res) => {
+  //       setassigned_usersMeFileRepoData(res);
+  //     })
+  //     .catch((error) => console.log('error', error));
+  // };
 
 
-  const getMyAddedFileRepoData = () => {
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
+  // const getMyAddedFileRepoData = () => {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append(
+  //     'authorization',
+  //     'Bearer ' + localStorage.getItem('token')
+  //   );
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //     headers: myHeaders,
+  //   };
 
-    fetch(
-      `${BASE_URL}/uploads/dashboardFiles/${localStorage.getItem('user_id')}`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        // let repoData = [];
-        console.log('data--->', result);
-        // res?.map((item) => {
-        //   if (item.filesPath.includes('/')) {
-        //     item.filesPath = item.filesPath.split('/');
-        //   }
+  //   fetch(
+  //     `${BASE_URL}/uploads/dashboardFiles/${localStorage.getItem('user_id')}`,
+  //     requestOptions
+  //   )
+  //     .then((response) => response.json())
+  //     .then((result) => {
 
-        //   if (item.filesPath.includes('\\')) {
-        //     console.log('Hello9009546546789875674');
-        //     item.filesPath = item.filesPath.split('\\');
-        //   }
-        //   repoData.push({
-        //     id: item.id,
-        //     name:
-        //       '../img/abstract-ico.png,' +
-        //       item.filesPath[item.filesPath.length - 1],
-        //     createdon: moment(item.createdAt).format('DD/MM/YYYY'),
-        //     createdby: item.creatorName + ',' + item.creatorRole,
-        //     sharing: '../img/sharing-ico.png, Shared',
-        //   });
-        // });
-        // console.log('repoData---->', repoData);
-        setFileRepoData(result);
-      })
-      .catch((error) => console.log('error', error));
-  };
+  //       console.log('data--->', result);
 
-  const getUserRoleAndFranchiseeData = () => {
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-    };
+  //       setFileRepoData(result);
+  //     })
+  //     .catch((error) => console.log('error', error));
+  // };
 
-    fetch(`${BASE_URL}/fileRepo/`, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        setUserRole(res?.userRoleList);
-        console.log('response0-------->1', res?.userRoleList);
-      })
-      .catch((error) => console.log('error', error));
-  };
+  // const getUserRoleAndFranchiseeData = () => {
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //   };
+
+  //   fetch(`${BASE_URL}/fileRepo/`, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((res) => {
+  //       setUserRole(res?.userRoleList);
+  //       console.log('response0-------->1', res?.userRoleList);
+  //     })
+  //     .catch((error) => console.log('error', error));
+  // };
 
   function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
@@ -699,7 +680,7 @@ const FileRepository = () => {
                         );
                       })}
                     </Form.Select>
-                    {error && !formSettingData.file_category && < span className="error"> File Category is required!</span>}
+                    {error && !formSettingData.file_category && < span className="error"> File is required!</span>}
                   </Form.Group>
                 </Col>
               </Row>
@@ -949,14 +930,14 @@ const FileRepository = () => {
                                     .toString()
                                     .includes('coordinator')
                                 ) {
-                                  data['shared_role'] += 'coordinator,';
+                                  data['shared_role'] += 'coordinator';
                                 }
                                 if (
                                   !data['shared_role']
                                     .toString()
                                     .includes('all')
                                 ) {
-                                  data['shared_role'] += 'all,';
+                                  data['shared_role'] += ',';
                                 }
                                 setFormSettingData(data);
                               } else {
@@ -965,7 +946,7 @@ const FileRepository = () => {
                               }
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'all'
+                              'parent,educator,coordinator'
                             )}
                           />
                           <span className="checkmark"></span>
