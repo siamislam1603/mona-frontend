@@ -4,6 +4,7 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
+import moment from 'moment';
 
 
 const Noticefication = (props) => {
@@ -34,7 +35,6 @@ const [notificationDetails,setNotificationDetail] = useState([])
           // console.log("The code is 404")
           setNotificationDetail([])
         }
-
     }
   
 }
@@ -105,69 +105,41 @@ const handleLinkClick = notificationId => {
                   </header>
                   
                   <div className="notofication-listing-sec notificationpopup mb-5">
-                    <div className="notifitem unread">
+
+                  { notificationDetails &&
+                        notificationDetails.length !==0 ? (
+                          notificationDetails.map((details,index) => (
+                            
+                    <div className={details.is_read == 'true' ?'notifitem':'notifitem unread'}>
                       <div className="notifimg">
-                        <a className="notilink" href="/wfc/Notifications">
-                          <span className="gdot"></span>
+                        <a className="notilink" href="javascript:void(0)">
                             <div className="notifpic">
-                              <img src="https://wfc-development.s3.ap-south-1.amazonaws.com/documents/629449f083201e1dcc1407dd/f967f4bb-229e-4fe2-96c3-86dd9fdee960.jpeg" className="logo-circle rounded-circle"/>
+                              
+                            <img src="../img/announcements-ico.png" alt="" className="logo-circle rounded-circle"/>
                             </div>
-                          <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
+                          <div className="notiftxt">
+                          <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
+                            dangerouslySetInnerHTML={{
+                                      __html: `${details.title}`,
+                                    }}/>
+                          </div>
                         </a>
                       </div>
-                      <div className="notification-time">21 hours ago</div>
+                      <div className="notification-time">{moment(details.createdAt).fromNow()}</div>
                     </div>
-                    <div className="notifitem unread">
-                      <div className="notifimg">
-                        <a className="notilink" href="/wfc/Notifications">
-                          <span className="gdot"></span>
-                            <div className="notifpic">
-                              <img src="https://wfc-development.s3.ap-south-1.amazonaws.com/documents/629449f083201e1dcc1407dd/f967f4bb-229e-4fe2-96c3-86dd9fdee960.jpeg" className="logo-circle rounded-circle"/>
-                            </div>
-                          <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
-                        </a>
-                      </div>
-                      <div className="notification-time">21 hours ago</div>
-                    </div>
-                    <div className="notifitem">
-                      <div className="notifimg">
-                        <a className="notilink" href="/wfc/Notifications">
-                          <span className="gdot"></span>
-                            <div className="notifpic">
-                              <img src="https://wfc-development.s3.ap-south-1.amazonaws.com/documents/629449f083201e1dcc1407dd/f967f4bb-229e-4fe2-96c3-86dd9fdee960.jpeg" className="logo-circle rounded-circle"/>
-                            </div>
-                          <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
-                        </a>
-                      </div>
-                      <div className="notification-time">21 hours ago</div>
-                    </div>
+
+
+                ))
+                ): (
+                  <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
+                )
+                }
+
+
+
                   </div>
                   
                   
-                  
-                    <Accordion defaultActiveKey="0">
-                      { notificationDetails && notificationDetails.length !==0 ? (
-                          notificationDetails.map((details,index) => (
-                            <div key={index}>
-                            
-                           <Accordion.Item  eventKey={index}>
-                               <div className="head-title">
-                                 <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                                 <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
-                                 dangerouslySetInnerHTML={{
-                                      __html: `${details.title}`,
-                                    }}/>
-                               </div>
-                           </Accordion.Item>
-                           
-                            </div> 
-                           
-                           ))
-                        ): (
-                          <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
-                        )
-                      }
-                    </Accordion>
                     </div>
                     </div>
                     </div>
