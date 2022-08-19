@@ -95,18 +95,18 @@ export const createFormFieldValidation = (form) => {
 
   return newErrors;
 };
-export const createFileRepoValidation = (form, franchisee, user) => {
+export const createFileRepoValidation = (form) => {
   let newErrors = {};
-  let { applicable_to_user, applicable_to_franchisee, setting_files } = form;
-  if (applicable_to_user === '0') {
-    if (user === '') newErrors.user = 'Applicable to User is Required';
+  let { file_category, meta_description, setting_files } = form;
+  if (!file_category || file_category === '') {
+    newErrors.file_category = 'File Category is Required';
   }
-  if (applicable_to_franchisee === '0') {
-    if (franchisee === '')
-      newErrors.franchisee = 'Applicable to Franchisee is Required';
+  if (!meta_description || meta_description === '') {
+    newErrors.meta_description = 'Meta Description is Required';
   }
-  if (!setting_files || setting_files === '')
+  if (!setting_files || setting_files === '') {
     newErrors.setting_files = 'File is Required';
+  }
 
   return newErrors;
 };
