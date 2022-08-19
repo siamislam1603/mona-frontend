@@ -322,7 +322,7 @@ const EditTraining = () => {
       // if(allowSubmit !== true)
       //   setSettingsModalPopup(true);
 
-      if (settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+      if (settingsModalPopup === false && trainingData && coverImage) {
         let data = new FormData();
 
         for (let [key, values] of Object.entries(trainingSettings)) {
