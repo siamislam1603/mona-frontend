@@ -190,7 +190,10 @@ const AvailableTraining = ({ filter }) => {
                         <div className="iconame">
                           <a href="/training-detail">{item.training.title}</a>
                           <div className="datecol">
-                            <span className="red-date">Due Date:{' '}{moment(item.training.createdAt).format('DD/MM/YYYY')}</span>
+                            {
+                              item.training.end_date !== null &&
+                              <span className="red-date">Due Date:{' '}{moment(item.training.end_date).format('DD/MM/YYYY')}</span>
+                            }
                             <span className="time">{item.training.completion_time} {item.training.completion_in}</span>
                           </div>
                         </div>
