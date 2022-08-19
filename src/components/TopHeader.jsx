@@ -279,7 +279,9 @@ const handleMarkRearAll = notificationId => {
       setNotifData(filteredData);
     }
   };
-  
+  // const handleSearch = () =>{
+  //   console.log("HANDLE SEARCH")
+  // }
   useEffect(() => {
     let ths = this;
     $(".topsearch").focus(function () {
@@ -467,6 +469,7 @@ const handleMarkRearAll = notificationId => {
             <ul>
               <li>
                 <span className="search-col cursor">
+                
                   <img alt="" src="/img/search-icon.svg" />
                 </span>
               </li>
