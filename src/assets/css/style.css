@@ -739,6 +739,10 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .notofication-listing-sec.notificationpopup { height: auto; max-width: 100%; }
 .notofication-listing-sec.notificationpopup .notifitem.unread, .notofication-listing-sec.notificationpopup .notifitem { background-color: transparent; }
 
+.fullloader-sec{position:fixed;top:0;left:0;width:100%;height:100%;z-index:99;display:flex;background:rgba(255, 255, 255, 0.8);align-items:center;justify-content:center;}
+.smallloader-sec{position:absolute;width:100%;height:auto;padding:3rem 0;display:block;background:rgba(255, 255, 255, 0.8);align-items:flex-start;justify-content:center;left:0px;z-index:99;}
+.fullloader-sec.loader,.smallloader-sec.loader{overflow:hidden;}
+
 
 
 /* Responsive */

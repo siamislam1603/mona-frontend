@@ -54,7 +54,7 @@ const RepoEdit = () => {
         console.log(response, "response")
         if (response.status === 200 && response.data.status === "success") {
             console.log('RESPONSE IS SUCCESS');
-            const {file} = response.data;
+            const { file } = response.data;
             console.log('result>>>>>>>', file)
             copyFetchedData(file);
         }
@@ -62,8 +62,6 @@ const RepoEdit = () => {
     }
 
     const copyFetchedData = (data) => {
-        console.log('COPYING FETCHED DATA:', data);
-        
         setData(prevState => ({
             ...prevState,
             id: data.id,
@@ -106,7 +104,7 @@ const RepoEdit = () => {
         event.preventDefault();
         console.log('DATA:', data);
         let dataObj = new FormData();
-        for(let[key, value] of Object.entries(data)) {
+        for (let [key, value] of Object.entries(data)) {
             console.log(key, value);
             dataObj.append(key, value);
         }
@@ -130,15 +128,15 @@ const RepoEdit = () => {
 
         console.log('DATA UPDATE RESPONSE:', response);
         if (response.status === 200 && response.data.status === "success") {
-            if(typeof data.image === 'string') {
+            if (typeof data.image === 'string') {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
 
                 console.log('IMAGE UPDATE RESPONSE:', response);
-                if(response.status === 201 && response.data.status === "success") {
+                if (response.status === 201 && response.data.status === "success") {
                     console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
                     window.location.href = '/file-repository';
                 }
-            } else if(typeof data.image === 'object') {
+            } else if (typeof data.image === 'object') {
                 let dataObj = new FormData();
                 dataObj.append("image", data.image);
                 dataObj.append("id", Params.id);
@@ -154,11 +152,11 @@ const RepoEdit = () => {
                 console.log('SOLO IMAGE SAVE RESPONSE:', response);
                 if (response.status === 200 && response.data.status === "success") {
                     console.log('DATA UPDATED SUCCESSFULLT => type: object');
-                    window.location.href='/file-repository';
+                    window.location.href = '/file-repository';
                 }
             }
             console.log('DATA UPDATED SUCCESSFULLT');
-            window.location.href='/file-repository';
+            window.location.href = '/file-repository';
         }
     }
 
@@ -310,7 +308,7 @@ const RepoEdit = () => {
                                                         <Form.Group>
                                                             <DragDropRepository onChange={setField} />
                                                             <p className="error">{errors.setting_files}</p> {/* <img src={data.image} alt="smkdjh" /> */}
-                                                            <img className="cover-image-style" src={data.image} alt="training cover image" />
+                                                            {/* <img className="cover-image-style" src={setField} alt="training cover image" /> */}
                                                             {/* {
                                                                 data &&
                                                                 <>

@@ -25,7 +25,7 @@ const [notificationDetails,setNotificationDetail] = useState([])
         }
       });
       // console.log("The All Announcement",response.data.result);
-      console.log(response);
+      console.log("response responseresponseresponseresponseresponse", response.data.notification);
       
       if(response.status === 200 && response.data.status === "success") {
           setNotificationDetail(response.data.notification.rows);
@@ -119,32 +119,45 @@ const handleLinkClick = notificationId => {
                             </div>
                           <div className="notiftxt">
                           <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
-                            dangerouslySetInnerHTML={{
-                                      __html: `${details.title}`,
-                                    }}/>
+                          dangerouslySetInnerHTML={{
+                                    __html: `${details.title}`,
+                                  }}/>
                           </div>
-                        </a>
-                      </div>
-                      <div className="notification-time">{moment(details.createdAt).fromNow()}</div>
+                      </a>
                     </div>
-
-
+                    <div className="notification-time">{moment(details.createdAt).fromNow()}</div>
+                  </div>
                 ))
                 ): (
                   <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
                 )
+              }
+            </div>
+              <Accordion defaultActiveKey="0">
+                { notificationDetails && notificationDetails.length !==0 ? (
+                  notificationDetails.map((details,index) => (
+                    <div key={index}>
+                      <Accordion.Item  eventKey={index}>
+                          <div className="head-title">
+                            <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                            <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
+                            dangerouslySetInnerHTML={{
+                                __html: `${details.title}`,
+                              }}/>
+                          </div>
+                      </Accordion.Item>
+                    </div> 
+                    ))
+                  ):(
+                    <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
+                  )
                 }
-
-
-
-                  </div>
-                  
-                  
-                    </div>
-                    </div>
-                    </div>
-                    </Container>
-                  </div>
+              </Accordion>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </div>
   )
 }
 

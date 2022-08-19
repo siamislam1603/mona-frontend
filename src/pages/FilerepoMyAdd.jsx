@@ -392,7 +392,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     <>
 
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" || cell[0] === "image/png" ?
+                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -422,6 +422,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 <VideoPopupfForFile
                                                     data={cell[2]}
                                                     title={cell[0]}
+                                                    name={cell[1]}
                                                     // duration={cell[0]}
                                                     fun={handleVideoClose}
                                                 />
