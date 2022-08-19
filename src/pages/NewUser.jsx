@@ -65,6 +65,7 @@ const NewUser = () => {
   const [createUserModal, setCreateUserModal] = useState(false);
   const [userActiveStatus, setUserActiveStatus] = useState(null);
   const [statusPopup, setStatusPopup] = useState(false);
+  const [currentRole, setCurrentRole] = useState(null);
 
 
   // LOADER STATES
@@ -341,23 +342,26 @@ const NewUser = () => {
     });
     if (response.status === 200) {
       const { userRoleList } = response.data;
-      let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
+      // let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
       
-      newRoleList = newRoleList.map(d => ({
+      let newRoleList = userRoleList.map(d => ({
+        id: d.id,
         value: d.role_name,
         label: d.role_label,
+        sequence: d.role_sequence
       }));
 
-      if(localStorage.getItem('user_role') === 'franchisee_admin') {
-        newRoleList = newRoleList.filter(role => role.label !== 'Franchisee Admin');
-      }
+      // if(localStorage.getItem('user_role') === 'franchisee_admin') {
+      //   newRoleList = newRoleList.filter(role => role.label !== 'Franchisee Admin');
+      // }
 
-      if(localStorage.getItem('user_role')) {
-        newRoleList = newRoleList.filter(role => role.role_name !== 'Franchisee Admin' && role.role_name !== 'Coordinator');
-      }
+      // if(localStorage.getItem('user_role')) {
+      //   newRoleList = newRoleList.filter(role => role.role_name !== 'Franchisee Admin' && role.role_name !== 'Coordinator');
+      // }
       setUserRoleData(
         newRoleList
       );
+      setCurrentRole(localStorage.getItem('user_role'));
     }
   };
 
@@ -439,6 +443,33 @@ const NewUser = () => {
     }
   }
 
+  const trimRoleList = () => {
+    console.log('TRIMMING ROLE!');
+    let newRoleList = userRoleData;
+    console.log('NEW ROLE LIST:', newRoleList);
+
+    if(currentRole === "educator") {
+      newRoleList = newRoleList.filter(role => role.sequence === 4);
+      setUserRoleData(newRoleList);
+    }
+
+    if(currentRole === "coordinator") {
+      newRoleList = newRoleList.filter(role => role.sequence > 3);
+      setUserRoleData(newRoleList);
+    }
+
+    if(currentRole === "franchisee_admin") {
+      newRoleList = newRoleList.filter(role => role.sequence > 2);
+      setUserRoleData(newRoleList);
+    }
+
+    if(currentRole === "guardian") {
+      newRoleList = newRoleList.filter(role => role.sequence === 5);
+      setUserRoleData(newRoleList);
+    }
+  }
+
+
   useEffect(() => {
     setFormErrors(prevState => ({
       ...prevState,
@@ -470,6 +501,11 @@ const NewUser = () => {
       }));
     }
   }, [franchiseeData]);
+
+  useEffect(() => {
+    console.log('CURRENT ROLE HAS BEEN LOADED!');
+    trimRoleList();
+  }, [currentRole]);
 
   formData && console.log('FORM ERRORS:', formData);
   // franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);

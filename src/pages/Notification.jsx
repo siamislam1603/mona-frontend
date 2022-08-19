@@ -89,29 +89,35 @@ const handleLinkClick = notificationId => {
 
   return (
     <div className="announcement-accordion">
-      <Container>
-        <div className="admin-wrapper">
-          <aside className="app-sidebar">
-            <LeftNavbar />
-          </aside>
-          <div className="sec-column">
-            <TopHeader 
-              notificationType='Child Enrollment'/>
-            <div className="entry-container">
-            <header className="title-head">
-              <h1 className="title-lg">Notifications</h1>
-            </header>
-            <div className="notofication-listing-sec notificationpopup mb-5">
-              { notificationDetails &&
-                    notificationDetails.length !==0 ? (
-                      notificationDetails.map((details,index) => (        
-                  <div className={details.is_read == 'true' ?'notifitem':'notifitem unread'}>
-                    <div className="notifimg">
-                      <a className="notilink" href="javascript:void(0)">
-                        <div className="notifpic">  
-                          <img src="../img/announcements-ico.png" alt="" className="logo-circle rounded-circle"/>
-                        </div>
-                        <div className="notiftxt">
+
+<Container>
+            <div className="admin-wrapper">
+              <aside className="app-sidebar">
+              <LeftNavbar />
+              </aside>
+              <div className="sec-column">
+                <TopHeader 
+                  notificationType='Child Enrollment'/>
+
+              <div className="entry-container">
+                  <header className="title-head">
+                    <h1 className="title-lg">Notifications</h1>
+                  </header>
+                  
+                  <div className="notofication-listing-sec notificationpopup mb-5">
+
+                  { notificationDetails &&
+                        notificationDetails.length !==0 ? (
+                          notificationDetails.map((details,index) => (
+                            
+                    <div className={details.is_read == 'true' ?'notifitem':'notifitem unread'}>
+                      <div className="notifimg">
+                        <a className="notilink" href="javascript:void(0)">
+                            <div className="notifpic">
+                              
+                            <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
+                            </div>
+                          <div className="notiftxt">
                           <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
                           dangerouslySetInnerHTML={{
                                     __html: `${details.title}`,
@@ -127,26 +133,7 @@ const handleLinkClick = notificationId => {
                 )
               }
             </div>
-              <Accordion defaultActiveKey="0">
-                { notificationDetails && notificationDetails.length !==0 ? (
-                  notificationDetails.map((details,index) => (
-                    <div key={index}>
-                      <Accordion.Item  eventKey={index}>
-                          <div className="head-title">
-                            <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                            <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
-                            dangerouslySetInnerHTML={{
-                                __html: `${details.title}`,
-                              }}/>
-                          </div>
-                      </Accordion.Item>
-                    </div> 
-                    ))
-                  ):(
-                    <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
-                  )
-                }
-              </Accordion>
+
             </div>
           </div>
         </div>
