@@ -657,8 +657,8 @@ const FileRepository = () => {
                 <Row>
                   <Col md={12}>
                     <Form.Group>
+                    <Form.Label>Upload File:*</Form.Label>
                       <DragDropRepository onChange={setField} />
-                      <p> <small className='text-danger'>*required</small></p>
                       <p className="error">{errors.setting_files}</p>
                     </Form.Group>
                   </Col>
@@ -675,7 +675,7 @@ const FileRepository = () => {
                 <Col lg={12}>
                   <div className="metadescription">
                     <Form.Group className="mb-3">
-                      <Form.Label>Meta Description <small className='text-danger'>*required</small></Form.Label>
+                      <Form.Label>Meta Description*</Form.Label>
                       <Form.Control
                         as="textarea"
                         rows={2}
@@ -689,7 +689,7 @@ const FileRepository = () => {
                 </Col>
                 <Col lg={12}>
                   <Form.Group>
-                    <Form.Label>File Category <small className='text-danger'>*required</small></Form.Label>
+                    <Form.Label>File Category*</Form.Label>
                     <Form.Select
                       name="file_category"
                       onChange={(e) => {
