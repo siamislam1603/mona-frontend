@@ -85,9 +85,12 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
         <input {...getInputProps()} type="file" name="setting_file" />
         <div className="text-center uploadfile">
           <span>Please Select a file to share : <br /><span className="btn btn-primary" >Choose File</span> <br /> <small>Accepted file types : doc, pdf, mp3, png, jpg</small></span>
+
         </div>
       </div>
-
+      <div className="showfiles">
+        <ul>{files}</ul>
+      </div>
       {/* {files.length > 0 && <button onClick={removeAll}>Remove All</button>} */}
     </div>
   );
