@@ -733,7 +733,7 @@ const AddOperatingManual = () => {
                                     src="../img/bi_cloud-upload.svg"
                                     alt=""
                                   />
-                                  Add File
+                                  Add Video
                                 </span>
                                 <Form.Control
                                   className="add_image_input"
