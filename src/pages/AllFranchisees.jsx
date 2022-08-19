@@ -335,7 +335,7 @@ const AllFranchisees = () => {
                                                         </a> */}
 
                                                         {
-                                                            verifyPermission("franchisee_management", "add") &&
+                                                            verifyPermission("user_management", "add") &&
                                                             <a href="/new-franchisees" className="btn btn-primary me-3">+ Add New Franchisee</a>
                                                         }
 
