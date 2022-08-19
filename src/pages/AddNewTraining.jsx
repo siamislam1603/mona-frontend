@@ -41,10 +41,10 @@ const validateTrainingSettings = (trainingSettings) => {
     start_time
   } = trainingSettings;
 
-  if(!start_date)
+  if (!start_date)
     errors.start_date = "Choose a start date!";
 
-  if(!start_time)
+  if (!start_time)
     errors.start_time = "Choose a start time!";
 
   return errors;
@@ -58,22 +58,22 @@ const AddNewTraining = () => {
   const [loader, setLoader] = useState(false);
   const [createTrainingModal, setCreateTrainingModal] = useState(false);
 
-  const [trainingData, setTrainingData] = useState({ 
+  const [trainingData, setTrainingData] = useState({
     time_unit: "Hours",
     title: "",
     description: "",
     meta_description: "",
     category_id: "",
     time_required_to_complete: "",
-    training_form_id: "" 
+    training_form_id: ""
   });
-  const [trainingSettings, setTrainingSettings] = useState({ 
-    start_date: "", 
-    start_time: "", 
+  const [trainingSettings, setTrainingSettings] = useState({
+    start_date: "",
+    start_time: "",
     send_to_all_franchisee: false,
-    applicable_to: 'roles', 
-    assigned_franchisee: [], 
-    assigned_roles: [], 
+    applicable_to: 'roles',
+    assigned_franchisee: [],
+    assigned_roles: [],
     assigned_users: []
   });
   const [userRoles, setUserRoles] = useState([]);
@@ -90,6 +90,8 @@ const AddNewTraining = () => {
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
+  console.log(errors, "errors")
+
   const [trainingSettingErrors, setTrainingSettingErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
 
@@ -102,7 +104,7 @@ const AddNewTraining = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       setFranchiseeList(response.data.franchiseeList.map(data => ({
         id: data.id,
         cat: data.franchisee_alias,
@@ -131,15 +133,15 @@ const AddNewTraining = () => {
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
+      headers: {
+        "Authorization": "Bearer " + token
       }
+    }
     );
 
     console.log('Training Details Response:', response);
 
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       // let { id } = response.data.training;
 
       // let token = localStorage.getItem('token');
@@ -167,24 +169,24 @@ const AddNewTraining = () => {
 
       let imgSaveResponse = await axios.post(
         `${BASE_URL}/training/coverImg?title="training"`, data, {
-          headers: {
-            "Authorization": "Bearer " + token
-          }
+        headers: {
+          "Authorization": "Bearer " + token
         }
+      }
       );
 
-      if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
+      if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
         setLoader(false)
         localStorage.setItem('success_msg', 'Training Created Successfully!');
         localStorage.setItem('active_tab', '/created-training');
-        window.location.href="/training";
+        window.location.href = "/training";
       } else {
         setTopErrorMessage("unable to save cover image!");
         setTimeout(() => {
           setTopErrorMessage(null);
         }, 3000)
       }
-    } else if(response.status === 200 && response.data.status === "fail") {
+    } else if (response.status === 200 && response.data.status === "fail") {
       const { msg } = response.data;
       setTopErrorMessage(msg);
       setLoader(false);
@@ -192,16 +194,16 @@ const AddNewTraining = () => {
       setTimeout(() => {
         setTopErrorMessage(null);
       }, 3000)
-    } 
-};  
+    }
+  };
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
     console.log('franchisee_id:', franchisee_id);
-    if(franchisee_id.length > 0 && franchisee_id[0] !== 'all') {
+    if (franchisee_id.length > 0 && franchisee_id[0] !== 'all') {
       console.log('FETCHING FRANCHISEE USERS!');
       const response = await axios.get(`${BASE_URL}/user-group/users/franchisee/${franchisee_id[0]}`);
-      if(response.status === 200 && response.data.status === "success") {
+      if (response.status === 200 && response.data.status === "success") {
         const { users } = response.data;
         setFetchedFranchiseeUsers([
           ...users?.map((data) => ({
@@ -218,14 +220,14 @@ const AddNewTraining = () => {
   const fetchTrainingFormData = async () => {
     const response = await axios.get(`${BASE_URL}/training/forms/training`);
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       const { formData } = response.data;
       setTrainingFormData(formData.map(d => ({
         id: d.id,
         label: d.form_name,
         value: d.form_name
       })));
-    } 
+    }
   }
 
   // FETCHING TRAINING CATEGORIES
@@ -233,15 +235,15 @@ const AddNewTraining = () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(
       `${BASE_URL}/training/get-training-categories`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
+      headers: {
+        "Authorization": "Bearer " + token
       }
+    }
     );
 
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
-      console.log('CATEGORY:', )
+      console.log('CATEGORY:',)
       setTrainingCategory([
         ...categoryList.map((data) => ({
           id: data.id,
@@ -274,30 +276,30 @@ const AddNewTraining = () => {
     event.preventDefault();
     // window.scrollTo(0, 0);
 
-    let errorObj = TrainingFormValidation(trainingData, coverImage); 
+    let errorObj = TrainingFormValidation(trainingData, coverImage);
     console.log(errorObj);
-    if(Object.keys(errorObj).length > 0) {
+    if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
       setErrors({});
-      if(!allowSubmit)
+      if (!allowSubmit)
         setSettingsModalPopup(true);
 
-      if(settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+      if (settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
 
         let data = new FormData();
-        for(let [key, values] of Object.entries(trainingSettings)) {
+        for (let [key, values] of Object.entries(trainingSettings)) {
           data.append(`${key}`, values);
         }
 
-        for(let [ key, values ] of Object.entries(trainingData)) {
+        for (let [key, values] of Object.entries(trainingData)) {
           data.append(`${key}`, values)
         }
 
         videoTutorialFiles.forEach((file, index) => {
           data.append(`images`, file);
         });
-        
+
         relatedFiles.forEach((file, index) => {
           data.append(`images`, file);
         });
@@ -312,7 +314,7 @@ const AddNewTraining = () => {
 
   const handleTrainingCancel = () => {
     localStorage.setItem('active_tab', '/created-training');
-    window.location.href="/training";
+    window.location.href = "/training";
   };
 
   useEffect(() => {
@@ -329,7 +331,7 @@ const AddNewTraining = () => {
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   trainingData && console.log('TRAINING DATA:', trainingData);
-  
+  trainingFormData && console.log('TRAINING FORM DATA:', trainingFormData);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -341,7 +343,7 @@ const AddNewTraining = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader
-                  selectedFranchisee={selectedFranchisee} 
+                  selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
@@ -352,7 +354,7 @@ const AddNewTraining = () => {
                       </span>
                     </h1>
                   </header>
-                    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
+                  {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
                   <div className="training-form">
                     <Row>
                       <Col md={6} className="mb-3">
@@ -369,14 +371,14 @@ const AddNewTraining = () => {
                             //     }
                             // }}
                             onChange={(e) => {
-                              if(trainingData.title.length <= 20) {
+                              if (trainingData.title.length <= 20) {
                                 setTrainingData(prevState => ({
                                   ...prevState,
                                   title: e.target.value
                                 }));
                               }
 
-                              if(trainingData.title.length > 2) {
+                              if (trainingData.title.length > 2) {
                                 setErrors(prevState => ({
                                   ...prevState,
                                   title_length: null
@@ -389,8 +391,8 @@ const AddNewTraining = () => {
                               }));
                             }}
                           />
-                          { errors.title !== null && <span className="error">{errors.title}</span> }
-                          { errors.title === null && errors.title_length !== null && <span className="error">{errors.title_length}</span> }
+                          {errors.title !== null && <span className="error">{errors.title}</span>}
+                          {errors.title === null && errors.title_length !== null && <span className="error">{errors.title_length}</span>}
                         </Form.Group>
                       </Col>
 
@@ -413,7 +415,7 @@ const AddNewTraining = () => {
                               }));
                             }}
                           />
-                          { errors.category_id && <span className="error">{errors.category_id}</span> }
+                          {errors.category_id && <span className="error">{errors.category_id}</span>}
                         </Form.Group>
                       </Col>
 
@@ -433,7 +435,7 @@ const AddNewTraining = () => {
                               }));
                             }}
                           />
-                          { errors.description !== null && <span className="error">{errors.description}</span> }
+                          {errors.description !== null && <span className="error">{errors.description}</span>}
                         </Form.Group>
                       </Col>
 
@@ -447,7 +449,7 @@ const AddNewTraining = () => {
                             placeholder="Enter Meta Description"
                             rows={3}
                             onChange={(e) => {
-                              if(trainingData.meta_description.length >= 0 && trainingData.meta_description.length <= 250) {
+                              if (trainingData.meta_description.length >= 0 && trainingData.meta_description.length <= 250) {
                                 setTrainingData(prevState => ({
                                   ...prevState,
                                   meta_description: e.target.value
@@ -459,7 +461,7 @@ const AddNewTraining = () => {
                               }));
                             }}
                           />
-                          { errors.meta_description !== null && <span className="error">{errors.meta_description}</span> }
+                          {errors.meta_description !== null && <span className="error">{errors.meta_description}</span>}
                         </Form.Group>
                       </Col>
 
@@ -502,7 +504,7 @@ const AddNewTraining = () => {
                               }
                             />
                           </div>
-                          { errors.time_required_to_complete !== null && <span className="error">{errors.time_required_to_complete}</span> }
+                          {errors.time_required_to_complete !== null && <span className="error">{errors.time_required_to_complete}</span>}
                         </Form.Group>
                         {/* <Form.Control.Feedback type="invalid">
                             {errors.select_hour}
@@ -528,12 +530,12 @@ const AddNewTraining = () => {
                               }));
                             }}
                           />
-                          { errors.training_form_id && <span className="error">{errors.training_form_id}</span> }
+                          {errors.training_form_id && <span className="error">{errors.training_form_id}</span>}
                         </Form.Group>
                       </Col>
                     </Row>
                     <Row>
-      
+
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image*:</Form.Label>
@@ -541,10 +543,10 @@ const AddNewTraining = () => {
                             title="Image"
                             onSave={setCoverImage}
                             setErrors={setErrors}
-                            // setTrainingData={setTraining}
+                          // setTrainingData={setTraining}
                           />
                           <small className="fileinput">(png, jpg & jpeg)</small>
-                        { errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span> } 
+                          {errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span>}
                         </Form.Group>
                       </Col>
 
@@ -624,10 +626,10 @@ const AddNewTraining = () => {
                       setTrainingSettingErrors(prevState => ({
                         ...prevState,
                         start_date: null
-                      })); 
+                      }));
                     }}
                   />
-                  { trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span> }
+                  {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>}
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-sm-0">
@@ -644,7 +646,7 @@ const AddNewTraining = () => {
                       }));
                     }}
                   />
-                  { trainingSettingErrors.start_time !== null && <span className="error">{trainingSettingErrors.start_time}</span> }
+                  {trainingSettingErrors.start_time !== null && <span className="error">{trainingSettingErrors.start_time}</span>}
                 </Form.Group>
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -732,14 +734,14 @@ const AddNewTraining = () => {
                       placeholder={"Select User Names"}
                       displayValue="key"
                       className="multiselect-box default-arrow-select"
-                      onKeyPressFn={function noRefCheck() {}}
+                      onKeyPressFn={function noRefCheck() { }}
                       onRemove={function noRefCheck(data) {
                         setTrainingSettings((prevState) => ({
                           ...prevState,
                           assigned_franchisee: [...data.map(data => data.id)],
                         }));
                       }}
-                      onSearch={function noRefCheck() {}}
+                      onSearch={function noRefCheck() { }}
                       onSelect={function noRefCheck(data) {
                         setTrainingSettings((prevState) => ({
                           ...prevState,
@@ -749,7 +751,7 @@ const AddNewTraining = () => {
                       options={franchiseeList}
                     />
                   </div>
-                </Form.Group> 
+                </Form.Group>
               </Col>
             </Row>
 
@@ -764,7 +766,7 @@ const AddNewTraining = () => {
                           type="radio"
                           value="Y"
                           name="roles"
-                          checked={ trainingSettings?.applicable_to === 'roles' }
+                          checked={trainingSettings?.applicable_to === 'roles'}
                           id="yes1"
                           onChange={(event) => {
                             setTrainingSettings((prevState) => ({
@@ -789,7 +791,7 @@ const AddNewTraining = () => {
                           type="radio"
                           value="N"
                           name="roles"
-                          checked={ trainingSettings?.applicable_to === 'users' }
+                          checked={trainingSettings?.applicable_to === 'users'}
                           id="no1"
                           onChange={(event) => {
                             setTrainingSettings((prevState) => ({
@@ -808,20 +810,20 @@ const AddNewTraining = () => {
                       </label>
                     </div>
                   </div>
-              
+
                 </Form.Group>
               </Col>
               <Col lg={9} md={6} className="mt-3 mt-md-0">
-                <div className={`custom-checkbox ${trainingSettings.applicable_to === 'users' ? "d-none": ""}`}>
+                <div className={`custom-checkbox ${trainingSettings.applicable_to === 'users' ? "d-none" : ""}`}>
                   <Form.Label className="d-block">Select User Roles</Form.Label>
                   <div className="btn-checkbox d-block">
-                  <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
-                      <Form.Check 
-                        type="checkbox" 
+                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                      <Form.Check
+                        type="checkbox"
                         checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
                         label="Franchisee Admin"
                         onChange={() => {
-                          if(trainingSettings.assigned_roles.includes("franchisee_admin")) {
+                          if (trainingSettings.assigned_roles.includes("franchisee_admin")) {
                             let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
                             setTrainingSettings(prevState => ({
                               ...prevState,
@@ -829,19 +831,20 @@ const AddNewTraining = () => {
                             }));
                           }
 
-                          if(!trainingSettings.assigned_roles.includes("franchisee_admin"))
+                          if (!trainingSettings.assigned_roles.includes("franchisee_admin"))
                             setTrainingSettings(prevState => ({
-                            ...prevState,
-                            assigned_roles: [...trainingSettings.assigned_roles, "franchisee_admin"]
-                        }))}} />
+                              ...prevState,
+                              assigned_roles: [...trainingSettings.assigned_roles, "franchisee_admin"]
+                            }))
+                        }} />
                     </Form.Group>
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
-                      <Form.Check 
-                        type="checkbox" 
+                      <Form.Check
+                        type="checkbox"
                         checked={trainingSettings.assigned_roles?.includes("coordinator")}
                         label="Co-ordinators"
                         onChange={() => {
-                          if(trainingSettings.assigned_roles.includes("coordinator")) {
+                          if (trainingSettings.assigned_roles.includes("coordinator")) {
                             let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
                             setTrainingSettings(prevState => ({
                               ...prevState,
@@ -849,19 +852,20 @@ const AddNewTraining = () => {
                             }));
                           }
 
-                          if(!trainingSettings.assigned_roles.includes("coordinator"))
+                          if (!trainingSettings.assigned_roles.includes("coordinator"))
                             setTrainingSettings(prevState => ({
-                            ...prevState,
-                            assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
-                        }))}} />
+                              ...prevState,
+                              assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
+                            }))
+                        }} />
                     </Form.Group>
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
-                      <Form.Check 
-                        type="checkbox" 
+                      <Form.Check
+                        type="checkbox"
                         label="Educator"
                         checked={trainingSettings.assigned_roles.includes("educator")}
                         onChange={() => {
-                          if(trainingSettings.assigned_roles.includes("educator")) {
+                          if (trainingSettings.assigned_roles.includes("educator")) {
                             let data = trainingSettings.assigned_roles.filter(t => t !== "educator");
                             setTrainingSettings(prevState => ({
                               ...prevState,
@@ -869,40 +873,42 @@ const AddNewTraining = () => {
                             }));
                           }
 
-                          if(!trainingSettings.assigned_roles.includes("educator"))
+                          if (!trainingSettings.assigned_roles.includes("educator"))
                             setTrainingSettings(prevState => ({
-                            ...prevState,
-                            assigned_roles: [...trainingSettings.assigned_roles, "educator"]
-                        }))}} />
+                              ...prevState,
+                              assigned_roles: [...trainingSettings.assigned_roles, "educator"]
+                            }))
+                        }} />
                     </Form.Group>
                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                      <Form.Check 
-                        type="checkbox" 
+                      <Form.Check
+                        type="checkbox"
                         label="All Roles"
                         checked={trainingSettings.assigned_roles.length === 3}
                         onChange={() => {
-                          if(trainingSettings.assigned_roles.includes("franchisee_admin") 
-                              && trainingSettings.assigned_roles.includes("coordinator")
-                              && trainingSettings.assigned_roles.includes("educator")) {
-                                setTrainingSettings(prevState => ({
-                                  ...prevState,
-                                  assigned_roles: [],
-                                }));
-                              }
-                            
-                          if(!trainingSettings.assigned_roles.includes("franchisee_admin")
-                              && !trainingSettings.assigned_roles.includes("coordinator") 
-                              && !trainingSettings.assigned_roles.includes("educator"))
+                          if (trainingSettings.assigned_roles.includes("franchisee_admin")
+                            && trainingSettings.assigned_roles.includes("coordinator")
+                            && trainingSettings.assigned_roles.includes("educator")) {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              assigned_roles: [],
+                            }));
+                          }
+
+                          if (!trainingSettings.assigned_roles.includes("franchisee_admin")
+                            && !trainingSettings.assigned_roles.includes("coordinator")
+                            && !trainingSettings.assigned_roles.includes("educator"))
                             setTrainingSettings(prevState => ({
                               ...prevState,
                               assigned_roles: ["franchisee_admin", "coordinator", "educator"]
                             })
-                        )}} />
+                            )
+                        }} />
                     </Form.Group>
                   </div>
                 </div>
 
-                <div className={`mt-3 mt-md-0 ${trainingSettings.applicable_to === 'roles' ? "d-none": ""}`}>
+                <div className={`mt-3 mt-md-0 ${trainingSettings.applicable_to === 'roles' ? "d-none" : ""}`}>
                   <Form.Group>
                     <Form.Label>Select User Names</Form.Label>
                     <Multiselect
@@ -910,7 +916,7 @@ const AddNewTraining = () => {
                       displayValue="key"
                       selectedValues={trainingSettings.assigned_users_data}
                       className="multiselect-box default-arrow-select"
-                      onKeyPressFn={function noRefCheck() {}}
+                      onKeyPressFn={function noRefCheck() { }}
                       onRemove={function noRefCheck(data) {
                         setTrainingSettings((prevState) => ({
                           ...prevState,
@@ -918,7 +924,7 @@ const AddNewTraining = () => {
                           assigned_users_data: [...data.map(data => data)]
                         }));
                       }}
-                      onSearch={function noRefCheck() {}}
+                      onSearch={function noRefCheck() { }}
                       onSelect={function noRefCheck(data) {
                         setTrainingSettings((prevState) => ({
                           ...prevState,
@@ -928,7 +934,7 @@ const AddNewTraining = () => {
                       }}
                       options={fetchedFranchiseeUsers}
                     />
-                    
+
                   </Form.Group>
                 </div>
               </Col>
@@ -941,7 +947,7 @@ const AddNewTraining = () => {
           </Button>
           <Button variant="primary" onClick={() => {
             let settingErrors = validateTrainingSettings(trainingSettings);
-            if(Object.keys(settingErrors).length > 0) {
+            if (Object.keys(settingErrors).length > 0) {
               setTrainingSettingErrors(settingErrors);
             } else {
               console.log('CLOSING POPUP');
@@ -952,9 +958,9 @@ const AddNewTraining = () => {
             Save Settings
           </Button>
         </Modal.Footer>
-      </Modal> 
+      </Modal>
       {
-        createTrainingModal && 
+        createTrainingModal &&
         <Modal
           show={createTrainingModal}
           onHide={() => setCreateTrainingModal(false)}>
@@ -971,12 +977,12 @@ const AddNewTraining = () => {
             </div>
           </Modal.Body>
 
-          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          {
-            loader === true && <div>
-              <ReactBootstrap.Spinner animation="border" />
-            </div>
-          }
+          <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {
+              loader === true && <div>
+                <ReactBootstrap.Spinner animation="border" />
+              </div>
+            }
           </Modal.Footer>
         </Modal>
       }

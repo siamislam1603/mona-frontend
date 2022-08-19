@@ -318,13 +318,11 @@ const EditTraining = () => {
       setErrors(errorObj);
     } else {
       setErrors({});
-      if (Object.keys(trainingSettings).length === 1) {
-        setSettingsModalPopup(true);
-      } else {
-        setAllowSubmit(true);
-      }
 
-      if (settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+      // if(allowSubmit !== true)
+      //   setSettingsModalPopup(true);
+
+      if (settingsModalPopup === false && trainingData && coverImage) {
         let data = new FormData();
 
         for (let [key, values] of Object.entries(trainingSettings)) {
@@ -972,8 +970,8 @@ const EditTraining = () => {
             Cancel
           </Button>
           <Button variant="primary" onClick={() => {
-            setAllowSubmit(true);
             setSettingsModalPopup(false)
+            setAllowSubmit(true);
           }}>
             Save Settings
           </Button>

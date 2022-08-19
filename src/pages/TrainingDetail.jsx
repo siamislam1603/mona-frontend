@@ -50,7 +50,7 @@ const TrainingDetail = () => {
 
   const handleSurveyTransition = () => {
     console.log('handling survey transition!');
-    console.log('LINK:', `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`);
+    // console.log('LINK:', `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`);
     window.location.href = `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`;
   }
 
@@ -90,7 +90,7 @@ const TrainingDetail = () => {
       setHideTrainingFinishButton(true);
       setTimeout(() => {
         setShowSurveyForm(true);
-      }, 5000);
+      }, 2000);
     }
   };
 

@@ -2,19 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Button,
   Container,
-  Dropdown,
   Form,
   Modal,
   Row,
   Col,
 } from 'react-bootstrap';
 import axios from "axios";
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import ToolkitProvider, {
@@ -26,11 +21,10 @@ import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import Multiselect from 'multiselect-react-dropdown';
 import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
-import { createFileRepoValidation } from '../helpers/validation';
-import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import FileRepoShairWithme from './FileRepoShairWithme';
 import FileRepodAddbyMe from './FileRepodAddbyMe';
+
 
 let selectedUserId = '';
 const { SearchBar } = Search;
@@ -48,6 +42,7 @@ const styles = {
     backgroundColor: state.isSelected ? '#E27235' : '',
   }),
 };
+
 const training = [
   {
     value: 'sydney',
@@ -83,6 +78,7 @@ const FileRepository = () => {
   const [tabLinkPath, setTabLinkPath] = useState("/available-Files");
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
   const [franchiseeList, setFranchiseeList] = useState();
+  const [error, setError] = useState(false);
   const [filterData, setFilterData] = useState({
     category_id: null,
     search: ""
@@ -221,10 +217,11 @@ const FileRepository = () => {
       selectedFranchiseeId += item.id + ',';
     });
 
-    if(!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category){
-      window.alert("Please fill required Fields!")
-      return
+    if (!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category) {
+      setError(true);
+      return false
     }
+
 
     setLoaderFlag(true);
 
@@ -454,9 +451,6 @@ const FileRepository = () => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
-
-
-
   return (
     <>
       {console.log('hello----->', formSettingData)}
@@ -613,7 +607,7 @@ const FileRepository = () => {
                             <ul>
                               <li><a onClick={handleLinkClick} path="/available-Files" className={`${tabLinkPath === "/available-Files" ? "active" : ""}`}>Files shared with me</a></li>
                               {
-                                verifyPermission("file_repository","add") &&
+                                verifyPermission("file_repository", "add") &&
                                 <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My added files</a></li>
                               }
                             </ul>
@@ -658,7 +652,7 @@ const FileRepository = () => {
                   <Col md={12}>
                     <Form.Group>
                       <DragDropRepository onChange={setField} />
-                      <p> <small className='text-danger'>*required</small></p>
+                      {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                       <p className="error">{errors.setting_files}</p>
                     </Form.Group>
                   </Col>
@@ -675,7 +669,7 @@ const FileRepository = () => {
                 <Col lg={12}>
                   <div className="metadescription">
                     <Form.Group className="mb-3">
-                      <Form.Label>Meta Description <small className='text-danger'>*required</small></Form.Label>
+                      <Form.Label>Meta Description*</Form.Label>
                       <Form.Control
                         as="textarea"
                         rows={2}
@@ -684,12 +678,13 @@ const FileRepository = () => {
                           setField(e.target.name, e.target.value);
                         }}
                       />
+                      {error && !formSettingData.meta_description && < span className="error"> Meta Description is required!</span>}
                     </Form.Group>
                   </div>
                 </Col>
                 <Col lg={12}>
                   <Form.Group>
-                    <Form.Label>File Category <small className='text-danger'>*required</small></Form.Label>
+                    <Form.Label>File Category*</Form.Label>
                     <Form.Select
                       name="file_category"
                       onChange={(e) => {
@@ -703,6 +698,7 @@ const FileRepository = () => {
                         );
                       })}
                     </Form.Select>
+                    {error && !formSettingData.file_category && < span className="error"> File Category is required!</span>}
                   </Form.Group>
                 </Col>
               </Row>

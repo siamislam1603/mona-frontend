@@ -3,13 +3,13 @@ import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
 
-let random = () => {}
+let random = () => { }
 
-export default function DropAllFile({ image,onSave, setTrainingData, setErrors, setFetchedCoverImage=random, title="Files" }) {
-  
+export default function DropAllFile({ image, onSave, setTrainingData, setErrors, setFetchedCoverImage = random, title = "Files" }) {
+
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
-  const [theImage,setTheImage] = useState()
+  const [theImage, setTheImage] = useState()
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach(file => {
@@ -31,7 +31,7 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
     temp.splice(temp.indexOf(file), 1);
     setData(temp);
   }
-  const handleDelete = () =>{
+  const handleDelete = () => {
     console.log("Handle Delete")
     setTheImage(null)
   }
@@ -39,7 +39,7 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
   // Converting the current image to BASE-64 URI string,
   // so that it could be used with <Img>:src tag.
   const getBase64 = (file) => {
-    let reader = new FileReader(); 
+    let reader = new FileReader();
     // console.log("The reader",reader)
     reader.readAsDataURL(file);
     // console.log(reader)
@@ -61,9 +61,9 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
     // }))
 
   }, [data]);
-  useEffect(() =>{
+  useEffect(() => {
     setTheImage(image)
-  },[image])
+  }, [image])
   return (
     <div className="file-upload-form">
       <div {...getRootProps({ className: 'dropzone' })}>
@@ -72,8 +72,8 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add {title}
         </span>
       </div>
-      
-     {/* {
+
+      {/* {
       theImage ? (
         <div className="showfiles">
         
@@ -91,25 +91,25 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
      
       </div>
       ):( */}
-        <div className="showfiles">
+      <div className="showfiles">
         <ul>
           {
             data.map((file, index) => (
               <li className="mt-3" key={index}>
-                <img src={getBase64(file) || currentURI ||image} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
+                <img src={getBase64(file) || currentURI || image} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
                 <span className="ms-2">
                   <Link to="#" onClick={() => handleFileDelete(file)}>
-                      <img src="../img/removeIcon.svg" alt="" />
+                    <img src="../img/removeIcon.svg" alt="" />
                   </Link>
                 </span>
-              
+
               </li>
             ))
           }
         </ul>
       </div>
-      
-     
+
+
     </div>
   );
 }
@@ -121,7 +121,7 @@ const thumb = {
 const thumbInner = {
   display: "flex",
   alignItems: "baseline"
- 
+
 };
 
 const img = {

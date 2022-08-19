@@ -171,7 +171,8 @@ const AvailableTraining = ({ filter }) => {
     console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
-  formSettings && console.log('FORM SETTINGS:', formSettings);
+  // formSettings && console.log('FORM SETTINGS:', formSettings);
+  availableTrainingData && console.log('Available Training Data:', availableTrainingData);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -183,14 +184,14 @@ const AvailableTraining = ({ filter }) => {
                 return (
                   <Col lg={4} md={6}>
                     <div className="item mt-3 mb-3">
-                      <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.coverImage} alt="" /> <span className="lthumb"><img src="../img/logo-thumb.png" alt="" /></span></a></div>
+                      <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={item.training.coverImage} alt="" /> <span className="lthumb"><img src="../img/logo-thumb.png" alt="" /></span></a></div>
                       <div className="fixcol">
                         <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
                         <div className="iconame">
-                          <a href="/training-detail">{item.title}</a>
+                          <a href="/training-detail">{item.training.title}</a>
                           <div className="datecol">
-                            <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
-                            <span className="time">{item.completion_time} {item.completion_in}</span>
+                            <span className="red-date">Due Date:{' '}{moment(item.training.createdAt).format('DD/MM/YYYY')}</span>
+                            <span className="time">{item.training.completion_time} {item.training.completion_in}</span>
                           </div>
                         </div>
                         <div className="cta-col">
@@ -201,7 +202,7 @@ const AvailableTraining = ({ filter }) => {
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                               <Dropdown.Item href="#" onClick={() => {
-                                setSaveTrainingId(item.id);
+                                setSaveTrainingId(item.training.id);
                                 setShowModal(true)
                               }}>Share</Dropdown.Item>
                             </Dropdown.Menu>
