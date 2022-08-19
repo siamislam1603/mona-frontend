@@ -232,15 +232,16 @@ const FileRpositoryList = () => {
         response = await response.json();
         setUser(response.result)
 
-        const users = response.files;
-        console.log("responseresponse", users, "response")
+        const users = response.result.files;
+        console.log("+++++++++++++++++++++++++", users, "response")
         let tempData = users.map((dt) => ({
-            name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+            // name: `${dt.repository},${dt.fileName},${dt.filesPath}`,
+            name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
             createdAt: dt.createdAt,
-            // userID: dt.id,
-            creatorName: dt.creatorName + "," + dt.creatorRole,
-            Shaired: dt.repository.repository_shares.length,
-            categoryId: dt.categoryId
+            userID: dt.id,
+            creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
+            Shaired: dt.repository.repository_files[0].length,
+            // categoryId: dt.categoryId
         }));
         // tempData = tempData.filter((data) => data.is_deleted === 0);
         // console.log(users.repository.repository, "success")
@@ -323,7 +324,7 @@ const FileRpositoryList = () => {
                     <>
 
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" ?
+                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" || cell[0] == "image" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -353,10 +354,12 @@ const FileRpositoryList = () => {
                                                 <VideoPopupfForFile
                                                     data={cell[2]}
                                                     title={cell[0]}
+                                                    name={cell[1]}
                                                     // duration={cell[0]}
                                                     fun={handleVideoClose}
                                                 />
                                             </div>
+
                                         </> :
                                         cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                             <>
@@ -407,16 +410,10 @@ const FileRpositoryList = () => {
                 return (
                     <>
                         <div className="user-list">
-                            {cell > 0 ?
-                                <span className="user-name">
-                                    <img src="../img/sharing-ico.png" className="me-2" alt="" />
-                                    Shared
-                                </span> :
-                                <span className="user-name">
-                                    <img src="../img/NoShore.png" className="me-2" alt="" />
-                                    No Shared
-                                </span>
-                            }
+                            <span className="user-name">
+                                <img src="../img/sharing-ico.png" className="me-2" alt="" />
+                                Shared
+                            </span>
                         </div>
                     </>
                 );
@@ -428,18 +425,18 @@ const FileRpositoryList = () => {
             formatter: (cell) => {
                 return (
                     <>
-                        <div className="cta-col">
+                        {/* <div className="cta-col">
                             <Dropdown>
                                 <Dropdown.Toggle variant="transparent" id="ctacol">
                                     <img src="../img/dot-ico.svg" alt="" />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    {/* <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
                                     <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                    <Dropdown.Item href="#">Share</Dropdown.Item> */}
+                                    <Dropdown.Item href="#">Share</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
-                        </div>
+                        </div> */}
                     </>
                 );
             },

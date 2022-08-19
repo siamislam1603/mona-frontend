@@ -4,20 +4,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import axios from "axios";
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
-import {
-    Button,
-    Container,
-    Dropdown,
-    Form,
-    Modal,
-    Row,
-    Col,
-} from 'react-bootstrap';
-import ToolkitProvider, {
-    Search,
-    CSVExport,
-} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 const selectRow = {
     mode: 'checkbox',
@@ -36,10 +23,9 @@ const FileRepodAddbyMe = () => {
             },
         })
 
-        console.log(response, "+++++++++++++++++++++", "created-filesBy-category")
         if (response.status === 200) {
             const users = response.data.dataDetails;
-            console.log(users, "successsuccesssuccesssuccesssuccess")
+
             let tempData = users.map((dt) => ({
                 name: `${dt.categoryId}, ${dt.count}`,
                 createdAt: dt.updatedAt,
@@ -130,11 +116,6 @@ const FileRepodAddbyMe = () => {
     ]);
     useEffect(() => {
         GetData();
-        // getUserRoleAndFranchiseeData();
-        // getMyAddedFileRepoData();
-        // getFilesSharedWithMeData();
-        // getFileCategory();
-        // getUser();
     }, []);
     return (
         <div>

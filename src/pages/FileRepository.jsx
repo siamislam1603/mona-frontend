@@ -2,19 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Button,
   Container,
-  Dropdown,
   Form,
   Modal,
   Row,
   Col,
 } from 'react-bootstrap';
 import axios from "axios";
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import ToolkitProvider, {
@@ -26,8 +21,6 @@ import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import Multiselect from 'multiselect-react-dropdown';
 import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
-import { createFileRepoValidation } from '../helpers/validation';
-import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import FileRepoShairWithme from './FileRepoShairWithme';
 import FileRepodAddbyMe from './FileRepodAddbyMe';
@@ -221,7 +214,7 @@ const FileRepository = () => {
       selectedFranchiseeId += item.id + ',';
     });
 
-    if(!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category){
+    if (!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category) {
       window.alert("Please fill required Fields!")
       return
     }
@@ -613,7 +606,7 @@ const FileRepository = () => {
                             <ul>
                               <li><a onClick={handleLinkClick} path="/available-Files" className={`${tabLinkPath === "/available-Files" ? "active" : ""}`}>Files shared with me</a></li>
                               {
-                                verifyPermission("file_repository","add") &&
+                                verifyPermission("file_repository", "add") &&
                                 <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My added files</a></li>
                               }
                             </ul>

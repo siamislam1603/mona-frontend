@@ -315,7 +315,7 @@ const UserManagement = () => {
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}, ${dt.is_active}`,
         email: dt.email,
-        number: (dt.phone === null ? null : dt.phone.slice(1)),
+        number: (dt.phone !== null ? dt.phone.slice(1) : null),
         location: dt.city,
         is_deleted: dt.is_deleted,
         userID: dt.id,
