@@ -318,11 +318,9 @@ const EditTraining = () => {
       setErrors(errorObj);
     } else {
       setErrors({});
-      if (Object.keys(trainingSettings).length === 1) {
-        setSettingsModalPopup(true);
-      } else {
-        setAllowSubmit(true);
-      }
+
+      // if(allowSubmit !== true)
+      //   setSettingsModalPopup(true);
 
       if (settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
         let data = new FormData();
@@ -972,8 +970,8 @@ const EditTraining = () => {
             Cancel
           </Button>
           <Button variant="primary" onClick={() => {
-            setAllowSubmit(true);
             setSettingsModalPopup(false)
+            setAllowSubmit(true);
           }}>
             Save Settings
           </Button>
