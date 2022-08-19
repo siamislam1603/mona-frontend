@@ -172,6 +172,8 @@ const AllFranchisees = () => {
         }, 3000);
     },[deleteResponseMessage])
     
+    console.log('PERMISSION TO ADD FRANCHISEE:', verifyPermission("user_management", "add"));
+
     return (
         <div>
             <div id="main">
@@ -335,7 +337,7 @@ const AllFranchisees = () => {
                                                         </a> */}
 
                                                         {
-                                                            verifyPermission("franchisee_management", "add") &&
+                                                            verifyPermission("user_management", "add") &&
                                                             <a href="/new-franchisees" className="btn btn-primary me-3">+ Add New Franchisee</a>
                                                         }
 
