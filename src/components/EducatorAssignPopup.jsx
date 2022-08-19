@@ -4,9 +4,11 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import  {useNavigate} from 'react-router'
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 const EducatorAssignPopup = (props) => {
     const navigate = useNavigate();
+    const { SearchBar } = Search;
 //   const [show, setShow] = useState(false);
 
   const [selectedEducators, setSelectedEducators] = useState([])
@@ -108,9 +110,17 @@ const PopColumns = [
                     </Button>
                 </Modal.Header>
                 <Modal.Body>
+                <ToolkitProvider
+                    bootstrap4
+                    keyField="id"
+                    data={products}
+                    columns={PopColumns}
+                    search
+                >
+                    {(props) => (
                     <div className="data-search me-3">
                         <label for="search-bar" className="search-label">
-                            <input
+                            {/* <input
                                 id="search-bar"
                                 type="text"
                                 className="form-control"
@@ -120,17 +130,19 @@ const PopColumns = [
                             //     setSearch(e.target.value);
                             // }}
 
-                            />
+                            /> */}
+                           <SearchBar {...props.searchProps}/>
                         </label>
-                    </div>
-                    <div className="column-table user-management-sec user_management_sec">
+                    {/* </div>
+                    <div className="column-table user-management-sec user_management_sec"> */}
                         <BootstrapTable
-                            keyField="id"
                             selectRow={selectRow}
-                            data={products}
-                            columns={PopColumns}
+                            {...props.baseProps}
+                            noDataIndication="There is no similar Educator!"
                         />
                     </div>
+                    )}
+                    </ToolkitProvider>
                 </Modal.Body>
                 <Modal.Footer className="justify-content-md-center">
                     <Button variant="transparent" onClick={handleClose}>
