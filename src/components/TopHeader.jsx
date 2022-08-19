@@ -88,7 +88,6 @@ const handleLinkClick = notificationId => {
 
   if(notificationId){
 
-    const token = localStorage.getItem('token');
     const response = axios.put(
       `${BASE_URL}/notification/${notificationId}`,{}, {
       headers: {
@@ -119,34 +118,25 @@ const handleLinkClick = notificationId => {
 }
 
 const handleMarkRearAll = notificationId => {
-// alert("dddddddddddddddd")
-  if(notificationId){
+alert("dddddddddddddddd")
 
-    const token = localStorage.getItem('token');
-    const response = axios.put(
-      `${BASE_URL}/notification/${notificationId}`,{}, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    }
-    );
+    let userID = localStorage.getItem('user_id');
 
+    const response = axios.put(`${BASE_URL}/notification/unread/${userID}`,{}, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+    });
     console.log('notification read status updated', response);
-
-
 
     if (response.status === 200) {  
       console.log('notification read status updated', response.msg);
 
-
     }else{
-
       console.log('TYPE OF COVER IMAGE:', response.msg);
 
     }
 
-
-  }
 
 }
 
