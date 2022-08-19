@@ -133,26 +133,7 @@ const handleLinkClick = notificationId => {
                 )
               }
             </div>
-              <Accordion defaultActiveKey="0">
-                { notificationDetails && notificationDetails.length !==0 ? (
-                  notificationDetails.map((details,index) => (
-                    <div key={index}>
-                      <Accordion.Item  eventKey={index}>
-                          <div className="head-title">
-                            <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                            <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
-                            dangerouslySetInnerHTML={{
-                                __html: `${details.title}`,
-                              }}/>
-                          </div>
-                      </Accordion.Item>
-                    </div> 
-                    ))
-                  ):(
-                    <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
-                  )
-                }
-              </Accordion>
+
             </div>
           </div>
         </div>
