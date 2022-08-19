@@ -70,7 +70,9 @@ const columns = [
               <div className="user-list">
                 <span className="user-pic">
 
-                  <img src={cell[3]} alt='' />
+                  {/* <img src={cell[3]} alt='' /> */}
+            {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
+
                 </span>
                 <span className="user-name">
                   {cell[1] === " " || cell[1] === "undefined" ? (null) : (cell[1])}

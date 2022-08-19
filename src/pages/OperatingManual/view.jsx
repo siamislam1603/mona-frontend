@@ -835,7 +835,7 @@ const OperatingManual = () => {
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
-                  <label className="container">
+                  {localStorage.getItem("user_role")==="franchisor_admin" && <label className="container">
                       Franchisee Admin
                       <input
                         type="checkbox"
@@ -868,7 +868,7 @@ const OperatingManual = () => {
                           .includes('franchisee_admin')}
                       />
                       <span className="checkmark"></span>
-                    </label>
+                    </label>}
                     <label className="container">
                       Co-ordinators
                       <input
@@ -937,7 +937,7 @@ const OperatingManual = () => {
                       />
                       <span className="checkmark"></span>
                     </label>
-                    <label className="container">
+                    {/* <label className="container">
                       Parents
                       <input
                         type="checkbox"
@@ -970,7 +970,7 @@ const OperatingManual = () => {
                         )}
                       />
                       <span className="checkmark"></span>
-                    </label>
+                    </label> */}
                     <label className="container">
                       All Roles
                       <input
@@ -981,11 +981,11 @@ const OperatingManual = () => {
                           let data = { ...formSettingData };
                           console.log('e.target.checked', e.target.checked);
                           if (e.target.checked === true) {
-                            if (
-                              !data['shared_role'].toString().includes('parent')
-                            ) {
-                              data['shared_role'] += 'parent,';
-                            }
+                            // if (
+                            //   !data['shared_role'].toString().includes('parent')
+                            // ) {
+                            //   data['shared_role'] += 'parent,';
+                            // }
                             if (
                               !data['shared_role']
                                 .toString()
