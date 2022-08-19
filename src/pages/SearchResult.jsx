@@ -5,6 +5,7 @@ import { Button, Container } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
 
 const SearchResult = (props) => {
   const [announcement,setAnnouncement] = useState([])
@@ -36,15 +37,17 @@ const SearchResult = (props) => {
       setOperatingMannual(response.data.data[0].operatingMannual)
       setTraining(response.data.data[0].training)
       setUser(response.data.data[0].user)
-      setTimeout(()=>{
-        setIsLoading(false)
-      }, 2000)
+      setIsLoading(false)
+      if(announcement?.length<1 && fileRepository?.length<1 && franchise?.length<1 && operatingMannual?.length<1  ){
+        console.log("NO DATA FOUND")
+      }
     }
   
     
   }
   useEffect(() =>{
     GlobalSearch()
+
   },[term])
   console.log("Announcement",announcement)
 
@@ -64,217 +67,284 @@ const SearchResult = (props) => {
                   <header className="title-head">
                     <h1 className="title-lg">Search Result</h1>
                   </header>
-                  
-                  <div className="column-card">
-                    <header className="entry-title mb-4">
-                      <h2 className="title-xs">Announcements</h2>
-                    </header>
-                    
-                    { announcement?.length>0 ? announcement?.map((data) =>(
-                      <div className="search-item">
-                      <div className="search-user-pic">
-                        <a href="/">
-                          <figure className="figure">
-                            <img alt="" src={data?.coverImage} className="figure-img img-fluid" />
-                            
-                            </figure>
-                        </a>
-                      </div>
-                      <div className="search-user-detail">
-                        <h2 className="title-md text-capitalize"><a href="/">{data?.title}</a></h2>
-                        <div className="totalview mb-2">
-                          <span className="style-scope meta-block">
-                            <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                          </span>
+             
+                  {announcement?.length>0 &&
+                  <div>
+                      <Accordion defaultActiveKey="0">
+                        
+                                <div >
+                              <Accordion.Item >
+                                <Accordion.Header>
+                                  <div className="head-title">
+                                    <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                                    <div className="title-xxs">Announcements</div>
+                                  
+                                  </div>
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                  <Row className="mb-4">
+                                    
+                                  {announcement?.map((data) => (
+                        <div className="search-item">
+                        <div className="search-user-pic">
+                          <a href="/announcements">
+                            <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                          </a>
                         </div>
-                        <div className="user-link mt-4"><a href="/">View Details</a></div>
+                        <div className="search-user-detail">
+                          <h2 className="title-md text-capitalize"><a href="/announcements">{data?.title}</a></h2>
+                          <div className="totalview mb-2">
+                            <span className="style-scope meta-block">
+                              <strong>Shared Time:</strong> <time>38 minutes ago</time>
+                            </span>
+                          </div>
+                          <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                        </div>
                       </div>
                       
-                    </div>
-                    )) :(
-                      <div className="text-center mb-5 mt-5"><strong>No data found !</strong></div>
-
-                    )}
-                  </div>
-                  
-                   <div className="column-card">
-                   <header className="entry-title mb-4">
-                     <h2 className="title-xs">Trainings</h2>
-                   </header>
-                   { training?.length>0 ?training?.map((data) => (
-                     <div className="search-item">
-                     <div className="search-user-pic">
-                       <a href="/">
-                         <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
-                       </a>
-                     </div>
-                     <div className="search-user-detail">
-                       <h2 className="title-md text-capitalize"><a href="/">{data?.title}</a></h2>
-                       <div className="totalview mb-2">
-                         <span className="style-scope meta-block">
-                           <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                         </span>
-                       </div>
-                       <div className="user-link mt-4"><a href="/">View Details</a></div>
-                     </div>
-                   </div>
-                   ))
-                   :(
-                    <div className="text-center mb-5 mt-5"><strong>No data found !</strong></div>
-
-                   )
+                      ))}
+                                
+                                  </Row>
+                                </Accordion.Body>
+                              </Accordion.Item>
+                                </div> 
+                              
+                            
+                        </Accordion>
+                      </div>
                   }
+
+                  {/* TRAINING MOUDLE */}
+
+                 { training?.length>0 &&
+                   <div >
+                   
+                   <Accordion defaultActiveKey="0">
+                     
+                     <div >
+                    <Accordion.Item >
+                      <Accordion.Header>
+                        <div className="head-title">
+                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          <div className="title-xxs">Trainings</div>
+                       
+                        </div>
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <Row className="mb-4">
+                          
+                        {training?.map((data) => (
+                          <div className="search-item">
+                          <div className="search-user-pic">
+                            <a href="/announcements">
+                              <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                            </a>
+                          </div>
+                          <div className="search-user-detail">
+                            <h2 className="title-md text-capitalize"><a href="/announcements">{data?.title}</a></h2>
+                            <div className="totalview mb-2">
+                              <span className="style-scope meta-block">
+                                <strong>Shared Time:</strong> <time>38 minutes ago</time>
+                              </span>
+                            </div>
+                            <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                          </div>
+                        </div>
+            
+                     ))}
+                     
+                        </Row>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                     </div> 
+                    
                   
-                
+             </Accordion>
                  </div>
-                  
+              }
 
                   {fileRepository?.length>0 &&
-                   <div className="column-card">
-                   <header className="entry-title mb-4">
-                     <h2 className="title-xs">File Repository</h2>
-                   </header>
-                   {fileRepository?.map((data) => (
-                     <div className="search-item">
-                     <div className="search-user-pic">
-                       <a href="/">
-                         <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
-                       </a>
-                     </div>
-                     <div className="search-user-detail">
-                       <h2 className="title-md text-capitalize"><a href="/">{data?.title}</a></h2>
-                       <div className="totalview mb-2">
-                         <span className="style-scope meta-block">
-                           <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                         </span>
-                       </div>
-                       <div className="user-link mt-4"><a href="/">View Details</a></div>
-                     </div>
-                   </div>
-                   ))}
-                  
-                
+                   <div >
+                   
+                   <Accordion defaultActiveKey="0">
+                     
+                     <div >
+                    <Accordion.Item >
+                      <Accordion.Header>
+                        <div className="head-title">
+                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          <div className="title-xxs">File Repository</div>
+                       
+                        </div>
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <Row className="mb-4">
+                          
+                        {fileRepository?.map((data) => (
+                          <div className="search-item">
+                          <div className="search-user-pic">
+                            <a href="/announcements">
+                              <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                            </a>
+                          </div>
+                          <div className="search-user-detail">
+                            <h2 className="title-md text-capitalize"><a href="/announcements">{data?.title}</a></h2>
+                            <div className="totalview mb-2">
+                              <span className="style-scope meta-block">
+                                <strong>Shared Time:</strong> <time>38 minutes ago</time>
+                              </span>
+                            </div>
+                            <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                          </div>
+                        </div>
+            
+                     ))}
+                     
+                        </Row>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                     </div> 
+                   </Accordion>
                  </div>
                   }
 
                   {/* - ---- ---- FRANHISESS  ----------------------------------*/}
 
                     {franchise?.length>0 &&
-                   <div className="column-card">
-                   <header className="entry-title mb-4">
-                     <h2 className="title-xs">Franchises</h2>
-                   </header>
-                   {franchise?.map((data) => (
-                     <div className="search-item">
-                     <div className="search-user-pic">
-                       <a href="/">
-                         <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
-                       </a>
-                     </div>
-                     <div className="search-user-detail">
-                       <h2 className="title-md text-capitalize"><a href="/">{data?.franchisee_name}</a></h2>
-                       <div className="totalview mb-2">
-                         <span className="style-scope meta-block">
-                           <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                         </span>
-                       </div>
-                       <div className="user-link mt-4"><a href="/">View Details</a></div>
-                     </div>
-                   </div>
-                   ))}
-                  </div>
+              
+                   <div >
+                   
+                   <Accordion defaultActiveKey="0">
+                     
+                     <div >
+                    <Accordion.Item >
+                      <Accordion.Header>
+                        <div className="head-title">
+                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          <div className="title-xxs">Franchises</div>
+                       
+                        </div>
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <Row className="mb-4">
+                          
+                        {franchise?.map((data) => (
+                          <div className="search-item">
+                          <div className="search-user-pic">
+                            <a href="/announcements">
+                              <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                            </a>
+                          </div>
+                          <div className="search-user-detail">
+                            <h2 className="title-md text-capitalize"><a href="/announcements">{data?.franchisee_name}</a></h2>
+                            <div className="totalview mb-2">
+                              <span className="style-scope meta-block">
+                                <strong>Shared Time:</strong> <time>38 minutes ago</time>
+                              </span>
+                            </div>
+                            <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                          </div>
+                        </div>
+            
+                     ))}
+                     
+                        </Row>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                     </div> 
+                   </Accordion>
+                 </div>
+                  
                   }
                   
-                  
-                  {/* <div className="column-card">
-                    <header className="entry-title mb-4">
-                      <h2 className="title-xs">Traning</h2>
-                    </header>
-                    <div className="search-item">
-                      <div className="search-user-pic">
-                        <a href="/">
-                          <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
-                        </a>
-                      </div>
-                      <div className="search-user-detail">
-                        <h2 className="title-md text-capitalize"><a href="/">Manita Vidyarthy</a></h2>
-                        <div className="totalview mb-2">
-                          <span className="style-scope meta-block">
-                            <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                          </span>
-                        </div>
-                        <div className="user-link mt-4"><a href="/">View Details</a></div>
-                      </div>
-                    </div>
-                    <div className="search-item">
-                      <div className="search-user-pic">
-                        <a href="/">
-                          <figure className="figure"><img alt="" src="/img/related-pic4.png" className="figure-img img-fluid" /></figure>
-                        </a>
-                      </div>
-                      <div className="search-user-detail">
-                        <h2 className="title-md text-capitalize"><a href="/">Manita Vidyarthy</a></h2>
-                        <div className="totalview mb-2">
-                          <span className="style-scope meta-block">
-                            <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                          </span>
-                        </div>
-                        <div className="user-link mt-4"><a href="/">View Details</a></div>
-                      </div>
-                    </div>
-                  </div> */}
-                    {operatingMannual?.length>0 &&
-                   <div className="column-card">
-                   <header className="entry-title mb-4">
-                     <h2 className="title-xs">Operating Mannual</h2>
-                   </header>
-                   {operatingMannual?.map((data) => (
-                     <div className="search-item">
-                     <div className="search-user-pic">
-                       <a href="/">
-                         <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
-                       </a>
-                     </div>
-                     <div className="search-user-detail">
-                       <h2 className="title-md text-capitalize"><a href="/">{data?.title}</a></h2>
-                       <div className="totalview mb-2">
-                         <span className="style-scope meta-block">
-                           <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                         </span>
-                       </div>
-                       <div className="user-link mt-4"><a href="/">View Details</a></div>
-                     </div>
-                   </div>
-                   ))}
-                  
                 
-                 </div>
+                    {operatingMannual?.length>0 &&
+                      <div >
+                   
+                      <Accordion defaultActiveKey="0">
+                        
+                        <div >
+                       <Accordion.Item >
+                         <Accordion.Header>
+                           <div className="head-title">
+                             <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                             <div className="title-xxs">Operating Mannual</div>
+                          
+                           </div>
+                         </Accordion.Header>
+                         <Accordion.Body>
+                           <Row className="mb-4">
+                             
+                           {operatingMannual?.map((data) => (
+                             <div className="search-item">
+                             <div className="search-user-pic">
+                               <a href="/announcements">
+                                 <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                               </a>
+                             </div>
+                             <div className="search-user-detail">
+                               <h2 className="title-md text-capitalize"><a href="/announcements">{data?.title}</a></h2>
+                               <div className="totalview mb-2">
+                                 <span className="style-scope meta-block">
+                                   <strong>Shared Time:</strong> <time>38 minutes ago</time>
+                                 </span>
+                               </div>
+                               <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                             </div>
+                           </div>
+               
+                        ))}
+                        
+                           </Row>
+                         </Accordion.Body>
+                       </Accordion.Item>
+                        </div> 
+                      </Accordion>
+                    </div>
                   }
                     {user?.length>0 &&
-                   <div className="column-card">
-                   <header className="entry-title mb-4">
-                     <h2 className="title-xs">Users</h2>
-                   </header>
-                   {user?.map((data) => (
-                     <div className="search-item">
-                     <div className="search-user-pic">
-                       <a href="/">
-                         <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
-                       </a>
-                     </div>
-                     <div className="search-user-detail">
-                       <h2 className="title-md text-capitalize"><a href="/">{data?.fullname}</a></h2>
-                       <div className="totalview mb-2">
-                         <span className="style-scope meta-block">
-                           <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                         </span>
-                       </div>
-                       <div className="user-link mt-4"><a href="/">View Details</a></div>
-                     </div>
-                   </div>
-                   ))}
-                  
                 
+                   <div >
+                   
+                   <Accordion defaultActiveKey="0">
+                     
+                     <div >
+                    <Accordion.Item >
+                      <Accordion.Header>
+                        <div className="head-title">
+                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          <div className="title-xxs">Users</div>
+                       
+                        </div>
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <Row className="mb-4">
+                          
+                        {user?.map((data) => (
+                          <div className="search-item">
+                          <div className="search-user-pic">
+                            <a href="/announcements">
+                              <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                            </a>
+                          </div>
+                          <div className="search-user-detail">
+                            <h2 className="title-md text-capitalize"><a href="/announcements">{data?.fullname}</a></h2>
+                            <div className="totalview mb-2">
+                              <span className="style-scope meta-block">
+                                <strong>Shared Time:</strong> <time>38 minutes ago</time>
+                              </span>
+                            </div>
+                            <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                          </div>
+                        </div>
+            
+                     ))}
+                     
+                        </Row>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                     </div> 
+                   </Accordion>
                  </div>
                   }
 

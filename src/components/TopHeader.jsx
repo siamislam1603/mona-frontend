@@ -251,9 +251,16 @@ const handleMarkRearAll = async notificationId => {
       setNotifData(filteredData);
     }
   };
-  // const handleSearch = () =>{
-  //   console.log("HANDLE SEARCH")
-  // }
+  const handelSearch = (e) =>{
+    console.log("Event",e)
+    const { name, value } = e.target;
+
+    console.log("HANDLE SEARCH",name,value)
+    // const queryParams = new URLSearchParams(window.location.search)
+    // let term = queryParams.get("query")
+    // console.log("TEM HANDEL SEARCH",term)
+
+  }
   useEffect(() => {
     let ths = this;
     $(".topsearch").focus(function () {
@@ -384,6 +391,8 @@ const handleMarkRearAll = async notificationId => {
                   className="topsearch"
                   placeholder="Type here to search..."
                   name="query"
+                  
+                  onChange={handelSearch}
                 />
                 <div className="tipsearch">
                   <div className="searchlisting cus-scr">
