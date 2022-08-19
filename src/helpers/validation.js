@@ -224,6 +224,8 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
+
+
 export const TrainingFormValidation = (form, coverImage) => {
   let errors = {};
   let {

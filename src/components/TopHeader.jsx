@@ -16,6 +16,8 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   const [notificationDialog, setNotificationDialog] = useState(true);
   const [notifType, setNotifType] = useState('none');
   const [notifData, setNotifData] = useState(null);
+  const [topHeaderNotification, setTopHeaderNotification] = useState([]);
+  const [topHeaderNotificationCount, setTopHeaderNotificationCount] = useState(null);
 
 
 
@@ -26,10 +28,11 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
 
   const [userDashboardLink, setuserDashboardLink] = useState();
 
+  let token = localStorage.getItem('token');
+
   const fetchFranchiseeList = async () => {
 
 
-    let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/role/franchisee`, {
       headers: {
         Authorization: 'Bearer ' + token,
@@ -56,6 +59,99 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       }
     }
   };
+
+
+  const fetchNotificationList = async () => {
+    let userID = localStorage.getItem('user_id');
+    try {
+      const response = await axios.get(`${BASE_URL}/notification/unread/${userID}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      if(response.status === 200 && response.data.status === "success") {
+        setTopHeaderNotification(response.data.notification.rows);
+        setTopHeaderNotificationCount(response.data.notification.count);
+    }
+  } catch (error) {
+      if(error.response.status === 404){
+        // console.log("The code is 404")
+        setTopHeaderNotification([])
+      }
+  }
+
+
+};
+
+const handleLinkClick = notificationId => {
+  console.log("event eventeventeventevent",  notificationId)
+
+  if(notificationId){
+
+    const token = localStorage.getItem('token');
+    const response = axios.put(
+      `${BASE_URL}/notification/${notificationId}`,{}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }
+    );
+
+    console.log('notification read status updated', response);
+
+
+
+    if (response.status === 200) {  
+      console.log('notification read status updated', response.msg);
+
+
+    }else{
+
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+
+    }
+
+
+  }
+
+  // let path = event.target.getAttribute('path');
+  // setTabLinkPath(path);
+}
+
+const handleMarkRearAll = notificationId => {
+// alert("dddddddddddddddd")
+  if(notificationId){
+
+    const token = localStorage.getItem('token');
+    const response = axios.put(
+      `${BASE_URL}/notification/${notificationId}`,{}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }
+    );
+
+    console.log('notification read status updated', response);
+
+
+
+    if (response.status === 200) {  
+      console.log('notification read status updated', response.msg);
+
+
+    }else{
+
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+
+    }
+
+
+  }
+
+}
+
+  
+
 
 
   // const fetchAndPopulateFranchiseeDetails = async () => {
@@ -118,36 +214,48 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   <Popover id="popover-basic" className="notificationpopup">
     <Popover.Header as="h3">
       Your Notifications{" "}
-      <Link style={{ marginLeft: 10 }} to="/Notifications">
+      <Link style={{ marginLeft: 10 }} to="/notifications">
         View All
       </Link>
     </Popover.Header>
     <Popover.Body>
-      <div className="notifitem unread">
-        <div className="notifimg">
-          <Link className="notilink" to="/">
-            <span className="gdot">&nbsp;</span>
-            <div className="notifpic">
-              <Image
-                src="https://wfc-development.s3.ap-south-1.amazonaws.com/documents/629449f083201e1dcc1407dd/f967f4bb-229e-4fe2-96c3-86dd9fdee960.jpeg"
-                roundedCircle
-                className="logo-circle"
-              />
-            </div>
-            <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
-          </Link>
-        </div>
-        <div className="notification-time">
-          18 hours ago
-        </div>
-      </div>
+    { topHeaderNotification &&
+      topHeaderNotification.length !==0 ? (
+        topHeaderNotification.map((details,index) => (
+          
+              <div className="notifitem unread">
+                <div className="notifimg">
+                  <Link className="notilink" to="/">
+                    <div className="notifpic">
+                    <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
+
+                    </div>
+                    <div className="notiftxt">
+                    <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
+                      dangerouslySetInnerHTML={{
+                      __html: `${details.title}`,
+                    }}/>
+                      
+                      </div>
+                  </Link>
+                </div>
+                <div className="notification-time">
+                {moment(details.createdAt).fromNow()}
+                </div>
+              </div>
+
+            ))
+          ): (
+            <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
+          )
+          }
+
     </Popover.Body>
+
     <div className="totalmsg">
-      You have 19 unread notifications from 335
+      You have {topHeaderNotificationCount?topHeaderNotificationCount:0} unread notifications
     </div>
-    <div className="totalreadmsg">
-      Mark to Read All
-    </div>
+      <div className="totalreadmsg" onClick={()=> handleMarkRearAll()}>Mark to Read All</div>
   </Popover>
 );
 
@@ -224,6 +332,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   }, [notifType])
 
   useEffect(() => {
+
+    fetchFranchiseeList();
+    fetchNotificationList();
+
     var user_dashboar_link = '';
     if (localStorage.getItem('user_role') === 'coordinator')
       user_dashboar_link = '/coordinator-dashboard'
@@ -243,7 +355,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
     setuserDashboardLink(user_dashboar_link);
 
 
-    fetchFranchiseeList();
   }, []);
 
   useEffect(() => {
@@ -372,7 +483,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
                     // onMouseEnter={() => setNotificationDialog(true)} 
                     // onMouseLeave={() => setNotificationDialog(false)} 
                     src="/img/notification-icon.svg" />
-                    <span class="tag">19</span>
+                    <span class="tag">{topHeaderNotificationCount?topHeaderNotificationCount > 99 ? "99+":topHeaderNotificationCount:0}</span>
                 </div>
                 </OverlayTrigger>
               </li>

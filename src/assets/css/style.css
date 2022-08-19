@@ -246,7 +246,7 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 .topheader .rpanel .user-sec li { margin-right: 25px; }
 .topheader .rpanel .user-sec li:last-child { margin-right: 0; }
 .topheader .rpanel .user-sec li .chat-meg { position: relative; }
-.topheader .rpanel .user-sec li .tag{position:absolute;top:-5px;right:-3px;width:20px;height:20px;border:1px solid var(--white);background-color:var(--red);border-radius:100px;color:var(--white);text-align:center;font-size:12px;font-weight:600;line-height:18px;}
+.topheader .rpanel .user-sec li .tag{position:absolute;top:-5px;right:-3px;width:20px;height:20px;border:1px solid var(--white);background-color:var(--red);border-radius:100px;color:var(--white);text-align:center;font-size:8.5px;font-weight:600;line-height:18px;}
 .topheader .rpanel .user-sec .dropdown .btn-primary { background-color: #f7f7f7; border: none; border-radius: 12px; padding: 10px; display: flex; align-items: center; min-width: 240px; }
 .topheader .rpanel .user-sec .dropdown .btn-primary:focus { outline:none; box-shadow: none; }
 .topheader .rpanel .user-sec .dropdown .btn-primary.dropdown-toggle::after { background:url("../img/select-icon.png") no-repeat; border:none; width: 14px; height: 8px; position: absolute; top:50%; transform: translateY(-50%); right:10px; }
@@ -738,6 +738,10 @@ label.form-check-label {font-weight: 400;font-size: 14px;line-height: 17px;color
 
 .notofication-listing-sec.notificationpopup { height: auto; max-width: 100%; }
 .notofication-listing-sec.notificationpopup .notifitem.unread, .notofication-listing-sec.notificationpopup .notifitem { background-color: transparent; }
+
+.fullloader-sec{position:fixed;top:0;left:0;width:100%;height:100%;z-index:99;display:flex;background:rgba(255, 255, 255, 0.8);align-items:center;justify-content:center;}
+.smallloader-sec{position:absolute;width:100%;height:auto;padding:3rem 0;display:block;background:rgba(255, 255, 255, 0.8);align-items:flex-start;justify-content:center;left:0px;z-index:99;}
+.fullloader-sec.loader,.smallloader-sec.loader{overflow:hidden;}
 
 
 

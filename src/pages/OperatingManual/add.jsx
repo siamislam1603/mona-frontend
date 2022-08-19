@@ -204,7 +204,7 @@ const AddOperatingManual = () => {
         data['shared_with'] = selectedUserId
           ? selectedUserId.slice(0, -1)
           : null;
-        data['link']=FRONT_BASE_URL+"/operatingmanual?select=";
+        data['link']=FRONT_BASE_URL+"/operatingmanual";
         // data['shared_role'] = null;
         // data['accessible_to_role'] = formSettingData.accessible_to_role;
         // data['accessible_to_all'] = false;
@@ -348,10 +348,18 @@ const AddOperatingManual = () => {
 
   const uploadFiles = async (name, file) => {
     let flag = false;
+    console.log("file--->",file.type);
     if (name === 'cover_image') {
       if (file.size > 2048 * 1024) {
         let errorData = { ...errors };
         errorData['cover_image'] = 'File is too large. File limit 2 MB.';
+        setErrors(errorData);
+        flag = true;
+      }
+      if(!(file.type.includes("jpg") || file.type.includes("jpeg") || file.type.includes("png")))
+      {
+        let errorData = { ...errors };
+        errorData['cover_image'] = 'File must be JPG or PNG.';
         setErrors(errorData);
         flag = true;
       }
@@ -360,6 +368,13 @@ const AddOperatingManual = () => {
       if (file.size > 1024 * 1024 * 1024) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File is too large. File limit 1 GB.';
+        setErrors(errorData);
+        flag = true;
+      }
+      if(!(file.type.includes("mp4")))
+      {
+        let errorData = { ...errors };
+        errorData['reference_video'] = 'File must be MP4.';
         setErrors(errorData);
         flag = true;
       }
@@ -718,7 +733,7 @@ const AddOperatingManual = () => {
                                     src="../img/bi_cloud-upload.svg"
                                     alt=""
                                   />
-                                  Add File
+                                  Add Video
                                 </span>
                                 <Form.Control
                                   className="add_image_input"
@@ -876,7 +891,7 @@ const AddOperatingManual = () => {
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
-                  <label className="container">
+                  {localStorage.getItem("user_role")==="franchisor_admin" && <label className="container">
                       Franchisee Admin
                       <input
                         type="checkbox"
@@ -909,7 +924,7 @@ const AddOperatingManual = () => {
                           .includes('franchisee_admin')}
                       />
                       <span className="checkmark"></span>
-                    </label>
+                    </label>}
                     <label className="container">
                       Co-ordinators
                       <input
@@ -982,7 +997,7 @@ const AddOperatingManual = () => {
                       />
                       <span className="checkmark"></span>
                     </label>
-                    <label className="container">
+                    {/* <label className="container">
                       Parents
                       <input
                         type="checkbox"
@@ -1015,7 +1030,7 @@ const AddOperatingManual = () => {
                         )}
                       />
                       <span className="checkmark"></span>
-                    </label>
+                    </label> */}
                     <label className="container">
                       All Roles
                       <input
@@ -1026,11 +1041,11 @@ const AddOperatingManual = () => {
                           let data = { ...formSettingData };
                           console.log('e.target.checked', e.target.checked);
                           if (e.target.checked === true) {
-                            if (
-                              !data['shared_role'].toString().includes('parent')
-                            ) {
-                              data['shared_role'] += 'parent,';
-                            }
+                            // if (
+                            //   !data['shared_role'].toString().includes('parent')
+                            // ) {
+                            //   data['shared_role'] += 'parent,';
+                            // }
                             if (
                               !data['shared_role']
                                 .toString()

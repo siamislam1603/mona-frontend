@@ -50,7 +50,7 @@ const TrainingDetail = () => {
 
   const handleSurveyTransition = () => {
     console.log('handling survey transition!');
-    console.log('LINK:', `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`);
+    // console.log('LINK:', `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`);
     window.location.href = `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`;
   }
 
@@ -90,7 +90,7 @@ const TrainingDetail = () => {
       setHideTrainingFinishButton(true);
       setTimeout(() => {
         setShowSurveyForm(true);
-      }, 5000);
+      }, 2000);
     }
   };
 
@@ -134,8 +134,8 @@ const TrainingDetail = () => {
       fetchTrainingFormDetails(trainingDetails?.training_form_id);
   }, [trainingDetails])
 
-  trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  relatedForms && console.log('RELATED FORMS:', relatedForms);
+  // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
+  // relatedForms && console.log('RELATED FORMS:', relatedForms);
   return (
     <>
       <div id="main">
@@ -189,48 +189,58 @@ const TrainingDetail = () => {
                       <Row>
                         <Col lg={5} md={6}>
                           <div className="video-tuto-sec mb-5">
-                            <h3 className="title-sm">Video Tutorials</h3>
-                            <div className="vid-col-sec">
-                              {console.log(trainingDetails, "trainingDetails")}
-                              {
-                                trainingDetails.training_files.map((data, index) =>
-                                  data.fileType === '.mp4' &&
-                                  (
-                                    <VideoPop
-                                      data={data}
-                                      title={`Training Video ${index + 1}`}
-                                      duration={trainingDetails.completion_time}
-                                      fun={handleClose} />
-                                  )
-                                )
-                              }
-                            </div>
+                            {
+                              trainingDetails?.training_files.map(d => d.fileType === ".mp4").includes(true) &&
+                              <>
+                                <h3 className="title-sm">Video Tutorials</h3>
+                                <div className="vid-col-sec">
+                                  {console.log(trainingDetails, "trainingDetails")}
+                                  {
+                                    trainingDetails.training_files.map((data, index) =>
+                                      data.fileType === '.mp4' &&
+                                      (
+                                        <VideoPop
+                                          data={data}
+                                          title={`Training Video ${index + 1}`}
+                                          duration={trainingDetails.completion_time}
+                                          fun={handleClose} />
+                                      )
+                                    )
+                                  }
+                                </div>
+                              </>
+                            }
                           </div>
                         </Col>
                         <Col lg={7} md={6}>
                           <div className="related-files-sec mb-5">
-                            <h3 className="title-sm">Related Files</h3>
-                            <div className="column-list files-list two-col mb-5">
-                              {
-                                trainingDetails.training_files.map((data, index) => data.fileType !== '.mp4' && (
-                                  <div className="item">
-                                    <div className="pic"><a href="">
-                                      <img src="../img/book-ico.png" alt="" /></a>
-                                    </div>
-                                    <div className="name">
-                                      <a href={data.file}>
-                                        {`document${index - 1}${data.fileType}`} <span className="time">{trainingDetails.completion_time}</span>
-                                      </a>
-                                    </div>
-                                    <div className="cta-col">
-                                      <a href="">
-                                        <img src="../img/removeIcon.svg" alt="" />
-                                      </a>
-                                    </div>
-                                  </div>
-                                ))
-                              }
-                            </div>
+                            {
+                              trainingDetails?.training_files.map(d => d.fileType !== ".mp4").includes(true) &&
+                              <>
+                                <h3 className="title-sm">Related Files</h3>
+                                <div className="column-list files-list two-col mb-5">
+                                  {
+                                    trainingDetails.training_files.map((data, index) => data.fileType !== '.mp4' && (
+                                      <div className="item">
+                                        <div className="pic"><a href="">
+                                          <img src="../img/book-ico.png" alt="" /></a>
+                                        </div>
+                                        <div className="name">
+                                          <a href={data.file}>
+                                            {`document${index - 1}${data.fileType}`} <span className="time">{trainingDetails.completion_time}</span>
+                                          </a>
+                                        </div>
+                                        <div className="cta-col">
+                                          <a href="">
+                                            <img src="../img/removeIcon.svg" alt="" />
+                                          </a>
+                                        </div>
+                                      </div>
+                                    ))
+                                  }
+                                </div>
+                              </>
+                            }
                           </div>
                         </Col>
 
@@ -283,22 +293,30 @@ const TrainingDetail = () => {
                           </Col>
                         }
                       </Row>
-
+                      
                       <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
-                        {hideTrainingFinishButton === true
-                          ? <p> You've finished this training on {moment(trainingFinishedDate).format(
-                            'MMMM Do, YYYY'
-                          )}</p>
-                          : <p>
-                            Please acknowledge by clicking below that you have
-                            completed this training completely and can proceed
-                            further.
+                        { 
+                          localStorage.getItem('user_role') === 'franchisor_admin' ?
+                          <p>
+                            {parseInt(localStorage.getItem('user_id')) === parseInt(trainingDetails?.addedBy) ? `This training was created by you on ${moment(trainingDetails.createdAt).format('DD/MM/YYYY')}.`: ""}
                           </p>
+                          :<>
+                            {hideTrainingFinishButton === true
+                              ? <p> You've finished this training on {moment(trainingFinishedDate).format(
+                                'MMMM Do, YYYY'
+                              )}</p>
+                              : <p>
+                                Please acknowledge by clicking below that you have
+                                completed this training completely and can proceed
+                                further.
+                              </p>
 
+                            }
+                            <button className={`btn btn-primary ${hideTrainingFinishButton === true ? "d-none" : ""}`} onClick={handleFinishTraining}>
+                              Yes, I have completed the training
+                            </button>
+                          </>
                         }
-                        <button className={`btn btn-primary ${hideTrainingFinishButton === true ? "d-none" : ""}`} onClick={handleFinishTraining}>
-                          Yes, I have completed the training
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -313,7 +331,7 @@ const TrainingDetail = () => {
         <Modal 
           show={showSurveyForm}>
           <Modal.Header>
-            <Modal.Title>Congratuations!</Modal.Title>
+            <Modal.Title>Congratulations!</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
