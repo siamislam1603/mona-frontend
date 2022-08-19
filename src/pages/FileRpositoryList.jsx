@@ -57,6 +57,7 @@ const FileRpositoryList = () => {
     const [user, setUser] = useState([]);
     const [franchiseeList, setFranchiseeList] = useState();
     let Params = useParams();
+    const [error, setError] = useState(false);
     const [formSettings, setFormSettings] = useState({
         user_roles: [],
         assigned_franchisee: [],
@@ -116,6 +117,13 @@ const FileRpositoryList = () => {
         selectedUser?.map((item) => {
             selectedFranchiseeId += item.id + ',';
         });
+
+        if (!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category) {
+            setError(true);
+            return false
+        }
+
+
         setLoaderFlag(true);
 
         var myHeaders = new Headers();
@@ -124,13 +132,12 @@ const FileRpositoryList = () => {
             'Authorization',
             'Bearer ' + localStorage.getItem('token')
         );
-
-        console.log(localStorage, "localStorage");
         const file = formSettingData.setting_files[0];
         console.log('file------->', file);
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
         console.log('reader---->');
         var formdata = new FormData();
+
         formdata.append('image', blob, file.name);
         formdata.append('description', formSettingData.meta_description);
         formdata.append('title', 'abc');
@@ -138,7 +145,6 @@ const FileRpositoryList = () => {
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
         formdata.append('franchisee', formSettings.assigned_franchisee);
-
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -151,7 +157,8 @@ const FileRpositoryList = () => {
                 'accessibleToAll',
                 true
             );
-        } else {
+        }
+        else {
             if (formSettingData.accessible_to_role === 1) {
                 formdata.append(
                     'user_roles',
@@ -188,13 +195,13 @@ const FileRpositoryList = () => {
                 );
             }
         }
-
         var requestOptions = {
             method: 'POST',
             headers: myHeaders,
             body: formdata,
             redirect: 'follow',
         };
+
 
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
@@ -210,7 +217,7 @@ const FileRpositoryList = () => {
                 if (result) {
                     setLoaderFlag(false);
                     setShow(false);
-                    Navigate(`/file-repository`);
+                    Navigate('/file-repository')
                 }
             })
             .catch((error) => console.log('error', error));
@@ -616,29 +623,12 @@ const FileRpositoryList = () => {
                                         <Col md={12}>
                                             <Form.Group>
                                                 <DragDropRepository onChange={setField} />
+                                                {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                                                 <p className="error">{errors.setting_files}</p>
                                             </Form.Group>
                                         </Col>
                                     </Row>
-                                    <div className="toggle-switch">
-                                        {/* <Row>
-                                            <Col md={12}>
-                                                <div className="t-switch">
-                                                    <p>Enable Sharing</p>
-                                                    <div className="toogle-swich">
-                                                        <input
-                                                            className="switch"
-                                                            type="checkbox"
-                                                            name="enable_sharing"
-                                                            onChange={(e) => {
-                                                                setField(e.target.name, e.target.checked);
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                        </Row> */}
-                                    </div>
+
                                     <div className="setting-heading">
                                         <h2>Settings</h2>
                                     </div>
@@ -650,7 +640,7 @@ const FileRpositoryList = () => {
                                     <Col lg={12}>
                                         <div className="metadescription">
                                             <Form.Group className="mb-3">
-                                                <Form.Label>Meta Description</Form.Label>
+                                                <Form.Label>Meta Description*</Form.Label>
                                                 <Form.Control
                                                     as="textarea"
                                                     rows={2}
@@ -659,12 +649,13 @@ const FileRpositoryList = () => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
                                                 />
+                                                {error && !formSettingData.meta_description && < span className="error"> Meta Description is required!</span>}
                                             </Form.Group>
                                         </div>
                                     </Col>
-                                    <Col lg={12} className="mb-3">
+                                    <Col lg={12}>
                                         <Form.Group>
-                                            <Form.Label>File Category</Form.Label>
+                                            <Form.Label>File Category*</Form.Label>
                                             <Form.Select
                                                 name="file_category"
                                                 onChange={(e) => {
@@ -678,82 +669,84 @@ const FileRpositoryList = () => {
                                                     );
                                                 })}
                                             </Form.Select>
+                                            {error && !formSettingData.file_category && < span className="error"> File Category is required!</span>}
                                         </Form.Group>
                                     </Col>
-                                    <Row>
-                                        <Col lg={3} md={6}>
-                                            <Form.Group>
-                                                <Form.Label>Send to all franchisee:</Form.Label>
-                                                <div className="new-form-radio d-block">
-                                                    <div className="new-form-radio-box">
-                                                        <label for="all">
-                                                            <input
-                                                                type="radio"
-                                                                checked={sendToAllFranchisee === 'all'}
-                                                                name="send_to_all_franchisee"
-                                                                id="all"
-                                                                onChange={() => {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_franchisee: ['all']
-                                                                    }));
-                                                                    setSendToAllFranchisee('all')
-                                                                }}
-                                                            />
-                                                            <span className="radio-round"></span>
-                                                            <p>Yes</p>
-                                                        </label>
-                                                    </div>
-                                                    <div className="new-form-radio-box m-0 mt-3">
-                                                        <label for="none">
-                                                            <input
-                                                                type="radio"
-                                                                name="send_to_all_franchisee"
-                                                                checked={sendToAllFranchisee === 'none'}
-                                                                id="none"
-                                                                onChange={() => {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_franchisee: []
-                                                                    }));
-                                                                    setSendToAllFranchisee('none')
-                                                                }}
-                                                            />
-                                                            <span className="radio-round"></span>
-                                                            <p>No</p>
-                                                        </label>
-                                                    </div>
+                                </Row>
+                                <Row className="mt-4">
+                                    <Col lg={3} md={6}>
+                                        <Form.Group>
+                                            <Form.Label>Send to all franchisee:</Form.Label>
+                                            <div className="new-form-radio d-block">
+                                                <div className="new-form-radio-box">
+                                                    <label for="all">
+                                                        <input
+                                                            type="radio"
+                                                            checked={sendToAllFranchisee === 'all'}
+                                                            name="send_to_all_franchisee"
+                                                            id="all"
+                                                            onChange={() => {
+                                                                setFormSettings(prevState => ({
+                                                                    ...prevState,
+                                                                    assigned_franchisee: ['all']
+                                                                }));
+                                                                setSendToAllFranchisee('all')
+                                                            }}
+                                                        />
+                                                        <span className="radio-round"></span>
+                                                        <p>Yes</p>
+                                                    </label>
                                                 </div>
-                                            </Form.Group>
-                                        </Col>
+                                                <div className="new-form-radio-box m-0 mt-3">
+                                                    <label for="none">
+                                                        <input
+                                                            type="radio"
+                                                            name="send_to_all_franchisee"
+                                                            checked={sendToAllFranchisee === 'none'}
+                                                            id="none"
+                                                            onChange={() => {
+                                                                setFormSettings(prevState => ({
+                                                                    ...prevState,
+                                                                    assigned_franchisee: []
+                                                                }));
+                                                                setSendToAllFranchisee('none')
+                                                            }}
+                                                        />
+                                                        <span className="radio-round"></span>
+                                                        <p>No</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </Form.Group>
+                                    </Col>
 
-                                        <Col lg={9} md={12}>
-                                            <Form.Group>
-                                                <Form.Label>Select Franchisee</Form.Label>
-                                                <div className="select-with-plus">
-                                                    <Multiselect
-                                                        disable={sendToAllFranchisee === 'all'}
-                                                        placeholder={"Select User Names"}
-                                                        displayValue="key"
-                                                        className="multiselect-box default-arrow-select"
-                                                        onRemove={function noRefCheck(data) {
-                                                            setFormSettings((prevState) => ({
-                                                                ...prevState,
-                                                                assigned_franchisee: [...data.map(data => data.id)],
-                                                            }));
-                                                        }}
-                                                        onSelect={function noRefCheck(data) {
-                                                            setFormSettings((prevState) => ({
-                                                                ...prevState,
-                                                                assigned_franchisee: [...data.map((data) => data.id)],
-                                                            }));
-                                                        }}
-                                                        options={franchiseeList}
-                                                    />
-                                                </div>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
+                                    <Col lg={9} md={12}>
+                                        <Form.Group>
+                                            <Form.Label>Select Franchisee</Form.Label>
+                                            <div className="select-with-plus">
+                                                <Multiselect
+                                                    disable={sendToAllFranchisee === 'all'}
+                                                    placeholder={"Select User Names"}
+                                                    displayValue="key"
+                                                    className="multiselect-box default-arrow-select"
+                                                    onRemove={function noRefCheck(data) {
+                                                        setFormSettings((prevState) => ({
+                                                            ...prevState,
+                                                            assigned_franchisee: [...data.map(data => data.id)],
+                                                        }));
+                                                    }}
+
+                                                    onSelect={function noRefCheck(data) {
+                                                        setFormSettings((prevState) => ({
+                                                            ...prevState,
+                                                            assigned_franchisee: [...data.map((data) => data.id)],
+                                                        }));
+                                                    }}
+                                                    options={franchiseeList}
+                                                />
+                                            </div>
+                                        </Form.Group>
+                                    </Col>
                                 </Row>
                                 <Row className="mt-4">
                                     <Col lg={3} md={6}>
@@ -796,6 +789,7 @@ const FileRpositoryList = () => {
                                         </Form.Group>
                                     </Col>
                                     <Col lg={9} md={12}>
+                                        {console.log(formSettingData, "{console.log(...formSettingData)}")}
                                         {formSettingData.accessible_to_role === 1 ? (
                                             <Form.Group>
                                                 <Form.Label>Select User Roles</Form.Label>

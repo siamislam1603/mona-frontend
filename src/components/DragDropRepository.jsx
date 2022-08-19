@@ -21,7 +21,13 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
 
         maxFiles: 1,
         multiple: false,
-        accept: '.doc, .pdf, .mp3, .png, .jpg',
+        accept: {
+          'image/*': ['.jpeg', '.png', '.jpg'],
+          'text/*': ['.html', '.htm', '.doc', '.pdf'],
+          'video/mp4': ['video/mp4'],
+          'audio/mpeg': ['.audio/mpeg', '.mp3']
+          // '.doc, .pdf, .mp3, .png, .jpg'
+        },
         useFsAccessApi: false,
       })
 
