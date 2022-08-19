@@ -70,7 +70,9 @@ const LeftNavbar = () => {
       user_dashboar_link = '/educator-dashboard'
     else if (localStorage.getItem('user_role') === 'guardian')
       user_dashboar_link = '/parents-dashboard'
-
+    else{
+      user_dashboar_link= '/'
+    }
     setuserDashboardLink(user_dashboar_link)
 
     fetchPermissionList();
