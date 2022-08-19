@@ -81,9 +81,74 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   }
 
 
-
-
 };
+
+const handleLinkClick = notificationId => {
+  console.log("event eventeventeventevent",  notificationId)
+
+  if(notificationId){
+
+    const token = localStorage.getItem('token');
+    const response = axios.put(
+      `${BASE_URL}/notification/${notificationId}`,{}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }
+    );
+
+    console.log('notification read status updated', response);
+
+
+
+    if (response.status === 200) {  
+      console.log('notification read status updated', response.msg);
+
+
+    }else{
+
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+
+    }
+
+
+  }
+
+  // let path = event.target.getAttribute('path');
+  // setTabLinkPath(path);
+}
+
+const handleMarkRearAll = notificationId => {
+// alert("dddddddddddddddd")
+  if(notificationId){
+
+    const token = localStorage.getItem('token');
+    const response = axios.put(
+      `${BASE_URL}/notification/${notificationId}`,{}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }
+    );
+
+    console.log('notification read status updated', response);
+
+
+
+    if (response.status === 200) {  
+      console.log('notification read status updated', response.msg);
+
+
+    }else{
+
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+
+    }
+
+
+  }
+
+}
 
   
 
@@ -162,10 +227,16 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
                 <div className="notifimg">
                   <Link className="notilink" to="/">
                     <div className="notifpic">
-                    <img src="../img/announcements-ico.png" alt="" className="logo-circle rounded-circle"/>
+                    <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
 
                     </div>
-                    <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
+                    <div className="notiftxt">
+                    <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
+                      dangerouslySetInnerHTML={{
+                      __html: `${details.title}`,
+                    }}/>
+                      
+                      </div>
                   </Link>
                 </div>
                 <div className="notification-time">
@@ -184,9 +255,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
     <div className="totalmsg">
       You have {topHeaderNotificationCount?topHeaderNotificationCount:0} unread notifications
     </div>
-      {/* <div className="totalreadmsg">
-        Mark to Read All
-      </div> */}
+      <div className="totalreadmsg" onClick={()=> handleMarkRearAll()}>Mark to Read All</div>
   </Popover>
 );
 

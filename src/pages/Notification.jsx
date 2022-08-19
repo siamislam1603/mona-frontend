@@ -115,7 +115,7 @@ const handleLinkClick = notificationId => {
                         <a className="notilink" href="javascript:void(0)">
                             <div className="notifpic">
                               
-                            <img src="../img/announcements-ico.png" alt="" className="logo-circle rounded-circle"/>
+                            <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
                             </div>
                           <div className="notiftxt">
                           <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
