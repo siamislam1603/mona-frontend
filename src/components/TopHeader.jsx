@@ -483,7 +483,7 @@ const handleMarkRearAll = notificationId => {
                     // onMouseEnter={() => setNotificationDialog(true)} 
                     // onMouseLeave={() => setNotificationDialog(false)} 
                     src="/img/notification-icon.svg" />
-                    <span class="tag">{topHeaderNotificationCount?topHeaderNotificationCount:0}</span>
+                    <span class="tag">{topHeaderNotificationCount?topHeaderNotificationCount > 99 ? "99+":topHeaderNotificationCount:0}</span>
                 </div>
                 </OverlayTrigger>
               </li>

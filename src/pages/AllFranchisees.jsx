@@ -172,6 +172,8 @@ const AllFranchisees = () => {
         }, 3000);
     },[deleteResponseMessage])
     
+    console.log('PERMISSION TO ADD FRANCHISEE:', verifyPermission("user_management", "add"));
+
     return (
         <div>
             <div id="main">
