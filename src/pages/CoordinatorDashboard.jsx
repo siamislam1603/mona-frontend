@@ -137,7 +137,7 @@ const CoordinatorDashboard = () => {
 
     // const users = response.childrenEnrolled[0].users;
     if (response.status === "pass") {
-      console.log("The data", response)
+      console.log(" data repsonse", response)
 
       let data = response.childrenEnrolled;
       let tempData = data.map((dt) => ({
