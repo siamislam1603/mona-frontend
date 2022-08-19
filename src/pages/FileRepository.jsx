@@ -949,14 +949,14 @@ const FileRepository = () => {
                                     .toString()
                                     .includes('coordinator')
                                 ) {
-                                  data['shared_role'] += 'coordinator,';
+                                  data['shared_role'] += 'coordinator';
                                 }
                                 if (
                                   !data['shared_role']
                                     .toString()
                                     .includes('all')
                                 ) {
-                                  data['shared_role'] += 'all,';
+                                  data['shared_role'] += ',';
                                 }
                                 setFormSettingData(data);
                               } else {
@@ -965,7 +965,7 @@ const FileRepository = () => {
                               }
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'all'
+                              'parent,educator,coordinator'
                             )}
                           />
                           <span className="checkmark"></span>
