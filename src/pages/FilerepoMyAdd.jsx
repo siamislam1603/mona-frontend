@@ -53,7 +53,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [errors, setErrors] = useState({});
     const [selectedUser, setSelectedUser] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
-    console.log("userData", userData.length)
     const [saveFileId, setSaveFileId] = useState(null);
     const [user, setUser] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -120,7 +119,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             id: selectedItem.id,
             email: selectedItem.email,
         });
-        console.log('selectedUser---->', selectedUser);
+
     }
 
     function onRemoveUser(selectedList, removedItem) {
@@ -129,10 +128,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
-        {
-            console.log('selectedUser---->', selectedUser);
-        }
     }
+
     const onSubmit = async (e) => {
         e.preventDefault();
         selectedUser?.map((item) => {
@@ -258,7 +255,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
         response = await response.json();
         setUserTow(response.result)
-        console.log(userTO, " userTO")
 
 
         const users = response.files;
@@ -270,9 +266,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             Shaired: dt.repository.repository_shares.length,
             categoryId: dt.categoryId
         }));
-        // tempData = tempData.filter((data) => data.is_deleted === 0);
-        // console.log(users.repository.repository, "success")
-        console.log(tempData, "++++++++++++++++++++++++++++tempData++++++++++++++++++++++++++++")
         setUserData(tempData);
     }
 
@@ -290,6 +283,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             });
         }
     };
+
     const getFileCategory = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -307,6 +301,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             .catch((error) => console.log('error', error));
     };
 
+
     const getUser = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -320,9 +315,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         let franchiseeArr = JSON.stringify(formSettings.franchisee)
 
-        let response = await axios.get(`http://localhost:4000/auth/users/franchisees?franchiseeId=${franchiseeArr}`, request)
+        let response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchiseeArr}`, request)
         if (response.status === 200) {
-            console.log(response.data.users, "respo")
+            // console.log(response.data.users, "respo")
             setUser(response.data.users)
         }
     };
@@ -339,7 +334,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }, [])
 
     const handleTrainingDelete = async (cell) => {
-        console.log('DELETING THE TRAINING!');
+
         let token = localStorage.getItem('token');
         // let userId = localStorage.getItem('user_id');
         const response = await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
@@ -358,7 +353,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     // FETCH FILE DATA
     const fetchFileData = async (fileId) => {
-        console.log('TRAINING ID:', fileId);
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${fileId}`, {
             headers: {
@@ -368,7 +362,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         if (response.status === 200 && response.data.status === "success") {
             const { file } = response.data;
-            console.log('FILE:', file);
             copyDataToStates(file);
         }
     };
@@ -384,7 +377,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     useEffect(() => {
         fetchFileData(saveFileId);
-        console.log('SAVE TRAINING ID:', saveFileId);
     }, [saveFileId]);
 
     const [columns, setColumns] = useState([
@@ -702,30 +694,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         <Col md={12}>
                                             <Form.Group>
                                                 <DragDropRepository onChange={setField} />
-                                                {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
+                                                {error && !formSettingData.setting_files && < span className="error"> File is required!</span>}
                                                 <p className="error">{errors.setting_files}</p>
                                             </Form.Group>
                                         </Col>
                                     </Row>
-                                    <div className="toggle-switch">
-                                        {/* <Row>
-                                                <Col md={12}>
-                                                    <div className="t-switch">
-                                                        <p>Enable Sharing</p>
-                                                        <div className="toogle-swich">
-                                                            <input
-                                                                className="switch"
-                                                                type="checkbox"
-                                                                name="enable_sharing"
-                                                                onChange={(e) => {
-                                                                    setField(e.target.name, e.target.checked);
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </Col>
-                                            </Row> */}
-                                    </div>
+
                                     <div className="setting-heading">
                                         <h2>Settings</h2>
                                     </div>
@@ -785,7 +759,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             onChange={() => {
                                                                 setFormSettings(prevState => ({
                                                                     ...prevState,
-                                                                    franchisee: ['all']
+                                                                    assigned_franchisee: ['all']
                                                                 }));
                                                                 setSendToAllFranchisee('all')
                                                             }}
@@ -804,7 +778,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             onChange={() => {
                                                                 setFormSettings(prevState => ({
                                                                     ...prevState,
-                                                                    franchisee: []
+                                                                    assigned_franchisee: []
                                                                 }));
                                                                 setSendToAllFranchisee('none')
                                                             }}
@@ -821,7 +795,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         <Form.Group>
                                             <Form.Label>Select Franchisee</Form.Label>
                                             <div className="select-with-plus">
-
                                                 <Multiselect
                                                     disable={sendToAllFranchisee === 'all'}
                                                     placeholder={"Select User Names"}
@@ -830,14 +803,14 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     onRemove={function noRefCheck(data) {
                                                         setFormSettings((prevState) => ({
                                                             ...prevState,
-                                                            franchisee: [...data.map(data => data.id)],
+                                                            assigned_franchisee: [...data.map(data => data.id)],
                                                         }));
                                                     }}
-                                                    selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.franchisee) === d.id)}
+
                                                     onSelect={function noRefCheck(data) {
                                                         setFormSettings((prevState) => ({
                                                             ...prevState,
-                                                            franchisee: [...data.map((data) => data.id)],
+                                                            assigned_franchisee: [...data.map((data) => data.id)],
                                                         }));
                                                     }}
                                                     options={franchiseeList}
@@ -846,11 +819,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         </Form.Group>
                                     </Col>
                                 </Row>
-
-
-
-
-
                                 <Row className="mt-4">
                                     <Col lg={3} md={6}>
                                         <Form.Group>
@@ -892,6 +860,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         </Form.Group>
                                     </Col>
                                     <Col lg={9} md={12}>
+                                        {console.log(formSettingData, "{console.log(...formSettingData)}")}
                                         {formSettingData.accessible_to_role === 1 ? (
                                             <Form.Group>
                                                 <Form.Label>Select User Roles</Form.Label>

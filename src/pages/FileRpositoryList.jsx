@@ -623,7 +623,7 @@ const FileRpositoryList = () => {
                                         <Col md={12}>
                                             <Form.Group>
                                                 <DragDropRepository onChange={setField} />
-                                                {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
+                                                {error && !formSettingData.setting_files && < span className="error"> File is required!</span>}
                                                 <p className="error">{errors.setting_files}</p>
                                             </Form.Group>
                                         </Col>

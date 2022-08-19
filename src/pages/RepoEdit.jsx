@@ -8,42 +8,40 @@ import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import DropOneFile from '../components/DragDrop';
 import Select from 'react-select';
-// import { TrainingFormValidation } from '../helpers/validation';
+import DragDropFileEdit from '../components/DragDropFileEdit';
+import VideoPopupfForFile from '../components/VideoPopupfForFile';
 const animatedComponents = makeAnimated();
+
 let selectedUserId = '';
 
 const RepoEdit = () => {
 
     const Params = useParams();
     const navigate = useNavigate();
-    const [settingsModalPopup, setSettingsModalPopup] = useState(false);
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
-    const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
     const [errors, setErrors] = useState({});
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [user, setUser] = useState([]);
     const [data, setData] = useState([])
-    const [coverImage, setCoverImage] = useState("");
-    const [fetchedCoverImage, setFetchedCoverImage] = useState();
     const [franchiseeList, setFranchiseeList] = useState();
-    const [img, setimg] = useState();
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
-    const [croppedImage, setCroppedImage] = useState(null);
+    const [error, setError] = useState(false);
+    const [coverImage, setCoverImage] = useState({});
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
         assigned_users: []
     });
-    const toBase64 = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
+
+    // const toBase64 = (file) =>
+    //     new Promise((resolve, reject) => {
+    //         const reader = new FileReader();
+    //         reader.readAsDataURL(file);
+    //         reader.onload = () => resolve(reader.result);
+    //         reader.onerror = (error) => reject(error);
+    //     });
 
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${Params.id}`, {
@@ -75,19 +73,9 @@ const RepoEdit = () => {
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
-
         }));
-
+        setCoverImage(data?.repository_files[0].filesPath);
     }
-    // FUNCTION TO SAVE TRAINING SETTINGS
-
-    const handleDiscriptionSettings = (event) => {
-        const { name, value } = event.target;
-        setData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
 
     // FUNCTION TO SAVE TRAINING DATA
     const handleDiscriptionData = (event) => {
@@ -103,17 +91,15 @@ const RepoEdit = () => {
     const handleDataSubmit = async (event) => {
         event.preventDefault();
         console.log('DATA:', data);
+        if (!data.image || !data.description || !data.categoryId) {
+            setError(true);
+            return false
+        }
         let dataObj = new FormData();
         for (let [key, value] of Object.entries(data)) {
             console.log(key, value);
             dataObj.append(key, value);
         }
-
-        // if(typeof data.image === 'object') {
-        //     console.log('IMAGE:', data.image);
-        //     dataObj.append("image", data.image);
-        // }
-
         saveDataToServer(dataObj);
     }
 
@@ -256,9 +242,7 @@ const RepoEdit = () => {
         getUser();
         fetchFranchiseeList();
     }, []);
-    const handleTrainingCancel = () => {
-        window.location.href = "/file-repository";
-    };
+
 
     data && console.log('IMAGE DATA:', data.image);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
@@ -280,7 +264,7 @@ const RepoEdit = () => {
                                     <header className="title-head">
                                         <h1 className="title-lg">
                                             Edit File{' '}
-                                            <span className="setting-ico" onClick={() => setSettingsModalPopup(true)}>
+                                            <span className="setting-ico" >
                                                 <img src="../img/setting-ico.png" alt="" />
                                             </span>
                                         </h1>
@@ -306,9 +290,29 @@ const RepoEdit = () => {
                                                         </Col> */}
                                                         <Col md={6}></Col>
                                                         <Form.Group>
-                                                            <DragDropRepository onChange={setField} />
-                                                            <p className="error">{errors.setting_files}</p> {/* <img src={data.image} alt="smkdjh" /> */}
-                                                            {/* <img className="cover-image-style" src={setField} alt="training cover image" /> */}
+                                                            {/* <DragDropRepository /> */}
+                                                            {/* <VideoPopupfForFile
+                                                                data={data.image}
+                                                            title={cell[0]}
+                                                            name={cell[1]}
+                                                            duration={cell[0]}
+                                                            fun={handleVideoClose}
+                                                            /> */}
+
+                                                            {/* <video width="auto" height="auto" autoplay>
+                                                                <source src={data.image} type="video/ogg" />
+                                                                Your browser does not support the video tag.
+                                                            </video> */}
+                                                            {/* {data.image} */}
+                                                            <DragDropFileEdit onChange={setField} />
+                                                            <div className="showfiles mt-3 text-center" >
+                                                                {typeof data.image === "string" ?
+                                                                    (<img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto" }} />)
+                                                                    : (<></>)}
+                                                            </div>
+                                                            {error && !data.image && < span className="error"> File is required!</span>}
+                                                            <p className="error">{errors.setting_files}</p>
+                                                            {/* <img className="cover-image-style" src={coverImage} alt="training cover image" /> */}
                                                             {/* {
                                                                 data &&
                                                                 <>
@@ -364,6 +368,7 @@ const RepoEdit = () => {
                                                                     onChange={handleDiscriptionData}
                                                                 />
                                                             </Form.Group>
+                                                            {error && !data.description && < span className="error"> Description is required!</span>}
                                                         </div>
                                                     </Col>
                                                     <Col lg={12}>
@@ -380,6 +385,7 @@ const RepoEdit = () => {
                                                                     categoryId: e.id
                                                                 }))}
                                                             />
+                                                            {error && !data.categoryId && < span className="error"> File Category is required!</span>}
                                                             {errors && errors.categoryId && <span className="error">{errors.categoryId}</span>}
                                                         </Form.Group>
                                                     </Col>
