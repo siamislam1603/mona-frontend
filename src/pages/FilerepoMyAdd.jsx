@@ -61,6 +61,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState();
     const [shareType, setShareType] = useState("roles");
     const [applicableToAll, setApplicableToAll] = useState(false);
+    const [error, setError] = useState(false);
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -137,6 +138,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         selectedUser?.map((item) => {
             selectedFranchiseeId += item.id + ',';
         });
+
+        if (!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category) {
+            setError(true);
+            return false
+        }
+
+
         setLoaderFlag(true);
 
         var myHeaders = new Headers();
@@ -145,71 +153,69 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             'Authorization',
             'Bearer ' + localStorage.getItem('token')
         );
-        console.log(localStorage, "localStorage");
-
         const file = formSettingData.setting_files[0];
         console.log('file------->', file);
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
         console.log('reader---->');
         var formdata = new FormData();
+
         formdata.append('image', blob, file.name);
         formdata.append('description', formSettingData.meta_description);
         formdata.append('title', 'abc');
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
-        // if (
-        //     formSettingData.accessible_to_role === null ||
-        //     formSettingData.accessible_to_role === undefined
-        // ) {
-        //     formdata.append(
-        //         'accessibleToRole',
-        //         null
-        //     );
-        //     formdata.append(
-        //         'accessibleToAll',
-        //         true
-        //     );
-        // } else {
-        //     if (formSettingData.accessible_to_role === 1) {
-        //         formdata.append(
-        //             'sharedRole',
-        //             formSettingData.shared_role.slice(0, -1)
-        //         );
-        //         formdata.append(
-        //             'sharedWith',
-        //             null
-        //         );
-        //         formdata.append(
-        //             'accessibleToRole',
-        //             formSettingData.accessible_to_role
-        //         );
-        //         formdata.append(
-        //             'accessibleToAll',
-        //             false
-        //         );
-        //     } else {
-        //         formdata.append(
-        //             'sharedRole',
-        //             null
-        //         );
-        //         formdata.append(
-        //             'sharedWith',
-        //             selectedUserId.slice(0, -1)
-        //         );
-        //         formdata.append(
-        //             'accessibleToRole',
-        //             formSettingData.accessible_to_role
-        //         );
-        //         formdata.append(
-        //             'accessibleToAll',
-        //             false
-        //         );
-        //     }
-        // }
-
-        // >>>>>>> master
-
+        formdata.append('franchisee', formSettings.assigned_franchisee);
+        if (
+            formSettingData.accessible_to_role === null ||
+            formSettingData.accessible_to_role === undefined
+        ) {
+            formdata.append(
+                'accessibleToRole',
+                null
+            );
+            formdata.append(
+                'accessibleToAll',
+                true
+            );
+        }
+        else {
+            if (formSettingData.accessible_to_role === 1) {
+                formdata.append(
+                    'user_roles',
+                    formSettingData.shared_role.slice(0, -1)
+                );
+                formdata.append(
+                    'assigned_users',
+                    ""
+                );
+                formdata.append(
+                    'accessibleToRole',
+                    formSettingData.accessible_to_role
+                );
+                formdata.append(
+                    'accessibleToAll',
+                    false
+                );
+            } else {
+                formdata.append(
+                    'user_roles',
+                    ""
+                );
+                formdata.append(
+                    'assigned_users',
+                    selectedUserId.slice(0, -1)
+                );
+                formdata.append(
+                    'accessibleToRole',
+                    formSettingData.accessible_to_role
+                );
+                formdata.append(
+                    'accessibleToAll',
+                    false
+                );
+            }
+        }
         var requestOptions = {
             method: 'POST',
             headers: myHeaders,
@@ -217,7 +223,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             redirect: 'follow',
         };
 
-        console.log("submitted", requestOptions)
 
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
@@ -233,6 +238,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 if (result) {
                     setLoaderFlag(false);
                     setShow(false);
+                    Navigate('/file-repository')
                 }
             })
             .catch((error) => console.log('error', error));
@@ -392,7 +398,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     <>
 
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" || cell[0] === "image/png" ?
+                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -422,6 +428,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 <VideoPopupfForFile
                                                     data={cell[2]}
                                                     title={cell[0]}
+                                                    name={cell[1]}
                                                     // duration={cell[0]}
                                                     fun={handleVideoClose}
                                                 />
@@ -695,6 +702,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         <Col md={12}>
                                             <Form.Group>
                                                 <DragDropRepository onChange={setField} />
+                                                {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                                                 <p className="error">{errors.setting_files}</p>
                                             </Form.Group>
                                         </Col>
@@ -729,7 +737,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     <Col lg={12}>
                                         <div className="metadescription">
                                             <Form.Group className="mb-3">
-                                                <Form.Label>Meta Description</Form.Label>
+                                                <Form.Label>Meta Description*</Form.Label>
                                                 <Form.Control
                                                     as="textarea"
                                                     rows={2}
@@ -738,12 +746,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
                                                 />
+                                                {error && !formSettingData.meta_description && < span className="error"> Meta Description is required!</span>}
                                             </Form.Group>
                                         </div>
                                     </Col>
                                     <Col lg={12}>
                                         <Form.Group>
-                                            <Form.Label>File Category</Form.Label>
+                                            <Form.Label>File Category*</Form.Label>
                                             <Form.Select
                                                 name="file_category"
                                                 onChange={(e) => {
@@ -757,6 +766,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     );
                                                 })}
                                             </Form.Select>
+                                            {error && !formSettingData.file_category && < span className="error"> File Category is required!</span>}
                                         </Form.Group>
                                     </Col>
                                 </Row>
