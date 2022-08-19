@@ -623,7 +623,7 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="all_roles"
-                                                                            checked={data?.user_roles?.includes('all')}
+                                                                            checked={data?.user_roles?.includes('parent' && 'educator' && 'coordinator')}
                                                                             onChange={() => {
                                                                                 if (data.user_roles?.includes("coordinator")
                                                                                     && data.user_roles.includes("educator")

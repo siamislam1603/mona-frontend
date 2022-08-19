@@ -81,12 +81,49 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   }
 
 
-
-
 };
 
-  
+const handleLinkClick = notificationId => {
+  console.log("event eventeventeventevent",  notificationId)
 
+  if(notificationId){
+    const response = axios.put(
+      `${BASE_URL}/notification/${notificationId}`,{}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }
+    );
+
+    if (response.status === 200) {  
+      console.log('notification read status updated', response.msg);
+    }else{
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+
+    }
+
+
+  }
+
+  // let path = event.target.getAttribute('path');
+  // setTabLinkPath(path);
+}
+
+const handleMarkRearAll = async notificationId => {
+
+    let userID = localStorage.getItem('user_id');
+    const response = await axios.put(`${BASE_URL}/notification/unread/${userID}`,{}, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+      });
+    if (response.status == 200) {  
+      setTopHeaderNotificationCount(0);
+    }else{
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+    }
+
+}
 
 
   // const fetchAndPopulateFranchiseeDetails = async () => {
@@ -158,14 +195,20 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       topHeaderNotification.length !==0 ? (
         topHeaderNotification.map((details,index) => (
           
-              <div className="notifitem unread">
+              <div className={topHeaderNotificationCount?"notifitem unread":"notifitem"}>
                 <div className="notifimg">
                   <Link className="notilink" to="/">
                     <div className="notifpic">
-                    <img src="../img/announcements-ico.png" alt="" className="logo-circle rounded-circle"/>
+                    <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
 
                     </div>
-                    <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
+                    <div className="notiftxt">
+                    <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
+                      dangerouslySetInnerHTML={{
+                      __html: `${details.title}`,
+                    }}/>
+                      
+                      </div>
                   </Link>
                 </div>
                 <div className="notification-time">
@@ -184,9 +227,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
     <div className="totalmsg">
       You have {topHeaderNotificationCount?topHeaderNotificationCount:0} unread notifications
     </div>
-      {/* <div className="totalreadmsg">
-        Mark to Read All
-      </div> */}
+      <div className="totalreadmsg" onClick={()=> handleMarkRearAll()}>Mark to Read All</div>
   </Popover>
 );
 
@@ -210,7 +251,9 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       setNotifData(filteredData);
     }
   };
-  
+  // const handleSearch = () =>{
+  //   console.log("HANDLE SEARCH")
+  // }
   useEffect(() => {
     let ths = this;
     $(".topsearch").focus(function () {
@@ -398,6 +441,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
             <ul>
               <li>
                 <span className="search-col cursor">
+                
                   <img alt="" src="/img/search-icon.svg" />
                 </span>
               </li>
@@ -414,7 +458,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
                     // onMouseEnter={() => setNotificationDialog(true)} 
                     // onMouseLeave={() => setNotificationDialog(false)} 
                     src="/img/notification-icon.svg" />
-                    <span class="tag">{topHeaderNotificationCount?topHeaderNotificationCount:0}</span>
+                    <span class="tag">{topHeaderNotificationCount?topHeaderNotificationCount > 99 ? "99+":topHeaderNotificationCount:0}</span>
                 </div>
                 </OverlayTrigger>
               </li>

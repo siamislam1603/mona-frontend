@@ -1133,6 +1133,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 // singleSelect={true}
                                                 displayValue="key"
                                                 className="multiselect-box default-arrow-select"
+                                                selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.franchisee) === d.id)}
                                                 onKeyPressFn={function noRefCheck() { }}
                                                 onRemove={function noRefCheck(data) {
                                                     setFormSettings((prevState) => ({
@@ -1258,20 +1259,20 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             label="Parents"
-                                                            checked={formSettings.assigned_role.includes("guardian")}
+                                                            checked={formSettings.assigned_role.includes("parent")}
                                                             onChange={() => {
-                                                                if (formSettings.assigned_role.includes("guardian")) {
-                                                                    let data = formSettings.assigned_role.filter(t => t !== "guardian");
+                                                                if (formSettings.assigned_role.includes("parent")) {
+                                                                    let data = formSettings.assigned_role.filter(t => t !== "parent");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
                                                                         assigned_role: [...data]
                                                                     }));
                                                                 }
 
-                                                                if (!formSettings.assigned_role.includes("guardian"))
+                                                                if (!formSettings.assigned_role.includes("parent"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "guardian"]
+                                                                        assigned_role: [...formSettings.assigned_role, "parent"]
                                                                     }))
                                                             }} />
                                                     </Form.Group>

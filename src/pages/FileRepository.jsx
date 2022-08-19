@@ -632,6 +632,7 @@ const FileRepository = () => {
                 <Row>
                   <Col md={12}>
                     <Form.Group>
+                    <Form.Label>Upload File:*</Form.Label>
                       <DragDropRepository onChange={setField} />
                       {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                       <p className="error">{errors.setting_files}</p>
@@ -929,14 +930,14 @@ const FileRepository = () => {
                                     .toString()
                                     .includes('coordinator')
                                 ) {
-                                  data['shared_role'] += 'coordinator,';
+                                  data['shared_role'] += 'coordinator';
                                 }
                                 if (
                                   !data['shared_role']
                                     .toString()
                                     .includes('all')
                                 ) {
-                                  data['shared_role'] += 'all,';
+                                  data['shared_role'] += ',';
                                 }
                                 setFormSettingData(data);
                               } else {
@@ -945,7 +946,7 @@ const FileRepository = () => {
                               }
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'all'
+                              'parent,educator,coordinator'
                             )}
                           />
                           <span className="checkmark"></span>
