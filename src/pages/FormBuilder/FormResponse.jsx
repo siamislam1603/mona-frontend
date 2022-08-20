@@ -229,8 +229,7 @@ function FormResponse(props) {
                                       item
                                     )}
                                     <h4 className="content-wrap-title text-capitalize">
-                                      Filled By {item.user.fullname} |{' '}
-                                      {item.section_name} Section
+                                      Filled By {item.user.fullname} {!item.section_name || item.section_name!=="" && `| ${item.section_name} Section`}
                                     </h4>
 
                                     {Object.keys(JSON.parse(item.fields)).map(
