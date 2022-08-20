@@ -404,8 +404,7 @@ const OperatingManual = () => {
               <div className="sec-column">
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
-                  setSelectedFranchisee={(name, id) => {
-                    setSelectedFranchisee(name);
+                  setSelectedFranchisee={(id) => {
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                     if (

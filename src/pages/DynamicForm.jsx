@@ -215,7 +215,7 @@ const DynamicForm = (props) => {
                                 return (
                                   <>
                                     <option value={item.id}>
-                                      {item.email}
+                                      {item.child ? item.fullname : item.email}
                                     </option>
                                   </>
                                 );

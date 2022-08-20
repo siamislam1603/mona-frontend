@@ -24,6 +24,8 @@ let selectedTargetUserId = '';
 let selectedTargetUser = [];
 let selectedResponseVisibilityUserId = '';
 let selectedResponseVisibilityUser = [];
+let selectedChildId = '';
+let selectedChild = [];
 let counter = 0;
 function Setting(props) {
   const [form, setForm] = useState({
@@ -39,6 +41,7 @@ function Setting(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState([]);
+  const [child,setChild]=useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
@@ -50,11 +53,9 @@ function Setting(props) {
   useEffect(() => {
     console.log('location?.state?.id---->', location?.state?.id);
     getUser();
-  }, [localStorage.getItem("f_id")]);
-  useEffect(() => {
-    getParticularFormData();
-  }, [user]);
-  const getParticularFormData = () => {
+  }, [localStorage.getItem('f_id')]);
+  const getParticularFormData = (userData,childData) => {
+    console.log('user----->Helllo');
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
@@ -68,6 +69,18 @@ function Setting(props) {
     )
       .then((response) => response.json())
       .then((result) => {
+        selectedFormVisibleUserId = '';
+        selectedFormVisibleUser = [];
+        selectedFillAccessUserId = '';
+        selectedFillAccessUser = [];
+        selectedSignatoriesUserId = '';
+        selectedSignatoriesUser = [];
+        selectedTargetUserId = '';
+        selectedTargetUser = [];
+        selectedResponseVisibilityUserId = '';
+        selectedResponseVisibilityUser = [];
+        selectedChild=[];
+        selectedChildId='';
         let oldResult = result?.result;
         if (
           oldResult?.permission?.accessible_to_role === '1' ||
@@ -109,17 +122,24 @@ function Setting(props) {
           oldResult?.permission?.accessible_to_role === '0' ||
           oldResult?.permission?.accessible_to_role === false
         ) {
-          selectedFormVisibleUserId = '';
-          selectedFormVisibleUser = [];
-          selectedFillAccessUserId = '';
-          selectedFillAccessUser = [];
-          selectedSignatoriesUserId = '';
-          selectedSignatoriesUser = [];
-          selectedTargetUserId = '';
-          selectedTargetUser = [];
-          selectedResponseVisibilityUserId = '';
-          selectedResponseVisibilityUser = [];
-          user.map((item) => {
+          console.log('user----->', userData);
+          childData.map((item)=>{
+            if (oldResult?.permission?.target_child) {
+              if (
+                oldResult?.permission?.target_child.includes(
+                  item.id.toString()
+                )
+              ) {
+                console.log('user_els--->', item);
+                selectedChild.push({
+                  id: item.id,
+                  fullname: item.fullname,
+                });
+                selectedChildId += item.id + ',';
+              }
+            }
+          })
+          userData.map((item) => {
             if (oldResult?.permission?.form_visible_to) {
               if (
                 oldResult?.permission?.form_visible_to.includes(
@@ -246,7 +266,7 @@ function Setting(props) {
       removedItem.id + ',',
       ''
     );
-    const index = selectedFillAccessUser.findIndex((object) => {
+    const index = selectedTargetUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
     selectedTargetUser.splice(index, 1);
@@ -255,6 +275,28 @@ function Setting(props) {
     }
   }
 
+  function onTargetSelectChild(optionsList, selectedItem) {
+    selectedChildId += selectedItem.id + ',';
+    selectedChild.push({
+      id: selectedItem.id,
+      fullname: selectedItem.fullname,
+    });
+    console.log('selectedFillAccessUserId---->', selectedChildId);
+  }
+  function onTargetRemoveChild(selectedList, removedItem) {
+    selectedChildId = selectedChildId.replace(
+      removedItem.id + ',',
+      ''
+    );
+    const index = selectedChild.findIndex((object) => {
+      return object.id === removedItem.id;
+    });
+    selectedChild.splice(index, 1);
+    {
+      console.log('selectedFillAccessUserId---->', selectedChildId);
+    }
+  }
+  
   function onResponseVisibilitySelectUser(optionsList, selectedItem) {
     selectedResponseVisibilityUserId += selectedItem.id + ',';
     selectedResponseVisibilityUser.push({
@@ -271,7 +313,7 @@ function Setting(props) {
       removedItem.id + ',',
       ''
     );
-    const index = selectedFillAccessUser.findIndex((object) => {
+    const index = selectedResponseVisibilityUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
     selectedResponseVisibilityUser.splice(index, 1);
@@ -296,7 +338,7 @@ function Setting(props) {
       removedItem.id + ',',
       ''
     );
-    const index = selectedFillAccessUser.findIndex((object) => {
+    const index = selectedSignatoriesUser.findIndex((object) => {
       return object.id === removedItem.id;
     });
     selectedSignatoriesUser.splice(index, 1);
@@ -341,10 +383,17 @@ function Setting(props) {
     };
     let api_url = '';
     console.log('selectedFranchisee--->', selectedFranchisee);
-    if (selectedFranchisee) {
-      if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
-      else
-        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
+    console.log('fid----->', localStorage.getItem('f_id'));
+    if (localStorage.getItem('f_id')) {
+      if (localStorage.getItem('f_id') === "all" || localStorage.getItem('f_id') === "All") {
+        api_url = `${BASE_URL}/auth/users`;
+        
+      } else {
+        api_url = `${BASE_URL}/user-group/users/franchisee/${localStorage.getItem(
+          'f_id'
+        )}`;
+        
+      }
     } else {
       api_url = `${BASE_URL}/auth/users`;
     }
@@ -352,16 +401,57 @@ function Setting(props) {
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log('user---->', result);
         result?.data?.map((item) => {
           item['status'] = false;
         });
-        if (selectedFranchisee) {
-          if (selectedFranchisee === 'All') setUser(result?.data);
-          else setUser(result?.users);
-        } else setUser(result?.data);
+        if (localStorage.getItem('f_id')) {
+          if (localStorage.getItem('f_id') === "all" || localStorage.getItem('f_id') === "All") {
+            setUser(result?.data);
+            
+            childList(result?.data);
+          } else {
+            setUser(result?.users);
+            childList(result?.data);
+          }
+        } else {
+          setUser(result?.data);
+          childList(result?.data);
+        }
       })
       .catch((error) => console.log('error', error));
+
+      
   };
+  const childList=(userData)=>{
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
+    );
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    let api_url = '';
+    if (localStorage.getItem('f_id')) {
+      if (localStorage.getItem('f_id') === "all" || localStorage.getItem('f_id') === "All") {
+        api_url = `${BASE_URL}/form/child_list`;
+      } else {
+        api_url=`${BASE_URL}/form/child_list?franchisee_id=${localStorage.getItem('f_id')}`
+      }
+    } else {
+      api_url = `${BASE_URL}/form/child_list`;
+    }
+    fetch(api_url, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("result?.children---->",result?.children);
+        setChild(result?.children);
+        getParticularFormData(userData,result?.children);
+      });
+    }
   const onSubmit = (e) => {
     e.preventDefault();
     // const newErrors = createFormValidation(form);
@@ -386,7 +476,7 @@ function Setting(props) {
       data['response_visibility'] = form.response_visibility
         ? form.response_visibility.slice(0, -1)
         : null;
-      
+      data["target_child"]=null;
     }
     if (data.accessible_to_role === '0' || data.accessible_to_role === false) {
       data['form_visible_to'] = selectedFormVisibleUserId
@@ -404,9 +494,12 @@ function Setting(props) {
       data['response_visibility'] = selectedResponseVisibilityUserId
         ? selectedResponseVisibilityUserId.slice(0, -1)
         : null;
+      data["target_child"]=selectedChildId
+      ? selectedChildId.slice(0, -1)
+      : null;
     }
-    data["link"]=FRONT_BASE_URL+"/form/dynamic/"+data.form_name;
-    data['franchisee_id'] = localStorage.getItem("f_id");
+    data['link'] = FRONT_BASE_URL + '/form/dynamic/' + data.form_name;
+    data['franchisee_id'] = localStorage.getItem('f_id');
     data['permission_update'] = true;
     data['shared_by'] = localStorage.getItem('user_id');
     data['id'] = location?.state?.id;
@@ -1190,6 +1283,29 @@ function Setting(props) {
                                 // onSearch={function noRefCheck() {}}
                                 onSelect={onTargetSelectUser}
                                 options={user}
+                              />
+                            </div>
+                            <p className="error">{errors.franchisee}</p>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={12}>
+                          <Form.Group>
+                            <Form.Label>
+                              Select Users As Targeted Child
+                            </Form.Label>
+                            <div className="select-with-plus">
+                              <Multiselect
+                                displayValue="fullname"
+                                className="multiselect-box default-arrow-select"
+                                // placeholder="Select Franchisee"
+                                selectedValues={selectedChild}
+                                // onKeyPressFn={function noRefCheck() {}}
+                                onRemove={onTargetRemoveChild}
+                                // onSearch={function noRefCheck() {}}
+                                onSelect={onTargetSelectChild}
+                                options={child}
                               />
                             </div>
                             <p className="error">{errors.franchisee}</p>
