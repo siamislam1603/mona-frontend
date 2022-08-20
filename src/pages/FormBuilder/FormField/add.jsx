@@ -605,8 +605,8 @@ const AddFormField = (props) => {
               <div className="sec-column">
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
-                  setSelectedFranchisee={(name, id) => {
-                    setSelectedFranchisee(name);
+                  setSelectedFranchisee={(id) => {
+                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                   }}
