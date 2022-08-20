@@ -434,7 +434,7 @@ function ViewFormBuilder(props) {
                                           inner_item.form_permissions[0]
                                             ?.fill_access_users || []
                                         ).includes(
-                                          localStorage.getItem('user_role')
+                                          localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role')
                                         ) ||
                                           (
                                             inner_item.form_permissions[0]
@@ -584,7 +584,7 @@ function ViewFormBuilder(props) {
                                           inner_item.form_permissions[0]
                                             ?.fill_access_users || []
                                         ).includes(
-                                          localStorage.getItem('user_role')
+                                          localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role')
                                         ) ||
                                           (
                                             inner_item.form_permissions[0]
