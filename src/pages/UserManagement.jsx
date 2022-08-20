@@ -283,18 +283,18 @@ const UserManagement = () => {
 
   const fetchUserDetails = async () => {
     let api_url = '';
-
+    let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
     if (search) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}`;
+      api_url = `${BASE_URL}/role/user/${id}?search=${search}`;
     }
     if (filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
     }
     if (search && filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}&filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
     }
     if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}`;
+      api_url = `${BASE_URL}/role/user/${id}`;
     }
 
 
