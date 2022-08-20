@@ -405,6 +405,7 @@ const OperatingManual = () => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(id) => {
+                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                     if (
