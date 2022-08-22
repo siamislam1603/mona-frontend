@@ -326,6 +326,15 @@ const AddNewTraining = () => {
 
 
   useEffect(() => {
+    if(trainingSettings?.assigned_franchisee.length === 0) {
+      setTrainingSettings(prevState => ({
+        ...prevState,
+        assigned_users: []
+      }));
+
+      setFetchedFranchiseeUsers([]);
+    }
+
     fetchFranchiseeUsers(trainingSettings?.assigned_franchisee);
   }, [trainingSettings.assigned_franchisee]);
 
@@ -914,14 +923,13 @@ const AddNewTraining = () => {
                     <Multiselect
                       placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
                       displayValue="key"
-                      selectedValues={trainingSettings.assigned_users_data}
+                      selectedValues={fetchedFranchiseeUsers.filter(d => trainingSettings.assigned_users.includes(parseInt(d.id)))}
                       className="multiselect-box default-arrow-select"
                       onKeyPressFn={function noRefCheck() { }}
                       onRemove={function noRefCheck(data) {
                         setTrainingSettings((prevState) => ({
                           ...prevState,
                           assigned_users: [...data.map(data => data.id)],
-                          assigned_users_data: [...data.map(data => data)]
                         }));
                       }}
                       onSearch={function noRefCheck() { }}

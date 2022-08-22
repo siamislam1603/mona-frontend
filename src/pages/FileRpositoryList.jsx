@@ -63,6 +63,7 @@ const FileRpositoryList = () => {
         assigned_franchisee: [],
         assigned_users: []
     });
+    const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
     const toBase64 = (file) =>
         new Promise((resolve, reject) => {
@@ -235,7 +236,9 @@ const FileRpositoryList = () => {
             headers: myHeaders,
         };
         // let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
-        let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}`, requestOptions)
+        const ID_array = selectedFranchisee?.split(",");
+        let data = ID_array?.length > 1 ? ID_array?.slice(1) : ID_array;
+        let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=${data}`, requestOptions)
         response = await response.json();
         setUser(response.result)
 
@@ -459,7 +462,9 @@ const FileRpositoryList = () => {
                                 <LeftNavbar />
                             </aside>
                             <div className="sec-column">
-                                <TopHeader />
+                                <TopHeader 
+                                    selectedFranchisee={selectedFranchisee}
+                                    setSelectedFranchisee={setSelectedFranchisee} />
                                 <div className="entry-container">
                                     <div className="user-management-sec repository-sec">
                                         <ToolkitProvider

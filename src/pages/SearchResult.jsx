@@ -6,6 +6,10 @@ import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
+import moment from "moment";
+import CardImg from '../assets/img/card.png'
+
+
 
 const SearchResult = (props) => {
   const [announcement,setAnnouncement] = useState([])
@@ -20,6 +24,7 @@ const SearchResult = (props) => {
 
   const queryParams = new URLSearchParams(window.location.search)
   let term = queryParams.get("query")
+  console.log("TEM VALE",term)
   // const location = queryParams.get("query")
 
   const GlobalSearch = async() =>{
@@ -29,7 +34,8 @@ const SearchResult = (props) => {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("Search value",response.data.data) 
+    console.log("Search value",response.data.data[0]) 
+    // let res = response.data.data[0].fileRepository[0];
     if(response.status === 200 && response.data.status === "success"){
       setAnnouncement(response.data.data[0].announcement) 
       setFileRepository(response.data.data[0].fileRepository)
@@ -67,16 +73,16 @@ const SearchResult = (props) => {
                   <header className="title-head">
                     <h1 className="title-lg">Search Result</h1>
                   </header>
-             
+    
                   {announcement?.length>0 &&
                   <div>
-                      <Accordion defaultActiveKey="0">
+                      <Accordion defaultActiveKey={['0']} alwaysOpen>
                         
                                 <div >
-                              <Accordion.Item >
+                              <Accordion.Item eventKey="0" >
                                 <Accordion.Header>
                                   <div className="head-title">
-                                    <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                                    {/* <div className="ico"><img src="../img/announcements-ico.png "  alt=""/></div> */}
                                     <div className="title-xxs">Announcements</div>
                                   
                                   </div>
@@ -88,14 +94,20 @@ const SearchResult = (props) => {
                         <div className="search-item">
                         <div className="search-user-pic">
                           <a href="/announcements">
-                            <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                            <figure className="figure"><img alt="" src={data?.coverImage ? data?.coverImage : "../img/announcements-ico.png "} className="figure-img img-fluid" /></figure>
                           </a>
                         </div>
                         <div className="search-user-detail">
                           <h2 className="title-md text-capitalize"><a href="/announcements">{data?.title}</a></h2>
                           <div className="totalview mb-2">
                             <span className="style-scope meta-block">
-                              <strong>Shared Time:</strong> <time>38 minutes ago</time>
+                              <strong>Created At:</strong> <time>
+                                <strong>
+                                {moment(data.createdAt).fromNow()}
+
+                                </strong>
+
+                              </time>
                             </span>
                           </div>
                           <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
@@ -113,19 +125,21 @@ const SearchResult = (props) => {
                         </Accordion>
                       </div>
                   }
+                 
 
                   {/* TRAINING MOUDLE */}
-
+                
                  { training?.length>0 &&
                    <div >
                    
                    <Accordion defaultActiveKey="0">
                      
                      <div >
-                    <Accordion.Item >
+                     <Accordion.Item eventKey="0" >
+
                       <Accordion.Header>
                         <div className="head-title">
-                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                           <div className="title-xxs">Trainings</div>
                        
                         </div>
@@ -136,19 +150,28 @@ const SearchResult = (props) => {
                         {training?.map((data) => (
                           <div className="search-item">
                           <div className="search-user-pic">
-                            <a href="/announcements">
-                              <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                            <a href={`/training-detail/${data.id}`}>
+                            <figure className="figure"><img alt="" src={data?.coverImage ? data?.coverImage : "/img/related-pic3.png"} className="figure-img img-fluid" /></figure>
                             </a>
                           </div>
+                          
                           <div className="search-user-detail">
-                            <h2 className="title-md text-capitalize"><a href="/announcements">{data?.title}</a></h2>
+
+                            <h2 className="title-md text-capitalize"><a href={`/training-detail/${data.id}`}>{data?.title}</a></h2>
                             <div className="totalview mb-2">
-                              <span className="style-scope meta-block">
-                                <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                              </span>
-                            </div>
-                            <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                            <span className="style-scope meta-block">
+                              <strong>Created At:</strong> <time>
+                                <strong>
+                                {moment(data.createdAt).fromNow()}
+
+                                </strong>
+
+                              </time>
+                            </span>
                           </div>
+                            <div className="user-link mt-4"><a href={`/training-detail/${data.id}`}>View Details</a></div>
+                          </div>
+                          
                         </div>
             
                      ))}
@@ -169,10 +192,10 @@ const SearchResult = (props) => {
                    <Accordion defaultActiveKey="0">
                      
                      <div >
-                    <Accordion.Item >
+                    <Accordion.Item eventKey="0" >
                       <Accordion.Header>
                         <div className="head-title">
-                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                           <div className="title-xxs">File Repository</div>
                        
                         </div>
@@ -180,21 +203,28 @@ const SearchResult = (props) => {
                       <Accordion.Body>
                         <Row className="mb-4">
                           
-                        {fileRepository?.map((data) => (
+                        {fileRepository?.map((data,index) => (
                           <div className="search-item">
+                          
                           <div className="search-user-pic">
-                            <a href="/announcements">
-                              <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                            <a href={`/file-repository-List/${data?.repository_files[0]?.categoryId}`}>
+                              <figure className="figure"><img alt="" src={data?.repository_files[0]?.filesPath ? data?.repository_files[0]?.filesPath: "/img/related-pic3.png" } className="figure-img img-fluid" /></figure>
                             </a>
                           </div>
                           <div className="search-user-detail">
-                            <h2 className="title-md text-capitalize"><a href="/announcements">{data?.title}</a></h2>
+                            <h2 className="title-md text-capitalize"><a href="/file-repository">{data?.title}</a></h2>
                             <div className="totalview mb-2">
-                              <span className="style-scope meta-block">
-                                <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                              </span>
-                            </div>
-                            <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                            <span className="style-scope meta-block">
+                              <strong>Created At:</strong> <time>
+                                <strong>
+                                {moment(data.createdAt).fromNow()}
+
+                                </strong>
+
+                              </time>
+                            </span>
+                          </div>
+                            <div className="user-link mt-4"><a href={`/file-repository-List/${data.repository_files[0].categoryId}`}>View Details</a></div>
                           </div>
                         </div>
             
@@ -217,10 +247,10 @@ const SearchResult = (props) => {
                    <Accordion defaultActiveKey="0">
                      
                      <div >
-                    <Accordion.Item >
+                    <Accordion.Item eventKey="0" >
                       <Accordion.Header>
                         <div className="head-title">
-                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                           <div className="title-xxs">Franchises</div>
                        
                         </div>
@@ -231,18 +261,24 @@ const SearchResult = (props) => {
                         {franchise?.map((data) => (
                           <div className="search-item">
                           <div className="search-user-pic">
-                            <a href="/announcements">
-                              <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                            <a href="/all-franchisees">
+                              <figure className="figure"><img alt="" src={CardImg} className="figure-img img-fluid" /></figure>
                             </a>
                           </div>
                           <div className="search-user-detail">
-                            <h2 className="title-md text-capitalize"><a href="/announcements">{data?.franchisee_name}</a></h2>
+                            <h2 className="title-md text-capitalize"><a href="/all-franchisees">{data?.franchisee_name}</a></h2>
                             <div className="totalview mb-2">
-                              <span className="style-scope meta-block">
-                                <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                              </span>
-                            </div>
-                            <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                            <span className="style-scope meta-block">
+                              <strong>Created At:</strong> <time>
+                                <strong>
+                                {moment(data.createdAt).fromNow()}
+
+                                </strong>
+
+                              </time>
+                            </span>
+                          </div>
+                            <div className="user-link mt-4"><a href="/all-franchisees">View Details</a></div>
                           </div>
                         </div>
             
@@ -264,10 +300,10 @@ const SearchResult = (props) => {
                       <Accordion defaultActiveKey="0">
                         
                         <div >
-                       <Accordion.Item >
+                       <Accordion.Item eventKey="0" >
                          <Accordion.Header>
                            <div className="head-title">
-                             <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                             {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                              <div className="title-xxs">Operating Mannual</div>
                           
                            </div>
@@ -278,18 +314,24 @@ const SearchResult = (props) => {
                            {operatingMannual?.map((data) => (
                              <div className="search-item">
                              <div className="search-user-pic">
-                               <a href="/announcements">
-                                 <figure className="figure"><img alt="" src="/img/related-pic3.png" className="figure-img img-fluid" /></figure>
+                               <a href="/operatingmanual">
+                                 <figure className="figure"><img alt="" src={data?.cover_image ? data?.cover_image: "/img/related-pic3.png"} className="figure-img img-fluid" /></figure>
                                </a>
                              </div>
                              <div className="search-user-detail">
-                               <h2 className="title-md text-capitalize"><a href="/announcements">{data?.title}</a></h2>
+                               <h2 className="title-md text-capitalize"><a href="/operatingmanual">{data?.title}</a></h2>
                                <div className="totalview mb-2">
-                                 <span className="style-scope meta-block">
-                                   <strong>Shared Time:</strong> <time>38 minutes ago</time>
-                                 </span>
-                               </div>
-                               <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                            <span className="style-scope meta-block">
+                              <strong>Created At:</strong> <time>
+                                <strong>
+                                {moment(data.createdAt).fromNow()}
+
+                                </strong>
+
+                              </time>
+                            </span>
+                          </div>
+                               <div className="user-link mt-4"><a href="/operatingmanual">View Details</a></div>
                              </div>
                            </div>
                
@@ -302,25 +344,9 @@ const SearchResult = (props) => {
                       </Accordion>
                     </div>
                   }
-                    {user?.length>0 &&
-                
-                   <div >
-                   
-                   <Accordion defaultActiveKey="0">
-                     
-                     <div >
-                    <Accordion.Item >
-                      <Accordion.Header>
-                        <div className="head-title">
-                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                          <div className="title-xxs">Users</div>
-                       
-                        </div>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <Row className="mb-4">
-                          
-                        {user?.map((data) => (
+                  {/* <div className='cloumn-card'>
+                    
+                  {user?.map((data) => (
                           <div className="search-item">
                           <div className="search-user-pic">
                             <a href="/announcements">
@@ -335,6 +361,51 @@ const SearchResult = (props) => {
                               </span>
                             </div>
                             <div className="user-link mt-4"><a href="/announcements">View Details</a></div>
+                          </div>
+                        </div>
+            
+                     ))}
+
+                  </div> */}
+                    {user?.length>0 &&
+                
+                   <div >
+                   
+                   <Accordion defaultActiveKey="0">
+                     
+                     <div >
+                    <Accordion.Item eventKey="0">
+                      <Accordion.Header>
+                        <div className="head-title">
+                          {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
+                          <div className="title-xxs">Users</div>
+                       
+                        </div>
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <Row className="mb-4">
+                          
+                        {user?.map((data) => (
+                          <div className="search-item">
+                          <div className="search-user-pic">
+                            <a href="/user-management">
+                              <figure className="figure"><img alt="" src={data?.profile_photo ? data?.profile_photo: "/img/related-pic3.png"} className="figure-img img-fluid" /></figure>
+                            </a>
+                          </div>
+                          <div className="search-user-detail">
+                            <h2 className="title-md text-capitalize"><a href="/user-management">{data?.fullname}</a></h2>
+                            <div className="totalview mb-2">
+                            <span className="style-scope meta-block">
+                              <strong>Created At:</strong> <time>
+                                <strong>
+                                {moment(data.createdAt).fromNow()}
+
+                                </strong>
+
+                              </time>
+                            </span>
+                          </div>
+                            <div className="user-link mt-4"><a href="/user-management">View Details</a></div>
                           </div>
                         </div>
             

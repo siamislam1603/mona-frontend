@@ -24,7 +24,6 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { verifyPermission } from '../../helpers/roleBasedAccess';
-import { saveAs } from 'file-saver';
 
 let upperRoleUser = '';
 let selectedUserId = '';
@@ -404,8 +403,8 @@ const OperatingManual = () => {
               <div className="sec-column">
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
-                  setSelectedFranchisee={(name, id) => {
-                    setSelectedFranchisee(name);
+                  setSelectedFranchisee={(id) => {
+                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                     if (
@@ -704,21 +703,11 @@ const OperatingManual = () => {
                                                     file_item
                                                   )}
 
-                                                  <button
+                                                  <a
                                                     className="forms-content create-other"
-                                                    onClick={(e) => {
-                                                      e.preventDefault();
-                                                      saveAs(
-                                                        'data:text/plain;charset=utf-8, ' +
-                                                          encodeURIComponent(
-                                                            file_item.url
-                                                          ),
-                                                        file_item.name
-                                                      );
-                                                      // window.open(
-                                                      //   file_item.url
-                                                      // );
-                                                    }}
+                                                    role="button"
+                                                    href={file_item.url}
+                                                    download
                                                   >
                                                     <div className="content-icon-section">
                                                       <img
@@ -740,7 +729,7 @@ const OperatingManual = () => {
                                                         ).format('DD/MM/YYYY')}
                                                       </h4>
                                                     </div>
-                                                  </button>
+                                                  </a>
                                                 </>
                                               );
                                             }
