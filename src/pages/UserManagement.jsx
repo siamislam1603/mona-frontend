@@ -320,12 +320,15 @@ const UserManagement = () => {
         action: dt.is_active
       }));
 
-      tempData = tempData.filter((data) => data.is_deleted === 0);
-      console.log('Temp Data:', tempData);
+      // tempData = tempData.filter((data) => data.is_deleted === 0);
+      // console.log('Temp Data:', tempData);
       if(localStorage.getItem('user_role') === 'guardian') {
         tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
       }
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
+
+      if(localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+        tempData = tempData.filter(d => d.action === 1);
+      }
       setUserData(tempData);
 
       let temp = tempData;

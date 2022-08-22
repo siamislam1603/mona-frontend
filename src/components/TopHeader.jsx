@@ -50,15 +50,15 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
         name: d.fullname
       })));
       
-      let id = children.map(d => d.id);
-      // console.log('ID ARRAY:', id);
-      id = ['all', ...id].join(',');
-      // console.log('ID STRING:', id);
-      // console.log('REFORMED DATA:', data);
-      setChildList(prevState => ([
-        { id: id, name: 'All' },
-        ...prevState
-      ]));
+      // let id = children.map(d => d.id);
+      // // console.log('ID ARRAY:', id);
+      // id = ['all', ...id].join(',');
+      // // console.log('ID STRING:', id);
+      // // console.log('REFORMED DATA:', data);
+      // setChildList(prevState => ([
+      //   { id: id, name: 'All' },
+      //   ...prevState
+      // ]));
     }
   };
 
