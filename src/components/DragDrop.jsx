@@ -12,9 +12,10 @@ export default function DropAllFile({ image,onSave, setTrainingData, setErrors, 
   const [theImage,setTheImage] = useState()
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-    acceptedFiles.forEach(file => {
-      setData(prevState => [...prevState, file]);
-    });
+    // acceptedFiles.forEach(file => {
+    //   setData(file);
+    // });
+    setData(acceptedFiles)
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({
