@@ -10,13 +10,11 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import DragDropFileEdit from '../components/DragDropFileEdit';
-import VideoPopupfForFile from '../components/VideoPopupfForFile';
+import FileRepoVideo from '../components/FileRepoVideo';
+import VideoPop from "../components/VideoPop";
 const animatedComponents = makeAnimated();
-
 let selectedUserId = '';
-
 const RepoEdit = () => {
-
     const Params = useParams();
     const navigate = useNavigate();
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
@@ -34,7 +32,6 @@ const RepoEdit = () => {
         franchisee: [],
         assigned_users: []
     });
-
     // const toBase64 = (file) =>
     //     new Promise((resolve, reject) => {
     //         const reader = new FileReader();
@@ -42,7 +39,6 @@ const RepoEdit = () => {
     //         reader.onload = () => resolve(reader.result);
     //         reader.onerror = (error) => reject(error);
     //     });
-
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${Params.id}`, {
             headers: {
@@ -56,9 +52,8 @@ const RepoEdit = () => {
             console.log('result>>>>>>>', file)
             copyFetchedData(file);
         }
-
     }
-
+    console.log(data, "fileTypefileType")
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
@@ -73,10 +68,10 @@ const RepoEdit = () => {
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
+            file_type: data?.repository_files[0].fileType,
         }));
         setCoverImage(data?.repository_files[0].filesPath);
     }
-
     // FUNCTION TO SAVE TRAINING DATA
     const handleDiscriptionData = (event) => {
         const { name, value } = event.target;
@@ -85,9 +80,7 @@ const RepoEdit = () => {
             [name]: value,
         }));
     };
-
     // Update API For File Repo
-
     const handleDataSubmit = async (event) => {
         event.preventDefault();
         console.log('DATA:', data);
@@ -102,7 +95,6 @@ const RepoEdit = () => {
         }
         saveDataToServer(dataObj);
     }
-
     const saveDataToServer = async () => {
         console.log('SAVING DATA TO SERVER');
         const token = localStorage.getItem('token');
@@ -111,12 +103,10 @@ const RepoEdit = () => {
                 "Authorization": "Bearer " + token
             }
         });
-
         console.log('DATA UPDATE RESPONSE:', response);
         if (response.status === 200 && response.data.status === "success") {
             if (typeof data.image === 'string') {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
-
                 console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
                     console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
@@ -128,13 +118,11 @@ const RepoEdit = () => {
                 dataObj.append("id", Params.id);
                 dataObj.append("title", data.title);
                 dataObj.append("description", data.description);
-
                 response = await axios.post(`${BASE_URL}/fileRepo/data/saveImageData`, dataObj, {
                     headers: {
                         "Authorization": "Bearer " + token
                     }
                 });
-
                 console.log('SOLO IMAGE SAVE RESPONSE:', response);
                 if (response.status === 200 && response.data.status === "success") {
                     console.log('DATA UPDATED SUCCESSFULLT => type: object');
@@ -145,8 +133,6 @@ const RepoEdit = () => {
             window.location.href = '/file-repository';
         }
     }
-
-
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/role/franchisee`, {
@@ -154,7 +140,6 @@ const RepoEdit = () => {
                 "Authorization": `Bearer ${token}`
             }
         });
-
         if (response.status === 200 && response.data.status === "success") {
             setFranchiseeList(response.data.franchiseeList.map(data => ({
                 id: data.id,
@@ -163,7 +148,6 @@ const RepoEdit = () => {
             })));
         }
     };
-
     const getFileCategory = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(
@@ -184,14 +168,12 @@ const RepoEdit = () => {
             ]);
         }
     };
-
     const getUser = () => {
         var myHeaders = new Headers();
         myHeaders.append(
             'authorization',
             'Bearer ' + localStorage.getItem('token')
         );
-
         var requestOptions = {
             method: 'GET',
             redirect: 'follow',
@@ -207,25 +189,20 @@ const RepoEdit = () => {
             })
             .catch((error) => console.log('error', error));
     };
-
     function onSelectUser(optionsList, selectedItem) {
         selectedUserId += selectedItem.id + ',';
         selectedUser.push({
             id: selectedItem.id,
             email: selectedItem.email,
         });
-
     }
-
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
         const index = selectedUser.findIndex((object) => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
-
     }
-
     const setField = async (field, value) => {
         setData({ ...data, image: field[0] })
         if (!!errors[field]) {
@@ -235,18 +212,14 @@ const RepoEdit = () => {
             });
         }
     };
-
     useEffect(() => {
         GetData();
         getFileCategory();
         getUser();
         fetchFranchiseeList();
     }, []);
-
-
     data && console.log('IMAGE DATA:', data.image);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
-
     return (
         <div style={{ position: "relative", overflow: "hidden" }}>
             <div id="main">
@@ -275,7 +248,6 @@ const RepoEdit = () => {
                                                 <div className="modal-top-containt">
                                                     <Row>
                                                         {/* <Col md={6}>
-                                                           
                                                             <DropOneFile
                                                                 onSave={setCoverImage}
                                                                 title="Image"
@@ -286,7 +258,6 @@ const RepoEdit = () => {
                                                             <small className="fileinput">(png, jpg & jpeg)</small>
                                                             {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
                                                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
-                                                            
                                                         </Col> */}
                                                         <Col md={6}></Col>
                                                         <Form.Group>
@@ -298,7 +269,6 @@ const RepoEdit = () => {
                                                             duration={cell[0]}
                                                             fun={handleVideoClose}
                                                             /> */}
-
                                                             {/* <video width="auto" height="auto" autoplay>
                                                                 <source src={data.image} type="video/ogg" />
                                                                 Your browser does not support the video tag.
@@ -307,7 +277,29 @@ const RepoEdit = () => {
                                                             <DragDropFileEdit onChange={setField} />
                                                             <div className="showfiles mt-3 text-center" >
                                                                 {typeof data.image === "string" ?
-                                                                    (<img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto" }} />)
+                                                                    (<>
+                                                                        {data.file_type === "image/jpeg" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
+                                                                            data.file_type === "application/pdf" ? (<>
+                                                                                <span className="user-pic-tow">
+                                                                                    <a href={data.image} download >
+                                                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                                                    </a>
+                                                                                </span>
+                                                                                <span className="user-name">
+                                                                                    {data.image}.Doc
+                                                                                </span>
+                                                                            </>) :
+                                                                                data.file_type === "video/mp4" ? (
+                                                                                    <>
+                                                                                        <div style={{ display: "inline-table" }}>
+                                                                                            <FileRepoVideo
+                                                                                                data={data.image}
+                                                                                            />
+                                                                                        </div>
+                                                                                    </>
+                                                                                ) : (<>sdk</>)}
+                                                                    </>
+                                                                    )
                                                                     : (<></>)}
                                                             </div>
                                                             {error && !data.image && < span className="error"> File is required!</span>}
@@ -322,14 +314,10 @@ const RepoEdit = () => {
                                                                     </div>
                                                                 </>
                                                             } */}
-
                                                             {errors && errors.setField && <span className="error mt-2">{errors.coverImage}</span>}
-
                                                         </Form.Group>
-
                                                     </Row>
                                                     <div className="toggle-switch">
-
                                                         {/* <Row>
                                                             <Col md={12}>
                                                                 <div className="t-switch">
@@ -436,13 +424,11 @@ const RepoEdit = () => {
                                                             </div>
                                                         </Form.Group>
                                                     </Col>
-
                                                     <Col lg={9} md={12}>
                                                         <Form.Group>
                                                             <Form.Label>Select Franchisee</Form.Label>
                                                             <div className="select-with-plus">
                                                                 {/* <Multiselect
-                                                                   
                                                                     placeholder={"Select User Names"}
                                                                     displayValue="key"
                                                                     selectedValues={franchiseeList?.filter(d => parseInt(data?.franchise) === d.id)}
@@ -486,7 +472,6 @@ const RepoEdit = () => {
                                                         </Form.Group>
                                                     </Col>
                                                 </Row>
-
                                                 <Row className="mt-4">
                                                     <Col lg={3} md={6}>
                                                         <Form.Group>
@@ -557,7 +542,6 @@ const RepoEdit = () => {
                                                                                         user_roles: [...Data]
                                                                                     }));
                                                                                 }
-
                                                                                 if (!data.user_roles?.includes("coordinator"))
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
@@ -582,14 +566,12 @@ const RepoEdit = () => {
                                                                                         user_roles: [...Data]
                                                                                     }));
                                                                                 }
-
                                                                                 if (!data.user_roles?.includes("educator"))
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
                                                                                         user_roles: [...data.user_roles, "educator"]
                                                                                     }))
                                                                             }}
-
                                                                         />
                                                                         <span className="checkmark"></span>
                                                                     </label>
@@ -680,7 +662,6 @@ const RepoEdit = () => {
                                                 </Row>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>

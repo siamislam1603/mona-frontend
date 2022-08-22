@@ -2,10 +2,12 @@ import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
 
-
 export default function DragDropRepository({ onChange, setPopupVisible, imageToCrop }) {
   const [myFiles, setMyFiles] = useState([])
- 
+  // NEW FUNCTION FOR ME********************************
+  // const onDrop = useCallback(acceptedFiles => {
+  //   setMyFiles([...myFiles, ...acceptedFiles])
+  // }, [myFiles])
   const { acceptedFiles, getRootProps, getInputProps } =
     useDropzone
       ({
@@ -41,7 +43,6 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
         </Link>
       </>
   })
-
   // NEW FUNCTION FOR ME************************************
   // const { acceptedFiles, getRootProps, getInputProps } =
   //   useDropzone({
