@@ -2918,5 +2918,22 @@ h6.text-capitalize {
 .bold-user-info{
     font-weight: 900 !important;
     color: black !important;
-}   
+}  
+
+.error{
+    font-size: .875em !important;
+}
+
+p.error {
+    margin: 0;
+}
+
+.dynamic-form-check{
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+.child_info_field{
+    margin-bottom: 0px !important;
+}
         

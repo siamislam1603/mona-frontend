@@ -1,3 +1,4 @@
+
 import React, { Component, useEffect, useState } from 'react';
 import {
     Button,
@@ -429,5 +430,6 @@ const AllFranchisees = () => {
         </div>
     )
 }
+
 
 export default AllFranchisees

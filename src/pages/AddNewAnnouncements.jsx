@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
@@ -611,7 +612,5 @@ console.log("THE handle ",announcementData)
 
 
 export default AddNewAnnouncements;
-
-
 
 

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
@@ -999,3 +1000,4 @@ const AddNewTraining = () => {
 };
 
 export default AddNewTraining;
+

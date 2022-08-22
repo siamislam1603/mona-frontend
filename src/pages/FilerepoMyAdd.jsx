@@ -1340,6 +1340,4 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         </>
     )
 }
-
-
-export default FilerepoMyAdd
+export default FilerepoMyAdd;
