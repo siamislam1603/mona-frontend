@@ -1,3 +1,4 @@
+
 import React, { useState,useEffect } from "react";
 import { Button, Container, Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
 import { BASE_URL } from "../components/App";
@@ -5,6 +6,7 @@ import axios from "axios";
 // import VideoPop from "../components/VideoPop";
 import AnnouncementVideo from "./AnnouncementVideo";
 import { debounce } from 'lodash';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
 import { verifyPermission } from "../helpers/roleBasedAccess";
 const AllEvent = (props) => {
@@ -12,6 +14,7 @@ const AllEvent = (props) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const [userRole,setUserRole]=useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
 
  
@@ -30,10 +33,16 @@ const AllEvent = (props) => {
       console.log("ALL EVENTS",response)
       if(response.status === 200 && response.data.status === "success") {
         setAllEventData(response.data.result.searchedData);
+        setIsLoading(true)
+
+      
       }
     } catch (error) {
         if(error.response.status === 404){
           console.log("The code is 404")
+          setIsLoading(false)
+          setAllEventData([])
+
           // setAnnouncementDetail([])
         }
 
@@ -239,7 +248,7 @@ console.log("THE EVENT PROPS",props.allEvent)
         ))
        )
        :(
-        <div>No data found</div>
+        <div className="text-center mb-5 mt-5"> {isLoading ? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
        )
       }
    

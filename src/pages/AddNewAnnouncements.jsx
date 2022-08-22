@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
@@ -116,22 +117,18 @@ const createAnnouncement = async (data) => {
             setTopErrorMessage(null);
           }, 3000)
         
-        }
-
-      
+        }      
     } 
-    
+    // else if(response.status === 403 && response.data.status === "fail"){
+    //   console.log('ERROR RESPONSE! Permission Denied');
+    //   setTopErrorMessage("Permission Denied");
+    //   setLoader(false)
+    //   setAddnewAnnouncement(false)
 
-    else if(response.status === 403 && response.data.status === "fail"){
-      console.log('ERROR RESPONSE! Permission Denied');
-      setTopErrorMessage("Permission Denied");
-      setLoader(false)
-    setAddnewAnnouncement(false)
-
-      setTimeout(() => {
-        setTopErrorMessage(null);
-      }, 3000)
-    }
+    //   setTimeout(() => {
+    //     setTopErrorMessage(null);
+    //   }, 3000)
+    // }
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
     window.location.href="/announcements";
         
@@ -608,7 +605,5 @@ console.log("THE handle ",announcementData)
 
 
 export default AddNewAnnouncements;
-
-
 
 

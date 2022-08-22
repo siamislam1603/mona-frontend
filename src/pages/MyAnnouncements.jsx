@@ -1,13 +1,10 @@
 import React, { useState,useEffect } from "react";
 import { Button, Container, Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
-import LeftNavbar from "../components/LeftNavbar";
-import TopHeader from "../components/TopHeader";
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import { BASE_URL } from "../components/App";
 import axios from "axios";
-import { NavLink } from "react-router-dom";
-import { useParams } from "react-router-dom";
+
 import AnnouncementVideo from "./AnnouncementVideo";
 import moment from 'moment';
 
@@ -19,6 +16,7 @@ const MyAnnouncements = (props) => {
   const [myAnnouncement,setmyAnnouncement] = useState([]);
   // const {id} = useParams
   const [userRole,setUserRole]=useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   const myAnnouncementData = async() =>{
     try {
@@ -40,9 +38,13 @@ const MyAnnouncements = (props) => {
      console.log("The repsonse mY anncounce,",response)
      if(response.status === 200) {
         setmyAnnouncement(response.data.result.searchedData)
+        setIsLoading(true)
+
      }
     } catch (error) {
        setmyAnnouncement([])
+       setIsLoading(false)
+
     }
   }
   const deleteAnnouncement = async (id) =>{
@@ -297,7 +299,8 @@ const MyAnnouncements = (props) => {
         ))
        )
        :(
-        <div>No data found</div>
+        <div className="text-center mb-5 mt-5"> {isLoading ? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
+
        )
       }
    

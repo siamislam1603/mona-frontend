@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
@@ -41,14 +42,12 @@ const columns1 = [
     dataField: 'formname',
     text: 'Form Name',
     formatter: (cell) => {
-      console.log("CELL", cell)
-      cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">{cell[0]} <small>{moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
+      return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on:  {moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
     },
   },
   {
     dataField: 'educatorname',
-    text: 'Name',
+    text: 'Educator Name',
     formatter: (cell) => {
       console.log("EDUCATIN CELL", cell)
       cell = cell.split(",");
@@ -172,7 +171,7 @@ const FranchisorDashboard = () => {
     if (response.status == 200) {
       let data = response.data.data.formData;
       let tempData = data.map((dt) => ({
-        formname: `${dt.form_name}, ${dt.audited_on}`,
+        formname: `${dt.audited_on}`,
         educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
         // console.log("THe dt",)
 
