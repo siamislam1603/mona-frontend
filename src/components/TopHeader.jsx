@@ -22,7 +22,14 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   const [notifData, setNotifData] = useState(null);
   const [topHeaderNotification, setTopHeaderNotification] = useState([]);
   const [topHeaderNotificationCount, setTopHeaderNotificationCount] = useState(null);
-
+  const [searchKeyword, setSearchKeyword] = useState('none');
+  const [searchResult, setSearchResult] = useState([]);
+  const [searchAnnouncement, setSearchAnnouncement] = useState([]);
+  const [searchFileRepository, setSearchFileRepository] = useState([]);
+  const [searchFranchise, setSearchFranchise] = useState([]);
+  const [searchOperatingMannual, setSearchOperatingMannual] = useState([]);
+  const [searchTraining, setSearchTraining] = useState([]);
+  const [searchUser, setSearchUser] = useState([]);
 
 
   const savePermissionInState = async () => {
@@ -155,6 +162,47 @@ const handleMarkRearAll = async notificationId => {
     }
 
 }
+
+
+const handelSearch = async (e) =>{
+  e.preventDefault();
+  try {
+  let searchKey = e.target.value;
+  if(searchKey){
+
+      const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
+        headers: {"Authorization": "Bearer " + token}
+        });
+        
+        if(response.status === 200 && response.data.status === "success") {
+          
+          setSearchResult(response.data.data[0]) 
+          console.log("ddddddddddddddddddddddddddddddddddddddddddddd",response.data.data[0].announcement)
+
+          setSearchAnnouncement(response.data.data[0].announcement) 
+          setSearchFileRepository(response.data.data[0].fileRepository)
+          setSearchFranchise(response.data.data[0].franchise)
+          setSearchOperatingMannual(response.data.data[0].operatingMannual)
+          setSearchTraining(response.data.data[0].training)
+          setSearchUser(response.data.data[0].user)
+
+        }
+
+        }
+
+
+    } catch (error) {
+        if(error.response.status === 404){
+          // console.log("The code is 404")
+          setTopHeaderNotification([])
+        }
+    }
+
+
+}
+
+
+
 
 
   // const fetchAndPopulateFranchiseeDetails = async () => {
@@ -478,50 +526,59 @@ const handleMarkRearAll = async notificationId => {
                   className="topsearch"
                   placeholder="Type here to search..."
                   name="query"
+                  onChange={handelSearch}
+
                 />
                 <div className="tipsearch">
                   <div className="searchlisting cus-scr">
                     <ul>
+
+
+
+                    {searchAnnouncement?.map((announceData) => (
                       <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        <a href="/announcements" class="d-flex">
+                       {/* <img alt="" src={announceData?.coverImage?announceData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{announceData?.title}</strong></span>
                         </a>
                       </li>
+                        ))}
+
+
+                      {searchTraining?.map((trainingData) => (
                       <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        <a href={`/training-detail/${trainingData.id}`} class="d-flex">
+                       {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{trainingData?.title}</strong></span>
                         </a>
                       </li>
+                        ))}
+
+
+                      {searchOperatingMannual?.map((operatingData) => (
                       <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
                         </a>
                       </li>
+                        ))}
+
+
+
+                    {searchOperatingMannual?.map((operatingData) => (
                       <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
                         </a>
                       </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
+                        ))}
+
+
+
+
+
                     </ul>
                   </div>
                 </div>
