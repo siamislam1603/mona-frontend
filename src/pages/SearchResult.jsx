@@ -8,6 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import CardImg from '../assets/img/card.png'
+// import Loader from "../assets/img/loader.svg"
 
 
 
@@ -87,7 +88,7 @@ const SearchResult = (props) => {
                     <header className="title-head">
                       <h1 className="title-lg">Search Result</h1>
                     </header>
-      
+                    {/* <img src=""/> */}
                     {announcement?.length>0 &&
                     <div>
                         <Accordion defaultActiveKey={['0']} alwaysOpen>
