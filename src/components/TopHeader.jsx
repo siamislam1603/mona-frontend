@@ -11,7 +11,11 @@ let temp = () => { }
 
 const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
+  const [childList, setChildList] = useState([]);
+
   const [franchiseeId, setFranchiseeId] = useState();
+  const [childId, setChildId] = useState();
+
   const [permissionList, setPermissionList] = useState();
   const [notificationDialog, setNotificationDialog] = useState(true);
   const [notifType, setNotifType] = useState('none');
@@ -28,7 +32,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   const [searchUser, setSearchUser] = useState([]);
 
 
-
   const savePermissionInState = async () => {
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
     setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
@@ -38,9 +41,36 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
 
   let token = localStorage.getItem('token');
 
+
+  const fetchChildList = async () => {
+    let response = await axios.get(`${BASE_URL}/enrollment/parent/getChildrenByParentId`, {
+       headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+       }
+    });
+
+    if(response.status === 200 && response.data.status === 'success') {
+      let { children } = response.data;
+      console.log('CHILDREN:', children);
+      setChildList(children.map(d => ({
+        id: d.id,
+        name: d.fullname
+      })));
+      
+      let id = children.map(d => d.id);
+      // console.log('ID ARRAY:', id);
+      id = ['all', ...id].join(',');
+      // console.log('ID STRING:', id);
+      // console.log('REFORMED DATA:', data);
+      setChildList(prevState => ([
+        { id: id, name: 'All' },
+        ...prevState
+      ]));
+    }
+  };
+
+
   const fetchFranchiseeList = async () => {
-
-
     const response = await axios.get(`${BASE_URL}/role/franchisee`, {
       headers: {
         Authorization: 'Bearer ' + token,
@@ -134,6 +164,47 @@ const handleMarkRearAll = async notificationId => {
 }
 
 
+const handelSearch = async (e) =>{
+  e.preventDefault();
+  try {
+  let searchKey = e.target.value;
+  if(searchKey){
+
+      const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
+        headers: {"Authorization": "Bearer " + token}
+        });
+        
+        if(response.status === 200 && response.data.status === "success") {
+          
+          setSearchResult(response.data.data[0]) 
+          console.log("ddddddddddddddddddddddddddddddddddddddddddddd",response.data.data[0].announcement)
+
+          setSearchAnnouncement(response.data.data[0].announcement) 
+          setSearchFileRepository(response.data.data[0].fileRepository)
+          setSearchFranchise(response.data.data[0].franchise)
+          setSearchOperatingMannual(response.data.data[0].operatingMannual)
+          setSearchTraining(response.data.data[0].training)
+          setSearchUser(response.data.data[0].user)
+
+        }
+
+        }
+
+
+    } catch (error) {
+        if(error.response.status === 404){
+          // console.log("The code is 404")
+          setTopHeaderNotification([])
+        }
+    }
+
+
+}
+
+
+
+
+
   // const fetchAndPopulateFranchiseeDetails = async () => {
   //   const response = await axios.get(
   //     `${BASE_URL}/role/franchisee/details/${localStorage.getItem('user_id')}`
@@ -179,6 +250,7 @@ const handleMarkRearAll = async notificationId => {
     logout();
   };
 
+
   const selectFranchisee = (e) => {
     console.log('SELECTED FRANCHISEE:', e);
     if (e === 'All') {
@@ -189,6 +261,17 @@ const handleMarkRearAll = async notificationId => {
       setSelectedFranchisee(e);
     }
   };
+
+  const selectChild = (e) => {
+    console.log('SELECTED CHILD:', e);
+    // if (e === 'All') {
+    //   setChildId({ name: 'All' });
+    //   setSelectedFranchisee('all');
+    // } else {
+      setChildId({ ...childList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
+      setSelectedFranchisee(e);
+    // }
+  }
   
   const popover = (
   <Popover id="popover-basic" className="notificationpopup">
@@ -259,49 +342,9 @@ const handleMarkRearAll = async notificationId => {
       setNotifData(filteredData);
     }
   };
-  const handelSearch = async (e) =>{
-    e.preventDefault();
-    try {
-    let searchKey = e.target.value;
-    if(searchKey){
-
-        const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
-          headers: {"Authorization": "Bearer " + token}
-          });
-          
-          if(response.status === 200 && response.data.status === "success") {
-            
-            setSearchResult(response.data.data[0]) 
-            console.log("ddddddddddddddddddddddddddddddddddddddddddddd",response.data.data[0].announcement)
-
-            setSearchAnnouncement(response.data.data[0].announcement) 
-            setSearchFileRepository(response.data.data[0].fileRepository)
-            setSearchFranchise(response.data.data[0].franchise)
-            setSearchOperatingMannual(response.data.data[0].operatingMannual)
-            setSearchTraining(response.data.data[0].training)
-            setSearchUser(response.data.data[0].user)
-
-          }
-
-          }
-
-
-      } catch (error) {
-          if(error.response.status === 404){
-            // console.log("The code is 404")
-            setTopHeaderNotification([])
-          }
-      }
-
-      
-
-   
-
-    // const queryParams = new URLSearchParams(window.location.search)
-    // let term = queryParams.get("query")
-    // console.log("TEM HANDEL SEARCH",term)
-
-  }
+  // const handleSearch = () =>{
+  //   console.log("HANDLE SEARCH")
+  // }
   useEffect(() => {
     let ths = this;
     $(".topsearch").focus(function () {
@@ -335,6 +378,8 @@ const handleMarkRearAll = async notificationId => {
     $(".tipsearch").hide();
   }, []);
 
+
+  
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'franchisor_admin') {
       setSelectedFranchisee('All');
@@ -343,6 +388,15 @@ const handleMarkRearAll = async notificationId => {
       setSelectedFranchisee(franchiseeList[0]?.id);
     }
   }, [franchiseeList]);
+
+  useEffect(() => {
+    // if (localStorage.getItem('user_role') === 'guardian') {
+    // setSelectedFranchisee('All');
+    // setChildId({ name: 'All' });
+    // } else {
+      setSelectedFranchisee(childList[0]?.id);
+    // }
+  }, [childList]);
 
   useEffect(() => {
     setNotifType(notificationType)
@@ -355,7 +409,12 @@ const handleMarkRearAll = async notificationId => {
 
   useEffect(() => {
 
-    fetchFranchiseeList();
+    if(localStorage.getItem('user_role') === 'guardian') {
+      fetchChildList();
+    } else {
+      fetchFranchiseeList();
+    }
+
     fetchNotificationList();
 
     var user_dashboar_link = '';
@@ -383,14 +442,48 @@ const handleMarkRearAll = async notificationId => {
     savePermissionInState();
   }, []);
 
-  notifData && console.log('DATA=>:', notifData);
-  notifType && console.log('TYPE=>:', notifType);
-  
+  // notifData && console.log('DATA=>:', notifData);
+  // notifType && console.log('TYPE=>:', notifType);
+  childId && console.log('CHILD ID:', childId);
+  childList && console.log('Child List:', childList);
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
         <div className="lpanel">
-          <div className="selectdropdown">
+          {
+            localStorage.getItem('user_role') === 'guardian'
+            ? <div className="selectdropdown">
+            <Dropdown onSelect={selectChild}>
+              <Dropdown.Toggle id="dropdown-basic">
+                {childId?.name ||
+                  childList[0]?.name ||
+                  'No Child Available'}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
+                  <Dropdown.Item eventKey="All">
+                    <span className="loction-pic">
+                      <img alt="" id="user-pic" src="/img/user.png" />
+                    </span>
+                    All
+                  </Dropdown.Item>
+                </React.Fragment> : null}
+                {childList.map((data) => {
+                  return (
+                    <React.Fragment key={data.id}>
+                      <Dropdown.Item eventKey={`${data.id}`}>
+                        <span className="loction-pic">
+                          <img alt="" id="user-pic" src="/img/user.png" />
+                        </span>
+                        {data.name}
+                      </Dropdown.Item>
+                    </React.Fragment>
+                  );
+                })}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+            : <div className="selectdropdown">
             <Dropdown onSelect={selectFranchisee}>
               <Dropdown.Toggle id="dropdown-basic">
                 {franchiseeId?.franchisee_name ||
@@ -421,6 +514,7 @@ const handleMarkRearAll = async notificationId => {
               </Dropdown.Menu>
             </Dropdown>
           </div>
+          }
         </div>
         
         <div className="rpanel ms-auto">
@@ -432,12 +526,11 @@ const handleMarkRearAll = async notificationId => {
                   className="topsearch"
                   placeholder="Type here to search..."
                   name="query"
-                  
                   onChange={handelSearch}
+
                 />
                 <div className="tipsearch">
                   <div className="searchlisting cus-scr">
-
                     <ul>
 
 
@@ -462,23 +555,31 @@ const handleMarkRearAll = async notificationId => {
                         ))}
 
 
-
-                      </ul>
-                    
-
-
-
-                      
-
-
-
-                      {/* <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                      {searchOperatingMannual?.map((operatingData) => (
+                      <li>
+                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
                         </a>
-                      </li> */}
-        
-                    
+                      </li>
+                        ))}
+
+
+
+                    {searchOperatingMannual?.map((operatingData) => (
+                      <li>
+                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
+                        </a>
+                      </li>
+                        ))}
+
+
+
+
+
+                    </ul>
                   </div>
                 </div>
                 <Link className="search-close" to="#">
@@ -516,7 +617,7 @@ const handleMarkRearAll = async notificationId => {
                 <Dropdown>
                   <Dropdown.Toggle id="dropdown-basic">
                     <span className="user-pic">
-                      <img alt="" id="user-pic" src="/img/user.png" />
+                      <img alt="" id="user-pic" src={localStorage.getItem('profile_photo') || ''} />
                     </span>
                     <span className="user-name">
                       {localStorage.getItem('user_name')
