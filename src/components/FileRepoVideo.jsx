@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Modal } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { PlayerSdk } from '@api.video/player-sdk'
+import { Button, Col, Container, Row, Form, Dropdown, Modal } from "react-bootstrap";
 
-const VideoPopupfForFile = ({ data, title, duration }) => {
+const FileRepoVideo = ({ data, title, duration }) => {
     console.log(data, 'cellcellcell')
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
@@ -13,8 +14,8 @@ const VideoPopupfForFile = ({ data, title, duration }) => {
             <div className="item mb-3">
                 <div className="vidcol">
                     <div className="d-flex align-items-center" onClick={handleShow}>
-                        <div className="pic">
-                            <iframe title="video file" style={{ height: "70px" }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                        <div className="pic2">
+                            <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                         </div>
                         <div className="vid-title">
                             {title}<span className="time">{duration}</span>
@@ -42,5 +43,6 @@ const VideoPopupfForFile = ({ data, title, duration }) => {
         </>
     )
 }
-export default VideoPopupfForFile
 
+
+export default FileRepoVideo

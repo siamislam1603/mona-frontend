@@ -82,7 +82,7 @@ const SearchResult = (props) => {
                               <Accordion.Item eventKey="0" >
                                 <Accordion.Header>
                                   <div className="head-title">
-                                    <div className="ico"><img src="../img/announcements-ico.png "  alt=""/></div>
+                                    {/* <div className="ico"><img src="../img/announcements-ico.png "  alt=""/></div> */}
                                     <div className="title-xxs">Announcements</div>
                                   
                                   </div>
@@ -139,7 +139,7 @@ const SearchResult = (props) => {
 
                       <Accordion.Header>
                         <div className="head-title">
-                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                           <div className="title-xxs">Trainings</div>
                        
                         </div>
@@ -195,7 +195,7 @@ const SearchResult = (props) => {
                     <Accordion.Item eventKey="0" >
                       <Accordion.Header>
                         <div className="head-title">
-                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                           <div className="title-xxs">File Repository</div>
                        
                         </div>
@@ -250,7 +250,7 @@ const SearchResult = (props) => {
                     <Accordion.Item eventKey="0" >
                       <Accordion.Header>
                         <div className="head-title">
-                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                           <div className="title-xxs">Franchises</div>
                        
                         </div>
@@ -303,7 +303,7 @@ const SearchResult = (props) => {
                        <Accordion.Item eventKey="0" >
                          <Accordion.Header>
                            <div className="head-title">
-                             <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                             {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                              <div className="title-xxs">Operating Mannual</div>
                           
                            </div>
@@ -377,7 +377,7 @@ const SearchResult = (props) => {
                     <Accordion.Item eventKey="0">
                       <Accordion.Header>
                         <div className="head-title">
-                          <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
+                          {/* <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div> */}
                           <div className="title-xxs">Users</div>
                        
                         </div>
