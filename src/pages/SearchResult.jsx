@@ -73,13 +73,13 @@ const SearchResult = (props) => {
                   <header className="title-head">
                     <h1 className="title-lg">Search Result</h1>
                   </header>
-             
+    
                   {announcement?.length>0 &&
                   <div>
-                      <Accordion defaultActiveKey="0">
+                      <Accordion defaultActiveKey={['0']} alwaysOpen>
                         
                                 <div >
-                              <Accordion.Item >
+                              <Accordion.Item eventKey="0" >
                                 <Accordion.Header>
                                   <div className="head-title">
                                     <div className="ico"><img src="../img/announcements-ico.png "  alt=""/></div>
@@ -135,7 +135,8 @@ const SearchResult = (props) => {
                    <Accordion defaultActiveKey="0">
                      
                      <div >
-                    <Accordion.Item >
+                     <Accordion.Item eventKey="0" >
+
                       <Accordion.Header>
                         <div className="head-title">
                           <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
@@ -191,7 +192,7 @@ const SearchResult = (props) => {
                    <Accordion defaultActiveKey="0">
                      
                      <div >
-                    <Accordion.Item >
+                    <Accordion.Item eventKey="0" >
                       <Accordion.Header>
                         <div className="head-title">
                           <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
@@ -246,7 +247,7 @@ const SearchResult = (props) => {
                    <Accordion defaultActiveKey="0">
                      
                      <div >
-                    <Accordion.Item >
+                    <Accordion.Item eventKey="0" >
                       <Accordion.Header>
                         <div className="head-title">
                           <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
@@ -299,7 +300,7 @@ const SearchResult = (props) => {
                       <Accordion defaultActiveKey="0">
                         
                         <div >
-                       <Accordion.Item >
+                       <Accordion.Item eventKey="0" >
                          <Accordion.Header>
                            <div className="head-title">
                              <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
@@ -373,7 +374,7 @@ const SearchResult = (props) => {
                    <Accordion defaultActiveKey="0">
                      
                      <div >
-                    <Accordion.Item >
+                    <Accordion.Item eventKey="0">
                       <Accordion.Header>
                         <div className="head-title">
                           <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>

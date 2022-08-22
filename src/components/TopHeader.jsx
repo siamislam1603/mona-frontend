@@ -49,6 +49,16 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
         id: d.id,
         name: d.fullname
       })));
+      
+      let id = children.map(d => d.id);
+      // console.log('ID ARRAY:', id);
+      id = ['all', ...id].join(',');
+      // console.log('ID STRING:', id);
+      // console.log('REFORMED DATA:', data);
+      setChildList(prevState => ([
+        { id: id, name: 'All' },
+        ...prevState
+      ]));
     }
   };
 
@@ -192,6 +202,7 @@ const handleMarkRearAll = async notificationId => {
     logout();
   };
 
+
   const selectFranchisee = (e) => {
     console.log('SELECTED FRANCHISEE:', e);
     if (e === 'All') {
@@ -205,8 +216,13 @@ const handleMarkRearAll = async notificationId => {
 
   const selectChild = (e) => {
     console.log('SELECTED CHILD:', e);
-    setChildId({ ...childList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
-    setSelectedFranchisee(e);
+    // if (e === 'All') {
+    //   setChildId({ name: 'All' });
+    //   setSelectedFranchisee('all');
+    // } else {
+      setChildId({ ...childList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
+      setSelectedFranchisee(e);
+    // }
   }
   
   const popover = (
@@ -314,18 +330,24 @@ const handleMarkRearAll = async notificationId => {
     $(".tipsearch").hide();
   }, []);
 
+
+  
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'franchisor_admin') {
       setSelectedFranchisee('All');
-      setChildId({ franchisee_name: 'All' });
+      setFranchiseeId({ franchisee_name: 'All' });
     } else {
       setSelectedFranchisee(franchiseeList[0]?.id);
     }
   }, [franchiseeList]);
 
   useEffect(() => {
-    console.log('CHILD LIST STATE:', childList);
-    setSelectedFranchisee(childList[0]?.id);
+    // if (localStorage.getItem('user_role') === 'guardian') {
+    // setSelectedFranchisee('All');
+    // setChildId({ name: 'All' });
+    // } else {
+      setSelectedFranchisee(childList[0]?.id);
+    // }
   }, [childList]);
 
   useEffect(() => {
@@ -374,7 +396,8 @@ const handleMarkRearAll = async notificationId => {
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
-  
+  childId && console.log('CHILD ID:', childId);
+  childList && console.log('Child List:', childList);
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
