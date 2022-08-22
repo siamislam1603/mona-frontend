@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
@@ -982,7 +983,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   <>
                     <Col md={4}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="py-3"> if at School, Date first went to School : *</Form.Label>
+                        <Form.Label className="py-3"> Date first went to School : *</Form.Label>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -1011,7 +1012,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Col>
                     <Col md={4}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="py-3">if at School, Name and address of School *</Form.Label>
+                        <Form.Label className="py-3">Name and address of School *</Form.Label>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -1530,3 +1531,4 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 };
 
 export default ChildEnrollment1;
+

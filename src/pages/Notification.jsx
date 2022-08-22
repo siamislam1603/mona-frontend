@@ -25,7 +25,7 @@ const [notificationDetails,setNotificationDetail] = useState([])
         }
       });
       // console.log("The All Announcement",response.data.result);
-      console.log(response);
+      console.log("response responseresponseresponseresponseresponse", response.data.notification);
       
       if(response.status === 200 && response.data.status === "success") {
           setNotificationDetail(response.data.notification.rows);
@@ -115,36 +115,30 @@ const handleLinkClick = notificationId => {
                         <a className="notilink" href="javascript:void(0)">
                             <div className="notifpic">
                               
-                            <img src="../img/announcements-ico.png" alt="" className="logo-circle rounded-circle"/>
+                            <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
                             </div>
                           <div className="notiftxt">
                           <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
-                            dangerouslySetInnerHTML={{
-                                      __html: `${details.title}`,
-                                    }}/>
+                          dangerouslySetInnerHTML={{
+                                    __html: `${details.title}`,
+                                  }}/>
                           </div>
-                        </a>
-                      </div>
-                      <div className="notification-time">{moment(details.createdAt).fromNow()}</div>
+                      </a>
                     </div>
-
-
+                    <div className="notification-time">{moment(details.createdAt).fromNow()}</div>
+                  </div>
                 ))
                 ): (
                   <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
                 )
-                }
+              }
+            </div>
 
-
-
-                  </div>
-                  
-                  
-                    </div>
-                    </div>
-                    </div>
-                    </Container>
-                  </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </div>
   )
 }
 

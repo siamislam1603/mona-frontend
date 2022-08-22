@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Col, Container, Form, Row, Button } from 'react-bootstrap';
 import { BASE_URL } from '../components/App';
@@ -60,7 +61,7 @@ const DynamicForm = (props) => {
     
     let api_url = `${BASE_URL}/form/target_users?form_name=${form_name}&franchisee_id=${localStorage.getItem(
       'franchisee_id'
-    )}`;
+    )}&user_id=${localStorage.getItem("user_id")}&user_role=${localStorage.getItem("user_role")}`;
 
     fetch(api_url, requestOptions)
       .then((response) => response.json())
@@ -88,7 +89,7 @@ const DynamicForm = (props) => {
       .then((result) => {
         let res = JSON.parse(result);
         setFormData(res.result);
-        setFormPermission(res.form_permission);
+        setFormPermission(res?.form[0]?.form_permissions[0]);
         let formsData = {};
         let data = {};
         Object.keys(res?.result)?.map((item) => {
@@ -186,9 +187,10 @@ const DynamicForm = (props) => {
                 </Row>
                 <Form>
                   <Row>
+                    {console.log("formPermission?.target_user--->",formPermission)}
                     {!(
                       formPermission?.target_user?.includes(
-                        localStorage.getItem('user_role')
+                        localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role')
                       ) ||
                       formPermission?.target_user?.includes(
                         localStorage.getItem('user_id')
@@ -215,7 +217,7 @@ const DynamicForm = (props) => {
                                 return (
                                   <>
                                     <option value={item.id}>
-                                      {item.email}
+                                      {item.child ? item.fullname : item.email}
                                     </option>
                                   </>
                                 );

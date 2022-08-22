@@ -27,13 +27,14 @@ const SignIn = () => {
     const res = await axios.post(`${BASE_URL}/auth/login`, data);
 
     if (res.status === 200 && res.data.status === 'success') {
-
+      console.log('DATA:', res.data);
       localStorage.setItem('token', res.data.accessToken);
       localStorage.setItem('user_id', res.data.user.id);
       localStorage.setItem('user_role', res.data.user.role);
       localStorage.setItem('user_name', res.data.user.name);
       localStorage.setItem('email', res.data.user.email);
       localStorage.setItem('franchisee_id', res.data.user.franchisee_id);
+      localStorage.setItem('profile_photo', res.data.user.profile_photo);
 
       let token = res.data.accessToken;
       const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {

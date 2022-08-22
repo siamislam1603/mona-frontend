@@ -1,8 +1,11 @@
+
 import React, { useState,useEffect } from "react";
 import { Button, Container, Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
 import { BASE_URL } from "../components/App";
 import axios from "axios";
 // import VideoPop from "../components/VideoPop";
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import AnnouncementVideo from "./AnnouncementVideo";
 import { debounce } from 'lodash';
 import moment from 'moment';
@@ -19,7 +22,7 @@ const [userRole,setUserRole]=useState(null)
 const userName = localStorage.getItem("user_name");
 const userROle = localStorage.getItem("user_role");
 const [search,setSearch]=useState('');
-
+const [isLoading, setIsLoading] = useState(true)
 const [topMessage,setTopMessage] = useState(null);
 const [theRelatedFiles,setTheRelatedFiles] = useState([])
 const [announcementDetails,setAnnouncementDetail] = useState([])
@@ -42,11 +45,14 @@ const [searchData,setSearchData] = useState()
       
       if(response.status === 200 && response.data.status === "success") {
           setAnnouncementDetail(response.data.result.searchedData);
-      }
+          setIsLoading(true)
+        }
     } catch (error) {
         if(error.response.status === 404){
           // console.log("The code is 404")
           setAnnouncementDetail([])
+          setIsLoading(false)
+
         }
 
     }
@@ -326,7 +332,7 @@ useEffect(() =>{
                            
                            ))
                         ): (
-                          <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
+                          <div className="text-center mb-5 mt-5"> {isLoading ? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
                         )
                       }
                     </Accordion>

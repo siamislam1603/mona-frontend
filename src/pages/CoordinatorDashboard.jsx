@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
@@ -137,7 +138,7 @@ const CoordinatorDashboard = () => {
 
     // const users = response.childrenEnrolled[0].users;
     if (response.status === "pass") {
-      console.log("The data", response)
+      console.log(" data repsonse", response)
 
       let data = response.childrenEnrolled;
       let tempData = data.map((dt) => ({

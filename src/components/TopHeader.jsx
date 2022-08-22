@@ -11,14 +11,25 @@ let temp = () => { }
 
 const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
+  const [childList, setChildList] = useState([]);
+
   const [franchiseeId, setFranchiseeId] = useState();
+  const [childId, setChildId] = useState();
+
   const [permissionList, setPermissionList] = useState();
   const [notificationDialog, setNotificationDialog] = useState(true);
   const [notifType, setNotifType] = useState('none');
   const [notifData, setNotifData] = useState(null);
   const [topHeaderNotification, setTopHeaderNotification] = useState([]);
   const [topHeaderNotificationCount, setTopHeaderNotificationCount] = useState(null);
-
+  const [searchKeyword, setSearchKeyword] = useState('none');
+  const [searchResult, setSearchResult] = useState([]);
+  const [searchAnnouncement, setSearchAnnouncement] = useState([]);
+  const [searchFileRepository, setSearchFileRepository] = useState([]);
+  const [searchFranchise, setSearchFranchise] = useState([]);
+  const [searchOperatingMannual, setSearchOperatingMannual] = useState([]);
+  const [searchTraining, setSearchTraining] = useState([]);
+  const [searchUser, setSearchUser] = useState([]);
 
 
   const savePermissionInState = async () => {
@@ -30,9 +41,36 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
 
   let token = localStorage.getItem('token');
 
+
+  const fetchChildList = async () => {
+    let response = await axios.get(`${BASE_URL}/enrollment/parent/getChildrenByParentId`, {
+       headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+       }
+    });
+
+    if(response.status === 200 && response.data.status === 'success') {
+      let { children } = response.data;
+      console.log('CHILDREN:', children);
+      setChildList(children.map(d => ({
+        id: d.id,
+        name: d.fullname
+      })));
+      
+      let id = children.map(d => d.id);
+      // console.log('ID ARRAY:', id);
+      id = ['all', ...id].join(',');
+      // console.log('ID STRING:', id);
+      // console.log('REFORMED DATA:', data);
+      setChildList(prevState => ([
+        { id: id, name: 'All' },
+        ...prevState
+      ]));
+    }
+  };
+
+
   const fetchFranchiseeList = async () => {
-
-
     const response = await axios.get(`${BASE_URL}/role/franchisee`, {
       headers: {
         Authorization: 'Bearer ' + token,
@@ -81,11 +119,89 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   }
 
 
-
-
 };
 
-  
+const handleLinkClick = notificationId => {
+  console.log("event eventeventeventevent",  notificationId)
+
+  if(notificationId){
+    const response = axios.put(
+      `${BASE_URL}/notification/${notificationId}`,{}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }
+    );
+
+    if (response.status === 200) {  
+      console.log('notification read status updated', response.msg);
+    }else{
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+
+    }
+
+
+  }
+
+  // let path = event.target.getAttribute('path');
+  // setTabLinkPath(path);
+}
+
+const handleMarkRearAll = async notificationId => {
+
+    let userID = localStorage.getItem('user_id');
+    const response = await axios.put(`${BASE_URL}/notification/unread/${userID}`,{}, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+      });
+    if (response.status == 200) {  
+      setTopHeaderNotificationCount(0);
+    }else{
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+    }
+
+}
+
+
+const handelSearch = async (e) =>{
+  e.preventDefault();
+  try {
+  let searchKey = e.target.value;
+  if(searchKey){
+
+      const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
+        headers: {"Authorization": "Bearer " + token}
+        });
+        
+        if(response.status === 200 && response.data.status === "success") {
+          
+          setSearchResult(response.data.data[0]) 
+          console.log("ddddddddddddddddddddddddddddddddddddddddddddd",response.data.data[0].announcement)
+
+          setSearchAnnouncement(response.data.data[0].announcement) 
+          setSearchFileRepository(response.data.data[0].fileRepository)
+          setSearchFranchise(response.data.data[0].franchise)
+          setSearchOperatingMannual(response.data.data[0].operatingMannual)
+          setSearchTraining(response.data.data[0].training)
+          setSearchUser(response.data.data[0].user)
+
+        }
+
+        }
+
+
+    } catch (error) {
+        if(error.response.status === 404){
+          // console.log("The code is 404")
+          setTopHeaderNotification([])
+        }
+    }
+
+
+}
+
+
 
 
 
@@ -134,6 +250,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
     logout();
   };
 
+
   const selectFranchisee = (e) => {
     console.log('SELECTED FRANCHISEE:', e);
     if (e === 'All') {
@@ -144,6 +261,17 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       setSelectedFranchisee(e);
     }
   };
+
+  const selectChild = (e) => {
+    console.log('SELECTED CHILD:', e);
+    // if (e === 'All') {
+    //   setChildId({ name: 'All' });
+    //   setSelectedFranchisee('all');
+    // } else {
+      setChildId({ ...childList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
+      setSelectedFranchisee(e);
+    // }
+  }
   
   const popover = (
   <Popover id="popover-basic" className="notificationpopup">
@@ -158,14 +286,20 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       topHeaderNotification.length !==0 ? (
         topHeaderNotification.map((details,index) => (
           
-              <div className="notifitem unread">
+              <div className={topHeaderNotificationCount?"notifitem unread":"notifitem"}>
                 <div className="notifimg">
                   <Link className="notilink" to="/">
                     <div className="notifpic">
-                    <img src="../img/announcements-ico.png" alt="" className="logo-circle rounded-circle"/>
+                    <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
 
                     </div>
-                    <div className="notiftxt">Vipin Semwal asked a question for startup: iMumz. Click to see</div>
+                    <div className="notiftxt">
+                    <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
+                      dangerouslySetInnerHTML={{
+                      __html: `${details.title}`,
+                    }}/>
+                      
+                      </div>
                   </Link>
                 </div>
                 <div className="notification-time">
@@ -184,9 +318,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
     <div className="totalmsg">
       You have {topHeaderNotificationCount?topHeaderNotificationCount:0} unread notifications
     </div>
-      {/* <div className="totalreadmsg">
-        Mark to Read All
-      </div> */}
+      <div className="totalreadmsg" onClick={()=> handleMarkRearAll()}>Mark to Read All</div>
   </Popover>
 );
 
@@ -210,7 +342,9 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       setNotifData(filteredData);
     }
   };
-  
+  // const handleSearch = () =>{
+  //   console.log("HANDLE SEARCH")
+  // }
   useEffect(() => {
     let ths = this;
     $(".topsearch").focus(function () {
@@ -244,6 +378,8 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
     $(".tipsearch").hide();
   }, []);
 
+
+  
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'franchisor_admin') {
       setSelectedFranchisee('All');
@@ -252,6 +388,15 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
       setSelectedFranchisee(franchiseeList[0]?.id);
     }
   }, [franchiseeList]);
+
+  useEffect(() => {
+    // if (localStorage.getItem('user_role') === 'guardian') {
+    // setSelectedFranchisee('All');
+    // setChildId({ name: 'All' });
+    // } else {
+      setSelectedFranchisee(childList[0]?.id);
+    // }
+  }, [childList]);
 
   useEffect(() => {
     setNotifType(notificationType)
@@ -264,7 +409,12 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
 
   useEffect(() => {
 
-    fetchFranchiseeList();
+    if(localStorage.getItem('user_role') === 'guardian') {
+      fetchChildList();
+    } else {
+      fetchFranchiseeList();
+    }
+
     fetchNotificationList();
 
     var user_dashboar_link = '';
@@ -292,14 +442,48 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
     savePermissionInState();
   }, []);
 
-  notifData && console.log('DATA=>:', notifData);
-  notifType && console.log('TYPE=>:', notifType);
-  
+  // notifData && console.log('DATA=>:', notifData);
+  // notifType && console.log('TYPE=>:', notifType);
+  childId && console.log('CHILD ID:', childId);
+  childList && console.log('Child List:', childList);
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
         <div className="lpanel">
-          <div className="selectdropdown">
+          {
+            localStorage.getItem('user_role') === 'guardian'
+            ? <div className="selectdropdown">
+            <Dropdown onSelect={selectChild}>
+              <Dropdown.Toggle id="dropdown-basic">
+                {childId?.name ||
+                  childList[0]?.name ||
+                  'No Child Available'}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
+                  <Dropdown.Item eventKey="All">
+                    <span className="loction-pic">
+                      <img alt="" id="user-pic" src="/img/user.png" />
+                    </span>
+                    All
+                  </Dropdown.Item>
+                </React.Fragment> : null}
+                {childList.map((data) => {
+                  return (
+                    <React.Fragment key={data.id}>
+                      <Dropdown.Item eventKey={`${data.id}`}>
+                        <span className="loction-pic">
+                          <img alt="" id="user-pic" src="/img/user.png" />
+                        </span>
+                        {data.name}
+                      </Dropdown.Item>
+                    </React.Fragment>
+                  );
+                })}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+            : <div className="selectdropdown">
             <Dropdown onSelect={selectFranchisee}>
               <Dropdown.Toggle id="dropdown-basic">
                 {franchiseeId?.franchisee_name ||
@@ -330,6 +514,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
               </Dropdown.Menu>
             </Dropdown>
           </div>
+          }
         </div>
         
         <div className="rpanel ms-auto">
@@ -341,50 +526,59 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
                   className="topsearch"
                   placeholder="Type here to search..."
                   name="query"
+                  onChange={handelSearch}
+
                 />
                 <div className="tipsearch">
                   <div className="searchlisting cus-scr">
                     <ul>
+
+
+
+                    {searchAnnouncement?.map((announceData) => (
                       <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        <a href="/announcements" class="d-flex">
+                       {/* <img alt="" src={announceData?.coverImage?announceData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{announceData?.title}</strong></span>
                         </a>
                       </li>
+                        ))}
+
+
+                      {searchTraining?.map((trainingData) => (
                       <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        <a href={`/training-detail/${trainingData.id}`} class="d-flex">
+                       {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{trainingData?.title}</strong></span>
                         </a>
                       </li>
+                        ))}
+
+
+                      {searchOperatingMannual?.map((operatingData) => (
                       <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
                         </a>
                       </li>
+                        ))}
+
+
+
+                    {searchOperatingMannual?.map((operatingData) => (
                       <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
+                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
                         </a>
                       </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
+                        ))}
+
+
+
+
+
                     </ul>
                   </div>
                 </div>
@@ -398,6 +592,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
             <ul>
               <li>
                 <span className="search-col cursor">
+                
                   <img alt="" src="/img/search-icon.svg" />
                 </span>
               </li>
@@ -414,7 +609,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
                     // onMouseEnter={() => setNotificationDialog(true)} 
                     // onMouseLeave={() => setNotificationDialog(false)} 
                     src="/img/notification-icon.svg" />
-                    <span class="tag">{topHeaderNotificationCount?topHeaderNotificationCount:0}</span>
+                    <span class="tag">{topHeaderNotificationCount?topHeaderNotificationCount > 99 ? "99+":topHeaderNotificationCount:0}</span>
                 </div>
                 </OverlayTrigger>
               </li>
@@ -422,7 +617,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
                 <Dropdown>
                   <Dropdown.Toggle id="dropdown-basic">
                     <span className="user-pic">
-                      <img alt="" id="user-pic" src="/img/user.png" />
+                      <img alt="" id="user-pic" src={localStorage.getItem('profile_photo') || ''} />
                     </span>
                     <span className="user-name">
                       {localStorage.getItem('user_name')

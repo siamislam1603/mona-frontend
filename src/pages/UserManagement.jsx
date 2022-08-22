@@ -50,30 +50,30 @@ const UserManagement = () => {
   
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
-      if (e.target.text === 'Delete') {
+      // if (e.target.text === 'Delete') {
 
-        async function deleteUserFromDB() {
-          const response = await axios.patch(
-            `${BASE_URL}/auth/user/status/${row.userID}`,
-            {
-              is_active: 2,
-            }, {
-            headers: {
-              "Authorization": `Bearer ${localStorage.getItem('token')}`
-            }
-          });
+      //   async function deleteUserFromDB() {
+      //     const response = await axios.patch(
+      //       `${BASE_URL}/auth/user/status/${row.userID}`,
+      //       {
+      //         is_active: 2,
+      //       }, {
+      //       headers: {
+      //         "Authorization": `Bearer ${localStorage.getItem('token')}`
+      //       }
+      //     });
 
-          if(response.status === 201 && response.data.status === "success") {
-            fetchUserDetails();
-          }
-        }
+      //     if(response.status === 201 && response.data.status === "success") {
+      //       fetchUserDetails();
+      //     }
+      //   }
 
-        if (window.confirm('Are you sure you want to delete this user?')) {
-          deleteUserFromDB();
-        }
+      //   if (window.confirm('Are you sure you want to delete this user?')) {
+      //     deleteUserFromDB();
+      //   }
 
-        // fetchUserDetails();
-      }
+      //   // fetchUserDetails();
+      // }
 
       if(e.target.text === "Deactivate") {
 
@@ -256,11 +256,9 @@ const UserManagement = () => {
 
         if(cell === 1) {
           button = "Deactivate";
-        } else if(cell === 2) {
-          button = "Activate";
         } else if(cell === 0) {
-          button = "Activate"
-        }
+          button = "Activate";
+        } 
         return (
           <>
             <div className="cta-col">
@@ -269,7 +267,6 @@ const UserManagement = () => {
                   <img src="../img/dot-ico.svg" alt="" />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  {cell !== 2 && <Dropdown.Item href="#">Delete</Dropdown.Item>}
                   <Dropdown.Item href="#">{button}</Dropdown.Item>
                   {cell === 1 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
                 </Dropdown.Menu>
@@ -286,18 +283,18 @@ const UserManagement = () => {
 
   const fetchUserDetails = async () => {
     let api_url = '';
-
+    let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
     if (search) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}`;
+      api_url = `${BASE_URL}/role/user/${id}?search=${search}`;
     }
     if (filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
     }
     if (search && filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}&filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
     }
     if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}`;
+      api_url = `${BASE_URL}/role/user/${id}`;
     }
 
 
@@ -315,7 +312,7 @@ const UserManagement = () => {
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}, ${dt.is_active}`,
         email: dt.email,
-        number: dt.phone.slice(1),
+        number: (dt.phone !== null ? dt.phone.slice(1) : null),
         location: dt.city,
         is_deleted: dt.is_deleted,
         userID: dt.id,
@@ -324,6 +321,10 @@ const UserManagement = () => {
       }));
 
       tempData = tempData.filter((data) => data.is_deleted === 0);
+      console.log('Temp Data:', tempData);
+      if(localStorage.getItem('user_role') === 'guardian') {
+        tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
+      }
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
       setUserData(tempData);
 
