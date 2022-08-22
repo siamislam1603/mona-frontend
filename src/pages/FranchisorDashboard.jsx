@@ -43,12 +43,19 @@ const columns1 = [
     formatter: (cell) => {
       console.log("CELL", cell)
       cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">{cell[0]} <small>{moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
+      return (<><div className="user-list">
+        <span className="user-pic">
+          <img src="../img/audit-form.png" />
+        </span>
+        <span className="user-name">
+        Compliance visit
+        <small> Audited on: {moment(cell[1]).format('DD/MM/YYYY')} 
+        </small></span></div></>)
     },
   },
   {
     dataField: 'educatorname',
-    text: 'Name',
+    text: 'Educator Name',
     formatter: (cell) => {
       console.log("EDUCATIN CELL", cell)
       cell = cell.split(",");
