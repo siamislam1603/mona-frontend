@@ -18,6 +18,14 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   const [notifData, setNotifData] = useState(null);
   const [topHeaderNotification, setTopHeaderNotification] = useState([]);
   const [topHeaderNotificationCount, setTopHeaderNotificationCount] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState('none');
+  const [searchResult, setSearchResult] = useState([]);
+  const [searchAnnouncement, setSearchAnnouncement] = useState([]);
+  const [searchFileRepository, setSearchFileRepository] = useState([]);
+  const [searchFranchise, setSearchFranchise] = useState([]);
+  const [searchOperatingMannual, setSearchOperatingMannual] = useState([]);
+  const [searchTraining, setSearchTraining] = useState([]);
+  const [searchUser, setSearchUser] = useState([]);
 
 
 
@@ -251,11 +259,44 @@ const handleMarkRearAll = async notificationId => {
       setNotifData(filteredData);
     }
   };
-  const handelSearch = (e) =>{
-    console.log("Event",e)
-    const { name, value } = e.target;
+  const handelSearch = async (e) =>{
+    e.preventDefault();
+    try {
+    let searchKey = e.target.value;
+    if(searchKey){
 
-    console.log("HANDLE SEARCH",name,value)
+        const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
+          headers: {"Authorization": "Bearer " + token}
+          });
+          
+          if(response.status === 200 && response.data.status === "success") {
+            
+            setSearchResult(response.data.data[0]) 
+            console.log("ddddddddddddddddddddddddddddddddddddddddddddd",response.data.data[0].announcement)
+
+            setSearchAnnouncement(response.data.data[0].announcement) 
+            setSearchFileRepository(response.data.data[0].fileRepository)
+            setSearchFranchise(response.data.data[0].franchise)
+            setSearchOperatingMannual(response.data.data[0].operatingMannual)
+            setSearchTraining(response.data.data[0].training)
+            setSearchUser(response.data.data[0].user)
+
+          }
+
+          }
+
+
+      } catch (error) {
+          if(error.response.status === 404){
+            // console.log("The code is 404")
+            setTopHeaderNotification([])
+          }
+      }
+
+      
+
+   
+
     // const queryParams = new URLSearchParams(window.location.search)
     // let term = queryParams.get("query")
     // console.log("TEM HANDEL SEARCH",term)
@@ -396,48 +437,48 @@ const handleMarkRearAll = async notificationId => {
                 />
                 <div className="tipsearch">
                   <div className="searchlisting cus-scr">
+
                     <ul>
+
+
+
+                    {searchAnnouncement?.map((announceData) => (
                       <li>
+                        <a href="/announcements" class="d-flex">
+                       {/* <img alt="" src={announceData?.coverImage?announceData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{announceData?.title}</strong></span>
+                        </a>
+                      </li>
+                        ))}
+
+
+                      {searchTraining?.map((trainingData) => (
+                      <li>
+                        <a href={`/training-detail/${trainingData.id}`} class="d-flex">
+                       {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{trainingData?.title}</strong></span>
+                        </a>
+                      </li>
+                        ))}
+
+
+
+                      </ul>
+                    
+
+
+
+                      
+
+
+
+                      {/* <li>
                         <a href="/" class="d-flex">
                           <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
                         </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="/" class="d-flex">
-                          <span class="sec-cont"><strong class="text-capitalize">Siddharth Shantilal Jain</strong></span>
-                        </a>
-                      </li>
-                    </ul>
+                      </li> */}
+        
+                    
                   </div>
                 </div>
                 <Link className="search-close" to="#">
