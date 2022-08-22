@@ -257,7 +257,7 @@ const DynamicForm = (props) => {
                             </Form.Select>)
                             }
                           </div>
-                          <p style={{ color: 'red', marginTop: '-8px' }}>
+                          <p className='error' style={{marginTop:"-10px !important"}}>
                             {errors.behalf_of}
                           </p>
                         </div>
