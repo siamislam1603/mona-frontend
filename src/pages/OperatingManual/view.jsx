@@ -16,7 +16,7 @@ import {
   Modal,
   Row,
 } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
@@ -24,12 +24,12 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { verifyPermission } from '../../helpers/roleBasedAccess';
-import { saveAs } from 'file-saver';
 
 let upperRoleUser = '';
 let selectedUserId = '';
 const OperatingManual = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [Index, setIndex] = useState(0);
   const [innerIndex, setInnerIndex] = useState(0);
   const [operatingManualdata, setOperatingManualdata] = useState([]);
@@ -136,9 +136,16 @@ const OperatingManual = () => {
         el.classList.add('expand');
         x.src = '../img/circle-minus.svg';
         const childNode = elm.childNodes[0];
-        if (index === 0) {
-          childNode.classList.add('tree-title');
+        if (location.search) {
+          if (index === Index) {
+            childNode.classList.add('tree-title');
+          }
+        } else {
+          if (index === 0) {
+            childNode.classList.add('tree-title');
+          }
         }
+
         // } else {
         //   x.src = '../img/plus-circle.svg';
         //   el.classList.add('collapse');
@@ -296,6 +303,17 @@ const OperatingManual = () => {
       .then((result) => {
         result = JSON.parse(result);
         setOperatingManualdata(result.result);
+        if (location.search) {
+          console.log('location---->', parseInt(location.search.split('=')[1]));
+          result?.result?.map((item, index) => {
+            item?.operating_manuals?.map((inner_item, inner_index) => {
+              if (inner_item.id === parseInt(location.search.split('=')[1])) {
+                setIndex(index);
+                setInnerIndex(inner_index);
+              }
+            });
+          });
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -352,7 +370,7 @@ const OperatingManual = () => {
       }
       // data['created_by'] = localStorage.getItem('user_id');
       data['shared_by'] = localStorage.getItem('user_id');
-      data['link']=FRONT_BASE_URL+"/operatingmanual?select=";
+      data['link'] = FRONT_BASE_URL + '/operatingmanual';
       upperRoleUser = getUpperRoleUser();
       data['upper_role'] = upperRoleUser;
       data['franchisee_id'] = selectedFranchiseeId;
@@ -385,8 +403,8 @@ const OperatingManual = () => {
               <div className="sec-column">
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
-                  setSelectedFranchisee={(name, id) => {
-                    setSelectedFranchisee(name);
+                  setSelectedFranchisee={(id) => {
+                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                     if (
@@ -437,6 +455,24 @@ const OperatingManual = () => {
                               </Dropdown.Toggle>
 
                               <Dropdown.Menu>
+                                {categoryFilter === 'reset' ? (
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      getOperatingManual('', '');
+                                    }}
+                                    active
+                                  >
+                                    Reset
+                                  </Dropdown.Item>
+                                ) : (
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      getOperatingManual('', '');
+                                    }}
+                                  >
+                                    Reset
+                                  </Dropdown.Item>
+                                )}
                                 {category?.map((item, index) => {
                                   return categoryFilter ===
                                     item.category_name ? (
@@ -464,24 +500,6 @@ const OperatingManual = () => {
                                     </Dropdown.Item>
                                   );
                                 })}
-                                {categoryFilter === 'reset' ? (
-                                  <Dropdown.Item
-                                    onClick={() => {
-                                      getOperatingManual('', '');
-                                    }}
-                                    active
-                                  >
-                                    Reset
-                                  </Dropdown.Item>
-                                ) : (
-                                  <Dropdown.Item
-                                    onClick={() => {
-                                      getOperatingManual('', '');
-                                    }}
-                                  >
-                                    Reset
-                                  </Dropdown.Item>
-                                )}
                               </Dropdown.Menu>
                             </Dropdown>
                           </div>
@@ -505,7 +523,10 @@ const OperatingManual = () => {
                                           setInnerIndex(inner_index);
                                         }}
                                       >
-                                        {console.log("inner_item---->1111111",inner_item)}
+                                        {console.log(
+                                          'inner_item---->1111111',
+                                          inner_item
+                                        )}
                                         <a
                                           className={
                                             index === Index &&
@@ -682,21 +703,11 @@ const OperatingManual = () => {
                                                     file_item
                                                   )}
 
-                                                  <button
+                                                  <a
                                                     className="forms-content create-other"
-                                                    onClick={(e) => {
-                                                      e.preventDefault();
-                                                      saveAs(
-                                                        'data:text/plain;charset=utf-8, ' +
-                                                          encodeURIComponent(
-                                                            file_item.url
-                                                          ),
-                                                        file_item.name
-                                                      );
-                                                      // window.open(
-                                                      //   file_item.url
-                                                      // );
-                                                    }}
+                                                    role="button"
+                                                    href={file_item.url}
+                                                    download
                                                   >
                                                     <div className="content-icon-section">
                                                       <img
@@ -718,7 +729,7 @@ const OperatingManual = () => {
                                                         ).format('DD/MM/YYYY')}
                                                       </h4>
                                                     </div>
-                                                  </button>
+                                                  </a>
                                                 </>
                                               );
                                             }
@@ -835,40 +846,42 @@ const OperatingManual = () => {
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
-                  {localStorage.getItem("user_role")==="franchisor_admin" && <label className="container">
-                      Franchisee Admin
-                      <input
-                        type="checkbox"
-                        name="shared_role"
-                        id="franchisee_admin"
-                        onClick={(e) => {
-                          let data = { ...formSettingData };
-                          if (
-                            !data['shared_role']
-                              .toString()
-                              .includes(e.target.id)
-                          ) {
-                            data['shared_role'] += e.target.id + ',';
-                          } else {
-                            data['shared_role'] = data['shared_role'].replace(
-                              e.target.id + ',',
-                              ''
-                            );
-                            if (data['shared_role'].includes('all')) {
+                    {localStorage.getItem('user_role') ===
+                      'franchisor_admin' && (
+                      <label className="container">
+                        Franchisee Admin
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="franchisee_admin"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
                               data['shared_role'] = data['shared_role'].replace(
-                                'all,',
+                                e.target.id + ',',
                                 ''
                               );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
                             }
-                          }
-                          setFormSettingData(data);
-                        }}
-                        checked={formSettingData?.shared_role
-                          ?.toString()
-                          .includes('franchisee_admin')}
-                      />
-                      <span className="checkmark"></span>
-                    </label>}
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('franchisee_admin')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    )}
                     <label className="container">
                       Co-ordinators
                       <input
@@ -1049,7 +1062,14 @@ const OperatingManual = () => {
           </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button className="back" onClick={()=>{setFormSettingFlag(false)}}>Cancel</Button>
+          <Button
+            className="back"
+            onClick={() => {
+              setFormSettingFlag(false);
+            }}
+          >
+            Cancel
+          </Button>
           <Button className="done" onClick={onModelSubmit}>
             Save Settings
           </Button>

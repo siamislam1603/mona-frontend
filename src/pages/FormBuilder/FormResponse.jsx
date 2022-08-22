@@ -26,9 +26,9 @@ function FormResponse(props) {
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
   useEffect(() => {
-    getResponse("");
+    getResponse('');
   }, []);
-  const getResponse=(search)=>{
+  const getResponse = (search) => {
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
@@ -37,7 +37,7 @@ function FormResponse(props) {
     fetch(
       `${BASE_URL}/form/response?search=${search}&form_id=${
         location?.state?.id ? location?.state?.id : 1
-      }`,
+      }&user_id=${localStorage.getItem("user_id")}&user_role=${localStorage.getItem("user_role")}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -46,7 +46,7 @@ function FormResponse(props) {
         setFormData(result?.form);
       })
       .catch((error) => console.log('error', error));
-  }
+  };
   return (
     <>
       {console.log('result?.result---->', responseData)}

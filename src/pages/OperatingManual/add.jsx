@@ -204,7 +204,7 @@ const AddOperatingManual = () => {
         data['shared_with'] = selectedUserId
           ? selectedUserId.slice(0, -1)
           : null;
-        data['link']=FRONT_BASE_URL+"/operatingmanual?select=";
+        data['link']=FRONT_BASE_URL+"/operatingmanual";
         // data['shared_role'] = null;
         // data['accessible_to_role'] = formSettingData.accessible_to_role;
         // data['accessible_to_all'] = false;
@@ -493,8 +493,8 @@ const AddOperatingManual = () => {
                 <div className="new_module">
                   <TopHeader
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={(name, id) => {
-                      setSelectedFranchisee(name);
+                    setSelectedFranchisee={(id) => {
+                      id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
                       setSelectedFranchiseeId(id);
                       localStorage.setItem('f_id', id);
                     }}
@@ -733,7 +733,7 @@ const AddOperatingManual = () => {
                                     src="../img/bi_cloud-upload.svg"
                                     alt=""
                                   />
-                                  Add File
+                                  Add Video
                                 </span>
                                 <Form.Control
                                   className="add_image_input"
