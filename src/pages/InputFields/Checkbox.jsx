@@ -18,6 +18,10 @@ const Checkbox = (props) => {
                     name={controls.field_name}
                     id={Object.keys(item2)[0]}
                     value={Object.keys(item2)[0]}
+                    onClick={(e) => {
+                      //  setDefaultValueCheck(e.target.value);
+                      props.onChange(e.target.name, e.target.value);
+                    }}
                   />
                   <span className="checkmark"></span>
                 </label>
