@@ -88,7 +88,7 @@ const DynamicForm = (props) => {
       .then((result) => {
         let res = JSON.parse(result);
         setFormData(res.result);
-        setFormPermission(res.form_permission);
+        setFormPermission(res?.form[0]?.form_permissions[0]);
         let formsData = {};
         let data = {};
         Object.keys(res?.result)?.map((item) => {
@@ -186,9 +186,10 @@ const DynamicForm = (props) => {
                 </Row>
                 <Form>
                   <Row>
+                    {console.log("formPermission?.target_user--->",formPermission)}
                     {!(
                       formPermission?.target_user?.includes(
-                        localStorage.getItem('user_role')
+                        localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role')
                       ) ||
                       formPermission?.target_user?.includes(
                         localStorage.getItem('user_id')
