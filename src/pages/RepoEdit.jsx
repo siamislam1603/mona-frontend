@@ -133,6 +133,29 @@ const RepoEdit = () => {
             window.location.href = '/file-repository';
         }
     }
+
+    const childList = async () => {
+        const token = localStorage.getItem('token');
+        console.log("data frnahise", data.franchise)
+        const response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, {
+            franchisee_id: data.franchise
+
+        },
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+        console.log("CHIlD DATA after franhisee", response)
+        if (response.status === 200 && response.data.status === "success") {
+            setData((prevState) => ({
+                ...prevState,
+                franchise: [data.franchise.map(option => option.id + "")]
+            }));
+        }
+
+    }
+
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/role/franchisee`, {
@@ -217,8 +240,14 @@ const RepoEdit = () => {
         getFileCategory();
         getUser();
         fetchFranchiseeList();
+        // childList()
     }, []);
-    data && console.log('IMAGE DATA:', data.image);
+
+    useEffect(() => {
+        childList()
+    }, [data.franchise])
+
+    data && console.log('FILE REPO DATA:', data.franchise);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
     return (
         <div style={{ position: "relative", overflow: "hidden" }}>
@@ -244,7 +273,7 @@ const RepoEdit = () => {
                                     </header>
                                     <div className="form-settings-content">
                                         <div className="form-settings-content">
-                                            <div className="modal-top">
+                                            <div className="modal-top">``
                                                 <div className="modal-top-containt">
                                                     <Row>
                                                         {/* <Col md={6}>
@@ -429,6 +458,54 @@ const RepoEdit = () => {
                                                             <Form.Label>Select Franchisee</Form.Label>
                                                             <div className="select-with-plus">
                                                                 {/* <Multiselect
+                                                                    placeholder={"Select User Names"}
+                                                                    displayValue="key"
+                                                                    selectedValues={franchiseeList?.filter(d => parseInt(data?.franchise) === d.id)}
+                                                                    className="multiselect-box default-arrow-select"
+                                                                    onKeyPressFn={function noRefCheck() { }}
+                                                                    onRemove={function noRefCheck(data) {
+                                                                        setData((prevState) => ({
+                                                                            ...prevState,
+                                                                            franchise: [...data.map(data => data.id)],
+                                                                        }));
+                                                                    }}
+                                                                    onSelect={function noRefCheck(data) {
+                                                                        setData((prevState) => ({
+                                                                            ...prevState,
+                                                                            franchise: [...data.map((data) => data.id)],
+                                                                        }));
+                                                                    }}
+                                                                    options={franchiseeList}
+                                                                /> */}
+                                                                <Multiselect
+                                                                    disable={sendToAllFranchisee === 'all'}
+                                                                    placeholder={"Select User Names"}
+                                                                    displayValue="key"
+                                                                    className="multiselect-box default-arrow-select"
+                                                                    onRemove={function noRefCheck(data) {
+                                                                        setFormSettings((prevState) => ({
+                                                                            ...prevState,
+                                                                            franchise: [...data.map(data => data.id)],
+                                                                        }));
+                                                                    }}
+                                                                    selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
+                                                                    onSelect={(selectedOptions) => {
+                                                                        setData((prevState) => ({
+                                                                            ...prevState,
+                                                                            franchise: [...selectedOptions.map(option => option.id + "")]
+                                                                        }));
+                                                                    }}
+                                                                    options={franchiseeList}
+                                                                />
+                                                            </div>
+                                                        </Form.Group>
+                                                    </Col>
+                                                    <Col lg={5} md={12}>
+                                                        <Form.Group>
+                                                            <Form.Label>Selected Child</Form.Label>
+                                                            <div className="select-with-plus">
+                                                                {/* <Multiselect
+                                                                   
                                                                     placeholder={"Select User Names"}
                                                                     displayValue="key"
                                                                     selectedValues={franchiseeList?.filter(d => parseInt(data?.franchise) === d.id)}

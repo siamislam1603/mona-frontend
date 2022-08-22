@@ -11,7 +11,6 @@ import TopHeader from '../../components/TopHeader';
 import Setting from './Setting';
 
 function FormSetting(props) {
-  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,11 +25,12 @@ function FormSetting(props) {
               </aside>
               <div className="sec-column">
                 <TopHeader
-                  selectedFranchisee={selectedFranchisee}
-                  setSelectedFranchisee={(name, id) => {
-                    setSelectedFranchisee(name);
+                  selectedFranchisee={selectedFranchiseeId}
+                  setSelectedFranchisee={(id) => {
+                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
+
                   }}
                 />
                 <Row>
@@ -49,7 +49,7 @@ function FormSetting(props) {
                     </div>
                   </Col>
                 </Row>
-                <Setting/>
+                <Setting />
               </div>
             </div>
           </Container>

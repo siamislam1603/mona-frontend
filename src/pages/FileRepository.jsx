@@ -67,6 +67,7 @@ const FileRepository = () => {
   const [user, setUser] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [category, setCategory] = useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   // console.log(category, "category")
   const [filterFlag, setFilterFlag] = useState(false);
   const [selectedAll, setSelectedAll] = useState(false);
@@ -301,8 +302,9 @@ const FileRepository = () => {
       redirect: 'follow',
     };
 
-
-    fetch(`${BASE_URL}/fileRepo/`, requestOptions)
+    const ID_array = selectedFranchisee?.split(",");
+    let data = ID_array?.length > 1 ? ID_array?.slice(1) : ID_array;
+    fetch(`${BASE_URL}/fileRepo?childId=${data}`, requestOptions)
       .then((response) => {
         response.json()
         console.log(response.statusText, "+++++++++++")
@@ -432,6 +434,9 @@ const FileRepository = () => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
+
+  selectedFranchisee && console.log('Selected Franchisee Outside Tab:', selectedFranchisee);
+  // console.log('TYPE OF:', typeof selectedFranchisee);
   return (
     <>
       {console.log('hello----->', formSettingData)}
@@ -443,7 +448,9 @@ const FileRepository = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader 
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={setSelectedFranchisee} />
                 {console.log("assigned_usersMeFileRepoData------>", assigned_usersMeFileRepoData)}
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
