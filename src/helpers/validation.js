@@ -27,9 +27,11 @@ export const DynamicFormValidation = (form, data, behalf_of) => {
 };
 export const createCategoryValidation = (form) => {
   let newErrors = {};
-  let { category_name } = form;
+  let { category_name,order } = form;
   if (!category_name || category_name === '')
     newErrors.category_name = 'Category Name is Required';
+    if (!order || order === '')
+    newErrors.order = 'Position is Required';
   return newErrors;
 };
 export const createFormSettingModelValidation = (form, franchisee, user) => {
