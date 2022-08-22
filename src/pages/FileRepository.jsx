@@ -639,7 +639,7 @@ const FileRepository = () => {
                 <Row>
                   <Col md={12}>
                     <Form.Group>
-                    <Form.Label>Upload File:*</Form.Label>
+                      <Form.Label>Upload File:*</Form.Label>
                       <DragDropRepository onChange={setField} />
                       {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                       <p className="error">{errors.setting_files}</p>
@@ -1031,12 +1031,12 @@ const FileRepository = () => {
               type="button"
               id="extrabtn"
               aria-expanded="false"
-              class="filter-button btn btn-btn-outline "
+              className="filter-button btn btn-btn-outline "
               onClick={() => {
                 setFilterFlag(true);
               }}
             >
-              <i class="filter-ico"></i> Add Filters
+              <i className="filter-ico"></i> Add Filters
             </button>
           </Modal.Header>
           <Modal.Body>
@@ -1192,7 +1192,7 @@ const FileRepository = () => {
               <div className="select-check-wrp">
                 {userRole.map((item) => {
                   return (
-                    <div class="form-group">
+                    <div className="form-group">
                       <input type="radio" id={item.role_name} name="role" />
                       <label for={item.role_name}>{item.role_label}</label>
                     </div>
@@ -1200,19 +1200,19 @@ const FileRepository = () => {
                 })}
               </div>
               {/* <div className="select-check-wrp">
-                <div class="form-group">
+                <div className="form-group">
                   <input type="checkbox" id="html" />
                   <label for="html">Admin</label>
                 </div>
-                <div class="form-group">
+                <div className="form-group">
                   <input type="checkbox" id="css" />
                   <label for="css">Co-ordinator</label>
                 </div>
-                <div class="form-group">
+                <div className="form-group">
                   <input type="checkbox" id="javascript" />
                   <label for="javascript">Educator</label>
                 </div>
-                <div class="form-group">
+                <div className="form-group">
                   <input type="checkbox" id="javascript1" />
                   <label for="javascript1">Parent/Guardian</label>
                 </div>
