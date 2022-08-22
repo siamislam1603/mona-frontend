@@ -60,7 +60,7 @@ const DynamicForm = (props) => {
     
     let api_url = `${BASE_URL}/form/target_users?form_name=${form_name}&franchisee_id=${localStorage.getItem(
       'franchisee_id'
-    )}`;
+    )}&user_id=${localStorage.getItem("user_id")}&user_role=${localStorage.getItem("user_role")}`;
 
     fetch(api_url, requestOptions)
       .then((response) => response.json())
