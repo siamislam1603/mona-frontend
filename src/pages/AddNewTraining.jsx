@@ -201,20 +201,21 @@ const AddNewTraining = () => {
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
     console.log('franchisee_id:', franchisee_id);
-    if (franchisee_id.length > 0 && franchisee_id[0] !== 'all') {
-      console.log('FETCHING FRANCHISEE USERS!');
-      const response = await axios.get(`${BASE_URL}/user-group/users/franchisee/${franchisee_id[0]}`);
-      if (response.status === 200 && response.data.status === "success") {
-        const { users } = response.data;
-        setFetchedFranchiseeUsers([
-          ...users?.map((data) => ({
-            id: data.id,
-            cat: data.fullname.toLowerCase().split(" ").join("_"),
-            key: data.fullname
-          })),
-        ]);
-      }
+    // if (franchisee_id.length > 0 && franchisee_id[0] !== 'all') {
+    console.log('FETCHING FRANCHISEE USERS!');
+    const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${franchisee_id}]`);
+    console.log('USER DATA FROM FRANCHISEE:', response);
+    if (response.status === 200 && response.data.status === "success") {
+      const { users } = response.data;
+      setFetchedFranchiseeUsers([
+        ...users?.map((data) => ({
+          id: data.id,
+          cat: data.fullname.toLowerCase().split(" ").join("_"),
+          key: data.fullname
+        })),
+      ]);
     }
+    // }
   };
 
   // FETCHING TRAINING FORM DATA
@@ -340,8 +341,6 @@ const AddNewTraining = () => {
   }, [trainingSettings.assigned_franchisee]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  trainingFormData && console.log('TRAINING FORM DATA:', trainingFormData);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -740,7 +739,7 @@ const AddNewTraining = () => {
                   <div className="select-with-plus">
                     <Multiselect
                       disable={trainingSettings?.send_to_all_franchisee === true}
-                      singleSelect={true}
+                      // singleSelect={true}
                       placeholder={"Select User Names"}
                       displayValue="key"
                       className="multiselect-box default-arrow-select"
