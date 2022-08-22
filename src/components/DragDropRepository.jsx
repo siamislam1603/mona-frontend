@@ -5,10 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function DragDropRepository({ onChange, setPopupVisible, imageToCrop }) {
   const [myFiles, setMyFiles] = useState([])
-  // NEW FUNCTION FOR ME********************************
-  // const onDrop = useCallback(acceptedFiles => {
-  //   setMyFiles([...myFiles, ...acceptedFiles])
-  // }, [myFiles])
+ 
   const { acceptedFiles, getRootProps, getInputProps } =
     useDropzone
       ({
@@ -87,7 +84,6 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
         <input {...getInputProps()} type="file" name="setting_file" />
         <div className="text-center uploadfile">
           <span>Please Select a file to share : <br /><span className="btn btn-primary" >Choose File</span> <br /> <small>Accepted file types : doc, pdf, mp3, png, jpg</small></span>
-
         </div>
       </div>
       <div className="showfiles">
