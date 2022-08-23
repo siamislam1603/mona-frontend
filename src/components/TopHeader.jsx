@@ -458,7 +458,6 @@ const handelSearch = async (e) =>{
   childList && console.log('Child List:', childList);
   return (
     <>
-      <FullLoader loading={true} />
       <div className="topheader" style={{ position: 'relative' }}>
         <div className="lpanel">
           {
@@ -705,6 +704,7 @@ const handelSearch = async (e) =>{
           </div>
         </div>
       </div>
+                      
       {/* {
         notificationDialog === true &&
         <div className="notification-dialog">
