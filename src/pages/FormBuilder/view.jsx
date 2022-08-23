@@ -39,14 +39,11 @@ function ViewFormBuilder(props) {
   }, []);
   const deleteForm = (id) => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + token
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'DELETE',
       redirect: 'follow',
-      headers: myHeaders
+      headers: myHeaders,
     };
 
     fetch(
@@ -62,14 +59,11 @@ function ViewFormBuilder(props) {
   };
   const getFormData = (search) => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + token
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
-      headers: myHeaders
+      headers: myHeaders,
     };
 
     fetch(
@@ -86,7 +80,6 @@ function ViewFormBuilder(props) {
         let me = [];
         let others = [];
         result?.result.map((item, index) => {
-          console.log('item--->', item);
           me.push(item);
           others.push(item);
           me.forms = [];
@@ -104,24 +97,19 @@ function ViewFormBuilder(props) {
               others.forms.push(inner_item);
             }
           });
-          console.log('me.forms--->', me.forms);
           if (me.forms.length === 0) {
             delete me[index];
           }
-          console.log('others.forms.length---->', others.forms);
           if (others.forms.length === 0) {
             delete others[index];
           }
         });
-        console.log('me--->', me);
-        console.log('others--->', others);
         setMeFormData(me);
         setOthersFormData(others);
       })
       .catch((error) => console.log('error', error));
   };
   const seenFormResponse = (data) => {
-    console.log('data--->RESPONSE', data);
     let seenData = [];
     data?.map((item) => {
       item?.map((inner_item) => {
@@ -133,10 +121,7 @@ function ViewFormBuilder(props) {
     });
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + token
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -182,12 +167,6 @@ function ViewFormBuilder(props) {
                           />
                         </Form.Group>
                       </div>
-                      {/* <div className="forms-filter">
-                        <Button variant="outline-primary">
-                          <img src="../img/Vector.svg" />
-                          Add Filters
-                        </Button>
-                      </div> */}
                       {(localStorage.getItem('user_role') ===
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
@@ -206,24 +185,6 @@ function ViewFormBuilder(props) {
                           </Button>
                         </div>
                       )}
-                      {/* <div className="forms-toogle">
-                        <div class="custom-menu-dots">
-                          <Dropdown>
-                            <Dropdown.Toggle id="dropdown-basic">
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item href="#/action-1">
-                                <FontAwesomeIcon icon={faPen} /> Edit
-                              </Dropdown.Item>
-                              <Dropdown.Item href="#/action-2">
-                                <FontAwesomeIcon icon={faRemove} /> Remove
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </div>
-                      </div> */}
                     </div>
                   </div>
                   <div className="tab-section">
@@ -240,22 +201,9 @@ function ViewFormBuilder(props) {
                           {formData?.map((item) => {
                             return (
                               <>
-                                {/* <Row>
-                                  <Col lg={12}>
-                                    <h2 className="page_title">
-                                      {item.category}
-                                    </h2>
-                                  </Col>
-                                </Row> */}
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
-                                      {
-                                        console.log(
-                                          'inner_item--->',
-                                          inner_item.form_filled_user
-                                        );
-                                      }
                                       return inner_item.end_date &&
                                         !(
                                           inner_item?.form_filled_user || []
@@ -266,7 +214,10 @@ function ViewFormBuilder(props) {
                                           inner_item.form_permissions[0]
                                             ?.fill_access_users || []
                                         ).includes(
-                                          localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role')
+                                          localStorage.getItem('user_role') ===
+                                            'guardian'
+                                            ? 'parent'
+                                            : localStorage.getItem('user_role')
                                         ) ||
                                           (
                                             inner_item.form_permissions[0]
@@ -277,7 +228,13 @@ function ViewFormBuilder(props) {
                                           (
                                             inner_item.upper_role || []
                                           ).includes(
-                                            localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role') 
+                                            localStorage.getItem(
+                                              'user_role'
+                                            ) === 'guardian'
+                                              ? 'parent'
+                                              : localStorage.getItem(
+                                                  'user_role'
+                                                )
                                           ) ||
                                           inner_item.created_by ===
                                             parseInt(
@@ -286,8 +243,6 @@ function ViewFormBuilder(props) {
                                           localStorage.getItem('user_role') ===
                                             'franchisor_admin') ? (
                                         <>
-                                          {console.log('Hello--->', inner_item)}
-                                          {/* {(hrFlag = true)} */}
                                           {inner_index === 0 && (
                                             <Row>
                                               <Col lg={12}>
@@ -302,15 +257,11 @@ function ViewFormBuilder(props) {
                                               <div
                                                 className="content-icon-section"
                                                 onClick={() => {
-                                                  if (
-                                                    inner_item.end_date
-                                                  ) {
-                                                    let todayDate =
-                                                      new Date();
-                                                    let endDate =
-                                                      new Date(
-                                                        inner_item.end_date
-                                                      );
+                                                  if (inner_item.end_date) {
+                                                    let todayDate = new Date();
+                                                    let endDate = new Date(
+                                                      inner_item.end_date
+                                                    );
                                                     if (
                                                       todayDate.getTime() >
                                                       endDate.getTime()
@@ -324,8 +275,7 @@ function ViewFormBuilder(props) {
                                                       navigate(
                                                         `/form/dynamic/${inner_item.form_name}`
                                                       );
-                                                  }
-                                                  else
+                                                  } else
                                                     navigate(
                                                       `/form/dynamic/${inner_item.form_name}`
                                                     );
@@ -361,15 +311,11 @@ function ViewFormBuilder(props) {
                                               <div
                                                 className="content-title-section"
                                                 onClick={() => {
-                                                  if (
-                                                    inner_item.end_date
-                                                  ) {
-                                                    let todayDate =
-                                                      new Date();
-                                                    let endDate =
-                                                      new Date(
-                                                        inner_item.end_date
-                                                      );
+                                                  if (inner_item.end_date) {
+                                                    let todayDate = new Date();
+                                                    let endDate = new Date(
+                                                      inner_item.end_date
+                                                    );
                                                     if (
                                                       todayDate.getTime() >
                                                       endDate.getTime()
@@ -383,8 +329,7 @@ function ViewFormBuilder(props) {
                                                       navigate(
                                                         `/form/dynamic/${inner_item.form_name}`
                                                       );
-                                                  }
-                                                  else
+                                                  } else
                                                     navigate(
                                                       `/form/dynamic/${inner_item.form_name}`
                                                     );
@@ -398,38 +343,6 @@ function ViewFormBuilder(props) {
                                                   ).format('DD/MM/YYYY')}
                                                 </h4>
                                               </div>
-                                              {/* <div className="content-toogle">
-                                                <Dropdown>
-                                                  <Dropdown.Toggle id="dropdown-basic1">
-                                                    <FontAwesomeIcon
-                                                      icon={faEllipsisVertical}
-                                                    />
-                                                  </Dropdown.Toggle>
-
-                                                  <Dropdown.Menu>
-                                                    <Dropdown.Item
-                                                      onClick={() => {
-                                                        navigate('/form/add', {
-                                                          state: {
-                                                            id: inner_item.id,
-                                                          },
-                                                        });
-                                                      }}
-                                                    >
-                                                      <FontAwesomeIcon
-                                                        icon={faPen}
-                                                      />{' '}
-                                                      Edit
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item href="#/action-2">
-                                                      <FontAwesomeIcon
-                                                        icon={faRemove}
-                                                      />{' '}
-                                                      Remove
-                                                    </Dropdown.Item>
-                                                  </Dropdown.Menu>
-                                                </Dropdown>
-                                              </div> */}
                                             </div>
                                           </Col>
                                         </>
@@ -437,7 +350,6 @@ function ViewFormBuilder(props) {
                                     }
                                   )}
                                 </Row>
-                                {/* {hrFlag && <hr className="date-line"></hr>} */}
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
@@ -451,7 +363,10 @@ function ViewFormBuilder(props) {
                                           inner_item.form_permissions[0]
                                             ?.fill_access_users || []
                                         ).includes(
-                                          localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role')
+                                          localStorage.getItem('user_role') ===
+                                            'guardian'
+                                            ? 'parent'
+                                            : localStorage.getItem('user_role')
                                         ) ||
                                           (
                                             inner_item.form_permissions[0]
@@ -482,12 +397,7 @@ function ViewFormBuilder(props) {
                                           )}
                                           <Col lg={4}>
                                             {(hrFlag = false)}
-                                            {console.log(
-                                              'inner_item?.end_date---->ELSE',
-                                              inner_item?.end_date,
-                                              '------',
-                                              inner_item
-                                            )}
+
                                             <div className="forms-content create-other">
                                               <div
                                                 className="content-icon-section"
@@ -540,38 +450,6 @@ function ViewFormBuilder(props) {
                                                   ).format('DD/MM/YYYY')}
                                                 </h4>
                                               </div>
-                                              {/* <div className="content-toogle">
-                                                <Dropdown>
-                                                  <Dropdown.Toggle id="dropdown-basic1">
-                                                    <FontAwesomeIcon
-                                                      icon={faEllipsisVertical}
-                                                    />
-                                                  </Dropdown.Toggle>
-
-                                                  <Dropdown.Menu>
-                                                    <Dropdown.Item
-                                                      onClick={() => {
-                                                        navigate('/form/add', {
-                                                          state: {
-                                                            id: inner_item.id,
-                                                          },
-                                                        });
-                                                      }}
-                                                    >
-                                                      <FontAwesomeIcon
-                                                        icon={faPen}
-                                                      />{' '}
-                                                      Edit
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item href="#/action-2">
-                                                      <FontAwesomeIcon
-                                                        icon={faRemove}
-                                                      />{' '}
-                                                      Remove
-                                                    </Dropdown.Item>
-                                                  </Dropdown.Menu>
-                                                </Dropdown>
-                                              </div> */}
                                             </div>
                                           </Col>
                                         </>
@@ -601,7 +479,10 @@ function ViewFormBuilder(props) {
                                           inner_item.form_permissions[0]
                                             ?.fill_access_users || []
                                         ).includes(
-                                          localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role')
+                                          localStorage.getItem('user_role') ===
+                                            'guardian'
+                                            ? 'parent'
+                                            : localStorage.getItem('user_role')
                                         ) ||
                                           (
                                             inner_item.form_permissions[0]
@@ -687,7 +568,6 @@ function ViewFormBuilder(props) {
                                                   ).format('DD/MM/YYYY')}
                                                 </h4>
                                               </div>
-                                              {/* {inner_item.form_type!=="single_submission" && ( */}
                                               <div className="content-toogle">
                                                 <Dropdown>
                                                   <Dropdown.Toggle id="dropdown-basic1">
@@ -721,8 +601,7 @@ function ViewFormBuilder(props) {
                                                             navigate(
                                                               `/form/dynamic/${inner_item.form_name}`
                                                             );
-                                                        }
-                                                        else
+                                                        } else
                                                           navigate(
                                                             `/form/dynamic/${inner_item.form_name}`
                                                           );
@@ -1167,37 +1046,6 @@ function ViewFormBuilder(props) {
           <Modal.Title>
             <img src="../img/survey.png" />
             <h1>Form Responses</h1>
-            {/* {key === 'created-by-me' &&
-            MeFormData[Index]?.forms[innerIndex]?.form_data.length === 0 ? (
-              <button
-                className="view-response-button"
-                onClick={() => {
-                  navigate('/form/response', {
-                    state: {
-                      id: MeFormData[Index]?.forms[innerIndex]?.id,
-                    },
-                  });
-                }}
-              >
-                View Response
-              </button>
-            ) : (
-              OthersFormData[Index]?.forms[innerIndex]?.form_data.length ===
-                0 && (
-                <button
-                  className="view-response-button"
-                  onClick={() => {
-                    navigate('/form/response', {
-                      state: {
-                        id: OthersFormData[Index]?.forms[innerIndex]?.id,
-                      },
-                    });
-                  }}
-                >
-                  View Response
-                </button>
-              )
-            )} */}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -1215,12 +1063,6 @@ function ViewFormBuilder(props) {
                 ? MeFormData[Index]?.forms &&
                   MeFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item) => {
-                      {
-                        console.log(
-                          'MeFormData--->',
-                          MeFormData[Index]?.forms[innerIndex]?.id
-                        );
-                      }
                       return (
                         <div className="user_box">
                           <div className="user_name">
@@ -1290,12 +1132,6 @@ function ViewFormBuilder(props) {
                     (item, index) => {
                       return (
                         <div className="user_box">
-                          {console.log(
-                            'item?.seen_flag--->',
-                            item[0]?.seen_flag,
-                            'index--->',
-                            index
-                          )}
                           <div className="user_name">
                             <div className="user_profile">
                               <img src="../img/user_img.png" alt="" />
