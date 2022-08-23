@@ -151,7 +151,7 @@ const FileRepository = () => {
         headers: myHeaders,
     };
 
-    let response = await axios.post(`http://127.0.0.1:4000/enrollment/franchisee/child`,{franchisee_id:franchiseeArr},request)
+    let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`,{franchisee_id:franchiseeArr},request)
     if (response.status === 200) {
         setChild(response.data.children)
     }}
@@ -202,7 +202,7 @@ const FileRepository = () => {
 
     let franchiseeArr = formSettings.franchisee
 
-    let response = await axios.post(`http://127.0.0.1:4000/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
+    let response = await axios.post(`${BASE_URL}/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
     if (response.status === 200) {
         // console.log(response.data.users, "respo")
         setUser(response.data.users)
