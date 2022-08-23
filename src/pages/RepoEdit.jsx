@@ -12,9 +12,22 @@ import Select from 'react-select';
 import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
 import VideoPop from "../components/VideoPop";
+import { Viewer } from '@react-pdf-viewer/core';
+import { Document, Page, pdfjs } from 'react-pdf';
+
+import '@react-pdf-viewer/core/lib/styles/index.css';
+const url = "https://cors-anywhere.herokuapp.com/http://www.pdf995.com/samples/pdf.pdf"
+
+
 const animatedComponents = makeAnimated();
 let selectedUserId = '';
 const RepoEdit = () => {
+    const [url, setUrl] = React.useState('');
+
+
+
+
+
     const Params = useParams();
     const navigate = useNavigate();
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
@@ -72,6 +85,10 @@ const RepoEdit = () => {
         }));
         setCoverImage(data?.repository_files[0].filesPath);
     }
+    const onChange = (e) => {
+        const files = data.image;
+        files.length > 0 && setUrl(files);
+    };
     // FUNCTION TO SAVE TRAINING DATA
     const handleDiscriptionData = (event) => {
         const { name, value } = event.target;
@@ -247,6 +264,36 @@ const RepoEdit = () => {
         childList()
     }, [data.franchise])
 
+
+    pdfjs.GlobalWorkerOptions.workerSrc =
+        `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+    const [numPages, setNumPages] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1);
+
+    /*To Prevent right click on screen*/
+    document.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+    });
+
+    /*When document gets loaded successfully*/
+
+    function onDocumentLoadSuccess({ numPages }) {
+        setNumPages(numPages);
+        setPageNumber(1);
+    }
+
+    function changePage(offset) {
+        setPageNumber(prevPageNumber => prevPageNumber + offset);
+    }
+
+    function previousPage() {
+        changePage(-1);
+    }
+
+    function nextPage() {
+        changePage(1);
+    }
+
     data && console.log('FILE REPO DATA:', data.franchise);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
     return (
@@ -273,9 +320,47 @@ const RepoEdit = () => {
                                     </header>
                                     <div className="form-settings-content">
                                         <div className="form-settings-content">
-                                            <div className="modal-top">``
+                                            <div className="modal-top">
                                                 <div className="modal-top-containt">
+                                                    {console.log(pageNumber, "pageNumber    ")}
                                                     <Row>
+                                                        {/* <div style={{ width: "200px", height: "200px", backgroundColor: "red", overflow: "hidden" }}>
+                                                            <Document
+                                                                file={url}
+                                                                onLoadSuccess={onDocumentLoadSuccess}
+                                                            >
+                                                                <Page pageNumber={pageNumber} style={{ width: "100%" }} />
+                                                            </Document>
+                                                        </div>
+                                                        <input type="file" accept=".pdf" onChange={onChange} /> */}
+                                                        {/* <div className="mt4" style={{ height: '750px' }}>
+                                                            {url ? (
+                                                                <div
+                                                                    style={{
+                                                                        border: '1px solid rgba(0, 0, 0, 0.3)',
+                                                                        height: '100%',
+                                                                    }}
+                                                                >
+                                                                    <Viewer fileUrl={url} />
+                                                                </div>
+                                                            ) : (
+                                                                <div
+                                                                    style={{
+                                                                        alignItems: 'center',
+                                                                        border: '2px dashed rgba(0, 0, 0, .3)',
+                                                                        display: 'flex',
+                                                                        fontSize: '2rem',
+                                                                        height: '100%',
+                                                                        justifyContent: 'center',
+                                                                        width: '100%',
+                                                                    }}
+                                                                >
+                                                                    Preview area
+                                                                </div>
+                                                            )}
+                                                        </div> */}
+
+
                                                         {/* <Col md={6}>
                                                             <DropOneFile
                                                                 onSave={setCoverImage}
@@ -309,6 +394,14 @@ const RepoEdit = () => {
                                                                     (<>
                                                                         {data.file_type === "image/jpeg" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
                                                                             data.file_type === "application/pdf" ? (<>
+                                                                                {/* <div style={{ width: "200px", height: "200px", backgroundColor: "red", overflow: "hidden" }}>
+                                                                                    <Document
+                                                                                        file={url}
+                                                                                        onLoadSuccess={onDocumentLoadSuccess}
+                                                                                    >
+                                                                                        <Page pageNumber={pageNumber} style={{ width: "100%" }} />
+                                                                                    </Document>
+                                                                                </div> */}
                                                                                 <span className="user-pic-tow">
                                                                                     <a href={data.image} download >
                                                                                         <img src="../img/abstract-ico.png" className="me-2" alt="" />

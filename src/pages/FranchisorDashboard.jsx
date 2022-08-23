@@ -99,12 +99,6 @@ const FranchisorDashboard = () => {
     })
   }
 
-
-
-
-  console.log("alsoidjh", latest_announcement[0].scheduled_date)
-
-
   const announcement = () => {
     let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
@@ -120,6 +114,7 @@ const FranchisorDashboard = () => {
       console.log("Error", e);
     })
   }
+
 
   const count_Api = () => {
     let token = localStorage.getItem('token');
@@ -179,6 +174,7 @@ const FranchisorDashboard = () => {
     }
   }
 
+  
   React.useEffect(() => {
     count_Api();
     announcement();
