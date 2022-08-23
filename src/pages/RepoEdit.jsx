@@ -35,7 +35,7 @@ const RepoEdit = () => {
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
-    const [selectedChild,setSelectedChild] = useState([])
+    const [selectedChild, setSelectedChild] = useState([])
     const [child, setChild] = useState([]);
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
@@ -220,11 +220,11 @@ const RepoEdit = () => {
 
         let franchiseeArr = data.franchise
 
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
             // console.log(response.data.users, "respo")
             setUser(response.data.users)
-            console.log(user,"userSList")
+            console.log(user, "userSList")
         }
     };
     function onSelectUser(optionsList, selectedItem) {
@@ -253,14 +253,14 @@ const RepoEdit = () => {
 
     function onRemoveChild(removedItem) {
         let removedchildarr = removedItem
-        removedItem = removedItem.map((item)=>{
+        removedItem = removedItem.map((item) => {
             return item.id
         })
         setData(prevState => ({
             ...prevState,
             assigned_childs: removedItem
         }));
-        console.log(selectedChild,"Selllee")
+        console.log(selectedChild, "Selllee")
         setSelectedChild(removedchildarr)
     }
     useEffect(() => {
@@ -407,7 +407,7 @@ const RepoEdit = () => {
                                                             <div className="showfiles mt-3 text-center" >
                                                                 {typeof data.image === "string" ?
                                                                     (<>
-                                                                        {data.file_type === "image/jpeg" || "image/png" || "jpe" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
+                                                                        {data.file_type === "image/jpeg" || data.file_type === "image/png" || data.file_type === "image/jpe" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
                                                                             data.file_type === "application/pdf" ? (<>
                                                                                 {/* <div style={{ width: "200px", height: "200px", backgroundColor: "red", overflow: "hidden" }}>
                                                                                     <Document
@@ -611,7 +611,7 @@ const RepoEdit = () => {
                                                         </Form.Group>
                                                     </Col>
                                                 </Row>
-                                                   
+
                                                 <Row className="mt-4">
                                                     <Col lg={3} md={6}>
                                                         <Form.Group>
@@ -772,48 +772,48 @@ const RepoEdit = () => {
                                                         ) : null}
                                                         {data.accessibleToRole === 0 ? (
                                                             <>
-                                                            <Form.Group>
-                                                                <Form.Label>Select User</Form.Label>
-                                                                <div className="select-with-plus">
-                                                                    <Multiselect
-                                                                    disable={sendToAllFranchisee === 'all'}
-                                                                        displayValue="email"
-                                                                        className="multiselect-box default-arrow-select"
-                                                                        selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
-                                                                        onRemove={onRemoveUser}
-                                                                        value={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
-                                                                        onSelect={(selectedOptions) => {
-                                                                            setData((prevState) => ({
-                                                                                ...prevState,
-                                                                                assigned_users: [...selectedOptions.map(option => option.id + "")]
-                                                                            }));
-                                                                        }}
-                                                                        options={user}
-                                                                    />
-                                                                </div>
-                                                                <p className="error">{errors.franchisee}</p>
-                                                            </Form.Group>
-                                                            <Form.Group>
-                                                            <Form.Label>Select Child</Form.Label>
-                                                            <div className="select-with-plus">
-                                                                <Multiselect
-                                                                    disable={sendToAllFranchisee === 'all'}
-                                                                    placeholder={"Select child"}
-                                                                    displayValue="name"
-                                                                    className="multiselect-box default-arrow-select"
-                                                                    onRemove={onRemoveChild}
-                                                                    selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
-                                                                    value={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
-                                                                    onSelect={(selectedOptions) => {
-                                                                        setData((prevState) => ({
-                                                                            ...prevState,
-                                                                            assigned_childs: [...selectedOptions.map(option => option.id + "")]
-                                                                        }));
-                                                                    }}
-                                                                    options={child}
-                                                                />
-                                                            </div>
-                                                        </Form.Group>
+                                                                <Form.Group>
+                                                                    <Form.Label>Select User</Form.Label>
+                                                                    <div className="select-with-plus">
+                                                                        <Multiselect
+                                                                            disable={sendToAllFranchisee === 'all'}
+                                                                            displayValue="email"
+                                                                            className="multiselect-box default-arrow-select"
+                                                                            selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
+                                                                            onRemove={onRemoveUser}
+                                                                            value={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
+                                                                            onSelect={(selectedOptions) => {
+                                                                                setData((prevState) => ({
+                                                                                    ...prevState,
+                                                                                    assigned_users: [...selectedOptions.map(option => option.id + "")]
+                                                                                }));
+                                                                            }}
+                                                                            options={user}
+                                                                        />
+                                                                    </div>
+                                                                    <p className="error">{errors.franchisee}</p>
+                                                                </Form.Group>
+                                                                <Form.Group>
+                                                                    <Form.Label>Select Child</Form.Label>
+                                                                    <div className="select-with-plus">
+                                                                        <Multiselect
+                                                                            disable={sendToAllFranchisee === 'all'}
+                                                                            placeholder={"Select child"}
+                                                                            displayValue="name"
+                                                                            className="multiselect-box default-arrow-select"
+                                                                            onRemove={onRemoveChild}
+                                                                            selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
+                                                                            value={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
+                                                                            onSelect={(selectedOptions) => {
+                                                                                setData((prevState) => ({
+                                                                                    ...prevState,
+                                                                                    assigned_childs: [...selectedOptions.map(option => option.id + "")]
+                                                                                }));
+                                                                            }}
+                                                                            options={child}
+                                                                        />
+                                                                    </div>
+                                                                </Form.Group>
                                                             </>
                                                         ) : null}
                                                     </Col>

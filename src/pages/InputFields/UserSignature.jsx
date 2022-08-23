@@ -11,9 +11,6 @@ const UserSignature = (props) => {
   };
   const trim = (e) => {
     e.preventDefault();
-    // console.log(controls.field_name,"-------->",sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
-    // console.log("sdfasdfsdfsdf", sigPad.current;
-    // props.onChange(sigPad.current);
     props.handleSignatureDialog(sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
   };
   return (

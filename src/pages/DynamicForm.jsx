@@ -6,12 +6,11 @@ import InputFields from './InputFields';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import { getSuggestedQuery } from '@testing-library/react';
 let values = [];
-const DynamicForm = (props) => {
+let behalfOfFlag = false;
+const DynamicForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  console.log('location----->', location);
   const [formData, setFormData] = useState([]);
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
@@ -36,7 +35,6 @@ const DynamicForm = (props) => {
     }
   };
   useEffect(() => {
-    console.log('history---->');
     getFormFields();
     getUser();
   }, []);
@@ -120,7 +118,6 @@ const DynamicForm = (props) => {
             } else {
               data[item].push(inner_item);
             }
-            console.log('form_data---->1212', data);
           });
         });
         setForm(formsData);
@@ -131,25 +128,18 @@ const DynamicForm = (props) => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log('form---->', form);
-    console.log('form_data---->', formData);
     const newErrors = DynamicFormValidation(
       form,
       formData,
-      localStorage.getItem('user_role') === 'guardian'
-        ? childId.includes('all')
-          ? null
-          : childId
-        : behalfOf
+      localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
+      behalfOfFlag
     );
-    console.log('newErrors---->', newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
       myHeaders.append('authorization', 'Bearer ' + token);
-      console.log('formData[0]?.form?.id---->', formData[0]?.form_id);
       var requestOptions = {
         method: 'POST',
         headers: myHeaders,
@@ -158,7 +148,9 @@ const DynamicForm = (props) => {
           user_id: localStorage.getItem('user_id'),
           behalf_of:
             localStorage.getItem('user_role') === 'guardian'
-              ? childId
+              ? behalfOfFlag
+                ? childId
+                : behalfOf
               : behalfOf,
           data: form,
         }),
@@ -177,7 +169,6 @@ const DynamicForm = (props) => {
   };
   return (
     <>
-      {console.log('form_data---->', formData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -188,7 +179,6 @@ const DynamicForm = (props) => {
               <div className="sec-column">
                 <TopHeader
                   setSelectedFranchisee={(id) => {
-                    console.log('id---->444', id);
                     setChildId(id);
                     console.log('user_id', id);
                     id =
@@ -212,10 +202,6 @@ const DynamicForm = (props) => {
                 </Row>
                 <Form>
                   <Row>
-                    {console.log(
-                      'formPermission?.target_user--->',
-                      formPermission
-                    )}
                     {!(
                       formPermission?.target_user?.includes(
                         localStorage.getItem('user_role') === 'guardian'
@@ -227,6 +213,7 @@ const DynamicForm = (props) => {
                       )
                     ) && (
                       <Col sm={6}>
+                        {(behalfOfFlag = true)}
                         <div className="child_info_field sex">
                           <span className="form-label">Behalf of:</span>
                           <div clas Name="d-flex mt-2"></div>
@@ -305,7 +292,6 @@ const DynamicForm = (props) => {
                     {Object.keys(formData)?.map((item) => {
                       return item ? (
                         <>
-                          {console.log('item---->', item)}
                           {formData[item]?.map((inner_item, index) => {
                             return inner_item.form_field_permissions.length >
                               0 ? (
@@ -317,8 +303,6 @@ const DynamicForm = (props) => {
                                   {...inner_item}
                                   error={errors}
                                   onChange={(key, value) => {
-                                    console.log('KEY--->', key);
-                                    console.log('VALUE--->', value);
                                     setField(item, key, value);
                                   }}
                                 />
@@ -328,8 +312,6 @@ const DynamicForm = (props) => {
                                 {...inner_item}
                                 error={errors}
                                 onChange={(key, value) => {
-                                  console.log('KEY--->', key);
-                                  console.log('VALUE--->', value);
                                   setField(key, value);
                                 }}
                               />
@@ -343,8 +325,6 @@ const DynamicForm = (props) => {
                               {...inner_item}
                               error={errors}
                               onChange={(key, value) => {
-                                console.log('KEY--->', key);
-                                console.log('VALUE--->', value);
                                 setField(item, key, value);
                               }}
                             />
@@ -352,10 +332,6 @@ const DynamicForm = (props) => {
                         })
                       );
                     })}
-                    {console.log(
-                      'formPermission?.fill_access_users--->',
-                      formPermission?.target_user
-                    )}
 
                     <Col md={12}>
                       <div className="custom_submit">

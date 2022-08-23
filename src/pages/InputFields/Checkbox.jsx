@@ -19,35 +19,11 @@ const Checkbox = (props) => {
                     id={Object.keys(item2)[0]}
                     value={Object.keys(item2)[0]}
                     onClick={(e) => {
-                      //  setDefaultValueCheck(e.target.value);
                       props.onChange(e.target.name, e.target.value);
                     }}
                   />
                   <span className="checkmark"></span>
                 </label>
-                {/* <label className="form-label" htmlFor={Object.keys(item2)[0]}>
-                  {Object.keys(item2)[0]}
-                </label>
-                <input
-                  type="checkbox"
-                  name={controls.field_name}
-                  id={Object.keys(item2)[0]}
-                  value={Object.keys(item2)[0]}
-                  onChange={(e) => {
-                    props.onChange(e.target.name, e.target.value);
-                  }}
-                /> */}
-                {/* <Form.Check
-                  type="checkbox"
-                  className="checktest"
-                  name={controls.field_name}
-                  id={Object.keys(item2)[0]}
-                  value={Object.keys(item2)[0]}
-                  onClick={(e) => {
-                    //  setDefaultValueCheck(e.target.value);
-                    props.onChange(e.target.name, e.target.value);
-                  }}
-                /> */}
               </>
             );
           })}

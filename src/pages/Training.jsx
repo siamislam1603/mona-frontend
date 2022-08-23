@@ -14,6 +14,7 @@ import { verifyPermission } from '../helpers/roleBasedAccess';
 import { useEffect } from "react";
 import { BASE_URL } from "../components/App";
 import axios from 'axios';
+import { FullLoader } from "../components/Loader";
 
 const animatedComponents = makeAnimated();
 const styles = {
@@ -43,6 +44,7 @@ const Training = () => {
     category_id: null,
     search: ""
   });
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
 
   // STYLE ACTIVE LINKS
@@ -68,6 +70,10 @@ const Training = () => {
       }
     }
     );
+
+    if(response)
+      setfullLoaderStatus(false)
+
 
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
@@ -127,6 +133,10 @@ const Training = () => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
+
+                  <FullLoader loading={fullLoaderStatus} />
+
+
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Trainings</h1>

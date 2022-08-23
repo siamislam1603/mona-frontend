@@ -9,7 +9,6 @@ let values = [];
 const Preview = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log('location?.state?.form_name--->', location?.state?.form_name);
   const [formData, setFormData] = useState([]);
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
@@ -36,14 +35,11 @@ const Preview = (props) => {
   }, []);
   const getFormFields = async () => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + token
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
-      headers: myHeaders
+      headers: myHeaders,
     };
 
     fetch(
@@ -91,12 +87,11 @@ const Preview = (props) => {
                       <img src="../../img/back-arrow.svg" />
                     </Button>
                     <h4 className="mynewForm text-capitalize">{`Preview - ${location.pathname
-                        .split('/')
-                        [location.pathname.split('/').length - 1].replaceAll(
-                          '%20',
-                          ' '
-                        )
-                    }`}</h4>
+                      .split('/')
+                      [location.pathname.split('/').length - 1].replaceAll(
+                        '%20',
+                        ' '
+                      )}`}</h4>
                   </div>
                   <div className="userBox">
                     <p>Created by:</p>

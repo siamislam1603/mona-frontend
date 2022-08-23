@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
-// let default_checked_value;
 const Radio = (props) => {
   const { ...controls } = props;
   const [optionValue, setOptionValue] = useState('');
@@ -13,17 +12,8 @@ const Radio = (props) => {
   };
   const trim = (e) => {
     e.preventDefault();
-    console.log(
-      controls.field_name,
-      '-------->',
-      sigPad.current.getTrimmedCanvas().toDataURL('image/png')
-    );
     props.onChange(sigPad.current.getTrimmedCanvas().toDataURL('image/png'));
   };
-  //   const [defaultValueCheck, setDefaultValueCheck] = useState(
-  //     controls?.default_value
-  //   );
-  //   default_checked_value = defaultValueCheck;
 
   return (
     <>
@@ -34,14 +24,6 @@ const Radio = (props) => {
             {eval(controls.option)?.map((item, index) => {
               return (
                 <>
-                  {console.log(
-                    'eval(controls.option)',
-                    Object.keys(eval(controls.option)[index])[0]
-                  )}
-                  {console.log(
-                    'eval(controls.option)',
-                    Object.values(eval(controls.option)[index])[0]
-                  )}
                   {Object.keys(eval(controls.option)[index])[0] ===
                   Object.values(eval(controls.option)[index])[0] ? (
                     <div className="new-form-radio-box">

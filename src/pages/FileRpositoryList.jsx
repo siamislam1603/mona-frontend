@@ -85,7 +85,6 @@ const FileRpositoryList = () => {
         console.log('selectedUser---->', selectedUser);
     }
 
-
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
         const index = selectedUser.findIndex((object) => {
@@ -305,6 +304,7 @@ const FileRpositoryList = () => {
             redirect: 'follow',
             headers: myHeaders,
         };
+
         fetch(`${BASE_URL}/auth/users`, requestOptions)
             .then((response) => response.json())
             .then((result) => {
@@ -372,7 +372,7 @@ const FileRpositoryList = () => {
                                             </div>
 
                                         </> :
-                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" ?
                                             <>
                                                 <span className="user-pic-tow">
                                                     <a href={cell[2]} download >
@@ -463,7 +463,7 @@ const FileRpositoryList = () => {
                                 <LeftNavbar />
                             </aside>
                             <div className="sec-column">
-                                <TopHeader 
+                                <TopHeader
                                     selectedFranchisee={selectedFranchisee}
                                     setSelectedFranchisee={setSelectedFranchisee} />
                                 <div className="entry-container">
