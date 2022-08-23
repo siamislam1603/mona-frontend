@@ -58,21 +58,21 @@ const SignIn = () => {
         window.location.href = '/franchisor-dashboard';
         localStorage.setItem('selectedFranchisee',"All")
       } else if (res.data.user.role === 'franchisor_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = redirectTo || '/change-password';
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/coordinator-dashboard';
       } else if(res.data.user.role === 'coordinator' && res.data.user.isLoggedIn === 0) {
-        window.location.href = redirectTo || '/change-password';
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/franchisee-dashboard';
       } else if(res.data.user.role === 'franchisee_admin' && res.data.user.isLoggedIn === 0) {
-        window.location.href = redirectTo || '/change-password';
+        window.location.href = '/change-password';
       } else if (res.data.user.role === 'educator' && res.data.user.isLoggedIn === 1) {
         window.location.href = '/educator-dashboard';
       } else if(res.data.user.role === 'educator' && res.data.user.isLoggedIn === 0) {
-        window.location.href= redirectTo || "/change-password";
+        window.location.href= "/change-password";
       } else if (res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 1) {
-        window.location.href = '/parents-dashboard';
+        window.location.href = redirectTo || '/parents-dashboard';
       } else if(res.data.user.role === 'guardian' && res.data.user.isLoggedIn === 0) {
         window.location.href= redirectTo || "/change-password";
       }
