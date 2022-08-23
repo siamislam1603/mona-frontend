@@ -501,7 +501,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             </div>
                                         </> :
 
-                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" ?
+                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf"||cell[0] === "text/csv"?
                                             <>
                                                 <span className="user-pic-tow">
                                                     <a href={cell[2]} download >
