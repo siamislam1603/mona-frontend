@@ -46,8 +46,8 @@ const Announcements =  () => {
   const [myLoadData,setMyLoadData]= useState([])
   const [myDataLength,setMyDataLength] = useState(null)
   const [myCount,setMyCount] = useState('');
-  const [eventLength,setEventLength] = useState(' ')
-  const [eventCount,setEventCount] = useState('')
+  const [eventLength,setEventLength] = useState(null)
+  const [eventCount,setEventCount] = useState(null)
   const [allEvent,setAllEvent] = useState([])
 
   const handleLinkClick = event => {
@@ -547,6 +547,8 @@ const Announcements =  () => {
         if(error.response.status === 404){
           // console.log("The code is 404")
           // setAnnouncementDetail([])
+          setEventCount(0)
+          setEventLength(0)
         }
 
     }
@@ -635,7 +637,7 @@ useEffect(() =>{
   // console.log("THE LOAD MRE EVENT",loadMoreEvent)
   // console.log("PERMISSION",verifyPermission("announcements", "add"));
 
-  console.log("Event count",eventCount )
+  console.log("Event count",eventCount,"lenght ",eventLength )
   
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)

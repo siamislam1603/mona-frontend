@@ -120,6 +120,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 formSettings.accessibleToAll=false
             }
         }
+
+        formSettings.franchisee = formSettings.franchisee[0] == "all" ? [] : formSettings.franchisee
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
             // shared_by: user_id,
@@ -208,7 +210,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
-        formdata.append('franchisee', formSettings.assigned_franchisee);
+        formdata.append('franchisee', formSettings.assigned_franchisee[0] == "all" ? [] : formSettings.assigned_franchisee);
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -279,14 +281,14 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 if (response.statusText === "Created") {
                     setLoaderFlag(false);
                     setShow(false);
-                    Navigate(`/file-repository`);
+                    Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
                 }
             })
             .then((result) => {
                 if (result) {
                     setLoaderFlag(false);
                     setShow(false);
-                    Navigate('/file-repository')
+                    Navigate(`/file-repository-List-me/${formSettingData.file_category}`)
                 }
             })
             .catch((error) => console.log('error', error));
@@ -366,7 +368,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         let franchiseeArr = formSettings.franchisee
 
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
+        let response = await axios.post(`http://localhost:4000/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
         if (response.status === 200) {
             // console.log(response.data.users, "respo")
             setUser(response.data.users)

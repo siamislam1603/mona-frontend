@@ -12,7 +12,6 @@ const Signature = (props) => {
   };
   const trim = (e) => {
     e.preventDefault();
-    console.log(controls.field_name,"-------->",sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
     props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
   };
   return (
