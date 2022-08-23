@@ -1,20 +1,5 @@
-import {
-  faEllipsisVertical,
-  faPen,
-  faPlus,
-  faRemove,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
-import {
-  Accordion,
-  Button,
-  Col,
-  Container,
-  Dropdown,
-  Form,
-  Row,
-} from 'react-bootstrap';
+import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
@@ -25,19 +10,25 @@ function FormResponse(props) {
   const navigate = useNavigate();
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
+  const token = localStorage.getItem('token');
   useEffect(() => {
     getResponse('');
   }, []);
   const getResponse = (search) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(
       `${BASE_URL}/form/response?search=${search}&form_id=${
         location?.state?.id ? location?.state?.id : 1
-      }&user_id=${localStorage.getItem("user_id")}&user_role=${localStorage.getItem("user_role")}`,
+      }&user_id=${localStorage.getItem(
+        'user_id'
+      )}&user_role=${localStorage.getItem('user_role')}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -49,7 +40,6 @@ function FormResponse(props) {
   };
   return (
     <>
-      {console.log('result?.result---->', responseData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -94,30 +84,6 @@ function FormResponse(props) {
                           />
                         </Form.Group>
                       </div>
-                      {/* <div className="forms-filter">
-                        <Button variant="outline-primary">
-                          <img src="../img/Vector.svg" />
-                          Add Filters
-                        </Button>
-                      </div>
-                      <div className="forms-toogle">
-                        <div class="custom-menu-dots">
-                          <Dropdown>
-                            <Dropdown.Toggle id="dropdown-basic">
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item href="#/action-1">
-                                <FontAwesomeIcon icon={faPen} /> Edit
-                              </Dropdown.Item>
-                              <Dropdown.Item href="#/action-2">
-                                <FontAwesomeIcon icon={faRemove} /> Remove
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </div>
-                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -224,12 +190,11 @@ function FormResponse(props) {
                                         : 'responses-content-wrap response-margin'
                                     }
                                   >
-                                    {console.log(
-                                      'item--->111111111111111111',
-                                      item
-                                    )}
                                     <h4 className="content-wrap-title text-capitalize">
-                                      Filled By {item.user.fullname} {!item.section_name || item.section_name!=="" && `| ${item.section_name} Section`}
+                                      Filled By {item.user.fullname}{' '}
+                                      {!item.section_name ||
+                                        (item.section_name !== '' &&
+                                          `| ${item.section_name} Section`)}
                                     </h4>
 
                                     {Object.keys(JSON.parse(item.fields)).map(
@@ -249,12 +214,7 @@ function FormResponse(props) {
                                                 src="../img/bx_right-arrow-alt.svg"
                                                 alt=""
                                               />
-                                              {console.log(
-                                                'dsfsfsfs',
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]
-                                              )}
+
                                               {Object.values(
                                                 JSON.parse(item.fields)
                                               )[inner_index]?.includes(
@@ -316,100 +276,4 @@ function FormResponse(props) {
     </>
   );
 }
-
 export default FormResponse;
-
-{
-  /* <Accordion.Item eventKey="1">
-                      <Accordion.Header>
-                        <div className="responses-header-row">
-                          <div className="responses-header-left">
-                            <div className="responses-header-image">
-                              <img src="../img/small-user.png" alt="" />
-                            </div>
-                            <div className="responses-header-detail">
-                              <h5>James Parker</h5>
-                              <h6>
-                                <span>Educator,</span> Smile Daycare
-                              </h6>
-                            </div>
-                          </div>
-                          <div className="responses-header-right">
-                            <p>
-                              Completed on: <br />
-                              05/15/2022, 14:00:00 hrs
-                            </p>
-                          </div>
-                        </div>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <div className="responses-content-wrap">
-                          <h4 className="content-wrap-title">Section Name</h4>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>1</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>2</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>3</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="responses-content-box">
-                            <div className="responses-content-question">
-                              <span>4</span>
-                              <h6>Some text here for the label</h6>
-                            </div>
-                            <div className="responses-content-answer">
-                              <img src="../img/bx_right-arrow-alt.svg" alt="" />
-                              <div className="answer-files">
-                                <img src="../img/audio-ico.png" alt="" />
-                                <h4>audiofilename.mp3</h4>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Accordion.Body>
-                    </Accordion.Item> */
-}

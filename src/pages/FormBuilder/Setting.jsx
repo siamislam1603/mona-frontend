@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Accordion,
-  Button,
-  Col,
-  Container,
-  Form,
-  Row,
-  Table,
-} from 'react-bootstrap';
-import LeftNavbar from '../../components/LeftNavbar';
-import TopHeader from '../../components/TopHeader';
+import { Button, Col, Form, Row, Table } from 'react-bootstrap';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Multiselect from 'multiselect-react-dropdown';
@@ -41,7 +31,7 @@ function Setting(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState([]);
-  const [child,setChild]=useState([]);
+  const [child, setChild] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
@@ -49,16 +39,18 @@ function Setting(props) {
   const setFields = (field, value) => {
     setForm({ ...form, [field]: value });
   };
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    console.log('location?.state?.id---->', location?.state?.id);
     getUser();
   }, [localStorage.getItem('f_id')]);
-  const getParticularFormData = (userData,childData) => {
-    console.log('user----->Helllo');
+  const getParticularFormData = (userData, childData) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(
@@ -79,8 +71,8 @@ function Setting(props) {
         selectedTargetUser = [];
         selectedResponseVisibilityUserId = '';
         selectedResponseVisibilityUser = [];
-        selectedChild=[];
-        selectedChildId='';
+        selectedChild = [];
+        selectedChildId = '';
         let oldResult = result?.result;
         if (
           oldResult?.permission?.accessible_to_role === '1' ||
@@ -122,15 +114,11 @@ function Setting(props) {
           oldResult?.permission?.accessible_to_role === '0' ||
           oldResult?.permission?.accessible_to_role === false
         ) {
-          console.log('user----->', userData);
-          childData.map((item)=>{
+          childData.map((item) => {
             if (oldResult?.permission?.target_child) {
               if (
-                oldResult?.permission?.target_child.includes(
-                  item.id.toString()
-                )
+                oldResult?.permission?.target_child.includes(item.id.toString())
               ) {
-                console.log('user_els--->', item);
                 selectedChild.push({
                   id: item.id,
                   fullname: item.fullname,
@@ -138,7 +126,7 @@ function Setting(props) {
                 selectedChildId += item.id + ',';
               }
             }
-          })
+          });
           userData.map((item) => {
             if (oldResult?.permission?.form_visible_to) {
               if (
@@ -146,7 +134,6 @@ function Setting(props) {
                   item.id.toString()
                 )
               ) {
-                console.log('user_els--->', item);
                 selectedFormVisibleUser.push({
                   id: item.id,
                   email: item.email,
@@ -160,7 +147,6 @@ function Setting(props) {
                   item.id.toString()
                 )
               ) {
-                console.log('user_els--->', item);
                 selectedFillAccessUser.push({ id: item.id, email: item.email });
                 selectedFillAccessUserId += item.id + ',';
               }
@@ -171,7 +157,6 @@ function Setting(props) {
                   item.id.toString()
                 )
               ) {
-                console.log('user_els--->', item);
                 selectedSignatoriesUser.push({
                   id: item.id,
                   email: item.email,
@@ -185,7 +170,6 @@ function Setting(props) {
                   item.id.toString()
                 )
               ) {
-                console.log('user_els--->', item);
                 selectedResponseVisibilityUser.push({
                   id: item.id,
                   email: item.email,
@@ -197,7 +181,6 @@ function Setting(props) {
               if (
                 oldResult?.permission?.target_user.includes(item.id.toString())
               ) {
-                console.log('user_els--->', item);
                 selectedTargetUser.push({ id: item.id, email: item.email });
                 selectedTargetUserId += item.id + ',';
               }
@@ -237,7 +220,6 @@ function Setting(props) {
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log('selectedFillAccessUserId---->', selectedFillAccessUserId);
   }
   function onFillAccessRemoveUser(selectedList, removedItem) {
     selectedFillAccessUserId = selectedFillAccessUserId.replace(
@@ -248,9 +230,6 @@ function Setting(props) {
       return object.id === removedItem.id;
     });
     selectedFillAccessUser.splice(index, 1);
-    {
-      console.log('selectedFillAccessUserId---->', selectedFillAccessUserId);
-    }
   }
 
   function onTargetSelectUser(optionsList, selectedItem) {
@@ -259,7 +238,6 @@ function Setting(props) {
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log('selectedFillAccessUserId---->', selectedTargetUserId);
   }
   function onTargetRemoveUser(selectedList, removedItem) {
     selectedTargetUserId = selectedTargetUserId.replace(
@@ -270,9 +248,6 @@ function Setting(props) {
       return object.id === removedItem.id;
     });
     selectedTargetUser.splice(index, 1);
-    {
-      console.log('selectedFillAccessUserId---->', selectedTargetUserId);
-    }
   }
 
   function onTargetSelectChild(optionsList, selectedItem) {
@@ -281,32 +256,21 @@ function Setting(props) {
       id: selectedItem.id,
       fullname: selectedItem.fullname,
     });
-    console.log('selectedFillAccessUserId---->', selectedChildId);
   }
   function onTargetRemoveChild(selectedList, removedItem) {
-    selectedChildId = selectedChildId.replace(
-      removedItem.id + ',',
-      ''
-    );
+    selectedChildId = selectedChildId.replace(removedItem.id + ',', '');
     const index = selectedChild.findIndex((object) => {
       return object.id === removedItem.id;
     });
     selectedChild.splice(index, 1);
-    {
-      console.log('selectedFillAccessUserId---->', selectedChildId);
-    }
   }
-  
+
   function onResponseVisibilitySelectUser(optionsList, selectedItem) {
     selectedResponseVisibilityUserId += selectedItem.id + ',';
     selectedResponseVisibilityUser.push({
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log(
-      'selectedFillAccessUserId---->',
-      selectedResponseVisibilityUserId
-    );
   }
   function onResponseVisibilityRemoveUser(selectedList, removedItem) {
     selectedResponseVisibilityUserId = selectedResponseVisibilityUserId.replace(
@@ -317,12 +281,6 @@ function Setting(props) {
       return object.id === removedItem.id;
     });
     selectedResponseVisibilityUser.splice(index, 1);
-    {
-      console.log(
-        'selectedFillAccessUserId---->',
-        selectedResponseVisibilityUserId
-      );
-    }
   }
 
   function onSignatorieselectUser(optionsList, selectedItem) {
@@ -331,7 +289,6 @@ function Setting(props) {
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log('selectedFillAccessUserId---->', selectedSignatoriesUserId);
   }
   function onSignatoriesRemoveUser(selectedList, removedItem) {
     selectedSignatoriesUserId = selectedSignatoriesUserId.replace(
@@ -342,31 +299,6 @@ function Setting(props) {
       return object.id === removedItem.id;
     });
     selectedSignatoriesUser.splice(index, 1);
-    {
-      console.log('selectedFillAccessUserId---->', selectedSignatoriesUserId);
-    }
-  }
-
-  function onFormVisibleSelectUser(optionsList, selectedItem) {
-    selectedFormVisibleUserId += selectedItem.id + ',';
-    selectedFormVisibleUser.push({
-      id: selectedItem.id,
-      email: selectedItem.email,
-    });
-    console.log('selectedFillAccessUserId---->', selectedFormVisibleUserId);
-  }
-  function onFormVisibleRemoveUser(selectedList, removedItem) {
-    selectedFormVisibleUserId = selectedFormVisibleUserId.replace(
-      removedItem.id + ',',
-      ''
-    );
-    const index = selectedFillAccessUser.findIndex((object) => {
-      return object.id === removedItem.id;
-    });
-    selectedFormVisibleUser.splice(index, 1);
-    {
-      console.log('selectedFillAccessUserId---->', selectedFormVisibleUserId);
-    }
   }
 
   const getUser = () => {
@@ -382,17 +314,16 @@ function Setting(props) {
       headers: myHeaders,
     };
     let api_url = '';
-    console.log('selectedFranchisee--->', selectedFranchisee);
-    console.log('fid----->', localStorage.getItem('f_id'));
     if (localStorage.getItem('f_id')) {
-      if (localStorage.getItem('f_id') === "all" || localStorage.getItem('f_id') === "All") {
+      if (
+        localStorage.getItem('f_id') === 'all' ||
+        localStorage.getItem('f_id') === 'All'
+      ) {
         api_url = `${BASE_URL}/auth/users`;
-        
       } else {
         api_url = `${BASE_URL}/user-group/users/franchisee/${localStorage.getItem(
           'f_id'
         )}`;
-        
       }
     } else {
       api_url = `${BASE_URL}/auth/users`;
@@ -401,14 +332,16 @@ function Setting(props) {
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log('user---->', result);
         result?.data?.map((item) => {
           item['status'] = false;
         });
         if (localStorage.getItem('f_id')) {
-          if (localStorage.getItem('f_id') === "all" || localStorage.getItem('f_id') === "All") {
+          if (
+            localStorage.getItem('f_id') === 'all' ||
+            localStorage.getItem('f_id') === 'All'
+          ) {
             setUser(result?.data);
-            
+
             childList(result?.data);
           } else {
             setUser(result?.users);
@@ -420,10 +353,8 @@ function Setting(props) {
         }
       })
       .catch((error) => console.log('error', error));
-
-      
   };
-  const childList=(userData)=>{
+  const childList = (userData) => {
     var myHeaders = new Headers();
     myHeaders.append(
       'authorization',
@@ -436,10 +367,15 @@ function Setting(props) {
     };
     let api_url = '';
     if (localStorage.getItem('f_id')) {
-      if (localStorage.getItem('f_id') === "all" || localStorage.getItem('f_id') === "All") {
+      if (
+        localStorage.getItem('f_id') === 'all' ||
+        localStorage.getItem('f_id') === 'All'
+      ) {
         api_url = `${BASE_URL}/form/child_list`;
       } else {
-        api_url=`${BASE_URL}/form/child_list?franchisee_id=${localStorage.getItem('f_id')}`
+        api_url = `${BASE_URL}/form/child_list?franchisee_id=${localStorage.getItem(
+          'f_id'
+        )}`;
       }
     } else {
       api_url = `${BASE_URL}/form/child_list`;
@@ -447,18 +383,14 @@ function Setting(props) {
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log("result?.children---->",result?.children);
         setChild(result?.children);
-        getParticularFormData(userData,result?.children);
+        getParticularFormData(userData, result?.children);
       });
-    }
+  };
   const onSubmit = (e) => {
     e.preventDefault();
-    // const newErrors = createFormValidation(form);
-    // if (Object.keys(newErrors).length > 0) {
-    //   setErrors(newErrors);
-    // } else {
     var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     let data = { ...form };
     if (data.accessible_to_role === '1' || data.accessible_to_role === true) {
       data['form_visible_to'] = form.form_visible_to
@@ -476,7 +408,7 @@ function Setting(props) {
       data['response_visibility'] = form.response_visibility
         ? form.response_visibility.slice(0, -1)
         : null;
-      data["target_child"]=null;
+      data['target_child'] = null;
     }
     if (data.accessible_to_role === '0' || data.accessible_to_role === false) {
       data['form_visible_to'] = selectedFormVisibleUserId
@@ -494,9 +426,9 @@ function Setting(props) {
       data['response_visibility'] = selectedResponseVisibilityUserId
         ? selectedResponseVisibilityUserId.slice(0, -1)
         : null;
-      data["target_child"]=selectedChildId
-      ? selectedChildId.slice(0, -1)
-      : null;
+      data['target_child'] = selectedChildId
+        ? selectedChildId.slice(0, -1)
+        : null;
     }
     data['link'] = FRONT_BASE_URL + '/form/dynamic/' + data.form_name;
     data['franchisee_id'] = localStorage.getItem('f_id');
@@ -516,7 +448,6 @@ function Setting(props) {
         });
         props.onModelChange();
       });
-    // }
   };
   return (
     <>
@@ -536,15 +467,11 @@ function Setting(props) {
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
                         }}
-                        // isInvalid={!!formSettingError.start_date}
                       />
                       <img
                         className="form_fields_icon"
                         src="../../img/calendar_icons.png"
                       />
-                      <Form.Control.Feedback type="invalid">
-                        {/* {formSettingError.start_date}  */}
-                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
                   <Col lg={3} sm={6} className="mt-3 mt-sm-0">
@@ -557,15 +484,11 @@ function Setting(props) {
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
                         }}
-                        // isInvalid={!!formSettingError.start_time}
                       />
                       <img
                         className="form_fields_icon"
                         src="../../img/clock-circle-icon.png"
                       />
-                      <Form.Control.Feedback type="invalid">
-                        {/* {formSettingError.start_time}  */}
-                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
                   <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -578,15 +501,11 @@ function Setting(props) {
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
                         }}
-                        // isInvalid={!!formSettingError.end_date}
                       />
                       <img
                         className="form_fields_icon"
                         src="../../img/calendar_icons.png"
                       />
-                      <Form.Control.Feedback type="invalid">
-                        {/* {formSettingError.end_date}  */}
-                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
                   <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -599,15 +518,11 @@ function Setting(props) {
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
                         }}
-                        // isInvalid={!!formSettingError.end_time}
                       />
                       <img
                         className="form_fields_icon"
                         src="../../img/clock-circle-icon.png"
                       />
-                      <Form.Control.Feedback type="invalid">
-                        {/* {formSettingError.end_time}  */}
-                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
                 </Row>
@@ -1159,108 +1074,6 @@ function Setting(props) {
                               </div>
                             </div>
                           )}
-                          {/* <label class="form_label_title form-label mt-3 pb-1">
-                            Form Visible To
-                          </label>
-                          <div className="checkbox-card">
-                            <div className="modal-two-check user-roles-box">
-                              <label className="container">
-                                Franchisor Admin
-                                <input
-                                  type="checkbox"
-                                  name="form_visible_to"
-                                  value="franchisor_admin"
-                                  checked={form?.form_visible_to?.includes(
-                                    'franchisor_admin'
-                                  )}
-                                  onChange={(e) => {
-                                    setCheckBoxField(
-                                      e.target.name,
-                                      e.target.value,
-                                      e.target.checked
-                                    );
-                                  }}
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-                              <label className="container">
-                                Franchisee Admin
-                                <input
-                                  type="checkbox"
-                                  name="form_visible_to"
-                                  value="franchisee_admin"
-                                  checked={form?.form_visible_to?.includes(
-                                    'franchisee_admin'
-                                  )}
-                                  onChange={(e) => {
-                                    setCheckBoxField(
-                                      e.target.name,
-                                      e.target.value,
-                                      e.target.checked
-                                    );
-                                  }}
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-                              <label className="container">
-                                Co-ordinators
-                                <input
-                                  type="checkbox"
-                                  name="form_visible_to"
-                                  value="coordinator"
-                                  checked={form?.form_visible_to?.includes(
-                                    'coordinator'
-                                  )}
-                                  onChange={(e) => {
-                                    setCheckBoxField(
-                                      e.target.name,
-                                      e.target.value,
-                                      e.target.checked
-                                    );
-                                  }}
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-                              <label className="container">
-                                Educators
-                                <input
-                                  type="checkbox"
-                                  name="form_visible_to"
-                                  value="educator"
-                                  checked={form?.form_visible_to?.includes(
-                                    'educator'
-                                  )}
-                                  onChange={(e) => {
-                                    setCheckBoxField(
-                                      e.target.name,
-                                      e.target.value,
-                                      e.target.checked
-                                    );
-                                  }}
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-                              <label className="container">
-                                Parent/Guardian
-                                <input
-                                  type="checkbox"
-                                  name="form_visible_to"
-                                  value="parent"
-                                  checked={form?.form_visible_to?.includes(
-                                    'parent'
-                                  )}
-                                  onChange={(e) => {
-                                    setCheckBoxField(
-                                      e.target.name,
-                                      e.target.value,
-                                      e.target.checked
-                                    );
-                                  }}
-                                />
-                                <span className="checkmark"></span>
-                              </label>
-                            </div>
-                          </div> */}
                         </Col>
                       </Row>
                     </>
@@ -1276,11 +1089,8 @@ function Setting(props) {
                               <Multiselect
                                 displayValue="email"
                                 className="multiselect-box default-arrow-select"
-                                // placeholder="Select Franchisee"
                                 selectedValues={selectedTargetUser}
-                                // onKeyPressFn={function noRefCheck() {}}
                                 onRemove={onTargetRemoveUser}
-                                // onSearch={function noRefCheck() {}}
                                 onSelect={onTargetSelectUser}
                                 options={user}
                               />
@@ -1299,11 +1109,8 @@ function Setting(props) {
                               <Multiselect
                                 displayValue="fullname"
                                 className="multiselect-box default-arrow-select"
-                                // placeholder="Select Franchisee"
                                 selectedValues={selectedChild}
-                                // onKeyPressFn={function noRefCheck() {}}
                                 onRemove={onTargetRemoveChild}
-                                // onSearch={function noRefCheck() {}}
                                 onSelect={onTargetSelectChild}
                                 options={child}
                               />
@@ -1322,11 +1129,8 @@ function Setting(props) {
                               <Multiselect
                                 displayValue="email"
                                 className="multiselect-box default-arrow-select"
-                                // placeholder="Select Franchisee"
                                 selectedValues={selectedFillAccessUser}
-                                // onKeyPressFn={function noRefCheck() {}}
                                 onRemove={onFillAccessRemoveUser}
-                                // onSearch={function noRefCheck() {}}
                                 onSelect={onFillAccessSelectUser}
                                 options={user}
                               />
@@ -1345,11 +1149,8 @@ function Setting(props) {
                               <Multiselect
                                 displayValue="email"
                                 className="multiselect-box default-arrow-select"
-                                // placeholder="Select Franchisee"
                                 selectedValues={selectedResponseVisibilityUser}
-                                // onKeyPressFn={function noRefCheck() {}}
                                 onRemove={onResponseVisibilityRemoveUser}
-                                // onSearch={function noRefCheck() {}}
                                 onSelect={onResponseVisibilitySelectUser}
                                 options={user}
                               />
@@ -1398,11 +1199,8 @@ function Setting(props) {
                                 <Multiselect
                                   displayValue="email"
                                   className="multiselect-box default-arrow-select"
-                                  // placeholder="Select Franchisee"
                                   selectedValues={selectedSignatoriesUser}
-                                  // onKeyPressFn={function noRefCheck() {}}
                                   onRemove={onSignatoriesRemoveUser}
-                                  // onSearch={function noRefCheck() {}}
                                   onSelect={onSignatorieselectUser}
                                   options={user}
                                 />
@@ -1412,31 +1210,6 @@ function Setting(props) {
                           </Col>
                         </Row>
                       )}
-                      {console.log(
-                        'selectedFormVisibleUser---->',
-                        selectedFormVisibleUser
-                      )}
-                      {/* <Row>
-                        <Col md={12}>
-                          <Form.Group>
-                            <Form.Label>Form Visible To</Form.Label>
-                            <div className="select-with-plus">
-                              <Multiselect
-                                displayValue="email"
-                                className="multiselect-box default-arrow-select"
-                                // placeholder="Select Franchisee"
-                                selectedValues={selectedFormVisibleUser}
-                                // onKeyPressFn={function noRefCheck() {}}
-                                onRemove={onFormVisibleRemoveUser}
-                                // onSearch={function noRefCheck() {}}
-                                onSelect={onFormVisibleSelectUser}
-                                options={user}
-                              />
-                            </div>
-                            <p className="error">{errors.franchisee}</p>
-                          </Form.Group>
-                        </Col>
-                      </Row> */}
                     </>
                   )}
                 </div>

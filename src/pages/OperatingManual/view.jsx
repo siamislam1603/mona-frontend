@@ -40,7 +40,6 @@ const OperatingManual = () => {
   let [category, setCategory] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [formSettingError, setFormSettingError] = useState({});
   const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [selectedUser, setSelectedUser] = useState([]);
   const [errors, setErrors] = useState({});
@@ -49,31 +48,28 @@ const OperatingManual = () => {
   const [userRole, setUserRole] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
+  const token = localStorage.getItem('token');
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
     getCategory();
-    console.log(
-      'user_id---->',
-      operatingManualdata[Index]?.operating_manuals[innerIndex]?.created_by
-    );
   }, []);
   useEffect(() => {
     getUser();
   }, [selectedFranchisee]);
   const getUserRoleData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
-        // console.log('response0-------->1', localStorage.getItem('user_role'));
         setUserRole(res?.userRoleList);
-
-        console.log('upperRoleUser--->', upperRoleUser);
       })
       .catch((error) => console.log('error', error));
   };
@@ -91,10 +87,7 @@ const OperatingManual = () => {
   };
   const getUser = () => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
 
     var requestOptions = {
       method: 'GET',
@@ -103,7 +96,6 @@ const OperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      console.log('selectedFranchisee--->', selectedFranchisee);
       if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
       else
         api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
@@ -128,7 +120,6 @@ const OperatingManual = () => {
   useEffect(() => {
     var tree = document.getElementById('tree1');
     if (tree) {
-      // console.log('tree---->', tree);
       tree.querySelectorAll('ul').forEach(function (el, index, key, parent) {
         var elm = el.parentNode;
         elm.classList.add('branch');
@@ -145,11 +136,6 @@ const OperatingManual = () => {
             childNode.classList.add('tree-title');
           }
         }
-
-        // } else {
-        //   x.src = '../img/plus-circle.svg';
-        //   el.classList.add('collapse');
-        // }
         if (elm.firstChild.tagName !== x.tagName) {
           console.log('tagName', x.tagName, elm.firstChild.tagName);
           elm.insertBefore(x, elm.firstChild);
@@ -181,9 +167,12 @@ const OperatingManual = () => {
     }
   }, [operatingManualdata]);
   const getOneOperatingManual = async (id, category_name) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
     await fetch(
       `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}&franchisee_id=${localStorage.getItem(
@@ -193,7 +182,6 @@ const OperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log('response--->', response?.result);
         setSingleOperatingManual(response?.result);
         let data = formSettingData;
         data['applicable_to_all'] =
@@ -206,9 +194,6 @@ const OperatingManual = () => {
         selectedUserId = '';
         data['shared_role'] = '';
 
-        // if (response?.result?.permission?.accessible_to_role === 0) {
-
-        console.log('user----->', user);
         user.map((item) => {
           if (
             response?.result?.permission?.shared_with.includes(
@@ -220,34 +205,22 @@ const OperatingManual = () => {
           }
         });
         setSelectedUser(users);
-        // }
-        // else
-        // {
-
         response?.result?.permission?.shared_role.map((item) => {
           role += item + ',';
         });
         data['shared_role'] = role;
-        // }
         setFormSettingData(data);
       })
       .catch((error) => console.log('error', error));
   };
 
-  // const setFormSettingFields = (field, value) => {
-  //   setFormSettingData({ ...formSettingData, [field]: value });
-
-  //   if (!!formSettingError[field]) {
-  //     setFormSettingError({
-  //       ...formSettingError,
-  //       [field]: null,
-  //     });
-  //   }
-  // };
   const getCategory = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/operating_manual/category`, requestOptions)
@@ -259,9 +232,12 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   const deleteOperatingManual = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'DELETE',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(
@@ -275,20 +251,27 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   const getOperatingManual = (key, value) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
     let api_url = '';
     if (key === 'category') {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
         'user_role'
-      )}&id=${localStorage.getItem('user_id')}`;
+      )}&id=${localStorage.getItem(
+        'user_id'
+      )}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
       setCategoryFilter(value);
     } else if (key === 'search') {
       api_url = `${BASE_URL}/operating_manual?search=${value}&role=${localStorage.getItem(
         'user_role'
-      )}&id=${localStorage.getItem('user_id')}`;
+      )}&id=${localStorage.getItem(
+        'user_id'
+      )}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
@@ -304,7 +287,6 @@ const OperatingManual = () => {
         result = JSON.parse(result);
         setOperatingManualdata(result.result);
         if (location.search) {
-          console.log('location---->', parseInt(location.search.split('=')[1]));
           result?.result?.map((item, index) => {
             item?.operating_manuals?.map((inner_item, inner_index) => {
               if (inner_item.id === parseInt(location.search.split('=')[1])) {
@@ -318,13 +300,11 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   function onSelectUser(optionsList, selectedItem) {
-    console.log('selected_item---->2', selectedItem);
     selectedUserId += selectedItem.id + ',';
     selectedUser.push({
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log('selectedUser---->', selectedUser);
   }
   function onRemoveUser(selectedList, removedItem) {
     selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
@@ -332,43 +312,26 @@ const OperatingManual = () => {
       return object.id === removedItem.id;
     });
     selectedUser.splice(index, 1);
-    {
-      console.log('selectedUser---->', selectedUser);
-    }
   }
   const onModelSubmit = (e) => {
     e.preventDefault();
     let data = singleOperatingManual;
     if (!data?.id) {
-      console.log('data----->', data);
       alert('Please save first operating manual information');
     } else {
-      console.log(
-        'formSettingData.accessible_to_role---->',
-        formSettingData.shared_role
-      );
-
       if (formSettingData.shared_role === '' && selectedUserId === '') {
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
-        // if (formSettingData.accessible_to_role === 1) {
         data['shared_role'] = formSettingData.shared_role
           ? formSettingData.shared_role.slice(0, -1)
           : null;
-        // data['shared_with'] = null;
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = false;
-        // } else {
         data['shared_with'] = selectedUserId
           ? selectedUserId.slice(0, -1)
           : null;
-        // data['shared_role'] = null;
-        // data['accessible_to_role'] = formSettingData.accessible_to_role;
-        // data['accessible_to_all'] = false;
-        // }
       }
-      // data['created_by'] = localStorage.getItem('user_id');
       data['shared_by'] = localStorage.getItem('user_id');
       data['link'] = FRONT_BASE_URL + '/operatingmanual';
       upperRoleUser = getUpperRoleUser();
@@ -377,6 +340,7 @@ const OperatingManual = () => {
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('authorization', 'Bearer ' + token);
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
         body: JSON.stringify(data),
@@ -386,7 +350,6 @@ const OperatingManual = () => {
         .then((res) => {
           setSingleOperatingManual(res?.result);
           setFormSettingFlag(false);
-          // navigate('/operatingmanual');
         });
     }
   };
@@ -404,7 +367,10 @@ const OperatingManual = () => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(id) => {
-                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
+                    id =
+                      localStorage.getItem('user_role') === 'guardian'
+                        ? localStorage.getItem('franchisee_id')
+                        : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                     if (
@@ -523,10 +489,6 @@ const OperatingManual = () => {
                                           setInnerIndex(inner_index);
                                         }}
                                       >
-                                        {console.log(
-                                          'inner_item---->1111111',
-                                          inner_item
-                                        )}
                                         <a
                                           className={
                                             index === Index &&
@@ -554,29 +516,7 @@ const OperatingManual = () => {
                   </Col>
                   <Col sm={8}>
                     <div className="create_model_bar">
-                      {/* <Button
-                        onClick={() => {
-                          navigate('/operatingmanual/add');
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faPlus} /> Create an Operating
-                        Manual
-                      </Button> */}
                       <div className="forms-toogle">
-                        {console.log(
-                          'hello--->',
-                          operatingManualdata[Index]?.operating_manuals[
-                            innerIndex
-                          ]?.created_by,
-                          '--------',
-                          parseInt(localStorage.getItem('user_id'))
-                        )}
-                        {console.log(
-                          'Hello2--->',
-                          operatingManualdata[Index]?.operating_manuals[
-                            innerIndex
-                          ]?.upper_role
-                        )}
                         <div class="custom-menu-dots">
                           {(operatingManualdata[Index]?.operating_manuals[
                             innerIndex
@@ -653,8 +593,6 @@ const OperatingManual = () => {
                               }
                               return inner_index === innerIndex ? (
                                 <>
-                                  {console.log('inner_item----->', inner_item)}
-                                  {console.log('inner_item----->', inner_item)}
                                   <PdfComponent {...inner_item} />
                                   <Row>
                                     {inner_item.reference_video && (
@@ -796,53 +734,7 @@ const OperatingManual = () => {
         <Modal.Body>
           <div className="form-settings-content">
             <Row className="mt-4">
-              {/* <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Accessible to:</Form.Label>
-                  <div className="new-form-radio d-block">
-                    <div className="new-form-radio-box">
-                      <label for="yes">
-                        <input
-                          type="radio"
-                          value={1}
-                          name="accessible_to_role"
-                          id="yes"
-                          onClick={(e) => {
-                            setFormSettingFields(
-                              e.target.name,
-                              parseInt(e.target.value)
-                            );
-                          }}
-                          checked={formSettingData.accessible_to_role === 1}
-                        />
-                        <span className="radio-round"></span>
-                        <p>User Roles</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box m-0 mt-3">
-                      <label for="no">
-                        <input
-                          type="radio"
-                          value={0}
-                          name="accessible_to_role"
-                          id="no"
-                          onClick={(e) => {
-                            setFormSettingFields(
-                              e.target.name,
-                              parseInt(e.target.value)
-                            );
-                          }}
-                          checked={formSettingData.accessible_to_role === 0}
-                        />
-                        <span className="radio-round"></span>
-                        <p>Specific Users</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col> */}
               <Col lg={12} md={12}>
-                {/* {formSettingData.accessible_to_role === 1 ? ( */}
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
@@ -950,40 +842,6 @@ const OperatingManual = () => {
                       />
                       <span className="checkmark"></span>
                     </label>
-                    {/* <label className="container">
-                      Parents
-                      <input
-                        type="checkbox"
-                        name="shared_role"
-                        id="parent"
-                        onClick={(e) => {
-                          let data = { ...formSettingData };
-                          if (
-                            !data['shared_role']
-                              .toString()
-                              .includes(e.target.id)
-                          ) {
-                            data['shared_role'] += e.target.id + ',';
-                          } else {
-                            data['shared_role'] = data['shared_role'].replace(
-                              e.target.id + ',',
-                              ''
-                            );
-                            if (data['shared_role'].includes('all')) {
-                              data['shared_role'] = data['shared_role'].replace(
-                                'all,',
-                                ''
-                              );
-                            }
-                          }
-                          setFormSettingData(data);
-                        }}
-                        checked={formSettingData?.shared_role?.includes(
-                          'parent'
-                        )}
-                      />
-                      <span className="checkmark"></span>
-                    </label> */}
                     <label className="container">
                       All Roles
                       <input
@@ -1037,26 +895,20 @@ const OperatingManual = () => {
                     </label>
                   </div>
                 </Form.Group>
-                {/* ) : null} */}
-                {/* {formSettingData.accessible_to_role === 0 ? ( */}
                 <Form.Group>
                   <Form.Label>Select User</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
                       displayValue="email"
                       className="multiselect-box default-arrow-select"
-                      // placeholder="Select Franchisee"
                       selectedValues={selectedUser}
-                      // onKeyPressFn={function noRefCheck() {}}
                       onRemove={onRemoveUser}
-                      // onSearch={function noRefCheck() {}}
                       onSelect={onSelectUser}
                       options={user}
                     />
                   </div>
                   <p className="error">{errors.franchisee}</p>
                 </Form.Group>
-                {/* ) : null} */}
               </Col>
             </Row>
           </div>
