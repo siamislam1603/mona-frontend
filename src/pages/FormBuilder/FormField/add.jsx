@@ -28,7 +28,7 @@ let selectedFillAccessUserId = '';
 let selectedFillAccessUser = [];
 let selectedSignatoriesUserId = '';
 let selectedSignatoriesUser = [];
-
+const token = localStorage.getItem('token');
 const AddFormField = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,10 +70,7 @@ const AddFormField = (props) => {
   }, [localStorage.getItem('f_id')]);
   const getUser = () => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
 
     var requestOptions = {
       method: 'GET',
@@ -187,9 +184,12 @@ const AddFormField = (props) => {
   //   selectedUserRole.splice(index, 1);
   // }
   const getUserRoleAndFranchiseeData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
@@ -266,9 +266,12 @@ const AddFormField = (props) => {
     }
   };
   const getFormData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(
@@ -288,9 +291,12 @@ const AddFormField = (props) => {
       .catch((error) => console.log('error', error));
   };
   const getFormField = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(
@@ -404,7 +410,6 @@ const AddFormField = (props) => {
                         );
                       }
                     }
-                    
                   });
                   setSection(sectionData);
                   if (!conditionFlag && !groupFlag) {
@@ -442,9 +447,12 @@ const AddFormField = (props) => {
       .catch((error) => console.log('error', error));
   };
   const deleteFormField = (id) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'DELETE',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/field/${id}`, requestOptions)
@@ -477,6 +485,7 @@ const AddFormField = (props) => {
     } else {
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('authorization', 'Bearer ' + token);
       let data = [...form];
       data?.map((item) => {
         console.log('item.accessible_to_role--->', item.accessible_to_role);
@@ -521,7 +530,7 @@ const AddFormField = (props) => {
       })
         .then((res) => res.json())
         .then((res) => {
-          navigate("/form");
+          navigate('/form');
 
           res?.result?.map((item) => {
             if (item.option) {
@@ -606,7 +615,10 @@ const AddFormField = (props) => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(id) => {
-                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
+                    id =
+                      localStorage.getItem('user_role') === 'guardian'
+                        ? localStorage.getItem('franchisee_id')
+                        : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                   }}

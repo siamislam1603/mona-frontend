@@ -32,14 +32,21 @@ function ViewFormBuilder(props) {
   const [MeFormData, setMeFormData] = useState([]);
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
+  const token = localStorage.getItem('token');
   let hrFlag = false;
   useEffect(() => {
     getFormData('');
   }, []);
   const deleteForm = (id) => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'DELETE',
       redirect: 'follow',
+      headers: myHeaders
     };
 
     fetch(
@@ -54,9 +61,15 @@ function ViewFormBuilder(props) {
       .catch((error) => console.log('error', error));
   };
   const getFormData = (search) => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders
     };
 
     fetch(
@@ -120,6 +133,10 @@ function ViewFormBuilder(props) {
     });
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
