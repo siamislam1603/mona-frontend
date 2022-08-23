@@ -17,7 +17,7 @@ const ParentsDashboard = () => {
   const [editTrainingData, setEditTrainingData] = useState([]);
   const [viewEnrollmentDialog, setViewEnrollmentDialog] = useState(false);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  console.log(selectedFranchisee, "selectedFranchisee")
+
   const checkPendingConsent = async () => {
     let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
       headers: {
@@ -30,7 +30,7 @@ const ParentsDashboard = () => {
       console.log('PDATA:', parentConsentData);
       console.log('PARENT CONSENT DATA:', parentConsentData[0]);
 
-      if(parentConsentData.length > 0) {
+      if (parentConsentData.length > 0) {
         localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
         localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
         localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
@@ -96,6 +96,7 @@ const ParentsDashboard = () => {
       setannouncements(training);
     }
   };
+
   const assignededucators = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/parent/educators-assigned/${selectedFranchisee}`, {
@@ -110,8 +111,9 @@ const ParentsDashboard = () => {
       console.log(result, "<<<<<<<<<<<>>>>>>>>>>>>")
       setEditTrainingData(result);
     }
-
   }
+  console.log(selectedFranchisee, "selectedFranchisee")
+
 
   const getAddedTime = (str) => {
     const Added = moment(str).format('DD/MM/YYYY')
@@ -168,7 +170,7 @@ const ParentsDashboard = () => {
     events();
     Userannouncements();
     assignededucators();
-  }, [])
+  }, [selectedFranchisee])
 
   const fetchUserDetails = async (userId) => {
     let token = localStorage.getItem('token');

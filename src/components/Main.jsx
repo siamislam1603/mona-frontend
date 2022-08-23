@@ -73,6 +73,7 @@ const Main = () => {
       logoutTime.setTime(loginTime.getTime() + 2 * 60 * 60 * 1000); // 1 HOUR
       console.log("Auto logout at:", logoutTime);
 
+
       function autoLogout() {
         (function loop() {
           var now = new Date();
@@ -114,7 +115,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <UserManagement />
+              {localStorage.getItem('user_role')=='franchisor_admin'?<FranchisorDashboard />:localStorage.getItem('user_role')=='franchisee_admin'?<FranchiseeDashboard />:localStorage.getItem('user_role')=='coodinator'?<CoordinatorDashboard />:localStorage.getItem('educator')=='EducatorDashboard'?<EducatorDashboard />:<ParentsDashboard />}
             </Protected>
           }
         />
