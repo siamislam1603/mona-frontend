@@ -1,28 +1,16 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Col,
-  Container,
-  Form,
-  Modal,
-  Row,
-  Table,
-} from 'react-bootstrap';
+import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import LeftNavbar from '../../../components/LeftNavbar';
 import TopHeader from '../../../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
-import {
-  createFormFieldValidation,
-  createFormSettingModelValidation,
-} from '../../../helpers/validation';
+import { createFormFieldValidation } from '../../../helpers/validation';
 import { BASE_URL } from '../../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Setting from '../Setting';
 
 let counter = 0;
-let selectedFranchisee = [];
 let selectedUserRole = [];
 let selectedFillAccessUserId = '';
 let selectedFillAccessUser = [];
@@ -57,8 +45,6 @@ const AddFormField = (props) => {
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
   useEffect(() => {
     setFormSettingFlag(false);
-    console.log('location?.state?.id---->', location?.state?.id);
-    console.log('location?.state?.form_name--->', location?.state?.form_name);
     if (location?.state?.form_name) {
       getFormField();
       getFormData();
@@ -78,7 +64,6 @@ const AddFormField = (props) => {
       headers: myHeaders,
     };
     let api_url = '';
-    console.log('selectedFranchisee--->', selectedFranchisee);
     if (selectedFranchisee) {
       if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
       else
@@ -118,7 +103,6 @@ const AddFormField = (props) => {
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log('selectedFillAccessUserId---->', selectedFillAccessUserId);
   }
   function onFillAccessRemoveUser(selectedList, removedItem) {
     selectedFillAccessUserId = selectedFillAccessUserId.replace(
@@ -129,9 +113,6 @@ const AddFormField = (props) => {
       return object.id === removedItem.id;
     });
     selectedFillAccessUser.splice(index, 1);
-    {
-      console.log('selectedFillAccessUserId---->', selectedFillAccessUserId);
-    }
   }
   function onSignatorieselectUser(optionsList, selectedItem) {
     selectedSignatoriesUserId += selectedItem.id + ',';
@@ -139,7 +120,6 @@ const AddFormField = (props) => {
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log('selectedFillAccessUserId---->', selectedSignatoriesUserId);
   }
   function onSignatoriesRemoveUser(selectedList, removedItem) {
     selectedSignatoriesUserId = selectedSignatoriesUserId.replace(
@@ -150,39 +130,7 @@ const AddFormField = (props) => {
       return object.id === removedItem.id;
     });
     selectedSignatoriesUser.splice(index, 1);
-    {
-      console.log('selectedFillAccessUserId---->', selectedSignatoriesUserId);
-    }
   }
-  // function onSelectFranchisee(optionsList, selectedItem) {
-  //   console.log('selected_item---->2', selectedItem);
-  //   selectedFranchisee.push({
-  //     id: selectedItem.id,
-  //     role_label: selectedItem.registered_name,
-  //   });
-  //   console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
-  // }
-  // function onRemoveFranchisee(selectedList, removedItem) {
-  //   const index = selectedFranchisee.findIndex((object) => {
-  //     return object.id === removedItem.id;
-  //   });
-  //   selectedFranchisee.splice(index, 1);
-  // }
-
-  // function onSelectUserRole(optionsList, selectedItem) {
-  //   console.log('selected_item---->2', selectedItem);
-  //   selectedUserRole.push({
-  //     id: selectedItem.id,
-  //     role_label: selectedItem.role_label,
-  //   });
-  //   console.log('selected_item---->1selectedFranchisee', selectedFranchisee);
-  // }
-  // function onRemoveUserRole(selectedList, removedItem) {
-  //   const index = selectedUserRole.findIndex((object) => {
-  //     return object.id === removedItem.id;
-  //   });
-  //   selectedUserRole.splice(index, 1);
-  // }
   const getUserRoleAndFranchiseeData = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -205,16 +153,6 @@ const AddFormField = (props) => {
         setFranchisee(res?.franchiseeList);
       })
       .catch((error) => console.log('error', error));
-  };
-  const setFormSettingFields = (field, value) => {
-    setFormSettingData({ ...formSettingData, [field]: value });
-
-    if (!!formSettingError[field]) {
-      setFormSettingError({
-        ...formSettingError,
-        [field]: null,
-      });
-    }
   };
   const setConditionField = (
     field,
@@ -327,17 +265,10 @@ const AddFormField = (props) => {
               item?.accessible_to_role === false
             ) {
               user.map((user_item) => {
-                console.log(
-                  'user---->',
-                  user_item,
-                  '\nitem?.fill_access_users--->',
-                  item?.fill_access_users
-                );
                 if (item?.fill_access_users) {
                   if (
                     item?.fill_access_users.includes(user_item.id.toString())
                   ) {
-                    console.log('user_els--->', user_item);
                     selectedFillAccessUser.push({
                       id: user_item.id,
                       email: user_item.email,
@@ -347,7 +278,6 @@ const AddFormField = (props) => {
                 }
                 if (item?.signatories_role) {
                   if (item?.signatories_role.includes(item.id.toString())) {
-                    console.log('user_els--->', item);
                     selectedSignatoriesUser.push({
                       id: item.id,
                       email: item.email,
@@ -368,18 +298,11 @@ const AddFormField = (props) => {
               });
             }
             setForm(res?.result);
-            // setConditionModelData(res?.result);
             setGroupModelData(res?.result);
           } else if (groupFlag) {
             setGroupModelData(res?.result);
-          } else {
-            // setConditionModelData(res?.result);
           }
         } else {
-          console.log(
-            'res?.form?.previous_form---->',
-            res?.form?.previous_form
-          );
           if (res?.form?.previous_form !== '') {
             fetch(
               `${BASE_URL}/field?form_name=${res?.form?.previous_form}`,
@@ -424,7 +347,6 @@ const AddFormField = (props) => {
                       });
                     }
                     setForm(result?.result);
-                    // setConditionModelData(res?.result);
                     setGroupModelData(result?.result);
                   } else if (groupFlag) {
                     setGroupModelData(result?.result);
@@ -463,7 +385,6 @@ const AddFormField = (props) => {
   const onSubmit = (e) => {
     e.preventDefault();
     const newErrors = createFormFieldValidation(form);
-    console.log('form--->', form);
     let error_flag = false;
     newErrors.map((item) => {
       if (Object.values(item)[0]) {
@@ -521,7 +442,6 @@ const AddFormField = (props) => {
           item['section'] = false;
         }
       });
-      console.log('Hello---->payload is here', data);
 
       fetch(`${BASE_URL}/field/add?form_name=${location?.state?.form_name}`, {
         method: 'post',
@@ -548,9 +468,7 @@ const AddFormField = (props) => {
     const tempArr = form;
     const tempObj = tempArr[index];
     if (field === 'option') {
-      console.log('tempObj----->', tempObj);
       const tempOption = tempObj['option'];
-      console.log('tempoption---->', tempOption);
       tempOption[inner_index] = { [value]: value };
       tempArr[index]['option'] = tempOption;
       setForm(tempArr);
@@ -560,8 +478,6 @@ const AddFormField = (props) => {
         value === 'checkbox' ||
         value === 'dropdown_selection')
     ) {
-      console.log('Hello field---->', field);
-      console.log('Hello value---->', value);
       tempObj['option'] = [{ '': '' }, { '': '' }];
       tempObj[field] = value;
       tempArr[index] = tempObj;
@@ -578,32 +494,18 @@ const AddFormField = (props) => {
         let tempErrorObj = tempErrorArray[index];
         tempErrorObj['option'][inner_index] = undefined;
         tempErrorArray[index] = tempErrorObj;
-
         setErrors(tempErrorArray);
-        console.log(
-          'option.length--->',
-          tempErrorObj['option'].length,
-          '======',
-          inner_index,
-          '-------',
-          tempErrorObj['option']
-        );
-        console.log('Hello--->', tempErrorArray);
       } else {
         let tempErrorArray = errors;
         let tempErrorObj = tempErrorArray[index];
         delete tempErrorObj[field];
         tempErrorArray[index] = tempErrorObj;
         setErrors(tempErrorArray);
-        console.log('Hello--->', tempErrorArray);
       }
     }
   };
-  // console.log("conditionModelData==>", conditionModelData);
   return (
     <>
-      {console.log('form--->', form)}
-      {console.log('formSettingData---->', formSettingData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -648,10 +550,6 @@ const AddFormField = (props) => {
                       </Button>
                     </div>
                   </Col>
-                  {/* <Col sm={4}>
-                  <a href="#">Questions</a>
-                  <a href="#">Answers</a>
-                </Col> */}
                   <Col sm={12}>
                     <p className="myform-details">
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit,
@@ -1038,19 +936,6 @@ const AddFormField = (props) => {
                                 field_type: 'text',
                                 field_label: '',
                               });
-                              // for(let i=index;i<data.length;i++)
-                              // {
-                              //   data[i]=temp;
-                              //   temp=data[i+1];
-                              // }
-                              // data.push(temp);
-                              console.log(
-                                'Hello--->',
-                                data,
-                                'index',
-                                index + 1
-                              );
-                              // data.push({ field_type: 'text' });
                               setForm(data);
                             }}
                           >
@@ -1110,10 +995,6 @@ const AddFormField = (props) => {
                             {form[Index]?.['option']?.map((item, index) => {
                               return (
                                 <Row>
-                                  {console.log(
-                                    'item------of---model=---->',
-                                    Object.values(item)[0]
-                                  )}
                                   <Col sm={12}>
                                     <Form.Label className="formlabel modal-m-lable">
                                       If{' '}
@@ -1281,10 +1162,6 @@ const AddFormField = (props) => {
                                         (inner_item, inner_index) => {
                                           return (
                                             <Col lg={6}>
-                                              {console.log(
-                                                'inner_item--->',
-                                                inner_item
-                                              )}
                                               <div className="my-form-input my-form-input-modal">
                                                 <Form.Control
                                                   type="text"
@@ -1395,7 +1272,6 @@ const AddFormField = (props) => {
                             className="done"
                             onClick={() => {
                               setConditionFlag(false);
-                              // setForm(conditionModelData);
                               counter++;
                               setCount(counter);
                             }}
@@ -1813,15 +1689,12 @@ const AddFormField = (props) => {
                                                   <Multiselect
                                                     displayValue="email"
                                                     className="multiselect-box default-arrow-select"
-                                                    // placeholder="Select Franchisee"
                                                     selectedValues={
                                                       selectedFillAccessUser
                                                     }
-                                                    // onKeyPressFn={function noRefCheck() {}}
                                                     onRemove={
                                                       onFillAccessRemoveUser
                                                     }
-                                                    // onSearch={function noRefCheck() {}}
                                                     onSelect={
                                                       onFillAccessSelectUser
                                                     }
@@ -1887,15 +1760,12 @@ const AddFormField = (props) => {
                                                   <Multiselect
                                                     displayValue="email"
                                                     className="multiselect-box default-arrow-select"
-                                                    // placeholder="Select Franchisee"
                                                     selectedValues={
                                                       selectedSignatoriesUser
                                                     }
-                                                    // onKeyPressFn={function noRefCheck() {}}
                                                     onRemove={
                                                       onSignatoriesRemoveUser
                                                     }
-                                                    // onSearch={function noRefCheck() {}}
                                                     onSelect={
                                                       onSignatorieselectUser
                                                     }
@@ -1910,73 +1780,6 @@ const AddFormField = (props) => {
                                           )}
                                         </>
                                       )}
-                                      {/* <div className="sub_check_box">
-                                        <h2>Applicable to:</h2>
-                                        <div className="sub_check_box_list">
-                                          <div className="modal_check_box">
-                                            <div className="modal-two-check">
-                                              <label class="container">
-                                                Franchisor Admin
-                                                <input
-                                                  type="checkbox"
-                                                  id="abc"
-                                                  name="section_name"
-                                                  value="abc"
-                                                />
-                                                <span class="checkmark"></span>
-                                              </label>
-                                            </div>
-                                            <div className="modal-two-check">
-                                              <label class="container">
-                                                Franchisee Admin
-                                                <input
-                                                  type="checkbox"
-                                                  id="abc"
-                                                  name="section_name"
-                                                  value="abc"
-                                                />
-                                                <span class="checkmark"></span>
-                                              </label>
-                                            </div>
-                                            <div className="modal-two-check">
-                                              <label class="container">
-                                                Co-ordinators
-                                                <input
-                                                  type="checkbox"
-                                                  id="abc"
-                                                  name="section_name"
-                                                  value="abc"
-                                                />
-                                                <span class="checkmark"></span>
-                                              </label>
-                                            </div>
-                                            <div className="modal-two-check">
-                                              <label class="container">
-                                                Educators
-                                                <input
-                                                  type="checkbox"
-                                                  id="abc"
-                                                  name="section_name"
-                                                  value="abc"
-                                                />
-                                                <span class="checkmark"></span>
-                                              </label>
-                                            </div>
-                                            <div className="modal-two-check">
-                                              <label class="container">
-                                                Parents
-                                                <input
-                                                  type="checkbox"
-                                                  id="abc"
-                                                  name="section_name"
-                                                  value="abc"
-                                                />
-                                                <span class="checkmark"></span>
-                                              </label>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div> */}
                                     </>
                                   )}
                                 </>
