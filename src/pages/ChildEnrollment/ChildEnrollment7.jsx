@@ -459,7 +459,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                         comment: e.target.value
                       }))} />
                   </div> 
-                  <p>* You've done {localStorage.getItem('change_count')} {localStorage.getItem('change_count') > 1 ? "changes" : "change"} in this form!</p>
+                  <p>* There were changes in {localStorage.getItem('change_count')} {localStorage.getItem('change_count') > 1 ? "sections" : "section"} of this form!</p>
                 </div>
               </Form.Group>
             </div>
