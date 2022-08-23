@@ -43,6 +43,7 @@ const AddFormField = (props) => {
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
+  const form_name=location?.state?.form_name;
   useEffect(() => {
     setFormSettingFlag(false);
     if (location?.state?.form_name) {
@@ -213,7 +214,11 @@ const AddFormField = (props) => {
     };
 
     fetch(
-      `${BASE_URL}/form?form_name=${location?.state?.form_name}`,
+      `${BASE_URL}/form?form_name=${location?.state?.form_name}&id=${localStorage.getItem(
+        'user_id'
+      )}&role=${localStorage.getItem(
+        'user_role'
+      )}&franchisee_id=${localStorage.getItem('franchisee_id')}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -238,7 +243,7 @@ const AddFormField = (props) => {
     };
 
     fetch(
-      `${BASE_URL}/field?form_name=${location?.state?.form_name}`,
+      `${BASE_URL}/field?form_name=${form_name}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -305,7 +310,7 @@ const AddFormField = (props) => {
         } else {
           if (res?.form?.previous_form !== '') {
             fetch(
-              `${BASE_URL}/field?form_name=${res?.form?.previous_form}`,
+              `${BASE_URL}/field?form_name=${res?.form[0]?.previous_form}`,
               requestOptions
             )
               .then((response) => response.json())
@@ -314,7 +319,6 @@ const AddFormField = (props) => {
                   let sectionData = [];
                   let flag = false;
                   result?.result?.map((item) => {
-                    console.log('item.field_type----->', item);
                     if (item.field_type === 'signature') {
                       flag = true;
                     }
