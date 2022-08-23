@@ -70,7 +70,7 @@ const OperatingManual = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
-    
+
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
@@ -296,12 +296,12 @@ const OperatingManual = () => {
     if (key === 'category') {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
         'user_role'
-      )}&id=${localStorage.getItem('user_id')}`;
+      )}&id=${localStorage.getItem('user_id')}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
       setCategoryFilter(value);
     } else if (key === 'search') {
       api_url = `${BASE_URL}/operating_manual?search=${value}&role=${localStorage.getItem(
         'user_role'
-      )}&id=${localStorage.getItem('user_id')}`;
+      )}&id=${localStorage.getItem('user_id')}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'

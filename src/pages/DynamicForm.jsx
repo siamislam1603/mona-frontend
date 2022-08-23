@@ -8,6 +8,7 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import { getSuggestedQuery } from '@testing-library/react';
 let values = [];
+let behalfOfFlag=false;
 const DynamicForm = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -137,10 +138,9 @@ const DynamicForm = (props) => {
       form,
       formData,
       localStorage.getItem('user_role') === 'guardian'
-        ? childId.includes('all')
-          ? null
-          : childId
-        : behalfOf
+        ? childId
+        : behalfOf,
+      behalfOfFlag
     );
     console.log('newErrors---->', newErrors);
     if (Object.keys(newErrors).length > 0) {
@@ -158,7 +158,7 @@ const DynamicForm = (props) => {
           user_id: localStorage.getItem('user_id'),
           behalf_of:
             localStorage.getItem('user_role') === 'guardian'
-              ? childId
+              ? behalfOfFlag ? childId : behalfOf
               : behalfOf,
           data: form,
         }),
@@ -227,6 +227,7 @@ const DynamicForm = (props) => {
                       )
                     ) && (
                       <Col sm={6}>
+                        {behalfOfFlag=true}
                         <div className="child_info_field sex">
                           <span className="form-label">Behalf of:</span>
                           <div clas Name="d-flex mt-2"></div>
@@ -236,6 +237,7 @@ const DynamicForm = (props) => {
                               <Form.Select
                                 name={'behalf_of'}
                                 onChange={(e) => {
+                                  
                                   setBehalfOf(e.target.value);
                                   if (e.target.value !== '') {
                                     let errorData = { ...errors };
