@@ -49,6 +49,7 @@ function Setting(props) {
   const setFields = (field, value) => {
     setForm({ ...form, [field]: value });
   };
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     console.log('location?.state?.id---->', location?.state?.id);
@@ -56,9 +57,15 @@ function Setting(props) {
   }, [localStorage.getItem('f_id')]);
   const getParticularFormData = (userData,childData) => {
     console.log('user----->Helllo');
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers:myHeaders
     };
 
     fetch(
@@ -459,6 +466,10 @@ function Setting(props) {
     //   setErrors(newErrors);
     // } else {
     var myHeaders = new Headers();
+      myHeaders.append(
+        'authorization',
+        'Bearer ' + token
+      );
     let data = { ...form };
     if (data.accessible_to_role === '1' || data.accessible_to_role === true) {
       data['form_visible_to'] = form.form_visible_to

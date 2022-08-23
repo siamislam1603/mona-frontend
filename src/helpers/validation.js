@@ -1,10 +1,6 @@
-export const DynamicFormValidation = (form, data, behalf_of) => {
+export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
   let newErrors = {};
   Object.keys(data)?.map((item) => {
-
-
-
-
     // console.log('inner_item_item--->', item);
     data[item].map((inner_item) => {
       // console.log('inner_item', form[item]);
@@ -20,9 +16,11 @@ export const DynamicFormValidation = (form, data, behalf_of) => {
       }
     });
   });
-  if (!behalf_of || behalf_of === '')
-    newErrors.behalf_of = 'Behalf of is required';
-
+  if(behalf_of_flag===true)
+  {
+    if (!behalf_of || behalf_of === '')
+      newErrors.behalf_of = 'Behalf of is required';
+  }
   return newErrors;
 };
 export const createCategoryValidation = (form) => {

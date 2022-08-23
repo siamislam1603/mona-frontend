@@ -23,11 +23,6 @@ const animatedComponents = makeAnimated();
 let selectedUserId = '';
 const RepoEdit = () => {
     const [url, setUrl] = React.useState('');
-
-
-
-
-
     const Params = useParams();
     const navigate = useNavigate();
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
@@ -41,10 +36,12 @@ const RepoEdit = () => {
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
     const [selectedChild,setSelectedChild] = useState([])
+    const [child, setChild] = useState([]);
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
         assigned_users: []
+
     });
     // const toBase64 = (file) =>
     //     new Promise((resolve, reject) => {
@@ -82,7 +79,7 @@ const RepoEdit = () => {
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
-            assigned_childs:data?.repository_shares[0].assigned_childs,
+            assigned_childs: data?.repository_shares[0].assigned_childs,
             file_type: data?.repository_files[0].fileType,
         }));
         setCoverImage(data?.repository_files[0].filesPath);
@@ -158,7 +155,6 @@ const RepoEdit = () => {
         console.log("data frnahise", data.franchise)
         const response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, {
             franchisee_id: data.franchise
-
         },
             {
                 headers: {
@@ -167,10 +163,10 @@ const RepoEdit = () => {
             })
         console.log("CHIlD DATA after franhisee", response)
         if (response.status === 200 && response.data.status === "success") {
-            setSelectedChild(response.data.children.map(data => ({
+            setChild(response.data.children.map(data => ({
                 id: data.id,
                 name: data.fullname,
-                key: `${data.fullname}, ${data.city}`
+                key: `${data.fullname}`
             })));
         }
 
@@ -211,26 +207,25 @@ const RepoEdit = () => {
             ]);
         }
     };
-    const getUser = () => {
+    const getUser = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
             'authorization',
             'Bearer ' + localStorage.getItem('token')
         );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
+
+        var request = {
             headers: myHeaders,
         };
-        fetch(`${BASE_URL}/auth/users`, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                result?.data?.map((item) => {
-                    item['status'] = false;
-                });
-                setUser(result?.data);
-            })
-            .catch((error) => console.log('error', error));
+
+        let franchiseeArr = data.franchise
+
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
+        if (response.status === 200) {
+            // console.log(response.data.users, "respo")
+            setUser(response.data.users)
+            console.log(user,"userSList")
+        }
     };
     function onSelectUser(optionsList, selectedItem) {
         selectedUserId += selectedItem.id + ',';
@@ -255,6 +250,19 @@ const RepoEdit = () => {
             });
         }
     };
+
+    function onRemoveChild(removedItem) {
+        let removedchildarr = removedItem
+        removedItem = removedItem.map((item)=>{
+            return item.id
+        })
+        setData(prevState => ({
+            ...prevState,
+            assigned_childs: removedItem
+        }));
+        console.log(selectedChild,"Selllee")
+        setSelectedChild(removedchildarr)
+    }
     useEffect(() => {
         GetData();
         getFileCategory();
@@ -265,6 +273,7 @@ const RepoEdit = () => {
 
     useEffect(() => {
         childList()
+        getUser();
     }, [data.franchise])
 
 
@@ -300,7 +309,7 @@ const RepoEdit = () => {
     data && console.log('FILE REPO DATA:', data.franchise);
     data && console.log('FILE REPO DATA:', data);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
-    console.log("Selected child",selectedChild)
+    console.log("Selected child", selectedChild)
 
     return (
         <div style={{ position: "relative", overflow: "hidden" }}>
@@ -398,7 +407,7 @@ const RepoEdit = () => {
                                                             <div className="showfiles mt-3 text-center" >
                                                                 {typeof data.image === "string" ?
                                                                     (<>
-                                                                        {data.file_type === "image/jpeg" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
+                                                                        {data.file_type === "image/jpeg" || "image/png" || "jpe" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
                                                                             data.file_type === "application/pdf" ? (<>
                                                                                 {/* <div style={{ width: "200px", height: "200px", backgroundColor: "red", overflow: "hidden" }}>
                                                                                     <Document
@@ -425,7 +434,7 @@ const RepoEdit = () => {
                                                                                             />
                                                                                         </div>
                                                                                     </>
-                                                                                ) : (<>sdk</>)}
+                                                                                ) : (<></>)}
                                                                     </>
                                                                     )
                                                                     : (<></>)}
@@ -578,11 +587,11 @@ const RepoEdit = () => {
                                                                 /> */}
                                                                 <Multiselect
                                                                     disable={sendToAllFranchisee === 'all'}
-                                                                    placeholder={"Select User Names"}
+                                                                    placeholder={"Select Franchisee"}
                                                                     displayValue="key"
                                                                     className="multiselect-box default-arrow-select"
                                                                     onRemove={function noRefCheck(data) {
-                                                                        setFormSettings((prevState) => ({
+                                                                        setData((prevState) => ({
                                                                             ...prevState,
                                                                             franchise: [...data.map(data => data.id)],
                                                                         }));
@@ -591,7 +600,9 @@ const RepoEdit = () => {
                                                                     onSelect={(selectedOptions) => {
                                                                         setData((prevState) => ({
                                                                             ...prevState,
-                                                                            franchise: [...selectedOptions.map(option => option.id + "")]
+                                                                            franchise: [...selectedOptions.map(option => option.id + "")],
+                                                                            assigned_childs: [],
+                                                                            assigned_users: []
                                                                         }));
                                                                     }}
                                                                     options={franchiseeList}
@@ -600,60 +611,7 @@ const RepoEdit = () => {
                                                         </Form.Group>
                                                     </Col>
                                                 </Row>
-                                                    <Row className="mt-4">
-                                                    <Col lg={3} md={6}>
-                                                       
-                                                        </Col>
-                                                        <Col lg={9} md={12}>
-                                                        <Form.Group>
-                                                            <Form.Label>Selected Child</Form.Label>
-                                                            <div className="select-with-plus">
-                                                                {/* <Multiselect
-                                                                   
-                                                                    placeholder={"Select User Names"}
-                                                                    displayValue="key"
-                                                                    selectedValues={franchiseeList?.filter(d => parseInt(data?.franchise) === d.id)}
-                                                                    className="multiselect-box default-arrow-select"
-                                                                    onKeyPressFn={function noRefCheck() { }}
-                                                                    onRemove={function noRefCheck(data) {
-                                                                        setData((prevState) => ({
-                                                                            ...prevState,
-                                                                            franchise: [...data.map(data => data.id)],
-                                                                        }));
-                                                                    }}
-                                                                    onSelect={function noRefCheck(data) {
-                                                                        setData((prevState) => ({
-                                                                            ...prevState,
-                                                                            franchise: [...data.map((data) => data.id)],
-                                                                        }));
-                                                                    }}
-                                                                    options={franchiseeList}
-                                                                /> */}
-                                                                <Multiselect
-                                                                    disable={sendToAllFranchisee === 'all'}
-                                                                    placeholder={""}
-                                                                    displayValue="key"
-                                                                    className="multiselect-box default-arrow-select"
-                                                                    // onRemove={function noRefCheck(data) {
-                                                                    //     setFormSettings((prevState) => ({
-                                                                    //         ...prevState,
-                                                                    //         franchise: [...data.map(data => data.id)],
-                                                                    //     }));
-                                                                    // }}
-                                                                    // selectedValues={
-                                                                    selectedValues={selectedChild}
-                                                                    onSelect={(selectedOptions) => {
-                                                                        setData((prevState) => ({
-                                                                            ...prevState,
-                                                                            assigned_childs: [...selectedOptions.map(option => option.id + "")]
-                                                                        }));
-                                                                    }}
-                                                                    options={selectedChild}
-                                                                />
-                                                            </div>
-                                                        </Form.Group>
-                                                    </Col>
-                                                </Row>
+                                                   
                                                 <Row className="mt-4">
                                                     <Col lg={3} md={6}>
                                                         <Form.Group>
@@ -813,10 +771,12 @@ const RepoEdit = () => {
                                                             </Form.Group>
                                                         ) : null}
                                                         {data.accessibleToRole === 0 ? (
+                                                            <>
                                                             <Form.Group>
                                                                 <Form.Label>Select User</Form.Label>
                                                                 <div className="select-with-plus">
                                                                     <Multiselect
+                                                                    disable={sendToAllFranchisee === 'all'}
                                                                         displayValue="email"
                                                                         className="multiselect-box default-arrow-select"
                                                                         selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
@@ -833,6 +793,28 @@ const RepoEdit = () => {
                                                                 </div>
                                                                 <p className="error">{errors.franchisee}</p>
                                                             </Form.Group>
+                                                            <Form.Group>
+                                                            <Form.Label>Select Child</Form.Label>
+                                                            <div className="select-with-plus">
+                                                                <Multiselect
+                                                                    disable={sendToAllFranchisee === 'all'}
+                                                                    placeholder={"Select child"}
+                                                                    displayValue="name"
+                                                                    className="multiselect-box default-arrow-select"
+                                                                    onRemove={onRemoveChild}
+                                                                    selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
+                                                                    value={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
+                                                                    onSelect={(selectedOptions) => {
+                                                                        setData((prevState) => ({
+                                                                            ...prevState,
+                                                                            assigned_childs: [...selectedOptions.map(option => option.id + "")]
+                                                                        }));
+                                                                    }}
+                                                                    options={child}
+                                                                />
+                                                            </div>
+                                                        </Form.Group>
+                                                            </>
                                                         ) : null}
                                                     </Col>
                                                     <div className="d-flex justify-content-center my-5">

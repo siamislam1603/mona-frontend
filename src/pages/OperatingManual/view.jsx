@@ -49,6 +49,7 @@ const OperatingManual = () => {
   const [userRole, setUserRole] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
+  const token = localStorage.getItem('token');
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
@@ -62,9 +63,12 @@ const OperatingManual = () => {
     getUser();
   }, [selectedFranchisee]);
   const getUserRoleData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
@@ -91,10 +95,7 @@ const OperatingManual = () => {
   };
   const getUser = () => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
 
     var requestOptions = {
       method: 'GET',
@@ -181,9 +182,12 @@ const OperatingManual = () => {
     }
   }, [operatingManualdata]);
   const getOneOperatingManual = async (id, category_name) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
     await fetch(
       `${BASE_URL}/operating_manual/one?id=${id}&category_name=${category_name}&franchisee_id=${localStorage.getItem(
@@ -245,9 +249,12 @@ const OperatingManual = () => {
   //   }
   // };
   const getCategory = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/operating_manual/category`, requestOptions)
@@ -259,9 +266,12 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   const deleteOperatingManual = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'DELETE',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(
@@ -275,20 +285,23 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   const getOperatingManual = (key, value) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
     let api_url = '';
     if (key === 'category') {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
         'user_role'
-      )}&id=${localStorage.getItem('user_id')}`;
+      )}&id=${localStorage.getItem('user_id')}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
       setCategoryFilter(value);
     } else if (key === 'search') {
       api_url = `${BASE_URL}/operating_manual?search=${value}&role=${localStorage.getItem(
         'user_role'
-      )}&id=${localStorage.getItem('user_id')}`;
+      )}&id=${localStorage.getItem('user_id')}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
     } else {
       api_url = `${BASE_URL}/operating_manual?role=${localStorage.getItem(
         'user_role'
@@ -377,6 +390,7 @@ const OperatingManual = () => {
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('authorization', 'Bearer ' + token);
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
         body: JSON.stringify(data),
@@ -404,7 +418,10 @@ const OperatingManual = () => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(id) => {
-                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
+                    id =
+                      localStorage.getItem('user_role') === 'guardian'
+                        ? localStorage.getItem('franchisee_id')
+                        : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                     if (
