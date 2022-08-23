@@ -92,6 +92,8 @@ const FileRepository = () => {
   const [assigned_usersMeFileRepoData, setassigned_usersMeFileRepoData] = useState([]);
   const [errors, setErrors] = useState({});
   const [post, setPost] = React.useState([]);
+  const [child, setChild] = useState([]);
+  const [selectedChild, setSelectedChild] = useState([]);
   const [userData, setUserData] = useState([]);
   userData && console.log('USER DATA:', userData.map(data => data));
 
@@ -135,6 +137,31 @@ const FileRepository = () => {
       })));
     }
   };
+
+  const getChildren = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+        'authorization',
+        'Bearer ' + localStorage.getItem('token')
+    );
+
+    let franchiseeArr = formSettings.assigned_franchisee
+
+    var request = {
+        headers: myHeaders,
+    };
+
+    let response = await axios.post(`http://127.0.0.1:4000/enrollment/franchisee/child`,{franchisee_id:franchiseeArr},request)
+    if (response.status === 200) {
+        setChild(response.data.children)
+    }}
+
+  useEffect(()=>{
+    getUser();
+    getChildren()
+  },[formSettings.franchisee])
+
+
   useEffect(() => {
     GetData();
     fetchFranchiseeList();
@@ -162,29 +189,26 @@ const FileRepository = () => {
       .then((result) => setCategory(result.category))
       .catch((error) => console.log('error', error));
   };
-  const getUser = () => {
+  const getUser = async () => {
     var myHeaders = new Headers();
     myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
+        'authorization',
+        'Bearer ' + localStorage.getItem('token')
     );
 
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
+    var request = {
+        headers: myHeaders,
     };
 
-    fetch(`${BASE_URL}/auth/users`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        result?.data?.map((item) => {
-          item['status'] = false;
-        });
-        setUser(result?.data);
-      })
-      .catch((error) => console.log('error', error));
-  };
+    let franchiseeArr = formSettings.franchisee
+
+    let response = await axios.post(`http://127.0.0.1:4000/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
+    if (response.status === 200) {
+        // console.log(response.data.users, "respo")
+        setUser(response.data.users)
+        console.log(user,"userSList")
+    }
+};
 
   const setField = (field, value) => {
     if (value === null || value === undefined) {
@@ -292,6 +316,10 @@ const FileRepository = () => {
           'accessibleToAll',
           false
         );
+        formdata.append(
+          'assigned_childs',
+          formSettings.assigned_childs
+      )
       }
     }
     var requestOptions = {
@@ -407,6 +435,33 @@ const FileRepository = () => {
       console.log('selectedUser---->', selectedUser);
     }
   }
+
+  function onSelectChild(selectedItem) {
+    let selectedchildarr = selectedItem
+    selectedItem = selectedItem.map((item)=>{
+        return item.id
+    })
+    setFormSettings(prevState => ({
+        ...prevState,
+        assigned_childs: selectedItem
+    }));
+    console.log(selectedChild,"Selllee")
+    setSelectedChild(selectedchildarr)
+}
+
+  function onRemoveChild(removedItem) {
+    let removedchildarr = removedItem
+    removedItem = removedItem.map((item)=>{
+        return item.id
+    })
+    setFormSettings(prevState => ({
+        ...prevState,
+        assigned_childs: removedItem
+    }));
+    console.log(selectedChild,"Selllee")
+    setSelectedChild(removedchildarr)
+}
+
 
 
   function onSelect(index) {
@@ -699,7 +754,8 @@ const FileRepository = () => {
                             onChange={() => {
                               setFormSettings(prevState => ({
                                 ...prevState,
-                                assigned_franchisee: ['all']
+                                assigned_franchisee: ['all'],
+                                franchisee: ['all']
                               }));
                               setSendToAllFranchisee('all')
                             }}
@@ -718,7 +774,8 @@ const FileRepository = () => {
                             onChange={() => {
                               setFormSettings(prevState => ({
                                 ...prevState,
-                                assigned_franchisee: []
+                                assigned_franchisee: [],
+                                franchisee: []
                               }));
                               setSendToAllFranchisee('none')
                             }}
@@ -744,14 +801,22 @@ const FileRepository = () => {
                           setFormSettings((prevState) => ({
                             ...prevState,
                             assigned_franchisee: [...data.map(data => data.id)],
+                            franchisee: [...data.map(data => data.id)]
                           }));
+
+                          setSelectedUser([])
+                          setSelectedChild([])
                         }}
 
                         onSelect={function noRefCheck(data) {
                           setFormSettings((prevState) => ({
                             ...prevState,
                             assigned_franchisee: [...data.map((data) => data.id)],
+                            franchisee: [...data.map(data => data.id)]
                           }));
+
+                          setSelectedUser([])
+                          setSelectedChild([])
                         }}
                         options={franchiseeList}
                       />
@@ -955,6 +1020,8 @@ const FileRepository = () => {
                     </Form.Group>
                   ) : null}
                   {formSettingData.accessible_to_role === 0 ? (
+                    <>
+
                     <Form.Group>
                       <Form.Label>Select User</Form.Label>
                       <div className="select-with-plus">
@@ -972,6 +1039,24 @@ const FileRepository = () => {
                       </div>
                       <p className="error">{errors.franchisee}</p>
                     </Form.Group>
+                    <Form.Group>
+                    <Form.Label>Select Child</Form.Label>
+                    <div className="select-with-plus">
+                        <Multiselect
+                            displayValue="fullname"
+                            className="multiselect-box default-arrow-select"
+                            // placeholder="Select Franchisee"
+                            selectedValues={selectedChild}
+                            // onKeyPressFn={function noRefCheck() {}}
+                            onRemove={onRemoveChild}
+                            // onSearch={function noRefCheck() {}}
+                            onSelect={onSelectChild}
+                            options={child}
+                        />
+                    </div>
+                    </Form.Group>
+                    </>
+                
                   ) : null}
                 </Col>
               </Row>

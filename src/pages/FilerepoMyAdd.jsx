@@ -64,8 +64,11 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
-        assigned_users: []
+        assigned_users: [],
+        assigned_childs: []
     });
+    const [child, setChild] = useState([]);
+    const [selectedChild, setSelectedChild] = useState([]);
     let Params = useParams();
 
     const toBase64 = (file) =>
@@ -96,6 +99,27 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         let user_id = localStorage.getItem('user_id')
+
+        if (
+            formSettingData.accessible_to_role === null ||
+            formSettingData.accessible_to_role === undefined
+        ) {
+            formSettings.accessibleToRole = null
+            formSettings.accessibleToAll = true
+        }
+        else {
+            if (formSettingData.accessible_to_role === 1) {
+                formSettings.user_roles=formSettingData.shared_role.slice(0, -1)
+                formSettings.assigned_users=""
+                formSettings.accessibleToRole=formSettingData.accessible_to_role
+                formSettings.accessibleToAll=false
+            } else {
+                formSettings.user_roles=""
+                formSettings.assigned_users=selectedUserId.slice(0, -1)
+                formSettings.accessibleToRole=formSettingData.accessible_to_role
+                formSettings.accessibleToAll=false
+            }
+        }
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
             // shared_by: user_id,
@@ -110,6 +134,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             console.log("submitted successfully")
 
         }
+
+        console.log(formSettings,"share final")
     }
 
     function onSelectUser(optionsList, selectedItem) {
@@ -128,6 +154,26 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
+    }
+
+    function onSelectChild(selectedItem) {
+        selectedItem = selectedItem.map((item)=>{
+            return item.id
+        })
+        setFormSettings(prevState => ({
+            ...prevState,
+            assigned_childs: selectedItem
+        }));
+    }
+
+    function onRemoveChild(removedItem) {
+        removedItem = removedItem.map((item)=>{
+            return item.id
+        })
+        setFormSettings(prevState => ({
+            ...prevState,
+            assigned_childs: removedItem
+        }));
     }
 
     const onSubmit = async (e) => {
@@ -211,6 +257,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     'accessibleToAll',
                     false
                 );
+                formdata.append(
+                    'assigned_childs',
+                    formSettings.assigned_childs
+                )
             }
         }
         var requestOptions = {
@@ -220,6 +270,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             redirect: 'follow',
         };
 
+        console.log(formdata,"formdata")
 
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
@@ -313,19 +364,39 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             headers: myHeaders,
         };
 
-        let franchiseeArr = JSON.stringify(formSettings.franchisee)
+        let franchiseeArr = formSettings.franchisee
 
-        let response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchiseeArr}`, request)
+        let response = await axios.post(`http://127.0.0.1:4000/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
         if (response.status === 200) {
             // console.log(response.data.users, "respo")
             setUser(response.data.users)
+            console.log(user,"userSList")
         }
     };
+
+    const getChildren = async () => {
+        var myHeaders = new Headers();
+        myHeaders.append(
+            'authorization',
+            'Bearer ' + localStorage.getItem('token')
+        );
+
+        let franchiseeArr = formSettings.franchisee
+
+        var request = {
+            headers: myHeaders,
+        };
+
+        let response = await axios.post(`http://127.0.0.1:4000/enrollment/franchisee/child`,{franchisee_id:franchiseeArr},request)
+        if (response.status === 200) {
+            setChild(response.data.children)
+        }}
 
     useEffect(() => {
         GetFile();
         getFileCategory();
         getUser();
+        getChildren();
     }, [trainingDeleteMessage, formSettings.franchisee])
 
 
@@ -371,7 +442,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             ...prevState,
             assigned_users: file?.repository_shares[0]?.assigned_users,
             assigned_role: file?.repository_shares[0]?.assigned_roles,
-            franchisee: file?.repository_shares[0]?.franchisee
+            franchisee: file?.repository_shares[0]?.franchisee,
+            assigned_childs: file?.repository_shares[0]?.assigned_childs,
+            accessibleToRole: file?.repository_shares[0].accessibleToRole,
+            accessibleToAll: file?.repository_shares[0].accessibleToAll,
         }));
     }
 
@@ -759,7 +833,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             onChange={() => {
                                                                 setFormSettings(prevState => ({
                                                                     ...prevState,
-                                                                    assigned_franchisee: ['all']
+                                                                    assigned_franchisee: ['all'],
+                                                                    franchisee: ['all']
                                                                 }));
                                                                 setSendToAllFranchisee('all')
                                                             }}
@@ -778,7 +853,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             onChange={() => {
                                                                 setFormSettings(prevState => ({
                                                                     ...prevState,
-                                                                    assigned_franchisee: []
+                                                                    assigned_franchisee: [],
+                                                                    franchisee: []
                                                                 }));
                                                                 setSendToAllFranchisee('none')
                                                             }}
@@ -804,6 +880,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         setFormSettings((prevState) => ({
                                                             ...prevState,
                                                             assigned_franchisee: [...data.map(data => data.id)],
+                                                            franchisee: [...data.map(data => data.id)],
                                                         }));
                                                     }}
 
@@ -811,6 +888,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         setFormSettings((prevState) => ({
                                                             ...prevState,
                                                             assigned_franchisee: [...data.map((data) => data.id)],
+                                                            franchisee: [...data.map(data => data.id)],
                                                         }));
                                                     }}
                                                     options={franchiseeList}
@@ -1015,7 +1093,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             </Form.Group>
                                         ) : null}
                                         {formSettingData.accessible_to_role === 0 ? (
-                                            <Form.Group>
+                                           <>
+                                             <Form.Group>
                                                 <Form.Label>Select User</Form.Label>
                                                 <div className="select-with-plus">
                                                     <Multiselect
@@ -1032,6 +1111,24 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 </div>
                                                 <p className="error">{errors.franchisee}</p>
                                             </Form.Group>
+
+                                            <Form.Group>
+                                            <Form.Label>Select Child</Form.Label>
+                                            <div className="select-with-plus">
+                                                <Multiselect
+                                                    displayValue="fullname"
+                                                    className="multiselect-box default-arrow-select"
+                                                    // placeholder="Select Franchisee"
+                                                    selectedValues={selectedChild}
+                                                    // onKeyPressFn={function noRefCheck() {}}
+                                                    onRemove={onRemoveChild}
+                                                    // onSearch={function noRefCheck() {}}
+                                                    onSelect={onSelectChild}
+                                                    options={child}
+                                                />
+                                            </div>
+                                            </Form.Group>
+                                           </>
                                         ) : null}
                                     </Col>
                                 </Row>
@@ -1070,7 +1167,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                             id="contained-modal-title-vcenter"
                             className="modal-heading">
                             <img src="../../img/carbon_settings.svg" />
-                            Form Settings
+                            Share File
                         </Modal.Title>
                     </Modal.Header>
 
@@ -1139,6 +1236,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     setFormSettings((prevState) => ({
                                                         ...prevState,
                                                         franchisee: [...data.map(data => data.id)],
+                                                        assigned_users: [],
+                                                        assigned_childs: []
                                                     }));
                                                 }}
                                                 onSearch={function noRefCheck() { }}
@@ -1146,6 +1245,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     setFormSettings((prevState) => ({
                                                         ...prevState,
                                                         franchisee: [...data.map((data) => data.id)],
+                                                        assigned_users: [],
+                                                        assigned_childs: []
                                                     }));
                                                 }}
                                                 options={franchiseeList}
@@ -1164,7 +1265,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 <label for="roles">
                                                     <input
                                                         type="radio"
-                                                        checked={shareType === "roles"}
+                                                        checked={formSettings.accessibleToRole === 1}
                                                         name="accessible_to_role"
                                                         id="roles"
                                                         onChange={() => {
@@ -1186,7 +1287,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     <input
                                                         type="radio"
                                                         name="accessible_to_role"
-                                                        checked={shareType === "users"}
+                                                        checked={formSettings.accessibleToRole === 0}
                                                         id="users"
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
@@ -1207,8 +1308,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
                                 <Col lg={9} md={12}>
                                     {
-                                        shareType === "roles" ?
-                                            <>
+                                        formSettings.accessibleToRole === 1 ?
+                                            (<>
                                                 <Form.Label className="d-block">Select User Roles</Form.Label>
                                                 <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
                                                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
@@ -1302,23 +1403,57 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     )
                                                             }} />
                                                     </Form.Group>
-                                                </div> </> :
-                                            <Form.Group>
-                                                <Form.Label>Select User</Form.Label>
-                                                <div className="select-with-plus">
-                                                    <Multiselect
-                                                        displayValue="email"
-                                                        className="multiselect-box default-arrow-select"
-                                                        // placeholder="Select Franchisee"
-                                                        selectedValues={selectedUser}
-                                                        // onKeyPressFn={function noRefCheck() {}}
-                                                        onRemove={onRemoveUser}
-                                                        // onSearch={function noRefCheck() {}}
-                                                        onSelect={onSelectUser}
-                                                        options={user}
-                                                    />
-                                                </div>
-                                            </Form.Group>
+                                                </div> </>) : null }
+                                               {
+                                               formSettings.accessibleToRole === 0 ? 
+                                               ( <>
+
+                                                <Form.Group>
+                                                    <Form.Label>Select User</Form.Label>
+                                                    <div className="select-with-plus">
+                                                        <Multiselect
+                                                            displayValue="email"
+                                                            className="multiselect-box default-arrow-select"
+                                                            // placeholder="Select Franchisee"
+                                                            selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + "")) }
+                                                            value={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
+                                                            // onKeyPressFn={function noRefCheck() {}}
+                                                            onRemove={onRemoveUser}
+                                                            // onSearch={function noRefCheck() {}}
+                                                            onSelect={(selectedOptions) => {
+                                                                setFormSettings((prevState) => ({
+                                                                    ...prevState,
+                                                                    assigned_users: [...selectedOptions.map(option => option.id + "")]
+                                                                }))
+                                                            }}
+                                                            options={user}
+                                                        />
+                                                    </div>
+                                                </Form.Group>
+                                                <hr/>
+                                                <Form.Group>
+                                                    <Form.Label>Select Child</Form.Label>
+                                                    <div className="select-with-plus">
+                                                        <Multiselect
+                                                            displayValue="fullname"
+                                                            className="multiselect-box default-arrow-select"
+                                                            // placeholder="Select Franchisee"
+                                                            selectedValues={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + "")) }
+                                                            value= {child && child.filter(c => formSettings.assigned_childs?.includes(c.id + "")) }
+                                                            // onKeyPressFn={function noRefCheck() {}}
+                                                            onRemove={onRemoveUser}
+                                                            // onSearch={function noRefCheck() {}}
+                                                            onSelect={(selectedOptions) => {
+                                                                setFormSettings((prevState) => ({
+                                                                    ...prevState,
+                                                                    assigned_childs: [...selectedOptions.map(option => option.id + "")]
+                                                                }))
+                                                            }}
+                                                            options={child}
+                                                        />
+                                                    </div>
+                                                </Form.Group>
+                                                </>) : null
                                     }
                                 </Col>
                             </Row>
