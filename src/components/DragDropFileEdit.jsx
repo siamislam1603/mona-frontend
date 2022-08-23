@@ -41,7 +41,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
         if (index != 0)
             return <>
                 {console.log(file.type, 'ddhb')}
-                {file.type === "image/jpeg" ? (<>
+                {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
                     <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
                 </>)
                     : file.type === "application/pdf" ? (
@@ -60,7 +60,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                         : file.type === "video/mp4" ?
                             (<>
                                 <FileRepoVideo
-                                    data={file.path}
+                                    data={getBase64(file) || currentURI || acceptedFiles}
                                 />
                             </>) :
                             (
