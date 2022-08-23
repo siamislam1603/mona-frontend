@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
@@ -44,6 +45,19 @@ function fetchRealatedFileName(fileURLString) {
   let extension = name[2].split(".")[1];
   name = name[0].split("-").join(" ");
   return name + "." + extension;
+}
+
+function convertToArray(objString) {
+  let str;
+  str = objString.substring(1, objString.length - 1); 
+  // console.log('STRING =>>>>>>>>>>>>>>>>>>>>>>>>>>>>', str)
+  let data = str.split(",");
+  if(data[0] === 'all') {
+    return ['all'];
+  } 
+
+  let parsed = data.map(d => parseInt(d.substring(1, str.length - 1)));
+  return parsed;
 }
 
 const EditTraining = () => {
@@ -120,8 +134,11 @@ const EditTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
-    if (response.status === 200 && Object.keys(response.data).length > 1) {
+    console.log('FRANCHISEE ID: => >>>>>>>>>>>>>>>>>>>', franchisee_id);
+    let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
+    const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${f}]`);
+    console.log('USER DATA FROM FRANCHISEE:', response);
+    if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
         ...users?.map((data) => ({
@@ -173,8 +190,8 @@ const EditTraining = () => {
       end_date: training?.end_date ? moment(training?.end_date).format('YYYY-MM-DD') : '',
       end_time: training?.end_date ? moment(training?.end_date).format('HH:mm') : '',
       applicable_to: training?.shares[0]?.applicable_to,
-      send_to_all_franchisee: training?.shares[0]?.franchisee === 'all' ? true : false,
-      assigned_franchisee: training?.shares[0]?.franchisee,
+      send_to_all_franchisee: convertToArray(training?.shares[0]?.franchisee)[0] === 'all' ? true : false,
+      assigned_franchisee: convertToArray(training?.shares[0]?.franchisee),
       assigned_roles: training?.shares[0]?.assigned_roles,
       assigned_users: training?.shares[0]?.assigned_users
     }));
@@ -375,13 +392,13 @@ const EditTraining = () => {
   }, []);
 
   useEffect(() => {
-    if (trainingSettings.assigned_franchisee !== 'all') {
-      fetchFranchiseeUsers(trainingSettings.assigned_franchisee);
-    }
+    // if (trainingSettings.assigned_franchisee !== 'all') {
+    fetchFranchiseeUsers(trainingSettings.assigned_franchisee);
+    // }
   }, [trainingSettings?.assigned_franchisee]);
 
   trainingData && console.log('TRAINING DATA:', trainingData);
-  // trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   // fetchedFranchiseeUsers && console.log('Fetched franchisee USERS:', fetchedFranchiseeUsers);
   // fetchedFranchiseeUsers && console.log('POPULATED USERS:', fetchedFranchiseeUsers?.map(d => trainingSettings?.d.id));
   fetchedVideoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', fetchedVideoTutorialFiles);
@@ -762,10 +779,10 @@ const EditTraining = () => {
                     <div className="select-with-plus">
                       <Multiselect
                         disable={trainingSettings?.send_to_all_franchisee === true}
-                        singleSelect={true}
+                        // singleSelect={true}
                         placeholder={"Select User Names"}
                         displayValue="key"
-                        selectedValues={franchiseeList?.filter(d => parseInt(trainingSettings?.assigned_franchisee) === d.id)}
+                        selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id)))}
                         className="multiselect-box default-arrow-select"
                         onKeyPressFn={function noRefCheck() { }}
                         onRemove={function noRefCheck(data) {
@@ -938,20 +955,20 @@ const EditTraining = () => {
                         <Multiselect
                           placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
                           displayValue="key"
-                          selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users.includes(d.id + ""))}
+                          selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users.includes(d.id + ''))}
                           className="multiselect-box default-arrow-select"
                           onKeyPressFn={function noRefCheck() { }}
                           onRemove={function noRefCheck(data) {
                             setTrainingSettings((prevState) => ({
                               ...prevState,
-                              assigned_users: [...data.map(data => data.id)],
+                              assigned_users: [...data.map(data => data.id + '')],
                             }));
                           }}
                           onSearch={function noRefCheck() { }}
                           onSelect={function noRefCheck(data) {
                             setTrainingSettings((prevState) => ({
                               ...prevState,
-                              assigned_users: [...data.map((data) => data.id)],
+                              assigned_users: [...data.map((data) => data.id + '')],
                             }));
                           }}
                           options={fetchedFranchiseeUsers}

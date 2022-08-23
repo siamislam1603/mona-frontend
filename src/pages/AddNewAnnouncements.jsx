@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
@@ -13,7 +14,9 @@ import Select from 'react-select';
 import MyEditor from './CKEditor';
 import * as ReactBootstrap from 'react-bootstrap';
 import DropVideo from '../components/DragDropVideo';
+
 import { useLocation, useNavigate } from 'react-router-dom';
+import moment from 'moment';
 const AddNewAnnouncements = () => {
 
 
@@ -116,22 +119,18 @@ const createAnnouncement = async (data) => {
             setTopErrorMessage(null);
           }, 3000)
         
-        }
-
-      
+        }      
     } 
-    
+    // else if(response.status === 403 && response.data.status === "fail"){
+    //   console.log('ERROR RESPONSE! Permission Denied');
+    //   setTopErrorMessage("Permission Denied");
+    //   setLoader(false)
+    //   setAddnewAnnouncement(false)
 
-    else if(response.status === 403 && response.data.status === "fail"){
-      console.log('ERROR RESPONSE! Permission Denied');
-      setTopErrorMessage("Permission Denied");
-      setLoader(false)
-    setAddnewAnnouncement(false)
-
-      setTimeout(() => {
-        setTopErrorMessage(null);
-      }, 3000)
-    }
+    //   setTimeout(() => {
+    //     setTopErrorMessage(null);
+    //   }, 3000)
+    // }
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
     window.location.href="/announcements";
         
@@ -447,12 +446,17 @@ console.log("THE handle ",announcementData)
                     <Col lg={3} sm={6}>
                 <Form.Group>
                   <Form.Label>Schedule Date</Form.Label>
+
                   <Form.Control  
                         type="date"
+                        min={new Date().toISOString().slice(0, 10)}
+
+
                         name="start_date"
                         onChange={handleAnnouncementData}
                       />
                 </Form.Group>
+           
                 {error.start_date && <p className="form-errors">{error.start_date}</p>}
 
               </Col>
@@ -608,7 +612,5 @@ console.log("THE handle ",announcementData)
 
 
 export default AddNewAnnouncements;
-
-
 
 

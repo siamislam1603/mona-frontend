@@ -493,8 +493,8 @@ const AddOperatingManual = () => {
                 <div className="new_module">
                   <TopHeader
                     selectedFranchisee={selectedFranchisee}
-                    setSelectedFranchisee={(name, id) => {
-                      setSelectedFranchisee(name);
+                    setSelectedFranchisee={(id) => {
+                      id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
                       setSelectedFranchiseeId(id);
                       localStorage.setItem('f_id', id);
                     }}
@@ -1155,6 +1155,23 @@ const AddOperatingManual = () => {
                   />
                   <Form.Control.Feedback type="invalid">
                     {categoryError.category_name}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Position in the tree-structure </Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="order"
+                    placeholder="Enter Position"
+                    onChange={(e) => {
+                      setCategoryField(e.target.name, e.target.value);
+                    }}
+                    isInvalid={!!categoryError.order}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {categoryError.order}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>

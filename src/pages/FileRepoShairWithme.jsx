@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
@@ -23,7 +24,7 @@ const selectRow = {
   mode: 'checkbox',
   clickToSelect: true,
 };
-const FileRepoShairWithme = () => {
+const FileRepoShairWithme = ({ selectedFranchisee }) => {
   const [userData, setUserData] = useState([]);
   userData && console.log('USER DATA:', userData.map(data => data));
 
@@ -137,6 +138,7 @@ const FileRepoShairWithme = () => {
     // getFileCategory();
     // getUser();
   }, []);
+  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   return (
 
 

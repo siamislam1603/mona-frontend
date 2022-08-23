@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Col, Container, Form, Row, Button } from 'react-bootstrap';
 import { BASE_URL } from '../components/App';
@@ -18,7 +19,7 @@ const DynamicForm = (props) => {
   const [formPermission, setFormPermission] = useState({});
   const [targetUser, setTargetUser] = useState([]);
   const [behalfOf, setBehalfOf] = useState('');
-
+  const [childId,setChildId]=useState();
   const setField = (section, field, value) => {
     setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
     if (!!errors[field]) {
@@ -60,7 +61,7 @@ const DynamicForm = (props) => {
     
     let api_url = `${BASE_URL}/form/target_users?form_name=${form_name}&franchisee_id=${localStorage.getItem(
       'franchisee_id'
-    )}`;
+    )}&user_id=${localStorage.getItem("user_id")}&user_role=${localStorage.getItem("user_role")}`;
 
     fetch(api_url, requestOptions)
       .then((response) => response.json())
@@ -88,7 +89,7 @@ const DynamicForm = (props) => {
       .then((result) => {
         let res = JSON.parse(result);
         setFormData(res.result);
-        setFormPermission(res.form_permission);
+        setFormPermission(res?.form[0]?.form_permissions[0]);
         let formsData = {};
         let data = {};
         Object.keys(res?.result)?.map((item) => {
@@ -129,7 +130,7 @@ const DynamicForm = (props) => {
     e.preventDefault();
     console.log('form---->', form);
     console.log('form_data---->', formData);
-    const newErrors = DynamicFormValidation(form, formData, behalfOf);
+    const newErrors = DynamicFormValidation(form, formData, localStorage.getItem("user_role")==="guardian" ? childId.includes("all") ? null : childId : behalfOf);
     console.log('newErrors---->', newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -143,7 +144,7 @@ const DynamicForm = (props) => {
         body: JSON.stringify({
           form_id: formData[Object.keys(formData)[0]][0]?.form_id,
           user_id: localStorage.getItem('user_id'),
-          behalf_of: behalfOf,
+          behalf_of: localStorage.getItem("user_role")==="guardian" ? childId : behalfOf,
           data: form,
         }),
         redirect: 'follow',
@@ -170,7 +171,14 @@ const DynamicForm = (props) => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+              <TopHeader
+                  setSelectedFranchisee={(id) => {
+                    console.log("id---->444",id);
+                    setChildId(id);
+                    console.log("user_id",id);
+                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
+                  }}
+                />
                 <Row>
                   <div className="forms-managment-left new-form-title">
                     <h6>
@@ -186,9 +194,10 @@ const DynamicForm = (props) => {
                 </Row>
                 <Form>
                   <Row>
+                    {console.log("formPermission?.target_user--->",formPermission)}
                     {!(
                       formPermission?.target_user?.includes(
-                        localStorage.getItem('user_role')
+                        localStorage.getItem('user_role')==="guardian" ? "parent" : localStorage.getItem('user_role')
                       ) ||
                       formPermission?.target_user?.includes(
                         localStorage.getItem('user_id')
@@ -199,7 +208,33 @@ const DynamicForm = (props) => {
                           <span className="form-label">Behalf of:</span>
                           <div clas Name="d-flex mt-2"></div>
                           <div className="btn-radio d-flex align-items-center">
+                            {localStorage.getItem("user_role")==="guardian" ? (
                             <Form.Select
+                              name={'behalf_of'}
+                              onChange={(e) => {
+                                setBehalfOf(e.target.value);
+                                if (e.target.value !== '') {
+                                  let errorData = { ...errors };
+                                  errorData['behalf_of'] = null;
+                                  setErrors(errorData);
+                                }
+                              }}
+                              disabled 
+                            >
+                              <option value="">Select Behalf of</option>
+                              {targetUser?.map((item) => {
+                                return (
+                                  <>
+                                    {item.id===parseInt(childId) ? <option value={item.id} selected>
+                                      {item.child ? item.fullname : item.email}
+                                    </option> : <option value={item.id}>
+                                      {item.child ? item.fullname : item.email}
+                                    </option>}
+                                  </>
+                                );
+                              })}
+                            </Form.Select>):
+                            (<Form.Select
                               name={'behalf_of'}
                               onChange={(e) => {
                                 setBehalfOf(e.target.value);
@@ -215,14 +250,15 @@ const DynamicForm = (props) => {
                                 return (
                                   <>
                                     <option value={item.id}>
-                                      {item.email}
+                                      {item.child ? item.fullname : item.email}
                                     </option>
                                   </>
                                 );
                               })}
-                            </Form.Select>
+                            </Form.Select>)
+                            }
                           </div>
-                          <p style={{ color: 'red', marginTop: '-8px' }}>
+                          <p className='error' style={{marginTop:"-10px !important"}}>
                             {errors.behalf_of}
                           </p>
                         </div>

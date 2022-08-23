@@ -46,7 +46,9 @@ const UserManagement = () => {
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
+  const [isLoading,setIsLoading] = useState(true)
   const [deleteResponse, setDeleteResponse] = useState(null);
+
   
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
@@ -283,18 +285,18 @@ const UserManagement = () => {
 
   const fetchUserDetails = async () => {
     let api_url = '';
-
+    let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
     if (search) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}`;
+      api_url = `${BASE_URL}/role/user/${id}?search=${search}`;
     }
     if (filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
     }
     if (search && filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}?search=${search}&filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
     }
     if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user/${selectedFranchisee}`;
+      api_url = `${BASE_URL}/role/user/${id}`;
     }
 
 
@@ -320,13 +322,17 @@ const UserManagement = () => {
         action: dt.is_active
       }));
 
-      tempData = tempData.filter((data) => data.is_deleted === 0);
-      console.log('Temp Data:', tempData);
+      // tempData = tempData.filter((data) => data.is_deleted === 0);
+      // console.log('Temp Data:', tempData);
       if(localStorage.getItem('user_role') === 'guardian') {
         tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
       }
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
+
+      if(localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+        tempData = tempData.filter(d => d.action === 1);
+      }
       setUserData(tempData);
+      setIsLoading(false)
 
       let temp = tempData;
       let csv_data = [];
@@ -590,12 +596,25 @@ const UserManagement = () => {
                               </div>
                             </div>
                           </header>
-                          <BootstrapTable
-                            {...props.baseProps}
-                            rowEvents={rowEvents}
-                            selectRow={selectRow}
-                            pagination={paginationFactory()}
-                          />
+                          {
+                            isLoading ? 
+                            (
+                              <div className="text-center mb-5 mt-5">
+                              <img src="../img/loader.svg" alt="" />
+
+                              </div>
+
+                            ) :
+                            (
+                              <BootstrapTable
+                              {...props.baseProps}
+                              rowEvents={rowEvents}
+                              selectRow={selectRow}
+                              pagination={paginationFactory()}
+                            />
+                            )
+                          }
+                         
                         </>
                       )}
                     </ToolkitProvider>
