@@ -14,7 +14,9 @@ import Select from 'react-select';
 import MyEditor from './CKEditor';
 import * as ReactBootstrap from 'react-bootstrap';
 import DropVideo from '../components/DragDropVideo';
+
 import { useLocation, useNavigate } from 'react-router-dom';
+import moment from 'moment';
 const AddNewAnnouncements = () => {
 
 
@@ -444,12 +446,17 @@ console.log("THE handle ",announcementData)
                     <Col lg={3} sm={6}>
                 <Form.Group>
                   <Form.Label>Schedule Date</Form.Label>
+
                   <Form.Control  
                         type="date"
+                        min={new Date().toISOString().slice(0, 10)}
+
+
                         name="start_date"
                         onChange={handleAnnouncementData}
                       />
                 </Form.Group>
+           
                 {error.start_date && <p className="form-errors">{error.start_date}</p>}
 
               </Col>
