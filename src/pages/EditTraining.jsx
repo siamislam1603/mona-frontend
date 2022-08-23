@@ -47,18 +47,17 @@ function fetchRealatedFileName(fileURLString) {
   return name + "." + extension;
 }
 
-function convertToArray(objString) {
-  let str;
-  str = objString.substring(1, objString.length - 1); 
-  // console.log('STRING =>>>>>>>>>>>>>>>>>>>>>>>>>>>>', str)
-  let data = str.split(",");
-  if(data[0] === 'all') {
-    return ['all'];
-  } 
+// function convertToArray(objString) {
+//   let str;
+//   str = objString.substring(1, objString.length - 1); 
+//   let data = str.split(",");
+//   if(data[0] === '"all"') {
+//     return ['all'];
+//   } 
 
-  let parsed = data.map(d => parseInt(d.substring(1, str.length - 1)));
-  return parsed;
-}
+//   let parsed = data.map(d => parseInt(d.substring(1, str.length - 1)));
+//   return parsed;
+// }
 
 const EditTraining = () => {
   const { trainingId } = useParams();
@@ -190,8 +189,8 @@ const EditTraining = () => {
       end_date: training?.end_date ? moment(training?.end_date).format('YYYY-MM-DD') : '',
       end_time: training?.end_date ? moment(training?.end_date).format('HH:mm') : '',
       applicable_to: training?.shares[0]?.applicable_to,
-      send_to_all_franchisee: convertToArray(training?.shares[0]?.franchisee)[0] === 'all' ? true : false,
-      assigned_franchisee: convertToArray(training?.shares[0]?.franchisee),
+      send_to_all_franchisee: training?.shares[0]?.franchisee[0] === 'all' ? true : false,
+      assigned_franchisee: training?.shares[0]?.franchisee,
       assigned_roles: training?.shares[0]?.assigned_roles,
       assigned_users: training?.shares[0]?.assigned_users
     }));
@@ -782,20 +781,20 @@ const EditTraining = () => {
                         // singleSelect={true}
                         placeholder={"Select User Names"}
                         displayValue="key"
-                        selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id)))}
+                        selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id) + ''))}
                         className="multiselect-box default-arrow-select"
                         onKeyPressFn={function noRefCheck() { }}
                         onRemove={function noRefCheck(data) {
                           setTrainingSettings((prevState) => ({
                             ...prevState,
-                            assigned_franchisee: [...data.map(data => data.id)],
+                            assigned_franchisee: [...data.map(data => data.id + '')],
                           }));
                         }}
                         onSearch={function noRefCheck() { }}
                         onSelect={function noRefCheck(data) {
                           setTrainingSettings((prevState) => ({
                             ...prevState,
-                            assigned_franchisee: [...data.map((data) => data.id)],
+                            assigned_franchisee: [...data.map((data) => data.id + '')],
                           }));
                         }}
                         options={franchiseeList}

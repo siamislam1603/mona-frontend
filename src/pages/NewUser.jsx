@@ -849,7 +849,7 @@ const NewUser = () => {
                           </Form.Group> */}
                           
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Upload Training Documents</Form.Label>
+                            <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               onSave={setTrainingDocuments} />
                           </Form.Group>

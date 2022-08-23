@@ -628,6 +628,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="date"
                     name="start_date"
+                    value={trainingSettings?.start_date}
                     min={new Date().toISOString().slice(0, 10)}
                     onChange={(e) => {
                       handleTrainingSettings(e);
@@ -647,6 +648,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="time"
                     name="start_time"
+                    value={trainingSettings?.start_time}
                     onChange={(e) => {
                       handleTrainingSettings(e);
                       setTrainingSettingErrors(prevState => ({
@@ -664,6 +666,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="date"
                     name="end_date"
+                    value={trainingSettings?.end_date}
                     onChange={(e) => {
                       handleTrainingSettings(e);
                       setTrainingSettingErrors(prevState => ({
@@ -680,6 +683,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="time"
                     name="end_time"
+                    value={trainingSettings?.end_time}
                     onChange={handleTrainingSettings}
                   />
                 </Form.Group>
