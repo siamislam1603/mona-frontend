@@ -16,7 +16,8 @@ const ParentsDashboard = () => {
   const [announcements, setannouncements] = useState([]);
   const [editTrainingData, setEditTrainingData] = useState([]);
   const [viewEnrollmentDialog, setViewEnrollmentDialog] = useState(false);
-
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  console.log(selectedFranchisee, "selectedFranchisee")
   const checkPendingConsent = async () => {
     let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
       headers: {
@@ -26,19 +27,23 @@ const ParentsDashboard = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       let { parentConsentData } = response.data;
+      console.log('PDATA:', parentConsentData);
       console.log('PARENT CONSENT DATA:', parentConsentData[0]);
-      localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
-      localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
-      localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
-      localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
-      localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
 
-      if (parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
-        console.log('VIEWING ENROLLMENT DIALOG');
-        setViewEnrollmentDialog(true);
+      if(parentConsentData.length > 0) {
+        localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
+        localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
+        localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
+        localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
+        localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
+
+        if (parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
+          console.log('VIEWING ENROLLMENT DIALOG');
+          setViewEnrollmentDialog(true);
+        }
+      } else {
+
       }
-    } else {
-
     }
   }
 
@@ -46,6 +51,22 @@ const ParentsDashboard = () => {
     setViewEnrollmentDialog(false);
     window.location.href = `/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
   }
+
+  // const educators_assigned = async () => {
+  //   let response = await axios.get(`${BASE_URL}/dashboard/parent/educators-assigned/84`, {
+  //     headers: {
+  //       authorization: `Bearer ${localStorage.getItem('token')}`,
+  //     },
+  //   });
+  //   console.log(response, "===============")
+  //   if (response.status === 200) {
+  //     const users = response.data.assignedEducatorData;
+  //     console.log('=========users', users)
+  //   }
+  // }
+  // useEffect(() => {
+  //   educators_assigned();
+  // }, [])
 
   const events = async () => {
     const token = localStorage.getItem('token');
@@ -77,15 +98,16 @@ const ParentsDashboard = () => {
   };
   const assignededucators = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard/parent/educators-assigned`, {
+    const response = await axios.get(`${BASE_URL}/dashboard/parent/educators-assigned/${selectedFranchisee}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
     console.log(response, "response??????????????")
     if (response.status === 200 && response.data.status === "pass") {
-      const result = response.data.assignedEducatorData.children[0].users;
-      // console.log(result, "<<<<<<<<<<<>>>>>>>>>>>>")
+      const result = response.data.assignedEducatorData.users;
+      // const result = response.data.assignedEducatorData
+      console.log(result, "<<<<<<<<<<<>>>>>>>>>>>>")
       setEditTrainingData(result);
     }
 
@@ -196,7 +218,9 @@ const ParentsDashboard = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader
+                  setSelectedFranchisee={setSelectedFranchisee}
+                />
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>

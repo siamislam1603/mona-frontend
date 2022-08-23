@@ -25,13 +25,20 @@ function FormResponse(props) {
   const navigate = useNavigate();
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
+  const token = localStorage.getItem('token');
   useEffect(() => {
     getResponse('');
   }, []);
   const getResponse = (search) => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders
     };
 
     fetch(

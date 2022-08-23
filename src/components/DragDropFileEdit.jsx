@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
+import FileRepoVideo from '../components/FileRepoVideo';
 export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCrop }) {
     const [myFiles, setMyFiles] = useState([])
     const [currentURI, setCurrentURI] = useState();
@@ -39,15 +40,54 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
     const Filess = myFiles.map((file, index) => {
         if (index != 0)
             return <>
-                {file.type === "image/jpeg" ? (<>
+                {console.log(file.type, 'ddhb')}
+                {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
                     <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
-                </>) : (<></>)}
+                </>)
+                    : file.type === "application/pdf" ? (
+                        <>
+                            <span className="user-pic-tow">
+                                {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
+                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                {/* </a> */}
+                            </span>
+                            <span className="user-name">
+                                {file.name}
+                                {getBase64(file)}.Doc
+                            </span>
+                        </>
+                    )
+                        : file.type === "video/mp4" ?
+                            (<>
+                                <FileRepoVideo
+                                    data={getBase64(file) || currentURI || acceptedFiles}
+                                />
+                            </>) :
+                            (
+                                file.type === "audio/mpeg" ? (
+                                    <>
+                                        <span className="user-pic-tow">
+                                            {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
+                                            <img src="../img/audio-ico.png" className="me-2" alt="" />
+                                            {/* </a> */}
+                                        </span>
+                                        <span className="user-name">
+                                            {file.name}
+                                            {getBase64(file)}.Doc
+                                        </span>
+                                    </>
+                                ) : (<></>)
+                            )
+                }
+                {console.log(getBase64(file) || currentURI || acceptedFiles, "dddsd")}
+
                 <Link to="#" onClick={removeFile(file)} style={{ margin: "20px" }}>
                     <img src="../img/removeIcon.svg" alt="" />
                 </Link>
             </>
     })
     return (
+
         <div className="repositorydrag text-center" >
             <div {...getRootProps({ className: "dropzone d-block" })}>
                 <input {...getInputProps()} type="file" name="setting_file" />

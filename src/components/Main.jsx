@@ -97,8 +97,10 @@ const Main = () => {
 
       autoLogout();
       setIsLoggedIn(true);
+      localStorage.setItem('is_user_logged_in', true);
     } else {
       setIsLoggedIn(false);
+      localStorage.setItem('is_user_logged_in', false);
     }
   }, []);
 

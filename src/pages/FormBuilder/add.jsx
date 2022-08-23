@@ -17,16 +17,17 @@ import { useLocation, useNavigate } from 'react-router-dom';
 function AddFormBuilder(props) {
   const [formData, setFormData] = useState([]);
   const [form, setForm] = useState({ form_template_select: 'Yes' });
-  const [formCategory,setFormCategory]=useState([]);
+  const [formCategory, setFormCategory] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const [errors, setErrors] = useState({});
   const [userRole, setUserRole] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    console.log("location?.state?.id--->",location?.state?.id);
+    console.log('location?.state?.id--->', location?.state?.id);
     if (location?.state?.id) {
       getParticularFormData();
     }
@@ -47,9 +48,12 @@ function AddFormBuilder(props) {
     return upper_role.slice(0, -1);
   };
   const getUserRoleData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
@@ -61,17 +65,22 @@ function AddFormBuilder(props) {
       })
       .catch((error) => console.log('error', error));
   };
-  const getFormCategory=()=>{
+  const getFormCategory = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/form/category`, requestOptions)
       .then((response) => response.json())
-      .then((result) => {setFormCategory(result?.result)})
+      .then((result) => {
+        setFormCategory(result?.result);
+      })
       .catch((error) => console.log('error', error));
-  }
+  };
   const setField = (field, value) => {
     setForm({ ...form, [field]: value });
     console.log('form---->', form);
@@ -89,10 +98,12 @@ function AddFormBuilder(props) {
       setErrors(newErrors);
     } else {
       var myHeaders = new Headers();
-      let data={...form};
-      data["link"]=FRONT_BASE_URL+"/form/dynamic/"+data.form_name;
-      data["created_by"]=localStorage.getItem("user_id");
-      data["upper_role"]=getUpperRoleUser();
+      myHeaders.append('authorization', 'Bearer ' + token);
+
+      let data = { ...form };
+      data['link'] = FRONT_BASE_URL + '/form/dynamic/' + data.form_name;
+      data['created_by'] = localStorage.getItem('user_id');
+      data['upper_role'] = getUpperRoleUser();
       myHeaders.append('Content-Type', 'application/json');
       fetch(`${BASE_URL}/form/add`, {
         method: 'post',
@@ -102,26 +113,43 @@ function AddFormBuilder(props) {
         .then((res) => res.json())
         .then((res) => {
           navigate('/form/setting', {
-            state: { id: res?.result?.id,form_name:res?.result?.form_name },
+            state: { id: res?.result?.id, form_name: res?.result?.form_name },
           });
         });
     }
   };
   const getParticularFormData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers:myHeaders
     };
 
-    fetch(`${BASE_URL}/form/one?id=${location?.state?.id}&franchisee_id=${localStorage.getItem('f_id')}`, requestOptions)
+    fetch(
+      `${BASE_URL}/form/one?id=${
+        location?.state?.id
+      }&franchisee_id=${localStorage.getItem('f_id')}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result) => setForm(result?.result))
       .catch((error) => console.log('error', error));
   };
   const getFormData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders
     };
 
     fetch(`${BASE_URL}/form/list`, requestOptions)
@@ -139,7 +167,7 @@ function AddFormBuilder(props) {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-              <TopHeader
+                <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(name, id) => {
                     setSelectedFranchisee(name);
@@ -148,7 +176,7 @@ function AddFormBuilder(props) {
                   }}
                 />
                 <Row>
-                <Col sm={8}>
+                  <Col sm={8}>
                     <div className="mynewForm-heading">
                       <Button
                         onClick={() => {
@@ -281,13 +309,16 @@ function AddFormBuilder(props) {
                         </div>
                       </Form.Group>
                     </Col>
-                    {form?.form_template_select === 'Yes' || form?.form_template_select === true ? (
+                    {form?.form_template_select === 'Yes' ||
+                    form?.form_template_select === true ? (
                       <Col md={6} className="mt-3 mt-md-0">
                         <Form.Group>
                           <Form.Label>Select Previous Form</Form.Label>
                           <Form.Select
                             name="previous_form"
-                            onChange={(e)=>{setField(e.target.name, e.target.value);}}
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.value);
+                            }}
                             isInvalid={!!errors.previous_form}
                           >
                             <option value="1">Select Previous Form</option>
@@ -316,17 +347,20 @@ function AddFormBuilder(props) {
                         <Form.Select
                           name="category_id"
                           isInvalid={!!errors.category_id}
-                          onChange={(e)=>{
+                          onChange={(e) => {
                             setField(e.target.name, e.target.value);
                           }}
                         >
                           <option value="">Select Category</option>
-                          {formCategory?.map((item)=>{
+                          {formCategory?.map((item) => {
                             return (
-                              <option value={item.id} selected={
-                                form?.category_id === item.id
-                              }>{item.category}</option>
-                            )
+                              <option
+                                value={item.id}
+                                selected={form?.category_id === item.id}
+                              >
+                                {item.category}
+                              </option>
+                            );
                           })}
                         </Form.Select>
                         <Form.Control.Feedback type="invalid">

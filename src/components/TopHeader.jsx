@@ -8,8 +8,8 @@ import moment from "moment";
 
 
 let temp = () => { }
-
-const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) => {
+let Child = () => { }
+const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificationType = 'none' }) => {
   const [franchiseeList, setFranchiseeList] = useState([]);
   const [childList, setChildList] = useState([]);
 
@@ -44,19 +44,19 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
 
   const fetchChildList = async () => {
     let response = await axios.get(`${BASE_URL}/enrollment/parent/getChildrenByParentId`, {
-       headers: {
+      headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
-       }
+      }
     });
 
-    if(response.status === 200 && response.data.status === 'success') {
+    if (response.status === 200 && response.data.status === 'success') {
       let { children } = response.data;
       console.log('CHILDREN:', children);
       setChildList(children.map(d => ({
         id: d.id,
         name: d.fullname
       })));
-      
+
       // let id = children.map(d => d.id);
       // // console.log('ID ARRAY:', id);
       // id = ['all', ...id].join(',');
@@ -107,79 +107,79 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
           "Authorization": "Bearer " + token
         }
       });
-      if(response.status === 200 && response.data.status === "success") {
+      if (response.status === 200 && response.data.status === "success") {
         setTopHeaderNotification(response.data.notification.rows);
         setTopHeaderNotificationCount(response.data.notification.count);
-    }
-  } catch (error) {
-      if(error.response.status === 404){
+      }
+    } catch (error) {
+      if (error.response.status === 404) {
         // console.log("The code is 404")
         setTopHeaderNotification([])
       }
+    }
+
+
+  };
+
+  const handleLinkClick = notificationId => {
+    console.log("event eventeventeventevent", notificationId)
+
+    if (notificationId) {
+      const response = axios.put(
+        `${BASE_URL}/notification/${notificationId}`, {}, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      }
+      );
+
+      if (response.status === 200) {
+        console.log('notification read status updated', response.msg);
+      } else {
+        console.log('TYPE OF COVER IMAGE:', response.msg);
+
+      }
+
+
+    }
+
+    // let path = event.target.getAttribute('path');
+    // setTabLinkPath(path);
   }
 
+  const handleMarkRearAll = async notificationId => {
 
-};
-
-const handleLinkClick = notificationId => {
-  console.log("event eventeventeventevent",  notificationId)
-
-  if(notificationId){
-    const response = axios.put(
-      `${BASE_URL}/notification/${notificationId}`,{}, {
+    let userID = localStorage.getItem('user_id');
+    const response = await axios.put(`${BASE_URL}/notification/unread/${userID}`, {}, {
       headers: {
         "Authorization": "Bearer " + token
       }
-    }
-    );
-
-    if (response.status === 200) {  
-      console.log('notification read status updated', response.msg);
-    }else{
+    });
+    if (response.status == 200) {
+      setTopHeaderNotificationCount(0);
+    } else {
       console.log('TYPE OF COVER IMAGE:', response.msg);
-
     }
-
 
   }
 
-  // let path = event.target.getAttribute('path');
-  // setTabLinkPath(path);
-}
 
-const handleMarkRearAll = async notificationId => {
+  const handelSearch = async (e) => {
+    e.preventDefault();
+    try {
+      let searchKey = e.target.value;
+      if (searchKey) {
 
-    let userID = localStorage.getItem('user_id');
-    const response = await axios.put(`${BASE_URL}/notification/unread/${userID}`,{}, {
-          headers: {
-            "Authorization": "Bearer " + token
-          }
-      });
-    if (response.status == 200) {  
-      setTopHeaderNotificationCount(0);
-    }else{
-      console.log('TYPE OF COVER IMAGE:', response.msg);
-    }
-
-}
-
-
-const handelSearch = async (e) =>{
-  e.preventDefault();
-  try {
-  let searchKey = e.target.value;
-  if(searchKey){
-
-      const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
-        headers: {"Authorization": "Bearer " + token}
+        const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
+          headers: { "Authorization": "Bearer " + token }
         });
-        
-        if(response.status === 200 && response.data.status === "success") {
-          
-          setSearchResult(response.data.data[0]) 
-          console.log("ddddddddddddddddddddddddddddddddddddddddddddd",response.data.data[0].announcement)
 
-          setSearchAnnouncement(response.data.data[0].announcement) 
+        if (response.status === 200 && response.data.status === "success") {
+
+          setSearchResult(response.data.data[0])
+          console.log("ddddddddddddddddddddddddddddddddddddddddddddd", response.data.data[0].announcement)
+
+          setSearchAnnouncement(response.data.data[0].announcement)
           setSearchFileRepository(response.data.data[0].fileRepository)
           setSearchFranchise(response.data.data[0].franchise)
           setSearchOperatingMannual(response.data.data[0].operatingMannual)
@@ -188,18 +188,18 @@ const handelSearch = async (e) =>{
 
         }
 
-        }
+      }
 
 
     } catch (error) {
-        if(error.response.status === 404){
-          // console.log("The code is 404")
-          setTopHeaderNotification([])
-        }
+      if (error.response.status === 404) {
+        // console.log("The code is 404")
+        setTopHeaderNotification([])
+      }
     }
 
 
-}
+  }
 
 
 
@@ -220,12 +220,13 @@ const handelSearch = async (e) =>{
   //     );
   //   }
   // };
-  
-  
+
+
 
   const logout = async () => {
     const response = await axios.get(`${BASE_URL}/auth/logout`);
     if (response.status === 200) {
+      localStorage.setItem('is_user_logged_in', 'logged_out');
       localStorage.removeItem('token');
       localStorage.removeItem('user_id');
       localStorage.removeItem('user_name');
@@ -233,16 +234,16 @@ const handelSearch = async (e) =>{
       localStorage.removeItem('menu_list');
       localStorage.removeItem('active_tab');
       localStorage.removeItem('selectedFranchisee');
-      localStorage.removeItem("attempts")  
-      localStorage.removeItem("enrolled_parent_id")  
+      localStorage.removeItem("attempts")
+      localStorage.removeItem("enrolled_parent_id")
       localStorage.removeItem("enrolled_child_id")
-      localStorage.removeItem("redirectURL")    
-      localStorage.removeItem("SelectedChild")  
-      localStorage.removeItem("DefaultEducators")  
-      localStorage.removeItem("DefaultParents")  
+      localStorage.removeItem("redirectURL")
+      localStorage.removeItem("SelectedChild")
+      localStorage.removeItem("DefaultEducators")
+      localStorage.removeItem("DefaultParents")
       localStorage.removeItem('has_given_consent');
       window.location.href = '/';
-      
+
     }
   };
 
@@ -268,59 +269,59 @@ const handelSearch = async (e) =>{
     //   setChildId({ name: 'All' });
     //   setSelectedFranchisee('all');
     // } else {
-      setChildId({ ...childList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
-      setSelectedFranchisee(e);
+    setChildId({ ...childList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
+    setSelectedFranchisee(e);
     // }
   }
-  
+
   const popover = (
-  <Popover id="popover-basic" className="notificationpopup">
-    <Popover.Header as="h3">
-      Your Notifications{" "}
-      <Link style={{ marginLeft: 10 }} to="/notifications">
-        View All
-      </Link>
-    </Popover.Header>
-    <Popover.Body>
-    { topHeaderNotification &&
-      topHeaderNotification.length !==0 ? (
-        topHeaderNotification.map((details,index) => (
-          
-              <div className={topHeaderNotificationCount?"notifitem unread":"notifitem"}>
-                <div className="notifimg">
-                  <Link className="notilink" to="/">
-                    <div className="notifpic">
-                    <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
+    <Popover id="popover-basic" className="notificationpopup">
+      <Popover.Header as="h3">
+        Your Notifications{" "}
+        <Link style={{ marginLeft: 10 }} to="/notifications">
+          View All
+        </Link>
+      </Popover.Header>
+      <Popover.Body>
+        {topHeaderNotification &&
+          topHeaderNotification.length !== 0 ? (
+          topHeaderNotification.map((details, index) => (
 
-                    </div>
-                    <div className="notiftxt">
-                    <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
+            <div className={topHeaderNotificationCount ? "notifitem unread" : "notifitem"}>
+              <div className="notifimg">
+                <Link className="notilink" to="/">
+                  <div className="notifpic">
+                    <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle" />
+
+                  </div>
+                  <div className="notiftxt">
+                    <div className="title-xxs" onClick={() => handleLinkClick(details.id)}
                       dangerouslySetInnerHTML={{
-                      __html: `${details.title}`,
-                    }}/>
-                      
-                      </div>
-                  </Link>
-                </div>
-                <div className="notification-time">
-                {moment(details.createdAt).fromNow()}
-                </div>
+                        __html: `${details.title}`,
+                      }} />
+
+                  </div>
+                </Link>
               </div>
+              <div className="notification-time">
+                {moment(details.createdAt).fromNow()}
+              </div>
+            </div>
 
-            ))
-          ): (
-            <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
-          )
-          }
+          ))
+        ) : (
+          <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
+        )
+        }
 
-    </Popover.Body>
+      </Popover.Body>
 
-    <div className="totalmsg">
-      You have {topHeaderNotificationCount?topHeaderNotificationCount:0} unread notifications
-    </div>
-      <div className="totalreadmsg" onClick={()=> handleMarkRearAll()}>Mark to Read All</div>
-  </Popover>
-);
+      <div className="totalmsg">
+        You have {topHeaderNotificationCount ? topHeaderNotificationCount : 0} unread notifications
+      </div>
+      <div className="totalreadmsg" onClick={() => handleMarkRearAll()}>Mark to Read All</div>
+    </Popover>
+  );
 
   const fetchNotificationData = async () => {
     const response = await axios.get(`${BASE_URL}/notification/data/${notifType}`, {
@@ -329,7 +330,7 @@ const handelSearch = async (e) =>{
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { data } = response.data
       let filteredData = data.map(d => ({
         id: d.id,
@@ -364,7 +365,7 @@ const handelSearch = async (e) =>{
         $(".tipsearch").fadeOut("medium");
       });
     });
-    
+
     $(".search-col").on("click", function () {
       $(".search-bar").addClass("show");
     });
@@ -374,12 +375,12 @@ const handelSearch = async (e) =>{
     $(".notofication-meg").on("click", function () {
       $(".notification-popup").toggleClass("show");
     });
-    
+
     $(".tipsearch").hide();
   }, []);
 
 
-  
+
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'franchisor_admin') {
       setSelectedFranchisee('All');
@@ -394,7 +395,7 @@ const handelSearch = async (e) =>{
     // setSelectedFranchisee('All');
     // setChildId({ name: 'All' });
     // } else {
-      setSelectedFranchisee(childList[0]?.id);
+    setSelectedFranchisee(childList[0]?.id);
     // }
   }, [childList]);
 
@@ -409,7 +410,7 @@ const handelSearch = async (e) =>{
 
   useEffect(() => {
 
-    if(localStorage.getItem('user_role') === 'guardian') {
+    if (localStorage.getItem('user_role') === 'guardian') {
       fetchChildList();
     } else {
       fetchFranchiseeList();
@@ -452,71 +453,71 @@ const handelSearch = async (e) =>{
         <div className="lpanel">
           {
             localStorage.getItem('user_role') === 'guardian'
-            ? <div className="selectdropdown">
-            <Dropdown onSelect={selectChild}>
-              <Dropdown.Toggle id="dropdown-basic">
-                {childId?.name ||
-                  childList[0]?.name ||
-                  'No Child Available'}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
-                  <Dropdown.Item eventKey="All">
-                    <span className="loction-pic">
-                      <img alt="" id="user-pic" src="/img/user.png" />
-                    </span>
-                    All
-                  </Dropdown.Item>
-                </React.Fragment> : null}
-                {childList.map((data) => {
-                  return (
-                    <React.Fragment key={data.id}>
-                      <Dropdown.Item eventKey={`${data.id}`}>
+              ? <div className="selectdropdown">
+                <Dropdown onSelect={selectChild}>
+                  <Dropdown.Toggle id="dropdown-basic">
+                    {childId?.name ||
+                      childList[0]?.name ||
+                      'No Child Available'}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
+                      <Dropdown.Item eventKey="All">
                         <span className="loction-pic">
                           <img alt="" id="user-pic" src="/img/user.png" />
                         </span>
-                        {data.name}
+                        All
                       </Dropdown.Item>
-                    </React.Fragment>
-                  );
-                })}
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-            : <div className="selectdropdown">
-            <Dropdown onSelect={selectFranchisee}>
-              <Dropdown.Toggle id="dropdown-basic">
-                {franchiseeId?.franchisee_name ||
-                  franchiseeList[0]?.franchisee_name ||
-                  'No Data Available'}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
-                  <Dropdown.Item eventKey="All">
-                    <span className="loction-pic">
-                      <img alt="" id="user-pic" src="/img/user.png" />
-                    </span>
-                    All
-                  </Dropdown.Item>
-                </React.Fragment> : null}
-                {franchiseeList.map((data) => {
-                  return (
-                    <React.Fragment key={data.id}>
-                      <Dropdown.Item eventKey={`${data.id}`}>
+                    </React.Fragment> : null}
+                    {childList.map((data) => {
+                      return (
+                        <React.Fragment key={data.id}>
+                          <Dropdown.Item eventKey={`${data.id}`}>
+                            <span className="loction-pic">
+                              <img alt="" id="user-pic" src="/img/user.png" />
+                            </span>
+                            {data.name}
+                          </Dropdown.Item>
+                        </React.Fragment>
+                      );
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              : <div className="selectdropdown">
+                <Dropdown onSelect={selectFranchisee}>
+                  <Dropdown.Toggle id="dropdown-basic">
+                    {franchiseeId?.franchisee_name ||
+                      franchiseeList[0]?.franchisee_name ||
+                      'No Data Available'}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
+                      <Dropdown.Item eventKey="All">
                         <span className="loction-pic">
                           <img alt="" id="user-pic" src="/img/user.png" />
                         </span>
-                        {data.franchisee_name}
+                        All
                       </Dropdown.Item>
-                    </React.Fragment>
-                  );
-                })}
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
+                    </React.Fragment> : null}
+                    {franchiseeList.map((data) => {
+                      return (
+                        <React.Fragment key={data.id}>
+                          <Dropdown.Item eventKey={`${data.id}`}>
+                            <span className="loction-pic">
+                              <img alt="" id="user-pic" src="/img/user.png" />
+                            </span>
+                            {data.franchisee_name}
+                          </Dropdown.Item>
+                        </React.Fragment>
+                      );
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
           }
         </div>
-        
+
         <div className="rpanel ms-auto">
           <div className="search-bar">
             <Form action="SearchResult">
@@ -535,45 +536,45 @@ const handelSearch = async (e) =>{
 
 
 
-                    {searchAnnouncement?.map((announceData) => (
-                      <li>
-                        <a href="/announcements" class="d-flex">
-                       {/* <img alt="" src={announceData?.coverImage?announceData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span class="sec-cont"><strong class="text-capitalize">{announceData?.title}</strong></span>
-                        </a>
-                      </li>
-                        ))}
+                      {searchAnnouncement?.map((announceData) => (
+                        <li>
+                          <a href="/announcements" class="d-flex">
+                            {/* <img alt="" src={announceData?.coverImage?announceData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                            <span class="sec-cont"><strong class="text-capitalize">{announceData?.title}</strong></span>
+                          </a>
+                        </li>
+                      ))}
 
 
                       {searchTraining?.map((trainingData) => (
-                      <li>
-                        <a href={`/training-detail/${trainingData.id}`} class="d-flex">
-                       {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span class="sec-cont"><strong class="text-capitalize">{trainingData?.title}</strong></span>
-                        </a>
-                      </li>
-                        ))}
+                        <li>
+                          <a href={`/training-detail/${trainingData.id}`} class="d-flex">
+                            {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                            <span class="sec-cont"><strong class="text-capitalize">{trainingData?.title}</strong></span>
+                          </a>
+                        </li>
+                      ))}
 
 
                       {searchOperatingMannual?.map((operatingData) => (
-                      <li>
-                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
-                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
-                        </a>
-                      </li>
-                        ))}
+                        <li>
+                          <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                            {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                            <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
+                          </a>
+                        </li>
+                      ))}
 
 
 
-                    {searchOperatingMannual?.map((operatingData) => (
-                      <li>
-                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
-                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
-                        </a>
-                      </li>
-                        ))}
+                      {searchOperatingMannual?.map((operatingData) => (
+                        <li>
+                          <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                            {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                            <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
+                          </a>
+                        </li>
+                      ))}
 
 
 
@@ -592,7 +593,7 @@ const handelSearch = async (e) =>{
             <ul>
               <li>
                 <span className="search-col cursor">
-                
+
                   <img alt="" src="/img/search-icon.svg" />
                 </span>
               </li>
@@ -603,14 +604,14 @@ const handelSearch = async (e) =>{
               </li>
               <li>
                 <OverlayTrigger rootClose={true} trigger="click" placement="bottom-end" overlay={popover}>
-                <div className="chat-meg cursor">
-                  <img 
-                    alt=""
-                    // onMouseEnter={() => setNotificationDialog(true)} 
-                    // onMouseLeave={() => setNotificationDialog(false)} 
-                    src="/img/notification-icon.svg" />
-                    <span class="tag">{topHeaderNotificationCount?topHeaderNotificationCount > 99 ? "99+":topHeaderNotificationCount:0}</span>
-                </div>
+                  <div className="chat-meg cursor">
+                    <img
+                      alt=""
+                      // onMouseEnter={() => setNotificationDialog(true)} 
+                      // onMouseLeave={() => setNotificationDialog(false)} 
+                      src="/img/notification-icon.svg" />
+                    <span class="tag">{topHeaderNotificationCount ? topHeaderNotificationCount > 99 ? "99+" : topHeaderNotificationCount : 0}</span>
+                  </div>
                 </OverlayTrigger>
               </li>
               <li className="user-col">

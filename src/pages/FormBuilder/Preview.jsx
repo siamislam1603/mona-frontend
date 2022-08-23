@@ -15,6 +15,7 @@ const Preview = (props) => {
   const [role, setRole] = useState('');
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
+  const token = localStorage.getItem('token');
   const setField = (field, value) => {
     setForm({ ...form, [field]: value });
     if (!!errors[field]) {
@@ -34,9 +35,15 @@ const Preview = (props) => {
     getFormFields();
   }, []);
   const getFormFields = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders
     };
 
     fetch(

@@ -41,6 +41,7 @@ const AddOperatingManual = () => {
   const [categoryError, setCategoryError] = useState({});
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
+  const token = localStorage.getItem('token');
   useEffect(() => {
     getUserRoleData();
   }, []);
@@ -55,10 +56,7 @@ const AddOperatingManual = () => {
   }, [selectedFranchiseeId]);
   const getUser = () => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
 
     var requestOptions = {
       method: 'GET',
@@ -87,9 +85,12 @@ const AddOperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   const getOneOperatingManual = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     await fetch(
@@ -204,7 +205,7 @@ const AddOperatingManual = () => {
         data['shared_with'] = selectedUserId
           ? selectedUserId.slice(0, -1)
           : null;
-        data['link']=FRONT_BASE_URL+"/operatingmanual";
+        data['link'] = FRONT_BASE_URL + '/operatingmanual';
         // data['shared_role'] = null;
         // data['accessible_to_role'] = formSettingData.accessible_to_role;
         // data['accessible_to_all'] = false;
@@ -222,6 +223,7 @@ const AddOperatingManual = () => {
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('authorization', 'Bearer ' + token);
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
         body: JSON.stringify(data),
@@ -244,11 +246,12 @@ const AddOperatingManual = () => {
       upperRoleUser = getUpperRoleUser();
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('authorization', 'Bearer ' + token);
       let data = { ...operatingManualData };
       data['cover_image'] = imageUrl;
       data['video_thumbnail'] = videoThumbnailUrl;
       data['reference_video'] = videoUrl;
-      data['link']=FRONT_BASE_URL+"/operating_manual?select=";
+      data['link'] = FRONT_BASE_URL + '/operating_manual?select=';
       data.created_by = localStorage.getItem('user_id');
       data.upper_role = upperRoleUser;
       console.log('data---->', data);
@@ -259,20 +262,17 @@ const AddOperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log("res---->",res);
-          if(res?.success===false)
-          {
-            let errorData={...errors};
-            errorData["title"]=res?.message;
-            setErrors(errorData)
-          }
-          else
-          {
+          console.log('res---->', res);
+          if (res?.success === false) {
+            let errorData = { ...errors };
+            errorData['title'] = res?.message;
+            setErrors(errorData);
+          } else {
             setOperatingManualData(res?.result);
             setFormSettingFlag(true);
-            setErrors([])
+            setErrors([]);
           }
-          
+
           // navigate('/operatingmanual');
         });
     }
@@ -299,6 +299,7 @@ const AddOperatingManual = () => {
       if (!flag) {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('authorization', 'Bearer ' + token);
         fetch(`${BASE_URL}/operating_manual/category/add`, {
           method: 'post',
           body: JSON.stringify(categoryData),
@@ -324,9 +325,12 @@ const AddOperatingManual = () => {
       reader.onerror = (error) => reject(error);
     });
   const getCategory = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/operating_manual/category`, requestOptions)
@@ -348,7 +352,7 @@ const AddOperatingManual = () => {
 
   const uploadFiles = async (name, file) => {
     let flag = false;
-    console.log("file--->",file.type);
+    console.log('file--->', file.type);
     if (name === 'cover_image') {
       if (file.size > 2048 * 1024) {
         let errorData = { ...errors };
@@ -356,8 +360,13 @@ const AddOperatingManual = () => {
         setErrors(errorData);
         flag = true;
       }
-      if(!(file.type.includes("jpg") || file.type.includes("jpeg") || file.type.includes("png")))
-      {
+      if (
+        !(
+          file.type.includes('jpg') ||
+          file.type.includes('jpeg') ||
+          file.type.includes('png')
+        )
+      ) {
         let errorData = { ...errors };
         errorData['cover_image'] = 'File must be JPG or PNG.';
         setErrors(errorData);
@@ -371,8 +380,7 @@ const AddOperatingManual = () => {
         setErrors(errorData);
         flag = true;
       }
-      if(!(file.type.includes("mp4")))
-      {
+      if (!file.type.includes('mp4')) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File must be MP4.';
         setErrors(errorData);
@@ -397,6 +405,7 @@ const AddOperatingManual = () => {
 
       var myHeaders = new Headers();
       myHeaders.append('shared_role', 'admin');
+      myHeaders.append('authorization', 'Bearer ' + token);
       fetch(`${BASE_URL}/uploads/uiFiles`, {
         method: 'post',
         body: body,
@@ -462,9 +471,15 @@ const AddOperatingManual = () => {
     }
   }
   const getUserRoleData = () => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'authorization',
+      'Bearer ' + token
+    );
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
+      headers: myHeaders
     };
 
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
@@ -494,7 +509,10 @@ const AddOperatingManual = () => {
                   <TopHeader
                     selectedFranchisee={selectedFranchisee}
                     setSelectedFranchisee={(id) => {
-                      id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
+                      id =
+                        localStorage.getItem('user_role') === 'guardian'
+                          ? localStorage.getItem('franchisee_id')
+                          : id;
                       setSelectedFranchiseeId(id);
                       localStorage.setItem('f_id', id);
                     }}
@@ -891,40 +909,42 @@ const AddOperatingManual = () => {
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
-                  {localStorage.getItem("user_role")==="franchisor_admin" && <label className="container">
-                      Franchisee Admin
-                      <input
-                        type="checkbox"
-                        name="shared_role"
-                        id="franchisee_admin"
-                        onClick={(e) => {
-                          let data = { ...formSettingData };
-                          if (
-                            !data['shared_role']
-                              .toString()
-                              .includes(e.target.id)
-                          ) {
-                            data['shared_role'] += e.target.id + ',';
-                          } else {
-                            data['shared_role'] = data['shared_role'].replace(
-                              e.target.id + ',',
-                              ''
-                            );
-                            if (data['shared_role'].includes('all')) {
+                    {localStorage.getItem('user_role') ===
+                      'franchisor_admin' && (
+                      <label className="container">
+                        Franchisee Admin
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="franchisee_admin"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
                               data['shared_role'] = data['shared_role'].replace(
-                                'all,',
+                                e.target.id + ',',
                                 ''
                               );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
+                              }
                             }
-                          }
-                          setFormSettingData(data);
-                        }}
-                        checked={formSettingData?.shared_role
-                          ?.toString()
-                          .includes('franchisee_admin')}
-                      />
-                      <span className="checkmark"></span>
-                    </label>}
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('franchisee_admin')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    )}
                     <label className="container">
                       Co-ordinators
                       <input
@@ -1183,8 +1203,8 @@ const AddOperatingManual = () => {
             className="back"
             onClick={() => {
               setCategoryModalFlag(false);
-              let data={...categoryData};
-              data["category_name"]="";
+              let data = { ...categoryData };
+              data['category_name'] = '';
               setCategoryData(data);
             }}
           >
