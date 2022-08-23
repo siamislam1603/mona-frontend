@@ -341,7 +341,7 @@ const AddFormField = (props) => {
                   setSection(sectionData);
                   if (!conditionFlag && !groupFlag) {
                     if (
-                      res?.form_permission?.signatories === true &&
+                      res?.form[0]?.form_permissions[0]?.signatories === true &&
                       flag === false
                     ) {
                       console.log('Hello23423423423');
@@ -357,7 +357,7 @@ const AddFormField = (props) => {
                   }
                 }
               });
-          } else if (res?.form_permission?.signatories === true) {
+          } else if (res?.form[0]?.form_permissions[0]?.signatories === true) {
             setForm([
               { field_type: 'text' },
               { field_type: 'radio', option: [{ '': '' }, { '': '' }] },
