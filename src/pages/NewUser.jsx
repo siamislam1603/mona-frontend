@@ -463,6 +463,11 @@ const NewUser = () => {
       setUserRoleData(newRoleList);
     }
 
+    if(currentRole === 'franchisor_admin') {
+      newRoleList = newRoleList.filter(role => role.sequence > 1);
+      setUserRoleData(newRoleList);
+    }
+
     if(currentRole === "guardian") {
       newRoleList = newRoleList.filter(role => role.sequence === 5);
       setUserRoleData(newRoleList);
@@ -927,4 +932,3 @@ const NewUser = () => {
 };
 
 export default NewUser;
-

@@ -58,15 +58,15 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
         name: d.fullname
       })));
       
-      let id = children.map(d => d.id);
-      // console.log('ID ARRAY:', id);
-      id = ['all', ...id].join(',');
-      // console.log('ID STRING:', id);
-      // console.log('REFORMED DATA:', data);
-      setChildList(prevState => ([
-        { id: id, name: 'All' },
-        ...prevState
-      ]));
+      // let id = children.map(d => d.id);
+      // // console.log('ID ARRAY:', id);
+      // id = ['all', ...id].join(',');
+      // // console.log('ID STRING:', id);
+      // // console.log('REFORMED DATA:', data);
+      // setChildList(prevState => ([
+      //   { id: id, name: 'All' },
+      //   ...prevState
+      // ]));
     }
   };
 
@@ -234,6 +234,7 @@ const handelSearch = async (e) =>{
   const logout = async () => {
     const response = await axios.get(`${BASE_URL}/auth/logout`);
     if (response.status === 200) {
+      localStorage.setItem('is_user_logged_in', 'logged_out');
       localStorage.removeItem('token');
       localStorage.removeItem('user_id');
       localStorage.removeItem('user_name');
