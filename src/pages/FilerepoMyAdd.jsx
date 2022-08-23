@@ -368,7 +368,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         let franchiseeArr = formSettings.franchisee
 
-        let response = await axios.post(`http://localhost:4000/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
         if (response.status === 200) {
             // console.log(response.data.users, "respo")
             setUser(response.data.users)
@@ -503,7 +503,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             </div>
                                         </> :
 
-                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" ?
+                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf"||cell[0] === "text/csv"?
                                             <>
                                                 <span className="user-pic-tow">
                                                     <a href={cell[2]} download >

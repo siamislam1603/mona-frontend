@@ -61,6 +61,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                             (<>
                                 <FileRepoVideo
                                     data={getBase64(file) || currentURI || acceptedFiles}
+                                    Src={file.path}
                                 />
                             </>) :
                             (
