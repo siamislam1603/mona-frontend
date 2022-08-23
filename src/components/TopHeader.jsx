@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import $ from "jquery";
 import moment from "moment";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { FullLoader } from "./Loader";
+// import { FullLoader } from "./Loader";
 
 let temp = () => { }
 let Child = () => { }
