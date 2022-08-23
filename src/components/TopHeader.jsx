@@ -226,6 +226,7 @@ const handelSearch = async (e) =>{
   const logout = async () => {
     const response = await axios.get(`${BASE_URL}/auth/logout`);
     if (response.status === 200) {
+      localStorage.setItem('is_user_logged_in', 'logged_out');
       localStorage.removeItem('token');
       localStorage.removeItem('user_id');
       localStorage.removeItem('user_name');
