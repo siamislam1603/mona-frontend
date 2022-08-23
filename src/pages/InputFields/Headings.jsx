@@ -12,3 +12,4 @@ const Headings = (props) => {
   );
 };
 export default Headings;
+

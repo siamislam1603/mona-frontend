@@ -40,6 +40,7 @@ const RepoEdit = () => {
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
+    const [selectedChild,setSelectedChild] = useState([])
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -81,6 +82,7 @@ const RepoEdit = () => {
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
+            assigned_childs:data?.repository_shares[0].assigned_childs,
             file_type: data?.repository_files[0].fileType,
         }));
         setCoverImage(data?.repository_files[0].filesPath);
@@ -165,10 +167,11 @@ const RepoEdit = () => {
             })
         console.log("CHIlD DATA after franhisee", response)
         if (response.status === 200 && response.data.status === "success") {
-            setData((prevState) => ({
-                ...prevState,
-                franchise: [data.franchise.map(option => option.id + "")]
-            }));
+            setSelectedChild(response.data.children.map(data => ({
+                id: data.id,
+                name: data.fullname,
+                key: `${data.fullname}, ${data.city}`
+            })));
         }
 
     }
@@ -295,7 +298,10 @@ const RepoEdit = () => {
     }
 
     data && console.log('FILE REPO DATA:', data.franchise);
+    data && console.log('FILE REPO DATA:', data);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
+    console.log("Selected child",selectedChild)
+
     return (
         <div style={{ position: "relative", overflow: "hidden" }}>
             <div id="main">
@@ -593,7 +599,12 @@ const RepoEdit = () => {
                                                             </div>
                                                         </Form.Group>
                                                     </Col>
-                                                    <Col lg={5} md={12}>
+                                                </Row>
+                                                    <Row className="mt-4">
+                                                    <Col lg={3} md={6}>
+                                                       
+                                                        </Col>
+                                                        <Col lg={9} md={12}>
                                                         <Form.Group>
                                                             <Form.Label>Selected Child</Form.Label>
                                                             <div className="select-with-plus">
@@ -620,23 +631,24 @@ const RepoEdit = () => {
                                                                 /> */}
                                                                 <Multiselect
                                                                     disable={sendToAllFranchisee === 'all'}
-                                                                    placeholder={"Select User Names"}
+                                                                    placeholder={""}
                                                                     displayValue="key"
                                                                     className="multiselect-box default-arrow-select"
-                                                                    onRemove={function noRefCheck(data) {
-                                                                        setFormSettings((prevState) => ({
-                                                                            ...prevState,
-                                                                            franchise: [...data.map(data => data.id)],
-                                                                        }));
-                                                                    }}
-                                                                    selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
+                                                                    // onRemove={function noRefCheck(data) {
+                                                                    //     setFormSettings((prevState) => ({
+                                                                    //         ...prevState,
+                                                                    //         franchise: [...data.map(data => data.id)],
+                                                                    //     }));
+                                                                    // }}
+                                                                    // selectedValues={
+                                                                    selectedValues={selectedChild}
                                                                     onSelect={(selectedOptions) => {
                                                                         setData((prevState) => ({
                                                                             ...prevState,
-                                                                            franchise: [...selectedOptions.map(option => option.id + "")]
+                                                                            assigned_childs: [...selectedOptions.map(option => option.id + "")]
                                                                         }));
                                                                     }}
-                                                                    options={franchiseeList}
+                                                                    options={selectedChild}
                                                                 />
                                                             </div>
                                                         </Form.Group>

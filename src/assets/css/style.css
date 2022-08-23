@@ -4059,6 +4059,18 @@ label.form-check-label {
   margin: 0 8px;
 }
 
+.searchresult-sec .entry-title{max-width:inherit;border-bottom:1px solid rgba(76, 76, 76, 0.3);color:var(--dark);display:flex;align-items:center;margin-bottom:0;padding-bottom:1rem;}
+.searchresult-sec .entry-title .title-xs{margin:0;display:flex;align-items:center;}
+.search-item{display:flex;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(0, 0, 0, 0.1);}
+.search-item a{color:var(--dark); }
+.search-item .user-link a{color:var(--dark); font-weight: bold; text-decoration: underline; }
+.search-item .user-link a:hover{color:var(--purple);}
+.search-item .search-user-pic .figure{min-width:50px;max-width:50px;height:50px;margin: 0; overflow:hidden;border-radius:100%;margin-right:1rem;position: relative;}
+.search-item .search-user-pic .figure .figure-img{ transform: translateX(-50%); left: 50%; height: 50px; max-width: fit-content; margin: 0; position: absolute; top:0; }
+.search-item .title-md{margin:7px 0;font-size:20px;}
+.totalview{overflow:hidden;display:flex;}
+.totalview .meta-block{display:inline-block;position:relative; opacity: .7; font-size: var(--fontxs); }
+.totalview .meta-block:not(:last-of-type):after{content:'|';margin:0 8px;}
 /*Search Results*/
 
 
