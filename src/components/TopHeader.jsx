@@ -5,7 +5,7 @@ import { BASE_URL } from './App';
 import { Link } from "react-router-dom";
 import $ from "jquery";
 import moment from "moment";
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 let temp = () => { }
 
@@ -30,6 +30,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, notificationType='none' }) =>
   const [searchOperatingMannual, setSearchOperatingMannual] = useState([]);
   const [searchTraining, setSearchTraining] = useState([]);
   const [searchUser, setSearchUser] = useState([]);
+  const [searchLoaderFlag, setSearchLoaderFlag] = useState(false);
 
 
   const savePermissionInState = async () => {
@@ -165,10 +166,14 @@ const handleMarkRearAll = async notificationId => {
 
 
 const handelSearch = async (e) =>{
+
   e.preventDefault();
   try {
   let searchKey = e.target.value;
   if(searchKey){
+
+    setSearchLoaderFlag(true)
+
 
       const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
         headers: {"Authorization": "Bearer " + token}
@@ -176,6 +181,7 @@ const handelSearch = async (e) =>{
         
         if(response.status === 200 && response.data.status === "success") {
           
+
           setSearchResult(response.data.data[0]) 
           console.log("ddddddddddddddddddddddddddddddddddddddddddddd",response.data.data[0].announcement)
 
@@ -185,6 +191,8 @@ const handelSearch = async (e) =>{
           setSearchOperatingMannual(response.data.data[0].operatingMannual)
           setSearchTraining(response.data.data[0].training)
           setSearchUser(response.data.data[0].user)
+
+          setSearchLoaderFlag(false)
 
         }
 
@@ -426,8 +434,6 @@ const handelSearch = async (e) =>{
       user_dashboar_link = '/franchisee-dashboard'
     else if (localStorage.getItem('user_role') === 'coodinator')
       user_dashboar_link = '/coordinator-dashboard'
-    else if (localStorage.getItem('user_role') === 'franchisee_admin')
-      user_dashboar_link = '/franchisee-dashboard'
     else if (localStorage.getItem('user_role') === 'educator')
       user_dashboar_link = '/educator-dashboard'
     else if (localStorage.getItem('user_role') === 'guardian')
@@ -526,11 +532,21 @@ const handelSearch = async (e) =>{
                   className="topsearch"
                   placeholder="Type here to search..."
                   name="query"
+                  autocomplete="off"
                   onChange={handelSearch}
 
                 />
                 <div className="tipsearch">
                   <div className="searchlisting cus-scr">
+
+                  {searchLoaderFlag == true ? (
+                        <div class="text-center">
+                           <CircularProgress />
+                           </div>
+                    ) : ''
+                  }
+
+
                     <ul>
 
 
@@ -566,11 +582,21 @@ const handelSearch = async (e) =>{
 
 
 
-                    {searchOperatingMannual?.map((operatingData) => (
+                    {searchFranchise?.map((franchiseeData) => (
                       <li>
-                        <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                        <a href={`/all-franchisees/`} class="d-flex">
                        {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
+                          <span class="sec-cont"><strong class="text-capitalize">{franchiseeData?.franchisee_name}</strong></span>
+                        </a>
+                      </li>
+                        ))}
+
+
+                      {searchFileRepository?.map((fileRepoData) => (
+                      <li>
+                        <a href={`/file-repository-List/${fileRepoData?.repository_files[0]?.categoryId}`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{fileRepoData?.title}</strong></span>
                         </a>
                       </li>
                         ))}
