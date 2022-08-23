@@ -24,10 +24,6 @@ let selectedUserId = '';
 const RepoEdit = () => {
     const [url, setUrl] = React.useState('');
 
-
-
-
-
     const Params = useParams();
     const navigate = useNavigate();
     const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
@@ -40,7 +36,7 @@ const RepoEdit = () => {
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
-    const [selectedChild,setSelectedChild] = useState([])
+    const [selectedChild, setSelectedChild] = useState([])
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -82,7 +78,7 @@ const RepoEdit = () => {
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
-            assigned_childs:data?.repository_shares[0].assigned_childs,
+            assigned_childs: data?.repository_shares[0].assigned_childs,
             file_type: data?.repository_files[0].fileType,
         }));
         setCoverImage(data?.repository_files[0].filesPath);
@@ -300,7 +296,7 @@ const RepoEdit = () => {
     data && console.log('FILE REPO DATA:', data.franchise);
     data && console.log('FILE REPO DATA:', data);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
-    console.log("Selected child",selectedChild)
+    console.log("Selected child", selectedChild)
 
     return (
         <div style={{ position: "relative", overflow: "hidden" }}>
@@ -398,7 +394,7 @@ const RepoEdit = () => {
                                                             <div className="showfiles mt-3 text-center" >
                                                                 {typeof data.image === "string" ?
                                                                     (<>
-                                                                        {data.file_type === "image/jpeg" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
+                                                                        {data.file_type === "image/jpeg" || "image/png" || "jpe" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
                                                                             data.file_type === "application/pdf" ? (<>
                                                                                 {/* <div style={{ width: "200px", height: "200px", backgroundColor: "red", overflow: "hidden" }}>
                                                                                     <Document
@@ -425,7 +421,7 @@ const RepoEdit = () => {
                                                                                             />
                                                                                         </div>
                                                                                     </>
-                                                                                ) : (<>sdk</>)}
+                                                                                ) : (<></>)}
                                                                     </>
                                                                     )
                                                                     : (<></>)}
@@ -600,11 +596,11 @@ const RepoEdit = () => {
                                                         </Form.Group>
                                                     </Col>
                                                 </Row>
-                                                    <Row className="mt-4">
+                                                <Row className="mt-4">
                                                     <Col lg={3} md={6}>
-                                                       
-                                                        </Col>
-                                                        <Col lg={9} md={12}>
+
+                                                    </Col>
+                                                    <Col lg={9} md={12}>
                                                         <Form.Group>
                                                             <Form.Label>Selected Child</Form.Label>
                                                             <div className="select-with-plus">

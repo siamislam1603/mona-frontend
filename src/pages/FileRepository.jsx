@@ -448,7 +448,7 @@ const FileRepository = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader 
+                <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
                 {console.log("assigned_usersMeFileRepoData------>", assigned_usersMeFileRepoData)}
@@ -725,7 +725,7 @@ const FileRepository = () => {
                             onChange={() => {
                               setFormSettings(prevState => ({
                                 ...prevState,
-                                assigned_franchisee: []
+                                franchisee: []
                               }));
                               setSendToAllFranchisee('none')
                             }}

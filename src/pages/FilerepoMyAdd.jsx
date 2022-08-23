@@ -66,6 +66,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         franchisee: [],
         assigned_users: []
     });
+    // const [trainingSettings, setTrainingSettings] = useState({
+    //     send_to_all_franchisee: false,
+    //     assigned_franchisee: [],
+    //     assigned_roles: [],
+    //     assigned_users: []
+    // });
     let Params = useParams();
 
     const toBase64 = (file) =>
@@ -93,6 +99,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             })));
         }
     };
+
+
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         let user_id = localStorage.getItem('user_id')
@@ -798,15 +806,18 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 <Multiselect
                                                     disable={sendToAllFranchisee === 'all'}
                                                     placeholder={"Select User Names"}
+                                                    // singleSelect={true}
                                                     displayValue="key"
                                                     className="multiselect-box default-arrow-select"
+                                                    selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.franchisee) === d.id)}
+                                                    onKeyPressFn={function noRefCheck() { }}
                                                     onRemove={function noRefCheck(data) {
                                                         setFormSettings((prevState) => ({
                                                             ...prevState,
                                                             assigned_franchisee: [...data.map(data => data.id)],
                                                         }));
                                                     }}
-
+                                                    onSearch={function noRefCheck() { }}
                                                     onSelect={function noRefCheck(data) {
                                                         setFormSettings((prevState) => ({
                                                             ...prevState,
@@ -859,6 +870,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             </div>
                                         </Form.Group>
                                     </Col>
+
                                     <Col lg={9} md={12}>
                                         {console.log(formSettingData, "{console.log(...formSettingData)}")}
                                         {formSettingData.accessible_to_role === 1 ? (
@@ -990,14 +1002,14 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                             .toString()
                                                                             .includes('coordinator')
                                                                     ) {
-                                                                        data['shared_role'] += 'coordinator,';
+                                                                        data['shared_role'] += 'coordinator';
                                                                     }
                                                                     if (
                                                                         !data['shared_role']
                                                                             .toString()
                                                                             .includes('all')
                                                                     ) {
-                                                                        data['shared_role'] += 'all,';
+                                                                        data['shared_role'] += ',';
                                                                     }
                                                                     setFormSettingData(data);
                                                                 } else {
@@ -1006,7 +1018,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                 }
                                                             }}
                                                             checked={formSettingData?.shared_role?.includes(
-                                                                'all'
+                                                                'parent,educator,coordinator'
                                                             )}
                                                         />
                                                         <span className="checkmark"></span>
