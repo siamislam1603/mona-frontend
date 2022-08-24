@@ -24,11 +24,18 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                 maxFiles: 1,
                 multiple: false,
                 accept: {
-                    'image/*': ['.jpeg', '.png', '.jpg'],
-                    'text/*': ['.html', '.htm', '.doc', '.pdf'],
+                    'image/jpeg': ['.jpeg'],
+                    'image/jpg': ['.jpg'],
+                    'image/png': ['.png'],
+                    'text/html': ['.html'],
+                    'text/htm': ['.html'],
+                    'text/cvs': ['.cvs'],
+                    'text/.docx': ['.docx'],
+                    'text/.xlsx': ['.xlsx'],
+                    'text/doc': ['.doc'],
+                    'text/pdf': ['.pdf'],
                     'video/mp4': ['video/mp4'],
                     'audio/mpeg': ['.audio/mpeg', '.mp3']
-                    // '.doc, .pdf, .mp3, .png, .jpg'
                 },
                 useFsAccessApi: false,
             })
@@ -37,55 +44,55 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
         newFiles.splice(newFiles.indexOf(file), 1)
         setMyFiles(newFiles)
     }
+
     const Filess = myFiles.map((file, index) => {
         if (index != 0)
-            return <>
-                {console.log(file.type, 'ddhb')}
-                {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
-                    <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
-                </>)
-                    : file.type === "application/pdf" ? (
-                        <>
-                            <span className="user-pic-tow">
-                                {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
-                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                {/* </a> */}
-                            </span>
-                            <span className="user-name">
-                                {file.name}
-                                {getBase64(file)}.Doc
-                            </span>
-                        </>
-                    )
-                        : file.type === "video/mp4" ?
-                            (<>
+          
+        return <>
+            {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
+                <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
+            </>)
+                : file.type === "application/pdf" || file.type === "text/html" || file.type === "text/htm" || file.type === "text/doc" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
+                    <>
+                        <span className="user-pic-tow">
+                            {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
+                            <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                            {/* </a> */}
+                        </span>
+                        <span className="user-name">
+                            {file.name}
+                            {getBase64(file)}.Doc
+                        </span>
+                    </>
+                )
+                    : file.type === "video/mp4" ?
+                        (<>
+                            <div style={{ display: "flex", justifyContent: " center" }}>
                                 <FileRepoVideo
-                                    data={getBase64(file) || currentURI || acceptedFiles}
-                                    Src={file.path}
+                                    data={URL.createObjectURL(file)}
                                 />
-                            </>) :
-                            (
-                                file.type === "audio/mpeg" ? (
-                                    <>
-                                        <span className="user-pic-tow">
-                                            {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
-                                            <img src="../img/audio-ico.png" className="me-2" alt="" />
-                                            {/* </a> */}
-                                        </span>
-                                        <span className="user-name">
-                                            {file.name}
-                                            {getBase64(file)}.Doc
-                                        </span>
-                                    </>
-                                ) : (<></>)
-                            )
-                }
-                {console.log(getBase64(file) || currentURI || acceptedFiles, "dddsd")}
-
-                <Link to="#" onClick={removeFile(file)} style={{ margin: "20px" }}>
-                    <img src="../img/removeIcon.svg" alt="" />
-                </Link>
-            </>
+                            </div>
+                        </>) :
+                        (
+                            file.type === "audio/mpeg" ? (
+                                <>
+                                    <span className="user-pic-tow">
+                                        {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
+                                        <img src="../img/audio-ico.png" className="me-2" alt="" />
+                                        {/* </a> */}
+                                    </span>
+                                    <span className="user-name">
+                                        {file.name}
+                                        {getBase64(file)}.Doc
+                                    </span>
+                                </>
+                            ) : (<></>)
+                        )
+            }
+            <Link to="#" onClick={removeFile(file)} style={{ margin: "20px" }}>
+                <img src="../img/removeIcon.svg" alt="" />
+            </Link>
+        </>
     })
     return (
 

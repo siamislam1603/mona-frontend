@@ -251,14 +251,16 @@ const EditUser = () => {
     })
 
     let blob;
-    if(typeof croppedImage === "object") {
-      console.log('Image Type: Object');
-      blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-      data.append('images', blob);
-    } else {
-      console.log('Image Type: String');
-      blob = croppedImage
-      data.append('profile_photo', blob);
+    if(croppedImage) {
+      if(typeof croppedImage === "object") {
+        console.log('Image Type: Object');
+        blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+        data.append('images', blob);
+      } else {
+        console.log('Image Type: String');
+        blob = croppedImage
+        data.append('profile_photo', blob);
+      }
     }
     
     Object.keys(formData)?.map((item,index) => {
@@ -502,10 +504,10 @@ const EditUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  // editUserData && console.log('EDIT USER DATA:', editUserData);
+  editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
   // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-  // formData && console.log('FORM DATA:', formData);
+  formData && console.log('FORM DATA:', formData);
   // userRoleData && console.log('USER ROLE DATA:', userRoleData);
   currentRole && console.log('Current Role:', currentRole);
   return (

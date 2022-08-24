@@ -63,6 +63,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
+    console.log('SIGNATURE IMAGHE RESPONSE:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { child } = response.data;
       let educators = child.users.map(e => e.id);
@@ -247,7 +248,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       data.append('image', blob);
     }
 
-    let response = await axios.put(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
@@ -374,8 +375,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the consent form!</p>
                   }
                   {
-                    signatureString &&
-                    <img src={consentData?.signature} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    (signatureString || localStorage.getItem('user_image') !== 'guardian') &&
+                    <img src={fetchedSignatureImage} alt="parent signature" style={{ width: "80px", height: "80px" }} />
                   }
                 </Form.Group>
               </Col>

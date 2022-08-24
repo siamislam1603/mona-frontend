@@ -628,6 +628,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="date"
                     name="start_date"
+                    value={trainingSettings?.start_date}
                     min={new Date().toISOString().slice(0, 10)}
                     onChange={(e) => {
                       handleTrainingSettings(e);
@@ -647,6 +648,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="time"
                     name="start_time"
+                    value={trainingSettings?.start_time}
                     onChange={(e) => {
                       handleTrainingSettings(e);
                       setTrainingSettingErrors(prevState => ({
@@ -664,6 +666,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="date"
                     name="end_date"
+                    value={trainingSettings?.end_date}
                     onChange={(e) => {
                       handleTrainingSettings(e);
                       setTrainingSettingErrors(prevState => ({
@@ -680,6 +683,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="time"
                     name="end_time"
+                    value={trainingSettings?.end_time}
                     onChange={handleTrainingSettings}
                   />
                 </Form.Group>
@@ -735,13 +739,14 @@ const AddNewTraining = () => {
 
               <Col lg={9} md={12}>
                 <Form.Group>
-                  <Form.Label>Select Franchisee</Form.Label>
+                  <Form.Label>Select Franchise</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
                       disable={trainingSettings?.send_to_all_franchisee === true}
                       // singleSelect={true}
-                      placeholder={"Select User Names"}
+                      placeholder={"Select Franchise Names"}
                       displayValue="key"
+                      selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id)))}
                       className="multiselect-box default-arrow-select"
                       onKeyPressFn={function noRefCheck() { }}
                       onRemove={function noRefCheck(data) {

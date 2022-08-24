@@ -1,25 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
+import { Button, Col, Container, Row, Form } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import makeAnimated from 'react-select/animated';
 import Multiselect from 'multiselect-react-dropdown';
-import DragDropRepository from '../components/DragDropRepository';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
-import VideoPop from "../components/VideoPop";
-import { Viewer } from '@react-pdf-viewer/core';
-import { Document, Page, pdfjs } from 'react-pdf';
 
-import '@react-pdf-viewer/core/lib/styles/index.css';
-const url = "https://cors-anywhere.herokuapp.com/http://www.pdf995.com/samples/pdf.pdf"
 
 
 const animatedComponents = makeAnimated();
+
 let selectedUserId = '';
 const RepoEdit = () => {
     const [url, setUrl] = React.useState('');
@@ -44,13 +39,7 @@ const RepoEdit = () => {
         assigned_users: []
 
     });
-    // const toBase64 = (file) =>
-    //     new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.readAsDataURL(file);
-    //         reader.onload = () => resolve(reader.result);
-    //         reader.onerror = (error) => reject(error);
-    //     });
+
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${Params.id}`, {
             headers: {
@@ -100,6 +89,7 @@ const RepoEdit = () => {
     // Update API For File Repo
     const handleDataSubmit = async (event) => {
         event.preventDefault();
+        setLoaderFlag(true);
         console.log('DATA:', data);
         if (!data.image || !data.description || !data.categoryId) {
             setError(true);
@@ -143,6 +133,7 @@ const RepoEdit = () => {
                 });
                 console.log('SOLO IMAGE SAVE RESPONSE:', response);
                 if (response.status === 200 && response.data.status === "success") {
+                    setLoaderFlag(false);
                     console.log('DATA UPDATED SUCCESSFULLT => type: object');
                     window.location.href = '/file-repository';
                 }
@@ -281,42 +272,14 @@ const RepoEdit = () => {
         getUser();
     }, [data.franchise])
 
-
-    pdfjs.GlobalWorkerOptions.workerSrc =
-        `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-    const [numPages, setNumPages] = useState(null);
-    const [pageNumber, setPageNumber] = useState(1);
-
-    /*To Prevent right click on screen*/
-    document.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-    });
-
-    /*When document gets loaded successfully*/
-
-    function onDocumentLoadSuccess({ numPages }) {
-        setNumPages(numPages);
-        setPageNumber(1);
-    }
-
-    function changePage(offset) {
-        setPageNumber(prevPageNumber => prevPageNumber + offset);
-    }
-
-    function previousPage() {
-        changePage(-1);
-    }
-
-    function nextPage() {
-        changePage(1);
-    }
-
     data && console.log('FILE REPO DATA:', data.franchise);
     data && console.log('FILE REPO DATA:', data);
     data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
     console.log("Selected child", selectedChild)
 
+
     return (
+
         <div style={{ position: "relative", overflow: "hidden" }}>
             <div id="main">
                 <section className="mainsection">
@@ -342,86 +305,14 @@ const RepoEdit = () => {
                                         <div className="form-settings-content">
                                             <div className="modal-top">
                                                 <div className="modal-top-containt">
-                                                    {console.log(pageNumber, "pageNumber    ")}
                                                     <Row>
-                                                        {/* <div style={{ width: "200px", height: "200px", backgroundColor: "red", overflow: "hidden" }}>
-                                                            <Document
-                                                                file={url}
-                                                                onLoadSuccess={onDocumentLoadSuccess}
-                                                            >
-                                                                <Page pageNumber={pageNumber} style={{ width: "100%" }} />
-                                                            </Document>
-                                                        </div>
-                                                        <input type="file" accept=".pdf" onChange={onChange} /> */}
-                                                        {/* <div className="mt4" style={{ height: '750px' }}>
-                                                            {url ? (
-                                                                <div
-                                                                    style={{
-                                                                        border: '1px solid rgba(0, 0, 0, 0.3)',
-                                                                        height: '100%',
-                                                                    }}
-                                                                >
-                                                                    <Viewer fileUrl={url} />
-                                                                </div>
-                                                            ) : (
-                                                                <div
-                                                                    style={{
-                                                                        alignItems: 'center',
-                                                                        border: '2px dashed rgba(0, 0, 0, .3)',
-                                                                        display: 'flex',
-                                                                        fontSize: '2rem',
-                                                                        height: '100%',
-                                                                        justifyContent: 'center',
-                                                                        width: '100%',
-                                                                    }}
-                                                                >
-                                                                    Preview area
-                                                                </div>
-                                                            )}
-                                                        </div> */}
-
-
-                                                        {/* <Col md={6}>
-                                                            <DropOneFile
-                                                                onSave={setCoverImage}
-                                                                title="Image"
-                                                                setErrors={setErrors}
-                                                                setFetchedCoverImage={setFetchedCoverImage}
-                                                            setTrainingData={setTraining}?
-                                                            />
-                                                            <small className="fileinput">(png, jpg & jpeg)</small>
-                                                            {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
-                                                            {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
-                                                        </Col> */}
-                                                        <Col md={6}></Col>
                                                         <Form.Group>
-                                                            {/* <DragDropRepository /> */}
-                                                            {/* <VideoPopupfForFile
-                                                                data={data.image}
-                                                            title={cell[0]}
-                                                            name={cell[1]}
-                                                            duration={cell[0]}
-                                                            fun={handleVideoClose}
-                                                            /> */}
-                                                            {/* <video width="auto" height="auto" autoplay>
-                                                                <source src={data.image} type="video/ogg" />
-                                                                Your browser does not support the video tag.
-                                                            </video> */}
-                                                            {/* {data.image} */}
                                                             <DragDropFileEdit onChange={setField} />
                                                             <div className="showfiles mt-3 text-center" >
                                                                 {typeof data.image === "string" ?
                                                                     (<>
                                                                         {data.file_type === "image/jpeg" || data.file_type === "image/png" || data.file_type === "image/jpe" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
-                                                                            data.file_type === "application/pdf" ? (<>
-                                                                                {/* <div style={{ width: "200px", height: "200px", backgroundColor: "red", overflow: "hidden" }}>
-                                                                                    <Document
-                                                                                        file={url}
-                                                                                        onLoadSuccess={onDocumentLoadSuccess}
-                                                                                    >
-                                                                                        <Page pageNumber={pageNumber} style={{ width: "100%" }} />
-                                                                                    </Document>
-                                                                                </div> */}
+                                                                            data.file_type === "application/pdf" || data.file_type === "text/html" || data.file_type === "text/pdf" || data.file_type === "text/csv" ? (<>
                                                                                 <span className="user-pic-tow">
                                                                                     <a href={data.image} download >
                                                                                         <img src="../img/abstract-ico.png" className="me-2" alt="" />
@@ -446,38 +337,11 @@ const RepoEdit = () => {
                                                             </div>
                                                             {error && !data.image && < span className="error"> File is required!</span>}
                                                             <p className="error">{errors.setting_files}</p>
-                                                            {/* <img className="cover-image-style" src={coverImage} alt="training cover image" /> */}
-                                                            {/* {
-                                                                data &&
-                                                                <>
-                                                                    <img className="cover-image-style" src={data.image} alt="training cover image" />
-                                                                    <div className="showfiles">
-                                                                        <ul>{data.image}</ul>
-                                                                    </div>
-                                                                </>
-                                                            } */}
+
                                                             {errors && errors.setField && <span className="error mt-2">{errors.coverImage}</span>}
                                                         </Form.Group>
                                                     </Row>
-                                                    <div className="toggle-switch">
-                                                        {/* <Row>
-                                                            <Col md={12}>
-                                                                <div className="t-switch">
-                                                                    <p>Enable Sharing</p>
-                                                                    <div className="toogle-swich">
-                                                                        <input
-                                                                            className="switch"
-                                                                            type="checkbox"
-                                                                            name="enable_sharing"
-                                                                            onChange={(e) => {
-                                                                                setField(e.target.name, e.target.checked);
-                                                                            }}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </Col>
-                                                        </Row> */}
-                                                    </div>
+
                                                     <div className="setting-heading">
                                                         <h2>Settings</h2>
                                                     </div>
@@ -570,26 +434,6 @@ const RepoEdit = () => {
                                                         <Form.Group>
                                                             <Form.Label>Select Franchisee</Form.Label>
                                                             <div className="select-with-plus">
-                                                                {/* <Multiselect
-                                                                    placeholder={"Select User Names"}
-                                                                    displayValue="key"
-                                                                    selectedValues={franchiseeList?.filter(d => parseInt(data?.franchise) === d.id)}
-                                                                    className="multiselect-box default-arrow-select"
-                                                                    onKeyPressFn={function noRefCheck() { }}
-                                                                    onRemove={function noRefCheck(data) {
-                                                                        setData((prevState) => ({
-                                                                            ...prevState,
-                                                                            franchise: [...data.map(data => data.id)],
-                                                                        }));
-                                                                    }}
-                                                                    onSelect={function noRefCheck(data) {
-                                                                        setData((prevState) => ({
-                                                                            ...prevState,
-                                                                            franchise: [...data.map((data) => data.id)],
-                                                                        }));
-                                                                    }}
-                                                                    options={franchiseeList}
-                                                                /> */}
                                                                 <Multiselect
                                                                     disable={sendToAllFranchisee === 'all'}
                                                                     placeholder={"Select Franchisee"}
@@ -721,24 +565,24 @@ const RepoEdit = () => {
                                                                         <span className="checkmark"></span>
                                                                     </label>
                                                                     <label className="container">
-                                                                        Parents
+                                                                        Guardian
                                                                         <input
                                                                             type="checkbox"
                                                                             name="shared_role"
-                                                                            id="parent"
-                                                                            checked={data?.user_roles.includes('parent')}
+                                                                            id="Guardian"
+                                                                            checked={data?.user_roles.includes('Guardian')}
                                                                             onChange={() => {
-                                                                                if (data.user_roles?.includes("parent")) {
-                                                                                    let Data = data.user_roles.filter(t => t !== "parent");
+                                                                                if (data.user_roles?.includes("Guardian")) {
+                                                                                    let Data = data.user_roles.filter(t => t !== "Guardian");
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
                                                                                         user_roles: [...Data]
                                                                                     }));
                                                                                 }
-                                                                                if (!data.user_roles?.includes("parent"))
+                                                                                if (!data.user_roles?.includes("Guardian"))
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        user_roles: [...data.user_roles, "parent"]
+                                                                                        user_roles: [...data.user_roles, "Guardian"]
                                                                                     }))
                                                                             }}
                                                                         />
@@ -750,11 +594,11 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="all_roles"
-                                                                            checked={data?.user_roles?.includes('parent' && 'educator' && 'coordinator')}
+                                                                            checked={data?.user_roles?.includes('Guardian' && 'educator' && 'coordinator')}
                                                                             onChange={() => {
                                                                                 if (data.user_roles?.includes("coordinator")
                                                                                     && data.user_roles.includes("educator")
-                                                                                    && data.user_roles.includes("parent")) {
+                                                                                    && data.user_roles.includes("Guardian")) {
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
                                                                                         user_roles: [],
@@ -762,11 +606,11 @@ const RepoEdit = () => {
                                                                                 }
                                                                                 if (!data.user_roles?.includes("coordinator")
                                                                                     && !data.user_roles.includes("educator")
-                                                                                    && !data.user_roles.includes("parent")
+                                                                                    && !data.user_roles.includes("Guardian")
                                                                                 )
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        user_roles: ["coordinator", "educator", "parent"]
+                                                                                        user_roles: ["coordinator", "educator", "Guardian"]
                                                                                     })
                                                                                     )
                                                                             }} />
@@ -839,6 +683,7 @@ const RepoEdit = () => {
                                                                 'Save Details'
                                                                 )}
                                                             
+
                                                             </Button>
                                                         </Form.Group>
                                                     </div>

@@ -30,7 +30,26 @@ const ChangePassword = () => {
   const [attemptError,setAttemptError] = useState(null)
 
 
+  const getRoleString = (role) => {
+    let roleString = '';
 
+    if(role === 'franchisor_admin') 
+      roleString = 'franchisor';
+    
+    if(role === 'franchisee_admin') 
+      roleString = 'franchisee';
+
+    if(role === 'coordinator')
+      roleString = 'coordinator';
+
+    if(role === 'educator')
+      roleString = 'educator';
+
+    if(role === 'guardian')
+      roleString = 'parents';
+
+    return roleString;
+  }
   
   // FETCHING FRANCHISEE LIST
   const fetchFranchiseeList = async () => {
@@ -97,7 +116,7 @@ const ChangePassword = () => {
     if(response.status===200 && response.data.status === "success"){
         setTopMessage("Password Change Successfully")
         setTimeout(() => {
-            logout()
+            window.location.href=`/${getRoleString(localStorage.getItem('user_role'))}-dashboard`;
         }, 2000);
     }
     } catch (error) {
