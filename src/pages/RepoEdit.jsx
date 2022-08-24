@@ -302,9 +302,7 @@ const RepoEdit = () => {
                                             <div className="modal-top">
                                                 <div className="modal-top-containt">
                                                     <Row>
-
                                                         <Form.Group>
-
                                                             <DragDropFileEdit onChange={setField} />
                                                             <div className="showfiles mt-3 text-center" >
                                                                 {typeof data.image === "string" ?

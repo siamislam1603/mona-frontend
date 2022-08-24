@@ -250,6 +250,15 @@ const Main = () => {
             </Protected>
           }
         />
+        <Route
+          path="/user-management/:key"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <UserManagement />
+            </Protected>
+          }
+        />
 
         <Route
           path="/new-user"
