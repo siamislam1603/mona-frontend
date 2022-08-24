@@ -30,8 +30,10 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
   });
   const [formStepData, setFormStepData] = useState(current_step);
   const [idList, setIdList] = useState({});
+  const [loader, setLoader] = useState(false);
 
   const updateFormThreeData = async () => {
+    setLoader(true);
     console.log('UPDATING THE EXISTING DATA');
     let token = localStorage.getItem('token');
     let response = await axios.patch(`${BASE_URL}/enrollment/holiday-hours/${idList.holiday_hours_id}`, { ...agreedHolidayHours }, {
@@ -57,12 +59,14 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
           changeCount++;
         
         localStorage.setItem('change_count', changeCount);
+        setLoader(false);
         nextStep();
       }
     }
   };
 
   const saveFormThreeData = async () => {
+    setLoader(true);
     console.log('SAVING FORM THREE DATA');
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
@@ -87,6 +91,7 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
         });
 
         if(response.status === 201 && response.data.status === "success") {
+          setLoader(false);
           nextStep();
         }
       }
@@ -805,8 +810,23 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
 
           </div>
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
-            <Button variant="primary" type="submit">Next</Button>
+            <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Go Back</Button>
+            <Button 
+              variant="primary" 
+              disabled={loader ? true : false}
+              type="submit">
+              {loader === true ? (
+                <>
+                  <img
+                  style={{ width: '24px' }}
+                  src={'/img/mini_loader1.gif'}
+                  alt=""
+                  />
+                    Submitting...
+                </>
+              ) : (
+              'Submit')}
+            </Button>
           </div>
         </Form>
       </div>
