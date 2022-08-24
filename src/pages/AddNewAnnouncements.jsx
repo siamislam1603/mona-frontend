@@ -528,13 +528,13 @@ console.log("THE handle ",announcementData)
                       </Col>
                       <Col sm={6}>
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label>Upload Video Tutorial Here :</Form.Label>
+                          <Form.Label>Upload Video :</Form.Label>
                           <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label>Upload Related Files :</Form.Label>
+                          <Form.Label>Upload Files :</Form.Label>
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>

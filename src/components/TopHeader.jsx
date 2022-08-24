@@ -520,7 +520,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
         <div className="rpanel ms-auto">
           <div className="search-bar">
-            <Form action="SearchResult">
+            <Form action={`${window.location.origin}/SearchResult`}>
               <Form.Group className="form-group" controlId="formBasicSearch">
                 <Form.Control
                   type="text"
