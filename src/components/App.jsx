@@ -8,8 +8,6 @@ const BASE_URL = "http://127.0.0.1:4000";
 
 const FRONT_BASE_URL = "http://localhost:5000";
 
->>>>>>> master
-
 function App() {
   return (
     <div id="main">
