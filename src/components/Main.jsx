@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import {Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
 import ChildEnrollment from '../pages/ChildEnrollment';
 // import ChildEnrollment1 from '../pages/ChildEnrollment/ChildEnrollment1';
@@ -60,7 +60,7 @@ import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
 import SearchResult from '../pages/SearchResult';
 const Main = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState();
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token')?true:false);
 
   useEffect(() => {
     const item = localStorage.getItem('token');
@@ -97,16 +97,17 @@ const Main = () => {
       }
 
       autoLogout();
-      setIsLoggedIn(true);
+      // setIsLoggedIn(true);
       localStorage.setItem('is_user_logged_in', true);
     } else {
-      setIsLoggedIn(false);
+      // setIsLoggedIn(false);
       localStorage.setItem('is_user_logged_in', false);
     }
   }, []);
 
   return (
     <main>
+
       <Routes>
         <Route
           exact
@@ -265,7 +266,6 @@ const Main = () => {
           path="/new-user"
           element={
             <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
               <NewUser />
             </Protected>
           }
@@ -671,3 +671,24 @@ const Main = () => {
 };
 
 export default Main;
+
+
+const AuthenticatedRoute = ({component:Component, ...properties}) => (
+
+	localStorage.getItem('token') ? 
+        <Route {...properties} render={(props)=>(
+			// Object.keys(usersessionHelper.getLoggedInUser(props)).length?
+			// <Component {...props}/>:
+			// <Redirect to={"/dashboard"} />
+      <Component {...props}/>
+
+		)}/>
+     :
+     <Route exact path='/' component={SignIn}/>
+
+
+
+
+
+	 
+)
