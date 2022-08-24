@@ -297,7 +297,7 @@ const AvailableTraining = ({ filter }) => {
                       <Multiselect
                         disable={formSettings?.send_to_all_franchisee === true}
                         placeholder={"Select User Names"}
-                        singleSelect={true}
+                        // singleSelect={true}
                         displayValue="key"
                         selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.assigned_franchisee) === parseInt(d.id))}
                         className="multiselect-box default-arrow-select"

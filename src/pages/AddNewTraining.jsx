@@ -66,7 +66,7 @@ const AddNewTraining = () => {
     meta_description: "",
     category_id: "",
     time_required_to_complete: "",
-    training_form_id: ""
+    training_form_id: null
   });
   const [trainingSettings, setTrainingSettings] = useState({
     start_date: "",
@@ -380,12 +380,12 @@ const AddNewTraining = () => {
                             //     }
                             // }}
                             onChange={(e) => {
-                              if (trainingData.title.length <= 20) {
+                              // if (trainingData.title.length <= 20) {
                                 setTrainingData(prevState => ({
                                   ...prevState,
                                   title: e.target.value
                                 }));
-                              }
+                              // }
 
                               if (trainingData.title.length > 2) {
                                 setErrors(prevState => ({
@@ -532,14 +532,8 @@ const AddNewTraining = () => {
                                 ...prevState,
                                 training_form_id: event.id,
                               }));
-
-                              setErrors(prevState => ({
-                                ...prevState,
-                                training_form_id: null
-                              }));
                             }}
                           />
-                          {errors.training_form_id && <span className="error">{errors.training_form_id}</span>}
                         </Form.Group>
                       </Col>
                     </Row>
