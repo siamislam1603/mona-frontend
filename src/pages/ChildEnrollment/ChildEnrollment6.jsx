@@ -12,6 +12,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
 
   const [acceptedAllPoints, setAcceptedAllPoints] = useState(false);
   const [formStepData, setFormStepData] = useState(null);
+  const [loader, setLoader] = useState(false);
 
   const populateFormStepData = async () => {
     let token = localStorage.getItem('token');
@@ -53,6 +54,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   };
 
   const updateFormSixData = async () => {
+    setLoader(true);
     let token = localStorage.getItem('token');
     let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
@@ -73,10 +75,12 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
         });
 
         if(response.status === 201 && response.data.status === "success") {
+          setLoader(false);
           nextStep();
         }
       }
 
+      setLoader(false);
       nextStep();
     }
   };
@@ -135,7 +139,19 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
               disabled={acceptedAllPoints === false} 
               variant="primary" 
               type="submit" 
-              onClick={handleDataSubmit}>Next</Button>
+              onClick={handleDataSubmit}>
+              {loader === true ? (
+                <>
+                  <img
+                  style={{ width: '24px' }}
+                  src={'/img/mini_loader1.gif'}
+                  alt=""
+                  />
+                    Submitting...
+                </>
+              ) : (
+              'Submit')}
+            </Button>
           </div>
         </Form>
       </div>

@@ -11,7 +11,7 @@ const Welcomemsg = () => {
               </div>
             </div>
             <p className="custom_main_title">Welcome Back,</p>
-            <p className="custom_main_content"> Lorem ipsum dolor sit amet, consectetur adipiscing, Nisi, metus elementum, erat id vel elementum lectus Diam amet, semper libero tempus.</p>
+            <p className="custom_main_content"> Mona Franchise Centralized Information System - Intarnet for all important documents, forms, annoucements and notifications.</p>
           </div>
         </div>
       </>
