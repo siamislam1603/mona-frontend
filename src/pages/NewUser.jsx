@@ -184,17 +184,17 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
-      if(croppedImage) {
-        setFormErrors(prevState => ({
-          ...prevState,
-          profile_pic: null
-        }));
-      } else {
-        setFormErrors(prevState => ({
-          ...prevState,
-          profile_pic: 'Image is required!'
-        }));
-      }
+      // if(croppedImage) {
+      //   setFormErrors(prevState => ({
+      //     ...prevState,
+      //     profile_pic: null
+      //   }));
+      // } else {
+      //   setFormErrors(prevState => ({
+      //     ...prevState,
+      //     profile_pic: 'Image is required!'
+      //   }));
+      // }
     } else {
       console.log('Erorrs removed!');
       let data=new FormData();
@@ -204,8 +204,7 @@ const NewUser = () => {
         // doc.push(blob);
         data.append('images', blob);
       })
-      console.log("trainingDocuments---->123",doc);
-
+      
       if(croppedImage) {
         const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
         // doc.push(blob);
@@ -478,12 +477,12 @@ const NewUser = () => {
   }
 
 
-  useEffect(() => {
-    setFormErrors(prevState => ({
-      ...prevState,
-      profile_pic: null
-    }))
-  }, [croppedImage]);
+  // useEffect(() => {
+  //   setFormErrors(prevState => ({
+  //     ...prevState,
+  //     profile_pic: null
+  //   }))
+  // }, [croppedImage]);
 
   useEffect(() => {
     fetchCountryData();
@@ -516,9 +515,9 @@ const NewUser = () => {
   }, [currentRole]);
 
   formData && console.log('FORM ERRORS:', formData);
-  franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
+  // franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
   // formErrors && console.log('FORM ERRORS:', formErrors);
-  currentRole && console.log('CURRENT ROLE:', currentRole);
+  formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
 
   return (
     <>
@@ -553,6 +552,7 @@ const NewUser = () => {
                             setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
+                        
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
@@ -589,8 +589,6 @@ const NewUser = () => {
                                   ...prevState,
                                   role: e.value,
                                 }));
-
-                                setFranchiseeData(null);
 
                                 setFormErrors(prevState => ({
                                   ...prevState,
@@ -780,6 +778,11 @@ const NewUser = () => {
                                     franchisee: e.id,
                                   }));
 
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    franchiseeObj: e
+                                  }))
+
                                   setFormErrors(prevState => ({
                                     ...prevState,
                                     franchisee: null
@@ -830,6 +833,19 @@ const NewUser = () => {
                               }}
                             />
                           </Form.Group>
+
+                          <Form.Group className="mb-3">
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                type="checkbox"
+                                id="accept"
+                                // checked={parentData.i_give_medication_permission}
+                                label="Assign random password (sent to user via email)"
+                                onChange={() => {
+                                  
+                                }} />
+                            </div>
+                          </Form.Group>
                           
                           {/* <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Termination Date</Form.Label>
@@ -857,7 +873,7 @@ const NewUser = () => {
                             <div className="cta text-center mt-5">
                               <Button variant="transparent">
                                 <Link to="/user-management">
-                                  Cancel
+                                  Back to All Users
                                 </Link>
                               </Button>
                               <Button variant="primary" type="submit">
