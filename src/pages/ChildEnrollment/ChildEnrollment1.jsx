@@ -331,12 +331,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     fetchChildDataAndPopulate();
   }, []);
 
-  useEffect(() => {
-    console.log("checking useEffect!")
-    if(localStorage.getItem('has_given_consent') !== null) {
-      setShowConsentCommentDialog(true);
-    }
-  }, [])
+  // useEffect(() => {
+  //   console.log("checking useEffect!")
+  //   if(localStorage.getItem('has_given_consent') !== null) {
+  //     setShowConsentCommentDialog(true);
+  //   }
+  // }, [])
 
   // formStepData && console.log('You\'re on step:', formStepData);
   // formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);

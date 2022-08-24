@@ -335,7 +335,7 @@ const FileRpositoryList = () => {
                     <>
 
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" || cell[0] == "image" ?
+                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" || cell[0] === "image" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -372,7 +372,7 @@ const FileRpositoryList = () => {
                                             </div>
 
                                         </> :
-                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" || cell[0] === "text/html" ?
+                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" || cell[0] === "text/html" || cell[0] === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ?
                                             <>
                                                 <span className="user-pic-tow">
                                                     <a href={cell[2]} download >

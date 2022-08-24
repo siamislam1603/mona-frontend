@@ -21,7 +21,7 @@ import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
-
+import { useParams } from 'react-router-dom';
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
@@ -38,7 +38,10 @@ const training = [
 ];
 
 let DeleteId = [];
+
 const UserManagement = () => {
+  const Key = useParams()
+  console.log('Key+++++++++', Key)
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
@@ -47,11 +50,11 @@ const UserManagement = () => {
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
-  const [isLoading,setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
-  
+
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       // if (e.target.text === 'Delete') {
@@ -79,7 +82,7 @@ const UserManagement = () => {
       //   // fetchUserDetails();
       // }
 
-      if(e.target.text === "Deactivate") {
+      if (e.target.text === "Deactivate") {
 
         async function deactivateUserFromDB() {
           const response = await axios.patch(
@@ -92,7 +95,7 @@ const UserManagement = () => {
             }
           });
 
-          if(response.status === 201 && response.data.status === "success") {
+          if (response.status === 201 && response.data.status === "success") {
             fetchUserDetails();
           }
         }
@@ -104,7 +107,7 @@ const UserManagement = () => {
         // fetchUserDetails();
       }
 
-      if(e.target.text === "Activate") {
+      if (e.target.text === "Activate") {
         console.log('ACTIVATING USER!')
 
         async function activateUserFromDB() {
@@ -118,7 +121,7 @@ const UserManagement = () => {
             }
           });
 
-          if(response.status === 201 && response.data.status === "success") {
+          if (response.status === 201 && response.data.status === "success") {
             fetchUserDetails();
           }
         }
@@ -133,12 +136,11 @@ const UserManagement = () => {
       if (e.target.text === "Edit") {
         navigate(`/edit-user/${row.userID}`);
       }
-      
+
     }
   }
 
   const selectRow = {
-
     mode: 'checkbox',
     onSelect: (row, isSelect, rowIndex, e) => {
       if (DeleteId.includes(row.userID)) {
@@ -192,11 +194,11 @@ const UserManagement = () => {
       formatter: (cell) => {
         let status = null;
         cell = cell.split(',');
-        if(parseInt(cell[3]) === 0) {
+        if (parseInt(cell[3]) === 0) {
           status = "inactive"
-        } else if(parseInt(cell[3]) === 1) {
+        } else if (parseInt(cell[3]) === 1) {
           status = "active"
-        } else if(parseInt(cell[3]) === 2) {
+        } else if (parseInt(cell[3]) === 2) {
           status = "deleted"
         }
         console.log('BIG STATUS:', status);
@@ -236,18 +238,18 @@ const UserManagement = () => {
         cell = cell.split(',');
         return (
           <>
-            { 
+            {
               (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === "franchisee_admin" || localStorage.getItem('user_role') === 'coordinator') &&
                 (cell[0] === "guardian" && cell[1] == 0) ? (
-                    <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
-                    New Children
-                    </button>
-                  ) : (cell[0] === "guardian" && cell[1] != 0) ?
-                  (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
+                <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
+                  New Children
+                </button>
+              ) : (cell[0] === "guardian" && cell[1] != 0) ?
+                (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
                   View Children
                 </button>
                 ) : ""
-              }
+            }
           </>
         );
       },
@@ -258,11 +260,11 @@ const UserManagement = () => {
       formatter: (cell) => {
         let button = null;
 
-        if(cell === 1) {
+        if (cell === 1) {
           button = "Deactivate";
-        } else if(cell === 0) {
+        } else if (cell === 0) {
           button = "Activate";
-        } 
+        }
         return (
           <>
             <div className="cta-col">
@@ -301,13 +303,13 @@ const UserManagement = () => {
       api_url = `${BASE_URL}/role/user/${id}`;
     }
 
-
     let response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    if (response){
+
+    if (response) {
       setfullLoaderStatus(false)
     }
     if (response.status === 200) {
@@ -330,11 +332,11 @@ const UserManagement = () => {
 
       // tempData = tempData.filter((data) => data.is_deleted === 0);
       // console.log('Temp Data:', tempData);
-      if(localStorage.getItem('user_role') === 'guardian') {
+      if (localStorage.getItem('user_role') === 'guardian') {
         tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
       }
 
-      if(localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+      if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
         tempData = tempData.filter(d => d.action === 1);
       }
       setUserData(tempData);
@@ -415,7 +417,7 @@ const UserManagement = () => {
                 <TopHeader
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
-                      <FullLoader loading={fullLoaderStatus} />
+                <FullLoader loading={fullLoaderStatus} />
 
                 <div className="entry-container">
                   <div className="user-management-sec">
@@ -570,8 +572,8 @@ const UserManagement = () => {
                                   </Dropdown.Menu>
                                 </Dropdown>
                                 {
-                                    verifyPermission("user_management", "add") &&
-                                    <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
+                                  verifyPermission("user_management", "add") &&
+                                  <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
                                 }
                                 <Dropdown>
                                   <Dropdown.Toggle
@@ -605,15 +607,15 @@ const UserManagement = () => {
                               </div>
                             </div>
                           </header>
-  
-                              <BootstrapTable
-                              {...props.baseProps}
-                              rowEvents={rowEvents}
-                              selectRow={selectRow}
-                              pagination={paginationFactory()}
-                            />
-                    
-                         
+
+                          <BootstrapTable
+                            {...props.baseProps}
+                            rowEvents={rowEvents}
+                            selectRow={selectRow}
+                            pagination={paginationFactory()}
+                          />
+
+
                         </>
                       )}
                     </ToolkitProvider>
