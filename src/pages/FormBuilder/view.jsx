@@ -226,24 +226,26 @@ function ViewFormBuilder(props) {
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem('user_id')
-                                          ) ||
-                                          (
-                                            inner_item.upper_role || []
-                                          ).includes(
-                                            localStorage.getItem(
-                                              'user_role'
-                                            ) === 'guardian'
-                                              ? 'parent'
-                                              : localStorage.getItem(
-                                                  'user_role'
-                                                )
-                                          ) ||
-                                          inner_item.created_by ===
-                                            parseInt(
-                                              localStorage.getItem('user_id')
-                                            ) ||
-                                          localStorage.getItem('user_role') ===
-                                            'franchisor_admin') ? (
+                                          ) 
+                                          // ||
+                                          // (
+                                          //   inner_item.upper_role || []
+                                          // ).includes(
+                                          //   localStorage.getItem(
+                                          //     'user_role'
+                                          //   ) === 'guardian'
+                                          //     ? 'parent'
+                                          //     : localStorage.getItem(
+                                          //         'user_role'
+                                          //       )
+                                          // ) ||
+                                          // inner_item.created_by ===
+                                          //   parseInt(
+                                          //     localStorage.getItem('user_id')
+                                          //   ) ||
+                                          // localStorage.getItem('user_role') ===
+                                          //   'franchisor_admin'
+                                            ) ? (
                                         <>
                                           {(item.title_flag === false) && (
                                             <>
@@ -355,18 +357,20 @@ function ViewFormBuilder(props) {
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem('user_id')
-                                          ) ||
-                                          (
-                                            inner_item.upper_role || []
-                                          ).includes(
-                                            localStorage.getItem('user_role')
-                                          ) ||
-                                          inner_item.created_by ===
-                                            parseInt(
-                                              localStorage.getItem('user_id')
-                                            ) ||
-                                          localStorage.getItem('user_role') ===
-                                            'franchisor_admin') ? (
+                                          ) 
+                                          // ||
+                                          // (
+                                          //   inner_item.upper_role || []
+                                          // ).includes(
+                                          //   localStorage.getItem('user_role')
+                                          // ) ||
+                                          // inner_item.created_by ===
+                                          //   parseInt(
+                                          //     localStorage.getItem('user_id')
+                                          //   ) ||
+                                          // localStorage.getItem('user_role') ===
+                                          //   'franchisor_admin'
+                                          ) ? (
                                         <>
                                           {item.title_flag === false && (
                                             <>
@@ -471,18 +475,20 @@ function ViewFormBuilder(props) {
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem('user_id')
-                                          ) ||
-                                          (
-                                            inner_item.upper_role || []
-                                          ).includes(
-                                            localStorage.getItem('user_role')
-                                          ) ||
-                                          inner_item.created_by ===
-                                            parseInt(
-                                              localStorage.getItem('user_id')
-                                            ) ||
-                                          localStorage.getItem('user_role') ===
-                                            'franchisor_admin') ? (
+                                          ) 
+                                          // ||
+                                          // (
+                                          //   inner_item.upper_role || []
+                                          // ).includes(
+                                          //   localStorage.getItem('user_role')
+                                          // ) ||
+                                          // inner_item.created_by ===
+                                          //   parseInt(
+                                          //     localStorage.getItem('user_id')
+                                          //   ) ||
+                                          // localStorage.getItem('user_role') ===
+                                          //   'franchisor_admin'
+                                            ) ? (
                                         <>
                                           {item.title_flag === false && (
                                             <>
