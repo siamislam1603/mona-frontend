@@ -16,6 +16,7 @@ import { BASE_URL } from "../components/App";
 import { useParams } from 'react-router-dom';
 
 function ChildEnrollment() {
+  // let page = window.location.search.split('=')[1];
   let { childId, parentId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
@@ -62,7 +63,8 @@ function ChildEnrollment() {
         setstep(1);  
       } else {
         // console.log('Didn\'t ask for consent');
-        setstep(form_step);
+          console.log('Stepping Inside Sever fetched step!');
+          setstep(form_step);
       }
     } else {
       setstep(1);
@@ -81,7 +83,7 @@ function ChildEnrollment() {
     }
   },[]);
 
-  console.log('SELECTED FRANCHISEE:', selectedFranchisee);
+  // console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   // eslint-disable-next-line default-case
   switch (step) {
     case 1:

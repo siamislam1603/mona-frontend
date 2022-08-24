@@ -115,7 +115,8 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              {localStorage.getItem('user_role') == 'franchisor_admin' ? <FranchisorDashboard /> : localStorage.getItem('user_role') == 'franchisee_admin' ? <FranchiseeDashboard /> : localStorage.getItem('user_role') == 'coodinator' ? <CoordinatorDashboard /> : localStorage.getItem('educator') == 'EducatorDashboard' ? <EducatorDashboard /> : <ParentsDashboard />}
+              {localStorage.getItem('user_role')=='franchisor_admin'?<FranchisorDashboard />:localStorage.getItem('user_role')=='franchisee_admin'?<FranchiseeDashboard />:localStorage.getItem('user_role')=='coodinator'?<CoordinatorDashboard />:localStorage.getItem('user_role')=='educator'?<EducatorDashboard />:<ParentsDashboard />}
+
             </Protected>
           }
         />
@@ -243,6 +244,15 @@ const Main = () => {
 
         <Route
           path="/user-management"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <UserManagement />
+            </Protected>
+          }
+        />
+        <Route
+          path="/user-management/:key"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

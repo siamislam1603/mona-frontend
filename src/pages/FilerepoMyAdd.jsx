@@ -109,15 +109,15 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
         else {
             if (formSettingData.accessible_to_role === 1) {
-                formSettings.user_roles=formSettingData.shared_role.slice(0, -1)
-                formSettings.assigned_users=""
-                formSettings.accessibleToRole=formSettingData.accessible_to_role
-                formSettings.accessibleToAll=false
+                formSettings.user_roles = formSettingData.shared_role.slice(0, -1)
+                formSettings.assigned_users = ""
+                formSettings.accessibleToRole = formSettingData.accessible_to_role
+                formSettings.accessibleToAll = false
             } else {
-                formSettings.user_roles=""
-                formSettings.assigned_users=selectedUserId.slice(0, -1)
-                formSettings.accessibleToRole=formSettingData.accessible_to_role
-                formSettings.accessibleToAll=false
+                formSettings.user_roles = ""
+                formSettings.assigned_users = selectedUserId.slice(0, -1)
+                formSettings.accessibleToRole = formSettingData.accessible_to_role
+                formSettings.accessibleToAll = false
             }
         }
 
@@ -137,7 +137,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         }
 
-        console.log(formSettings,"share final")
+        console.log(formSettings, "share final")
     }
 
     function onSelectUser(optionsList, selectedItem) {
@@ -159,7 +159,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }
 
     function onSelectChild(selectedItem) {
-        selectedItem = selectedItem.map((item)=>{
+        selectedItem = selectedItem.map((item) => {
             return item.id
         })
         setFormSettings(prevState => ({
@@ -169,7 +169,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }
 
     function onRemoveChild(removedItem) {
-        removedItem = removedItem.map((item)=>{
+        removedItem = removedItem.map((item) => {
             return item.id
         })
         setFormSettings(prevState => ({
@@ -272,7 +272,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             redirect: 'follow',
         };
 
-        console.log(formdata,"formdata")
+        console.log(formdata, "formdata")
 
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
@@ -368,11 +368,11 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         let franchiseeArr = formSettings.franchisee
 
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
             // console.log(response.data.users, "respo")
             setUser(response.data.users)
-            console.log(user,"userSList")
+            console.log(user, "userSList")
         }
     };
 
@@ -389,10 +389,11 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             headers: myHeaders,
         };
 
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`,{franchisee_id:franchiseeArr},request)
+        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
             setChild(response.data.children)
-        }}
+        }
+    }
 
     useEffect(() => {
         GetFile();
@@ -502,7 +503,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 />
                                             </div>
                                         </> :
-                                                cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" || cell[0] === "text/html" ?
+                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" || cell[0] === "text/html" || cell[0] === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ?
                                             <>
                                                 <span className="user-pic-tow">
                                                     <a href={cell[2]} download >
@@ -1009,7 +1010,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <span className="checkmark"></span>
                                                     </label>
                                                     <label className="container">
-                                                    Guardian
+                                                        Guardian
                                                         <input
                                                             type="checkbox"
                                                             name="shared_role"
@@ -1094,42 +1095,42 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             </Form.Group>
                                         ) : null}
                                         {formSettingData.accessible_to_role === 0 ? (
-                                           <>
-                                             <Form.Group>
-                                                <Form.Label>Select User</Form.Label>
-                                                <div className="select-with-plus">
-                                                    <Multiselect
-                                                        displayValue="email"
-                                                        className="multiselect-box default-arrow-select"
-                                                        // placeholder="Select Franchisee"
-                                                        selectedValues={selectedUser}
-                                                        // onKeyPressFn={function noRefCheck() {}}
-                                                        onRemove={onRemoveUser}
-                                                        // onSearch={function noRefCheck() {}}
-                                                        onSelect={onSelectUser}
-                                                        options={user}
-                                                    />
-                                                </div>
-                                                <p className="error">{errors.franchisee}</p>
-                                            </Form.Group>
+                                            <>
+                                                <Form.Group>
+                                                    <Form.Label>Select User</Form.Label>
+                                                    <div className="select-with-plus">
+                                                        <Multiselect
+                                                            displayValue="email"
+                                                            className="multiselect-box default-arrow-select"
+                                                            // placeholder="Select Franchisee"
+                                                            selectedValues={selectedUser}
+                                                            // onKeyPressFn={function noRefCheck() {}}
+                                                            onRemove={onRemoveUser}
+                                                            // onSearch={function noRefCheck() {}}
+                                                            onSelect={onSelectUser}
+                                                            options={user}
+                                                        />
+                                                    </div>
+                                                    <p className="error">{errors.franchisee}</p>
+                                                </Form.Group>
 
-                                            <Form.Group>
-                                            <Form.Label>Select Child</Form.Label>
-                                            <div className="select-with-plus">
-                                                <Multiselect
-                                                    displayValue="fullname"
-                                                    className="multiselect-box default-arrow-select"
-                                                    // placeholder="Select Franchisee"
-                                                    selectedValues={selectedChild}
-                                                    // onKeyPressFn={function noRefCheck() {}}
-                                                    onRemove={onRemoveChild}
-                                                    // onSearch={function noRefCheck() {}}
-                                                    onSelect={onSelectChild}
-                                                    options={child}
-                                                />
-                                            </div>
-                                            </Form.Group>
-                                           </>
+                                                <Form.Group>
+                                                    <Form.Label>Select Child</Form.Label>
+                                                    <div className="select-with-plus">
+                                                        <Multiselect
+                                                            displayValue="fullname"
+                                                            className="multiselect-box default-arrow-select"
+                                                            // placeholder="Select Franchisee"
+                                                            selectedValues={selectedChild}
+                                                            // onKeyPressFn={function noRefCheck() {}}
+                                                            onRemove={onRemoveChild}
+                                                            // onSearch={function noRefCheck() {}}
+                                                            onSelect={onSelectChild}
+                                                            options={child}
+                                                        />
+                                                    </div>
+                                                </Form.Group>
+                                            </>
                                         ) : null}
                                     </Col>
                                 </Row>
@@ -1404,10 +1405,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     )
                                                             }} />
                                                     </Form.Group>
-                                                </div> </>) : null }
-                                               {
-                                               formSettings.accessibleToRole === 0 ? 
-                                               ( <>
+                                                </div> </>) : null}
+                                    {
+                                        formSettings.accessibleToRole === 0 ?
+                                            (<>
 
                                                 <Form.Group>
                                                     <Form.Label>Select User</Form.Label>
@@ -1416,7 +1417,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             displayValue="email"
                                                             className="multiselect-box default-arrow-select"
                                                             // placeholder="Select Franchisee"
-                                                            selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + "")) }
+                                                            selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                             value={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                             // onKeyPressFn={function noRefCheck() {}}
                                                             onRemove={onRemoveUser}
@@ -1431,7 +1432,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         />
                                                     </div>
                                                 </Form.Group>
-                                                <hr/>
+                                                <hr />
                                                 <Form.Group>
                                                     <Form.Label>Select Child</Form.Label>
                                                     <div className="select-with-plus">
@@ -1439,8 +1440,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             displayValue="fullname"
                                                             className="multiselect-box default-arrow-select"
                                                             // placeholder="Select Franchisee"
-                                                            selectedValues={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + "")) }
-                                                            value= {child && child.filter(c => formSettings.assigned_childs?.includes(c.id + "")) }
+                                                            selectedValues={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
+                                                            value={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
                                                             // onKeyPressFn={function noRefCheck() {}}
                                                             onRemove={onRemoveUser}
                                                             // onSearch={function noRefCheck() {}}
@@ -1454,7 +1455,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         />
                                                     </div>
                                                 </Form.Group>
-                                                </>) : null
+                                            </>) : null
                                     }
                                 </Col>
                             </Row>

@@ -44,6 +44,8 @@ const [titleError,setTitleError] = useState(null);
   const [error, setError] = useState({user_roles: []});
   const [allFranchise,setAllFranchise] = useState(false)
 
+  const [allFranchise,setAllFranchise] = useState(false)
+
 
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
@@ -338,12 +340,9 @@ const createAnnouncement = async (data) => {
     },[])
 
    
-// coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-console.log("The franhiseData 1",franchiseeData);
-console.log("THE handle ",announcementData)
-console.log("The",announcementData.start_date)
-                          
-console.log("ALL fran",announcementData.franchise)
+  // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
+  // console.log("The franhiseData 1",franchiseeData);
+  announcementData && console.log('Announcement Data:', announcementData);
   return (
     
     <>
@@ -389,17 +388,14 @@ console.log("ALL fran",announcementData.franchise)
                         name="franchise"
                         id="a"
                         label="Yes"
-                        onChange={(event) =>{
-                                              
+                        checked={announcementData?.send_to_all_franchise === true}
+                        onChange={(event) =>{             
                           setAnnouncementData((prevState) => ({
                             ...prevState,
-                            franchise: [],
-                            
+                            send_to_all_franchise: true,
+                            franchise: []
                           }));
                         setAllFranchise(true)
-                        // setFranchiseeData([])
-                        // announcementData.franchise =[]
-
                         }}
                            
                          />
@@ -407,10 +403,13 @@ console.log("ALL fran",announcementData.franchise)
                         type="radio"
                         name="franchise"
                         id="e"
+                        checked={announcementData?.send_to_all_franchise === false}
                         onChange={() =>{
-                        setAllFranchise(false)
-                        
-
+                          setAnnouncementData(prevState => ({
+                            ...prevState,
+                            send_to_all_franchise: false
+                          }))
+                          setAllFranchise(false)
                         }
                         
                       }
@@ -434,29 +433,20 @@ console.log("ALL fran",announcementData.franchise)
                             localStorage.getItem('user_role') === 'franchisor_admin' ?
 
                             <div className="select-with-plus">
-
-                            <Select
-
-                            placeholder="Which Franchisee?"
-                            closeMenuOnSelect={false}
-                            isMulti
-                            isDisabled={allFranchise === false?false:true}
-                            // disable={true}
-                            // selectedValues={[]}
-                            selectedValues={franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id)))}
-
-                            // value={allFranchise === false ?announcementData.franchise.id:[] }
-
-                            // selectedValues={franchiseeData?.filter(d => parseInt(d.id) === parseInt(announcementData.franchise.id))}
-                            
-                            options={franchiseeData}
-                          onKeyPressFn={function noRefCheck() { }}
-
-
-                            onChange={handleAnnouncementFranchisee}
-
-                            />
-
+                              <Select
+                                placeholder="Which Franchisee?"
+                                closeMenuOnSelect={false}
+                                isMulti
+                                isDisabled={allFranchise === false?false:true}
+                                values={announcementData?.franchise.length > 0 ? franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id))) : []}
+                                options={franchiseeData}
+                                onChange={(event) => {
+                                  setAnnouncementData((prevState) => ({
+                                    ...prevState,
+                                    franchise: [...event.map(option => option.id + "")]
+                                  }));
+                                }}
+                              />
                             </div>
 
                           : <div className="select-with-plus">
