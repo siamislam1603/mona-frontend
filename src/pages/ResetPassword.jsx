@@ -9,6 +9,30 @@ import { BASE_URL } from '../components/App';
 import { ResetPasswordValidation } from '../helpers/validation';
 import axios from 'axios';
 import ResetPasswordLink from './ResetPasswordLink';
+
+function appendUserString(role) {
+  console.log('ROLE: IS:', role);
+  let roleStr = '';
+
+  if(role === 'franchisee_admin') {
+    roleStr = 'franchisee'
+  }
+
+  if(role === 'coordinator') {
+    roleStr = 'coordinator'
+  }
+  
+  if(role === 'educator') {
+    roleStr = 'educator'
+  }
+  
+  if(role === 'guardian') {
+    roleStr = 'guardian'
+  }
+
+  return roleStr;
+}
+
 const ResetPassword = () => {
 const [passwords, setPasswords] = useState({});
 const [errors, setErrors] = useState({});
@@ -54,7 +78,7 @@ const setField = (field, value) => {
     if(response.status===200 && response.data.status === "success"){
       setTopMessage("Password Reset Successfully ")
       setTimeout(() => {
-        logout()
+        window.location.href=`/${appendUserString(localStorage.getItem('user_role'))}-dashboard`;
       }, 3000);
       console.log("The success",response)
   }
