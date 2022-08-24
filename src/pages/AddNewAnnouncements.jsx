@@ -46,7 +46,7 @@ const [titleError,setTitleError] = useState(null);
 
 
   const [topErrorMessage, setTopErrorMessage] = useState(null);
-  const [franchiseeData, setFranchiseeData] = useState(null);
+  const [franchiseeData, setFranchiseeData] = useState();
 
 
 
@@ -186,8 +186,11 @@ const createAnnouncement = async (data) => {
           id: franchisee.id,
           value: franchisee.franchisee_name,
           label: franchisee.franchisee_name,
-          city: franchisee.franchisee_city
+          city: franchisee.franchisee_city,
+        key: `${franchisee.franchisee_name}`
+
         })));  
+
       }
     }
 
@@ -336,7 +339,7 @@ const createAnnouncement = async (data) => {
 
    
 // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-// console.log("The franhiseData 1",franchiseeData);
+console.log("The franhiseData 1",franchiseeData);
 console.log("THE handle ",announcementData)
 console.log("The",announcementData.start_date)
                           
@@ -390,9 +393,11 @@ console.log("ALL fran",announcementData.franchise)
                                               
                           setAnnouncementData((prevState) => ({
                             ...prevState,
-                            franchise: []
+                            franchise: [],
+                            
                           }));
                         setAllFranchise(true)
+                        // setFranchiseeData([])
                         // announcementData.franchise =[]
 
                         }}
@@ -445,6 +450,8 @@ console.log("ALL fran",announcementData.franchise)
                             // selectedValues={franchiseeData?.filter(d => parseInt(d.id) === parseInt(announcementData.franchise.id))}
                             
                             options={franchiseeData}
+                          onKeyPressFn={function noRefCheck() { }}
+
 
                             onChange={handleAnnouncementFranchisee}
 
@@ -467,6 +474,19 @@ console.log("ALL fran",announcementData.franchise)
                           }
                             
                           </Form.Group>
+                          <Multiselect
+                              disable={allFranchise === false?false:true}
+                               displayValue="key"
+                              selectedValues={franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id)))}
+                              className="multiselect-box default-arrow-select"
+                               // Options to display in the dropdown
+                              // selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
+                              // onSelect={this.onSelect} // Function will trigger on select event
+                              // onRemove={this.onRemove} // Function will trigger on remove event
+                              // displayValue="name" // Property name to display in the dropdown options
+                              options={franchiseeData}
+                              
+                              />
                       <Col md={12} className="mb-3">
                         <Form.Group>
                         <Form.Label>Announcement Description</Form.Label>

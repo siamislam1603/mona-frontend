@@ -19,6 +19,7 @@ const SearchResult = (props) => {
   const [operatingMannual,setOperatingMannual] = useState([])
   const [training,setTraining] = useState([])
   const [user,setUser] = useState([])
+  const [formData,setFormData] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error,setError] = useState("")
 
@@ -57,6 +58,7 @@ const SearchResult = (props) => {
         setOperatingMannual(response.data.data[0].operatingMannual)
         setTraining(response.data.data[0].training)
         setUser(response.data.data[0].user)
+        setFormData(response.data.data[0].form)
         setIsLoading(false)
       }
       
@@ -68,7 +70,7 @@ const SearchResult = (props) => {
     GlobalSearch()
 
   },[term])
-  console.log("Announcement",announcement)
+  console.log("Form data",formData)
 
   return (
     <div className="announcement-accordion">
@@ -449,6 +451,57 @@ const SearchResult = (props) => {
                        </div> 
                      </Accordion>
                    </div>
+                    }
+                     {formData?.length>0 &&
+                    <div>
+                        <Accordion defaultActiveKey={['0']} alwaysOpen>
+                          
+                                  <div >
+                                <Accordion.Item eventKey="0" >
+                                  <Accordion.Header>
+                                    <div className="head-title">
+                                      {/* <div className="ico"><img src="../img/announcements-ico.png "  alt=""/></div> */}
+                                      <div className="title-xxs">Form</div>
+                                    
+                                    </div>
+                                  </Accordion.Header>
+                                  <Accordion.Body>
+                                    <Row className="mb-4">
+                                      
+                                    {formData?.map((data) => (
+                          <div className="search-item">
+                          <div className="search-user-pic">
+                            <a href="/form">
+                              <figure className="figure"><img alt="" src={data?.coverImage ? data?.coverImage : "../img/blue_survey.png "} className="figure-img img-fluid" /></figure>
+                            </a>
+                          </div>
+                          <div className="search-user-detail">
+                            <h2 className="title-md text-capitalize"><a href="/form">{data?.form?.form_name}</a></h2>
+                            <div className="totalview mb-2">
+                              <span className="style-scope meta-block">
+                                <strong>Created At:</strong> <time>
+                                  <strong>
+                                  {moment(data?.createdAt).fromNow()}
+  
+                                  </strong>
+  
+                                </time>
+                              </span>
+                            </div>
+                            <div className="user-link mt-4"><a href="/form">View Details</a></div>
+                          </div>
+                        </div>
+                        
+                        ))}
+                                  
+                                    </Row>
+                                  </Accordion.Body>
+                                </Accordion.Item>
+                                  </div> 
+                                
+                              
+                          </Accordion>
+                        </div>
                     }
                <div className="text-center mb-5 mt-5"> <strong>{error}</strong> </div>
 
