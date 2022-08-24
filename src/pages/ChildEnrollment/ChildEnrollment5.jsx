@@ -36,6 +36,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
   const [childDailyRoutineError, setChildDailyRoutineError] = useState(null);
   const [formStepData, setFormStepData] = useState(null);
   const [dailyRoutineId, setDailyRoutineId] = useState(null);
+  const [loader, setLoader] = useState(false);
 
   const handleDailyRoutineData = (event) => {
     const { name, value } = event.target;
@@ -47,6 +48,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
   // UPDATING FORM FIVE DATA
   const updateFormFiveData = async () => {
+    setLoader(true);
     try {
       let childId = localStorage.getItem('enrolled_child_id');
       let token = localStorage.getItem('token');
@@ -73,6 +75,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
             changeCount++;
           
           localStorage.setItem('change_count', changeCount);
+          setLoader(true);
           nextStep();
         }
       }
@@ -84,7 +87,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
   // SAVING FORM FIVE DATA
   const saveFormFiveData = async () => {
-    
+    setLoader(true);
     try {
       let childId = localStorage.getItem('enrolled_child_id');
       let token = localStorage.getItem('token');
@@ -114,6 +117,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
           });
 
           if(response.status === 201 && response.data.status === "success") {
+            setLoader(false);
             nextStep();
           }
         }
@@ -672,8 +676,23 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
             </div>
           </div>
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
-            <Button variant="primary" type="submit">Next</Button>
+            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Go Back</Button>
+            <Button 
+              variant="primary" 
+              disabled={loader ? true : false}
+              type="submit">
+              {loader === true ? (
+                <>
+                  <img
+                  style={{ width: '24px' }}
+                  src={'/img/mini_loader1.gif'}
+                  alt=""
+                  />
+                    Submitting...
+                </>
+              ) : (
+              'Submit')}
+            </Button>
           </div>
           {/* <div className="cta text-center mt-5 mb-5">
               <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>

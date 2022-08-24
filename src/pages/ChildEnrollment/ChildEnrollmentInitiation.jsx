@@ -8,6 +8,7 @@ import { Button, Col, Row, Form } from "react-bootstrap";
 import Select from 'react-select';
 import { useParams } from 'react-router-dom';
 import { BASE_URL } from "../../components/App";
+import { enrollmentInitiationFormValidation } from '../../helpers/validation';
 
 const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let { parentId } = useParams();
@@ -18,8 +19,10 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     home_address: "",
     gender: "M",
   });
-  const [educatorData, setEducatorData] = useState();
+  const [educatorData, setEducatorData] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [loader, setLoader] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/${selectedFranchisee}`);
@@ -43,9 +46,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     }));
   };
 
-  const submitFormData = async (event) => {
-    event.preventDefault();
-    console.log('SUBMITTING FORM DATA');
+  const initiateEnrollment = async () => {
     let token = localStorage.getItem('token');
     let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: localStorage.getItem('franchisee_id') }, {
       headers: {
@@ -69,9 +70,23 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
           }     
         }); 
         if(response.status === 201 && response.data.status === "success") {
+          setLoader(false);
           window.location.href = `/children/${parentId}`;
         }
       }
+    }
+  }
+
+  const submitFormData = (event) => {
+    event.preventDefault();
+    console.log('SUBMITTING FORM DATA');
+    
+    let errorObj = enrollmentInitiationFormValidation(formOneChildData, educatorData);
+    if (Object.keys(errorObj).length > 0) {
+      setErrors(errorObj);
+    } else {
+      setLoader(true);
+      initiateEnrollment();
     }
   }
 
@@ -83,6 +98,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   formOneChildData && console.log('CHILD DATA:', formOneChildData);
   educatorData && console.log('EDUCATOR DATA:', educatorData);
   selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
+  errors && console.log('ERRORS:', errors);
   return (
     <>
       <div id="main">
@@ -116,7 +132,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   value={formOneChildData?.fullname || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      fullname: null
+                                    }))
                                   }} />
+                                  {errors.fullname !== null && <span className="error">{errors.fullname}</span>}
                               </Form.Group>
                             </Col>
                             
@@ -131,7 +152,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   value={formOneChildData?.dob || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      dob: null
+                                    }))
                                   }} />
+                                  {errors.dob !== null && <span className="error">{errors.dob}</span>}
                               </Form.Group>
                             </Col>
                             <Col md={12}>
@@ -173,7 +199,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   value={formOneChildData?.home_address || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      home_address: null
+                                    }))
                                   }} />
+                                  {errors.home_address !== null && <span className="error">{errors.home_address}</span>}
                               </Form.Group>
                             </Col>
 
@@ -190,15 +221,33 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                       ...prevState,
                                       educator: [...e.map(e => e.id)]
                                     }));
+
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      educatorData: null
+                                    }))
                                   }}
                                 />
+                                {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
                               </Form.Group>
                             </Col>
                           </Row>
                         </div>
                       </div>
                       <div className="cta text-center mt-5 mb-5">
-                        <Button variant="primary" type="submit">Next</Button>
+                        <Button variant="primary" disabled={loader ? true : false} type="submit">
+                          {loader === true ? (
+                            <>
+                              <img
+                              style={{ width: '24px' }}
+                              src={'/img/mini_loader1.gif'}
+                              alt=""
+                              />
+                                Submitting...
+                            </>
+                          ) : (
+                          'Submit')}
+                        </Button>
                       </div>
                     </Form>
                   </div>

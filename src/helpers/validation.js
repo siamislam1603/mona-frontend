@@ -234,7 +234,6 @@ export const TrainingFormValidation = (form, coverImage) => {
     meta_description,
     category_id,
     time_required_to_complete,
-    training_form_id
   } = form;
 
   if (!title) {
@@ -259,10 +258,6 @@ export const TrainingFormValidation = (form, coverImage) => {
 
   if (!time_required_to_complete) {
     errors.time_required_to_complete = 'Training time is required!';
-  }
-
-  if(!training_form_id) {
-    errors.training_form_id = "Select a training form!"
   }
 
   if (Object.keys(coverImage).length === 0) {
@@ -511,6 +506,29 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
   if (!allergy) errors.allergy = 'Mention the alergies, if any!';
 
   if (!comment) errors.comment = 'Provide a comment!';
+
+  return errors;
+};
+
+export const enrollmentInitiationFormValidation = (formOneChildData, educatorData) => {
+  let {
+    fullname,
+    dob,
+    home_address
+  } = formOneChildData;
+  let errors = {};
+
+  if(!fullname)
+    errors.fullname = "Fullname is required!";
+
+  if(!dob)
+    errors.dob = "Date of birth is required!";
+
+  if(!home_address) 
+    errors.home_address = "Home address is required!";
+
+  if(!educatorData) 
+    errors.educatorData = "One Educator needs to be selected!";
 
   return errors;
 };
