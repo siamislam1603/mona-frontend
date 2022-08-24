@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import $ from "jquery";
 import moment from "moment";
 import CircularProgress from '@material-ui/core/CircularProgress';
+// import { FullLoader } from "./Loader";
 
 let temp = () => { }
 let Child = () => { }
@@ -291,6 +292,7 @@ const handelSearch = async (e) =>{
           View All
         </Link>
       </Popover.Header>
+
       <Popover.Body>
         {topHeaderNotification &&
           topHeaderNotification.length !== 0 ? (
@@ -702,6 +704,7 @@ const handelSearch = async (e) =>{
           </div>
         </div>
       </div>
+                      
       {/* {
         notificationDialog === true &&
         <div className="notification-dialog">

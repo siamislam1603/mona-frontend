@@ -48,10 +48,6 @@ export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, 
   useEffect(() => {
     if(croppedImage) {
       setCurrentURI(croppedImage.src);
-      setFormErrors(prevState => ({
-        ...prevState,
-        profile_pic: null
-      }));
       setData([]);
     }
   }, [croppedImage]);
