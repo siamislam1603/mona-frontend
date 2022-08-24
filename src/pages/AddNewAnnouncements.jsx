@@ -31,7 +31,10 @@ const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
 const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
   user_roles: [],
-  is_event:0
+  is_event:0,
+  franchise:[],
+  start_date:new Date().toISOString().slice(0, 10),
+  start_time:new Date().getHours() + ":" + new Date().getMinutes()
 });
 const [titleError,setTitleError] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -39,6 +42,8 @@ const [titleError,setTitleError] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [error, setError] = useState({user_roles: []});
+  const [allFranchise,setAllFranchise] = useState(false)
+
 
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState(null);
@@ -234,12 +239,9 @@ const createAnnouncement = async (data) => {
 
     };
 
-
-
-      
-
     const handleDataSubmit = event => {
       event.preventDefault();
+      // if()
       console.log("The annoucement after submit ",announcementData)
       let errorObj = AddNewAnnouncementValidation(announcementData, coverImage);
       console.log("The error of announcement",errorObj)
@@ -297,7 +299,8 @@ const createAnnouncement = async (data) => {
 //   }); 
 // }
   };
-
+  console.log("Date",new Date().toISOString().slice(0, 10))
+  console.log("Time",new Date().getHours() + ":" + new Date().getMinutes())
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
@@ -335,6 +338,9 @@ const createAnnouncement = async (data) => {
 // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
 // console.log("The franhiseData 1",franchiseeData);
 console.log("THE handle ",announcementData)
+console.log("The",announcementData.start_date)
+                          
+console.log("ALL fran",announcementData.franchise)
   return (
     
     <>
@@ -370,7 +376,52 @@ console.log("THE handle ",announcementData)
                           {titleError && <div className="error">{titleError}</div>} 
                          
                         </Form.Group>
-                      <Form.Group className="col-md-6 mb-3">
+                        <Col lg={3} sm={6}>
+                  <Form.Group className="col-md-12">
+                    <div className="btn-radio inline-col">
+                      <Form.Label>Send to all franchisee:</Form.Label>
+                      <div>
+                      <Form.Check
+                        type="radio"
+                        name="franchise"
+                        id="a"
+                        label="Yes"
+                        onChange={(event) =>{
+                                              
+                          setAnnouncementData((prevState) => ({
+                            ...prevState,
+                            franchise: []
+                          }));
+                        setAllFranchise(true)
+                        // announcementData.franchise =[]
+
+                        }}
+                           
+                         />
+                      <Form.Check
+                        type="radio"
+                        name="franchise"
+                        id="e"
+                        onChange={() =>{
+                        setAllFranchise(false)
+                        
+
+                        }
+                        
+                      }
+                        defaultChecked
+
+                        label="No"
+                         />
+                         
+                      </div>
+                    
+                    </div>
+                  </Form.Group>
+                </Col>
+                          </Row>
+                          <Row>
+                          <Form.Group className="col-md-12 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
 
                             {
@@ -382,15 +433,17 @@ console.log("THE handle ",announcementData)
                             <Select
 
                             placeholder="Which Franchisee?"
-
                             closeMenuOnSelect={false}
-
                             isMulti
+                            isDisabled={allFranchise === false?false:true}
+                            // disable={true}
+                            // selectedValues={[]}
+                            selectedValues={franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id)))}
 
-                            // isDisabled={true}
+                            // value={allFranchise === false ?announcementData.franchise.id:[] }
 
-                            // value={franchiseeData?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('franchisee_id')))}
-
+                            // selectedValues={franchiseeData?.filter(d => parseInt(d.id) === parseInt(announcementData.franchise.id))}
+                            
                             options={franchiseeData}
 
                             onChange={handleAnnouncementFranchisee}
@@ -414,8 +467,6 @@ console.log("THE handle ",announcementData)
                           }
                             
                           </Form.Group>
-                          </Row>
-                          <Row>
                       <Col md={12} className="mb-3">
                         <Form.Group>
                         <Form.Label>Announcement Description</Form.Label>
@@ -450,8 +501,8 @@ console.log("THE handle ",announcementData)
                   <Form.Control  
                         type="date"
                         min={new Date().toISOString().slice(0, 10)}
-
-
+                        defaultValue= {new Date().toISOString().slice(0, 10)}
+                          // value={new Date().toISOString().slice(0, 10)}
                         name="start_date"
                         onChange={handleAnnouncementData}
                       />
@@ -467,12 +518,14 @@ console.log("THE handle ",announcementData)
                     type="time"
                     name="start_time"
                     onChange={handleAnnouncementData}
+                    defaultValue={new Date().getHours() + ":" + new Date().getMinutes()}
                     onInvalid={!!error.start_time}
                   />
                 </Form.Group>
                 {error.start_time && <p className="form-errors">{error.start_time}</p>}
              
               </Col>
+
               <Col lg={3} sm={6}>
                   <Form.Group >
                     <div className="btn-radio inline-col">

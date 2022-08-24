@@ -39,7 +39,7 @@ const SearchResult = (props) => {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("THE BASEURL",BASE_URL)
+    // console.log("THE BASEURL",BASE_URL)
     console.log("Search value",response) 
     // let res = response.data.data[0].fileRepository[0];
 
