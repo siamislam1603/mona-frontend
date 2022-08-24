@@ -44,7 +44,7 @@ const [titleError,setTitleError] = useState(null);
   const [error, setError] = useState({user_roles: []});
   const [allFranchise,setAllFranchise] = useState(false)
 
-  const [allFranchise,setAllFranchise] = useState(false)
+  
 
 
   const [topErrorMessage, setTopErrorMessage] = useState(null);
