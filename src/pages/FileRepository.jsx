@@ -935,11 +935,11 @@ const FileRepository = () => {
                           <span className="checkmark"></span>
                         </label>
                         <label className="container">
-                          Parents
+                        Guardian
                           <input
                             type="checkbox"
                             name="shared_role"
-                            id="parent"
+                            id="Guardian"
                             onClick={(e) => {
                               let data = { ...formSettingData };
                               if (
@@ -961,7 +961,7 @@ const FileRepository = () => {
                               setFormSettingData(data);
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'parent'
+                              'Guardian'
                             )}
                           />
                           <span className="checkmark"></span>
@@ -979,9 +979,9 @@ const FileRepository = () => {
                                 if (
                                   !data['shared_role']
                                     .toString()
-                                    .includes('parent')
+                                    .includes('Guardian')
                                 ) {
-                                  data['shared_role'] += 'parent,';
+                                  data['shared_role'] += 'Guardian,';
                                 }
                                 if (
                                   !data['shared_role']
@@ -1011,7 +1011,7 @@ const FileRepository = () => {
                               }
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'parent,educator,coordinator'
+                              'Guardian,educator,coordinator'
                             )}
                           />
                           <span className="checkmark"></span>

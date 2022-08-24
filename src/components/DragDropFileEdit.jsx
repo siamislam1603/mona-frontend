@@ -24,11 +24,16 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                 maxFiles: 1,
                 multiple: false,
                 accept: {
-                    'image/*': ['.jpeg', '.png', '.jpg'],
-                    'text/*': ['.html', '.htm', '.doc', '.pdf'],
+                    'image/jpeg': ['.jpeg'],
+                    'image/jpg': ['.jpg'],
+                    'image/png': ['.png'],
+                    'text/html': ['.html'],
+                    'text/htm': ['.html'],
+                    'text/cvs': ['.cvs'],
+                    'text/doc': ['.doc'],
+                    'text/pdf': ['.pdf'],
                     'video/mp4': ['video/mp4'],
                     'audio/mpeg': ['.audio/mpeg', '.mp3']
-                    // '.doc, .pdf, .mp3, .png, .jpg'
                 },
                 useFsAccessApi: false,
             })
@@ -37,14 +42,16 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
         newFiles.splice(newFiles.indexOf(file), 1)
         setMyFiles(newFiles)
     }
+
     const Filess = myFiles.map((file, index) => {
         if (index != 0)
+            // 
+            // console.log("url")
             return <>
-                {console.log(file.type, 'ddhb')}
                 {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
                     <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
                 </>)
-                    : file.type === "application/pdf" ? (
+                    : file.type === "application/pdf" || file.type === "text/html" || file.type === "text/htm" || file.type === "text/doc" || file.type === "text/cvs" ? (
                         <>
                             <span className="user-pic-tow">
                                 {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
@@ -59,10 +66,11 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                     )
                         : file.type === "video/mp4" ?
                             (<>
-                                <FileRepoVideo
-                                    data={getBase64(file) || currentURI || acceptedFiles}
-                                    Src={file.path}
-                                />
+                                <div style={{ display: "flex" }}>
+                                    <FileRepoVideo
+                                        data={URL.createObjectURL(file)}
+                                    />
+                                </div>
                             </>) :
                             (
                                 file.type === "audio/mpeg" ? (

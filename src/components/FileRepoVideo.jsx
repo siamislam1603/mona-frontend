@@ -7,8 +7,6 @@ const FileRepoVideo = ({ data, title, duration, Src }) => {
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
     const handleShow = () => setVideo(true);
-    console.log(data, duration,)
-
     return (
         <>
             <div className="item mb-3">

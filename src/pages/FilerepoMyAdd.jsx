@@ -502,8 +502,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 />
                                             </div>
                                         </> :
-
-                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf"||cell[0] === "text/csv"?
+                                                cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" || cell[0] === "text/html" ?
                                             <>
                                                 <span className="user-pic-tow">
                                                     <a href={cell[2]} download >
@@ -1010,11 +1009,11 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <span className="checkmark"></span>
                                                     </label>
                                                     <label className="container">
-                                                        Parents
+                                                    Guardian
                                                         <input
                                                             type="checkbox"
                                                             name="shared_role"
-                                                            id="parent"
+                                                            id="Guardian"
                                                             onClick={(e) => {
                                                                 let data = { ...formSettingData };
                                                                 if (
@@ -1036,7 +1035,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                 setFormSettingData(data);
                                                             }}
                                                             checked={formSettingData?.shared_role?.includes(
-                                                                'parent'
+                                                                'Guardian'
                                                             )}
                                                         />
                                                         <span className="checkmark"></span>
@@ -1054,9 +1053,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     if (
                                                                         !data['shared_role']
                                                                             .toString()
-                                                                            .includes('parent')
+                                                                            .includes('Guardian')
                                                                     ) {
-                                                                        data['shared_role'] += 'parent,';
+                                                                        data['shared_role'] += 'Guardian,';
                                                                     }
                                                                     if (
                                                                         !data['shared_role']
@@ -1361,21 +1360,21 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                                                         <Form.Check
                                                             type="checkbox"
-                                                            label="Parents"
-                                                            checked={formSettings.assigned_role.includes("parent")}
+                                                            label="Guardian"
+                                                            checked={formSettings.assigned_role.includes("Guardian")}
                                                             onChange={() => {
-                                                                if (formSettings.assigned_role.includes("parent")) {
-                                                                    let data = formSettings.assigned_role.filter(t => t !== "parent");
+                                                                if (formSettings.assigned_role.includes("Guardian")) {
+                                                                    let data = formSettings.assigned_role.filter(t => t !== "Guardian");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
                                                                         assigned_role: [...data]
                                                                     }));
                                                                 }
 
-                                                                if (!formSettings.assigned_role.includes("parent"))
+                                                                if (!formSettings.assigned_role.includes("Guardian"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "parent"]
+                                                                        assigned_role: [...formSettings.assigned_role, "Guardian"]
                                                                     }))
                                                             }} />
                                                     </Form.Group>
