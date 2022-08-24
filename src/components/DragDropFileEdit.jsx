@@ -66,7 +66,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                     )
                         : file.type === "video/mp4" ?
                             (<>
-                                <div style={{ display: "flex" }}>
+                                <div style={{ display: "flex", justifyContent: " center" }}>
                                     <FileRepoVideo
                                         data={URL.createObjectURL(file)}
                                     />
@@ -88,9 +88,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                                 ) : (<></>)
                             )
                 }
-                {console.log(getBase64(file) || currentURI || acceptedFiles, "dddsd")}
-
-                <Link to="#" onClick={removeFile(file)} style={{ margin: "20px" }}>
+                <Link to="#" onClick={removeFile(file)} style={{ margin: "20px"}}>
                     <img src="../img/removeIcon.svg" alt="" />
                 </Link>
             </>
