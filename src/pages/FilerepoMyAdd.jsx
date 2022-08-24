@@ -99,7 +99,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         let user_id = localStorage.getItem('user_id')
-
+        setLoaderFlag(true);
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -134,7 +134,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         if (response.status === 201 && response.data.status === "success") {
             console.log("submitted successfully")
-
+            setLoaderFlag(false);
+        } else {
+            setLoaderFlag(false);
         }
 
         console.log(formSettings,"share final")
@@ -1469,7 +1471,19 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                 setShowModal(false);
                                 handleFileSharing()
                             }}>
-                            Save Settings
+                            {loaderFlag === true ? (
+                            <>
+                                <img
+                                style={{ width: '24px' }}
+                                src={'/img/mini_loader1.gif'}
+                                alt=""
+                                />
+                                Updating...
+                            </>
+                            ) : (
+                            'Save Settings'
+                            )}
+                            
                         </Button>
                     </Modal.Footer>
                 </Modal>
