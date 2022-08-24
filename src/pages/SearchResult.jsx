@@ -34,10 +34,11 @@ const SearchResult = (props) => {
 
   const GlobalSearch = async() =>{
     let token = localStorage.getItem('token');
-    let  url = `${BASE_URL}/globalSearch/?search=${term}`
-    const response  = await axios.get(`${BASE_URL}/globalSearch/?search=${term}`, {
+    // let  url = `${BASE_URL}/globalSearch/?search=${term}`
+    const response  = await axios.get(`${BASE_URL}/globalSearch/`, {
       headers: {
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${token}`,
+        "search":`${term}`
       }
     });
     // console.log("THE BASEURL",BASE_URL)

@@ -266,6 +266,7 @@ const Main = () => {
           path="/new-user"
           element={
             <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
               <NewUser />
             </Protected>
           }
