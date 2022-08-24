@@ -632,7 +632,7 @@ const EditAnnouncement = () => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Reference Video Here :
+                            Upload Video :
                           </Form.Label>
                           {/* <DropOneFile onSave={setVideoTutorialFiles}
 
@@ -671,7 +671,7 @@ const EditAnnouncement = () => {
                       
                      <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Related Files :</Form.Label>
+                          <Form.Label>Upload Files :</Form.Label>
                           <DropAllFile onSave={setRelatedFiles}
                             // Files={theRelatedFiles}
                           />
