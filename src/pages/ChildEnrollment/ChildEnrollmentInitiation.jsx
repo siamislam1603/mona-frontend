@@ -20,6 +20,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   });
   const [educatorData, setEducatorData] = useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
+  const [loader, setLoader] = useState(false);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/usersById/franchisee/${selectedFranchisee}`);
@@ -43,9 +44,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     }));
   };
 
-  const submitFormData = async (event) => {
-    event.preventDefault();
-    console.log('SUBMITTING FORM DATA');
+  const initiateEnrollment = async () => {
     let token = localStorage.getItem('token');
     let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: localStorage.getItem('franchisee_id') }, {
       headers: {
@@ -73,6 +72,13 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
         }
       }
     }
+  }
+
+  const submitFormData = (event) => {
+    event.preventDefault();
+    console.log('SUBMITTING FORM DATA');
+    
+    initiateEnrollment();
   }
 
   useEffect(() => {
@@ -199,6 +205,19 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                       </div>
                       <div className="cta text-center mt-5 mb-5">
                         <Button variant="primary" type="submit">Next</Button>
+                        <Button variant="primary">
+                          {loader === true ? (
+                            <>
+                              <img
+                              style={{ width: '24px' }}
+                              src={'/img/mini_loader1.gif'}
+                              alt=""
+                              />
+                                Submitting...
+                            </>
+                          ) : (
+                          'Submit')}
+                        </Button>
                       </div>
                     </Form>
                   </div>
