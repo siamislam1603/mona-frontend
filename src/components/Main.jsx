@@ -70,8 +70,9 @@ const Main = () => {
       // SETTING 2 HOURS TIMEOUT FOR LOGOUT
       const loginTime = new Date();
       const logoutTime = new Date();
-      logoutTime.setTime(loginTime.getTime() + 2 * 60 * 60 * 1000); // 1 HOUR
+      logoutTime.setTime(loginTime.getTime() + 6 * 60 * 60 * 1000); // 6 HOUR
       console.log("Auto logout at:", logoutTime);
+
 
       function autoLogout() {
         (function loop() {
@@ -114,7 +115,7 @@ const Main = () => {
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
-              <UserManagement />
+              {localStorage.getItem('user_role') == 'franchisor_admin' ? <FranchisorDashboard /> : localStorage.getItem('user_role') == 'franchisee_admin' ? <FranchiseeDashboard /> : localStorage.getItem('user_role') == 'coodinator' ? <CoordinatorDashboard /> : localStorage.getItem('educator') == 'EducatorDashboard' ? <EducatorDashboard /> : <ParentsDashboard />}
             </Protected>
           }
         />
@@ -408,7 +409,7 @@ const Main = () => {
             </Protected>
           }
         />
-          <Route
+        <Route
           path="/SearchResult/"
           element={
             <Protected isLoggedIn={isLoggedIn}>

@@ -20,6 +20,7 @@ import { useRef } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
+import { FullLoader } from "../components/Loader";
 
 // const { ExportCSVButton } = CSVExport;
 
@@ -48,6 +49,7 @@ const UserManagement = () => {
   const [search, setSearch] = useState('');
   const [isLoading,setIsLoading] = useState(true)
   const [deleteResponse, setDeleteResponse] = useState(null);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   
   const rowEvents = {
@@ -305,7 +307,11 @@ const UserManagement = () => {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
+    if (response){
+      setfullLoaderStatus(false)
+    }
     if (response.status === 200) {
+
       const { users } = response.data;
       console.log('USERS:', users);
       let tempData = users.map((dt) => ({
@@ -397,6 +403,7 @@ const UserManagement = () => {
   selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
   return (
     <>
+
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -408,6 +415,8 @@ const UserManagement = () => {
                 <TopHeader
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
+                      <FullLoader loading={fullLoaderStatus} />
+
                 <div className="entry-container">
                   <div className="user-management-sec">
                     <ToolkitProvider
@@ -596,24 +605,14 @@ const UserManagement = () => {
                               </div>
                             </div>
                           </header>
-                          {
-                            isLoading ? 
-                            (
-                              <div className="text-center mb-5 mt-5">
-                              <img src="../img/loader.svg" alt="" />
-
-                              </div>
-
-                            ) :
-                            (
+  
                               <BootstrapTable
                               {...props.baseProps}
                               rowEvents={rowEvents}
                               selectRow={selectRow}
                               pagination={paginationFactory()}
                             />
-                            )
-                          }
+                    
                          
                         </>
                       )}

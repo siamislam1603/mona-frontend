@@ -625,6 +625,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .notificationpopup .notifimg{position:relative}
 .notificationpopup .notifimg .notilink{position:relative;display:flex;align-items:center;color:var(--black)}
 .notificationpopup .notifimg .notilink .notifpic{border-radius:100%;max-width:40px;min-width:40px;height:40px;overflow:hidden;margin-right:10px;position:relative}
+.notificationpopup .notiftxt .title-xxs { font-size: 13px; }
 .notificationpopup .notifimg .notilink .notifpic img{width:40px;height:40px}
 .notificationpopup .notifitem{position:relative;padding:10px 15px;background-color:var(--white);border-bottom:1px solid rgba(0,0,0,.1)}
 .notificationpopup .notifitem:hover{background-color:var(--black)}
@@ -656,6 +657,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .notofication-listing-sec.notificationpopup{height:auto;max-width:100%}
 .notofication-listing-sec.notificationpopup .notifitem,.notofication-listing-sec.notificationpopup .notifitem.unread{background-color:transparent}
 .fullloader-sec{position:fixed;top:0;left:0;width:100%;height:100%;z-index:99;display:flex;background:rgba(255,255,255,.8);align-items:center;justify-content:center}
+.fullloader-sec img { max-width:100px; }
 .smallloader-sec{position:absolute;width:100%;height:auto;padding:3rem 0;display:block;background:rgba(255,255,255,.8);align-items:flex-start;justify-content:center;left:0;z-index:99}
 .fullloader-sec.loader,.smallloader-sec.loader{overflow:hidden}
 .column-card{position:relative;background-color:var(--white);border-radius:15px;box-shadow:var(--shadow);padding:15px;margin-bottom:1.5rem}

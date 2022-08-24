@@ -24,8 +24,6 @@ const AddOperatingManual = () => {
   const [errors, setErrors] = useState({});
   const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
   const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
-  const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
-  const [relatedFiles, setRelatedFiles] = useState([]);
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [videoThumbnailUrl, setVideoThumbnailUrl] = useState('');
@@ -39,14 +37,17 @@ const AddOperatingManual = () => {
   const [categoryModalFlag, setCategoryModalFlag] = useState(false);
   const [categoryData, setCategoryData] = useState({});
   const [categoryError, setCategoryError] = useState({});
-  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id'));
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const token = localStorage.getItem('token');
   useEffect(() => {
     getUserRoleData();
   }, []);
   useEffect(() => {
-    getUser();
+    if(selectedFranchisee)
+    {
+      getUser();
+    }
   }, [selectedFranchisee]);
   useEffect(() => {
     getCategory();
@@ -103,7 +104,6 @@ const AddOperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log('operating manual--->', response?.result);
         setOperatingManualData(response?.result);
         setImageUrl(response?.result?.cover_image);
         setVideoThumbnailUrl(response?.result?.video_thumbnail);
@@ -114,7 +114,6 @@ const AddOperatingManual = () => {
 
         data['accessible_to_role'] =
           response?.result?.permission?.accessible_to_role;
-        // if (response?.result?.permission?.accessible_to_role === 0) {
         if (Object.keys(response?.result?.permission).length === 0) {
           selectedUserId = '';
           setSelectedUser({});
@@ -132,17 +131,12 @@ const AddOperatingManual = () => {
             selectedUserId += item.id + ',';
           }
         });
-        console.log('users-retretertetretert-->', users);
         setSelectedUser(users);
-        // }
-        // else
-        // {
         let role = '';
         response?.result?.permission?.shared_role.map((item) => {
           role += item + ',';
         });
         data['shared_role'] = role;
-        // }
         setFormSettingData(data);
       })
       .catch((error) => console.log('error', error));
@@ -184,32 +178,20 @@ const AddOperatingManual = () => {
     if (!data?.id) {
       alert('Please save first operating manual information');
     } else {
-      console.log(
-        'formSettingData.accessible_to_role---->',
-        formSettingData.shared_role
-      );
-
       if (formSettingData.shared_role === '' && selectedUserId === '') {
         console.log('Hello');
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
-        // if (formSettingData.accessible_to_role === 1) {
         data['shared_role'] = formSettingData.shared_role
           ? formSettingData.shared_role.slice(0, -1)
           : null;
-        // data['shared_with'] = null;
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = false;
-        // } else {
         data['shared_with'] = selectedUserId
           ? selectedUserId.slice(0, -1)
           : null;
         data['link'] = FRONT_BASE_URL + '/operatingmanual';
-        // data['shared_role'] = null;
-        // data['accessible_to_role'] = formSettingData.accessible_to_role;
-        // data['accessible_to_all'] = false;
-        // }
       }
       data['cover_image'] = imageUrl;
       data['video_thumbnail'] = videoThumbnailUrl;
@@ -219,7 +201,6 @@ const AddOperatingManual = () => {
       upperRoleUser = getUpperRoleUser();
       data['upper_role'] = upperRoleUser;
       data['franchisee_id'] = selectedFranchiseeId;
-      console.log('Hello---->datadfdsfdsfdsffdsfsd', data);
 
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
@@ -254,7 +235,6 @@ const AddOperatingManual = () => {
       data['link'] = FRONT_BASE_URL + '/operating_manual?select=';
       data.created_by = localStorage.getItem('user_id');
       data.upper_role = upperRoleUser;
-      console.log('data---->', data);
       fetch(`${BASE_URL}/operating_manual/add`, {
         method: 'post',
         body: JSON.stringify(data),
@@ -262,7 +242,6 @@ const AddOperatingManual = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log('res---->', res);
           if (res?.success === false) {
             let errorData = { ...errors };
             errorData['title'] = res?.message;
@@ -272,8 +251,6 @@ const AddOperatingManual = () => {
             setFormSettingFlag(true);
             setErrors([]);
           }
-
-          // navigate('/operatingmanual');
         });
     }
   };
@@ -337,7 +314,6 @@ const AddOperatingManual = () => {
       .then((response) => response.text())
       .then((result) => {
         result = JSON.parse(result);
-        console.log('result---->', result?.result);
         setCategory(result.result);
         if (location?.state?.id && location?.state?.category_name) {
           getOneOperatingManual();
@@ -352,7 +328,6 @@ const AddOperatingManual = () => {
 
   const uploadFiles = async (name, file) => {
     let flag = false;
-    console.log('file--->', file.type);
     if (name === 'cover_image') {
       if (file.size > 2048 * 1024) {
         let errorData = { ...errors };
@@ -441,24 +416,12 @@ const AddOperatingManual = () => {
     }
   };
 
-  const setFormSettingFields = (field, value) => {
-    setFormSettingData({ ...formSettingData, [field]: value });
-
-    if (!!formSettingError[field]) {
-      setFormSettingError({
-        ...formSettingError,
-        [field]: null,
-      });
-    }
-  };
   function onSelectUser(optionsList, selectedItem) {
-    console.log('selected_item---->2', selectedItem);
     selectedUserId += selectedItem.id + ',';
     selectedUser.push({
       id: selectedItem.id,
       email: selectedItem.email,
     });
-    console.log('selectedUser---->', selectedUser);
   }
   function onRemoveUser(selectedList, removedItem) {
     selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
@@ -466,37 +429,26 @@ const AddOperatingManual = () => {
       return object.id === removedItem.id;
     });
     selectedUser.splice(index, 1);
-    {
-      console.log('selectedUser---->', selectedUser);
-    }
   }
   const getUserRoleData = () => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + token
-    );
+    myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
-      headers: myHeaders
+      headers: myHeaders,
     };
 
     fetch(`${BASE_URL}/api/user-role`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
-        console.log('res---->', res);
-        // console.log('response0-------->1', localStorage.getItem('user_role'));
         setUserRole(res?.userRoleList);
       })
       .catch((error) => console.log('error', error));
   };
 
-  selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
   return (
     <>
-      {console.log('selectedFranchiseeId--->', selectedFranchiseeId)}
-      {console.log('operating manual--->', operatingManualData)}
       <div id="main">
         <section className="mainsection ">
           <Container>
@@ -514,6 +466,7 @@ const AddOperatingManual = () => {
                           ? localStorage.getItem('franchisee_id')
                           : id;
                       setSelectedFranchiseeId(id);
+                      setSelectedFranchisee(id);
                       localStorage.setItem('f_id', id);
                     }}
                   />{' '}
@@ -637,18 +590,6 @@ const AddOperatingManual = () => {
                           <Form.Label className="formlabel">
                             Description
                           </Form.Label>
-                          {console.log(
-                            'operatingManualData--->',
-                            operatingManualData
-                          )}
-                          {console.log(
-                            'location?.state?.id---->',
-                            location?.state?.id
-                          )}
-                          {console.log(
-                            'location?.state?.category_name---->',
-                            location?.state?.category_name
-                          )}
                           {location?.state?.id &&
                           location?.state?.category_name &&
                           operatingManualData?.description ? (
@@ -758,10 +699,6 @@ const AddOperatingManual = () => {
                                   type="file"
                                   name="reference_video"
                                   onChange={(e) => {
-                                    console.log(
-                                      'e.target.files---->',
-                                      e.target.files
-                                    );
                                     if (e.target.files) {
                                       uploadFiles(
                                         e.target.name,
@@ -781,7 +718,6 @@ const AddOperatingManual = () => {
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
-                              {/* <span>Remove</span> */}
                             </Button>
                           </div>
                           <p className="form-errors">
@@ -859,53 +795,7 @@ const AddOperatingManual = () => {
         <Modal.Body>
           <div className="form-settings-content">
             <Row className="mt-4">
-              {/* <Col lg={3} md={6}>
-                <Form.Group>
-                  <Form.Label>Accessible to:</Form.Label>
-                  <div className="new-form-radio d-block">
-                    <div className="new-form-radio-box">
-                      <label for="yes">
-                        <input
-                          type="radio"
-                          value={1}
-                          name="accessible_to_role"
-                          id="yes"
-                          onChange={(e) => {
-                            setFormSettingFields(
-                              e.target.name,
-                              parseInt(e.target.value)
-                            );
-                          }}
-                          checked={formSettingData.accessible_to_role === 1}
-                        />
-                        <span className="radio-round"></span>
-                        <p>User Roles</p>
-                      </label>
-                    </div>
-                    <div className="new-form-radio-box m-0 mt-3">
-                      <label for="no">
-                        <input
-                          type="radio"
-                          value={0}
-                          name="accessible_to_role"
-                          id="no"
-                          onChange={(e) => {
-                            setFormSettingFields(
-                              e.target.name,
-                              parseInt(e.target.value)
-                            );
-                          }}
-                          checked={formSettingData.accessible_to_role === 0}
-                        />
-                        <span className="radio-round"></span>
-                        <p>Specific Users</p>
-                      </label>
-                    </div>
-                  </div>
-                </Form.Group>
-              </Col> */}
               <Col lg={12} md={12}>
-                {/* {formSettingData.accessible_to_role === 1 ? ( */}
                 <Form.Group>
                   <Form.Label>Select User Roles</Form.Label>
                   <div className="modal-two-check user-roles-box">
@@ -1017,40 +907,6 @@ const AddOperatingManual = () => {
                       />
                       <span className="checkmark"></span>
                     </label>
-                    {/* <label className="container">
-                      Parents
-                      <input
-                        type="checkbox"
-                        name="shared_role"
-                        id="parent"
-                        onClick={(e) => {
-                          let data = { ...formSettingData };
-                          if (
-                            !data['shared_role']
-                              .toString()
-                              .includes(e.target.id)
-                          ) {
-                            data['shared_role'] += e.target.id + ',';
-                          } else {
-                            data['shared_role'] = data['shared_role'].replace(
-                              e.target.id + ',',
-                              ''
-                            );
-                            if (data['shared_role'].includes('all')) {
-                              data['shared_role'] = data['shared_role'].replace(
-                                'all,',
-                                ''
-                              );
-                            }
-                          }
-                          setFormSettingData(data);
-                        }}
-                        checked={formSettingData?.shared_role?.includes(
-                          'parent'
-                        )}
-                      />
-                      <span className="checkmark"></span>
-                    </label> */}
                     <label className="container">
                       All Roles
                       <input
@@ -1061,11 +917,6 @@ const AddOperatingManual = () => {
                           let data = { ...formSettingData };
                           console.log('e.target.checked', e.target.checked);
                           if (e.target.checked === true) {
-                            // if (
-                            //   !data['shared_role'].toString().includes('parent')
-                            // ) {
-                            //   data['shared_role'] += 'parent,';
-                            // }
                             if (
                               !data['shared_role']
                                 .toString()
@@ -1104,26 +955,20 @@ const AddOperatingManual = () => {
                     </label>
                   </div>
                 </Form.Group>
-                {/* ) : null} */}
-                {/* {formSettingData.accessible_to_role === 0 ? ( */}
                 <Form.Group>
                   <Form.Label>Select User</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
                       displayValue="email"
                       className="multiselect-box default-arrow-select"
-                      // placeholder="Select Franchisee"
                       selectedValues={selectedUser}
-                      // onKeyPressFn={function noRefCheck() {}}
                       onRemove={onRemoveUser}
-                      // onSearch={function noRefCheck() {}}
                       onSelect={onSelectUser}
                       options={user}
                     />
                   </div>
                   <p className="error">{errors.franchisee}</p>
                 </Form.Group>
-                {/* ) : null} */}
               </Col>
             </Row>
           </div>

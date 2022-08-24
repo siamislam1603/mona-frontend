@@ -141,25 +141,26 @@ const FileRepository = () => {
   const getChildren = async () => {
     var myHeaders = new Headers();
     myHeaders.append(
-        'authorization',
-        'Bearer ' + localStorage.getItem('token')
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
     );
 
     let franchiseeArr = formSettings.assigned_franchisee
 
     var request = {
-        headers: myHeaders,
+      headers: myHeaders,
     };
 
-    let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`,{franchisee_id:franchiseeArr},request)
+    let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, request)
     if (response.status === 200) {
-        setChild(response.data.children)
-    }}
+      setChild(response.data.children)
+    }
+  }
 
-  useEffect(()=>{
+  useEffect(() => {
     getUser();
     getChildren()
-  },[formSettings.franchisee])
+  }, [formSettings.franchisee])
 
 
   useEffect(() => {
@@ -192,23 +193,23 @@ const FileRepository = () => {
   const getUser = async () => {
     var myHeaders = new Headers();
     myHeaders.append(
-        'authorization',
-        'Bearer ' + localStorage.getItem('token')
+      'authorization',
+      'Bearer ' + localStorage.getItem('token')
     );
 
     var request = {
-        headers: myHeaders,
+      headers: myHeaders,
     };
 
     let franchiseeArr = formSettings.franchisee
 
-    let response = await axios.post(`${BASE_URL}/auth/users/franchisees`,{franchisee_id:franchiseeArr}, request)
+    let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
     if (response.status === 200) {
-        // console.log(response.data.users, "respo")
-        setUser(response.data.users)
-        console.log(user,"userSList")
+      // console.log(response.data.users, "respo")
+      setUser(response.data.users)
+      console.log(user, "userSList")
     }
-};
+  };
 
   const setField = (field, value) => {
     if (value === null || value === undefined) {
@@ -267,7 +268,7 @@ const FileRepository = () => {
     formdata.append('createdBy', localStorage.getItem('user_name'));
     formdata.append('userId', localStorage.getItem('user_id'));
     formdata.append('categoryId', formSettingData.file_category);
-    formdata.append('franchisee', formSettings.assigned_franchisee);
+    formdata.append('franchisee', formSettings.assigned_franchisee[0] == "all" ? [] : formSettings.assigned_franchisee);
     if (
       formSettingData.accessible_to_role === null ||
       formSettingData.accessible_to_role === undefined
@@ -306,7 +307,7 @@ const FileRepository = () => {
         );
         formdata.append(
           'assigned_users',
-          selectedUserId.slice(0, -1)
+          selectedUserId.slice(0, -1) == "" ? null : selectedUserId.slice(0, -1)
         );
         formdata.append(
           'accessibleToRole',
@@ -319,7 +320,7 @@ const FileRepository = () => {
         formdata.append(
           'assigned_childs',
           formSettings.assigned_childs
-      )
+        )
       }
     }
     var requestOptions = {
@@ -337,14 +338,14 @@ const FileRepository = () => {
         if (response.statusText === "Created") {
           setLoaderFlag(false);
           setShow(false);
-          Navigate(`/file-repository`);
+          Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
         }
       })
       .then((result) => {
         if (result) {
           setLoaderFlag(false);
           setShow(false);
-          Navigate('/file-repository')
+          Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
         }
       })
       .catch((error) => console.log('error', error));
@@ -438,29 +439,29 @@ const FileRepository = () => {
 
   function onSelectChild(selectedItem) {
     let selectedchildarr = selectedItem
-    selectedItem = selectedItem.map((item)=>{
-        return item.id
+    selectedItem = selectedItem.map((item) => {
+      return item.id
     })
     setFormSettings(prevState => ({
-        ...prevState,
-        assigned_childs: selectedItem
+      ...prevState,
+      assigned_childs: selectedItem
     }));
-    console.log(selectedChild,"Selllee")
+    console.log(selectedChild, "Selllee")
     setSelectedChild(selectedchildarr)
-}
+  }
 
   function onRemoveChild(removedItem) {
     let removedchildarr = removedItem
-    removedItem = removedItem.map((item)=>{
-        return item.id
+    removedItem = removedItem.map((item) => {
+      return item.id
     })
     setFormSettings(prevState => ({
-        ...prevState,
-        assigned_childs: removedItem
+      ...prevState,
+      assigned_childs: removedItem
     }));
-    console.log(selectedChild,"Selllee")
+    console.log(selectedChild, "Selllee")
     setSelectedChild(removedchildarr)
-}
+  }
 
 
 
@@ -687,7 +688,7 @@ const FileRepository = () => {
                 <Row>
                   <Col md={12}>
                     <Form.Group>
-                    <Form.Label>Upload File:*</Form.Label>
+                      <Form.Label>Upload File:*</Form.Label>
                       <DragDropRepository onChange={setField} />
                       {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                       <p className="error">{errors.setting_files}</p>
@@ -935,11 +936,11 @@ const FileRepository = () => {
                           <span className="checkmark"></span>
                         </label>
                         <label className="container">
-                          Parents
+                          Guardian
                           <input
                             type="checkbox"
                             name="shared_role"
-                            id="parent"
+                            id="Guardian"
                             onClick={(e) => {
                               let data = { ...formSettingData };
                               if (
@@ -961,7 +962,7 @@ const FileRepository = () => {
                               setFormSettingData(data);
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'parent'
+                              'Guardian'
                             )}
                           />
                           <span className="checkmark"></span>
@@ -979,9 +980,9 @@ const FileRepository = () => {
                                 if (
                                   !data['shared_role']
                                     .toString()
-                                    .includes('parent')
+                                    .includes('Guardian')
                                 ) {
-                                  data['shared_role'] += 'parent,';
+                                  data['shared_role'] += 'Guardian,';
                                 }
                                 if (
                                   !data['shared_role']
@@ -1011,7 +1012,7 @@ const FileRepository = () => {
                               }
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'parent,educator,coordinator'
+                              'Guardian,educator,coordinator'
                             )}
                           />
                           <span className="checkmark"></span>
@@ -1022,27 +1023,27 @@ const FileRepository = () => {
                   {formSettingData.accessible_to_role === 0 ? (
                     <>
 
-                    <Form.Group>
-                      <Form.Label>Select User</Form.Label>
-                      <div className="select-with-plus">
-                        <Multiselect
-                          displayValue="email"
-                          className="multiselect-box default-arrow-select"
-                          // placeholder="Select Franchisee"
-                          selectedValues={selectedUser}
-                          // onKeyPressFn={function noRefCheck() {}}
-                          onRemove={onRemoveUser}
-                          // onSearch={function noRefCheck() {}}
-                          onSelect={onSelectUser}
-                          options={user}
-                        />
-                      </div>
-                      <p className="error">{errors.franchisee}</p>
-                    </Form.Group>
-                    <Form.Group>
-                    <Form.Label>Select Child</Form.Label>
-                    <div className="select-with-plus">
-                        <Multiselect
+                      <Form.Group>
+                        <Form.Label>Select User</Form.Label>
+                        <div className="select-with-plus">
+                          <Multiselect
+                            displayValue="email"
+                            className="multiselect-box default-arrow-select"
+                            // placeholder="Select Franchisee"
+                            selectedValues={selectedUser}
+                            // onKeyPressFn={function noRefCheck() {}}
+                            onRemove={onRemoveUser}
+                            // onSearch={function noRefCheck() {}}
+                            onSelect={onSelectUser}
+                            options={user}
+                          />
+                        </div>
+                        <p className="error">{errors.franchisee}</p>
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label>Select Child</Form.Label>
+                        <div className="select-with-plus">
+                          <Multiselect
                             displayValue="fullname"
                             className="multiselect-box default-arrow-select"
                             // placeholder="Select Franchisee"
@@ -1052,11 +1053,11 @@ const FileRepository = () => {
                             // onSearch={function noRefCheck() {}}
                             onSelect={onSelectChild}
                             options={child}
-                        />
-                    </div>
-                    </Form.Group>
+                          />
+                        </div>
+                      </Form.Group>
                     </>
-                
+
                   ) : null}
                 </Col>
               </Row>
@@ -1782,7 +1783,7 @@ export default FileRepository;
 //                 <LeftNavbar />
 //               </aside>
 //               <div className="sec-column">
-//                 <TopHeader 
+//                 <TopHeader
 //                   selectedFranchisee={selectedFranchisee}
 //                   setSelectedFranchisee={setSelectedFranchisee} />
 //                 {console.log("assigned_usersMeFileRepoData------>", assigned_usersMeFileRepoData)}

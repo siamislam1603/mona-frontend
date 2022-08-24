@@ -5,7 +5,8 @@ import { BASE_URL } from './App';
 import { Link } from "react-router-dom";
 import $ from "jquery";
 import moment from "moment";
-
+import CircularProgress from '@material-ui/core/CircularProgress';
+// import { FullLoader } from "./Loader";
 
 let temp = () => { }
 let Child = () => { }
@@ -30,6 +31,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   const [searchOperatingMannual, setSearchOperatingMannual] = useState([]);
   const [searchTraining, setSearchTraining] = useState([]);
   const [searchUser, setSearchUser] = useState([]);
+  const [searchLoaderFlag, setSearchLoaderFlag] = useState(false);
 
 
   const savePermissionInState = async () => {
@@ -164,11 +166,17 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   }
 
 
-  const handelSearch = async (e) => {
-    e.preventDefault();
-    try {
-      let searchKey = e.target.value;
-      if (searchKey) {
+
+
+const handelSearch = async (e) =>{
+
+  e.preventDefault();
+  try {
+  let searchKey = e.target.value;
+  if(searchKey){
+
+    setSearchLoaderFlag(true)
+
 
         const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
           headers: { "Authorization": "Bearer " + token }
@@ -185,6 +193,8 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
           setSearchOperatingMannual(response.data.data[0].operatingMannual)
           setSearchTraining(response.data.data[0].training)
           setSearchUser(response.data.data[0].user)
+
+          setSearchLoaderFlag(false)
 
         }
 
@@ -282,6 +292,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
           View All
         </Link>
       </Popover.Header>
+
       <Popover.Body>
         {topHeaderNotification &&
           topHeaderNotification.length !== 0 ? (
@@ -427,8 +438,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
       user_dashboar_link = '/franchisee-dashboard'
     else if (localStorage.getItem('user_role') === 'coodinator')
       user_dashboar_link = '/coordinator-dashboard'
-    else if (localStorage.getItem('user_role') === 'franchisee_admin')
-      user_dashboar_link = '/franchisee-dashboard'
     else if (localStorage.getItem('user_role') === 'educator')
       user_dashboar_link = '/educator-dashboard'
     else if (localStorage.getItem('user_role') === 'guardian')
@@ -527,14 +536,22 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                   className="topsearch"
                   placeholder="Type here to search..."
                   name="query"
+                  autocomplete="off"
                   onChange={handelSearch}
 
                 />
                 <div className="tipsearch">
                   <div className="searchlisting cus-scr">
+
+                  {searchLoaderFlag == true ? (
+                        <div class="text-center">
+                           <CircularProgress />
+                           </div>
+                    ) : ''
+                  }
+
+
                     <ul>
-
-
 
                       {searchAnnouncement?.map((announceData) => (
                         <li>
@@ -565,16 +582,24 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                         </li>
                       ))}
 
+                    {searchFranchise?.map((franchiseeData) => (
+                      <li>
+                        <a href={`/all-franchisees/`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{franchiseeData?.franchisee_name}</strong></span>
+                        </a>
+                      </li>
+                        ))}
 
 
-                      {searchOperatingMannual?.map((operatingData) => (
-                        <li>
-                          <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
-                            {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
-                          </a>
-                        </li>
-                      ))}
+                      {searchFileRepository?.map((fileRepoData) => (
+                      <li>
+                        <a href={`/file-repository-List/${fileRepoData?.repository_files[0]?.categoryId}`} class="d-flex">
+                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                          <span class="sec-cont"><strong class="text-capitalize">{fileRepoData?.title}</strong></span>
+                        </a>
+                      </li>
+                        ))}
 
 
 
@@ -679,6 +704,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
           </div>
         </div>
       </div>
+                      
       {/* {
         notificationDialog === true &&
         <div className="notification-dialog">
