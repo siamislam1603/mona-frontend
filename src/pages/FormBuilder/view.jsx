@@ -34,6 +34,7 @@ function ViewFormBuilder(props) {
   const [key, setKey] = useState('created-by-me');
   const token = localStorage.getItem('token');
   let hrFlag = false;
+  let title_flag=false;
   useEffect(() => {
     getFormData('');
   }, []);
@@ -202,6 +203,7 @@ function ViewFormBuilder(props) {
                             return (
                               <>
                                 <Row>
+                                  {item["title_flag"]=false}
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
                                       return inner_item.end_date &&
@@ -224,44 +226,48 @@ function ViewFormBuilder(props) {
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem('user_id')
-                                          ) ||
-                                          (
-                                            inner_item.upper_role || []
-                                          ).includes(
-                                            localStorage.getItem(
-                                              'user_role'
-                                            ) === 'guardian'
-                                              ? 'parent'
-                                              : localStorage.getItem(
-                                                  'user_role'
-                                                )
-                                          ) ||
+                                          ) 
+                                          ||
+                                          // (
+                                          //   inner_item.upper_role || []
+                                          // ).includes(
+                                          //   localStorage.getItem(
+                                          //     'user_role'
+                                          //   ) === 'guardian'
+                                          //     ? 'parent'
+                                          //     : localStorage.getItem(
+                                          //         'user_role'
+                                          //       )
+                                          // ) ||
                                           inner_item.created_by ===
                                             parseInt(
                                               localStorage.getItem('user_id')
-                                            ) ||
-                                          localStorage.getItem('user_role') ===
-                                            'franchisor_admin') ? (
+                                            ) 
+                                          // ||
+                                          // localStorage.getItem('user_role') ===
+                                          //   'franchisor_admin'
+                                            ) ? (
                                         <>
-                                          {inner_index === 0 && (
-                                            <Row>
+                                          {(item.title_flag === false) && (
+                                            <>
+                                              {item["title_flag"]=true}
                                               <Col lg={12}>
                                                 <h2 className="page_title">
                                                   {item.category}
                                                 </h2>
                                               </Col>
-                                            </Row>
+                                              </>
                                           )}
-                                          <Col lg={4}>
-                                            <div className="forms-content create-other">
-                                              <div
-                                                className="content-icon-section"
-                                                onClick={() => {
+                                          
+                                          <Col lg={4} onClick={() => {
                                                   if (inner_item.end_date) {
                                                     let todayDate = new Date();
+                                                    let dataAndTime=inner_item.end_date+" "+inner_item.end_time;
                                                     let endDate = new Date(
-                                                      inner_item.end_date
+                                                      dataAndTime
                                                     );
+                                                    console.log("endDate--->inner_item.end_time--->",inner_item.end_time);
+                                                    console.log("endDate--->",endDate);
                                                     if (
                                                       todayDate.getTime() >
                                                       endDate.getTime()
@@ -279,7 +285,10 @@ function ViewFormBuilder(props) {
                                                     navigate(
                                                       `/form/dynamic/${inner_item.form_name}`
                                                     );
-                                                }}
+                                                }}>
+                                            <div className="forms-content create-other">
+                                              <div
+                                                className="content-icon-section"
                                               >
                                                 <img
                                                   src={
@@ -310,30 +319,6 @@ function ViewFormBuilder(props) {
                                               </div>
                                               <div
                                                 className="content-title-section"
-                                                onClick={() => {
-                                                  if (inner_item.end_date) {
-                                                    let todayDate = new Date();
-                                                    let endDate = new Date(
-                                                      inner_item.end_date
-                                                    );
-                                                    if (
-                                                      todayDate.getTime() >
-                                                      endDate.getTime()
-                                                    )
-                                                      alert(
-                                                        'Your form was expired on ' +
-                                                          inner_item.end_date +
-                                                          '.'
-                                                      );
-                                                    else
-                                                      navigate(
-                                                        `/form/dynamic/${inner_item.form_name}`
-                                                      );
-                                                  } else
-                                                    navigate(
-                                                      `/form/dynamic/${inner_item.form_name}`
-                                                    );
-                                                }}
                                               >
                                                 <h6>{inner_item.form_name}</h6>
                                                 <h4 className="due_date">
@@ -373,30 +358,32 @@ function ViewFormBuilder(props) {
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem('user_id')
-                                          ) ||
-                                          (
-                                            inner_item.upper_role || []
-                                          ).includes(
-                                            localStorage.getItem('user_role')
-                                          ) ||
+                                          ) 
+                                          ||
+                                          // (
+                                          //   inner_item.upper_role || []
+                                          // ).includes(
+                                          //   localStorage.getItem('user_role')
+                                          // ) ||
                                           inner_item.created_by ===
                                             parseInt(
                                               localStorage.getItem('user_id')
-                                            ) ||
-                                          localStorage.getItem('user_role') ===
-                                            'franchisor_admin') ? (
+                                            ) 
+                                          // ||
+                                          // localStorage.getItem('user_role') ===
+                                          //   'franchisor_admin'
+                                          ) ? (
                                         <>
-                                          {inner_index === 0 && (
-                                            <Row>
+                                          {item.title_flag === false && (
+                                            <>
                                               <Col lg={12}>
                                                 <h2 className="page_title">
                                                   {item.category}
                                                 </h2>
                                               </Col>
-                                            </Row>
+                                            </>
                                           )}
                                           <Col lg={4}>
-                                            {(hrFlag = false)}
 
                                             <div className="forms-content create-other">
                                               <div
@@ -467,6 +454,7 @@ function ViewFormBuilder(props) {
                           {formData?.map((item) => {
                             return (
                               <>
+                                {item["title_flag"]=false}
                                 <Row>
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
@@ -489,27 +477,31 @@ function ViewFormBuilder(props) {
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem('user_id')
-                                          ) ||
-                                          (
-                                            inner_item.upper_role || []
-                                          ).includes(
-                                            localStorage.getItem('user_role')
-                                          ) ||
+                                          ) 
+                                          ||
+                                          // (
+                                          //   inner_item.upper_role || []
+                                          // ).includes(
+                                          //   localStorage.getItem('user_role')
+                                          // ) ||
                                           inner_item.created_by ===
                                             parseInt(
                                               localStorage.getItem('user_id')
-                                            ) ||
-                                          localStorage.getItem('user_role') ===
-                                            'franchisor_admin') ? (
+                                            ) 
+                                            // ||
+                                          // localStorage.getItem('user_role') ===
+                                          //   'franchisor_admin'
+                                            ) ? (
                                         <>
-                                          {inner_index === 0 && (
-                                            <Row>
+                                          {item.title_flag === false && (
+                                            <>
+                                              {item["title_flag"]=true}
                                               <div className="col-lg-12">
                                                 <h2 className="page_title">
                                                   {item.category}
                                                 </h2>
                                               </div>
-                                            </Row>
+                                            </>
                                           )}
                                           <Col lg={4}>
                                             <div className="forms-content create-other">

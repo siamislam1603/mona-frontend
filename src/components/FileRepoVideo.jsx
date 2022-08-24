@@ -7,15 +7,12 @@ const FileRepoVideo = ({ data, title, duration, Src }) => {
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
     const handleShow = () => setVideo(true);
-    console.log(data, duration,)
-
     return (
         <>
             <div className="item mb-3">
                 <div className="vidcol">
-                    <div className="d-flex align-items-center" onClick={handleShow}>
+                    <div className="align-items-center" onClick={handleShow}>
                         <div className="pic2">
-                            {console.log(data, "Sdsdsd")}
                             <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                             {/* <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src='https://youtu.be/NUhFD3j5xBA' frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
                         </div>

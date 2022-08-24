@@ -335,7 +335,7 @@ const FileRpositoryList = () => {
                     <>
 
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" || cell[0] == "image" ?
+                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" || cell[0] === "image" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -372,7 +372,7 @@ const FileRpositoryList = () => {
                                             </div>
 
                                         </> :
-                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" ?
+                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" || cell[0] === "text/html" || cell[0] === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ?
                                             <>
                                                 <span className="user-pic-tow">
                                                     <a href={cell[2]} download >
@@ -865,11 +865,11 @@ const FileRpositoryList = () => {
                                                         <span className="checkmark"></span>
                                                     </label>
                                                     <label className="container">
-                                                        Parents
+                                                        Guardian
                                                         <input
                                                             type="checkbox"
                                                             name="shared_role"
-                                                            id="parent"
+                                                            id="Guardian"
                                                             onClick={(e) => {
                                                                 let data = { ...formSettingData };
                                                                 if (
@@ -891,7 +891,7 @@ const FileRpositoryList = () => {
                                                                 setFormSettingData(data);
                                                             }}
                                                             checked={formSettingData?.shared_role?.includes(
-                                                                'parent'
+                                                                'Guardian'
                                                             )}
                                                         />
                                                         <span className="checkmark"></span>
@@ -909,16 +909,16 @@ const FileRpositoryList = () => {
                                                                     if (
                                                                         !data['shared_role']
                                                                             .toString()
-                                                                            .includes('parent')
+                                                                            .includes('Guardian')
                                                                     ) {
-                                                                        data['shared_role'] += 'parent,';
+                                                                        data['shared_role'] += 'Guardian,';
                                                                     }
                                                                     if (
                                                                         !data['shared_role']
                                                                             .toString()
-                                                                            .includes('educator')
+                                                                            .includes('Guardian')
                                                                     ) {
-                                                                        data['shared_role'] += 'educator,';
+                                                                        data['shared_role'] += 'Guardian,';
                                                                     }
                                                                     if (
                                                                         !data['shared_role']

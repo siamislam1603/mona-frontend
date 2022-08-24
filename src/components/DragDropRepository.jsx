@@ -19,11 +19,18 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
         maxFiles: 1,
         multiple: false,
         accept: {
-          'image/*': ['.jpeg', '.png', '.jpg'],
-          'text/*': ['.html', '.htm', '.doc', '.pdf'],
+          'image/jpeg': ['.jpeg'],
+          'image/jpg': ['.jpg'],
+          'image/png': ['.png'],
+          'text/html': ['.html'],
+          'text/htm': ['.html'],
+          'text/cvs': ['.cvs'],
+          'text/.docx': ['.docx'],
+          'text/.xlsx': ['.xlsx'],
+          'text/doc': ['.doc'],
+          'text/pdf': ['.pdf'],
           'video/mp4': ['video/mp4'],
           'audio/mpeg': ['.audio/mpeg', '.mp3']
-          // '.doc, .pdf, .mp3, .png, .jpg'
         },
         useFsAccessApi: false,
       })
