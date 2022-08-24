@@ -350,8 +350,8 @@ button:focus {
     color: #333333;
 }
 
-.new-form-radio-box+.new-form-radio-box {
-    margin-left: 30px;
+.new-form-radio-box {
+    margin-right: 30px;
 }
 
 .new-form-radio-box .radio-round {
@@ -946,7 +946,10 @@ button:focus {
     padding: 8px 40px 8px 20px;
     margin: 4px 4px;
 }
-
+.forms-content-section .row>div.col-lg-12 {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+}
 .multiselect-box .chip:before {
     content: "";
     position: absolute;
@@ -2786,7 +2789,6 @@ li.child_tag {
     font-size: 14px;
     vertical-align: middle;
     color: #333333;
-    line-height: 0;
 }
 
 .table-checkbox span {
@@ -2937,3 +2939,30 @@ p.error {
     margin-bottom: 0px !important;
 }
         
+@media only screen and (max-width: 1199px) {
+.new-form-radio-box {
+    margin: 0 20px 20px 0 !important; 
+}
+}
+@media only screen and (max-width: 767px) {
+    .responses-header-row {
+        flex-wrap: nowrap !important;
+        padding-right: 0 !important;
+    }
+    .responses-header-right {
+        padding-top: 0 !important;
+    }
+    .btn, .extra-btn .btn-btn-outline, .extra-btn .ctaact {
+        min-width: 110px !important;
+    }
+}
+@media only screen and (max-width: 575px) {
+.responses-header-row {
+    flex-wrap: wrap !important;
+    padding-right: 15px !important;
+}
+.responses-header-right {
+    padding-top: 10px !important;
+}
+
+}
