@@ -25,6 +25,8 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
           'text/html': ['.html'],
           'text/htm': ['.html'],
           'text/cvs': ['.cvs'],
+          'text/.docx': ['.docx'],
+          'text/.xlsx': ['.xlsx'],
           'text/doc': ['.doc'],
           'text/pdf': ['.pdf'],
           'video/mp4': ['video/mp4'],

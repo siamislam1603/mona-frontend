@@ -82,6 +82,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   
   formOneChildData && console.log('CHILD DATA:', formOneChildData);
   educatorData && console.log('EDUCATOR DATA:', educatorData);
+  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   return (
     <>
       <div id="main">

@@ -10,8 +10,8 @@ import { ResetPasswordValidation } from '../helpers/validation';
 import axios from 'axios';
 import ResetPasswordLink from './ResetPasswordLink';
 
+
 function appendUserString(role) {
-  console.log('ROLE: IS:', role);
   let roleStr = '';
 
   if(role === 'franchisee_admin') {
@@ -27,7 +27,7 @@ function appendUserString(role) {
   }
   
   if(role === 'guardian') {
-    roleStr = 'guardian'
+    roleStr = 'parents'
   }
 
   return roleStr;
@@ -85,19 +85,19 @@ const setField = (field, value) => {
     
 
 }
-const logout = async () => {
-  const response = await axios.get(`${BASE_URL}/auth/logout`);
-  if (response.status === 200) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user_id');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('menu_list');
-    localStorage.removeItem('active_tab');
-    localStorage.removeItem('selectedFranchisee');
-    window.location.href = '/';
-  }
-};
+// const logout = async () => {
+//   const response = await axios.get(`${BASE_URL}/auth/logout`);
+//   if (response.status === 200) {
+//     localStorage.removeItem('token');
+//     localStorage.removeItem('user_id');
+//     localStorage.removeItem('user_name');
+//     localStorage.removeItem('user_role');
+//     localStorage.removeItem('menu_list');
+//     localStorage.removeItem('active_tab');
+//     localStorage.removeItem('selectedFranchisee');
+//     window.location.href = '/';
+//   }
+// };
 const getUser =  async() =>{
  try {
   let response = await axios.get(`${BASE_URL}/auth/${userID}`)
