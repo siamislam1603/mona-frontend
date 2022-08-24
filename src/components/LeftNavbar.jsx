@@ -12,6 +12,9 @@ const LeftNavbar = () => {
 
 
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
+    // setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
+
+
     if(localStorage.getItem('user_role') !== 'guardian') {
       menu_list = menu_list.filter(d => d.controller.controller_label !== 'Child Enrollment');
     }
@@ -36,7 +39,7 @@ const LeftNavbar = () => {
 
     console.log('MENU LIST:', menu_list);
     // console.log('REFORMED:', menu_list.filter(permission => permission.controller.show_in_menu === true));
-    setPermissionList(menu_list);
+    setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
 
     // console.log('FETCHING PERMISSION LIST');
     // let token = localStorage.getItem('token');

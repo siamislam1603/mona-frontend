@@ -17,6 +17,7 @@ import TopHeader from '../components/TopHeader';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { verifyPermission } from '../helpers/roleBasedAccess';
+import { FullLoader } from "../components/Loader";
 
 import ToolkitProvider, {
     Search,
@@ -59,6 +60,7 @@ const AllFranchisees = () => {
     const [franchiseeData, setFranchiseeData] = useState();
     const [topSuccessMessage, setTopSuccessMessage] = useState();
     const [deleteResponseMessage, setDeleteResponseMessage] = useState(null);
+    const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
     const handleCancelFilter = () => {
         setFilter({});
@@ -127,6 +129,10 @@ const AllFranchisees = () => {
         });
 
         console.log('SERVER RESPONSE:', response);
+        if(response)
+            setfullLoaderStatus(false)
+
+
         if(response.status === 200 && response.data.status === "success") {
             const { franchisees } = response.data;
             console.log('FRANCHISEE LIST:', franchisees);
@@ -186,6 +192,10 @@ const AllFranchisees = () => {
                             </aside>
                             <div className="sec-column">
                                 <TopHeader />
+
+                                <FullLoader loading={fullLoaderStatus} />
+
+
                                 <div className="entry-container">
                                     <div className="user-management-sec">
                                     {
