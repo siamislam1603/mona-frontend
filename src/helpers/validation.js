@@ -302,12 +302,12 @@ export const EditFleRepo = (form, coverImage) => {
   } = form;
 
   if (!title) {
-    errors.title = ' title is required!';
+    errors.title = ' Title is required!';
   }
 
 // >>>>>>> master
   if (title <= 2) {
-    errors.title_length = ' title should be more than 2 characters.';
+    errors.title_length = 'Title should be more than 2 characters.';
   }
 
   if (!description) {
@@ -315,15 +315,15 @@ export const EditFleRepo = (form, coverImage) => {
   }
 
   if (!categoryId) {
-    errors.categoryId = 'categoryid  is required!';
+    errors.categoryId = 'Categoryid  is required!';
   }
 
   if (!assigned_users) {
-    errors.assigned_users = 'assigned_user time is required!';
+    errors.assigned_users = 'Assigned user time is required!';
   }
 
   if (!assigned_roles) {
-    errors.assigned_roles = 'user_roles time is required!';
+    errors.assigned_roles = 'User roles time is required!';
   }
 
   if (Object.keys(coverImage).length === 0) {
@@ -396,7 +396,7 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!abn) {
-    errors.abn = 'provide australian business number';
+    errors.abn = 'Provide australian business number';
   }
 
   if (!city) {
@@ -412,7 +412,7 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!acn) {
-    errors.acn = 'provide australian company number!';
+    errors.acn = 'Provide australian company number!';
   }
 
   if (!address) {
@@ -420,11 +420,11 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!postcode) {
-    errors.postcode = 'postal code is required!';
+    errors.postcode = 'Postal code is required!';
   }
 
   if (!contact) {
-    errors.contact = 'contact number is required!';
+    errors.contact = 'Contact number is required!';
   }
 
   return errors;
@@ -491,26 +491,26 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
     comment,
   } = childDailyRoutineForm;
 
-  if (!sleep_time) errors.sleep_time = 'sleep time is required!';
+  if (!sleep_time) errors.sleep_time = 'Sleep time is required!';
 
-  if (!bottle_time) errors.bottle_time = 'bottle time is required!';
+  if (!bottle_time) errors.bottle_time = 'Bottle time is required!';
 
-  if (!toileting) errors.toileting = 'toilet time is required!';
+  if (!toileting) errors.toileting = 'Toilet time is required!';
 
-  if (!routines) errors.routines = 'routine is required!';
+  if (!routines) errors.routines = 'Routine is required!';
 
-  if (!likes_dislikes) errors.likes_dislikes = 'specify the likes or dislikes!';
+  if (!likes_dislikes) errors.likes_dislikes = 'Specify the likes or dislikes!';
 
-  if (!comforter) errors.comforter = 'comforter is required!';
+  if (!comforter) errors.comforter = 'Comforter is required!';
 
-  if (!religion) errors.religion = 'religion is reuqired!';
+  if (!religion) errors.religion = 'Religion is reuqired!';
 
   if (!dietary_requirement)
-    errors.dietary_requirement = 'specify the dietary requirements!';
+    errors.dietary_requirement = 'Specify the dietary requirements!';
 
-  if (!allergy) errors.allergy = 'mention the alergies, if any!';
+  if (!allergy) errors.allergy = 'Mention the alergies, if any!';
 
-  if (!comment) errors.comment = 'provide a comment!';
+  if (!comment) errors.comment = 'Provide a comment!';
 
   return errors;
 };
