@@ -32,13 +32,14 @@ const RepoEdit = () => {
     const [coverImage, setCoverImage] = useState({});
     const [selectedChild, setSelectedChild] = useState([])
     const [child, setChild] = useState([]);
+    const [loaderFlag, setLoaderFlag] = useState(false);
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
         assigned_users: []
 
     });
-   
+
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${Params.id}`, {
             headers: {
@@ -88,6 +89,7 @@ const RepoEdit = () => {
     // Update API For File Repo
     const handleDataSubmit = async (event) => {
         event.preventDefault();
+        setLoaderFlag(true);
         console.log('DATA:', data);
         if (!data.image || !data.description || !data.categoryId) {
             setError(true);
@@ -130,6 +132,7 @@ const RepoEdit = () => {
                 });
                 console.log('SOLO IMAGE SAVE RESPONSE:', response);
                 if (response.status === 200 && response.data.status === "success") {
+                    setLoaderFlag(false);
                     console.log('DATA UPDATED SUCCESSFULLT => type: object');
                     window.location.href = '/file-repository';
                 }
@@ -332,11 +335,11 @@ const RepoEdit = () => {
                                                             </div>
                                                             {error && !data.image && < span className="error"> File is required!</span>}
                                                             <p className="error">{errors.setting_files}</p>
-                                                            
+
                                                             {errors && errors.setField && <span className="error mt-2">{errors.coverImage}</span>}
                                                         </Form.Group>
                                                     </Row>
-                                                    
+
                                                     <div className="setting-heading">
                                                         <h2>Settings</h2>
                                                     </div>
@@ -664,7 +667,22 @@ const RepoEdit = () => {
                                                     <div className="d-flex justify-content-center my-5">
                                                         <Form.Group className="mb-3" controlId="formBasicPassword">
                                                             <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => navigate(-1)}>Cancel</Button>
-                                                            <Button type="submit" onClick={handleDataSubmit} > Save Details</Button>
+                                                            <Button type="submit" onClick={handleDataSubmit} >
+
+                                                                {loaderFlag === true ? (
+                                                                    <>
+                                                                        <img
+                                                                            style={{ width: '24px' }}
+                                                                            src={'/img/mini_loader1.gif'}
+                                                                            alt=""
+                                                                        />
+                                                                        Uploading...
+                                                                    </>
+                                                                ) : (
+                                                                    '  Save Details'
+                                                                )}
+                                                             
+                                                            </Button>
                                                         </Form.Group>
                                                     </div>
                                                 </Row>
