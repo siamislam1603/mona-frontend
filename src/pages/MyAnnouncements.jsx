@@ -185,8 +185,8 @@ const MyAnnouncements = (props) => {
                                       (data) =>
                                        data.charAt(0).toUpperCase() + data.slice(1)
                                       ).join(' ')
-                          : ''} : </span>{userName}  ||
-                          {data.is_event === 1 ?<span style ={{color:"black",fontWeight:"bold"}}> Event</span>:<span style ={{color:"black",fontWeight:"900"}}> Announcement</span> }
+                          : ''} : </span>{userName}  
+                          {/* {data.is_event === 1 ?<span style ={{color:"black",fontWeight:"bold"}}> Event</span>:<span style ={{color:"black",fontWeight:"900"}}> Announcement</span> } */}
                             
                           </small>
                           </div>              

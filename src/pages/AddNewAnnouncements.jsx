@@ -33,7 +33,6 @@ const [announcementData, setAnnouncementData] = useState({
   user_roles: [],
   is_event:0,
   franchise:[],
-  send_to_all_franchise: false,
   start_date:new Date().toISOString().slice(0, 10),
   start_time:new Date().getHours() + ":" + new Date().getMinutes()
 });
@@ -47,7 +46,7 @@ const [titleError,setTitleError] = useState(null);
 
 
   const [topErrorMessage, setTopErrorMessage] = useState(null);
-  const [franchiseeData, setFranchiseeData] = useState(null);
+  const [franchiseeData, setFranchiseeData] = useState();
 
 
 
@@ -187,8 +186,11 @@ const createAnnouncement = async (data) => {
           id: franchisee.id,
           value: franchisee.franchisee_name,
           label: franchisee.franchisee_name,
-          city: franchisee.franchisee_city
+          city: franchisee.franchisee_city,
+        key: `${franchisee.franchisee_name}`
+
         })));  
+
       }
     }
 
@@ -460,6 +462,19 @@ const createAnnouncement = async (data) => {
                           }
                             
                           </Form.Group>
+                          <Multiselect
+                              disable={allFranchise === false?false:true}
+                               displayValue="key"
+                              selectedValues={franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id)))}
+                              className="multiselect-box default-arrow-select"
+                               // Options to display in the dropdown
+                              // selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
+                              // onSelect={this.onSelect} // Function will trigger on select event
+                              // onRemove={this.onRemove} // Function will trigger on remove event
+                              // displayValue="name" // Property name to display in the dropdown options
+                              options={franchiseeData}
+                              
+                              />
                       <Col md={12} className="mb-3">
                         <Form.Group>
                         <Form.Label>Announcement Description</Form.Label>

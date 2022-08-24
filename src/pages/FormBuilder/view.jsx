@@ -206,14 +206,14 @@ function ViewFormBuilder(props) {
                                   {item["title_flag"]=false}
                                   {item?.forms?.map(
                                     (inner_item, inner_index) => {
-                                      return inner_item.end_date &&
+                                      return inner_item?.end_date &&
                                         !(
                                           inner_item?.form_filled_user || []
                                         ).includes(
                                           localStorage.getItem('user_id')
                                         ) &&
                                         ((
-                                          inner_item.form_permissions[0]
+                                          inner_item?.form_permissions[0]
                                             ?.fill_access_users || []
                                         ).includes(
                                           localStorage.getItem('user_role') ===
