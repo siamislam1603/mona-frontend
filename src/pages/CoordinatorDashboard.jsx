@@ -72,7 +72,7 @@ const columns = [
                 <span className="user-pic">
 
                   {/* <img src={cell[3]} alt='' /> */}
-            {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
+                  {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
 
                 </span>
                 <span className="user-name">
@@ -308,7 +308,7 @@ const CoordinatorDashboard = () => {
 
                         <div className="children-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
-                            <h4 className="title-sm mb-0"><strong>Children</strong></h4>
+                            <h4 className="title-sm mb-0"><strong>Children Wtih Additional Needs</strong></h4>
                             <Link to="/" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
@@ -456,7 +456,7 @@ const CoordinatorDashboard = () => {
                             </div>
                             <div className="listing">
                               <a className="item" style={{ cursor: "not-allowed" }}>
-                                <span className="name">New Enrolments</span>
+                                <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.newEnrollments}</span>
                               </a>

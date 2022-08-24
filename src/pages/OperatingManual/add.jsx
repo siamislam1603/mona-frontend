@@ -37,14 +37,17 @@ const AddOperatingManual = () => {
   const [categoryModalFlag, setCategoryModalFlag] = useState(false);
   const [categoryData, setCategoryData] = useState({});
   const [categoryError, setCategoryError] = useState({});
-  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id'));
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const token = localStorage.getItem('token');
   useEffect(() => {
     getUserRoleData();
   }, []);
   useEffect(() => {
-    getUser();
+    if(selectedFranchisee)
+    {
+      getUser();
+    }
   }, [selectedFranchisee]);
   useEffect(() => {
     getCategory();
@@ -463,6 +466,7 @@ const AddOperatingManual = () => {
                           ? localStorage.getItem('franchisee_id')
                           : id;
                       setSelectedFranchiseeId(id);
+                      setSelectedFranchisee(id);
                       localStorage.setItem('f_id', id);
                     }}
                   />{' '}

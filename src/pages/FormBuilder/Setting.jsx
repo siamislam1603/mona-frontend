@@ -1015,7 +1015,7 @@ function Setting(props) {
                                   <span className="checkmark"></span>
                                 </label>
                                 <label className="container">
-                                  Co-ordinators
+                                  Coordinator
                                   <input
                                     type="checkbox"
                                     name="signatories_role"
@@ -1034,7 +1034,7 @@ function Setting(props) {
                                   <span className="checkmark"></span>
                                 </label>
                                 <label className="container">
-                                  Educators
+                                  Educator
                                   <input
                                     type="checkbox"
                                     name="signatories_role"

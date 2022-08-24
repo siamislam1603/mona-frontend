@@ -116,7 +116,7 @@ const Children = () => {
     };
 
     const handleEnrollmentPageRedirection = async (childId, parentId) => {
-        window.location.href=`/child-enrollment/${childId}/${parentId}`    
+        window.location.href=`/child-enrollment/${childId}/${parentId}?page=1`    
     };
 
     const DeactivateChild = async (id) => {
@@ -300,17 +300,20 @@ const Children = () => {
                 return (
                     <>  {
                             cell.enrollFlag === 0 ?
-                            <div className="cta-col">
-                                <button 
-                                    className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-                                    disabled={cell.initiationFlag === true}
-                                    onClick={() => sendInitiationMail(cell.childId)}>
-                                    {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
-                                </button>
-                            </div>
+                            (   
+                                localStorage.getItem('user_role') !== 'guardian' &&
+                                <div className="cta-col">
+                                    <button 
+                                        className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                        disabled={cell.initiationFlag === true}
+                                        onClick={() => sendInitiationMail(cell.childId)}>
+                                        {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
+                                    </button>
+                                </div>
+                            )
                             :
                             <div className="cta-col">
-                                <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800", textAlign: 'center'}}
                                 onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
                                     View Enrolment
                                 </button>
@@ -421,7 +424,7 @@ const Children = () => {
                                                     localStorage.getItem('user_role') !== 'guardian' ?
                                                     <>
                                                         <p className="center">No child connected to this parent.</p>
-                                                        <p className="center">Click on <strong className="disabled-button">Add Child</strong> to add one.</p>
+                                                        <p className="center">Click on <strong>Add Child</strong> to add one.</p>
                                                     </>
                                                     : <><p className="center">No child connected to this parent.</p></>
                                                 }

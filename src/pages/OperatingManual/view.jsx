@@ -46,7 +46,7 @@ const OperatingManual = () => {
   const [user, setUser] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('');
   const [userRole, setUserRole] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem("franchisee_id"));
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const token = localStorage.getItem('token');
   useEffect(() => {
@@ -55,7 +55,11 @@ const OperatingManual = () => {
     getCategory();
   }, []);
   useEffect(() => {
-    getUser();
+    if(selectedFranchisee)
+    {
+      getUser();
+    }
+    
   }, [selectedFranchisee]);
   const getUserRoleData = () => {
     var myHeaders = new Headers();
@@ -146,7 +150,6 @@ const OperatingManual = () => {
           function (event) {
             if (elm === event.target || elm === event.target.parentNode) {
               if (el.classList.contains('collapse')) {
-                console.log('el.classlist---->', el.classList);
                 el.classList.add('expand');
                 el.classList.remove('collapse');
                 const childNode = el.parentNode.childNodes[1];
@@ -372,6 +375,7 @@ const OperatingManual = () => {
                         ? localStorage.getItem('franchisee_id')
                         : id;
                     setSelectedFranchiseeId(id);
+                    setSelectedFranchisee(id);
                     localStorage.setItem('f_id', id);
                     if (
                       operatingManualdata[Index]?.operating_manuals[innerIndex]

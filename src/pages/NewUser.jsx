@@ -184,17 +184,17 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
-      if(croppedImage) {
-        setFormErrors(prevState => ({
-          ...prevState,
-          profile_pic: null
-        }));
-      } else {
-        setFormErrors(prevState => ({
-          ...prevState,
-          profile_pic: 'Image is required!'
-        }));
-      }
+      // if(croppedImage) {
+      //   setFormErrors(prevState => ({
+      //     ...prevState,
+      //     profile_pic: null
+      //   }));
+      // } else {
+      //   setFormErrors(prevState => ({
+      //     ...prevState,
+      //     profile_pic: 'Image is required!'
+      //   }));
+      // }
     } else {
       console.log('Erorrs removed!');
       let data=new FormData();
@@ -204,10 +204,12 @@ const NewUser = () => {
         // doc.push(blob);
         data.append('images', blob);
       })
-      console.log("trainingDocuments---->123",doc);
-      const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-      // doc.push(blob);
-      data.append('images', blob);
+      
+      if(croppedImage) {
+        const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+        // doc.push(blob);
+        data.append('images', blob);
+      }
       
       Object.keys(formData)?.map((item,index) => {
         data.append(item,Object.values(formData)[index]);
@@ -475,12 +477,12 @@ const NewUser = () => {
   }
 
 
-  useEffect(() => {
-    setFormErrors(prevState => ({
-      ...prevState,
-      profile_pic: null
-    }))
-  }, [croppedImage]);
+  // useEffect(() => {
+  //   setFormErrors(prevState => ({
+  //     ...prevState,
+  //     profile_pic: null
+  //   }))
+  // }, [croppedImage]);
 
   useEffect(() => {
     fetchCountryData();
@@ -550,7 +552,7 @@ const NewUser = () => {
                             setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
-                        { formErrors.profile_pic !== null && <span className="error">{formErrors.profile_pic}</span> }
+                        
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
@@ -804,7 +806,7 @@ const NewUser = () => {
                             <Form.Label>Select Primary Co-ordinator</Form.Label>
                             <Select
                               isDisabled={formData.role !== 'educator'}
-                              placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
+                              placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Which Co-ordinator?" : "Not Applicable"}
                               closeMenuOnSelect={true}
                               options={coordinatorData}
                               onChange={(e) => {
@@ -831,6 +833,19 @@ const NewUser = () => {
                               }}
                             />
                           </Form.Group>
+
+                          <Form.Group className="mb-3">
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                type="checkbox"
+                                id="accept"
+                                // checked={parentData.i_give_medication_permission}
+                                label="Assign random password (sent to user via email)"
+                                onChange={() => {
+                                  
+                                }} />
+                            </div>
+                          </Form.Group>
                           
                           {/* <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Termination Date</Form.Label>
@@ -849,7 +864,7 @@ const NewUser = () => {
                           </Form.Group> */}
                           
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Upload Training Documents</Form.Label>
+                            <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               onSave={setTrainingDocuments} />
                           </Form.Group>
