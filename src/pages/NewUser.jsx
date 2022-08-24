@@ -205,9 +205,12 @@ const NewUser = () => {
         data.append('images', blob);
       })
       console.log("trainingDocuments---->123",doc);
-      const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-      // doc.push(blob);
-      data.append('images', blob);
+
+      if(croppedImage) {
+        const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+        // doc.push(blob);
+        data.append('images', blob);
+      }
       
       Object.keys(formData)?.map((item,index) => {
         data.append(item,Object.values(formData)[index]);
@@ -513,9 +516,9 @@ const NewUser = () => {
   }, [currentRole]);
 
   formData && console.log('FORM ERRORS:', formData);
-  // franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
+  franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
   // formErrors && console.log('FORM ERRORS:', formErrors);
-  formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
+  currentRole && console.log('CURRENT ROLE:', currentRole);
 
   return (
     <>
@@ -550,7 +553,6 @@ const NewUser = () => {
                             setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
-                        { formErrors.profile_pic !== null && <span className="error">{formErrors.profile_pic}</span> }
                       </div>
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
@@ -587,6 +589,8 @@ const NewUser = () => {
                                   ...prevState,
                                   role: e.value,
                                 }));
+
+                                setFranchiseeData(null);
 
                                 setFormErrors(prevState => ({
                                   ...prevState,
@@ -776,11 +780,6 @@ const NewUser = () => {
                                     franchisee: e.id,
                                   }));
 
-                                  setFormData((prevState) => ({
-                                    ...prevState,
-                                    franchiseeObj: e
-                                  }))
-
                                   setFormErrors(prevState => ({
                                     ...prevState,
                                     franchisee: null
@@ -804,7 +803,7 @@ const NewUser = () => {
                             <Form.Label>Select Primary Co-ordinator</Form.Label>
                             <Select
                               isDisabled={formData.role !== 'educator'}
-                              placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
+                              placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Which Co-ordinator?" : "Not Applicable"}
                               closeMenuOnSelect={true}
                               options={coordinatorData}
                               onChange={(e) => {
@@ -858,7 +857,7 @@ const NewUser = () => {
                             <div className="cta text-center mt-5">
                               <Button variant="transparent">
                                 <Link to="/user-management">
-                                  Back to All Users
+                                  Cancel
                                 </Link>
                               </Button>
                               <Button variant="primary" type="submit">
