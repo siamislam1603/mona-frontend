@@ -312,7 +312,7 @@ const RepoEdit = () => {
                                                                 {typeof data.image === "string" ?
                                                                     (<>
                                                                         {data.file_type === "image/jpeg" || data.file_type === "image/png" || data.file_type === "image/jpe" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
-                                                                            data.file_type === "application/pdf" || data.file_type === "text/html" || data.file_type === "text/pdf" || data.file_type === "text/csv" ? (<>
+                                                                            data.file_type === "application/pdf" || data.file_type === "text/html" || data.file_type === "text/pdf" || data.file_type === "text/csv" || data.file_type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || data.file_type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? (<>
                                                                                 <span className="user-pic-tow">
                                                                                     <a href={data.image} download >
                                                                                         <img src="../img/abstract-ico.png" className="me-2" alt="" />
@@ -669,20 +669,20 @@ const RepoEdit = () => {
                                                     <div className="d-flex justify-content-center my-5">
                                                         <Form.Group className="mb-3" controlId="formBasicPassword">
                                                             <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => navigate(-1)}>Cancel</Button>
-                                                            <Button type="submit" onClick={handleDataSubmit} > 
-                                                            {loaderFlag === true ? (
-                                                                <>
-                                                                    <img
-                                                                    style={{ width: '24px' }}
-                                                                    src={'/img/mini_loader1.gif'}
-                                                                    alt=""
-                                                                    />
-                                                                    Updating...
-                                                                </>
+                                                            <Button type="submit" onClick={handleDataSubmit} >
+                                                                {loaderFlag === true ? (
+                                                                    <>
+                                                                        <img
+                                                                            style={{ width: '24px' }}
+                                                                            src={'/img/mini_loader1.gif'}
+                                                                            alt=""
+                                                                        />
+                                                                        Updating...
+                                                                    </>
                                                                 ) : (
-                                                                'Save Details'
+                                                                    'Save Details'
                                                                 )}
-                                                            
+
 
                                                             </Button>
                                                         </Form.Group>

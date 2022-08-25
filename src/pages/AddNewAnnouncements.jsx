@@ -207,7 +207,7 @@ const createAnnouncement = async (data) => {
           value: franchisee.franchisee_name,
           label: franchisee.franchisee_name,
           city: franchisee.franchisee_city,
-        key: `${franchisee.franchisee_name}`
+          key: `${franchisee.franchisee_name}`
 
         })));  
 
