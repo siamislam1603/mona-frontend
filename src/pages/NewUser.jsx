@@ -717,11 +717,18 @@ const NewUser = () => {
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={(e) => {
-                                  handleChange(e);
-                                  setFormErrors(prevState => ({
-                                    ...prevState,
-                                    phone: null
-                                  }));
+                                  // handleChange(e);
+                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                    setFormErrors(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value.slice(0, -1)
+                                    })); 
+                                  } else {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value
+                                    }));
+                                  }
                                 }}
                               />
                             </div>
