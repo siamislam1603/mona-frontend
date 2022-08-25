@@ -66,7 +66,7 @@ const columns = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/form/response">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -413,7 +413,7 @@ const FranchiseeDashboard = () => {
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h3 className="title-sm mb-0"><strong>Children With Additional Needs</strong></h3>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/form/response" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {ToolkitProvider ? (<>
@@ -454,21 +454,21 @@ const FranchiseeDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a href="/user-management/Educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a href="/user-management/Guardian" className="item">
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a href="/form/response" className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.auditForms}</span>
@@ -479,7 +479,7 @@ const FranchiseeDashboard = () => {
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>New Enrollments</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/user-management/Guardian" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {enrollments ? (<>
