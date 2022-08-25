@@ -338,12 +338,12 @@ const FranchiseeDashboard = () => {
                                 <div className="name">BI Tool</div>
                               </a>
                             </div>
-                            <div className="item">
+                            {/* <div className="item">
                               <a href="/" className="flex">
                                 <div className="pic"><img src="../img/intranet-ico.png" alt="" /></div>
                                 <div className="name">Intranet</div>
                               </a>
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                         {/*<div className="files-sec pb-5">

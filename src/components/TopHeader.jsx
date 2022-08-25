@@ -330,7 +330,7 @@ const handelSearch = async (e) =>{
       <div className="totalmsg">
         You have {topHeaderNotificationCount ? topHeaderNotificationCount : 0} unread notifications
       </div>
-      <div className="totalreadmsg" onClick={() => handleMarkRearAll()}>Mark to Read All</div>
+      <div className="totalreadmsg" onClick={() => handleMarkRearAll()}>Mark All to Read</div>
     </Popover>
   );
 
@@ -672,7 +672,7 @@ const handelSearch = async (e) =>{
                     </span>
                   </Dropdown.Toggle>
                   <Dropdown.Menu style={{ zIndex: '2000' }}>
-                    {permissionList
+                    {/* {permissionList
                       ? permissionList.map((top_menu) => {
                         return (
                           <Dropdown.Item
@@ -683,7 +683,7 @@ const handelSearch = async (e) =>{
                           </Dropdown.Item>
                         );
                       })
-                      : null}
+                      : null} */}
 
                     {/* <Dropdown.Item href="#">All Franchisee</Dropdown.Item>
                       <Dropdown.Item href="#">All Users</Dropdown.Item>
@@ -693,7 +693,7 @@ const handelSearch = async (e) =>{
 
                     <Dropdown.Item href="/change-password">Change Password</Dropdown.Item>
                     <Dropdown.Item href={`/edit-user/${localStorage.getItem('user_id')}`}>My Profile</Dropdown.Item>
-                    <Dropdown.Item href="#">Settings</Dropdown.Item>
+                    {/* <Dropdown.Item href="#">Settings</Dropdown.Item> */}
                     <Dropdown.Item href="#" onClick={handleLogout}>
                       Logout
                     </Dropdown.Item>

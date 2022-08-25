@@ -59,6 +59,29 @@ import RepoEdit from '../pages/RepoEdit';
 import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
 import SearchResult from '../pages/SearchResult';
+
+
+
+function returnDashboard (role) {
+
+  if(role === 'franchisor_admin')
+    return <FranchisorDashboard />
+
+  if(role === 'franchise_admin')
+    return <FranchiseeDashboard />
+
+  if(role === 'coordinator')
+    return <CoordinatorDashboard />
+
+  if(role === 'educator')
+    return <EducatorDashboard />
+
+  if(role === 'guardian')
+    return <ParentsDashboard />
+
+}
+
+
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token')?true:false);
 
@@ -106,6 +129,7 @@ const Main = () => {
   }, []);
 
   return (
+    
     <main>
 
       <Routes>
@@ -113,12 +137,8 @@ const Main = () => {
           exact
           activeClassName="active"
           path="/"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              {localStorage.getItem('user_role')=='franchisor_admin'?<FranchisorDashboard />:localStorage.getItem('user_role')=='franchisee_admin'?<FranchiseeDashboard />:localStorage.getItem('user_role')=='coodinator'?<CoordinatorDashboard />:localStorage.getItem('user_role')=='educator'?<EducatorDashboard />:<ParentsDashboard />}
-
-            </Protected>
+          element={ 
+            localStorage.getItem('user_id') || typeof localStorage.getItem('user_id')==='undefined'? returnDashboard(localStorage.getItem('user_role')):<SignIn />
           }
         />
 

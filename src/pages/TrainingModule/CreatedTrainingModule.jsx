@@ -3,6 +3,7 @@ import { Col, Row, Dropdown, Modal, Form, Button } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from "axios";
 import Multiselect from 'multiselect-react-dropdown';
+import { FullLoader } from "../../components/Loader";
 
 const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [myTrainingData, setMyTrainingData] = useState();
@@ -16,6 +17,8 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [userList, setUserList] = useState();
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
     assigned_franchisee: [],
@@ -97,6 +100,10 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
           "Authorization": "Bearer " + token
         }
       });
+      if(response)
+        setfullLoaderStatus(false)
+
+
 
       if (response.status === 200 && response.data.status === "success") {
         const { searchedData } = response.data;
@@ -192,6 +199,8 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   return (
     <>
       <div id="main">
+      <FullLoader loading={fullLoaderStatus} />
+
         <div className="training-column">
           <Row style={{ marginBottom: '40px' }}>
             {myTrainingData?.length > 0 && <h1>Created by me</h1>}

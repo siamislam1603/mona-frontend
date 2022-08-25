@@ -702,6 +702,8 @@ const NewUser = () => {
                               <Form.Control
                                 type="tel"
                                 name="phone"
+                                // minLength={10}
+                                maxLength={10}
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={(e) => {
