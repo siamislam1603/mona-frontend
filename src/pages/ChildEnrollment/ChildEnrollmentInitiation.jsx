@@ -113,7 +113,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                   setSelectedFranchisee={setSelectedFranchisee}/>
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-lg">Child Enrollment Initiation Form</h1>
+                    <h1 className="title-lg">Child Enrolment Initiation Form</h1>
                   </header>
                   <div className="enrollment-form-sec my-5">
                     <Form onSubmit={submitFormData}>
