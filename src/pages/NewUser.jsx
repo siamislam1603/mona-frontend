@@ -43,7 +43,8 @@ const NewUser = () => {
     businessAssets: "",
     terminationDate: "",
     telcode: '+61',
-    franchisee: ""
+    franchisee: "",
+    open_coordinator: false
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
@@ -787,6 +788,7 @@ const NewUser = () => {
                                   setFormData((prevState) => ({
                                     ...prevState,
                                     franchisee: e.id,
+                                    open_coordinator: true
                                   }));
 
                                   setFormData((prevState) => ({
@@ -813,22 +815,24 @@ const NewUser = () => {
                             { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Primary Co-ordinator</Form.Label>
-                            <Select
-                              isDisabled={formData.role !== 'educator'}
-                              placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Which Co-ordinator?" : "Not Applicable"}
-                              closeMenuOnSelect={true}
-                              options={coordinatorData}
-                              onChange={(e) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  coordinator: e.id,
-                                }));
-                              }}
-                            />
-                          </Form.Group>
-
+                          {
+                            formData?.role === 'educator' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Select Primary Co-ordinator</Form.Label>
+                              <Select
+                                isDisabled={formData.role !== 'educator'}
+                                placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Which Co-ordinator?" : "Not Applicable"}
+                                closeMenuOnSelect={true}
+                                options={coordinatorData}
+                                onChange={(e) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    coordinator: e.id,
+                                  }));
+                                }}
+                              />
+                            </Form.Group>
+                          }
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Business Assets</Form.Label>
                             <Select
