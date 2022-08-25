@@ -23,6 +23,10 @@ const timeqty =  [
     label: 'Minutes',
   },
   {
+    value: 'minutes',
+    label: 'Minutes'
+  },
+  {
     value: 'hours',
     label: 'Hours',
   },
