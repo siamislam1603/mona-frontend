@@ -417,8 +417,8 @@ const createAnnouncement = async (data) => {
                         </Form.Group>
                         {
                           localStorage.getItem("user_role") === "franchisor_admin" ? (
-                            <Col lg={3} sm={6}>
-                            <Form.Group className="col-md-12">
+                            
+                            <Form.Group className="col-md-6 mb-3">
                               <div className="btn-radio inline-col">
                                 <Form.Label>Send to all franchisee:</Form.Label>
                                 <div>
@@ -461,18 +461,13 @@ const createAnnouncement = async (data) => {
                               
                               </div>
                             </Form.Group>
-                          </Col>
+                        
                           )
                           :(
                             null
                           )
                         }
-                       
-                          </Row>
-                          <Row>
-
-                          
-                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
         
                             {
@@ -520,6 +515,11 @@ const createAnnouncement = async (data) => {
                           }
                             
                           </Form.Group>
+                          </Row>
+                          <Row>
+
+                          
+                      
                         
                       <Col md={12} className="mb-3">
                         <Form.Group>

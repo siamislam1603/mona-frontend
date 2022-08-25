@@ -1,4 +1,9 @@
-export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
+export const DynamicFormValidation = (
+  form,
+  data,
+  behalf_of,
+  behalf_of_flag
+) => {
   let newErrors = {};
   Object.keys(data)?.map((item) => {
     // console.log('inner_item_item--->', item);
@@ -7,7 +12,7 @@ export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
 
       if (inner_item.required) {
         console.log('inner_item', inner_item);
-        console.log("form-=-->21321313", form);
+        console.log('form-=-->21321313', form);
         if (!form[item][`${inner_item.field_name}`]) {
           newErrors[
             `${inner_item.field_name}`
@@ -16,8 +21,7 @@ export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
       }
     });
   });
-  if(behalf_of_flag===true)
-  {
+  if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
       newErrors.behalf_of = 'Behalf of is required';
   }
@@ -25,11 +29,11 @@ export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
 };
 export const createCategoryValidation = (form) => {
   let newErrors = {};
-  let { category_name,order } = form;
+  let { category_name, order } = form;
   if (!category_name || category_name === '')
     newErrors.category_name = 'Category Name is Required';
-    if (!order || order === '')
-    newErrors.order = 'Position is Required';
+  if (order <= 0) newErrors.order = 'Order must be greater than 0';
+  if (!order || order === '') newErrors.order = 'Position is Required';
   return newErrors;
 };
 export const createFormSettingModelValidation = (form, franchisee, user) => {
@@ -141,9 +145,9 @@ export const createOperatingManualValidation = (form) => {
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-  if (order < 0) newErrors.order = 'Value must be greater than 0';
+  if (order < 0) newErrors.order = 'Order must be greater than 0';
   if (order === 0 || order === '0')
-    newErrors.order = 'Value must be greater than 0';
+    newErrors.order = 'Order must be greater than 0';
   if (!order || order === '') newErrors.order = 'Position is Required';
 
   return newErrors;
@@ -224,8 +228,6 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
-
-
 export const TrainingFormValidation = (form, coverImage) => {
   let errors = {};
   let {
@@ -287,20 +289,14 @@ export const TrainingFormValidation = (form, coverImage) => {
 
 export const EditFleRepo = (form, coverImage) => {
   let errors = {};
-  let {
-    id,
-    title,
-    description,
-    categoryId,
-    assigned_users,
-    assigned_roles,
-  } = form;
+  let { id, title, description, categoryId, assigned_users, assigned_roles } =
+    form;
 
   if (!title) {
     errors.title = ' title is required!';
   }
 
-// >>>>>>> master
+  // >>>>>>> master
   if (title <= 2) {
     errors.title_length = ' title should be more than 2 characters.';
   }
@@ -510,25 +506,20 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
   return errors;
 };
 
-export const enrollmentInitiationFormValidation = (formOneChildData, educatorData) => {
-  let {
-    fullname,
-    dob,
-    home_address
-  } = formOneChildData;
+export const enrollmentInitiationFormValidation = (
+  formOneChildData,
+  educatorData
+) => {
+  let { fullname, dob, home_address } = formOneChildData;
   let errors = {};
 
-  if(!fullname)
-    errors.fullname = "Fullname is required!";
+  if (!fullname) errors.fullname = 'Fullname is required!';
 
-  if(!dob)
-    errors.dob = "Date of birth is required!";
+  if (!dob) errors.dob = 'Date of birth is required!';
 
-  if(!home_address) 
-    errors.home_address = "Home address is required!";
+  if (!home_address) errors.home_address = 'Home address is required!';
 
-  if(!educatorData) 
-    errors.educatorData = "One Educator needs to be selected!";
+  if (!educatorData) errors.educatorData = 'One Educator needs to be selected!';
 
   return errors;
 };
