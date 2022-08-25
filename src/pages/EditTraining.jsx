@@ -17,7 +17,11 @@ import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
-const timeqty = [
+const timeqty =  [
+  {
+    value: 'minutes',
+    label: 'Minutes',
+  },
   {
     value: 'hours',
     label: 'Hours',
@@ -661,6 +665,7 @@ const EditTraining = () => {
                         ...prevState,
                         start_date: e.target.value
                       }))}
+                      max={trainingSettings?.end_date}
                     />
                   </Form.Group>
                 </Col>
@@ -687,8 +692,9 @@ const EditTraining = () => {
                       value={trainingSettings?.end_date}
                       onChange={(e) => setTrainingSettings(prevState => ({
                         ...prevState,
-                        start_date: e.target.value
+                        end_date: e.target.value
                       }))}
+                      min={trainingSettings?.start_date}
                     />
                   </Form.Group>
                 </Col>
