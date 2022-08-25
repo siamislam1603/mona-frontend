@@ -34,7 +34,10 @@ const AddNewAnnouncements = () => {
     let currentHours = date.getHours();
     currentHours = ("0" + currentHours).slice(-2);
     console.log("Current hour",currentHours)
-    let  min = new Date().getMinutes()
+    let  min = date.getMinutes()
+    min = ("0" + min).slice(-2);
+
+
     let time = currentHours + ":" + min
     console.log("time and current hour",time,currentHours)
     return time;

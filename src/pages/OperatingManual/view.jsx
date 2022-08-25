@@ -59,7 +59,7 @@ const OperatingManual = () => {
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
-    getCategory();
+    // getCategory();
   }, []);
   useEffect(() => {
     if (selectedFranchisee) {
@@ -112,7 +112,7 @@ const OperatingManual = () => {
             setCategory(res?.result);
             setCategoryModalFlag(false);
             getOperatingManual();
-            getCategory();
+            // getCategory();
             // let data = operatingManualData;
             // data['category_name'] = categoryData?.category_name;
             // setOperatingManualData(data);
@@ -276,23 +276,23 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
 
-  const getCategory = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append('authorization', 'Bearer ' + token);
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
+  // const getCategory = async () => {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append('authorization', 'Bearer ' + token);
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //     headers: myHeaders,
+  //   };
 
-    fetch(`${BASE_URL}/operating_manual/category`, requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        result = JSON.parse(result);
-        setCategory(result.result);
-      })
-      .catch((error) => console.log('error', error));
-  };
+  //   fetch(`${BASE_URL}/operating_manual/category`, requestOptions)
+  //     .then((response) => response.text())
+  //     .then((result) => {
+  //       result = JSON.parse(result);
+  //       setCategory(result.result);
+  //     })
+  //     .catch((error) => console.log('error', error));
+  // };
   const deleteOperatingManualCategory = (id) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -309,7 +309,7 @@ const OperatingManual = () => {
       .then((response) => response.json())
       .then((result) => {
         getOperatingManual();
-        getCategory();
+        // getCategory();
       })
       .catch((error) => console.log('error', error));
   };
@@ -340,6 +340,7 @@ const OperatingManual = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
+    let category_flag=false;
     let api_url = '';
     if (key === 'category') {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
@@ -361,6 +362,7 @@ const OperatingManual = () => {
         'user_id'
       )}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
       setCategoryFilter('reset');
+      category_flag=true;
     }
 
     fetch(api_url, requestOptions)
@@ -368,6 +370,10 @@ const OperatingManual = () => {
       .then((result) => {
         result = JSON.parse(result);
         setOperatingManualdata(result.result);
+        if(category_flag)
+        {
+          setCategory(result.result);
+        }
         if (location.search) {
           result?.result?.map((item, index) => {
             item?.operating_manuals?.map((inner_item, inner_index) => {

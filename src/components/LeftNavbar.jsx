@@ -95,6 +95,12 @@ const LeftNavbar = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Nav className="mr-auto w-100">
+          <React.Fragment key="dashboard">
+            <LinkContainer to={`/${userDashboardLink}`}>
+             <Nav.Link href="#"><span><i className="ico overview-ico">&nbsp;</i> Overview</span></Nav.Link>
+            </LinkContainer>
+          </React.Fragment>
+
             {permissionList && permissionList.map(permission => {
               return (
                 <React.Fragment key={permission.controller_id}>
