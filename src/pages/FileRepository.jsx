@@ -960,7 +960,7 @@ const FileRepository = () => {
                               setFormSettingData(data);
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'Guardian'
+                              'guardian'
                             )}
                           />
                           <span className="checkmark"></span>
@@ -978,9 +978,9 @@ const FileRepository = () => {
                                 if (
                                   !data['shared_role']
                                     .toString()
-                                    .includes('Guardian')
+                                    .includes('guardian')
                                 ) {
-                                  data['shared_role'] += 'Guardian,';
+                                  data['shared_role'] += 'guardian,';
                                 }
                                 if (
                                   !data['shared_role']
@@ -1010,7 +1010,7 @@ const FileRepository = () => {
                               }
                             }}
                             checked={formSettingData?.shared_role?.includes(
-                              'Guardian,educator,coordinator'
+                              'guardian,educator,coordinator'
                             )}
                           />
                           <span className="checkmark"></span>

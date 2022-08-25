@@ -35,7 +35,11 @@ const [searchData,setSearchData] = useState()
     try {
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
+
+      
       let franhiseAlias = "all"
+     
+
       const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&isEvent=0&search=&offset=0&limit=5`, {
         headers: {
           "Authorization": "Bearer " + token

@@ -65,7 +65,6 @@ const [titleError,setTitleError] = useState(null);
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [error, setError] = useState({user_roles: []});
   const [allFranchise,setAllFranchise] = useState(false)
-
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
 
@@ -208,7 +207,7 @@ const createAnnouncement = async (data) => {
           value: franchisee.franchisee_name,
           label: franchisee.franchisee_name,
           city: franchisee.franchisee_city,
-        key: `${franchisee.franchisee_name}`
+          key: `${franchisee.franchisee_name}`
 
         })));  
 
