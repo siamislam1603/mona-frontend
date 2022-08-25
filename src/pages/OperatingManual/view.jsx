@@ -537,7 +537,7 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      <div className="edit-module">
+                                      {verifyPermission('operating_manual', 'add') && ( <div className="edit-module">
                                         <Dropdown.Item
                                           onClick={() => {
                                             setCategoryModalFlag(true);
@@ -560,7 +560,7 @@ const OperatingManual = () => {
                                         >
                                           <FontAwesomeIcon icon={faTrash} />
                                         </Dropdown.Item>
-                                      </div>
+                                      </div>)}
                                     </div>
                                   ) : (
                                     <div className="module-drop-down">
@@ -574,7 +574,7 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      <div className="edit-module">
+                                      {verifyPermission('operating_manual', 'add') && (<div className="edit-module">
                                         <Dropdown.Item
                                           onClick={() => {
                                             setCategoryModalFlag(true);
@@ -596,7 +596,7 @@ const OperatingManual = () => {
                                         >
                                           <FontAwesomeIcon icon={faTrash} />
                                         </Dropdown.Item>
-                                      </div>
+                                      </div>)}
                                     </div>
                                   );
                                 })}
