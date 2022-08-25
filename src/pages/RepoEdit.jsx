@@ -104,6 +104,7 @@ const RepoEdit = () => {
     }
     const saveDataToServer = async () => {
         console.log('SAVING DATA TO SERVER');
+        setLoaderFlag(true);
         const token = localStorage.getItem('token');
         let response = await axios.put(`${BASE_URL}/fileRepo`, data, {
             headers: {
@@ -137,8 +138,11 @@ const RepoEdit = () => {
                     window.location.href = '/file-repository';
                 }
             }
+            setLoaderFlag(false);
             console.log('DATA UPDATED SUCCESSFULLT');
             window.location.href = '/file-repository';
+        } else {
+            setLoaderFlag(false);
         }
     }
 
@@ -302,9 +306,7 @@ const RepoEdit = () => {
                                             <div className="modal-top">
                                                 <div className="modal-top-containt">
                                                     <Row>
-
                                                         <Form.Group>
-
                                                             <DragDropFileEdit onChange={setField} />
                                                             <div className="showfiles mt-3 text-center" >
                                                                 {typeof data.image === "string" ?
@@ -667,21 +669,21 @@ const RepoEdit = () => {
                                                     <div className="d-flex justify-content-center my-5">
                                                         <Form.Group className="mb-3" controlId="formBasicPassword">
                                                             <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => navigate(-1)}>Cancel</Button>
-                                                            <Button type="submit" onClick={handleDataSubmit} >
-
-                                                                {loaderFlag === true ? (
-                                                                    <>
-                                                                        <img
-                                                                            style={{ width: '24px' }}
-                                                                            src={'/img/mini_loader1.gif'}
-                                                                            alt=""
-                                                                        />
-                                                                        Uploading...
-                                                                    </>
+                                                            <Button type="submit" onClick={handleDataSubmit} > 
+                                                            {loaderFlag === true ? (
+                                                                <>
+                                                                    <img
+                                                                    style={{ width: '24px' }}
+                                                                    src={'/img/mini_loader1.gif'}
+                                                                    alt=""
+                                                                    />
+                                                                    Updating...
+                                                                </>
                                                                 ) : (
-                                                                    '  Save Details'
+                                                                'Save Details'
                                                                 )}
-                                                             
+                                                            
+
                                                             </Button>
                                                         </Form.Group>
                                                     </div>

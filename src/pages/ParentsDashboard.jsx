@@ -5,18 +5,22 @@ import TopHeader from "../components/TopHeader";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { BASE_URL } from "../components/App";
+import { logoutUser } from '../helpers/logout';
 import moment from 'moment';
 
 
 const ParentsDashboard = () => {
 
   const [userDetails, setUserDetails] = useState(null);
-  const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(false);
+  const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(true);
   const [event, setEvent] = useState([{}]);
   const [announcements, setannouncements] = useState([]);
   const [editTrainingData, setEditTrainingData] = useState([]);
   const [viewEnrollmentDialog, setViewEnrollmentDialog] = useState(false);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [nonEnrolledChildIds, setNonEnrolledChildIds] = useState(null);
+  const [enrollmentFormLinks, setEnrollmentFormLinks] = useState(null);
+  const [logUserOutDialog, setLogUserOutDialog] = useState(false);
 
   const checkPendingConsent = async () => {
     let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
@@ -30,7 +34,7 @@ const ParentsDashboard = () => {
       console.log('PDATA:', parentConsentData);
       console.log('PARENT CONSENT DATA:', parentConsentData[0]);
 
-      if (parentConsentData.length > 0) {
+      if (parentConsentData && parentConsentData.length > 0) {
         localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
         localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
         localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
@@ -165,50 +169,80 @@ const ParentsDashboard = () => {
   // }
   console.log(editTrainingData, "<<<<<<<<<<response")
 
+  const handleParentLogout = () => {
+    setLogUserOutDialog(false);
+    logoutUser();
+  }
+
+  const fetchUserChildrenDetails = async () => {
+    let childIds;
+    let parentId = localStorage.getItem('user_id');
+    let response = await axios.get(`${BASE_URL}/enrollment/children/${parentId}`, {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      }
+    });
+
+    if(response.status === 200 && response.data.status === 'success') {
+      let { parentData } = response.data;
+
+      if(parentData !== null && parentData.children.length > 0) {
+        console.log('PARENT DATA ISN\'T NULL');
+        let { children } = parentData;
+        console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
+        // FILTERING THE CHILDREN WHOSE ENROLLMENT FORM HASN'T BEEN FILLED
+        childIds = children.filter(d => d.isChildEnrolled === 0);
+        console.log('CHILDREN TO BE ENROLLED:', childIds);
+        // FETCHING AN ARRAY OF THEIR IDs.
+        childIds = childIds.map(d => d.id);
+        console.log('ARRAY OF CHILD IDs:', childIds);
+
+        setNonEnrolledChildIds(childIds);
+      } else {
+        // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
+        console.log('NO CHILD IS ASSIGNED TO YOU!!!!!!!!!!');
+        setLogUserOutDialog(true)
+      }
+    }
+  }
+
+  const moveToChildEnrollmentForm = (link) => {
+    window.location.href = link;
+  }
+
+  const createEnrollmentFormLinks = () => {
+    let linkArray = [];
+    let parentId = localStorage.getItem('user_id');
+    nonEnrolledChildIds?.forEach(childId => {
+        let link = `/child-enrollment/${childId}/${parentId}`;
+        linkArray.push(link);
+    });
+
+    setEnrollmentFormLinks(linkArray);
+    console.log('SETUP LINKS! ===============');
+  }
+
+  useEffect(() => {
+    fetchUserChildrenDetails();
+  }, []);
+  
+  // useEffect(() => {
+
+  // }, [enrollmentFormLinks]);
+
+  useEffect(() => {
+    createEnrollmentFormLinks();
+  }, [nonEnrolledChildIds]);
+
+  useEffect(() => {
+    checkPendingConsent();
+  }); 
 
   useEffect(() => {
     events();
     Userannouncements();
     assignededucators();
   }, [selectedFranchisee])
-
-  const fetchUserDetails = async (userId) => {
-    let token = localStorage.getItem('token');
-    let response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
-
-    if (response.status === 200 && response.data.status === "success") {
-      let { user } = response.data;
-      setUserDetails(user);
-    }
-  };
-
-  const moveToChildEnrollmentForm = () => {
-    let parentId = localStorage.getItem('user_id')
-    window.location.href = `/child-enrollment/73/${parentId}`;
-  }
-
-  useEffect(() => {
-    let user_role = localStorage.getItem('user_role');
-    let user_id = localStorage.getItem('user_id');
-
-    if (user_role === 'guardian')
-      fetchUserDetails(user_id);
-  }, []);
-
-
-  useEffect(() => {
-    if (userDetails?.isChildEnrolled === 0) {
-      setChildEnrollMessageDialog(true);
-    }
-  }, [userDetails?.isChildEnrolled]);
-
-  useEffect(() => {
-    checkPendingConsent();
-  });
 
   return (
     <>
@@ -544,34 +578,55 @@ const ParentsDashboard = () => {
         </section>
       </div>
       {
-        childEnrollMessageDialog &&
-        <Modal
+        enrollmentFormLinks &&
+        enrollmentFormLinks.map(link => {
+          return (
+            <Modal
+            show={childEnrollMessageDialog}>
+            <Modal.Header>
+              <Modal.Title>Welcome {userDetails?.fullname.split(" ")[0]}</Modal.Title>
+            </Modal.Header>
 
-          show={childEnrollMessageDialog}>
-          <Modal.Header>
-            <Modal.Title>Welcome {userDetails?.fullname.split(" ")[0]}</Modal.Title>
-          </Modal.Header>
+            <Modal.Body>
+              <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
+              <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrollment Form</strong> to enrol your</p>
+              <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
+              <p style={{ marginTop: "-5px" }}><strong>Child Enrollment Form.</strong></p>
+            </Modal.Body>
 
-          <Modal.Body>
-            <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
-            <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrollment Form</strong> to enrol your</p>
-            <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
-            <p style={{ marginTop: "-5px" }}><strong>Child Enrollment Form.</strong></p>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <button style={{
-              padding: ".7rem 1.4rem",
-              fontWeight: '500',
-              fontSize: '.8rem',
-              color: "#fff",
-              backgroundColor: '#3E5D58',
-              border: "none",
-              borderRadius: "5px"
-            }} onClick={() => moveToChildEnrollmentForm()}>Child Enrollment Form</button>
-          </Modal.Footer>
-        </Modal>
+            <Modal.Footer>
+              <button style={{
+                padding: ".7rem 1.4rem",
+                fontWeight: '500',
+                fontSize: '.8rem',
+                color: "#fff",
+                backgroundColor: '#3E5D58',
+                border: "none",
+                borderRadius: "5px"
+              }} onClick={() => moveToChildEnrollmentForm(link)}>Child Enrollment Form</button>
+            </Modal.Footer>
+          </Modal>
+          );
+        })
       }
+
+      <Modal
+        show={logUserOutDialog}>
+        <Modal.Header>
+          <Modal.Title>Message</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>No child is <strong>enrolled</strong> under you right now. Reach out to your <strong>coordinator</strong> for the same.</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <button
+            className="modal-button"
+            onClick={() => handleParentLogout()}>Log Out</button>
+        </Modal.Footer>
+      </Modal>
+
 
       <Modal
         show={viewEnrollmentDialog}>
