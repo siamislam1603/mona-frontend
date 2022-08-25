@@ -22,6 +22,7 @@ const AvailableTraining = ({ filter }) => {
 
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
+  const [successMessageToast, setSuccessMessageToast] = useState(null);
 
   const fetchAvailableTrainings = async () => {
     console.log('INSIDE AVAILABLE TRAINING MODULE')
@@ -146,8 +147,10 @@ const AvailableTraining = ({ filter }) => {
     });
 
     if (response.status === 201 && response.data.status === "success") {
-      // const { dataObj } = response.data;
-      
+      if (response.status === 201 && response.data.status === "success") {
+        let { msg: successMessage } = response.data;
+        setSuccessMessageToast('Training re-shared successfully.');
+      }
     }
   }
 
@@ -157,6 +160,12 @@ const AvailableTraining = ({ filter }) => {
   //   let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
   //   setFilteredData(newData);
   // };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSuccessMessageToast(null);
+    }, 4000)
+  }, [successMessageToast]);
 
   useEffect(() => {
     fetchAvailableTrainings();
@@ -178,6 +187,7 @@ const AvailableTraining = ({ filter }) => {
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
       <div id="main">
         <div className="training-column">
+        {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
           <Row>
             {availableTrainingData
               ? availableTrainingData.map((item) => {
@@ -299,20 +309,20 @@ const AvailableTraining = ({ filter }) => {
                         placeholder={"Select User Names"}
                         // singleSelect={true}
                         displayValue="key"
-                        selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.assigned_franchisee) === parseInt(d.id))}
+                        selectedValues={franchiseeList?.filter(d => formSettings?.assigned_franchisee?.includes(d.id + ''))}
                         className="multiselect-box default-arrow-select"
                         onKeyPressFn={function noRefCheck() { }}
                         onRemove={function noRefCheck(data) {
                           setFormSettings((prevState) => ({
                             ...prevState,
-                            assigned_franchisee: [...data.map(data => data.id)],
+                            assigned_franchisee: [...data.map(data => data.id + '')],
                           }));
                         }}
                         onSearch={function noRefCheck() { }}
                         onSelect={function noRefCheck(data) {
                           setFormSettings((prevState) => ({
                             ...prevState,
-                            assigned_franchisee: [...data.map((data) => data.id)],
+                            assigned_franchisee: [...data.map((data) => data.id + '')],
                           }));
                         }}
                         options={franchiseeList}

@@ -524,8 +524,9 @@ const OperatingManual = () => {
                                 )}
                                 {category?.map((item, index) => {
                                   return categoryFilter ===
-                                    item.category_name ? (
-                                    <div className="module-drop-down">
+                                    item.category_name ? 
+                                    (
+                                      <div className="module-drop-down">
                                       <Dropdown.Item
                                         onClick={() => {
                                           getOperatingManual(
