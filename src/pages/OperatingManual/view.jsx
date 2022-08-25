@@ -323,7 +323,7 @@ const OperatingManual = () => {
     };
 
     fetch(
-      `${BASE_URL}/operating_manual/${operatingManualdata[Index]?.operating_manuals[innerIndex]?.id}`,
+      `${BASE_URL}/operating_manual/${operatingManualdata[Index]?.operating_manuals[innerIndex]?.id}?shared_by=${localStorage.getItem("user_id")}&link=${FRONT_BASE_URL}/operatingmanual`,
       requestOptions
     )
       .then((response) => response.json())
@@ -511,7 +511,7 @@ const OperatingManual = () => {
                                     }}
                                     active
                                   >
-                                    Reset
+                                    Clear Filter
                                   </Dropdown.Item>
                                 ) : (
                                   <Dropdown.Item
@@ -519,7 +519,7 @@ const OperatingManual = () => {
                                       getOperatingManual('', '');
                                     }}
                                   >
-                                    Reset
+                                    Clear Filter
                                   </Dropdown.Item>
                                 )}
                                 {category?.map((item, index) => {
@@ -1058,7 +1058,7 @@ const OperatingManual = () => {
             Cancel
           </Button>
           <Button className="done" onClick={onModelSubmit}>
-            Save Settings
+            Save Permissions
           </Button>
         </Modal.Footer>
       </Modal>
