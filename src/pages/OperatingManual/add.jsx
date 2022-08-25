@@ -669,7 +669,7 @@ const AddOperatingManual = () => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Video Tutorial Here :
+                            Upload Video :
                           </Form.Label>
 
                           <div className="upload_cover_box video_reference">
@@ -731,7 +731,7 @@ const AddOperatingManual = () => {
                         <div className="upload_related_files">
                           <Form.Group>
                             <Form.Label className="formlabel">
-                              Upload Related Files :
+                              Upload File :
                             </Form.Label>
 
                             <DropAllRelatedFile
