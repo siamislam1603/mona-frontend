@@ -25,7 +25,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   const [errors, setErrors] = useState({});
 
   const fetchEducatorList = async () => {
-    const response = await axios.get(`${BASE_URL}/user-group/users/${selectedFranchisee}`);
+    const response = await axios.get(`${BASE_URL}/user-group/users/${typeof selectedFranchisee === 'undefined' ? 'all' : selectedFranchisee}`);
     console.log('RESPONSE EDUCATOR DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;

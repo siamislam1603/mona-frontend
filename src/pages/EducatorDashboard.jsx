@@ -67,7 +67,7 @@ const columns = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/user-management/Guardian">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -197,25 +197,25 @@ const EducatorDashboard = () => {
                           </header>
                           <div className="column-list access-list three-col">
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://app.storypark.com/users/sign_in?_ga=2.96275036.1184893872.1661406994-2035467191.1661406993" className="flex">
                                 <div className="pic"><img src="../img/story-ico.png" alt="" /></div>
                                 <div className="name">Story park</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://sp8.harmonykids.com.au/UserAccount/Login" className="flex">
                                 <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                                 <div className="name">Harmony</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://app.engagebay.com/login" className="flex">
                                 <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
                                 <div className="name">Engagebay</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://login.xero.com/identity/user/login" className="flex">
                                 <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
                                 <div className="name">Xero</div>
                               </a>
@@ -237,7 +237,7 @@ const EducatorDashboard = () => {
                         <div className="children-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Children</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/user-management/Guardian" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {/* <BootstrapTable
