@@ -765,7 +765,7 @@ const NewUser = () => {
                           }
                             
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Franchisee</Form.Label>
+                            <Form.Label>Select Franchise</Form.Label>
                             {
                               localStorage.getItem('user_role') === 'franchisor_admin' && 
                               <Select

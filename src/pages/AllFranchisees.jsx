@@ -349,7 +349,7 @@ const AllFranchisees = () => {
 
                                                         {
                                                             localStorage.getItem('user_role') === 'franchisor_admin' &&
-                                                            <a href="/new-franchisees" className="btn btn-primary me-3">+ Add New Franchisee</a>
+                                                            <a href="/new-franchisees" className="btn btn-primary me-3">+ Add New Franchise</a>
                                                         }
 
                                                         {/* <Dropdown>

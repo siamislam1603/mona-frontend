@@ -115,7 +115,6 @@ const columns = [
 
 const CoordinatorDashboard = () => {
   const [count, setcount] = React.useState();
-
   const [user, setUser] = useState([]);
   const [userData, setUserData] = useState([]);
 

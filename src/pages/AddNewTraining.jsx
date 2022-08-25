@@ -205,11 +205,7 @@ const AddNewTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    console.log('franchisee_id:', franchisee_id);
-    // if (franchisee_id.length > 0 && franchisee_id[0] !== 'all') {
-    console.log('FETCHING FRANCHISEE USERS!');
     const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${franchisee_id}]`);
-    console.log('USER DATA FROM FRANCHISEE:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -351,7 +347,6 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(trainingSettings?.assigned_franchisee);
   }, [trainingSettings.assigned_franchisee]);
 
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -536,7 +531,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Select Training Form*</Form.Label>
+                          <Form.Label>Select Training Form</Form.Label>
                           <Select
                             closeMenuOnSelect={true}
                             components={animatedComponents}
