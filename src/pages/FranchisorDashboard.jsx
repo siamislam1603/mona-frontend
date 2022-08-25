@@ -64,7 +64,7 @@ const columns1 = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/form/response">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -243,7 +243,7 @@ const FranchisorDashboard = () => {
                           <header className="title-head mb-4 justify-content-between">
                             <h2 className="title-sm mb-0"><strong>Record of Audits</strong></h2>
 
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/form/response" className="viewall">View All</Link>
                           </header>
                           <div className="audit-form">
                             <p>Total Number of Audit Forms <br />in Last 30 Days</p>
@@ -398,7 +398,7 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a className="item" href="/user-management/Guardian">
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>
