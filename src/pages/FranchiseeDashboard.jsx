@@ -125,7 +125,7 @@ const columns1 = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/form/response">Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)

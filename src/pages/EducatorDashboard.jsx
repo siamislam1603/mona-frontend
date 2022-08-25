@@ -67,7 +67,7 @@ const columns = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/user-management/Guardian">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -237,7 +237,7 @@ const EducatorDashboard = () => {
                         <div className="children-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Children</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/user-management/Guardian" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {/* <BootstrapTable

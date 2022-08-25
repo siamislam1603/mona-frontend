@@ -105,7 +105,7 @@ const columns = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/form/response">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -282,21 +282,21 @@ const CoordinatorDashboard = () => {
                             </div></>)}
 
                             <div className="item">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a href="/user-management/Guardian" className="item">
                                 <span className="name">New Parents Enrolled</span>
                                 <span className="separator">|</span>
                                 <span className="num">{onboarding.newParents}</span>
                               </a>
                             </div>
                             <div className="item">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a className="item" href="/form/response">
                                 <span className="name">New Forms Submitted</span>
                                 <span className="separator">|</span>
                                 <span className="num">{onboarding.newForms}</span>
                               </a>
                             </div>
                             <div className="item">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a className="item" href="/file-repository">
                                 <span className="name"> New Files</span>
                                 <span className="separator">|</span>
                                 <span className="num">{onboarding.newFiles}</span>
@@ -308,7 +308,7 @@ const CoordinatorDashboard = () => {
                         <div className="children-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Children Wtih Additional Needs</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/user-management/Guardian" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {userData.length > 0 ? (<>
@@ -433,14 +433,14 @@ const CoordinatorDashboard = () => {
                           </header>
                           <div className="activity-list relative">
                             <div className="listing">
-                              <a href="/user-management?role=educator" className="item">
+                              <a href="/user-management/Educator" className="item">
                                 <span className="name">Educators logged in</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.educatorsLoggedIn}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" href="/form">
+                              <a className="item" href="/form/response">
                                 <span className="name">Overdue Forms</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueForms}</span>
@@ -454,7 +454,7 @@ const CoordinatorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a className="item" href="/user-management/Guardian" >
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.newEnrollments}</span>
