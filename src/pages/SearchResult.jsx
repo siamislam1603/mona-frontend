@@ -8,7 +8,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import CardImg from '../assets/img/card.png'
-// import Loader from "../assets/img/loader.svg"
 
 
 
@@ -20,46 +19,59 @@ const SearchResult = (props) => {
   const [operatingMannual,setOperatingMannual] = useState([])
   const [training,setTraining] = useState([])
   const [user,setUser] = useState([])
+  const [formData,setFormData] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error,setError] = useState("")
 
 
 
   const queryParams = new URLSearchParams(window.location.search)
+  console.log("query params",window.location)
+
   let term = queryParams.get("query")
   console.log("TEM VALE",term)
   // const location = queryParams.get("query")
 
   const GlobalSearch = async() =>{
     let token = localStorage.getItem('token');
-    const response  = await axios.get(`${BASE_URL}/globalSearch/?search=${term}`, {
+    // let  url = `${BASE_URL}/globalSearch/?search=${term}`
+    const response  = await axios.get(`${BASE_URL}/globalSearch/`, {
       headers: {
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${token}`,
+        "search":`${term}`
       }
     });
+    // console.log("THE BASEURL",BASE_URL)
     console.log("Search value",response) 
     // let res = response.data.data[0].fileRepository[0];
+
     if(response.status === 200 && response.data.status === "success"){
-      setAnnouncement(response.data.data[0].announcement) 
-      setFileRepository(response.data.data[0].fileRepository)
-      setFranchise(response.data.data[0].franchise)
-      setOperatingMannual(response.data.data[0].operatingMannual)
-      setTraining(response.data.data[0].training)
-      setUser(response.data.data[0].user)
-      setIsLoading(false)
-      if(announcement?.length<1 && fileRepository?.length<1 && franchise?.length<1 && operatingMannual?.length<1 && training?.length<1 &&user?.length<1 ){
+
+      if(response.data.data[0].announcement.length==0 && response.data.data[0].fileRepository.length==0 && response.data.data[0].franchise.length==0 && response.data.data[0].operatingMannual.length==0 && response.data.data[0].training.length==0 && response.data.data[0].user.length==0 ){
         console.log("NO DATA FOUND")
         setError("No data found")
         setIsLoading(false)
-
       }
+      else{
+        setAnnouncement(response.data.data[0].announcement) 
+        setFileRepository(response.data.data[0].fileRepository)
+        setFranchise(response.data.data[0].franchise)
+        setOperatingMannual(response.data.data[0].operatingMannual)
+        setTraining(response.data.data[0].training)
+        setUser(response.data.data[0].user)
+        setFormData(response.data.data[0].form)
+        setIsLoading(false)
+      }
+      
     }
+   
+    
   }
   useEffect(() =>{
     GlobalSearch()
 
   },[term])
-  console.log("Announcement",announcement)
+  console.log("Form data",formData)
 
   return (
     <div className="announcement-accordion">
@@ -118,7 +130,7 @@ const SearchResult = (props) => {
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
                                   <strong>
-                                  {moment(data.createdAt).fromNow()}
+                                  {moment(data?.createdAt).fromNow()}
   
                                   </strong>
   
@@ -165,7 +177,9 @@ const SearchResult = (props) => {
                           {training?.map((data) => (
                             <div className="search-item">
                             <div className="search-user-pic">
-                              <a href={`/training-detail/${data.id}`}>
+                           
+ 
+                              <a href={`${BASE_URL}/training-detail/${data.id}`}>
                                 
                               <figure className="figure"><img alt="" src={data?.coverImage ? data?.coverImage : "/img/related-pic3.png"} className="figure-img img-fluid" /></figure>
                               </a>
@@ -173,19 +187,19 @@ const SearchResult = (props) => {
                             
                             <div className="search-user-detail">
   
-                              <h2 className="title-md text-capitalize"><a href={`/training-detail/${data.id}`}>{data?.title}</a></h2>
+                              <h2 className="title-md text-capitalize"><a href={`${BASE_URL}/training-detail/${data.id}`}>{data?.title}</a></h2>
                               <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
                                   <strong>
-                                  {moment(data.createdAt).fromNow()}
+                                  {moment(data?.createdAt).fromNow()}
   
                                   </strong>
   
                                 </time>
                               </span>
                             </div>
-                              <div className="user-link mt-4"><a href={`/training-detail/${data.id}`}>View Details</a></div>
+                              <div className="user-link mt-4"><a href={`${BASE_URL}/training-detail/${data.id}`}>View Details</a></div>
                             </div>
                             
                           </div>
@@ -238,14 +252,14 @@ const SearchResult = (props) => {
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
                                   <strong>
-                                  {moment(data.createdAt).fromNow()}
+                                  {moment(data?.createdAt).fromNow()}
   
                                   </strong>
   
                                 </time>
                               </span>
                             </div>
-                              <div className="user-link mt-4"><a href={`/file-repository-List/${data.repository_files[0].categoryId}`}>View Details</a></div>
+                              <div className="user-link mt-4"><a href={`/file-repository-List/${data?.repository_files[0]?.categoryId}`}>View Details</a></div>
                             </div>
                           </div>
               
@@ -292,7 +306,7 @@ const SearchResult = (props) => {
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
                                   <strong>
-                                  {moment(data.createdAt).fromNow()}
+                                  {moment(data?.createdAt).fromNow()}
   
                                   </strong>
   
@@ -335,24 +349,24 @@ const SearchResult = (props) => {
                              {operatingMannual?.map((data) => (
                                <div className="search-item">
                                <div className="search-user-pic">
-                                 <a href="/operatingmanual">
+                                 <a href={`/operatingmanual/?selected=${data.id}`}>
                                    <figure className="figure"><img alt="" src={data?.cover_image ? data?.cover_image: "/img/related-pic3.png"} className="figure-img img-fluid" /></figure>
                                  </a>
                                </div>
                                <div className="search-user-detail">
-                                 <h2 className="title-md text-capitalize"><a href="/operatingmanual">{data?.title}</a></h2>
+                                 <h2 className="title-md text-capitalize"><a href={`/operatingmanual/?selected=${data.id}`}>{data?.title}</a></h2>
                                  <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
                                   <strong>
-                                  {moment(data.createdAt).fromNow()}
+                                  {moment(data?.createdAt).fromNow()}
   
                                   </strong>
   
                                 </time>
                               </span>
                             </div>
-                                 <div className="user-link mt-4"><a href="/operatingmanual">View Details</a></div>
+                                 <div className="user-link mt-4"><a href={`/operatingmanual/?selected=${data.id}`}>View Details</a></div>
                                </div>
                              </div>
                  
@@ -419,7 +433,7 @@ const SearchResult = (props) => {
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
                                   <strong>
-                                  {moment(data.createdAt).fromNow()}
+                                  {moment(data?.createdAt).fromNow()}
   
                                   </strong>
   
@@ -438,6 +452,57 @@ const SearchResult = (props) => {
                        </div> 
                      </Accordion>
                    </div>
+                    }
+                     {formData?.length>0 &&
+                    <div>
+                        <Accordion defaultActiveKey={['0']} alwaysOpen>
+                          
+                                  <div >
+                                <Accordion.Item eventKey="0" >
+                                  <Accordion.Header>
+                                    <div className="head-title">
+                                      {/* <div className="ico"><img src="../img/announcements-ico.png "  alt=""/></div> */}
+                                      <div className="title-xxs">Form</div>
+                                    
+                                    </div>
+                                  </Accordion.Header>
+                                  <Accordion.Body>
+                                    <Row className="mb-4">
+                                      
+                                    {formData?.map((data) => (
+                          <div className="search-item">
+                          <div className="search-user-pic">
+                            <a href="/form">
+                              <figure className="figure"><img alt="" src={data?.coverImage ? data?.coverImage : "../img/blue_survey.png "} className="figure-img img-fluid" /></figure>
+                            </a>
+                          </div>
+                          <div className="search-user-detail">
+                            <h2 className="title-md text-capitalize"><a href="/form">{data?.form?.form_name}</a></h2>
+                            <div className="totalview mb-2">
+                              <span className="style-scope meta-block">
+                                <strong>Created At:</strong> <time>
+                                  <strong>
+                                  {moment(data?.createdAt).fromNow()}
+  
+                                  </strong>
+  
+                                </time>
+                              </span>
+                            </div>
+                            <div className="user-link mt-4"><a href="/form">View Details</a></div>
+                          </div>
+                        </div>
+                        
+                        ))}
+                                  
+                                    </Row>
+                                  </Accordion.Body>
+                                </Accordion.Item>
+                                  </div> 
+                                
+                              
+                          </Accordion>
+                        </div>
                     }
                <div className="text-center mb-5 mt-5"> <strong>{error}</strong> </div>
 

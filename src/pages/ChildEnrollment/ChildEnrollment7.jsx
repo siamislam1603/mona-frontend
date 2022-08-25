@@ -38,6 +38,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [signatureImage, setSignatureImage] = useState(null);
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [fetchedSignatureImage, setFetchedSignatureImage] = useState(null);
+  const [loader, setLoader] = useState(false);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
@@ -63,6 +64,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
+    console.log('SIGNATURE IMAGHE RESPONSE:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { child } = response.data;
       let educators = child.users.map(e => e.id);
@@ -87,6 +89,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   // UPDATING FORM SEVEN DATA;
   const updateFormSevenData = async () => {
+    setLoader(true);
     let token = localStorage.getItem('token');
     let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
@@ -121,9 +124,9 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
         }
         
         if(localStorage.getItem('user_role') === 'coordinator' && localStorage.getItem('change_count') > 0) {
+          setLoader(false);
           setUserConsentFormDialog(true);
         }
-
         setFormSubmissionSuccessDialog(true);
       }
     }
@@ -247,7 +250,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       data.append('image', blob);
     }
 
-    let response = await axios.put(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
@@ -374,8 +377,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the consent form!</p>
                   }
                   {
-                    signatureString &&
-                    <img src={consentData?.signature} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    (signatureString || localStorage.getItem('user_image') !== 'guardian') &&
+                    <img src={fetchedSignatureImage} alt="parent signature" style={{ width: "80px", height: "80px" }} />
                   }
                 </Form.Group>
               </Col>
@@ -397,12 +400,24 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
             </Row>
           </div>
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
+            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Go Back</Button>
             <Button 
               disabled={consentData?.consent_date === null}
               variant="primary" 
               type="submit" 
-              onClick={handleDataSubmit}>Next</Button>
+              onClick={handleDataSubmit}>
+              {loader === true ? (
+                <>
+                  <img
+                  style={{ width: '24px' }}
+                  src={'/img/mini_loader1.gif'}
+                  alt=""
+                  />
+                    Submitting...
+                </>
+              ) : (
+              'Submit')}
+            </Button>
           </div>
         </Form>
       </div>
