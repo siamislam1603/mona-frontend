@@ -570,19 +570,19 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="Guardian"
-                                                                            checked={data?.user_roles.includes('Guardian')}
+                                                                            checked={data?.user_roles.includes('guardian')}
                                                                             onChange={() => {
-                                                                                if (data.user_roles?.includes("Guardian")) {
-                                                                                    let Data = data.user_roles.filter(t => t !== "Guardian");
+                                                                                if (data.user_roles?.includes("guardian")) {
+                                                                                    let Data = data.user_roles.filter(t => t !== "guardian");
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
                                                                                         user_roles: [...Data]
                                                                                     }));
                                                                                 }
-                                                                                if (!data.user_roles?.includes("Guardian"))
+                                                                                if (!data.user_roles?.includes("guardian"))
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        user_roles: [...data.user_roles, "Guardian"]
+                                                                                        user_roles: [...data.user_roles, "guardian"]
                                                                                     }))
                                                                             }}
                                                                         />
@@ -594,11 +594,11 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="all_roles"
-                                                                            checked={data?.user_roles?.includes('Guardian' && 'educator' && 'coordinator')}
+                                                                            checked={data?.user_roles?.includes('guardian' && 'educator' && 'coordinator')}
                                                                             onChange={() => {
                                                                                 if (data.user_roles?.includes("coordinator")
                                                                                     && data.user_roles.includes("educator")
-                                                                                    && data.user_roles.includes("Guardian")) {
+                                                                                    && data.user_roles.includes("guardian")) {
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
                                                                                         user_roles: [],
@@ -606,11 +606,11 @@ const RepoEdit = () => {
                                                                                 }
                                                                                 if (!data.user_roles?.includes("coordinator")
                                                                                     && !data.user_roles.includes("educator")
-                                                                                    && !data.user_roles.includes("Guardian")
+                                                                                    && !data.user_roles.includes("guardian")
                                                                                 )
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        user_roles: ["coordinator", "educator", "Guardian"]
+                                                                                        user_roles: ["coordinator", "educator", "guardian"]
                                                                                     })
                                                                                     )
                                                                             }} />
