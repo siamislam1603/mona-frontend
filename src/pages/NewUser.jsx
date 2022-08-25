@@ -112,6 +112,15 @@ const NewUser = () => {
     }
   };
 
+  // const validateEmail = (email) => {
+  //   let errors = {};  
+  //   if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
+  //       errors.email= "Enter a valid email"
+  //   }
+  //   return errors;
+
+  // }
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -702,6 +711,8 @@ const NewUser = () => {
                               <Form.Control
                                 type="tel"
                                 name="phone"
+                                // minLength={10}
+                                maxLength={10}
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={(e) => {
