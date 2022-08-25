@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState, } from 'react';
 import {
   Button,
   Container,
@@ -41,9 +41,10 @@ let DeleteId = [];
 
 const UserManagement = () => {
   const Key = useParams()
-  console.log('Key+++++++++', Key)
+  console.log('Key+++++++++', Key.key)
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
+  const [userEducator, setEducator] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
@@ -103,8 +104,6 @@ const UserManagement = () => {
         if (window.confirm('Are you sure you want to deactivate this user?')) {
           deactivateUserFromDB();
         }
-
-        // fetchUserDetails();
       }
 
       if (e.target.text === "Activate") {
@@ -287,9 +286,11 @@ const UserManagement = () => {
     fetchUserDetails();
   }, 200);
 
+
   const fetchUserDetails = async () => {
     let api_url = '';
     let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
+
     if (search) {
       api_url = `${BASE_URL}/role/user/${id}?search=${search}`;
     }
@@ -299,6 +300,7 @@ const UserManagement = () => {
     if (search && filter) {
       api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
     }
+
     if (!search && !filter) {
       api_url = `${BASE_URL}/role/user/${id}`;
     }
@@ -365,14 +367,77 @@ const UserManagement = () => {
     }
   };
 
-  const handleApplyFilter = async () => {
-    // const res = await axios.post(`${BASE_URL}/`)
-    fetchUserDetails();
-  };
 
-  // useEffect(() =>{
-  //   fetchAllUsers()
-  // },[])
+
+  const handleApplyFilter = async () => {
+    fetchUserDetails();
+  }
+
+
+  const Show_eduactor = async () => {
+    let api_url = '';
+    // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
+    let filter = Key.key
+    // console.log(alert(filter))
+    if (filter) {
+      api_url = `${BASE_URL}/role/user/All?filter=${filter}`;
+    }
+
+    let response = await axios.get(api_url, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')} `,
+      },
+    });
+
+
+    if (response.status === 200) {
+      const { users } = response.data;
+      console.log('USERS:', users);
+      let tempData = users.map((dt) => ({
+        name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
+          .split('_')
+          .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+          .join(' ')
+          }, ${dt.is_active} `,
+        email: dt.email,
+        number: (dt.phone !== null ? dt.phone.slice(1) : null),
+        location: dt.city,
+        is_deleted: dt.is_deleted,
+        userID: dt.id,
+        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
+        action: dt.is_active
+      }));
+
+      if (localStorage.getItem('user_role') === 'guardian') {
+        tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
+      }
+
+      if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+        tempData = tempData.filter(d => d.action === 1);
+      }
+      setEducator(tempData);
+      setIsLoading(false)
+
+      let temp = tempData;
+      let csv_data = [];
+      temp.map((item, index) => {
+        delete item.is_deleted;
+        csv_data.push(item);
+        let data = { ...csv_data[index] };
+        data["name"] = data.name.split(",")[1];
+        csv_data[index] = data;
+      });
+      setCsvData(csv_data);
+    }
+  }
+
+
+
+  useEffect(() => {
+    Show_eduactor()
+  }, [])
+
+
   useEffect(() => {
     if (selectedFranchisee) {
       fetchUserDetails();
@@ -401,11 +466,13 @@ const UserManagement = () => {
   }, []);
 
   const csvLink = useRef();
+
+
   userData && console.log('USER DATA:', userData.map(data => data));
+  userEducator && console.log('userEducator DATA:', userEducator.map(data => data))
   selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
   return (
     <>
-
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -421,118 +488,115 @@ const UserManagement = () => {
 
                 <div className="entry-container">
                   <div className="user-management-sec">
-                    <ToolkitProvider
-                      keyField="name"
-                      data={userData}
-                      columns={columns}
-                    >
-                      {(props) => (
-                        <>
-                          {
-                            topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
-                          }
-                          <header className="title-head">
-                            <h1 className="title-lg">All User</h1>
-                            <div className="othpanel">
-                              <div className="extra-btn">
-                                <div className="data-search me-3">
-                                  <Form.Group
-                                    className="d-flex"
-                                    style={{ position: 'relative' }}
-                                  >
-                                    <div className="user-search">
-                                      <img
-                                        src="./img/search-icon-light.svg"
-                                        alt=""
-                                      />
-                                    </div>
-                                    <Form.Control
-                                      className="searchBox"
-                                      type="text"
-                                      placeholder="Search"
-                                      name="search"
-                                      onChange={(e) => {
-                                        setSearch(e.target.value);
-                                        onFilter();
-                                      }}
+
+                    <>
+                      {
+                        topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                      }
+                      <header className="title-head">
+                        <h1 className="title-lg">All User</h1>
+                        <div className="othpanel">
+                          <div className="extra-btn">
+                            <div className="data-search me-3">
+                              <Form.Group
+                                className="d-flex"
+                                style={{ position: 'relative' }}
+                              >
+                                <div className="user-search">
+                                  <img
+                                    src="./img/search-icon-light.svg"
+                                    alt=""
+                                  />
+                                </div>
+                                <Form.Control
+                                  className="searchBox"
+                                  type="text"
+                                  placeholder="Search"
+                                  name="search"
+                                  onChange={(e) => {
+                                    setSearch(e.target.value);
+                                    onFilter();
+                                  }}
+                                />
+                              </Form.Group>
+                            </div>
+                            <Dropdown className="filtercol me-3">
+                              <Dropdown.Toggle
+                                id="extrabtn"
+                                variant="btn-outline"
+                              >
+                                <i className="filter-ico"></i> Add Filters
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                <header>Filter by:</header>
+                                <div className="custom-radio btn-radio mb-2">
+                                  <label>Users:</label>
+                                  <Form.Group>
+                                    <Form.Check
+                                      inline
+                                      label="Franchisor Admin"
+                                      value="Franchisor_Admin"
+                                      name="users"
+                                      type="radio"
+                                      id="one"
+                                      checked={filter === "Franchisor_Admin"}
+                                      onChange={(event) =>
+                                        setFilter(event.target.value)
+                                      }
+                                    />
+                                    <Form.Check
+                                      inline
+                                      label="Franchisee Admin"
+                                      value="Franchisee_Admin"
+                                      name="users"
+                                      type="radio"
+                                      id="five"
+                                      checked={filter === "Franchisee_Admin"}
+                                      onChange={(event) =>
+                                        setFilter(event.target.value)
+                                      }
+                                    />
+                                    <Form.Check
+                                      inline
+                                      label="Co-ordinator"
+                                      value="Coordinator"
+                                      name="users"
+                                      type="radio"
+                                      id="two"
+                                      checked={filter === "Coordinator"}
+                                      onChange={(event) =>
+                                        setFilter(event.target.value)
+                                      }
+                                    />
+                                    <Form.Check
+                                      inline
+                                      label="Educator"
+                                      value="Educator"
+                                      name="users"
+                                      type="radio"
+                                      id="three"
+                                      s
+                                      checked={filter === "Educator"}
+                                      onChange={(event) =>
+                                        setFilter(event.target.value)
+                                      }
+                                    />
+
+                                    <Form.Check
+                                      inline
+                                      label="Parent/Guardian"
+                                      value="Guardian"
+                                      name="users"
+                                      type="radio"
+                                      id="four"
+                                      checked={filter === "Guardian"}
+                                      onChange={(event) =>
+                                        setFilter(event.target.value)
+                                      }
                                     />
                                   </Form.Group>
                                 </div>
-                                <Dropdown className="filtercol me-3">
-                                  <Dropdown.Toggle
-                                    id="extrabtn"
-                                    variant="btn-outline"
-                                  >
-                                    <i className="filter-ico"></i> Add Filters
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <header>Filter by:</header>
-                                    <div className="custom-radio btn-radio mb-2">
-                                      <label>Users:</label>
-                                      <Form.Group>
-                                        <Form.Check
-                                          inline
-                                          label="Franchisor Admin"
-                                          value="Franchisor_Admin"
-                                          name="users"
-                                          type="radio"
-                                          id="one"
-                                          checked={filter === "Franchisor_Admin"}
-                                          onChange={(event) =>
-                                            setFilter(event.target.value)
-                                          }
-                                        />
-                                        <Form.Check
-                                          inline
-                                          label="Franchisee Admin"
-                                          value="Franchisee_Admin"
-                                          name="users"
-                                          type="radio"
-                                          id="five"
-                                          checked={filter === "Franchisee_Admin"}
-                                          onChange={(event) =>
-                                            setFilter(event.target.value)
-                                          }
-                                        />
-                                        <Form.Check
-                                          inline
-                                          label="Co-ordinator"
-                                          value="Coordinator"
-                                          name="users"
-                                          type="radio"
-                                          id="two"
-                                          checked={filter === "Coordinator"}
-                                          onChange={(event) =>
-                                            setFilter(event.target.value)
-                                          }
-                                        />
-                                        <Form.Check
-                                          inline
-                                          label="Educator"
-                                          value="Educator"
-                                          name="users"
-                                          type="radio"
-                                          id="three"
-                                          checked={filter === "Educator"}
-                                          onChange={(event) =>
-                                            setFilter(event.target.value)
-                                          }
-                                        />
-                                        <Form.Check
-                                          inline
-                                          label="Parent/Guardian"
-                                          value="Guardian"
-                                          name="users"
-                                          type="radio"
-                                          id="four"
-                                          checked={filter === "Guardian"}
-                                          onChange={(event) =>
-                                            setFilter(event.target.value)
-                                          }
-                                        />
-                                      </Form.Group>
-                                    </div>
-                                    {/* <div className="custom-radio">
+                                {/* <div className="custom-radio">
                                       <label className="mb-2">Location:</label>
                                       <Form.Group>
                                         <Select
@@ -553,72 +617,102 @@ const UserManagement = () => {
                                         />
                                       </Form.Group>
                                     </div> */}
-                                    <footer>
-                                      <Button
-                                        variant="transparent"
-                                        type="submit"
-                                        onClick={() => { setFilter(''); }}
-                                      >
-                                        Reset
-                                      </Button>
-                                      <Button
-                                        variant="primary"
-                                        type="submit"
-                                        onClick={() => { handleApplyFilter(filter) }}
-                                      >
-                                        Apply
-                                      </Button>
-                                    </footer>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                                {
-                                  verifyPermission("user_management", "add") &&
-                                  <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
-                                }
-                                <Dropdown>
-                                  <Dropdown.Toggle
-                                    id="extrabtn"
-                                    className="ctaact"
+                                <footer>
+                                  <Button
+                                    variant="transparent"
+                                    type="submit"
+                                    onClick={() => { setFilter(''); }}
                                   >
-                                    <img src="../img/dot-ico.svg" alt="" />
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item
-                                      onClick={() => {
-                                        setCsvDownloadFlag(true);
-                                      }}
+                                    Reset
+                                  </Button>
+                                  <Button
+                                    variant="primary"
+                                    type="submit"
+                                    onClick={() => { handleApplyFilter(filter) }}
+                                  >
+                                    Apply
+                                  </Button>
+                                </footer>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                            {
+                              verifyPermission("user_management", "add") &&
+                              <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
+                            }
+                            <Dropdown>
+                              <Dropdown.Toggle
+                                id="extrabtn"
+                                className="ctaact"
+                              >
+                                <img src="../img/dot-ico.svg" alt="" />
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                <Dropdown.Item
+                                  onClick={() => {
+                                    setCsvDownloadFlag(true);
+                                  }}
+                                >
+                                  Export CSV!!
+                                  {csvDownloadFlag && (
+                                    <CSVDownload
+                                      data={csvData}
+                                      filename="user_management.csv"
+                                      ref={csvLink}
                                     >
-                                      Export CSV!!
-                                      {csvDownloadFlag && (
-                                        <CSVDownload
-                                          data={csvData}
-                                          filename="user_management.csv"
-                                          ref={csvLink}
-                                        >
-                                          {setCsvDownloadFlag(false)}
-                                        </CSVDownload>
-                                      )}
-                                    </Dropdown.Item>
-                                    <Dropdown.Item onClick={() => { onDeleteAll() }}>
-                                      Delete All Row
-                                    </Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          </header>
+                                      {setCsvDownloadFlag(false)}
+                                    </CSVDownload>
+                                  )}
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={() => { onDeleteAll() }}>
+                                  Delete All Row
+                                </Dropdown.Item>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </div>
+                        </div>
+                      </header>
+                      {/* userEducator */}
+                      {!Key.key ? (
+                        <>
+                          <ToolkitProvider
+                            keyField="name"
+                            data={userData}
+                            columns={columns}
+                          >
+                            {(props) => (
+                              <>
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                  rowEvents={rowEvents}
+                                  selectRow={selectRow}
+                                  pagination={paginationFactory()}
+                                />
+                              </>
+                            )}
+                          </ToolkitProvider>
 
-                          <BootstrapTable
-                            {...props.baseProps}
-                            rowEvents={rowEvents}
-                            selectRow={selectRow}
-                            pagination={paginationFactory()}
-                          />
+                        </>) :
+                        (<>
+                          <ToolkitProvider
+                            keyField="name"
+                            data={userEducator}
+                            columns={columns}
+                          >
+                            {(props) => (
+                              <>
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                  rowEvents={rowEvents}
+                                  selectRow={selectRow}
+                                  pagination={paginationFactory()}
+                                />
+                              </>
+                            )}
+                          </ToolkitProvider>
+                        </>)}
 
+                    </>
 
-                        </>
-                      )}
-                    </ToolkitProvider>
                   </div>
                 </div>
               </div>

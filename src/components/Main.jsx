@@ -289,7 +289,6 @@ const Main = () => {
             </Protected>
           }
         />
-
         <Route
           path="/franchisee-dashboard"
           element={
