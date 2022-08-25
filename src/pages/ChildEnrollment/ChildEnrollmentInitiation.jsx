@@ -194,7 +194,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   as="textarea"
                                   rows={3}
-                                  placeholder="Some text here for the label"
+                                  placeholder="Home Address"
                                   name="home_address"
                                   value={formOneChildData?.home_address || ""}
                                   onChange={(e) => {

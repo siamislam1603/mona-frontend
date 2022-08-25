@@ -1,4 +1,9 @@
-export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
+export const DynamicFormValidation = (
+  form,
+  data,
+  behalf_of,
+  behalf_of_flag
+) => {
   let newErrors = {};
   Object.keys(data)?.map((item) => {
     // console.log('inner_item_item--->', item);
@@ -7,7 +12,7 @@ export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
 
       if (inner_item.required) {
         console.log('inner_item', inner_item);
-        console.log("form-=-->21321313", form);
+        console.log('form-=-->21321313', form);
         if (!form[item][`${inner_item.field_name}`]) {
           newErrors[
             `${inner_item.field_name}`
@@ -16,8 +21,7 @@ export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
       }
     });
   });
-  if(behalf_of_flag===true)
-  {
+  if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
       newErrors.behalf_of = 'Behalf of is required';
   }
@@ -25,11 +29,11 @@ export const DynamicFormValidation = (form, data, behalf_of,behalf_of_flag) => {
 };
 export const createCategoryValidation = (form) => {
   let newErrors = {};
-  let { category_name,order } = form;
+  let { category_name, order } = form;
   if (!category_name || category_name === '')
     newErrors.category_name = 'Category Name is Required';
-    if (!order || order === '')
-    newErrors.order = 'Position is Required';
+  if (order <= 0) newErrors.order = 'Order must be greater than 0';
+  if (!order || order === '') newErrors.order = 'Position is Required';
   return newErrors;
 };
 export const createFormSettingModelValidation = (form, franchisee, user) => {
@@ -141,9 +145,9 @@ export const createOperatingManualValidation = (form) => {
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-  if (order < 0) newErrors.order = 'Value must be greater than 0';
+  if (order < 0) newErrors.order = 'Order must be greater than 0';
   if (order === 0 || order === '0')
-    newErrors.order = 'Value must be greater than 0';
+    newErrors.order = 'Order must be greater than 0';
   if (!order || order === '') newErrors.order = 'Position is Required';
 
   return newErrors;
@@ -224,8 +228,6 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
-
-
 export const TrainingFormValidation = (form, coverImage) => {
   let errors = {};
   let {
@@ -287,22 +289,16 @@ export const TrainingFormValidation = (form, coverImage) => {
 
 export const EditFleRepo = (form, coverImage) => {
   let errors = {};
-  let {
-    id,
-    title,
-    description,
-    categoryId,
-    assigned_users,
-    assigned_roles,
-  } = form;
+  let { id, title, description, categoryId, assigned_users, assigned_roles } =
+    form;
 
   if (!title) {
-    errors.title = ' Title is required!';
+    errors.title = ' title is required!';
   }
 
-// >>>>>>> master
+  // >>>>>>> master
   if (title <= 2) {
-    errors.title_length = 'Title should be more than 2 characters.';
+    errors.title_length = ' title should be more than 2 characters.';
   }
 
   if (!description) {
@@ -310,15 +306,15 @@ export const EditFleRepo = (form, coverImage) => {
   }
 
   if (!categoryId) {
-    errors.categoryId = 'Categoryid  is required!';
+    errors.categoryId = 'categoryid  is required!';
   }
 
   if (!assigned_users) {
-    errors.assigned_users = 'Assigned user time is required!';
+    errors.assigned_users = 'assigned_user time is required!';
   }
 
   if (!assigned_roles) {
-    errors.assigned_roles = 'User roles time is required!';
+    errors.assigned_roles = 'user_roles time is required!';
   }
 
   if (Object.keys(coverImage).length === 0) {
@@ -391,7 +387,7 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!abn) {
-    errors.abn = 'Provide australian business number';
+    errors.abn = 'provide australian business number';
   }
 
   if (!city) {
@@ -407,7 +403,7 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!acn) {
-    errors.acn = 'Provide australian company number!';
+    errors.acn = 'provide australian company number!';
   }
 
   if (!address) {
@@ -415,11 +411,11 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!postcode) {
-    errors.postcode = 'Postal code is required!';
+    errors.postcode = 'postal code is required!';
   }
 
   if (!contact) {
-    errors.contact = 'Contact number is required!';
+    errors.contact = 'contact number is required!';
   }
 
   return errors;
@@ -464,6 +460,9 @@ export const personValidation = (personValidationForm) => {
 
   if (!telephone) errors.telephone = 'Telephone number is required!';
 
+  if(telephone.length > 1 && telephone.length < 10)
+    errors.telephone = 'Telephone number must be at least 10-digit long.'
+
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
       'Specify their relationship to the child!';
@@ -486,49 +485,44 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
     comment,
   } = childDailyRoutineForm;
 
-  if (!sleep_time) errors.sleep_time = 'Sleep time is required!';
+  if (!sleep_time) errors.sleep_time = 'sleep time is required!';
 
-  if (!bottle_time) errors.bottle_time = 'Bottle time is required!';
+  if (!bottle_time) errors.bottle_time = 'bottle time is required!';
 
-  if (!toileting) errors.toileting = 'Toilet time is required!';
+  if (!toileting) errors.toileting = 'toilet time is required!';
 
-  if (!routines) errors.routines = 'Routine is required!';
+  if (!routines) errors.routines = 'routine is required!';
 
-  if (!likes_dislikes) errors.likes_dislikes = 'Specify the likes or dislikes!';
+  if (!likes_dislikes) errors.likes_dislikes = 'specify the likes or dislikes!';
 
-  if (!comforter) errors.comforter = 'Comforter is required!';
+  if (!comforter) errors.comforter = 'comforter is required!';
 
-  if (!religion) errors.religion = 'Religion is reuqired!';
+  if (!religion) errors.religion = 'religion is reuqired!';
 
   if (!dietary_requirement)
-    errors.dietary_requirement = 'Specify the dietary requirements!';
+    errors.dietary_requirement = 'specify the dietary requirements!';
 
-  if (!allergy) errors.allergy = 'Mention the alergies, if any!';
+  if (!allergy) errors.allergy = 'mention the alergies, if any!';
 
-  if (!comment) errors.comment = 'Provide a comment!';
+  if (!comment) errors.comment = 'provide a comment!';
 
   return errors;
 };
 
-export const enrollmentInitiationFormValidation = (formOneChildData, educatorData) => {
-  let {
-    fullname,
-    dob,
-    home_address
-  } = formOneChildData;
+export const enrollmentInitiationFormValidation = (
+  formOneChildData,
+  educatorData
+) => {
+  let { fullname, dob, home_address } = formOneChildData;
   let errors = {};
 
-  if(!fullname)
-    errors.fullname = "Fullname is required!";
+  if (!fullname) errors.fullname = 'Fullname is required!';
 
-  if(!dob)
-    errors.dob = "Date of birth is required!";
+  if (!dob) errors.dob = 'Date of birth is required!';
 
-  if(!home_address) 
-    errors.home_address = "Home address is required!";
+  if (!home_address) errors.home_address = 'Home address is required!';
 
-  if(!educatorData) 
-    errors.educatorData = "One Educator needs to be selected!";
+  if (!educatorData) errors.educatorData = 'One Educator needs to be selected!';
 
   return errors;
 };
