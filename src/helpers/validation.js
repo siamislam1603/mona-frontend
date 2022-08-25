@@ -387,7 +387,7 @@ export const FranchiseeFormValidation = (formObj) => {
   } = formObj;
 
   if (!franchisee_name) {
-    errors.franchisee_name = 'Franchisee Name is required!';
+    errors.franchisee_name = 'Franchise Name is required!';
   }
 
   if (!abn) {
@@ -403,7 +403,7 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!franchisee_number) {
-    errors.franchisee_number = 'Franchisee number is required!';
+    errors.franchisee_number = 'Franchise number is required!';
   }
 
   if (!acn) {
@@ -433,7 +433,7 @@ export const UserFormValidation = (formObj) => {
 
   if (!fullname) errors.fullname = 'Username is required!';
 
-  if (!franchisee) errors.franchisee = 'Franchisee is required!';
+  if (!franchisee) errors.franchisee = 'Franchise is required!';
 
   if (!role) errors.role = 'User role is required!';
 

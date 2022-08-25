@@ -136,7 +136,7 @@ const NewFranchisees = () => {
                                 <div className="entry-container">
                                     <div className="user-management-sec">
                                         <header className="title-head">
-                                            <h1 className="title-lg">Add Franchisee</h1>
+                                            <h1 className="title-lg">Add Franchise</h1>
                                         </header>
                                     </div>
                                 </div>
