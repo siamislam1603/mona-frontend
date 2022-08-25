@@ -260,7 +260,7 @@ const CoordinatorDashboard = () => {
                               </a>
                             </div>
                             <div className="item nolink">
-                              <div" className="flex">
+                              <div className="flex">
                                 <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
                               </div>
