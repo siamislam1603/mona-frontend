@@ -175,7 +175,7 @@ const FranchisorDashboard = () => {
     }
   }
 
-  
+
   React.useEffect(() => {
     count_Api();
     announcement();
@@ -391,7 +391,7 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/user-management?role=educator" className="item">
+                              <a href="/user-management/Educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalLocations}</span>
