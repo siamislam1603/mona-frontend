@@ -17,6 +17,10 @@ const animatedComponents = makeAnimated();
 
 const timeqty = [
   {
+    value: 'minutes',
+    label: 'Minutes',
+  },
+  {
     value: 'hours',
     label: 'Hours',
   },
@@ -58,6 +62,7 @@ const AddNewTraining = () => {
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
   const [createTrainingModal, setCreateTrainingModal] = useState(false);
+  const [saveSettingsToast, setSaveSettingsToast] = useState(null);
 
   const [trainingData, setTrainingData] = useState({
     time_unit: "Hours",
@@ -320,6 +325,12 @@ const AddNewTraining = () => {
   };
 
   useEffect(() => {
+    setTimeout(() => {
+      setSaveSettingsToast(null);
+    }, 3000);
+  }, [saveSettingsToast]);
+
+  useEffect(() => {
     fetchUserRoles();
     fetchTrainingCategories();
     fetchFranchiseeList();
@@ -344,6 +355,9 @@ const AddNewTraining = () => {
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
+      {
+        saveSettingsToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{saveSettingsToast}</p>
+      }
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -555,7 +569,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Video Tutorial Here :</Form.Label>
+                          <Form.Label>Upload Video:</Form.Label>
                           <DropAllFile
                             title="Video"
                             type="video"
@@ -567,7 +581,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Related Files :</Form.Label>
+                          <Form.Label>Upload File:</Form.Label>
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />
@@ -687,7 +701,7 @@ const AddNewTraining = () => {
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Send to all franchisee:</Form.Label>
+                  <Form.Label>Send to all franchises:</Form.Label>
                   <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
                       <label for="all">
@@ -959,6 +973,7 @@ const AddNewTraining = () => {
             } else {
               console.log('CLOSING POPUP');
               setAllowSubmit(true);
+              setSaveSettingsToast('Settings saved successfully.');
               setSettingsModalPopup(false);
             }
           }}>

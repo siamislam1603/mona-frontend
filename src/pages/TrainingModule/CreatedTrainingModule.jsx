@@ -21,6 +21,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     assigned_franchisee: [],
     assigned_users: []
   });
+  const [successMessageToast, setSuccessMessageToast] = useState(null);
 
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
@@ -69,8 +70,8 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     });
 
     if (response.status === 201 && response.data.status === "success") {
-      // const { dataObj } = response.data;
-      
+      let { msg: successMessage } = response.data;
+      setSuccessMessageToast('Training re-shared successfully.');
     }
   }
 
@@ -162,6 +163,12 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   }
 
   useEffect(() => {
+    setTimeout(() => {
+      setSuccessMessageToast(null);
+    }, 4000)
+  }, [successMessageToast]);
+
+  useEffect(() => {
     fetchCreatedTrainings();
   }, [filter, trainingDeleteMessage]);
 
@@ -189,9 +196,11 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   // fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
   otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
   myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
+  formSettings && console.log('FORM SETTINGS:', formSettings);
   return (
     <>
       <div id="main">
+        {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
         <div className="training-column">
           <Row style={{ marginBottom: '40px' }}>
             {myTrainingData?.length > 0 && <h1>Created by me</h1>}
@@ -363,22 +372,22 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                       <Multiselect
                         disable={formSettings?.send_to_all_franchisee === true}
                         placeholder={"Select User Names"}
-                        singleSelect={true}
+                        // singleSelect={true}
                         displayValue="key"
-                        selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.assigned_franchisee) === d.id)}
+                        selectedValues={franchiseeList?.filter(d => formSettings?.assigned_franchisee?.includes(d.id + ''))}
                         className="multiselect-box default-arrow-select"
                         onKeyPressFn={function noRefCheck() { }}
                         onRemove={function noRefCheck(data) {
                           setFormSettings((prevState) => ({
                             ...prevState,
-                            assigned_franchisee: [...data.map(data => data.id)],
+                            assigned_franchisee: [...data.map(data => data.id + '')],
                           }));
                         }}
                         onSearch={function noRefCheck() { }}
                         onSelect={function noRefCheck(data) {
                           setFormSettings((prevState) => ({
                             ...prevState,
-                            assigned_franchisee: [...data.map((data) => data.id)],
+                            assigned_franchisee: [...data.map((data) => data.id + '')],
                           }));
                         }}
                         options={franchiseeList}
@@ -443,7 +452,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             <Form.Check
                               type="checkbox"
                               checked={formSettings?.assigned_roles?.includes("franchisee_admin")}
-                              label="Franchisee Admin"
+                              label="Franchise Admin"
                               onChange={() => {
                                 if (formSettings.assigned_roles.includes("franchisee_admin")) {
                                   let data = formSettings.assigned_roles.filter(t => t !== "franchisee_admin");
