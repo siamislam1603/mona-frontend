@@ -1038,7 +1038,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                 setFormSettingData(data);
                                                             }}
                                                             checked={formSettingData?.shared_role?.includes(
-                                                                'Guardian'
+                                                                'guardian'
                                                             )}
                                                         />
                                                         <span className="checkmark"></span>
@@ -1056,9 +1056,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     if (
                                                                         !data['shared_role']
                                                                             .toString()
-                                                                            .includes('Guardian')
+                                                                            .includes('guardian')
                                                                     ) {
-                                                                        data['shared_role'] += 'Guardian,';
+                                                                        data['shared_role'] += 'guardian,';
                                                                     }
                                                                     if (
                                                                         !data['shared_role']
@@ -1364,20 +1364,20 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             label="Guardian"
-                                                            checked={formSettings.assigned_role.includes("Guardian")}
+                                                            checked={formSettings.assigned_role.includes("guardian")}
                                                             onChange={() => {
-                                                                if (formSettings.assigned_role.includes("Guardian")) {
-                                                                    let data = formSettings.assigned_role.filter(t => t !== "Guardian");
+                                                                if (formSettings.assigned_role.includes("guardian")) {
+                                                                    let data = formSettings.assigned_role.filter(t => t !== "guardian");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
                                                                         assigned_role: [...data]
                                                                     }));
                                                                 }
 
-                                                                if (!formSettings.assigned_role.includes("Guardian"))
+                                                                if (!formSettings.assigned_role.includes("guardian"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "Guardian"]
+                                                                        assigned_role: [...formSettings.assigned_role, "guardian"]
                                                                     }))
                                                             }} />
                                                     </Form.Group>
