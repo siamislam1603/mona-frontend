@@ -13,13 +13,13 @@ let nextstep = 2;
 let step = 1;
 
 var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-let countryData = [
-  {
-    id: 1,
-    value: "Australia",
-    label: "Australia"
-  }
-]
+// let countryData = [
+//   {
+//     id: 1,
+//     value: "Australia",
+//     label: "Australia"
+//   }
+// ]
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   let { childId: paramsChildId } = useParams();
@@ -66,7 +66,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [occupationData, setOccupationData] = useState(null);
   const [ethnicityData, setEthnicityData] = useState(null);
   const [languageData, setLanguageData] = useState(null);
-  // const [countryData, setCountryData] = useState(null);
+  const [countryData, setCountryData] = useState(null);
   const [formStepData, setFormStepData] = useState(step);
 
   // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
@@ -78,10 +78,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // MODAL DIALOG STATES
   const [showSubmissionSuccessModal, setShowSubmissionSuccessModal] = useState(false);
   const [showConsentCommentDialog, setShowConsentCommentDialog] = useState(false);
-
+  const [loader, setLoader] = useState(false);
 
   // FUNCTION TO UPDATE THIS FORM DATA
   const updateFormOneData = async (childData, parentData) => {
+    setLoader(true);
     console.log('UPDATING FORM ONE DATA!');
     let token = localStorage.getItem('token');
     let childId = localStorage.getItem('enrolled_child_id')
@@ -127,6 +128,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
           localStorage.setItem('change_count', changeCount);
 
+          setLoader(false);
           nextStep();
         }
       }
@@ -200,6 +202,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       setChildFormErrors(errorChild);
       setParentFormErrors(errorParent);
     } else {
+      setLoader(true);
       updateFormOneData(formOneChildData, formOneParentData);
       // if(formStepData > step) {
       //   console.log('UPDATING THE EXISTING DATA!');
@@ -249,17 +252,17 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   };
 
-  // const fetchCountryData = async () => {
-  //   let response = await axios.get(`${BASE_URL}/api/country-data`);
+  const fetchCountryData = async () => {
+    let response = await axios.get(`${BASE_URL}/api/country-data`);
 
-  //   if(response.status === 200 && response.data.status === "success") {
-  //     setCountryData(response.data.countryDataList.map(data => ({
-  //       id: data.id,
-  //       value: data.name,
-  //       label: data.name
-  //     })));
-  //   }
-  // };
+    if(response.status === 200 && response.data.status === "success") {
+      setCountryData(response.data.countryDataList.map(data => ({
+        id: data.id,
+        value: data.name,
+        label: data.name
+      })));
+    }
+  };
 
   const fetchChildDataAndPopulate = async () => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
@@ -324,7 +327,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     fetchOccupationData();
     fetchEthnicityData();
     fetchLanguageData();
-    // fetchCountryData();
+    fetchCountryData();
   }, []);
 
   useEffect(() => {
@@ -339,7 +342,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // }, [])
 
   // formStepData && console.log('You\'re on step:', formStepData);
-  // formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
+  formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
   formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
   // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
@@ -1269,7 +1272,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             name="telephone"
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
-                              handleParentData(e);
+                              
+                              // if(isNaN(e.target.value) === true) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  telephone: e.target.value
+                                }));
+                              // }
                               setParentFormErrors(prevState => ({
                                 ...prevState,
                                 telephone: null
@@ -1482,7 +1491,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
             </Form>
           </div>
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="primary" type="submit">Next</Button>
+          <Button variant="primary" disabled={loader ? true : false} type="submit">
+            {loader === true ? (
+              <>
+                <img
+                style={{ width: '24px' }}
+                src={'/img/mini_loader1.gif'}
+                alt=""
+                />
+                  Submitting...
+              </>
+            ) : (
+            'Submit')}
+          </Button>
           </div>
         </Form>
       </div>

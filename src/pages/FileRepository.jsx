@@ -166,8 +166,6 @@ const FileRepository = () => {
   useEffect(() => {
     GetData();
     fetchFranchiseeList();
-    // getMyAddedFileRepoData();
-    // getFilesassigned_usersMeData();
     getFileCategory();
     getUser();
     onSubmit();

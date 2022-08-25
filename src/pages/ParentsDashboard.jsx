@@ -183,10 +183,10 @@ const ParentsDashboard = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === 'success') {
+    if (response.status === 200 && response.data.status === 'success') {
       let { parentData } = response.data;
 
-      if(parentData !== null && parentData.children.length > 0) {
+      if (parentData !== null && parentData.children.length > 0) {
         console.log('PARENT DATA ISN\'T NULL');
         let { children } = parentData;
         console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
@@ -214,8 +214,8 @@ const ParentsDashboard = () => {
     let linkArray = [];
     let parentId = localStorage.getItem('user_id');
     nonEnrolledChildIds?.forEach(childId => {
-        let link = `/child-enrollment/${childId}/${parentId}`;
-        linkArray.push(link);
+      let link = `/child-enrollment/${childId}/${parentId}`;
+      linkArray.push(link);
     });
 
     setEnrollmentFormLinks(linkArray);
@@ -225,7 +225,7 @@ const ParentsDashboard = () => {
   useEffect(() => {
     fetchUserChildrenDetails();
   }, []);
-  
+
   // useEffect(() => {
 
   // }, [enrollmentFormLinks]);
@@ -236,7 +236,7 @@ const ParentsDashboard = () => {
 
   useEffect(() => {
     checkPendingConsent();
-  }); 
+  });
 
   useEffect(() => {
     events();
@@ -298,7 +298,7 @@ const ParentsDashboard = () => {
                                         <img src="../img/dot-ico.svg" alt="" />
                                       </Dropdown.Toggle>
                                       <Dropdown.Menu>
-                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                        <Dropdown.Item href="/announcements">View</Dropdown.Item>
                                       </Dropdown.Menu>
                                     </Dropdown>
                                   </div>
@@ -582,30 +582,30 @@ const ParentsDashboard = () => {
         enrollmentFormLinks.map(link => {
           return (
             <Modal
-            show={childEnrollMessageDialog}>
-            <Modal.Header>
-              <Modal.Title>Welcome {userDetails?.fullname.split(" ")[0]}</Modal.Title>
-            </Modal.Header>
+              show={childEnrollMessageDialog}>
+              <Modal.Header>
+                <Modal.Title>Welcome {userDetails?.fullname.split(" ")[0]}</Modal.Title>
+              </Modal.Header>
 
-            <Modal.Body>
-              <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
-              <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrollment Form</strong> to enrol your</p>
-              <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
-              <p style={{ marginTop: "-5px" }}><strong>Child Enrollment Form.</strong></p>
-            </Modal.Body>
+              <Modal.Body>
+                <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
+                <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrollment Form</strong> to enrol your</p>
+                <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
+                <p style={{ marginTop: "-5px" }}><strong>Child Enrollment Form.</strong></p>
+              </Modal.Body>
 
-            <Modal.Footer>
-              <button style={{
-                padding: ".7rem 1.4rem",
-                fontWeight: '500',
-                fontSize: '.8rem',
-                color: "#fff",
-                backgroundColor: '#3E5D58',
-                border: "none",
-                borderRadius: "5px"
-              }} onClick={() => moveToChildEnrollmentForm(link)}>Child Enrollment Form</button>
-            </Modal.Footer>
-          </Modal>
+              <Modal.Footer>
+                <button style={{
+                  padding: ".7rem 1.4rem",
+                  fontWeight: '500',
+                  fontSize: '.8rem',
+                  color: "#fff",
+                  backgroundColor: '#3E5D58',
+                  border: "none",
+                  borderRadius: "5px"
+                }} onClick={() => moveToChildEnrollmentForm(link)}>Child Enrollment Form</button>
+              </Modal.Footer>
+            </Modal>
           );
         })
       }

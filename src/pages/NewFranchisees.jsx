@@ -93,7 +93,6 @@ const NewFranchisees = () => {
         let errorObject = FranchiseeFormValidation(franchiseeData);
 
         if(Object.keys(errorObject).length > 0) {
-            console.log('ERROR OBJECT:', errorObject);
             setFormErrors(errorObject);
         } else {
             setCreateFranchiseeModal(true);

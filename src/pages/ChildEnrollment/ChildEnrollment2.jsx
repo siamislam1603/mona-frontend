@@ -75,10 +75,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     health_information_id: null,
     medical_information_id: null,
     immunisation_record_id: null
-  })
+  });
+  const [loader, setLoader] = useState(false);
 
   // UPDATEING FORM TWO DATA
   const updateFormTwoData = async () => {
+    setLoader(true);
     let childId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
     // SENDING HEALTH INFORMATION REQUEST
@@ -138,6 +140,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
               localStorage.setItem('change_count', changeCount);
 
+              setLoader(false);
               nextStep();
             }
           }
@@ -148,6 +151,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   // FUNCTIONS
   const saveFormTwoData = async () => {
+    setLoader(true);
     let childId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
     // SENDING HEALTH INFORMATION REQUEST
@@ -200,6 +204,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               });
 
               if (response.status === 201 && response.data.status === "success") {
+                setLoader(false);
                 nextStep();
               }
             }
@@ -318,7 +323,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         console.log('CREATING NEW DATA!')
         saveFormTwoData();
       }
-    }
+    
+    setLoader(true);}
     // nextStep();
   };
 
@@ -3143,11 +3149,23 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               </Form.Group>
             </div>
             <div className="cta text-center mt-5 mb-5">
-              <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
+              <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Go Back</Button>
               <Button
                 disabled={parentData?.i_give_medication_permission === false} 
                 variant="primary" 
-                type="submit">Next</Button>
+                type="submit">
+                {loader === true ? (
+                  <>
+                    <img
+                    style={{ width: '24px' }}
+                    src={'/img/mini_loader1.gif'}
+                    alt=""
+                    />
+                      Submitting...
+                  </>
+                ) : (
+                'Submit')}
+              </Button>
             </div>
           </Form>
         </div>

@@ -17,6 +17,10 @@ const animatedComponents = makeAnimated();
 
 const timeqty = [
   {
+    value: 'minutes',
+    label: 'Minutes',
+  },
+  {
     value: 'hours',
     label: 'Hours',
   },
@@ -58,6 +62,7 @@ const AddNewTraining = () => {
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
   const [createTrainingModal, setCreateTrainingModal] = useState(false);
+  const [saveSettingsToast, setSaveSettingsToast] = useState(null);
 
   const [trainingData, setTrainingData] = useState({
     time_unit: "Hours",
@@ -66,7 +71,7 @@ const AddNewTraining = () => {
     meta_description: "",
     category_id: "",
     time_required_to_complete: "",
-    training_form_id: ""
+    training_form_id: null
   });
   const [trainingSettings, setTrainingSettings] = useState({
     start_date: "",
@@ -200,11 +205,7 @@ const AddNewTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    console.log('franchisee_id:', franchisee_id);
-    // if (franchisee_id.length > 0 && franchisee_id[0] !== 'all') {
-    console.log('FETCHING FRANCHISEE USERS!');
     const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${franchisee_id}]`);
-    console.log('USER DATA FROM FRANCHISEE:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -320,6 +321,12 @@ const AddNewTraining = () => {
   };
 
   useEffect(() => {
+    setTimeout(() => {
+      setSaveSettingsToast(null);
+    }, 3000);
+  }, [saveSettingsToast]);
+
+  useEffect(() => {
     fetchUserRoles();
     fetchTrainingCategories();
     fetchFranchiseeList();
@@ -340,10 +347,12 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(trainingSettings?.assigned_franchisee);
   }, [trainingSettings.assigned_franchisee]);
 
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
+      {
+        saveSettingsToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{saveSettingsToast}</p>
+      }
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -380,12 +389,12 @@ const AddNewTraining = () => {
                             //     }
                             // }}
                             onChange={(e) => {
-                              if (trainingData.title.length <= 20) {
+                              // if (trainingData.title.length <= 20) {
                                 setTrainingData(prevState => ({
                                   ...prevState,
                                   title: e.target.value
                                 }));
-                              }
+                              // }
 
                               if (trainingData.title.length > 2) {
                                 setErrors(prevState => ({
@@ -522,7 +531,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Select Training Form*</Form.Label>
+                          <Form.Label>Select Training Form</Form.Label>
                           <Select
                             closeMenuOnSelect={true}
                             components={animatedComponents}
@@ -532,14 +541,8 @@ const AddNewTraining = () => {
                                 ...prevState,
                                 training_form_id: event.id,
                               }));
-
-                              setErrors(prevState => ({
-                                ...prevState,
-                                training_form_id: null
-                              }));
                             }}
                           />
-                          {errors.training_form_id && <span className="error">{errors.training_form_id}</span>}
                         </Form.Group>
                       </Col>
                     </Row>
@@ -561,7 +564,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Video Tutorial Here :</Form.Label>
+                          <Form.Label>Upload Video:</Form.Label>
                           <DropAllFile
                             title="Video"
                             type="video"
@@ -573,7 +576,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Related Files :</Form.Label>
+                          <Form.Label>Upload File:</Form.Label>
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />
@@ -693,7 +696,7 @@ const AddNewTraining = () => {
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Send to all franchisee:</Form.Label>
+                  <Form.Label>Send to all franchises:</Form.Label>
                   <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
                       <label for="all">
@@ -965,6 +968,7 @@ const AddNewTraining = () => {
             } else {
               console.log('CLOSING POPUP');
               setAllowSubmit(true);
+              setSaveSettingsToast('Settings saved successfully.');
               setSettingsModalPopup(false);
             }
           }}>

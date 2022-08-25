@@ -38,6 +38,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [signatureImage, setSignatureImage] = useState(null);
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [fetchedSignatureImage, setFetchedSignatureImage] = useState(null);
+  const [loader, setLoader] = useState(false);
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
@@ -88,6 +89,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   // UPDATING FORM SEVEN DATA;
   const updateFormSevenData = async () => {
+    setLoader(true);
     let token = localStorage.getItem('token');
     let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
@@ -122,9 +124,9 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
         }
         
         if(localStorage.getItem('user_role') === 'coordinator' && localStorage.getItem('change_count') > 0) {
+          setLoader(false);
           setUserConsentFormDialog(true);
         }
-
         setFormSubmissionSuccessDialog(true);
       }
     }
@@ -398,12 +400,24 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
             </Row>
           </div>
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
+            <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Go Back</Button>
             <Button 
               disabled={consentData?.consent_date === null}
               variant="primary" 
               type="submit" 
-              onClick={handleDataSubmit}>Next</Button>
+              onClick={handleDataSubmit}>
+              {loader === true ? (
+                <>
+                  <img
+                  style={{ width: '24px' }}
+                  src={'/img/mini_loader1.gif'}
+                  alt=""
+                  />
+                    Submitting...
+                </>
+              ) : (
+              'Submit')}
+            </Button>
           </div>
         </Form>
       </div>
