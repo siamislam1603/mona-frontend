@@ -18,6 +18,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  
 
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],

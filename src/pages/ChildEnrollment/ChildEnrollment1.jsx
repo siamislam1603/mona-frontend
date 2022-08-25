@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 
 let nextstep = 2;
 let step = 1;
+let telDigitCount = 0;
 
 var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 // let countryData = [
@@ -431,7 +432,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Nickname *</Form.Label>
+                    <Form.Label>Nickname</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Nickname"
@@ -445,10 +446,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           usually_called: e.target.value
                         }));
-                        setChildFormErrors(prevState => ({
-                          ...prevState,
-                          usually_called: null,
-                        })) 
                         // } else {
                         //   setFormOneChildData(prevState => ({
                         //     ...prevState,
@@ -464,7 +461,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }));
                         }
                       }} />
-                    { childFormErrors?.usually_called !== null && <span className="error">{childFormErrors?.usually_called}</span> }
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -544,7 +540,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="Some text here for the label"
+                      placeholder="Home Address"
                       name="home_address"
                       value={formOneChildData?.home_address || ""}
                       onChange={(e) => {
@@ -1272,15 +1268,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             name="telephone"
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
-                              let count = 0;
                               if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
                                 setFormOneParentData(prevState => ({
                                   ...prevState,
                                   telephone: e.target.value.slice(0, -1)
                                 }));
                               } else {
-                                count += 1;
-                                console.log('COUNT:', count);
                                 setFormOneParentData(prevState => ({
                                   ...prevState,
                                   telephone: e.target.value

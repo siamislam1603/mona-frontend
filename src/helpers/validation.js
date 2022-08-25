@@ -446,6 +446,9 @@ export const UserFormValidation = (formObj) => {
 
   if (!phone) errors.phone = 'Phone number is required!';
 
+  if(phone.length > 0 && phone.length < 10) 
+    errors.phone = 'Phone number must be 10-digits long.'
+
   return errors;
 };
 
@@ -460,12 +463,26 @@ export const personValidation = (personValidationForm) => {
 
   if (!telephone) errors.telephone = 'Telephone number is required!';
 
+  if(telephone.length > 1 && telephone.length < 10)
+    errors.telephone = 'Telephone number must be at least 10-digit long.'
+
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
       'Specify their relationship to the child!';
 
   return errors;
 };
+
+export const person2Validation = (obj) => {
+  let errors = {};
+  let { telephone } = obj;
+
+  if(telephone.length > 1 && telephone.length < 10)
+    errors.telephone = 'Telephone number must be at least 10-digit long.'
+
+  return errors;
+};
+
 
 export const childDailyRoutineValidation = (childDailyRoutineForm) => {
   let errors = {};

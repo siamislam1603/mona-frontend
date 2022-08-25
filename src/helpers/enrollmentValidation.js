@@ -3,7 +3,6 @@ export const childFormValidator = (childForm) => {
   let {
     fullname,
     family_name,
-    usually_called,
     dob,
     home_address,
     language,
@@ -15,9 +14,6 @@ export const childFormValidator = (childForm) => {
 
   if(!family_name)
     errors.family_name = "Family Name is required!";
-
-  if(!usually_called)
-    errors.usually_called = "What do they address you usually?";
 
   if(!dob)
     errors.dob = "Date of Birth is required!";
@@ -64,6 +60,9 @@ export const parentFormValidator = (parentForm) => {
   if(!telephone)
     errors.telephone = "Telephone number is required!";
 
+  if(telephone.length > 1 && telephone.length < 10)
+    errors.telephone = 'Telephone number must be at least 10-digit long.' 
+
   if(!email)
     errors.email = "Email is required!";
 
@@ -96,6 +95,9 @@ export const healthInformationFormValidator = (healthInformationForm) => {
 
   if(!telephone)  
     errors.telephone = "Telephone number is required!";
+
+  if(telephone.length > 1 && telephone.length < 10)
+    errors.telephone = 'Telephone number must be at least 10-digit long.'
 
   if(!medical_service_address)
     errors.medical_service_address = "Medical Service address is required!";

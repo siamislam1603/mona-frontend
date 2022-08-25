@@ -1122,10 +1122,11 @@ const OperatingManual = () => {
               </Col>
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label>Position in the tree-structure </Form.Label>
+                  <Form.Label>Order in List </Form.Label>
                   <Form.Control
                     type="number"
                     name="order"
+                    min={1}
                     value={categoryData?.order}
                     placeholder="Enter Position"
                     onChange={(e) => {

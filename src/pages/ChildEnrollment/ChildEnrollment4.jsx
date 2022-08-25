@@ -18,6 +18,13 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     relationship_to_the_child: "",
     log: []
   });
+  const [emergencyContactData2, setEmergencyContactData2] = useState({
+    name: "",
+    address: "",
+    telephone: "",
+    relationship_to_the_child: "",
+    log: []
+  });
 
   const [authorizedNomineeData, setAuthorizedNomineeData] = useState({
     name: "",
@@ -26,7 +33,14 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     relationship_to_the_child: "",
     log: []
   });
-  
+  const [authorizedNomineeData2, setAuthorizedNomineeData2] = useState({
+    name: "",
+    address: "",
+    telephone: "",
+    relationship_to_the_child: "",
+    log: []
+  });
+
   const [authorizedPersonData, setAuthorizedPersonData] = useState({
     name: "",
     address: "",
@@ -34,7 +48,14 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     relationship_to_the_child: "",
     log: []
   });
-  
+  const [authorizedPersonData2, setAuthorizedPersonData2] = useState({
+    name: "",
+    address: "",
+    telephone: "",
+    relationship_to_the_child: "",
+    log: []
+  });
+
   const [otherAuthorizedPersonData, setOtherAuthorizedPersonData] = useState({
     name: "",
     address: "",
@@ -42,6 +63,14 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     relationship_to_the_child: "",
     log: []
   });
+  const [otherAuthorizedPersonData2, setOtherAuthorizedPersonData2] = useState({
+    name: "",
+    address: "",
+    telephone: "",
+    relationship_to_the_child: "",
+    log: []
+  });
+
   const [formStepData, setFormStepData] = useState(null);
   const [idList, setIdList] = useState({
     emergency_contact_id: null,
@@ -52,9 +81,13 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   // ERROR HANDLING STATES
   const [emergencyContactError, setEmergencyContactError] = useState(null);
+  // const [emergencyContactError2, setEmergencyContactError2] = useState(null);
   const [authorizedNomineeError, setAuthorizedNomineeError] = useState(null);
+  // const [authorizedNomineeError2, setAuthorizedNomineeError2] = useState(null);
   const [authorizedPersonError, setAuthorizedPersonError] = useState(null);
+  // const [authorizedPersonError2, setAuthorizedPersonError2] = useState(null);
   const [otherAuthorizedPersonError, setOtherAuthorizedPersonError] = useState(null);
+  // const [otherAuthorizedPersonError2, setOtherAuthorizedPersonError2] = useState(null);
   const [loader, setLoader] = useState(false);
 
   // FORM AHNDLING FUNCTIONS
@@ -154,18 +187,32 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
   const submitFormData = (e) => {
     e.preventDefault();
     let emergencyContactErrorObj = personValidation(emergencyContactData);
+    // let emergencyContactErrorObj2 = person2Validation({telephone: ""});
+
     let authorizedNomineeErrorObj = personValidation(authorizedNomineeData);
+    // let authorizedNomineeErrorObj2 = person2Validation({telephone: ""});
+    
     let authorizedPersonErrorObj = personValidation(authorizedPersonData);
+    // let authorizedPersonErrorObj2 = person2Validation({telephone: ""});
+    
     let otherAuthorizedPersonErrorObj = personValidation(otherAuthorizedPersonData);
+    // let otherAuthorizedPersonErrorObj2 = person2Validation({telephone: ""});
 
     if(Object.keys(emergencyContactErrorObj).length > 0 ||
+      // Object.keys(emergencyContactErrorObj2).length > 0 ||
        Object.keys(authorizedNomineeErrorObj).length > 0 ||
+      //  Object.keys(authorizedNomineeErrorObj2).length > 0 ||
        Object.keys(authorizedPersonErrorObj).length > 0 ||
+      //  Object.keys(authorizedPersonErrorObj2).length > 0 ||
        Object.keys(otherAuthorizedPersonErrorObj).length > 0) {
         setEmergencyContactError(emergencyContactErrorObj);
+        // setEmergencyContactError2(emergencyContactErrorObj);
         setAuthorizedNomineeError(authorizedNomineeErrorObj);
+        // setAuthorizedNomineeError2(authorizedNomineeErrorObj);
         setAuthorizedPersonError(authorizedPersonErrorObj);
+        // setAuthorizedPersonError2(authorizedPersonErrorObj);
         setOtherAuthorizedPersonError(otherAuthorizedPersonErrorObj);
+        // setOtherAuthorizedPersonError2(otherAuthorizedPersonErrorObj);
     } else {
 
       if(formStepData >= step) {
@@ -395,7 +442,17 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       value={emergencyContactData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
-                        handleEmergencyContact(e);
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setEmergencyContactData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setEmergencyContactData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
                         setEmergencyContactError(prevState => ({
                           ...prevState,
                           telephone: null
@@ -442,18 +499,47 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
+
                   <Form.Group className="mb-3">
                     <Form.Label>Address</Form.Label>
                     <Form.Control as="textarea" rows={3} />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
+                  
                   <Form.Group className="mb-3">
                     <Form.Label>Telephone</Form.Label>
-                    <Form.Control type="tel" />
+                    <Form.Control 
+                      type="tel"
+                      name="telephone"
+                      value={emergencyContactData2?.telephone || ""}
+                      onChange={(e) => {
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setEmergencyContactData2(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setEmergencyContactData2(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
+
+                        // setEmergencyContactError2(prevState => ({
+                        //   ...prevState,
+                        //   telephone: null
+                        // }));
+                      }}
+                      />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
+                  
                   <Form.Group className="mb-3">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                 </Col>
               </Row>
@@ -523,7 +609,17 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       type="tel"
                       value={authorizedNomineeData?.telephone || ""}
                       onChange={(e) => {
-                        handleAuthorizedNominee(e);
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setAuthorizedNomineeData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setAuthorizedNomineeData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
                         setAuthorizedNomineeError(prevState => ({
                           ...prevState,
                           telephone: null
@@ -571,18 +667,46 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
+
                   <Form.Group className="mb-3">
                     <Form.Label>Address</Form.Label>
                     <Form.Control as="textarea" rows={3} />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
+                  
                   <Form.Group className="mb-3">
                     <Form.Label>Telephone</Form.Label>
-                    <Form.Control type="tel" />
+                    <Form.Control 
+                      type="tel"
+                      name="telephone"
+                      value={authorizedNomineeData2?.telephone || ""}
+                      onChange={(e) => {
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setAuthorizedNomineeData2(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setAuthorizedNomineeData2(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
+
+                        // setAuthorizedNomineeError2(prevState => ({
+                        //   ...prevState,
+                        //   telephone: null
+                        // }));
+                      }} />
+                    { authorizedNomineeError?.temp !== null && <span className="error">{authorizedNomineeError?.temp}</span> }
                   </Form.Group>
+                  
                   <Form.Group className="mb-3">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                 </Col>
               </Row>
@@ -654,7 +778,17 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       value={authorizedPersonData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
-                        handleAuthorizedPerson(e);
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
                         setAuthorizedPersonError(prevState => ({
                           ...prevState,
                           telephone: null
@@ -702,18 +836,45 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
+
                   <Form.Group className="mb-3">
                     <Form.Label>Address</Form.Label>
                     <Form.Control as="textarea" rows={3} />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
+
                   <Form.Group className="mb-3">
                     <Form.Label>Telephone</Form.Label>
-                    <Form.Control type="tel" />
+                    <Form.Control 
+                      type="tel"
+                      name="telephone"
+                      value={authorizedPersonData2?.telephone || ""}
+                      onChange={(e) => {
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setAuthorizedPersonData2(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setAuthorizedPersonData2(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
+                        // setAuthorizedPersonError2(prevState => ({
+                        //   ...prevState,
+                        //   telephone: null
+                        // }));
+                      }} />
+                    { authorizedPersonError?.temp !== null && <span className="error">{authorizedPersonError?.temp}</span> }
                   </Form.Group>
+
                   <Form.Group className="mb-3">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                 </Col>
               </Row>
@@ -783,7 +944,17 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       value={otherAuthorizedPersonData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
-                        handleOtherAuthorizedPerson(e);
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setOtherAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setOtherAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
                         setOtherAuthorizedPersonError(prevState => ({
                           ...prevState,
                           telephone: null
@@ -830,19 +1001,47 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                     <Form.Control type="text" />
                   </Form.Group>
+
                   <Form.Group className="mb-3">
                     <Form.Label>Address</Form.Label>
                     <Form.Control as="textarea" rows={3} />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
+
                   <Form.Group className="mb-3">
                     <Form.Label>Telephone</Form.Label>
-                    <Form.Control type="tel" />
+                    <Form.Control 
+                      type="tel"
+                      name="telephone"
+                      value={otherAuthorizedPersonData2?.telephone || ""}
+                      onChange={(e) => {
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setOtherAuthorizedPersonData2(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setOtherAuthorizedPersonData2(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
+
+                        // setOtherAuthorizedPersonError2(prevState => ({
+                        //   ...prevState,
+                        //   telephone: null
+                        // }))
+                      }} />
+                    { otherAuthorizedPersonError?.temp !== null && <span className="error">{otherAuthorizedPersonError?.temp}</span> }
                   </Form.Group>
+
                   <Form.Group className="mb-3">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                 </Col>
               </Row>
