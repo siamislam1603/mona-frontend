@@ -127,6 +127,7 @@ const Main = () => {
   }, []);
 
   return (
+    
     <main>
 
       <Routes>
@@ -134,9 +135,9 @@ const Main = () => {
           exact
           activeClassName="active"
           path="/"
-          element={
-            <SignIn />
-            // localStorage.getItem('user_id')? returnDashboard(localStorage.getItem('user_role')):<SignIn />
+          
+          element={ 
+            localStorage.getItem('user_id') || typeof localStorage.getItem('user_id')==='undefined'? returnDashboard(localStorage.getItem('user_role')):<SignIn />
           }
         />
 
