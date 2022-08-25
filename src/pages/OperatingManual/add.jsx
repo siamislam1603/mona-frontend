@@ -983,7 +983,7 @@ const AddOperatingManual = () => {
             Cancel
           </Button>
           <Button className="done" onClick={onModelSubmit}>
-            Save Settings
+            Save Permissions
           </Button>
         </Modal.Footer>
       </Modal>

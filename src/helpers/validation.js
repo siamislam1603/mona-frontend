@@ -53,7 +53,7 @@ export const createFormSettingModelValidation = (form, franchisee, user) => {
   }
   if (applicable_to_franchisee === 'No' || applicable_to_franchisee === false) {
     if (franchisee.length === 0)
-      newErrors.franchisee = 'Applicable to Franchisee is Required';
+      newErrors.franchisee = 'Applicable to Franchise is Required';
   }
   console.log('newerrors----->', newErrors);
   return newErrors;
@@ -431,7 +431,7 @@ export const UserFormValidation = (formObj) => {
   let { fullname, role, city, address, postalCode, email, phone, franchisee } =
     formObj;
 
-  if (!fullname) errors.fullname = 'Username is required!';
+  if (!fullname) errors.fullname = 'Fullname is required!';
 
   if (!franchisee) errors.franchisee = 'Franchise is required!';
 

@@ -59,7 +59,6 @@ import RepoEdit from '../pages/RepoEdit';
 import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
 import SearchResult from '../pages/SearchResult';
-
 function returnDashboard (role) {
 
   if(role === 'franchisor_admin')
@@ -127,6 +126,7 @@ const Main = () => {
   }, []);
 
   return (
+    
     <main>
 
       <Routes>
@@ -134,9 +134,8 @@ const Main = () => {
           exact
           activeClassName="active"
           path="/"
-          element={
-            <SignIn />
-            // localStorage.getItem('user_id')? returnDashboard(localStorage.getItem('user_role')):<SignIn />
+          element={ 
+            localStorage.getItem('user_id') || typeof localStorage.getItem('user_id')==='undefined'? returnDashboard(localStorage.getItem('user_role')):<SignIn />
           }
         />
 
