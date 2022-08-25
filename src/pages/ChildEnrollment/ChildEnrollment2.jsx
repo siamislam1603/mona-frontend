@@ -510,11 +510,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         name="telephone"
                         value={healthInformation?.telephone || ""}
                         onChange={(e) => {
-                          setHealthInformation(prevState => ({
-                            ...prevState,
-                            telephone: e.target.value
-                          }));
-
+                          if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                            setHealthInformation(prevState => ({
+                              ...prevState,
+                              telephone: e.target.value.slice(0, -1)
+                            }));
+                          } else {
+                            setHealthInformation(prevState => ({
+                              ...prevState,
+                              telephone: e.target.value
+                            }));
+                          }
                           setHealthInfoFormErrors(prevState => ({
                             ...prevState,
                             telephone: null
