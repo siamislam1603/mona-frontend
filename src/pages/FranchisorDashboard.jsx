@@ -213,11 +213,11 @@ const FranchisorDashboard = () => {
                                 <div className="name">Xero</div>
                               </a>
                             </div>
-                            <div className="item">
-                              <a href="/" className="flex">
+                            <div className="item nolink">
+                              <div className="flex">
                                 <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
-                              </a>
+                              </div>
                             </div>
                             <div className="item">
                               <a href="https://app.storypark.com/users/sign_in?_ga=2.96275036.1184893872.1661406994-2035467191.1661406993" className="flex">

@@ -259,11 +259,11 @@ const CoordinatorDashboard = () => {
                                 <div className="name">Xero</div>
                               </a>
                             </div>
-                            <div className="item">
-                              <a href="/" className="flex">
+                            <div className="item nolink">
+                              <div" className="flex">
                                 <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
-                              </a>
+                              </div>
                             </div>
                           </div>
                         </div>
