@@ -47,9 +47,9 @@ const OperatingManual = () => {
   const [errors, setErrors] = useState({});
   const [user, setUser] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('');
-  const [categoryModalFlag,setCategoryModalFlag]=useState(false);
-  const [categoryData,setCategoryData]=useState({});
-  const [categoryError,setCategoryError]=useState({});
+  const [categoryModalFlag, setCategoryModalFlag] = useState(false);
+  const [categoryData, setCategoryData] = useState({});
+  const [categoryError, setCategoryError] = useState({});
   const [userRole, setUserRole] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(
     localStorage.getItem('franchisee_id')
@@ -78,14 +78,13 @@ const OperatingManual = () => {
   const OnCategorySubmit = (e) => {
     e.preventDefault();
     const newErrors = createCategoryValidation(categoryData);
-    
+
     if (Object.keys(newErrors).length > 0) {
       setCategoryError(newErrors);
     } else {
       let flag = false;
       category.map((item) => {
-        if(!(item.id===categoryData?.id))
-        {
+        if (!(item.id === categoryData?.id)) {
           if (
             item.category_name.toLowerCase() ===
             categoryData?.category_name.toLowerCase()
@@ -96,7 +95,6 @@ const OperatingManual = () => {
             flag = true;
           }
         }
-        
       });
       if (!flag) {
         var myHeaders = new Headers();
@@ -303,7 +301,9 @@ const OperatingManual = () => {
     };
 
     fetch(
-      `${BASE_URL}/operating_manual/category/${id}`,
+      `${BASE_URL}/operating_manual/category/${id}?shared_by=${localStorage.getItem(
+        'user_id'
+      )}&link=${FRONT_BASE_URL}/operatingmanual`,
       requestOptions
     )
       .then((response) => response.json())
@@ -323,7 +323,11 @@ const OperatingManual = () => {
     };
 
     fetch(
-      `${BASE_URL}/operating_manual/${operatingManualdata[Index]?.operating_manuals[innerIndex]?.id}?shared_by=${localStorage.getItem("user_id")}&link=${FRONT_BASE_URL}/operatingmanual`,
+      `${BASE_URL}/operating_manual/${
+        operatingManualdata[Index]?.operating_manuals[innerIndex]?.id
+      }?shared_by=${localStorage.getItem(
+        'user_id'
+      )}&link=${FRONT_BASE_URL}/operatingmanual`,
       requestOptions
     )
       .then((response) => response.json())
@@ -340,7 +344,7 @@ const OperatingManual = () => {
       redirect: 'follow',
       headers: myHeaders,
     };
-    let category_flag=false;
+    let category_flag = false;
     let api_url = '';
     if (key === 'category') {
       api_url = `${BASE_URL}/operating_manual?category=${value}&role=${localStorage.getItem(
@@ -362,7 +366,7 @@ const OperatingManual = () => {
         'user_id'
       )}&franchisee_id=${localStorage.getItem('franchisee_id')}`;
       setCategoryFilter('reset');
-      category_flag=true;
+      category_flag = true;
     }
 
     fetch(api_url, requestOptions)
@@ -370,8 +374,7 @@ const OperatingManual = () => {
       .then((result) => {
         result = JSON.parse(result);
         setOperatingManualdata(result.result);
-        if(category_flag)
-        {
+        if (category_flag) {
           setCategory(result.result);
         }
         if (location.search) {
@@ -530,9 +533,8 @@ const OperatingManual = () => {
                                 )}
                                 {category?.map((item, index) => {
                                   return categoryFilter ===
-                                    item.category_name ? 
-                                    (
-                                      <div className="module-drop-down">
+                                    item.category_name ? (
+                                    <div className="module-drop-down">
                                       <Dropdown.Item
                                         onClick={() => {
                                           getOperatingManual(
@@ -544,30 +546,36 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      {verifyPermission('operating_manual', 'add') && ( <div className="edit-module">
-                                        <Dropdown.Item
-                                          onClick={() => {
-                                            setCategoryModalFlag(true);
-                                            setCategoryData(item);
-                                          
-                                          }}
-                                          active
-                                        >
-                                          <FontAwesomeIcon
-                                            icon={faPen}
-                                            style={{ color: '#455C58' }}
-                                          />
-                                        </Dropdown.Item>
-                                        <Dropdown.Item
-                                          className="tab-trash"
-                                          onClick={() => {
-                                            deleteOperatingManualCategory(item.id)
-                                          }}
-                                          active
-                                        >
-                                          <FontAwesomeIcon icon={faTrash} />
-                                        </Dropdown.Item>
-                                      </div>)}
+                                      {verifyPermission(
+                                        'operating_manual',
+                                        'add'
+                                      ) && (
+                                        <div className="edit-module">
+                                          <Dropdown.Item
+                                            onClick={() => {
+                                              setCategoryModalFlag(true);
+                                              setCategoryData(item);
+                                            }}
+                                            active
+                                          >
+                                            <FontAwesomeIcon
+                                              icon={faPen}
+                                              style={{ color: '#455C58' }}
+                                            />
+                                          </Dropdown.Item>
+                                          <Dropdown.Item
+                                            className="tab-trash"
+                                            onClick={() => {
+                                              deleteOperatingManualCategory(
+                                                item.id
+                                              );
+                                            }}
+                                            active
+                                          >
+                                            <FontAwesomeIcon icon={faTrash} style={{ color: '#455C58' }} />
+                                          </Dropdown.Item>
+                                        </div>
+                                      )}
                                     </div>
                                   ) : (
                                     <div className="module-drop-down">
@@ -581,29 +589,36 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      {verifyPermission('operating_manual', 'add') && (<div className="edit-module">
-                                        <Dropdown.Item
-                                          onClick={() => {
-                                            setCategoryModalFlag(true);
-                                            setCategoryData(item);
-                                          }}
-                                          active
-                                        >
-                                          <FontAwesomeIcon
-                                            icon={faPen}
-                                            style={{ color: '#455C58' }}
-                                          />
-                                        </Dropdown.Item>
-                                        <Dropdown.Item
-                                          className="tab-trash"
-                                          onClick={() => {
-                                            deleteOperatingManualCategory(item.id)
-                                          }}
-                                          active
-                                        >
-                                          <FontAwesomeIcon icon={faTrash} />
-                                        </Dropdown.Item>
-                                      </div>)}
+                                      {verifyPermission(
+                                        'operating_manual',
+                                        'add'
+                                      ) && (
+                                        <div className="edit-module">
+                                          <Dropdown.Item
+                                            onClick={() => {
+                                              setCategoryModalFlag(true);
+                                              setCategoryData(item);
+                                            }}
+                                            active
+                                          >
+                                            <FontAwesomeIcon
+                                              icon={faPen}
+                                              style={{ color: '#455C58' }}
+                                            />
+                                          </Dropdown.Item>
+                                          <Dropdown.Item
+                                            className="tab-trash"
+                                            onClick={() => {
+                                              deleteOperatingManualCategory(
+                                                item.id
+                                              );
+                                            }}
+                                            active
+                                          >
+                                            <FontAwesomeIcon icon={faTrash} />
+                                          </Dropdown.Item>
+                                        </div>
+                                      )}
                                     </div>
                                   );
                                 })}
@@ -1107,10 +1122,11 @@ const OperatingManual = () => {
               </Col>
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label>Position in the tree-structure </Form.Label>
+                  <Form.Label>Order in List </Form.Label>
                   <Form.Control
                     type="number"
                     name="order"
+                    min={1}
                     value={categoryData?.order}
                     placeholder="Enter Position"
                     onChange={(e) => {
