@@ -55,6 +55,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
   const [authorizedNomineeError, setAuthorizedNomineeError] = useState(null);
   const [authorizedPersonError, setAuthorizedPersonError] = useState(null);
   const [otherAuthorizedPersonError, setOtherAuthorizedPersonError] = useState(null);
+  const [loader, setLoader] = useState(false);
 
   // FORM AHNDLING FUNCTIONS
   const handleEmergencyContact = (event) => {
@@ -92,6 +93,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   // UPDATING THE FORM FOUR DATA
   const updateFormFourData = async () => {
+    setLoader(true);
     try {
       let token = localStorage.getItem('token');
       let response = await axios.patch(`${BASE_URL}/enrollment/emergency-contact/${idList.emergency_contact_id}`, {...emergencyContactData}, {
@@ -137,6 +139,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 changeCount++;
               
               localStorage.setItem('change_count', changeCount);
+              setLoader(false);
               nextStep();
             }
           }
@@ -177,6 +180,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
   };
 
   const saveFormFourData = async () => {
+    setLoader(true);
     try {
       let childId = localStorage.getItem('enrolled_child_id');
       let token = localStorage.getItem('token');
@@ -221,6 +225,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               });
 
               if(response.status === 201 && response.data.status === "success") {
+                setLoader(false);
                 nextStep();
               }
             }
@@ -849,8 +854,23 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
             <Button variant="primary" type="submit">Next</Button>
           </div> */}
           <div className="cta text-center mt-5 mb-5">
-            <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Previous</Button>
-            <Button variant="primary" type="submit">Next</Button>
+            <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Go Back</Button>
+            <Button 
+              variant="primary" 
+              disabled={loader ? true : false}
+              type="submit">
+              {loader === true ? (
+                <>
+                  <img
+                  style={{ width: '24px' }}
+                  src={'/img/mini_loader1.gif'}
+                  alt=""
+                  />
+                    Submitting...
+                </>
+              ) : (
+              'Submit')}
+            </Button>
           </div>
         </Form>
       </div>

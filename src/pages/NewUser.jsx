@@ -767,7 +767,7 @@ const NewUser = () => {
                           }
                             
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Franchisee</Form.Label>
+                            <Form.Label>Select Franchise</Form.Label>
                             {
                               localStorage.getItem('user_role') === 'franchisor_admin' && 
                               <Select
@@ -836,7 +836,7 @@ const NewUser = () => {
                             />
                           </Form.Group>
 
-                          <Form.Group className="mb-3">
+                          {/* <Form.Group className="mb-3">
                             <div className="btn-checkbox">
                               <Form.Check
                                 type="checkbox"
@@ -847,7 +847,7 @@ const NewUser = () => {
                                   
                                 }} />
                             </div>
-                          </Form.Group>
+                          </Form.Group> */}
                           
                           {/* <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Termination Date</Form.Label>

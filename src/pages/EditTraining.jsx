@@ -133,10 +133,8 @@ const EditTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    console.log('FRANCHISEE ID: => >>>>>>>>>>>>>>>>>>>', franchisee_id);
     let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
     const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${f}]`);
-    console.log('USER DATA FROM FRANCHISEE:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -158,10 +156,8 @@ const EditTraining = () => {
         "Authorization": "Bearer " + token
       }
     });
-    console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-      console.log('TRAINING:', training);
       copyDataToStates(training);
     }
   };
@@ -200,14 +196,10 @@ const EditTraining = () => {
     setFetchedCoverImage(training?.coverImage);
     setFetchedVideoTutorialFiles(training?.training_files?.filter(file => file.fileType === ".mp4"));
     setFetchedRelatedFiles(training?.training_files?.filter(file => file.fileType !== '.mp4'));
-    console.log('FETCHED DATA COPIED!');
-
-
   }
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const updateTraining = async (data) => {
-    console.log('CREATING THE TRAINING');
     const token = localStorage.getItem('token');
 
     const response = await axios.put(
@@ -219,12 +211,10 @@ const EditTraining = () => {
     );
 
     if (response.status === 201 && response.data.status === "success") {
-      console.log('TYPE OF COVER IMAGE:', typeof coverImage[0]);
       let data = new FormData();
 
       let imgSaveResponse;
       if (typeof coverImage === 'object') {
-        console.log('COVER IMAGE:', coverImage[0]);
 
         data.append('id', trainingId);
         data.append('image', coverImage[0]);
@@ -295,7 +285,6 @@ const EditTraining = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
-      console.log('CATEGORY:',)
       setTrainingCategory([
         ...categoryList.map((data) => ({
           id: data.id,
@@ -374,11 +363,8 @@ const EditTraining = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
-    console.log('Delete response:', deleteResponse);
     setFileDeleteResponse(deleteResponse);
     // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
-
     // }
   }
 
@@ -396,13 +382,10 @@ const EditTraining = () => {
     // }
   }, [trainingSettings?.assigned_franchisee]);
 
-  trainingData && console.log('TRAINING DATA:', trainingData);
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  // fetchedFranchiseeUsers && console.log('Fetched franchisee USERS:', fetchedFranchiseeUsers);
-  // fetchedFranchiseeUsers && console.log('POPULATED USERS:', fetchedFranchiseeUsers?.map(d => trainingSettings?.d.id));
-  fetchedVideoTutorialFiles && console.log('VIDEO TUTORIAL FILES:', fetchedVideoTutorialFiles);
-  fetchedRelatedFiles && console.log('RELATED FILES:', fetchedRelatedFiles);
-  console.log('COVER IMAGE:', coverImage);
+  useEffect(() => {
+    fetchTrainingFormData();
+  }, [fileDeleteResponse]);
+
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -567,7 +550,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload Video Tutorial Here :</Form.Label>
+                            <Form.Label>Upload Video:</Form.Label>
                             <DropAllFile
                               title="Videos"
                               type="video"
@@ -597,7 +580,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload Related Files :</Form.Label>
+                            <Form.Label>Upload File:</Form.Label>
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
@@ -608,7 +591,7 @@ const EditTraining = () => {
                                 fetchedRelatedFiles.map((file, index) => {
                                   return (
                                     <div className="file-container">
-                                      {/* <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} /> */}
+                                      <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
                                       <p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p>
                                       <img
                                         onClick={() => handleTrainingFileDelete(file.id)}
@@ -728,7 +711,7 @@ const EditTraining = () => {
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Send to all franchisee:</Form.Label>
+                    <Form.Label>Send to all franchise:</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
                         <label for="all">

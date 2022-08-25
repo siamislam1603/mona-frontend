@@ -312,7 +312,7 @@ const RepoEdit = () => {
                                                                 {typeof data.image === "string" ?
                                                                     (<>
                                                                         {data.file_type === "image/jpeg" || data.file_type === "image/png" || data.file_type === "image/jpe" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
-                                                                            data.file_type === "application/pdf" || data.file_type === "text/html" || data.file_type === "text/pdf" || data.file_type === "text/csv" ? (<>
+                                                                            data.file_type === "application/pdf" || data.file_type === "text/html" || data.file_type === "text/pdf" || data.file_type === "text/csv" || data.file_type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || data.file_type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? (<>
                                                                                 <span className="user-pic-tow">
                                                                                     <a href={data.image} download >
                                                                                         <img src="../img/abstract-ico.png" className="me-2" alt="" />
@@ -570,19 +570,19 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="Guardian"
-                                                                            checked={data?.user_roles.includes('Guardian')}
+                                                                            checked={data?.user_roles.includes('guardian')}
                                                                             onChange={() => {
-                                                                                if (data.user_roles?.includes("Guardian")) {
-                                                                                    let Data = data.user_roles.filter(t => t !== "Guardian");
+                                                                                if (data.user_roles?.includes("guardian")) {
+                                                                                    let Data = data.user_roles.filter(t => t !== "guardian");
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
                                                                                         user_roles: [...Data]
                                                                                     }));
                                                                                 }
-                                                                                if (!data.user_roles?.includes("Guardian"))
+                                                                                if (!data.user_roles?.includes("guardian"))
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        user_roles: [...data.user_roles, "Guardian"]
+                                                                                        user_roles: [...data.user_roles, "guardian"]
                                                                                     }))
                                                                             }}
                                                                         />
@@ -594,11 +594,11 @@ const RepoEdit = () => {
                                                                             type="checkbox"
                                                                             name="shared_role"
                                                                             id="all_roles"
-                                                                            checked={data?.user_roles?.includes('Guardian' && 'educator' && 'coordinator')}
+                                                                            checked={data?.user_roles?.includes('guardian' && 'educator' && 'coordinator')}
                                                                             onChange={() => {
                                                                                 if (data.user_roles?.includes("coordinator")
                                                                                     && data.user_roles.includes("educator")
-                                                                                    && data.user_roles.includes("Guardian")) {
+                                                                                    && data.user_roles.includes("guardian")) {
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
                                                                                         user_roles: [],
@@ -606,11 +606,11 @@ const RepoEdit = () => {
                                                                                 }
                                                                                 if (!data.user_roles?.includes("coordinator")
                                                                                     && !data.user_roles.includes("educator")
-                                                                                    && !data.user_roles.includes("Guardian")
+                                                                                    && !data.user_roles.includes("guardian")
                                                                                 )
                                                                                     setData(prevState => ({
                                                                                         ...prevState,
-                                                                                        user_roles: ["coordinator", "educator", "Guardian"]
+                                                                                        user_roles: ["coordinator", "educator", "guardian"]
                                                                                     })
                                                                                     )
                                                                             }} />
@@ -669,20 +669,20 @@ const RepoEdit = () => {
                                                     <div className="d-flex justify-content-center my-5">
                                                         <Form.Group className="mb-3" controlId="formBasicPassword">
                                                             <Button variant="link btn btn-light btn-md m-2" style={{ backgroundColor: '#efefef' }} onClick={() => navigate(-1)}>Cancel</Button>
-                                                            <Button type="submit" onClick={handleDataSubmit} > 
-                                                            {loaderFlag === true ? (
-                                                                <>
-                                                                    <img
-                                                                    style={{ width: '24px' }}
-                                                                    src={'/img/mini_loader1.gif'}
-                                                                    alt=""
-                                                                    />
-                                                                    Updating...
-                                                                </>
+                                                            <Button type="submit" onClick={handleDataSubmit} >
+                                                                {loaderFlag === true ? (
+                                                                    <>
+                                                                        <img
+                                                                            style={{ width: '24px' }}
+                                                                            src={'/img/mini_loader1.gif'}
+                                                                            alt=""
+                                                                        />
+                                                                        Updating...
+                                                                    </>
                                                                 ) : (
-                                                                'Save Details'
+                                                                    'Save Details'
                                                                 )}
-                                                            
+
 
                                                             </Button>
                                                         </Form.Group>

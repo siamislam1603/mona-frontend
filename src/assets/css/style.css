@@ -126,7 +126,7 @@ input:-webkit-autofill,input:-webkit-autofill:active,input:-webkit-autofill:focu
 img.custom_logo_image{width:10%}
 .custom_main_logo img{width:20%}
 .custom_logo{text-align:center}
-.custom_main_title{font-size:36px;font-weight:800;color:var(--primary);padding:50px 0 15px 0}
+.custom_main_title{font-size:36px;font-weight:800;color:var(--purple);padding:50px 0 15px 0}
 .custom_main_content{font-style:normal;font-weight:400;font-size:20px;line-height:28px;color:rgba(51,51,51,.7)}
 .custom_signin_page{padding:79px 55px;margin:50px;border-radius:20px;position:relative;background-position:top center;background-image:linear-gradient(to right top,#fff,#f8f8f8,#f2f2f2,#ebebeb,#e5e5e5)}
 .custom_content{margin:0;padding:150px 80px;position:relative}
@@ -379,15 +379,16 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .column-list .item .cta-col .btn-transparent{opacity:.5}
 .column-list.access-list .item,.column-list.files-list .item{background-color:var(--offwhite);box-shadow:none}
 .column-list.access-list .item:hover,.column-list.files-list .item:hover{background-color:var(--yellow)}
+.column-list.access-list .item.nolink:hover,.column-list.files-list .item.nolink:hover{background-color:var(--offwhite)}
 .column-list.event-list .item .name,.column-list.event-list .item .name a{font-size:var(--fontlg);color:var(--darkblue)}
-.column-list.access-list .item .name{font-size:var(--fontxl);font-weight:800;width:100%;text-align:right}
+.column-list.access-list .item .name{font-size:var(--fontxl);font-weight:800;width:100%;text-align:left}
 .column-list.access-list .item .pic{flex:0 0 55px}
 .three-col,.two-col{flex-flow:wrap;display:flex}
 .two-col .item{flex:0 0 48%}
-.three-col .item,.two-col .item{margin-right:1%}
+.three-col .item,.two-col .item{margin-right:2%}
 .two-col .item:nth-child(2n){margin-left:1%;margin-right:0}
-.three-col .item{flex:0 0 32%}
-.three-col .item:nth-child(3n){margin-left:1%;margin-right:0}
+.three-col .item{flex:0 0 31%}
+/*.three-col .item:nth-child(3n){margin-left:1%;margin-right:0}*/
 .training-column .item{background-color:var(--offwhite);overflow:none;border-radius:18px;margin-bottom:1rem}
 .training-column .item .pic{overflow:hidden;border-radius:18px;position:relative}
 .training-column .item .pic a,.training-column .item .pic img{width:100%;display:block}

@@ -3,6 +3,7 @@ import {
   faPen,
   faPlus,
   faRemove,
+  faTrash,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,6 +25,7 @@ import PdfComponent from '../PrintPDF/PdfComponent';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { verifyPermission } from '../../helpers/roleBasedAccess';
+import { createCategoryValidation } from '../../helpers/validation';
 
 let upperRoleUser = '';
 let selectedUserId = '';
@@ -45,8 +47,13 @@ const OperatingManual = () => {
   const [errors, setErrors] = useState({});
   const [user, setUser] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [categoryModalFlag,setCategoryModalFlag]=useState(false);
+  const [categoryData,setCategoryData]=useState({});
+  const [categoryError,setCategoryError]=useState({});
   const [userRole, setUserRole] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem("franchisee_id"));
+  const [selectedFranchisee, setSelectedFranchisee] = useState(
+    localStorage.getItem('franchisee_id')
+  );
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const token = localStorage.getItem('token');
   useEffect(() => {
@@ -55,12 +62,64 @@ const OperatingManual = () => {
     getCategory();
   }, []);
   useEffect(() => {
-    if(selectedFranchisee)
-    {
+    if (selectedFranchisee) {
       getUser();
     }
-    
   }, [selectedFranchisee]);
+  const setCategoryField = (field, value) => {
+    setCategoryData({ ...categoryData, [field]: value });
+    if (!!categoryError[field]) {
+      setCategoryError({
+        ...categoryError,
+        [field]: null,
+      });
+    }
+  };
+  const OnCategorySubmit = (e) => {
+    e.preventDefault();
+    const newErrors = createCategoryValidation(categoryData);
+    
+    if (Object.keys(newErrors).length > 0) {
+      setCategoryError(newErrors);
+    } else {
+      let flag = false;
+      category.map((item) => {
+        if(!(item.id===categoryData?.id))
+        {
+          if (
+            item.category_name.toLowerCase() ===
+            categoryData?.category_name.toLowerCase()
+          ) {
+            let categoryErrorData = { ...categoryError };
+            categoryErrorData['category_name'] = 'Module already exists';
+            setCategoryError(categoryErrorData);
+            flag = true;
+          }
+        }
+        
+      });
+      if (!flag) {
+        var myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('authorization', 'Bearer ' + token);
+        fetch(`${BASE_URL}/operating_manual/category/add`, {
+          method: 'post',
+          body: JSON.stringify(categoryData),
+          headers: myHeaders,
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            setCategory(res?.result);
+            setCategoryModalFlag(false);
+            getOperatingManual();
+            getCategory();
+            // let data = operatingManualData;
+            // data['category_name'] = categoryData?.category_name;
+            // setOperatingManualData(data);
+          });
+      }
+    }
+  };
   const getUserRoleData = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -234,6 +293,26 @@ const OperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
+  const deleteOperatingManualCategory = (id) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
+    var requestOptions = {
+      method: 'DELETE',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+
+    fetch(
+      `${BASE_URL}/operating_manual/category/${id}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        getOperatingManual();
+        getCategory();
+      })
+      .catch((error) => console.log('error', error));
+  };
   const deleteOperatingManual = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -244,10 +323,10 @@ const OperatingManual = () => {
     };
 
     fetch(
-      `${BASE_URL}/operating_manual/${operatingManualdata[Index]?.operating_manuals[innerIndex]?.id}`,
+      `${BASE_URL}/operating_manual/${operatingManualdata[Index]?.operating_manuals[innerIndex]?.id}?shared_by=${localStorage.getItem("user_id")}&link=${FRONT_BASE_URL}/operatingmanual`,
       requestOptions
     )
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((result) => {
         getOperatingManual();
       })
@@ -432,7 +511,7 @@ const OperatingManual = () => {
                                     }}
                                     active
                                   >
-                                    Reset
+                                    Clear Filter
                                   </Dropdown.Item>
                                 ) : (
                                   <Dropdown.Item
@@ -440,34 +519,86 @@ const OperatingManual = () => {
                                       getOperatingManual('', '');
                                     }}
                                   >
-                                    Reset
+                                    Clear Filter
                                   </Dropdown.Item>
                                 )}
                                 {category?.map((item, index) => {
                                   return categoryFilter ===
-                                    item.category_name ? (
-                                    <Dropdown.Item
-                                      onClick={() => {
-                                        getOperatingManual(
-                                          'category',
-                                          item.category_name
-                                        );
-                                      }}
-                                      active
-                                    >
-                                      {item.category_name}
-                                    </Dropdown.Item>
+                                    item.category_name ? 
+                                    (
+                                      <div className="module-drop-down">
+                                      <Dropdown.Item
+                                        onClick={() => {
+                                          getOperatingManual(
+                                            'category',
+                                            item.category_name
+                                          );
+                                        }}
+                                        active
+                                      >
+                                        {item.category_name}
+                                      </Dropdown.Item>
+                                      {verifyPermission('operating_manual', 'add') && ( <div className="edit-module">
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            setCategoryModalFlag(true);
+                                            setCategoryData(item);
+                                          
+                                          }}
+                                          active
+                                        >
+                                          <FontAwesomeIcon
+                                            icon={faPen}
+                                            style={{ color: '#455C58' }}
+                                          />
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          className="tab-trash"
+                                          onClick={() => {
+                                            deleteOperatingManualCategory(item.id)
+                                          }}
+                                          active
+                                        >
+                                          <FontAwesomeIcon icon={faTrash} />
+                                        </Dropdown.Item>
+                                      </div>)}
+                                    </div>
                                   ) : (
-                                    <Dropdown.Item
-                                      onClick={() => {
-                                        getOperatingManual(
-                                          'category',
-                                          item.category_name
-                                        );
-                                      }}
-                                    >
-                                      {item.category_name}
-                                    </Dropdown.Item>
+                                    <div className="module-drop-down">
+                                      <Dropdown.Item
+                                        onClick={() => {
+                                          getOperatingManual(
+                                            'category',
+                                            item.category_name
+                                          );
+                                        }}
+                                      >
+                                        {item.category_name}
+                                      </Dropdown.Item>
+                                      {verifyPermission('operating_manual', 'add') && (<div className="edit-module">
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            setCategoryModalFlag(true);
+                                            setCategoryData(item);
+                                          }}
+                                          active
+                                        >
+                                          <FontAwesomeIcon
+                                            icon={faPen}
+                                            style={{ color: '#455C58' }}
+                                          />
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          className="tab-trash"
+                                          onClick={() => {
+                                            deleteOperatingManualCategory(item.id)
+                                          }}
+                                          active
+                                        >
+                                          <FontAwesomeIcon icon={faTrash} />
+                                        </Dropdown.Item>
+                                      </div>)}
+                                    </div>
                                   );
                                 })}
                               </Dropdown.Menu>
@@ -732,7 +863,7 @@ const OperatingManual = () => {
             className="modal-heading"
           >
             <img src="../../img/carbon_settings.svg" />
-            Form Settings
+            Sharing Permissions
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -927,7 +1058,79 @@ const OperatingManual = () => {
             Cancel
           </Button>
           <Button className="done" onClick={onModelSubmit}>
-            Save Settings
+            Save Permissions
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={categoryModalFlag}
+        onHide={() => {
+          setCategoryModalFlag(false);
+        }}
+        size="md"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title
+            id="contained-modal-title-vcenter"
+            className="modal-heading"
+          >
+            Edit Module
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-settings-content">
+            <Row>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Module Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="category_name"
+                    value={categoryData?.category_name}
+                    onChange={(e) => {
+                      setCategoryField(e.target.name, e.target.value);
+                    }}
+                    isInvalid={!!categoryError.category_name}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {categoryError.category_name}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Position in the tree-structure </Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="order"
+                    value={categoryData?.order}
+                    placeholder="Enter Position"
+                    onChange={(e) => {
+                      setCategoryField(e.target.name, e.target.value);
+                    }}
+                    isInvalid={!!categoryError.order}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {categoryError.order}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+            </Row>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="justify-content-center">
+          <Button
+            className="back"
+            onClick={() => {
+              setCategoryModalFlag(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button className="done" onClick={OnCategorySubmit}>
+            Save
           </Button>
         </Modal.Footer>
       </Modal>

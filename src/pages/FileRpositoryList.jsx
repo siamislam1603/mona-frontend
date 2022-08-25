@@ -891,7 +891,7 @@ const FileRpositoryList = () => {
                                                                 setFormSettingData(data);
                                                             }}
                                                             checked={formSettingData?.shared_role?.includes(
-                                                                'Guardian'
+                                                                'guardian'
                                                             )}
                                                         />
                                                         <span className="checkmark"></span>
@@ -909,16 +909,16 @@ const FileRpositoryList = () => {
                                                                     if (
                                                                         !data['shared_role']
                                                                             .toString()
-                                                                            .includes('Guardian')
+                                                                            .includes('guardian')
                                                                     ) {
-                                                                        data['shared_role'] += 'Guardian,';
+                                                                        data['shared_role'] += 'guardian,';
                                                                     }
                                                                     if (
                                                                         !data['shared_role']
                                                                             .toString()
-                                                                            .includes('Guardian')
+                                                                            .includes('guardian')
                                                                     ) {
-                                                                        data['shared_role'] += 'Guardian,';
+                                                                        data['shared_role'] += 'guardian,';
                                                                     }
                                                                     if (
                                                                         !data['shared_role']

@@ -64,7 +64,7 @@ const columns1 = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/form/response">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -175,7 +175,7 @@ const FranchisorDashboard = () => {
     }
   }
 
-  
+
   React.useEffect(() => {
     count_Api();
     announcement();
@@ -208,31 +208,31 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="column-list access-list three-col">
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://login.xero.com/identity/user/login" className="flex">
                                 <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
                                 <div className="name">Xero</div>
                               </a>
                             </div>
-                            <div className="item">
-                              <a href="/" className="flex">
+                            <div className="item nolink">
+                              <div className="flex">
                                 <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
-                              </a>
+                              </div>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://app.storypark.com/users/sign_in?_ga=2.96275036.1184893872.1661406994-2035467191.1661406993" className="flex">
                                 <div className="pic"><img src="../img/story-ico.png" alt="" /></div>
                                 <div className="name">Story park</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://sp8.harmonykids.com.au/UserAccount/Login" className="flex">
                                 <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                                 <div className="name">Harmony</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://app.engagebay.com/login  " className="flex">
                                 <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
                                 <div className="name">Engagebay</div>
                               </a>
@@ -243,7 +243,7 @@ const FranchisorDashboard = () => {
                           <header className="title-head mb-4 justify-content-between">
                             <h2 className="title-sm mb-0"><strong>Record of Audits</strong></h2>
 
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/form/response" className="viewall">View All</Link>
                           </header>
                           <div className="audit-form">
                             <p>Total Number of Audit Forms <br />in Last 30 Days</p>
@@ -391,14 +391,14 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/user-management?role=educator" className="item">
+                              <a href="/user-management/Educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a className="item" href="/user-management/Guardian">
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>

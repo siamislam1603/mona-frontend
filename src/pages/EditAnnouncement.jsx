@@ -5,6 +5,7 @@ import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
 import MyEditor from './CKEditor';
+
 import { useParams } from 'react-router-dom';
 import * as ReactBootstrap from 'react-bootstrap';
 
@@ -36,9 +37,12 @@ const EditAnnouncement = () => {
   const handleClose = () => setShow(false);
 
   const [theMessage,setTheMessage] = useState("")
+const [selectedFranchisee, setSelectedFranchisee] = useState();
+
  
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [fileDeleteResponse, setFileDeleteResponse] = useState(false);
+  const [allFranchise,setAllFranchise] = useState(false)
 
    const [updateAnnouncement, setUpdateAnnouncement] = useState(false);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
@@ -58,7 +62,7 @@ const EditAnnouncement = () => {
   const [theVideo,setTheVideo] = useState({})
   const [loader, setLoader] = useState(false);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
-  const [franchiseeData, setFranchiseeData] = useState(null);
+  const [franchiseeData, setFranchiseeData] = useState();
 
 
   const { id } = useParams();
@@ -273,7 +277,9 @@ const EditAnnouncement = () => {
         id: franchisee.id,
         value: franchisee.franchisee_name,
         label: franchisee.franchisee_name,
-        city: franchisee.franchisee_city
+        city: franchisee.franchisee_city,
+        key: `${franchisee.franchisee_name}`
+
       })));  
     }
   }
@@ -346,9 +352,10 @@ const EditAnnouncement = () => {
   // console.log("The COPY DATA",announcementCopyData )
   // console.log("THE VIDEO DATA",fetchedVideoTutorialFiles)
   console.log("ANNOUNCEMENT DATA",announcementData)
-  console.log("The cover image",announcementCopyData.franchise)
+  console.log("The cover image",announcementCopyData)
   console.log("FRaNHISEE DATA",franchiseeData)
-  const dateToFormat = '1976-04-19T12:59-0500';
+  // const dateToFormat = '1976-04-19T12:59-0500';
+  console.log("ALL FRNHIASE",allFranchise)
   
   console.log("The value",franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + "")))
   // start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
@@ -371,7 +378,9 @@ const EditAnnouncement = () => {
               </aside>
               <div className="sec-column">
                 <div className="new_module">
-                  <TopHeader/>
+                  {/* <TopHeader/> */}
+                  <TopHeader setSelectedFranchisee={setSelectedFranchisee} />
+
                   <Row>
                   <div className='entry-container'>
                 <header className="title-head">
@@ -408,7 +417,61 @@ const EditAnnouncement = () => {
 
                         </Form.Group>
 
-                      
+                        {
+                          localStorage.getItem("user_role") === "franchisor_admin" ? (
+                            <Col lg={3} sm={6}>
+                            <Form.Group className="col-md-12">
+                              <div className="btn-radio inline-col">
+                                <Form.Label>Send to all franchisee:</Form.Label>
+                                <div>
+                                <Form.Check
+                                  type="radio"
+                                  name="franchise"
+                                  id="r"
+                                  label="Yes"
+                                  // checked={announcementData?.send_to_all_franchise === true}
+                                  onChange={(event) =>{             
+                                    setAnnouncementCopyData((prevState) => ({
+                                      ...prevState,
+                                      send_to_all_franchise: true,
+                                      franchise: []
+                                    }));
+                                  setAllFranchise(true)
+                                  }}
+                                  
+                                   />
+                                <Form.Check
+                                  type="radio"
+                                  name="franchise"
+                                  id="t"
+                                  // checked={announcementData?.send_to_all_franchise === false}
+                                  onChange={() =>{
+                                    setAnnouncementCopyData(prevState => ({
+                                      ...prevState,
+                                      send_to_all_franchise: false,
+                                     
+                                      // franchise: [franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(parseInt(c.id) + ''))]
+                                    }))
+                                    setAllFranchise(false)
+                                    copyFetchedData()
+                                  }
+                                  
+                                }
+                                  
+                                defaultChecked
+                                  label="No"
+                                   />
+                                   
+                                </div>
+                              
+                              </div>
+                            </Form.Group>
+                          </Col>
+                          )
+                          :(
+                            null
+                          )
+                        }
                
                         <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchisee</Form.Label>
@@ -430,7 +493,7 @@ const EditAnnouncement = () => {
                             localStorage.getItem('user_role') === 'franchisor_admin' ? (
                               <div className="select-with-plus">
 
-                              <Select
+                              {/* <Select
                                 placeholder="Which Franchisee?"
                                 closeMenuOnSelect={true}
                                 isMulti
@@ -442,7 +505,37 @@ const EditAnnouncement = () => {
                                     franchise: [...selectedOptions.map(option => option.id + "")]
                                   }));
                                 }}
-                              />
+                              /> */}
+                                 <Multiselect
+                                   disable={allFranchise === false?false:true}
+                              // singleSelect={true}
+                              // placeholder={"Select Franchise Names"}
+                              // value="ds"
+                                    displayValue="key"
+                                    selectedValues={allFranchise === false ? (franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(parseInt(c.id) + ''))):(franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(parseInt(c.id) + '')))}
+                                    // selectedValues={franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id)))}
+                                    className="multiselect-box default-arrow-select"
+                                    onKeyPressFn={function noRefCheck() { }}
+                                    onRemove={function noRefCheck(data) {
+                                      setAnnouncementCopyData((prevState) => ({
+                                        ...prevState,
+                                        franchise: [...data.map(data => data.id + '')],
+
+                                        // : [...event.map(option => option.id + "")]
+                                      }));
+                                    }}
+                              // onSearch={function noRefCheck() { }}
+                                    onSelect={function noRefCheck(data) {
+                                      setAnnouncementCopyData((prevState) => ({
+                                        ...prevState,
+                                        // franchise: [...data.map(option => option.id + "")]
+                                         franchise: [...data.map(data => data.id+'')],
+
+                                      }));
+                                    }}
+                                    options={franchiseeData}
+                           />
+
                               
                          
                             </div>
@@ -451,9 +544,11 @@ const EditAnnouncement = () => {
                               <div className="select-with-plus">
                              
                               <Select
-                                placeholder="Which Franchisee?"
-                                closeMenuOnSelect={true}
-                                options={franchiseeData}
+                                // placeholder="Which Franchisee?"
+                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0]?.label || "Which Franchisee?"}
+                                isDisabled={true} 
+                                // closeMenuOnSelect={true}
+                                // options={franchiseeData}
                                 // value={announcementCopyData.franchise}
                                 value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
 
@@ -536,6 +631,8 @@ const EditAnnouncement = () => {
                   <Form.Control  
                         type="date"
                         name="start_date"
+                    min={new Date().toISOString().slice(0, 10)}
+
                         defaultValue={announcementCopyData&& announcementCopyData.start_date}
                         onChange={(e) => {
                           setAnnouncementFiled(

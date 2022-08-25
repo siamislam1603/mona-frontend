@@ -789,7 +789,7 @@ const AddOperatingManual = () => {
             className="modal-heading"
           >
             <img src="../../img/carbon_settings.svg" />
-            Form Settings
+            Sharing Permissions
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -983,7 +983,7 @@ const AddOperatingManual = () => {
             Cancel
           </Button>
           <Button className="done" onClick={onModelSubmit}>
-            Save Settings
+            Save Permissions
           </Button>
         </Modal.Footer>
       </Modal>

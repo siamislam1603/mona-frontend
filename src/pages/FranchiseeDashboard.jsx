@@ -66,7 +66,7 @@ const columns = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/form/response">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -125,7 +125,7 @@ const columns1 = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#">Delete</Dropdown.Item>
+            <Dropdown.Item href="/form/response">Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -309,41 +309,36 @@ const FranchiseeDashboard = () => {
                           </header>
                           <div className="column-list access-list three-col">
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://app.storypark.com/users/sign_in?_ga=2.96275036.1184893872.1661406994-2035467191.1661406993" className="flex">
                                 <div className="pic"><img src="../img/story-ico.png" alt="" /></div>
                                 <div className="name">Story park</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://sp8.harmonykids.com.au/UserAccount/Login" className="flex">
                                 <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                                 <div className="name">Harmony</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://app.engagebay.com/login" className="flex">
                                 <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
                                 <div className="name">Engagebay</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="/" className="flex">
+                              <a href="https://login.xero.com/identity/user/login" className="flex">
                                 <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
                                 <div className="name">Xero</div>
                               </a>
                             </div>
-                            <div className="item">
-                              <a href="/" className="flex">
+                            <div className="item nolink">
+                              <div className="flex">
                                 <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
-                              </a>
+                              </div>
                             </div>
-                            {/* <div className="item">
-                              <a href="/" className="flex">
-                                <div className="pic"><img src="../img/intranet-ico.png" alt="" /></div>
-                                <div className="name">Intranet</div>
-                              </a>
-                            </div> */}
+
                           </div>
                         </div>
                         {/*<div className="files-sec pb-5">
@@ -413,7 +408,7 @@ const FranchiseeDashboard = () => {
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h3 className="title-sm mb-0"><strong>Children With Additional Needs</strong></h3>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/form/response" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {ToolkitProvider ? (<>
@@ -454,21 +449,21 @@ const FranchiseeDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a href="/user-management/Educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a href="/user-management/Guardian" className="item">
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a href="/form/response" className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.auditForms}</span>
@@ -479,7 +474,7 @@ const FranchiseeDashboard = () => {
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>New Enrollments</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
+                            <Link to="/user-management/Guardian" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {enrollments ? (<>
