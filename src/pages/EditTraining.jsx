@@ -17,7 +17,11 @@ import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
-const timeqty = [
+const timeqty =  [
+  {
+    value: 'minutes',
+    label: 'Minutes',
+  },
   {
     value: 'hours',
     label: 'Hours',
