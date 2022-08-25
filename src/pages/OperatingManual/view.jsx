@@ -572,7 +572,7 @@ const OperatingManual = () => {
                                             }}
                                             active
                                           >
-                                            <FontAwesomeIcon icon={faTrash} />
+                                            <FontAwesomeIcon icon={faTrash} style={{ color: '#455C58' }} />
                                           </Dropdown.Item>
                                         </div>
                                       )}
