@@ -666,6 +666,7 @@ const EditUser = () => {
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={handleChange}
+                                maxLength={10}
                               />
                             </div>
                             <span className="error">
