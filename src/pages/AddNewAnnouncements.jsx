@@ -65,7 +65,6 @@ const [titleError,setTitleError] = useState(null);
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [error, setError] = useState({user_roles: []});
   const [allFranchise,setAllFranchise] = useState(false)
-
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
 
