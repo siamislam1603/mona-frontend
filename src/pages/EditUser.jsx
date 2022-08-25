@@ -466,7 +466,7 @@ const EditUser = () => {
     }
 
     if(currentRole === "franchisee_admin") {
-      newRoleList = newRoleList.filter(role => role.sequence < 3);
+      newRoleList = newRoleList.filter(role => role.sequence < 3 && role.sequence > 1);
       setUserRoleData(newRoleList);
     }
 
