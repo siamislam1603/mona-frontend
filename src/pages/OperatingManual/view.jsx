@@ -522,7 +522,7 @@ const OperatingManual = () => {
                                     Clear Filter
                                   </Dropdown.Item>
                                 )}
-                                {category?.map((item, index) => {
+                                {operatingManualdata?.map((item, index) => {
                                   return categoryFilter ===
                                     item.category_name ? 
                                     (
