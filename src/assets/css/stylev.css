@@ -560,8 +560,7 @@ button:focus {
     margin: 20px 0;
 }
 
-.my-new-formsection input[type=text],
-.my-new-formsection select {
+.my-new-formsection input[type=text], [type=number], .my-new-formsection select {
     background-color: #fff !important;
     border: 1px solid #4242421A !important;
     border-radius: 5px !important;
@@ -2937,7 +2936,27 @@ p.error {
 .child_info_field{
     margin-bottom: 0px !important;
 }
-        @media only screen and (max-width: 1199px) {
+
+.module-drop-down {
+    display: flex;
+    width: 100%;
+}
+
+.custom-menu-dots .dropdown-item {
+    padding: 0.01rem 1rem !important;
+    width: 70%;
+}
+
+.edit-module{
+    display: flex;
+}
+
+a.tab-trash.dropdown-item.active {
+    color: red;
+    display: contents;
+}
+
+@media only screen and (max-width: 1199px) {
 .new-form-radio-box {
     margin: 0 20px 20px 0 !important; 
 }
