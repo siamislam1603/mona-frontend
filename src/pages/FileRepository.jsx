@@ -11,7 +11,7 @@ import axios from "axios";
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import makeAnimated from 'react-select/animated';
-import { verifyPermission } from '../helpers/roleBasedAccess';
+import { verifyPermission } from '../helpers/roleBasedAccess';  
 import ToolkitProvider, {
   Search,
   CSVExport,
@@ -641,6 +641,7 @@ const FileRepository = () => {
                             </ul> */}
                             <ul>
                               <li><a onClick={handleLinkClick} path="/available-Files" className={`${tabLinkPath === "/available-Files" ? "active" : ""}`}>Files shared with me</a></li>
+                             
                               {
                                 verifyPermission("file_repository", "add") &&
                                 <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My added files</a></li>
