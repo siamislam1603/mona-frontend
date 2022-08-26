@@ -477,7 +477,7 @@ export const person2Validation = (obj) => {
   let errors = {};
   let { telephone } = obj;
 
-  if(telephone.length > 1 && telephone.length < 10)
+  if(telephone?.length > 1 && telephone?.length < 10)
     errors.telephone = 'Telephone number must be at least 10-digit long.'
 
   return errors;

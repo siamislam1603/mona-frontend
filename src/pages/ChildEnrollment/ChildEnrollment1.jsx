@@ -14,6 +14,7 @@ let step = 1;
 let telDigitCount = 0;
 
 var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
 // let countryData = [
 //   {
 //     id: 1,
@@ -23,6 +24,7 @@ var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 // ]
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
+  console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 1);
   let { childId: paramsChildId } = useParams();
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
@@ -682,7 +684,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         type="radio"
                         name="aboriginaltorres"
                         id="yestorres"
-                        checked={formOneChildData?.child_origin.toUpperCase() === "TSI"}
+                        checked={formOneChildData?.child_origin?.toUpperCase() === "TSI"}
                         label="Yes, Torres Straight Islander"
                         onChange={(event) => {
                           setFormOneChildData(prevState => ({
@@ -1076,10 +1078,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               </Row>
             </div>
           </div>
-          <div className="enrollment-form-sec mt-5">
+          <div className="enrollment-form-sec mt-3">
             <Form onSubmit={submitFormData}>
               <div className="enrollment-form-column">
-                <h2 className="title-xs mb-3">Information about the child’s parents or guardians</h2>
+                <h2 className="title-xs">Information about the child’s parents or guardians</h2>
                 <div className="grayback">
                   <Row>
                     <Col md={12}>
@@ -1264,7 +1266,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>Telephone *</Form.Label>
                           <Form.Control 
                             type="tel" 
-                            placeholder="+3375005467"
+                            placeholder="3375005467"
                             name="telephone"
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {

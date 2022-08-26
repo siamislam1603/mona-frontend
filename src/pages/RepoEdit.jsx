@@ -379,7 +379,7 @@ const RepoEdit = () => {
                                                                         }}
                                                                     >
                                                                         <option value="">Select File Category</option>
-                                                                        <option value="8">Guardian</option>
+                                                                        <option value="8">General</option>
                                                                     </Form.Select>
                                                                 </>) : (
                                                                 <>

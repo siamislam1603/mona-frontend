@@ -119,6 +119,12 @@ const Training = () => {
   }, []);
 
   trainingCategory && console.log('FILTER DATA:', trainingCategory);
+  
+  useEffect(() => {
+    if(localStorage.getItem('user_role') === 'guardian') {
+      window.location.href=`/parents-dashboard`;
+    }
+  }, []);
 
   return (
     <>

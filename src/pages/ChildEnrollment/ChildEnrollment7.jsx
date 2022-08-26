@@ -23,7 +23,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [signatureString, setSignatureString] = useState(null);
   const [consentData, setConsentData] = useState({
     parent_name: "",
-    signature: "",
+    consent_signature: "",
     consent_date: null
   });
   const [parentConsentData, setParentConsentData] = useState({
@@ -37,11 +37,10 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const [userConsentFormDialog, setUserConsentFormDialog] = useState(false);
   const [signatureImage, setSignatureImage] = useState(null);
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
-  const [fetchedSignatureImage, setFetchedSignatureImage] = useState(null);
   const [loader, setLoader] = useState(false);
 
   const fetchEducatorList = async () => {
-    const response = await axios.get(`${BASE_URL}/user-group/users/educator`);
+    const response = await axios.get(`${BASE_URL}/user-group/users/role/educator`);
 
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
@@ -72,11 +71,12 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       let { consent } = response.data;
 
       setUserSelectedEducators(educators);
-      setFetchedSignatureImage(parents[0].signature);
+      //(child.consent_signature);
       setConsentData(prevState => ({
         ...prevState,
         parent_name: parents[0].family_name,
-        consent_date: moment(parents[0].consent_date).format('YYYY-MM-DD')
+        consent_date: moment(child.consent_date).format('YYYY-MM-DD'),
+        consent_signature: child.consent_signature
       }));
       setConsentDetail(consent.map(c => ({
         id: c.id,
@@ -250,7 +250,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       data.append('image', blob);
     }
 
-    let response = await axios.patch(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_parent_id')}`, data, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_child_id')}`, data, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
@@ -260,10 +260,10 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     if(response.status === 201 && response.data.status === "success") {
       let { signature: signatureURL } = response.data;
       console.log('Signature:', signatureURL);
-      setSignatureString(signatureURL);
+      // setSignatureString(signatureURL);
       setConsentData(prevState => ({
         ...prevState,
-        signature: signatureURL
+        consent_signature: signatureURL
       }));
     }
   }
@@ -377,8 +377,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the consent form!</p>
                   }
                   {
-                    (signatureString || localStorage.getItem('user_image') !== 'guardian') &&
-                    <img src={fetchedSignatureImage} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    (consentData?.signature_image || localStorage.getItem('user_image') !== 'guardian') &&
+                    <img src={consentData?.signature_image} alt="parent signature" style={{ width: "80px", height: "80px" }} />
                   }
                 </Form.Group>
               </Col>

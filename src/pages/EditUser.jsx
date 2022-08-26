@@ -881,7 +881,7 @@ const EditUser = () => {
                     I am happy to be reached if you have any questions.
                   </p>
 
-                  <img style={{ width: '200px', height: 'auto' }} src={signatureImage || formData?.signature_image} alt="consented user signature" />
+                  <img style={{ width: '200px', height: 'auto' }} src={signatureImage || formData?.user_signature} alt="consented user signature" />
                 </Row>
               </Modal.Body>
 
