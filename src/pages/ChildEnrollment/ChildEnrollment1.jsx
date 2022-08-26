@@ -1078,10 +1078,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               </Row>
             </div>
           </div>
-          <div className="enrollment-form-sec mt-5">
+          <div className="enrollment-form-sec mt-3">
             <Form onSubmit={submitFormData}>
               <div className="enrollment-form-column">
-                <h2 className="title-xs mb-3">Information about the child’s parents or guardians</h2>
+                <h2 className="title-xs">Information about the child’s parents or guardians</h2>
                 <div className="grayback">
                   <Row>
                     <Col md={12}>
