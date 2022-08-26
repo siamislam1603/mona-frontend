@@ -5,9 +5,10 @@ import axios from "axios";
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 
+
 const AvailableTraining = ({ filter }) => {
   console.log('FILTER:', filter);
-  const [availableTrainingData, setAvailableTrainingData] = useState();
+  const [availableTrainingData, setAvailableTrainingData] = useState([]);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [saveTrainingId, setSaveTrainingId] = useState(null);
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState(null);
@@ -20,16 +21,20 @@ const AvailableTraining = ({ filter }) => {
   const [franchiseeList, setFranchiseeList] = useState(null);
   const [dueDataTraining,setDueDataTraining]= useState(false)
   const [nodueData,setNoDueData]= useState(false)
+  const [page,setPage] = useState(5)
 
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [successMessageToast, setSuccessMessageToast] = useState(null);
 
   const fetchAvailableTrainings = async () => {
+    console.log('INSIDE AVAILABLE TRAINING MODULE',page)
     let user_id = localStorage.getItem('user_id');
+    console.log('USER ID:', user_id)
+    console.log('URL:', `${BASE_URL}/training/assigeedTraining/${user_id}`);
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${
-      filter.category_id}&search=${filter.search}`, {
+
+    const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -38,15 +43,16 @@ const AvailableTraining = ({ filter }) => {
     if (response.status === 200 && response.data.status === "success") {
       console.log('RESPONSE:', response.data);
       const { searchedData } = response.data;
-      console.log('Searched data', searchedData);
-      
-      // GETTING DISTINCT DATA FROM THE LIST OF FETCHED DATA
-      let uniqueObjArray = [
-        ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
-      ];
-
-      setAvailableTrainingData(uniqueObjArray);
-      uniqueObjArray?.map((item) => {
+      // setAvailableTrainingData((prev) =>([
+      //   ...prev,
+      //   ...searchedData
+      // ]));
+      setAvailableTrainingData(searchedData)
+      // setAvailableTrainingData((prev) =>([
+      //   prev,
+      //   ...searchedData
+      // ]))
+      searchedData?.map((item) => {
        if(item.training.end_date){
         return setDueDataTraining(true)
        }
@@ -178,7 +184,22 @@ const AvailableTraining = ({ filter }) => {
   //   let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
   //   setFilteredData(newData);
   // };
- 
+//   const handleScroll = () => {
+//     console.log("HANDLE SCROLL")
+//     let userScrollHeight = window.innerHeight + window.scrollY;
+//         let windowBottomHeight = document.documentElement.offsetHeight;
+//       if (userScrollHeight >= windowBottomHeight) {
+//         fetchAvailableTrainings();
+//         setPage(prevCount => prevCount + 5)
+//       }
+// };
+window.onscroll = function () {
+  let userScrollHeight = window.innerHeight + window.scrollY;
+        let windowBottomHeight = document.documentElement.offsetHeight;
+        if (userScrollHeight >= windowBottomHeight) {
+                  setPage(page + 5)
+        }
+    }
 
   useEffect(() => {
     setTimeout(() => {
@@ -188,7 +209,7 @@ const AvailableTraining = ({ filter }) => {
 
   useEffect(() => {
     fetchAvailableTrainings();
-  }, [filter]);
+  }, [filter,page]);
 
   useEffect(() => {
     fetchFranchiseeList();
@@ -200,7 +221,7 @@ const AvailableTraining = ({ filter }) => {
   }, [saveTrainingId]);
 
   // formSettings && console.log('FORM SETTINGS:', formSettings);
-  console.log('Available Training Data:', availableTrainingData,dueDataTraining,nodueData);
+  console.log('Available Training Data:', availableTrainingData,page);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -267,7 +288,7 @@ const AvailableTraining = ({ filter }) => {
               )
               : null
             }
-            {dueDataTraining === false ? null : <hr style={{color: "black" ,height:1,backgroundColor:"black",opacity:1}}/>}
+            {dueDataTraining === false ? null : <hr/>}
 
 
              {availableTrainingData
