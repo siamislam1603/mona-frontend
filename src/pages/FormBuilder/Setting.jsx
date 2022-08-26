@@ -665,7 +665,7 @@ function Setting(props) {
                                     </td>
                                   </tr>
                                   <tr>
-                                    <td>Franchisee admin </td>
+                                    <td>Franchise admin </td>
                                     <td className="input_checkbox">
                                       <label className="table-checkbox">
                                         <input
@@ -996,7 +996,7 @@ function Setting(props) {
                                   <span className="checkmark"></span>
                                 </label>
                                 <label className="container">
-                                  Franchisee Admin
+                                  Franchise Admin
                                   <input
                                     type="checkbox"
                                     name="signatories_role"

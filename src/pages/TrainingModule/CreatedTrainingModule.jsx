@@ -18,7 +18,6 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  
 
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
@@ -461,7 +460,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             <Form.Check
                               type="checkbox"
                               checked={formSettings?.assigned_roles?.includes("franchisee_admin")}
-                              label="Franchisee Admin"
+                              label="Franchise Admin"
                               onChange={() => {
                                 if (formSettings.assigned_roles.includes("franchisee_admin")) {
                                   let data = formSettings.assigned_roles.filter(t => t !== "franchisee_admin");

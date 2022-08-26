@@ -101,7 +101,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   acceptedAllPoints && console.log('Accepted all points:', acceptedAllPoints);
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={handleDataSubmit}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">I understand and have read the following:</h2>
@@ -121,7 +121,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
                 <li>I understand that it is my responsibility as the parent to notify the office immediately when individuals other than the educators or the nominated assistants is in contact with, pickup or drop off my children to and from school / home.</li>
                 <li>I understand that I am not entitled to receive childcare subsidy for my own children’s session of care, if on that same day, I as FDC educator provide care for an approved FDC service.</li>
               </ol>
-              <Form.Group className="mb-3">
+              <Form.Group className="mb-3 relative">
                 <div className="btn-checkbox">
                   <Form.Check 
                     type="checkbox" 
