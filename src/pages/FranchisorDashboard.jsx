@@ -384,7 +384,7 @@ const FranchisorDashboard = () => {
                               </Link>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a className="item" href="/user-management/Guardian">
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalChildren}</span>
