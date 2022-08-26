@@ -43,24 +43,20 @@ const AvailableTraining = ({ filter }) => {
     if (response.status === 200 && response.data.status === "success") {
       console.log('RESPONSE:', response.data);
       const { searchedData } = response.data;
-      // setAvailableTrainingData((prev) =>([
-      //   ...prev,
-      //   ...searchedData
-      // ]));
-      setAvailableTrainingData(searchedData)
-      // setAvailableTrainingData((prev) =>([
-      //   prev,
-      //   ...searchedData
-      // ]))
-      searchedData?.map((item) => {
-       if(item.training.end_date){
+
+      let uniqueObjArray = [
+        ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
+      ];
+      setAvailableTrainingData(uniqueObjArray)
+
+      uniqueObjArray?.map((item) => {
+       if(item.training.end_date) {
         return setDueDataTraining(true)
        }
        else if(!item.training.end_date){
         return setNoDueData(true)
        }
-      })
-      
+      }) 
     }
     else {
       setAvailableTrainingData([])
