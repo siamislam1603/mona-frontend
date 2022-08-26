@@ -2941,17 +2941,23 @@ p.error {
     display: flex;
     width: 100%;
 }
+.create_model_bar .forms-toogle .dropdown-toggle.btn.btn-primary { margin: 0; }
 
 .custom-menu-dots .dropdown-item {
-    padding: 0.3rem 1rem !important;
-    width: 70%; background-color: transparent;
+    padding: .3rem !important;
+    max-width: 110px; flex: 0 0 110px; flex-flow: wrap; font-size: 12px; white-space: pre-wrap; background-color: transparent;
+}
+.custom-menu-dots .dropdown-item svg {
+    width: 20px;
 }
 
 .edit-module{ display: flex;
-    flex: 0 0 55px;
-    max-width: 55px;
+    flex: 0 0 50px;
+    max-width: 50px;
     align-items: center; }
-.custom-menu-dots .edit-module .dropdown-item { padding:0!important; }
+.custom-menu-dots .edit-module .dropdown-item { padding: 0!important;
+    max-width: 25px;
+    flex: 0 0 auto; }
 .custom-menu-dots .edit-module .dropdown-item svg, .custom-menu-dots .edit-module .dropdown-item.active svg { color:var(--primary); opacity: .5; max-width: 15px; }
 .custom-menu-dots .edit-module .dropdown-item.tab-trash svg, .custom-menu-dots .edit-module .dropdown-item.active.tab-trash svg { max-width: 13px; }
 .custom-menu-dots .edit-module .dropdown-item:hover svg, .custom-menu-dots .edit-module .dropdown-item.active:hover svg { opacity: 1; }
