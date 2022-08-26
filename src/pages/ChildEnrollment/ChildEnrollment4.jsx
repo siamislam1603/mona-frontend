@@ -8,8 +8,10 @@ import { useEffect } from "react";
 let nextstep = 5;
 let step = 4;
 let fields = ["name", "telephone", "address", "relationship_to_the_child"];
-const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
+
+const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
+  console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 4);
   // REQUIRED STATES
   const [emergencyContactData, setEmergencyContactData] = useState({
     name: "",
@@ -337,6 +339,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <p>(This person is to be notified of an emergency involving the child if any parents of the child cannot be immediately contacted).</p>
               <Row>
                 <Col md={6}>
+                  <h2 className="title-xs">Contact: 1</h2>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Name *</Form.Label>
                     <Form.Control
@@ -449,6 +452,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 </Col>
 
                 <Col md={6}>
+                  <h2 className="title-xs">Contact: 2</h2>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
@@ -479,6 +483,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <p>(A person who has been given permission by a parents or family member to collect the child from Family Day Care).</p>
               <Row>
                 <Col md={6}>
+                  <h2 className="title-xs">Contact: 1</h2>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Name *</Form.Label>
                     <Form.Control
@@ -592,6 +597,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 </Col>
 
                 <Col md={6}>
+                  <h2 className="title-xs">Contact: 2</h2>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
@@ -624,6 +630,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <p>(A person who is authorized to consent to medical treatment of the child or to authorize the administration of medication to the child).</p>
               <Row>
                 <Col md={6}>
+                  <h2 className="title-xs">Contact: 1</h2>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Name *</Form.Label>
                     <Form.Control
@@ -737,6 +744,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 </Col>
 
                 <Col md={6}>
+                  <h2 className="title-xs">Contact: 2</h2>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
@@ -767,6 +775,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <p>(A person who is authorized to authorize an educator to take the child outside the education and care service premises).</p>
               <Row>
                 <Col md={6}>
+                  <h2 className="title-xs">Contact: 1</h2>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Name *</Form.Label>
                     <Form.Control
@@ -880,6 +889,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
+                  <h2 className="title-xs">Contact: 2</h2>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
