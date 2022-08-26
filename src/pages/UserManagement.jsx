@@ -328,11 +328,12 @@ const UserManagement = () => {
         location: dt.city,
         role: dt.role,
         is_deleted: dt.is_deleted,
+        role: dt.role,
         userID: dt.id,
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
         action: dt.is_active
       }));
-
+      console.log('TEMP =>>>>>>>>>>>>>>>>>', tempData);
       // tempData = tempData.filter((data) => data.is_deleted === 0);
       // console.log('Temp Data:', tempData);
       if (localStorage.getItem('user_role') === 'guardian') {
@@ -342,7 +343,8 @@ const UserManagement = () => {
       if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
         tempData = tempData.filter(d => d.action === 1);
       }
-      setUserData(tempData);
+      
+      setUserDataAfterFilter(tempData);
       setIsLoading(false)
 
       let temp = tempData;
@@ -366,6 +368,30 @@ const UserManagement = () => {
       });
       setCsvData(csv_data);
     }
+  };
+
+  const setUserDataAfterFilter = data => {
+    let role = localStorage.getItem('user_role');
+    let filteredData = null;
+
+    if(role === 'franchisor_admin') {
+      filteredData = data.filter(d => d.role !== 'franchisor_admin');
+    }
+
+    if(role === 'franchisee_admin') {
+      filteredData = data.filter(d => d.role !== 'franchisor_admin' || d!== 'franchisee_admin');
+    }
+
+    if(role === 'coordinator') {
+      filteredData = data.filter(d => d.role === 'educator' || d.role === 'guardian');
+      console.log('COORDINATOR:', filteredData);
+    }
+
+    if(role === 'educator') {
+      filteredData = data.filter(d => d.role === 'guardian');
+    }
+    
+    setUserData(filteredData);
   };
 
 
@@ -393,7 +419,7 @@ const UserManagement = () => {
 
     if (response.status === 200) {
       const { users } = response.data;
-      console.log('USERS:', users);
+      console.log('USERS =>>>>>>>>>>>>>>>>>>:', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
@@ -405,6 +431,7 @@ const UserManagement = () => {
         location: dt.city,
         is_deleted: dt.is_deleted,
         userID: dt.id,
+        role: dt.role,
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
         action: dt.is_active
       }));
