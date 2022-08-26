@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
 import ChildEnrollment from '../pages/ChildEnrollment';
 // import ChildEnrollment1 from '../pages/ChildEnrollment/ChildEnrollment1';
@@ -79,7 +79,7 @@ function returnDashboard (role) {
 }
 
 const Main = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token')?true:false);
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') ? true : false);
 
   useEffect(() => {
     const item = localStorage.getItem('token');
