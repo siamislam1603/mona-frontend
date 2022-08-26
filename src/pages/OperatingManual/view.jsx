@@ -892,7 +892,7 @@ const OperatingManual = () => {
                     {localStorage.getItem('user_role') ===
                       'franchisor_admin' && (
                         <label className="container">
-                          Franchisee Admin
+                          Franchise Admin
                           <input
                             type="checkbox"
                             name="shared_role"
