@@ -328,7 +328,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">Emergency Contact: R160 (3) (b) (ii)</h2>
@@ -882,8 +882,8 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
-                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>Address</Form.Label>

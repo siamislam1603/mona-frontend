@@ -115,7 +115,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                   <header className="title-head">
                     <h1 className="title-lg">Child Enrolment Initiation Form</h1>
                   </header>
-                  <div className="enrollment-form-sec my-5">
+                  <div className="enrollment-form-sec error-sec my-5">
                     <Form onSubmit={submitFormData}>
                       <div className="enrollment-form-column">
                         <div className="grayback">

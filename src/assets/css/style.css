@@ -502,7 +502,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .grayback .single-field{display:flex;align-items:center}
 .grayback .single-field .form-label{flex:0 0 auto;margin-right:1rem;margin-bottom:0}
 .whiteback{border-radius:16px;border:1px solid var(--black);padding:25px}
-.error{color:var(--red);margin-top:4px;display:inline-block}
+.error{color:var(--red);margin-top:4px;display:inline-block; }
 .toast-error{display:block;border:1px solid var(--red);background:rgba(244,170,157,.753);color:var(--white);padding:.5rem 1rem}
 .repositorydrag .uploadfile{border:2px dashed var(--gray);border-radius:16px;height:150px;display:flex;align-items:center;justify-content:center}
 .announcement-accordion .accordion-item{margin-bottom:1rem}

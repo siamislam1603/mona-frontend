@@ -348,7 +348,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
-      <div className="enrollment-form-sec my-5">
+      <div className="enrollment-form-sec error-sec my-5">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <div className="grayback">

@@ -11,7 +11,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
 
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={submitFormData}>
           <div className="whiteback mt-4">
             <h4 className="title-xs mb-3 text-center">For Office Use Only</h4>

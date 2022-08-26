@@ -163,7 +163,7 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
   agreedHolidayHours && console.log('Agreed Holiday Hours:', agreedHolidayHours);
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">Please tick the type of care you require <small>(Agreed Booking Hours)</small></h2>
