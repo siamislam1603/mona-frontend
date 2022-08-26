@@ -110,7 +110,7 @@ const EditUser = () => {
       professionalDevCategories: user?.professional_development_categories?.map(d => parseInt(d)),
       coordinator: user?.coordinator,
       businessAssets: user?.business_assets?.map(d => parseInt(d)),
-      termination_date: user?.terminationDate === 'Invalid Date' ? 'YYYY-MM-DD' : moment(user?.terminationDate).format('YYYY-MM-DD'),
+      termination_date: user?.terminationDate,
       termination_reach_me: user?.termination_reach_me,
       user_signature: user?.user_signature,
       profile_photo: user?.profile_photo
@@ -505,12 +505,13 @@ const EditUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  editUserData && console.log('EDIT USER DATA:', editUserData);
+  // editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
   // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
   formData && console.log('FORM DATA:', formData);
+  signatureImage && console.log('Signature Image:', signatureImage);
   // userRoleData && console.log('USER ROLE DATA:', userRoleData);
-  currentRole && console.log('Current Role:', currentRole);
+  // currentRole && console.log('Current Role:', currentRole);
   return (
     <>
       <div id="main">
@@ -805,7 +806,7 @@ const EditUser = () => {
                               type="date"
                               disabled={true}
                               name="terminationDate"
-                              value={formData?.termination_date}
+                              value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
                               onChange={handleChange}
                             />
                             {
@@ -910,7 +911,7 @@ const EditUser = () => {
                     <Form.Control
                       type="date"
                       name="terminationDate"
-                      value={formData.terminationDate}
+                      value={moment(formData.termination_date).format('YYYY-MM-DD')}
                       onChange={handleChange}
                     />
                   </Form.Group>
