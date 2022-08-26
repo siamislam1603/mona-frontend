@@ -297,7 +297,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   // signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={handleDataSubmit}>
           <h2 className="title-xs mt-4 mb-4">Consent for educator and nominated assistant R 144</h2>
 

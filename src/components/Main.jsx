@@ -59,6 +59,25 @@ import RepoEdit from '../pages/RepoEdit';
 import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
 import SearchResult from '../pages/SearchResult';
+function returnDashboard (role) {
+
+  if(role === 'franchisor_admin')
+    return <FranchisorDashboard />
+
+  if(role === 'franchise_admin')
+    return <FranchiseeDashboard />
+
+  if(role === 'coordinator')
+    return <CoordinatorDashboard />
+
+  if(role === 'educator')
+    return <EducatorDashboard />
+
+  if(role === 'guardian')
+    return <ParentsDashboard />
+
+}
+
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') ? true : false);
 
@@ -96,16 +115,18 @@ const Main = () => {
         })();
       }
 
+
       autoLogout();
-      // setIsLoggedIn(true);
+      setIsLoggedIn(true);
       localStorage.setItem('is_user_logged_in', true);
     } else {
-      // setIsLoggedIn(false);
+      setIsLoggedIn(false);
       localStorage.setItem('is_user_logged_in', false);
     }
   }, []);
 
   return (
+    
     <main>
 
       <Routes>
@@ -113,12 +134,8 @@ const Main = () => {
           exact
           activeClassName="active"
           path="/"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              {localStorage.getItem('user_role') == 'franchisor_admin' ? <FranchisorDashboard /> : localStorage.getItem('user_role') == 'franchisee_admin' ? <FranchiseeDashboard /> : localStorage.getItem('user_role') == 'coodinator' ? <CoordinatorDashboard /> : localStorage.getItem('user_role') == 'educator' ? <EducatorDashboard /> : <ParentsDashboard />}
-
-            </Protected>
+          element={ 
+            localStorage.getItem('user_id') || typeof localStorage.getItem('user_id')==='undefined'? returnDashboard(localStorage.getItem('user_role')):<SignIn />
           }
         />
 
@@ -671,24 +688,3 @@ const Main = () => {
 };
 
 export default Main;
-
-
-const AuthenticatedRoute = ({ component: Component, ...properties }) => (
-
-  localStorage.getItem('token') ?
-    <Route {...properties} render={(props) => (
-      // Object.keys(usersessionHelper.getLoggedInUser(props)).length?
-      // <Component {...props}/>:
-      // <Redirect to={"/dashboard"} />
-      <Component {...props} />
-
-    )} />
-    :
-    <Route exact path='/' component={SignIn} />
-
-
-
-
-
-
-)

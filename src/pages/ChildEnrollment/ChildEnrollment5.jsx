@@ -215,7 +215,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
   agreement && console.log('AGREEMENT:', agreement);
   return (
     <>
-      <div className="enrollment-form-sec mt-5">
+      <div className="enrollment-form-sec error-sec mt-5">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">Photo</h2>

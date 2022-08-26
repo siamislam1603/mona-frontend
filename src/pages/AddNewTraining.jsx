@@ -677,6 +677,7 @@ const AddNewTraining = () => {
                         start_time: null
                       }));
                     }}
+                    min={trainingSettings?.start_date}
                   />
                 </Form.Group>
               </Col>

@@ -36,6 +36,7 @@ const EditUser = () => {
     phone: '',
     role: '',
     telcode: '+61',
+    terminationDate: "",
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
@@ -109,7 +110,7 @@ const EditUser = () => {
       professionalDevCategories: user?.professional_development_categories?.map(d => parseInt(d)),
       coordinator: user?.coordinator,
       businessAssets: user?.business_assets?.map(d => parseInt(d)),
-      termination_date: moment(user?.termination_date).format('YYYY-MM-DD'),
+      termination_date: user?.terminationDate === 'Invalid Date' ? 'YYYY-MM-DD' : moment(user?.terminationDate).format('YYYY-MM-DD'),
       termination_reach_me: user?.termination_reach_me,
       user_signature: user?.user_signature,
       profile_photo: user?.profile_photo
@@ -466,7 +467,7 @@ const EditUser = () => {
     }
 
     if(currentRole === "franchisee_admin") {
-      newRoleList = newRoleList.filter(role => role.sequence < 3);
+      newRoleList = newRoleList.filter(role => role.sequence < 3 && role.sequence > 1);
       setUserRoleData(newRoleList);
     }
 
@@ -665,6 +666,7 @@ const EditUser = () => {
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={handleChange}
+                                maxLength={10}
                               />
                             </div>
                             <span className="error">
@@ -735,6 +737,7 @@ const EditUser = () => {
                                 setFormData((prevState) => ({
                                   ...prevState,
                                   franchisee_id: e.id,
+                                  open_coordinator: false
                                 }));
 
                                 setFormData((prevState) => ({
@@ -750,7 +753,7 @@ const EditUser = () => {
                             />
                             { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
-
+                          
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Primary Co-ordinator</Form.Label> 
                             <Select
@@ -803,7 +806,7 @@ const EditUser = () => {
                               type="date"
                               disabled={true}
                               name="terminationDate"
-                              value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
+                              value={formData?.termination_date}
                               onChange={handleChange}
                             />
                             {
@@ -815,7 +818,7 @@ const EditUser = () => {
                               formData.termination_reach_me === true &&
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
                               <div>
-                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
+                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData.termination_date).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
                                 <img style={{ width: "100px", height: "auto" }}src={`${formData.user_signature}`} alt="" />
                               </div>
                               }

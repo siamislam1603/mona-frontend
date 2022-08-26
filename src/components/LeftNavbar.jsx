@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from "react-router-bootstrap";
 import axios from 'axios';
-import { BASE_URL } from './App';
+import { BASE_URL, FRONT_BASE_URL } from './App';
 
 const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
@@ -60,19 +60,19 @@ const LeftNavbar = () => {
   useEffect(() => {
     var user_dashboar_link = '';
     if (localStorage.getItem('user_role') === 'coordinator')
-      user_dashboar_link = '/coordinator-dashboard'
+      user_dashboar_link = 'coordinator-dashboard'
     else if (localStorage.getItem('user_role') === 'franchisor_admin')
-      user_dashboar_link = '/franchisor-dashboard'
+      user_dashboar_link = 'franchisor-dashboard'
     else if (localStorage.getItem('user_role') === 'franchisee_admin')
-      user_dashboar_link = '/franchisee-dashboard'
+      user_dashboar_link = 'franchisee-dashboard'
     else if (localStorage.getItem('user_role') === 'coodinator')
-      user_dashboar_link = '/coordinator-dashboard'
+      user_dashboar_link = 'coordinator-dashboard'
     else if (localStorage.getItem('user_role') === 'franchisee_admin')
-      user_dashboar_link = '/franchisee-dashboard'
+      user_dashboar_link = 'franchisee-dashboard'
     else if (localStorage.getItem('user_role') === 'educator')
-      user_dashboar_link = '/educator-dashboard'
+      user_dashboar_link = 'educator-dashboard'
     else if (localStorage.getItem('user_role') === 'guardian')
-      user_dashboar_link = '/parents-dashboard'
+      user_dashboar_link = 'parents-dashboard'
     else{
       user_dashboar_link= '/'
     }
@@ -85,7 +85,7 @@ const LeftNavbar = () => {
   return (
     <>
       <div className="logo-column text-center">
-        <Navbar.Brand href={userDashboardLink}>
+        <Navbar.Brand href={`/${userDashboardLink}`}>
           <img src="/img/logo-ico.png" alt="" />
         </Navbar.Brand>
 
@@ -95,10 +95,12 @@ const LeftNavbar = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Nav className="mr-auto w-100">
+          {/* <Nav.Link href={`/${FRONT_BASE_URL}/${userDashboardLink}`}><span><i className="ico overview-ico">&nbsp;</i> Overview</span></Nav.Link> */}
+          
             {permissionList && permissionList.map(permission => {
               return (
                 <React.Fragment key={permission.controller_id}>
-                  <LinkContainer to={`/${permission.controller.menu_link}`}>
+                  <LinkContainer to={`/${permission.controller.controller_name=='overview'?userDashboardLink:permission.controller.menu_link}`}>
                     <Nav.Link>
                       <span>
                         <i className={`ico ${permission.controller.controller_icon}`}>

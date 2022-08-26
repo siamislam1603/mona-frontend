@@ -259,11 +259,11 @@ const CoordinatorDashboard = () => {
                                 <div className="name">Xero</div>
                               </a>
                             </div>
-                            <div className="item">
-                              <a href="/" className="flex">
+                            <div className="item nolink">
+                              <div className="flex">
                                 <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
-                              </a>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -448,7 +448,7 @@ const CoordinatorDashboard = () => {
                             </div>
                             <div className="listing">
                               <a className="item" href="/training">
-                                <span className="name">Overdue Trainings</span>
+                                <span className="name">Overdue Training</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueTrainings}</span>
                               </a>

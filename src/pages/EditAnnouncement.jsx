@@ -631,6 +631,8 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                   <Form.Control  
                         type="date"
                         name="start_date"
+                    min={new Date().toISOString().slice(0, 10)}
+
                         defaultValue={announcementCopyData&& announcementCopyData.start_date}
                         onChange={(e) => {
                           setAnnouncementFiled(

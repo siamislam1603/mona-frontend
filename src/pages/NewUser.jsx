@@ -43,7 +43,8 @@ const NewUser = () => {
     businessAssets: "",
     terminationDate: "",
     telcode: '+61',
-    franchisee: ""
+    franchisee: "",
+    open_coordinator: false
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
@@ -111,6 +112,15 @@ const NewUser = () => {
       })));
     }
   };
+
+  // const validateEmail = (email) => {
+  //   let errors = {};  
+  //   if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
+  //       errors.email= "Enter a valid email"
+  //   }
+  //   return errors;
+
+  // }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -702,14 +712,23 @@ const NewUser = () => {
                               <Form.Control
                                 type="tel"
                                 name="phone"
+                                // minLength={10}
+                                maxLength={10}
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={(e) => {
-                                  handleChange(e);
-                                  setFormErrors(prevState => ({
-                                    ...prevState,
-                                    phone: null
-                                  }));
+                                  // handleChange(e);
+                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                    setFormErrors(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value.slice(0, -1)
+                                    })); 
+                                  } else {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value
+                                    }));
+                                  }
                                 }}
                               />
                             </div>
@@ -776,6 +795,7 @@ const NewUser = () => {
                                   setFormData((prevState) => ({
                                     ...prevState,
                                     franchisee: e.id,
+                                    open_coordinator: true
                                   }));
 
                                   setFormData((prevState) => ({
@@ -802,22 +822,24 @@ const NewUser = () => {
                             { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Primary Co-ordinator</Form.Label>
-                            <Select
-                              isDisabled={formData.role !== 'educator'}
-                              placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Which Co-ordinator?" : "Not Applicable"}
-                              closeMenuOnSelect={true}
-                              options={coordinatorData}
-                              onChange={(e) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  coordinator: e.id,
-                                }));
-                              }}
-                            />
-                          </Form.Group>
-
+                          {
+                            formData?.role === 'educator' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Select Primary Co-ordinator</Form.Label>
+                              <Select
+                                isDisabled={formData.role !== 'educator'}
+                                placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Which Co-ordinator?" : "Not Applicable"}
+                                closeMenuOnSelect={true}
+                                options={coordinatorData}
+                                onChange={(e) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    coordinator: e.id,
+                                  }));
+                                }}
+                              />
+                            </Form.Group>
+                          }
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Business Assets</Form.Label>
                             <Select

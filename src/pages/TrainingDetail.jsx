@@ -187,10 +187,10 @@ const TrainingDetail = () => {
                       </div>
 
                       <Row>
+                        {
+                              trainingDetails?.training_files.map(d => d.fileType === ".mp4").includes(true) &&
                         <Col lg={5} md={6}>
                           <div className="video-tuto-sec mb-5">
-                            {
-                              trainingDetails?.training_files.map(d => d.fileType === ".mp4").includes(true) &&
                               <>
                                 <h3 className="title-sm">Video Tutorials</h3>
                                 <div className="vid-col-sec">
@@ -209,9 +209,9 @@ const TrainingDetail = () => {
                                   }
                                 </div>
                               </>
-                            }
                           </div>
                         </Col>
+                        }
                         <Col lg={7} md={6}>
                           <div className="related-files-sec mb-5">
                             {

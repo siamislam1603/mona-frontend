@@ -19,6 +19,8 @@ const AvailableTraining = ({ filter }) => {
   });
   const [showModal, setShowModal] = useState(false);
   const [franchiseeList, setFranchiseeList] = useState(null);
+  const [dueDataTraining,setDueDataTraining]= useState(false)
+  const [nodueData,setNoDueData]= useState(false)
 
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
@@ -40,6 +42,18 @@ const AvailableTraining = ({ filter }) => {
       console.log('RESPONSE:', response.data);
       const { searchedData } = response.data;
       setAvailableTrainingData(searchedData);
+      searchedData?.map((item) => {
+       if(item.training.end_date){
+        return setDueDataTraining(true)
+       }
+       else if(!item.training.end_date){
+        return setNoDueData(true)
+       }
+      })
+      
+    }
+    else {
+      setAvailableTrainingData([])
     }
   };
 
@@ -160,6 +174,7 @@ const AvailableTraining = ({ filter }) => {
   //   let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
   //   setFilteredData(newData);
   // };
+ 
 
   useEffect(() => {
     setTimeout(() => {
@@ -181,7 +196,7 @@ const AvailableTraining = ({ filter }) => {
   }, [saveTrainingId]);
 
   // formSettings && console.log('FORM SETTINGS:', formSettings);
-  availableTrainingData && console.log('Available Training Data:', availableTrainingData);
+  console.log('Available Training Data:', availableTrainingData,dueDataTraining,nodueData);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -189,7 +204,130 @@ const AvailableTraining = ({ filter }) => {
         <div className="training-column">
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
           <Row>
-            {availableTrainingData
+
+          {availableTrainingData
+              ? availableTrainingData.map((item) => {
+                // console.log("the item",item.training.end_date)
+                // {
+                //   item.training.end_date ==null
+                // }
+                // return (
+                 
+                // );
+                if(item.training.end_date){
+                  return (
+                    <Col lg={4} md={6}>
+                    <div className="item mt-3 mb-3">
+                      <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={item.training.coverImage} alt="" /> <span className="lthumb"><img src="../img/logo-thumb.png" alt="" /></span></a></div>
+                      <div className="fixcol">
+                        <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                        <div className="iconame">
+                          <a href="/training-detail">{item.training.title}</a>
+                          <div className="datecol">
+                            {
+                              item.training.end_date !== null &&
+                              <span className="red-date">Due Date:{' '}{moment(item.training.end_date).format('DD/MM/YYYY')}</span>
+                            }
+                            <span className="time">{item.training.completion_time} {item.training.completion_in}</span>
+                          </div>
+                        </div>
+                        <div className="cta-col">
+                        { localStorage.getItem('user_role') !== 'educator' &&
+                          <Dropdown>
+                            <Dropdown.Toggle variant="transparent" id="ctacol">
+                              <img src="../img/dot-ico.svg" alt="" />
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item href="#" onClick={() => {
+                                setSaveTrainingId(item.training.id);
+                                setShowModal(true)
+                              }}>Share</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        }
+                        </div>
+                      </div>
+                    </div>
+                  </Col>
+                  )
+                  // <h1></h1>
+                }
+            
+                else{
+                  return (
+                    null
+                  )
+                }
+
+              }
+              )
+              : null
+            }
+            {dueDataTraining === false ? null : <hr style={{color: "black" ,height:1,backgroundColor:"black",opacity:1}}/>}
+
+
+             {availableTrainingData
+              ? availableTrainingData.map((item) => {
+                // console.log("the item",item.training.end_date)
+                // {
+                //   item.training.end_date ==null
+                // }
+                // return (
+                 
+                // );
+                if(!item.training.end_date){
+                  return (
+                    <Col lg={4} md={6}>
+                    <div className="item mt-3 mb-3">
+                      <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={item.training.coverImage} alt="" /> <span className="lthumb"><img src="../img/logo-thumb.png" alt="" /></span></a></div>
+                      <div className="fixcol">
+                        <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                        <div className="iconame">
+                          <a href="/training-detail">{item.training.title}</a>
+                          <div className="datecol">
+                            {
+                              item.training.end_date !== null &&
+                              <span className="red-date">Due Date:{' '}{moment(item.training.end_date).format('DD/MM/YYYY')}</span>
+                            }
+                            <span className="time">{item.training.completion_time} {item.training.completion_in}</span>
+                          </div>
+                        </div>
+                        <div className="cta-col">
+                        { localStorage.getItem('user_role') !== 'educator' &&
+                          <Dropdown>
+                            <Dropdown.Toggle variant="transparent" id="ctacol">
+                              <img src="../img/dot-ico.svg" alt="" />
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item href="#" onClick={() => {
+                                setSaveTrainingId(item.training.id);
+                                setShowModal(true)
+                              }}>Share</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        }
+                        </div>
+                      </div>
+                    </div>
+                  </Col>
+                  )
+                  // <h1></h1>
+                }
+                else{
+                  return (
+                    null
+                  )
+                }
+              })
+              : null
+            }
+
+            
+            {availableTrainingData && dueDataTraining === false && nodueData === false ?
+            <div className="text-center mb-5 mt-5">  <strong>No trainings assigned to you!</strong> </div>
+
+            : null }
+            {/* {availableTrainingData
               ? availableTrainingData.map((item) => {
                 return (
                   <Col lg={4} md={6}>
@@ -228,7 +366,7 @@ const AvailableTraining = ({ filter }) => {
                 );
               })
               : <div><p>No trainings assigned to you!</p></div>
-            }
+            } */}
           </Row>
         </div>
       </div>

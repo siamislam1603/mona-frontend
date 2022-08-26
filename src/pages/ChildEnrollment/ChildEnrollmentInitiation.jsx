@@ -25,7 +25,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   const [errors, setErrors] = useState({});
 
   const fetchEducatorList = async () => {
-    const response = await axios.get(`${BASE_URL}/user-group/usersById/franchisee/${selectedFranchisee}`);
+    const response = await axios.get(`${BASE_URL}/user-group/users/${typeof selectedFranchisee === 'undefined' ? 'all' : selectedFranchisee}`);
     console.log('RESPONSE EDUCATOR DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
@@ -113,9 +113,9 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                   setSelectedFranchisee={setSelectedFranchisee}/>
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-lg">Child Enrollment Initiation Form</h1>
+                    <h1 className="title-lg">Child Enrolment Initiation Form</h1>
                   </header>
-                  <div className="enrollment-form-sec my-5">
+                  <div className="enrollment-form-sec error-sec my-5">
                     <Form onSubmit={submitFormData}>
                       <div className="enrollment-form-column">
                         <div className="grayback">
@@ -194,7 +194,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   as="textarea"
                                   rows={3}
-                                  placeholder="Some text here for the label"
+                                  placeholder="Home Address"
                                   name="home_address"
                                   value={formOneChildData?.home_address || ""}
                                   onChange={(e) => {

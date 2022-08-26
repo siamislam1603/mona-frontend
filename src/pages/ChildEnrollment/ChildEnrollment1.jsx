@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 
 let nextstep = 2;
 let step = 1;
+let telDigitCount = 0;
 
 var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 // let countryData = [
@@ -305,8 +306,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneParentData(prevState => ({
         ...prevState,
-        family_name: child?.parents[0].family_name || parent.fullname,
-        given_name: child?.parents[0].given_name || parent.fullname,
+        family_name: child?.parents[0].family_name || parent.fullname?.split(" ")[0],
+        given_name: child?.parents[0].given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
         relation_type: child?.parents[0].relation_type,
         address_as_per_child: child?.parents[0].address_as_per_child || parent.address,
         telephone: child?.parents[0].telephone || parent.telephone,
@@ -343,11 +344,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
-  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
+  // formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
   // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
-      <div className="enrollment-form-sec my-5">
+      <div className="enrollment-form-sec error-sec my-5">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <div className="grayback">
@@ -356,7 +357,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Child’s Full Name *</Form.Label>
+                    <Form.Label>Child’s First Name *</Form.Label>
                     <Form.Control
                       type="text"
                       name="fullname"
@@ -431,10 +432,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Usually Called *</Form.Label>
+                    <Form.Label>Nickname</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Usually Called"
+                      placeholder="Nickname"
                       minLenth={3}
                       maxLength={50}
                       name="usually_called"
@@ -445,10 +446,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           usually_called: e.target.value
                         }));
-                        setChildFormErrors(prevState => ({
-                          ...prevState,
-                          usually_called: null,
-                        })) 
                         // } else {
                         //   setFormOneChildData(prevState => ({
                         //     ...prevState,
@@ -464,7 +461,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }));
                         }
                       }} />
-                    { childFormErrors?.usually_called !== null && <span className="error">{childFormErrors?.usually_called}</span> }
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -544,7 +540,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="Some text here for the label"
+                      placeholder="Home Address"
                       name="home_address"
                       value={formOneChildData?.home_address || ""}
                       onChange={(e) => {
@@ -567,7 +563,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Language spoken in the home *</Form.Label>
+                    <Form.Label>Language spoken at home *</Form.Label>
                     <Select
                       placeholder={formOneChildData?.language || "Select"}
                       closeMenuOnSelect={true}
@@ -1134,10 +1130,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                          <Form.Label>Family Name *</Form.Label>
+                          <Form.Label>First Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            placeholder="Family Name"
+                            placeholder="First Name"
                             name="family_name"
                             minLenth={3}
                             maxLength={50}
@@ -1173,10 +1169,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>Given Name *</Form.Label>
+                          <Form.Label>Last Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            placeholder="Given Name"
+                            placeholder="Last Name"
                             name="given_name"
                             minLenth={3}
                             maxLength={50}
@@ -1238,7 +1234,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3">
-                          <Form.Label>Address As Per Child *</Form.Label>
+                          <Form.Label>Address *</Form.Label>
                           <Form.Control 
                             as="textarea" 
                             rows={3} 
@@ -1272,13 +1268,17 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             name="telephone"
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
-                              
-                              // if(isNaN(e.target.value) === true) {
+                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  telephone: e.target.value.slice(0, -1)
+                                }));
+                              } else {
                                 setFormOneParentData(prevState => ({
                                   ...prevState,
                                   telephone: e.target.value
                                 }));
-                              // }
+                              }
                               setParentFormErrors(prevState => ({
                                 ...prevState,
                                 telephone: null
