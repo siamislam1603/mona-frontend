@@ -101,7 +101,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   acceptedAllPoints && console.log('Accepted all points:', acceptedAllPoints);
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={handleDataSubmit}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">I understand and have read the following:</h2>

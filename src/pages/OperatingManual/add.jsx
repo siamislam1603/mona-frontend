@@ -563,11 +563,13 @@ const AddOperatingManual = () => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Position in the tree-structure
+                            Order in List
                           </Form.Label>
                           <Form.Control
                             type="number"
                             name="order"
+                            min={1}
+                            
                             value={operatingManualData?.order}
                             placeholder="Enter Position"
                             onChange={(e) => {
@@ -669,7 +671,7 @@ const AddOperatingManual = () => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Video Tutorial Here :
+                            Upload Video :
                           </Form.Label>
 
                           <div className="upload_cover_box video_reference">
@@ -731,7 +733,7 @@ const AddOperatingManual = () => {
                         <div className="upload_related_files">
                           <Form.Group>
                             <Form.Label className="formlabel">
-                              Upload Related Files :
+                              Upload File :
                             </Form.Label>
 
                             <DropAllRelatedFile
@@ -1025,11 +1027,13 @@ const AddOperatingManual = () => {
               </Col>
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label>Position in the tree-structure </Form.Label>
+                  <Form.Label>Order in List </Form.Label>
                   <Form.Control
                     type="number"
                     name="order"
-                    placeholder="Enter Position"
+                    min={1}
+                    placeholder="Enter Posi
+                    tion"
                     onChange={(e) => {
                       setCategoryField(e.target.name, e.target.value);
                     }}
