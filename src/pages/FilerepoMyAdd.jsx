@@ -586,7 +586,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         if (window.confirm("Are you sure you want to delete ?"))
                                             handleTrainingDelete(cell)
                                     }}>Delete</Dropdown.Item>
-                                    <Dropdown.Item href={`/file-repository-Edit/${cell}`}>Edit</Dropdown.Item>
+                                    {getUser_Role === "guardian" ? (<></>) : (<>
+                                        <Dropdown.Item href={`/file-repository-Edit/${cell}`}>Edit</Dropdown.Item>
+                                    </>)}
                                     <Dropdown.Item href="#" onClick={() => {
                                         setSaveFileId(cell);
                                         setShowModal(true)
