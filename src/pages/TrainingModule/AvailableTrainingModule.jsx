@@ -5,7 +5,6 @@ import axios from "axios";
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 
-
 const AvailableTraining = ({ filter }) => {
   console.log('FILTER:', filter);
   const [availableTrainingData, setAvailableTrainingData] = useState();
@@ -27,12 +26,10 @@ const AvailableTraining = ({ filter }) => {
   const [successMessageToast, setSuccessMessageToast] = useState(null);
 
   const fetchAvailableTrainings = async () => {
-    console.log('INSIDE AVAILABLE TRAINING MODULE')
     let user_id = localStorage.getItem('user_id');
-    console.log('USER ID:', user_id)
-    console.log('URL:', `${BASE_URL}/training/assigeedTraining/${user_id}`);
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}`, {
+    const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${
+      filter.category_id}&search=${filter.search}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -41,8 +38,15 @@ const AvailableTraining = ({ filter }) => {
     if (response.status === 200 && response.data.status === "success") {
       console.log('RESPONSE:', response.data);
       const { searchedData } = response.data;
-      setAvailableTrainingData(searchedData);
-      searchedData?.map((item) => {
+      console.log('Searched data', searchedData);
+      
+      // GETTING DISTINCT DATA FROM THE LIST OF FETCHED DATA
+      let uniqueObjArray = [
+        ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
+      ];
+
+      setAvailableTrainingData(uniqueObjArray);
+      uniqueObjArray?.map((item) => {
        if(item.training.end_date){
         return setDueDataTraining(true)
        }
