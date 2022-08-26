@@ -6,6 +6,7 @@ import { childDailyRoutineValidation } from '../../helpers/validation';
 
 let nextstep = 6;
 let step = 5;
+console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 5);
 
 const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 

@@ -326,12 +326,14 @@ const UserManagement = () => {
         email: dt.email,
         number: (dt.phone !== null ? dt.phone.slice(1) : null),
         location: dt.city,
+        role: dt.role,
         is_deleted: dt.is_deleted,
+        role: dt.role,
         userID: dt.id,
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
         action: dt.is_active
       }));
-
+      console.log('TEMP =>>>>>>>>>>>>>>>>>', tempData);
       // tempData = tempData.filter((data) => data.is_deleted === 0);
       // console.log('Temp Data:', tempData);
       if (localStorage.getItem('user_role') === 'guardian') {
@@ -341,7 +343,8 @@ const UserManagement = () => {
       if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
         tempData = tempData.filter(d => d.action === 1);
       }
-      setUserData(tempData);
+      
+      setUserDataAfterFilter(tempData);
       setIsLoading(false)
 
       let temp = tempData;
@@ -365,6 +368,33 @@ const UserManagement = () => {
       });
       setCsvData(csv_data);
     }
+  };
+
+  const setUserDataAfterFilter = data => {
+    console.log('DATA:', data);
+    let role = localStorage.getItem('user_role');
+    let filteredData = null;
+
+    if(role === 'franchisor_admin') {
+      filteredData = data.filter(d => d.role !== 'franchisor_admin');
+    }
+
+    if(role === 'franchisee_admin') {
+      filteredData = data.filter(d => d.role !== 'franchisor_admin')
+      filteredData = filteredData.filter(d => d.role !== 'franchisee_admin')
+          
+    }
+
+    if(role === 'coordinator') {
+      filteredData = data.filter(d => d.role === 'educator' || d.role === 'guardian');
+      console.log('COORDINATOR:', filteredData);
+    }
+
+    if(role === 'educator') {
+      filteredData = data.filter(d => d.role === 'guardian');
+    }
+    
+    setUserData(filteredData);
   };
 
 
@@ -392,7 +422,7 @@ const UserManagement = () => {
 
     if (response.status === 200) {
       const { users } = response.data;
-      console.log('USERS:', users);
+      console.log('USERS =>>>>>>>>>>>>>>>>>>:', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
@@ -404,6 +434,7 @@ const UserManagement = () => {
         location: dt.city,
         is_deleted: dt.is_deleted,
         userID: dt.id,
+        role: dt.role,
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
         action: dt.is_active
       }));
@@ -418,6 +449,9 @@ const UserManagement = () => {
       setEducator(tempData);
       setIsLoading(false)
 
+
+
+
       let temp = tempData;
       let csv_data = [];
       temp.map((item, index) => {
@@ -431,6 +465,29 @@ const UserManagement = () => {
     }
   }
 
+
+  // const render_user_filter = async (arg) => {
+  //   let data;
+  //   console.log("datadatadatadatadatadatadatadatadatadata",userData)
+
+  //   var user_role = localStorage.getItem('user_role');
+  //     if(user_role==='franchisor_admin')
+  //       data = arg.filter(d=>d.role!=='franchisor_admin');
+  //     if(user_role==='franchisee_admin')
+  //       data = arg.filter(d=>d.role!=='franchisee_admin' && d.role!=='franchisor_admin')
+  //     if(user_role==='coordinator')
+  //       data = arg.filter(d=>d.role =='educator' && d.role=='guardian')
+  //     if(user_role==='educator')
+  //       data = arg.filter(d=>d.role=='guardian')
+
+
+  //       setUserData(data)
+  // }
+
+
+  // useEffect(() => {
+  //   render_user_filter()
+  // }, [tempData])
 
 
   useEffect(() => {

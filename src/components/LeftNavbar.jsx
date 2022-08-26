@@ -24,6 +24,7 @@ const LeftNavbar = () => {
         return {
           controller: {
             id: d.controller.id,
+            sequence: d.controller.sequence,
             actions: d.controller.actions,
             controller_icon: d.controller.controller_icon,
             controller_name: d.controller.controller_name,
@@ -37,9 +38,21 @@ const LeftNavbar = () => {
       return d;
     });
 
-    console.log('MENU LIST:', menu_list);
+    let sortedData = menu_list.sort(function(a,b){ 
+        // here a , b is whole object, you can access its property   //convert both to lowercase      
+        let x = a.controller.sequence;      
+        let y = b.controller.sequence;   //compare the word which is comes first      
+        if(x>y){return 1;}      
+        if(x<y){return -1;}
+        return 0;
+      });
+
+
+    console.log('MENU LIST:', sortedData);
+
+
     // console.log('REFORMED:', menu_list.filter(permission => permission.controller.show_in_menu === true));
-    setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
+    setPermissionList(sortedData.filter(permission => permission.controller.show_in_menu === true));
 
     // console.log('FETCHING PERMISSION LIST');
     // let token = localStorage.getItem('token');
