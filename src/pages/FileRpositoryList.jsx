@@ -887,7 +887,7 @@ const FileRpositoryList = () => {
                                                             <input
                                                                 type="checkbox"
                                                                 name="shared_role"
-                                                                id="Guardian"
+                                                                id="guardian"
                                                                 onClick={(e) => {
                                                                     let data = { ...formSettingData };
                                                                     if (

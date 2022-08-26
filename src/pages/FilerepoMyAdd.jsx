@@ -1032,7 +1032,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             <input
                                                                 type="checkbox"
                                                                 name="shared_role"
-                                                                id="Guardian"
+                                                                id="guardian"
                                                                 onClick={(e) => {
                                                                     let data = { ...formSettingData };
                                                                     if (
@@ -1380,7 +1380,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                                                         <Form.Check
                                                             type="checkbox"
-                                                            label="Guardian"
+                                                            label="guardian"
                                                             checked={formSettings.assigned_role.includes("guardian")}
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("guardian")) {

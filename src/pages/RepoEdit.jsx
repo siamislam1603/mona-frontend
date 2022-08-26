@@ -590,7 +590,7 @@ const RepoEdit = () => {
                                                                                 <input
                                                                                     type="checkbox"
                                                                                     name="shared_role"
-                                                                                    id="Guardian"
+                                                                                    id="guardian"
                                                                                     checked={data?.user_roles.includes('guardian')}
                                                                                     onChange={() => {
                                                                                         if (data.user_roles?.includes("guardian")) {
