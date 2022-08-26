@@ -86,7 +86,7 @@ img[align=right]{margin:0 0 30px 20px}
 .title-xs,h4{font-size:18px}
 .title-xxs,h5{font-size:16px}
 .relative{position:relative}
-hr{border-color:#c9c8c8;margin:3rem 0}
+hr{border-color:#c9c8c8;margin:3rem 0; height: 1px; opacity: 1; }
 @-webkit-keyframes autofill{
 to{background:var(--ms-white)}
 }
@@ -502,7 +502,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .grayback .single-field{display:flex;align-items:center}
 .grayback .single-field .form-label{flex:0 0 auto;margin-right:1rem;margin-bottom:0}
 .whiteback{border-radius:16px;border:1px solid var(--black);padding:25px}
-.error{color:var(--red);margin-top:4px;display:inline-block; }
+.error{color:var(--red);margin-top:4px;display:inline-block; font-size: .8em !important; }
 .toast-error{display:block;border:1px solid var(--red);background:rgba(244,170,157,.753);color:var(--white);padding:.5rem 1rem}
 .repositorydrag .uploadfile{border:2px dashed var(--gray);border-radius:16px;height:150px;display:flex;align-items:center;justify-content:center}
 .announcement-accordion .accordion-item{margin-bottom:1rem}
@@ -578,7 +578,6 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .change-pass-sec{max-width:700px;margin:auto}
 .react-bootstrap-table{display:block;width:100%;-webkit-overflow-scrolling:touch}
 .cursor{cursor:pointer}
-.error{color:var(--red)}
 .file-container{width:200px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .file-thumbnail{width:100px;height:auto}
 .file-thumbnail-vector{width:30px;height:auto}
@@ -691,7 +690,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .totalview .meta-block{display:inline-block;position:relative;opacity:.7;font-size:var(--fontxs)}
 .totalview .meta-block:not(:last-of-type):after{content:'|';margin:0 8px}
 
-
+.error-sec .mb-3.relative { margin-bottom: 2rem!important; }
+.error-sec .mb-3.relative .error { position: absolute; }
 
 
 

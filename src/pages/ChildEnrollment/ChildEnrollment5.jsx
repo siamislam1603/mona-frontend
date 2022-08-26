@@ -275,7 +275,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
               <p>To help us deliver the best possible care to your child, please provide us with following information if applicable:</p>
               <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Sleep Time *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -302,7 +302,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Bottle TIme/Breast Feeding Arrangements *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -329,7 +329,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Toileting *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -356,7 +356,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Routines *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -383,7 +383,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Likes/ Dislikes *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -410,7 +410,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Comforter *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -437,7 +437,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Religion *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -464,7 +464,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Dietary Requirement *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -491,7 +491,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Allergy *</Form.Label>
                     <Form.Control 
                       type="text"
@@ -518,7 +518,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Comment *</Form.Label>
                     <Form.Control 
                       type="text"
