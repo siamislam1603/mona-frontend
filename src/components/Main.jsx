@@ -59,21 +59,21 @@ import RepoEdit from '../pages/RepoEdit';
 import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
 import SearchResult from '../pages/SearchResult';
-function returnDashboard (role) {
+function returnDashboard(role) {
 
-  if(role === 'franchisor_admin')
+  if (role === 'franchisor_admin')
     return <FranchisorDashboard />
 
-  if(role === 'franchise_admin')
+  if (role === 'franchise_admin')
     return <FranchiseeDashboard />
 
-  if(role === 'coordinator')
+  if (role === 'coordinator')
     return <CoordinatorDashboard />
 
-  if(role === 'educator')
+  if (role === 'educator')
     return <EducatorDashboard />
 
-  if(role === 'guardian')
+  if (role === 'guardian')
     return <ParentsDashboard />
 
 }
@@ -126,7 +126,7 @@ const Main = () => {
   }, []);
 
   return (
-    
+
     <main>
 
       <Routes>
@@ -134,8 +134,8 @@ const Main = () => {
           exact
           activeClassName="active"
           path="/"
-          element={ 
-            localStorage.getItem('user_id') || typeof localStorage.getItem('user_id')==='undefined'? returnDashboard(localStorage.getItem('user_role')):<SignIn />
+          element={
+            localStorage.getItem('user_id') || typeof localStorage.getItem('user_id') === 'undefined' ? returnDashboard(localStorage.getItem('user_role')) : <SignIn />
           }
         />
 
@@ -456,7 +456,7 @@ const Main = () => {
             </Protected>
           }
         />
-
+       
         <Route
           path="/form"
           element={
