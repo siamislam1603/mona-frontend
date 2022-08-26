@@ -17,7 +17,15 @@ import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
-const timeqty = [
+const timeqty =  [
+  {
+    value: 'minutes',
+    label: 'Minutes',
+  },
+  {
+    value: 'minutes',
+    label: 'Minutes'
+  },
   {
     value: 'hours',
     label: 'Hours',
@@ -181,9 +189,9 @@ const EditTraining = () => {
     setTrainingSettings(prevState => ({
       ...prevState,
       start_date: moment(training?.start_date).format('YYYY-MM-DD'),
-      start_time: moment(training?.start_date).format('HH:mm'),
+      start_time: moment(training?.start_date).subtract(5.5, 'hours').format('HH:mm'),
       end_date: training?.end_date ? moment(training?.end_date).format('YYYY-MM-DD') : '',
-      end_time: training?.end_date ? moment(training?.end_date).format('HH:mm') : '',
+      end_time: training?.end_date ? moment(training?.end_date).subtract(5.5, 'hours').format('HH:mm') : '',
       applicable_to: training?.shares[0]?.applicable_to,
       send_to_all_franchisee: training?.shares[0]?.franchisee[0] === 'all' ? true : false,
       assigned_franchisee: training?.shares[0]?.franchisee,
@@ -661,6 +669,7 @@ const EditTraining = () => {
                         ...prevState,
                         start_date: e.target.value
                       }))}
+                      max={trainingSettings?.end_date}
                     />
                   </Form.Group>
                 </Col>
@@ -687,8 +696,9 @@ const EditTraining = () => {
                       value={trainingSettings?.end_date}
                       onChange={(e) => setTrainingSettings(prevState => ({
                         ...prevState,
-                        start_date: e.target.value
+                        end_date: e.target.value
                       }))}
+                      min={trainingSettings?.start_date}
                     />
                   </Form.Group>
                 </Col>

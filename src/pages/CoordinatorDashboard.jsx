@@ -448,7 +448,7 @@ const CoordinatorDashboard = () => {
                             </div>
                             <div className="listing">
                               <a className="item" href="/training">
-                                <span className="name">Overdue Trainings</span>
+                                <span className="name">Overdue Training</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.overdueTrainings}</span>
                               </a>

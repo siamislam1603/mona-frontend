@@ -11,37 +11,37 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
 
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={submitFormData}>
           <div className="whiteback mt-4">
             <h4 className="title-xs mb-3 text-center">For Office Use Only</h4>
             <Row>
               <Col md={4}>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 relative">
                   <Form.Label>Documents sighted by</Form.Label>
                   <Form.Control type="text" />
                 </Form.Group>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 relative">
                   <Form.Label>Signature</Form.Label>
                   <Form.Control type="text" />
                 </Form.Group>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 relative">
                   <Form.Label>Date</Form.Label>
                   <Form.Control type="date" placeholder="" name="dob" />
                 </Form.Group>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 relative">
                   <Form.Label>Percentage</Form.Label>
                   <Form.Control type="text" />
                 </Form.Group>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 relative">
                   <Form.Label>Eligible Hours</Form.Label>
                   <Form.Control type="text" />
                 </Form.Group>
@@ -67,7 +67,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
                 <li>I understand that it is my responsibility as the parent to notify the office immediately when individuals other than the educators or the nominated assistants is in contact with, pickup or drop off my children to and from school / home.</li>
                 <li>I understand that I am not entitled to receive childcare subsidy for my own children’s session of care, if on that same day, I as FDC educator provide care for an approved FDC service.</li>
               </ol>
-              <Form.Group className="mb-3">
+              <Form.Group className="mb-3 relative">
                 <div className="btn-checkbox">
                   <Form.Check type="checkbox" id="accept" label="I have read and accept all the above points." />
                 </div>

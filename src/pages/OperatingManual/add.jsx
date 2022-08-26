@@ -563,11 +563,13 @@ const AddOperatingManual = () => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Position in the tree-structure
+                            Order in List
                           </Form.Label>
                           <Form.Control
                             type="number"
                             name="order"
+                            min={1}
+                            
                             value={operatingManualData?.order}
                             placeholder="Enter Position"
                             onChange={(e) => {
@@ -802,7 +804,7 @@ const AddOperatingManual = () => {
                     {localStorage.getItem('user_role') ===
                       'franchisor_admin' && (
                       <label className="container">
-                        Franchisee Admin
+                        Franchise Admin
                         <input
                           type="checkbox"
                           name="shared_role"
@@ -1025,11 +1027,13 @@ const AddOperatingManual = () => {
               </Col>
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label>Position in the tree-structure </Form.Label>
+                  <Form.Label>Order in List </Form.Label>
                   <Form.Control
                     type="number"
                     name="order"
-                    placeholder="Enter Position"
+                    min={1}
+                    placeholder="Enter Posi
+                    tion"
                     onChange={(e) => {
                       setCategoryField(e.target.name, e.target.value);
                     }}

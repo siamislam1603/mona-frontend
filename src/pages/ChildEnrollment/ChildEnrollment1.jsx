@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 
 let nextstep = 2;
 let step = 1;
+let telDigitCount = 0;
 
 var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 // let countryData = [
@@ -305,8 +306,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneParentData(prevState => ({
         ...prevState,
-        family_name: child?.parents[0].family_name || parent.fullname,
-        given_name: child?.parents[0].given_name || parent.fullname,
+        family_name: child?.parents[0].family_name || parent.fullname?.split(" ")[0],
+        given_name: child?.parents[0].given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
         relation_type: child?.parents[0].relation_type,
         address_as_per_child: child?.parents[0].address_as_per_child || parent.address,
         telephone: child?.parents[0].telephone || parent.telephone,
@@ -343,11 +344,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
-  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
+  // formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
   // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
-      <div className="enrollment-form-sec my-5">
+      <div className="enrollment-form-sec error-sec my-5">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <div className="grayback">
@@ -355,8 +356,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               <p className="form_info mb-4">A parent or guardian who ns lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
               <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Child’s Full Name *</Form.Label>
+                  <Form.Group className="mb-3 relative">
+                    <Form.Label>Child’s First Name *</Form.Label>
                     <Form.Control
                       type="text"
                       name="fullname"
@@ -392,7 +393,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Family Name *</Form.Label>
                     <Form.Control
                       type="text"
@@ -430,11 +431,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Usually Called *</Form.Label>
+                  <Form.Group className="mb-3 relative">
+                    <Form.Label>Nickname</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Usually Called"
+                      placeholder="Nickname"
                       minLenth={3}
                       maxLength={50}
                       name="usually_called"
@@ -445,10 +446,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           usually_called: e.target.value
                         }));
-                        setChildFormErrors(prevState => ({
-                          ...prevState,
-                          usually_called: null,
-                        })) 
                         // } else {
                         //   setFormOneChildData(prevState => ({
                         //     ...prevState,
@@ -464,11 +461,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }));
                         }
                       }} />
-                    { childFormErrors?.usually_called !== null && <span className="error">{childFormErrors?.usually_called}</span> }
                   </Form.Group>
                 </Col>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Date Of Birth *</Form.Label>
                     <Form.Control
                       type="date"
@@ -495,7 +491,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 <Col md={12}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <div className="btn-radio inline-col">
                       <Form.Label>Sex</Form.Label>
                       <Form.Check
@@ -539,12 +535,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 <Col md={12}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Home Address *</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="Some text here for the label"
+                      placeholder="Home Address"
                       name="home_address"
                       value={formOneChildData?.home_address || ""}
                       onChange={(e) => {
@@ -566,8 +562,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Language spoken in the home *</Form.Label>
+                  <Form.Group className="mb-3 relative">
+                    <Form.Label>Language spoken at home *</Form.Label>
                     <Select
                       placeholder={formOneChildData?.language || "Select"}
                       closeMenuOnSelect={true}
@@ -594,7 +590,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Country Of Birth *</Form.Label>
                     <Select
                       placeholder={formOneChildData?.country_of_birth || "Select"}
@@ -621,7 +617,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 <Col md={12}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Is the child of Aboriginal and/or Torres Strait Islander origin?</Form.Label>
                     <div className="btn-radio two-col">
                       <Form.Check
@@ -704,7 +700,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </Form.Group>
                 </Col>
                 <Col md={12}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Does the child have a developmental delay or disability including intellectual, sensory or physical impairment?</Form.Label>
                     <div className="btn-radio inline-col">
                       <Form.Check
@@ -760,7 +756,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   formOneChildData.developmental_delay &&
                   <>
                     <Col md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Child Medical No. *</Form.Label>
                         <Form.Control
                           type="text"
@@ -782,7 +778,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Col>
 
                     <Col md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Child CRN *</Form.Label>
                         <Form.Control
                           type="text"
@@ -804,7 +800,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     </Col>
                     
                     <Col md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Parents CRN 1 *</Form.Label>
                         <Form.Control
                           type="text"
@@ -849,7 +845,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </>
                 }
                 <Col md={12}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Is the child using another service?</Form.Label>
                     <div className="btn-radio inline-col">
                       <Form.Check
@@ -902,31 +898,31 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   formOneChildData.another_service &&
                   <>
                     <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Monday</Form.Label>
                         <Form.Control type="number" />
                       </Form.Group>
                     </Col>
                     <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Tuesday</Form.Label>
                         <Form.Control type="number" />
                       </Form.Group>
                     </Col>
                     <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Wednesday</Form.Label>
                         <Form.Control type="number" />
                       </Form.Group>
                     </Col>
                     <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Thrusday</Form.Label>
                         <Form.Control type="number" />
                       </Form.Group>
                     </Col>
                     <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Friday</Form.Label>
                         <Form.Control type="number" />
                       </Form.Group>
@@ -934,7 +930,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </>
                 }
                 <Col md={12}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <div className="btn-radio inline-col">
                       <Form.Label>School Status :</Form.Label>
                       <Form.Check
@@ -985,12 +981,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   formOneChildData.school_status === 'at-school' &&
                   <>
                     <Col md={4}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label className="py-3"> Date first went to School : *</Form.Label>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Control 
                           type="date"
                           placeholder="" 
@@ -1014,12 +1010,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
                     </Col>
                     <Col md={4}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label className="py-3">Name and address of School *</Form.Label>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Control 
                           type="text" 
                           name="name_of_school"
@@ -1038,7 +1034,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }} />
                       </Form.Group>
 
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Control 
                           type="text" 
                           placeholder="Address of School" 
@@ -1063,13 +1059,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   </>
                 }
                 {/* <Col md={12} className="">
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name of the school</Form.Label>
                     <Form.Control type="text" />
                   </Form.Group>
                 </Col>
                 <Col md={12}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address of the school</Form.Label>
                     <Form.Control
                       as="textarea"
@@ -1088,7 +1084,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                   <Row>
                     <Col md={12}>
                       <div className="parent_fields">
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <div className="btn-radio inline-col">
                             <Form.Check 
                               type="radio" 
@@ -1133,11 +1129,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           </div>
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                          <Form.Label>Family Name *</Form.Label>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>First Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            placeholder="Family Name"
+                            placeholder="First Name"
                             name="family_name"
                             minLenth={3}
                             maxLength={50}
@@ -1172,11 +1168,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.family_name !== null && <span className="error">{parentFormErrors?.family_name}</span> }
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
-                          <Form.Label>Given Name *</Form.Label>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Last Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            placeholder="Given Name"
+                            placeholder="Last Name"
                             name="given_name"
                             minLenth={3}
                             maxLength={50}
@@ -1210,7 +1206,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.given_name !== null && <span className="error">{parentFormErrors?.given_name}</span> }
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <Form.Label>Date Of Birth *</Form.Label>
                           <Form.Control 
                             type="date" 
@@ -1237,8 +1233,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.dob !== null && <span className="error">{parentFormErrors?.dob}</span> }
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
-                          <Form.Label>Address As Per Child *</Form.Label>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Address *</Form.Label>
                           <Form.Control 
                             as="textarea" 
                             rows={3} 
@@ -1264,7 +1260,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.address_as_per_child !== null && <span className="error">{parentFormErrors?.address_as_per_child}</span> }
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <Form.Label>Telephone *</Form.Label>
                           <Form.Control 
                             type="tel" 
@@ -1272,13 +1268,17 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             name="telephone"
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
-                              
-                              // if(isNaN(e.target.value) === true) {
+                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  telephone: e.target.value.slice(0, -1)
+                                }));
+                              } else {
                                 setFormOneParentData(prevState => ({
                                   ...prevState,
                                   telephone: e.target.value
                                 }));
-                              // }
+                              }
                               setParentFormErrors(prevState => ({
                                 ...prevState,
                                 telephone: null
@@ -1296,7 +1296,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.telephone !== null && <span className="error">{parentFormErrors?.telephone}</span> }
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <Form.Label>Email Address *</Form.Label>
                           <Form.Control 
                             type="email" 
@@ -1322,7 +1322,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.email !== null && <span className="error">{parentFormErrors?.email}</span> }
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <div className="btn-radio inline-col">
                             <Form.Label>Child live with this parent/guardian?</Form.Label>
                             <Form.Check 
@@ -1366,7 +1366,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           </div>
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <Form.Label>Place Of Birth *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.place_of_birth || "Select"}
@@ -1393,7 +1393,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.place_of_birth !== null && <span className="error">{parentFormErrors?.place_of_birth}</span> }
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <Form.Label>Ethnicity *</Form.Label>
                           <Select
                              placeholder={formOneParentData?.ethnicity || "Select"}
@@ -1422,7 +1422,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.ethnicity !== null && <span className="error">{parentFormErrors?.ethnicity}</span> }
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <Form.Label>Primary Language *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.primary_language || "Select"}
@@ -1450,7 +1450,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           { parentFormErrors?.primary_language !== null && <span className="error">{parentFormErrors?.primary_language}</span> }
                         </Form.Group>
                         
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3 relative">
                           <Form.Label>Occupation *</Form.Label>
                           <Select
                             placeholder={formOneParentData?.occupation || "Select"}

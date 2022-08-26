@@ -29,6 +29,7 @@ import { createCategoryValidation } from '../../helpers/validation';
 
 let upperRoleUser = '';
 let selectedUserId = '';
+
 const OperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -546,36 +547,30 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      {verifyPermission(
-                                        'operating_manual',
-                                        'add'
-                                      ) && (
-                                        <div className="edit-module">
-                                          <Dropdown.Item
-                                            onClick={() => {
-                                              setCategoryModalFlag(true);
-                                              setCategoryData(item);
-                                            }}
-                                            active
-                                          >
-                                            <FontAwesomeIcon
-                                              icon={faPen}
-                                              style={{ color: '#455C58' }}
-                                            />
-                                          </Dropdown.Item>
-                                          <Dropdown.Item
-                                            className="tab-trash"
-                                            onClick={() => {
-                                              deleteOperatingManualCategory(
-                                                item.id
-                                              );
-                                            }}
-                                            active
-                                          >
-                                            <FontAwesomeIcon icon={faTrash} style={{ color: '#455C58' }} />
-                                          </Dropdown.Item>
-                                        </div>
-                                      )}
+                                      <div className="edit-module">
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            setCategoryModalFlag(true);
+                                            setCategoryData(item);
+
+                                          }}
+                                          active
+                                        >
+                                          <FontAwesomeIcon
+                                            icon={faPen}
+                                            style={{ color: '#455C58' }}
+                                          />
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          className="tab-trash"
+                                          onClick={() => {
+                                            deleteOperatingManualCategory(item.id)
+                                          }}
+                                          active
+                                        >
+                                          <img src="../img/removeIcon.svg" alt="" />
+                                        </Dropdown.Item>
+                                      </div>
                                     </div>
                                   ) : (
                                     <div className="module-drop-down">
@@ -648,7 +643,7 @@ const OperatingManual = () => {
                                         <a
                                           className={
                                             index === Index &&
-                                            innerIndex === inner_index
+                                              innerIndex === inner_index
                                               ? 'tree_active'
                                               : ''
                                           }
@@ -683,159 +678,159 @@ const OperatingManual = () => {
                             ]?.upper_role.includes(
                               localStorage.getItem('user_role')
                             )) && (
-                            <Dropdown>
-                              <Dropdown.Toggle id="dropdown-basic">
-                                <FontAwesomeIcon icon={faEllipsisVertical} />
-                              </Dropdown.Toggle>
+                              <Dropdown>
+                                <Dropdown.Toggle id="dropdown-basic">
+                                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                                </Dropdown.Toggle>
 
-                              <Dropdown.Menu>
-                                <Dropdown.Item
-                                  href=""
-                                  onClick={() => {
-                                    navigate('/operatingmanual/add', {
-                                      state: {
-                                        id: operatingManualdata[Index]
+                                <Dropdown.Menu>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      navigate('/operatingmanual/add', {
+                                        state: {
+                                          id: operatingManualdata[Index]
+                                            ?.operating_manuals[innerIndex]?.id,
+                                          category_name:
+                                            operatingManualdata[Index]
+                                              ?.category_name,
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faPen} /> Edit
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      deleteOperatingManual();
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faRemove} /> Remove
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    href=""
+                                    onClick={() => {
+                                      setFormSettingFlag(true);
+                                      getOneOperatingManual(
+                                        operatingManualdata[Index]
                                           ?.operating_manuals[innerIndex]?.id,
-                                        category_name:
-                                          operatingManualdata[Index]
-                                            ?.category_name,
-                                      },
-                                    });
-                                  }}
-                                >
-                                  <FontAwesomeIcon icon={faPen} /> Edit
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                  href=""
-                                  onClick={() => {
-                                    deleteOperatingManual();
-                                  }}
-                                >
-                                  <FontAwesomeIcon icon={faRemove} /> Remove
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                  href=""
-                                  onClick={() => {
-                                    setFormSettingFlag(true);
-                                    getOneOperatingManual(
-                                      operatingManualdata[Index]
-                                        ?.operating_manuals[innerIndex]?.id,
-                                      operatingManualdata[Index]?.category_name
-                                    );
-                                  }}
-                                >
-                                  <FontAwesomeIcon icon={faUsers} /> Sharing
-                                </Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown>
-                          )}
+                                        operatingManualdata[Index]?.category_name
+                                      );
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faUsers} /> Sharing
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            )}
                         </div>
                       </div>
                     </div>
                     {operatingManualdata.map((item, index) => {
                       return index === Index
                         ? item?.operating_manuals.map(
-                            (inner_item, inner_index) => {
-                              {
-                                inner_item.category =
-                                  operatingManualdata[
-                                    operatingManualdata
-                                      .map((object) => object.id)
-                                      .indexOf(inner_item.category_id)
-                                  ]?.category_name;
-                                inner_item.related_files = eval(
-                                  inner_item.related_files
-                                );
-                              }
-                              return inner_index === innerIndex ? (
-                                <>
-                                  <PdfComponent {...inner_item} />
-                                  <Row>
-                                    {inner_item.reference_video && (
-                                      <Col sm={7}>
-                                        <div className="reference_wrp">
-                                          <h1>Reference Videos</h1>
-                                          <div className="reference_videos">
-                                            <Button
-                                              className="vidico"
-                                              variant="transparent"
-                                              onClick={() => {
-                                                setVideoUrl(
-                                                  inner_item.reference_video
-                                                    ? inner_item.reference_video
-                                                    : 'https://player.vimeo.com/video/718118183?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1'
-                                                );
-                                                handleShow();
-                                              }}
-                                            >
-                                              <img
-                                                src={
-                                                  inner_item.video_thumbnail
-                                                    ? inner_item.video_thumbnail
-                                                    : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
-                                                }
-                                                alt=""
-                                              />
-                                            </Button>
-                                            <div className="video_title">
-                                              <h6>Video 1</h6>
-                                            </div>
+                          (inner_item, inner_index) => {
+                            {
+                              inner_item.category =
+                                operatingManualdata[
+                                  operatingManualdata
+                                    .map((object) => object.id)
+                                    .indexOf(inner_item.category_id)
+                                ]?.category_name;
+                              inner_item.related_files = eval(
+                                inner_item.related_files
+                              );
+                            }
+                            return inner_index === innerIndex ? (
+                              <>
+                                <PdfComponent {...inner_item} />
+                                <Row>
+                                  {inner_item.reference_video && (
+                                    <Col sm={7}>
+                                      <div className="reference_wrp">
+                                        <h1>Reference Videos</h1>
+                                        <div className="reference_videos">
+                                          <Button
+                                            className="vidico"
+                                            variant="transparent"
+                                            onClick={() => {
+                                              setVideoUrl(
+                                                inner_item.reference_video
+                                                  ? inner_item.reference_video
+                                                  : 'https://player.vimeo.com/video/718118183?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1'
+                                              );
+                                              handleShow();
+                                            }}
+                                          >
+                                            <img
+                                              src={
+                                                inner_item.video_thumbnail
+                                                  ? inner_item.video_thumbnail
+                                                  : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
+                                              }
+                                              alt=""
+                                            />
+                                          </Button>
+                                          <div className="video_title">
+                                            <h6>Video 1</h6>
                                           </div>
                                         </div>
-                                      </Col>
-                                    )}
-                                    {inner_item.related_files.length !== 0 ? (
-                                      <Col sm={5}>
-                                        <div className="related_files">
-                                          <h1>Related Files</h1>
-                                          {inner_item.related_files.map(
-                                            (file_item, file_index) => {
-                                              return (
-                                                <>
-                                                  {console.log(
-                                                    'file_item---->',
-                                                    file_item
-                                                  )}
+                                      </div>
+                                    </Col>
+                                  )}
+                                  {inner_item.related_files.length !== 0 ? (
+                                    <Col sm={5}>
+                                      <div className="related_files">
+                                        <h1>Related Files</h1>
+                                        {inner_item.related_files.map(
+                                          (file_item, file_index) => {
+                                            return (
+                                              <>
+                                                {console.log(
+                                                  'file_item---->',
+                                                  file_item
+                                                )}
 
-                                                  <a
-                                                    className="forms-content create-other"
-                                                    role="button"
-                                                    href={file_item.url}
-                                                    download
-                                                  >
-                                                    <div className="content-icon-section">
-                                                      <img
-                                                        src={
-                                                          (file_index + 1) %
-                                                            2 ==
+                                                <a
+                                                  className="forms-content create-other"
+                                                  role="button"
+                                                  href={file_item.url}
+                                                  download
+                                                >
+                                                  <div className="content-icon-section">
+                                                    <img
+                                                      src={
+                                                        (file_index + 1) %
+                                                          2 ==
                                                           0
-                                                            ? '../img/doc_pink.svg'
-                                                            : '../img/doc_blue.svg'
-                                                        }
-                                                      />
-                                                    </div>
-                                                    <div className="content-title-section">
-                                                      <h6>{file_item.name}</h6>
-                                                      <h4>
-                                                        Added On :
-                                                        {moment(
-                                                          inner_item.createdAt
-                                                        ).format('DD/MM/YYYY')}
-                                                      </h4>
-                                                    </div>
-                                                  </a>
-                                                </>
-                                              );
-                                            }
-                                          )}
-                                        </div>
-                                      </Col>
-                                    ) : null}
-                                  </Row>
-                                </>
-                              ) : null;
-                            }
-                          )
+                                                          ? '../img/doc_pink.svg'
+                                                          : '../img/doc_blue.svg'
+                                                      }
+                                                    />
+                                                  </div>
+                                                  <div className="content-title-section">
+                                                    <h6>{file_item.name}</h6>
+                                                    <h4>
+                                                      Added On :
+                                                      {moment(
+                                                        inner_item.createdAt
+                                                      ).format('DD/MM/YYYY')}
+                                                    </h4>
+                                                  </div>
+                                                </a>
+                                              </>
+                                            );
+                                          }
+                                        )}
+                                      </div>
+                                    </Col>
+                                  ) : null}
+                                </Row>
+                              </>
+                            ) : null;
+                          }
+                        )
                         : null;
                     })}
                   </Col>
@@ -896,40 +891,40 @@ const OperatingManual = () => {
                   <div className="modal-two-check user-roles-box">
                     {localStorage.getItem('user_role') ===
                       'franchisor_admin' && (
-                      <label className="container">
-                        Franchisee Admin
-                        <input
-                          type="checkbox"
-                          name="shared_role"
-                          id="franchisee_admin"
-                          onClick={(e) => {
-                            let data = { ...formSettingData };
-                            if (
-                              !data['shared_role']
-                                .toString()
-                                .includes(e.target.id)
-                            ) {
-                              data['shared_role'] += e.target.id + ',';
-                            } else {
-                              data['shared_role'] = data['shared_role'].replace(
-                                e.target.id + ',',
-                                ''
-                              );
-                              if (data['shared_role'].includes('all')) {
-                                data['shared_role'] = data[
-                                  'shared_role'
-                                ].replace('all,', '');
+                        <label className="container">
+                          Franchise Admin
+                          <input
+                            type="checkbox"
+                            name="shared_role"
+                            id="franchisee_admin"
+                            onClick={(e) => {
+                              let data = { ...formSettingData };
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes(e.target.id)
+                              ) {
+                                data['shared_role'] += e.target.id + ',';
+                              } else {
+                                data['shared_role'] = data['shared_role'].replace(
+                                  e.target.id + ',',
+                                  ''
+                                );
+                                if (data['shared_role'].includes('all')) {
+                                  data['shared_role'] = data[
+                                    'shared_role'
+                                  ].replace('all,', '');
+                                }
                               }
-                            }
-                            setFormSettingData(data);
-                          }}
-                          checked={formSettingData?.shared_role
-                            ?.toString()
-                            .includes('franchisee_admin')}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                    )}
+                              setFormSettingData(data);
+                            }}
+                            checked={formSettingData?.shared_role
+                              ?.toString()
+                              .includes('franchisee_admin')}
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                      )}
                     <label className="container">
                       Co-ordinators
                       <input
@@ -1122,10 +1117,11 @@ const OperatingManual = () => {
               </Col>
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label>Position in the tree-structure </Form.Label>
+                  <Form.Label>Order in List </Form.Label>
                   <Form.Control
                     type="number"
                     name="order"
+                    min={1}
                     value={categoryData?.order}
                     placeholder="Enter Position"
                     onChange={(e) => {

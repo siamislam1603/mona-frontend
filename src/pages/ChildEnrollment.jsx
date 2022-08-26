@@ -101,7 +101,7 @@ function ChildEnrollment() {
                     setSelectedFranchisee={setSelectedFranchisee} /> */}
                   <div className="entry-container">
                     <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
+                      <h1 className="title-lg">Child Enrolment Form</h1>
                     </header>
                     <div className="enrollment-form-sec">
                       <StepOne nextStep={nextStep} handleFormData={handleInputData} />
@@ -129,7 +129,7 @@ function ChildEnrollment() {
                     setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
+                      <h1 className="title-lg">Child Enrolment Form</h1>
                     </header>
                     <div className="enrollment-form-sec">
                       <StepTwo nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
@@ -157,7 +157,7 @@ function ChildEnrollment() {
                     setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
+                      <h1 className="title-lg">Child Enrolment Form</h1>
                     </header>
                     <div className="enrollment-form-sec">
                       <StepThree nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
@@ -185,7 +185,7 @@ function ChildEnrollment() {
                     setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
+                      <h1 className="title-lg">Child Enrolment Form</h1>
                     </header>
                     <div className="enrollment-form-sec">
                       <StepFour nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
@@ -213,7 +213,7 @@ function ChildEnrollment() {
                     setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
+                      <h1 className="title-lg">Child Enrolment Form</h1>
                     </header>
                     <div className="enrollment-form-sec">
                       <StepFive nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
@@ -241,7 +241,7 @@ function ChildEnrollment() {
                     setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
+                      <h1 className="title-lg">Child Enrolment Form</h1>
                     </header>
                     <div className="enrollment-form-sec">
                       <StepSix nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
@@ -269,7 +269,7 @@ function ChildEnrollment() {
                     setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
+                      <h1 className="title-lg">Child Enrolment Form</h1>
                     </header>
                     <div className="enrollment-form-sec">
                       <StepSeven nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />
@@ -297,7 +297,7 @@ function ChildEnrollment() {
                     setSelectedFranchisee={setSelectedFranchisee} />
                   <div className="entry-container">
                     <header className="title-head">
-                      <h1 className="title-lg">Child Enrollment Form</h1>
+                      <h1 className="title-lg">Child Enrolment Form</h1>
                     </header>
                     <div className="enrollment-form-sec">
                       <StepEight nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} />

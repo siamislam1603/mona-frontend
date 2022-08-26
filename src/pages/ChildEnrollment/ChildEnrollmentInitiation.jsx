@@ -115,7 +115,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                   <header className="title-head">
                     <h1 className="title-lg">Child Enrolment Initiation Form</h1>
                   </header>
-                  <div className="enrollment-form-sec my-5">
+                  <div className="enrollment-form-sec error-sec my-5">
                     <Form onSubmit={submitFormData}>
                       <div className="enrollment-form-column">
                         <div className="grayback">
@@ -123,7 +123,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                           <p className="form_info mb-4">A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
                           <Row>
                             <Col md={6}>
-                              <Form.Group className="mb-3">
+                              <Form.Group className="mb-3 relative">
                                 <Form.Label>Child’s Full Name</Form.Label>
                                 <Form.Control
                                   type="text"
@@ -142,7 +142,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                             </Col>
                             
                             <Col md={6}>
-                              <Form.Group className="mb-3">
+                              <Form.Group className="mb-3 relative">
                                 <Form.Label>Date Of Birth</Form.Label>
                                 <Form.Control
                                   type="date"
@@ -161,7 +161,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                               </Form.Group>
                             </Col>
                             <Col md={12}>
-                              <Form.Group className="mb-3">
+                              <Form.Group className="mb-3 relative">
                                 <div className="btn-radio inline-col">
                                   <Form.Label>Sex</Form.Label>
                                   <Form.Check
@@ -189,12 +189,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                               </Form.Group>
                             </Col>
                             <Col md={12}>
-                              <Form.Group className="mb-3">
+                              <Form.Group className="mb-3 relative">
                                 <Form.Label>Home Address</Form.Label>
                                 <Form.Control
                                   as="textarea"
                                   rows={3}
-                                  placeholder="Some text here for the label"
+                                  placeholder="Home Address"
                                   name="home_address"
                                   value={formOneChildData?.home_address || ""}
                                   onChange={(e) => {
@@ -209,7 +209,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                             </Col>
 
                             <Col md={6}>
-                              <Form.Group className="mb-3">
+                              <Form.Group className="mb-3 relative">
                                 <Form.Label>Select an Educator:</Form.Label>
                                 <Select
                                   placeholder={formOneChildData?.language || "Select"}

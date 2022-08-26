@@ -328,7 +328,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">Emergency Contact: R160 (3) (b) (ii)</h2>
@@ -337,7 +337,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <p>(This person is to be notified of an emergency involving the child if any parents of the child cannot be immediately contacted).</p>
               <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name *</Form.Label>
                     <Form.Control
                       name="name" 
@@ -362,7 +362,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     { emergencyContactError?.name !== null && <span className="error">{emergencyContactError?.name}</span> }
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
@@ -388,14 +388,24 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     { emergencyContactError?.address !== null && <span className="error">{emergencyContactError?.address}</span> }
                   </Form.Group>
                   
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
                       value={emergencyContactData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
-                        handleEmergencyContact(e);
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setEmergencyContactData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setEmergencyContactData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
                         setEmergencyContactError(prevState => ({
                           ...prevState,
                           telephone: null
@@ -412,7 +422,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       }} />
                     { emergencyContactError?.telephone !== null && <span className="error">{emergencyContactError?.telephone}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child" 
@@ -439,21 +449,25 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 </Col>
 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address</Form.Label>
                     <Form.Control as="textarea" rows={3} />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control type="tel" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                 </Col>
               </Row>
@@ -465,7 +479,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <p>(A person who has been given permission by a parents or family member to collect the child from Family Day Care).</p>
               <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name *</Form.Label>
                     <Form.Control
                       name="name" 
@@ -490,7 +504,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { authorizedNomineeError?.name !== null && <span className="error">{authorizedNomineeError?.name}</span> }
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
@@ -516,14 +530,24 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { authorizedNomineeError?.address !== null && <span className="error">{authorizedNomineeError?.address}</span> }
                   </Form.Group>
                   
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
                       type="tel"
                       value={authorizedNomineeData?.telephone || ""}
                       onChange={(e) => {
-                        handleAuthorizedNominee(e);
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setAuthorizedNomineeData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setAuthorizedNomineeData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
                         setAuthorizedNomineeError(prevState => ({
                           ...prevState,
                           telephone: null
@@ -541,7 +565,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { authorizedNomineeError?.telephone !== null && <span className="error">{authorizedNomineeError?.telephone}</span> }
                   </Form.Group>
                   
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child" 
@@ -568,21 +592,25 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 </Col>
 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address</Form.Label>
                     <Form.Control as="textarea" rows={3} />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control type="tel" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                 </Col>
               </Row>
@@ -596,7 +624,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <p>(A person who is authorized to consent to medical treatment of the child or to authorize the administration of medication to the child).</p>
               <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name *</Form.Label>
                     <Form.Control
                       name="name" 
@@ -621,7 +649,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { authorizedPersonError?.name !== null && <span className="error">{authorizedPersonError?.name}</span> }
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
@@ -647,14 +675,24 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { authorizedPersonError?.address !== null && <span className="error">{authorizedPersonError?.address}</span> }
                   </Form.Group>
                   
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
                       value={authorizedPersonData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
-                        handleAuthorizedPerson(e);
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
                         setAuthorizedPersonError(prevState => ({
                           ...prevState,
                           telephone: null
@@ -672,7 +710,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { authorizedPersonError?.telephone !== null && <span className="error">{authorizedPersonError?.telephone}</span> }
                   </Form.Group>
                   
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child" 
@@ -699,21 +737,25 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 </Col>
 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address</Form.Label>
                     <Form.Control as="textarea" rows={3} />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control type="tel" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                 </Col>
               </Row>
@@ -725,7 +767,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
               <p>(A person who is authorized to authorize an educator to take the child outside the education and care service premises).</p>
               <Row>
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name *</Form.Label>
                     <Form.Control
                       name="name" 
@@ -750,7 +792,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { otherAuthorizedPersonError?.name !== null && <span className="error">{otherAuthorizedPersonError?.name}</span> }
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
@@ -776,14 +818,24 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { otherAuthorizedPersonError?.address !== null && <span className="error">{otherAuthorizedPersonError?.address}</span> }
                   </Form.Group>
                   
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
                       value={otherAuthorizedPersonData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
-                        handleOtherAuthorizedPerson(e);
+                        if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                          setOtherAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value.slice(0, -1)
+                          }));
+                        } else {
+                          setOtherAuthorizedPersonData(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
+                        }
                         setOtherAuthorizedPersonError(prevState => ({
                           ...prevState,
                           telephone: null
@@ -801,7 +853,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       { otherAuthorizedPersonError?.telephone !== null && <span className="error">{otherAuthorizedPersonError?.telephone}</span> }
                   </Form.Group>
                   
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child"
@@ -828,21 +880,25 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                 </Col>
                 
                 <Col md={6}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Address</Form.Label>
                     <Form.Control as="textarea" rows={3} />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control type="tel" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child</Form.Label>
                     <Form.Control type="text" />
+                    { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                 </Col>
               </Row>
