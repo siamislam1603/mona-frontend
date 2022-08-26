@@ -628,7 +628,7 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>City</Form.Label>
+                            <Form.Label>Suburb</Form.Label>
                             <Select
                               placeholder="Which Suburb?"
                               closeMenuOnSelect={true}
@@ -825,7 +825,7 @@ const NewUser = () => {
                           {
                             formData?.role === 'educator' &&
                             <Form.Group className="col-md-6 mb-3">
-                              <Form.Label>Select Primary Co-ordinator</Form.Label>
+                              <Form.Label>Select Primary Coordinator</Form.Label>
                               <Select
                                 isDisabled={formData.role !== 'educator'}
                                 placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Which Co-ordinator?" : "Not Applicable"}

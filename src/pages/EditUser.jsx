@@ -110,7 +110,7 @@ const EditUser = () => {
       professionalDevCategories: user?.professional_development_categories?.map(d => parseInt(d)),
       coordinator: user?.coordinator,
       businessAssets: user?.business_assets?.map(d => parseInt(d)),
-      termination_date: user?.terminationDate === 'Invalid Date' ? 'YYYY-MM-DD' : moment(user?.terminationDate).format('YYYY-MM-DD'),
+      terminationDate: user?.termination_date || "",
       termination_reach_me: user?.termination_reach_me,
       user_signature: user?.user_signature,
       profile_photo: user?.profile_photo
@@ -140,6 +140,8 @@ const EditUser = () => {
             "Authorization": `Bearer ${token}`
           }
         });
+
+        console.log('SIGNATURE IMAGE RESPONSE:', signatureImageResponse);
 
         if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
           console.log('WE ARE DONE HERE: I');
@@ -505,12 +507,13 @@ const EditUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  editUserData && console.log('EDIT USER DATA:', editUserData);
+  // editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
   // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
   formData && console.log('FORM DATA:', formData);
+  signatureImage && console.log('Signature Image:', signatureImage);
   // userRoleData && console.log('USER ROLE DATA:', userRoleData);
-  currentRole && console.log('Current Role:', currentRole);
+  // currentRole && console.log('Current Role:', currentRole);
   return (
     <>
       <div id="main">
@@ -755,7 +758,7 @@ const EditUser = () => {
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Primary Co-ordinator</Form.Label> 
+                            <Form.Label>Select Primary Coordinator</Form.Label> 
                             <Select
                               isDisabled={formData.role !== 'educator'}
                               placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
@@ -794,7 +797,7 @@ const EditUser = () => {
                           </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Upload Training Documents</Form.Label>
+                            <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               title="Video"
                               onSave={setTrainingDocuments} />
@@ -806,11 +809,14 @@ const EditUser = () => {
                               type="date"
                               disabled={true}
                               name="terminationDate"
-                              value={formData?.termination_date}
-                              onChange={handleChange}
+                              value={moment(formData?.terminationDate).format('YYYY-MM-DD') || ""}
+                              onChange={(e) => setFormData(prevState => ({
+                                ...prevState,
+                                terminationData: e.target.value 
+                              }))}
                             />
                             {
-                              (formData.termination_reach_me === false  || formData.termination_reach_me === null) &&
+                              ((formData.termination_reach_me === false  || formData.termination_reach_me === null)) &&
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
                               <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
                             }
@@ -818,8 +824,8 @@ const EditUser = () => {
                               formData.termination_reach_me === true &&
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
                               <div>
-                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData.termination_date).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
-                                <img style={{ width: "100px", height: "auto" }}src={`${formData.user_signature}`} alt="" />
+                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData?.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
+                                <img style={{ width: "100px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
                               </div>
                               }
                               {
@@ -865,7 +871,7 @@ const EditUser = () => {
                   
                   <div className="mt-2">
                     <p style={{ fontSize: "16px" }}>I hereby formally provide notice of my intention to terminate my arrangement with Mona.</p>
-                    <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of <strong style={{ color: '#C2488D' }}>{moment(formData.termination_date).format('DD/MM/YYYY')}</strong>.</p>
+                    <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of <strong style={{ color: '#C2488D' }}>{moment(formData.terminationDate).format('DD/MM/YYYY')}</strong>.</p>
                   </div>
 
                   <p></p>
@@ -874,7 +880,7 @@ const EditUser = () => {
                     I am happy to be reached if you have any questions.
                   </p>
 
-                  <img style={{ width: '200px', height: 'auto' }} src={formData.user_signature} alt="consented user signature" />
+                  <img style={{ width: '200px', height: 'auto' }} src={signatureImage || formData?.signature_image} alt="consented user signature" />
                 </Row>
               </Modal.Body>
 
@@ -911,8 +917,11 @@ const EditUser = () => {
                     <Form.Control
                       type="date"
                       name="terminationDate"
-                      value={formData.terminationDate}
-                      onChange={handleChange}
+                      value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
+                      onChange={(e) => setFormData(prevState => ({
+                        ...prevState,
+                        terminationDate: e.target.value 
+                      }))}
                     />
                   </Form.Group>
 
