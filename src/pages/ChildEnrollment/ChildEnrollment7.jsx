@@ -306,7 +306,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
               return (
                 <div className="grayback" style={{ marginBottom: "1rem" }}>
                   <Col>
-                    <Form.Group className="mb-3 single-field">
+                    <Form.Group className="mb-3 relative single-field">
                       <Form.Label>Give consent to the educator</Form.Label>
                       <Select
                         placeholder="Which Franchisee?"
@@ -318,7 +318,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                       />
                     </Form.Group>
                   </Col>
-                  <Form.Group className="mb-3 single-field">
+                  <Form.Group className="mb-3 relative single-field">
                     <Form.Label>to provide care and education to my child; and nominated assistant/s</Form.Label>
                     <Form.Control
                       type="text"
@@ -354,7 +354,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           <h3 className="title-xs mt-4 mb-4">Authorization by parents/guardian</h3>
 
           <div className="grayback">
-            <Form.Group className="mb-3 single-field">
+            <Form.Group className="mb-3 relative single-field">
               <Form.Label>I,</Form.Label>
               <Form.Control
                 type="text"
@@ -370,7 +370,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
             <p>a person with full authority of the child referred to in this enrolment form; <br />Declare that the information in this enrolment form is true and correct and undertake to immediately inform the children service in the event of any change to this information;</p>
             <Row>
               <Col md={6}>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 relative">
                   <Form.Label>Signature</Form.Label>
                   {
                     (localStorage.getItem('user_role') === 'guardian' && (localStorage.getItem('user_id') === localStorage.getItem('enrolled_parent_id'))) &&
@@ -383,7 +383,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                 </Form.Group>
               </Col>
               <Col md={6}>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 relative">
                   <Form.Label>Date</Form.Label>
                   <Form.Control 
                     type="date" 
