@@ -1440,7 +1440,7 @@ const AddFormField = (props) => {
                                                   <span className="checkmark"></span>
                                                 </label>
                                                 <label className="container">
-                                                  Franchisee Admin
+                                                  Franchise Admin
                                                   <input
                                                     type="checkbox"
                                                     name="fill_access_users"
@@ -1589,7 +1589,7 @@ const AddFormField = (props) => {
                                                     <span className="checkmark"></span>
                                                   </label>
                                                   <label className="container">
-                                                    Franchisee Admin
+                                                    Franchise Admin
                                                     <input
                                                       type="checkbox"
                                                       name="signatories_role"
