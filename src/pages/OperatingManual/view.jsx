@@ -29,6 +29,7 @@ import { createCategoryValidation } from '../../helpers/validation';
 
 let upperRoleUser = '';
 let selectedUserId = '';
+
 const OperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -532,6 +533,9 @@ const OperatingManual = () => {
                                   </Dropdown.Item>
                                 )}
                                 {category?.map((item, index) => {
+                                  // {
+                                  //   item['access'] = false;
+                                  // }
                                   return categoryFilter ===
                                     item.category_name ? (
                                     <div className="module-drop-down">
@@ -546,36 +550,63 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      {verifyPermission(
-                                        'operating_manual',
-                                        'add'
-                                      ) && (
-                                        <div className="edit-module">
-                                          <Dropdown.Item
-                                            onClick={() => {
-                                              setCategoryModalFlag(true);
-                                              setCategoryData(item);
-                                            }}
-                                            active
-                                          >
-                                            <FontAwesomeIcon
-                                              icon={faPen}
-                                              style={{ color: '#455C58' }}
-                                            />
-                                          </Dropdown.Item>
-                                          <Dropdown.Item
-                                            className="tab-trash"
-                                            onClick={() => {
-                                              deleteOperatingManualCategory(
-                                                item.id
-                                              );
-                                            }}
-                                            active
-                                          >
-                                            <FontAwesomeIcon icon={faTrash} style={{ color: '#455C58' }} />
-                                          </Dropdown.Item>
-                                        </div>
+                                      {console.log(
+                                        'Hello1',
+                                        item.operating_manuals
                                       )}
+                                      {item.operating_manuals.length > 0 &&
+                                        item.operating_manuals.map(
+                                          (inner_item) => {
+                                            return (
+                                              verifyPermission(
+                                                'operating_manual',
+                                                'add'
+                                              ) &&
+                                              (inner_item.created_by ===
+                                                parseInt(
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
+                                                ) ||
+                                                inner_item.upper_role.includes
+                                                  (localStorage.getItem(
+                                                    'user_role'
+                                                  ))) && (
+                                                <div className="edit-module">
+                                                  <Dropdown.Item
+                                                    onClick={() => {
+                                                      setCategoryModalFlag(
+                                                        true
+                                                      );
+                                                      setCategoryData(item);
+                                                    }}
+                                                    active
+                                                  >
+                                                    <FontAwesomeIcon
+                                                      icon={faPen}
+                                                      style={{
+                                                        color: '#455C58',
+                                                      }}
+                                                    />
+                                                  </Dropdown.Item>
+                                                  <Dropdown.Item
+                                                    className="tab-trash"
+                                                    onClick={() => {
+                                                      deleteOperatingManualCategory(
+                                                        item.id
+                                                      );
+                                                    }}
+                                                    active
+                                                  >
+                                                    <FontAwesomeIcon
+                                                      icon={faTrash}
+                                                    />
+                                                  </Dropdown.Item>
+                                                </div>
+                                              )
+                                            );
+                                          }
+                                        )}
                                     </div>
                                   ) : (
                                     <div className="module-drop-down">
@@ -589,36 +620,59 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      {verifyPermission(
-                                        'operating_manual',
-                                        'add'
-                                      ) && (
-                                        <div className="edit-module">
-                                          <Dropdown.Item
-                                            onClick={() => {
-                                              setCategoryModalFlag(true);
-                                              setCategoryData(item);
-                                            }}
-                                            active
-                                          >
-                                            <FontAwesomeIcon
-                                              icon={faPen}
-                                              style={{ color: '#455C58' }}
-                                            />
-                                          </Dropdown.Item>
-                                          <Dropdown.Item
-                                            className="tab-trash"
-                                            onClick={() => {
-                                              deleteOperatingManualCategory(
-                                                item.id
-                                              );
-                                            }}
-                                            active
-                                          >
-                                            <FontAwesomeIcon icon={faTrash} />
-                                          </Dropdown.Item>
-                                        </div>
-                                      )}
+                                      {item.operating_manuals.length > 0 &&
+                                        item.operating_manuals.map(
+                                          (inner_item) => {
+                                            return (
+                                              verifyPermission(
+                                                'operating_manual',
+                                                'add'
+                                              ) &&
+                                              (inner_item.created_by ===
+                                                parseInt(
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
+                                                ) ||
+                                                inner_item.upper_role.includes
+                                                  (localStorage.getItem(
+                                                    'user_role'
+                                                  ))) && (
+                                                <div className="edit-module">
+                                                  <Dropdown.Item
+                                                    onClick={() => {
+                                                      setCategoryModalFlag(
+                                                        true
+                                                      );
+                                                      setCategoryData(item);
+                                                    }}
+                                                    active
+                                                  >
+                                                    <FontAwesomeIcon
+                                                      icon={faPen}
+                                                      style={{
+                                                        color: '#455C58',
+                                                      }}
+                                                    />
+                                                  </Dropdown.Item>
+                                                  <Dropdown.Item
+                                                    className="tab-trash"
+                                                    onClick={() => {
+                                                      deleteOperatingManualCategory(
+                                                        item.id
+                                                      );
+                                                    }}
+                                                    active
+                                                  >
+                                                    <FontAwesomeIcon
+                                                      icon={faTrash}
+                                                    />
+                                                  </Dropdown.Item>
+                                                </div>
+                                              )
+                                            );
+                                          }
+                                        )}
                                     </div>
                                   );
                                 })}
@@ -897,7 +951,7 @@ const OperatingManual = () => {
                     {localStorage.getItem('user_role') ===
                       'franchisor_admin' && (
                       <label className="container">
-                        Franchisee Admin
+                        Franchise Admin
                         <input
                           type="checkbox"
                           name="shared_role"

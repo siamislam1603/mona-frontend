@@ -7,7 +7,9 @@ let nextstep = 4;
 let current_step = 3;
 let days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
+
 const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
+  console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 3);
   const [agreedBookingHours, setAgreedBookingHours] = useState({
     // monday: {from: "", to: ""},
     // tuesday: {from: "", to: ""},
@@ -163,7 +165,7 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
   agreedHolidayHours && console.log('Agreed Holiday Hours:', agreedHolidayHours);
   return (
     <>
-      <div className="enrollment-form-sec">
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">Please tick the type of care you require <small>(Agreed Booking Hours)</small></h2>
