@@ -7,7 +7,9 @@ let nextstep = 4;
 let current_step = 3;
 let days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
+
 const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
+  console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 3);
   const [agreedBookingHours, setAgreedBookingHours] = useState({
     // monday: {from: "", to: ""},
     // tuesday: {from: "", to: ""},
