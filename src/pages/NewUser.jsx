@@ -717,6 +717,8 @@ const NewUser = () => {
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={(e) => {
+
+                                  e.target.value = e.target.value.replace(/\s/g, "");
                                   // handleChange(e);
                                   if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
                                     setFormErrors(prevState => ({
