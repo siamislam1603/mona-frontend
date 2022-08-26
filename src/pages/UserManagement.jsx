@@ -326,6 +326,7 @@ const UserManagement = () => {
         email: dt.email,
         number: (dt.phone !== null ? dt.phone.slice(1) : null),
         location: dt.city,
+        role: dt.role,
         is_deleted: dt.is_deleted,
         role: dt.role,
         userID: dt.id,
@@ -448,6 +449,9 @@ const UserManagement = () => {
       setEducator(tempData);
       setIsLoading(false)
 
+
+
+
       let temp = tempData;
       let csv_data = [];
       temp.map((item, index) => {
@@ -461,6 +465,29 @@ const UserManagement = () => {
     }
   }
 
+
+  // const render_user_filter = async (arg) => {
+  //   let data;
+  //   console.log("datadatadatadatadatadatadatadatadatadata",userData)
+
+  //   var user_role = localStorage.getItem('user_role');
+  //     if(user_role==='franchisor_admin')
+  //       data = arg.filter(d=>d.role!=='franchisor_admin');
+  //     if(user_role==='franchisee_admin')
+  //       data = arg.filter(d=>d.role!=='franchisee_admin' && d.role!=='franchisor_admin')
+  //     if(user_role==='coordinator')
+  //       data = arg.filter(d=>d.role =='educator' && d.role=='guardian')
+  //     if(user_role==='educator')
+  //       data = arg.filter(d=>d.role=='guardian')
+
+
+  //       setUserData(data)
+  // }
+
+
+  // useEffect(() => {
+  //   render_user_filter()
+  // }, [tempData])
 
 
   useEffect(() => {
