@@ -370,6 +370,7 @@ const UserManagement = () => {
   };
 
   const setUserDataAfterFilter = data => {
+    console.log('DATA:', data);
     let role = localStorage.getItem('user_role');
     let filteredData = null;
 
@@ -378,7 +379,9 @@ const UserManagement = () => {
     }
 
     if(role === 'franchisee_admin') {
-      filteredData = data.filter(d => d.role !== 'franchisor_admin' || d!== 'franchisee_admin');
+      filteredData = data.filter(d => d.role !== 'franchisor_admin')
+      filteredData = filteredData.filter(d => d.role !== 'franchisee_admin')
+          
     }
 
     if(role === 'coordinator') {
