@@ -2941,10 +2941,14 @@ p.error {
     display: flex;
     width: 100%;
 }
+.create_model_bar .forms-toogle .dropdown-toggle.btn.btn-primary { margin: 0; }
 
 .custom-menu-dots .dropdown-item {
-    padding: .5rem !important;
+    padding: .3rem !important;
     max-width: 110px; flex: 0 0 110px; flex-flow: wrap; font-size: 12px; white-space: pre-wrap; background-color: transparent;
+}
+.custom-menu-dots .dropdown-item svg {
+    width: 20px;
 }
 
 .edit-module{ display: flex;
