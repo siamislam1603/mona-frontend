@@ -86,7 +86,7 @@ img[align=right]{margin:0 0 30px 20px}
 .title-xs,h4{font-size:18px}
 .title-xxs,h5{font-size:16px}
 .relative{position:relative}
-hr{border-color:#c9c8c8;margin:3rem 0}
+hr{border-color:#c9c8c8;margin:3rem 0; height: 1px; opacity: 1; }
 @-webkit-keyframes autofill{
 to{background:var(--ms-white)}
 }
