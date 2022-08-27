@@ -185,13 +185,14 @@ const ParentsDashboard = () => {
 
     if (response.status === 200 && response.data.status === 'success') {
       let { parentData } = response.data;
+      console.log('PARENT DATA:', parentData);
 
       if (parentData !== null && parentData.children.length > 0) {
         console.log('PARENT DATA ISN\'T NULL');
         let { children } = parentData;
         console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
         // FILTERING THE CHILDREN WHOSE ENROLLMENT FORM HASN'T BEEN FILLED
-        childIds = children.filter(d => d.isChildEnrolled === 0);
+        childIds = children.filter(d => d.isEnrollmentInitiated === false);
         console.log('CHILDREN TO BE ENROLLED:', childIds);
         // FETCHING AN ARRAY OF THEIR IDs.
         childIds = childIds.map(d => d.id);
