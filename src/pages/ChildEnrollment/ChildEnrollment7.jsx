@@ -91,9 +91,9 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const updateFormSevenData = async () => {
     setLoader(true);
     let token = localStorage.getItem('token');
-    let parentId = localStorage.getItem('enrolled_parent_id');
+    // let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...consentData}, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData}, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -290,7 +290,10 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [])
 
-  consentData && console.log('Consent Data => signature:', consentData?.consent_signature);
+  consentData && console.log('Consent Data => signature:', consentData);
+  // consentDetail && console.log('CONSENT DETAIL:', consentDetail);
+  // parentConsentData && console.log('PARENT CONSENT DATA:', parentConsentData);
+  // signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
   return (
     <>
       <div className="enrollment-form-sec error-sec">

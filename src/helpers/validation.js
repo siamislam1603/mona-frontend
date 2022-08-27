@@ -524,10 +524,9 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
 };
 
 export const enrollmentInitiationFormValidation = (
-  formOneChildData,
-  educatorData
+  formOneChildData
 ) => {
-  let { fullname, dob, home_address } = formOneChildData;
+  let { fullname, dob, home_address, educator } = formOneChildData;
   let errors = {};
 
   if (!fullname) errors.fullname = 'Fullname is required!';
@@ -536,7 +535,7 @@ export const enrollmentInitiationFormValidation = (
 
   if (!home_address) errors.home_address = 'Home address is required!';
 
-  if (!educatorData) errors.educatorData = 'One Educator needs to be selected!';
+  if (educator.length === 0) errors.educatorData = 'An Educator needs to be selected!';
 
   return errors;
 };
