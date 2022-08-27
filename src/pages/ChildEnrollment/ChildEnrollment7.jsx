@@ -91,9 +91,9 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const updateFormSevenData = async () => {
     setLoader(true);
     let token = localStorage.getItem('token');
-    let parentId = localStorage.getItem('enrolled_parent_id');
+    // let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...consentData}, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData}, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -259,7 +259,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     console.log('SIGNATURE RESPONSE:', response);
     if(response.status === 201 && response.data.status === "success") {
       let { signature: signatureURL } = response.data;
-      console.log('Signature:', signatureURL);
+      // console.log('Signature:', signatureURL);
       // setSignatureString(signatureURL);
       setConsentData(prevState => ({
         ...prevState,
@@ -291,7 +291,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [])
 
-  consentData && console.log('Consent Data => signature:', consentData.signature);
+  consentData && console.log('Consent Data => signature:', consentData);
   // consentDetail && console.log('CONSENT DETAIL:', consentDetail);
   // parentConsentData && console.log('PARENT CONSENT DATA:', parentConsentData);
   // signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
@@ -377,8 +377,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the consent form!</p>
                   }
                   {
-                    (consentData?.signature_image || localStorage.getItem('user_image') !== 'guardian') &&
-                    <img src={consentData?.signature_image} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    consentData?.consent_signature &&
+                    <img src={consentData?.consent_signature} alt="parent signature" style={{ width: "80px", height: "80px" }} />
                   }
                 </Form.Group>
               </Col>
