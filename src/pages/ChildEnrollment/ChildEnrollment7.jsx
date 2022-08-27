@@ -258,12 +258,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
     console.log('SIGNATURE RESPONSE:', response);
     if(response.status === 201 && response.data.status === "success") {
-      let { signature: signatureURL } = response.data;
-      console.log('Signature:', signatureURL);
-      // setSignatureString(signatureURL);
+      let { signature } = response.data;
+      console.log('Signature:', signature);
       setConsentData(prevState => ({
         ...prevState,
-        consent_signature: signatureURL
+        consent_signature: signature
       }));
     }
   }
@@ -291,10 +290,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDataAndPopulate();
   }, [])
 
-  consentData && console.log('Consent Data => signature:', consentData.signature);
-  // consentDetail && console.log('CONSENT DETAIL:', consentDetail);
-  // parentConsentData && console.log('PARENT CONSENT DATA:', parentConsentData);
-  // signatureImage && console.log('SIGNATURE IMAGE:', signatureImage);
+  consentData && console.log('Consent Data => signature:', consentData?.consent_signature);
   return (
     <>
       <div className="enrollment-form-sec error-sec">
@@ -322,6 +318,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>to provide care and education to my child; and nominated assistant/s</Form.Label>
                     <Form.Control
                       type="text"
+                      disables={true}
                       name="to_provide_care_and_education_to_my_child"
                       value={educatorData?.filter(d => parseInt(d.id) === parseInt(consent.educator_id))[0].assistant}
                       // onChange={}
@@ -377,8 +374,8 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the consent form!</p>
                   }
                   {
-                    (consentData?.signature_image || localStorage.getItem('user_image') !== 'guardian') &&
-                    <img src={consentData?.signature_image} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    consentData?.consent_signature &&
+                    <img src={consentData?.consent_signature} alt="parent signature" style={{ width: "80px", height: "80px" }} />
                   }
                 </Form.Group>
               </Col>
