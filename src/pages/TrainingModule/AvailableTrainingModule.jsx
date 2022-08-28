@@ -6,7 +6,7 @@ import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 
 
-const AvailableTraining = ({ filter }) => {
+const AvailableTraining = ({ filter, selectedFranchisee }) => {
   console.log('FILTER:', filter);
   const [availableTrainingData, setAvailableTrainingData] = useState([]);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
@@ -217,7 +217,7 @@ window.onscroll = function () {
   }, [saveTrainingId]);
 
   // formSettings && console.log('FORM SETTINGS:', formSettings);
-  console.log('Available Training Data:', availableTrainingData,page);
+  franchiseeList && console.log('Franchisee List:', franchiseeList);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -414,81 +414,113 @@ window.onscroll = function () {
             <div className="form-settings-content">
               <Row className="mt-4">
                 <Col lg={3} md={6}>
-                  <Form.Group>
-                    <Form.Label>Send to all franchisee:</Form.Label>
-                    <div className="new-form-radio d-block">
-                      <div className="new-form-radio-box">
-                        <label for="all">
-                          <input
-                            type="radio"
-                            checked={formSettings.send_to_all_franchisee === true}
-                            name="send_to_all_franchisee"
-                            id="all"
-                            onChange={() => {
-                              setFormSettings(prevState => ({
-                                ...prevState,
-                                send_to_all_franchisee: true,
-                                assigned_franchisee: ['all']
-                              }));
-                            }}
-                          />
-                          <span className="radio-round"></span>
-                          <p>Yes</p>
-                        </label>
-                      </div>
-                      <div className="new-form-radio-box m-0 mt-3">
-                        <label for="none">
-                          <input
-                            type="radio"
-                            name="send_to_all_franchisee"
-                            checked={formSettings?.send_to_all_franchisee === false}
-                            id="none"
-                            onChange={() => {
-                              setFormSettings(prevState => ({
-                                ...prevState,
-                                send_to_all_franchisee: false,
-                                assigned_franchisee: []
-                              }));
-                            }}
-                          />
-                          <span className="radio-round"></span>
-                          <p>No</p>
-                        </label>
-                      </div>
-                    </div>
-                  </Form.Group>
+                  {
+                    localStorage.getItem('user_role') === 'franchisor_admin'
+                    ?(
+                      <Form.Group>
+                        <Form.Label>Send to all franchisee:</Form.Label>
+                        <div className="new-form-radio d-block">
+                          <div className="new-form-radio-box">
+                            <label for="all">
+                              <input
+                                type="radio"
+                                checked={formSettings.send_to_all_franchisee === true}
+                                name="send_to_all_franchisee"
+                                id="all"
+                                onChange={() => {
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    send_to_all_franchisee: true,
+                                    assigned_franchisee: ['all']
+                                  }));
+                                }}
+                              />
+                              <span className="radio-round"></span>
+                              <p>Yes</p>
+                            </label>
+                          </div>
+                          <div className="new-form-radio-box m-0 mt-3">
+                            <label for="none">
+                              <input
+                                type="radio"
+                                name="send_to_all_franchisee"
+                                checked={formSettings?.send_to_all_franchisee === false}
+                                id="none"
+                                onChange={() => {
+                                  setFormSettings(prevState => ({
+                                    ...prevState,
+                                    send_to_all_franchisee: false,
+                                    assigned_franchisee: []
+                                  }));
+                                }}
+                              />
+                              <span className="radio-round"></span>
+                              <p>No</p>
+                            </label>
+                          </div>
+                        </div>
+                      </Form.Group>
+                    )
+                    : (null)
+                  }
                 </Col>
 
-                <Col lg={9} md={12}>
-                  <Form.Group>
-                    <Form.Label>Select Franchisee</Form.Label>
-                    <div className="select-with-plus">
-                      <Multiselect
-                        disable={formSettings?.send_to_all_franchisee === true}
-                        placeholder={"Select User Names"}
-                        // singleSelect={true}
-                        displayValue="key"
-                        selectedValues={franchiseeList?.filter(d => formSettings?.assigned_franchisee?.includes(d.id + ''))}
-                        className="multiselect-box default-arrow-select"
-                        onKeyPressFn={function noRefCheck() { }}
-                        onRemove={function noRefCheck(data) {
-                          setFormSettings((prevState) => ({
-                            ...prevState,
-                            assigned_franchisee: [...data.map(data => data.id + '')],
-                          }));
-                        }}
-                        onSearch={function noRefCheck() { }}
-                        onSelect={function noRefCheck(data) {
-                          setFormSettings((prevState) => ({
-                            ...prevState,
-                            assigned_franchisee: [...data.map((data) => data.id + '')],
-                          }));
-                        }}
-                        options={franchiseeList}
-                      />
-                    </div>
-                  </Form.Group>
-                </Col>
+                {
+                  localStorage.getItem('user_role') === 'franchisor_admin'
+                  ? (
+                    <Col lg={9} md={12}>
+                      <Form.Group>
+                        <Form.Label>Select Franchisee</Form.Label>
+                        <div className="select-with-plus">
+                          <Multiselect
+                            disable={formSettings?.send_to_all_franchisee === true}
+                            placeholder={"Select User Names"}
+                            // singleSelect={true}
+                            displayValue="key"
+                            selectedValues={franchiseeList?.filter(d => formSettings?.assigned_franchisee?.includes(d.id + ''))}
+                            className="multiselect-box default-arrow-select"
+                            onKeyPressFn={function noRefCheck() { }}
+                            onRemove={function noRefCheck(data) {
+                              setFormSettings((prevState) => ({
+                                ...prevState,
+                                assigned_franchisee: [...data.map(data => data.id + '')],
+                              }));
+                            }}
+                            onSearch={function noRefCheck() { }}
+                            onSelect={function noRefCheck(data) {
+                              setFormSettings((prevState) => ({
+                                ...prevState,
+                                assigned_franchisee: [...data.map((data) => data.id + '')],
+                              }));
+                            }}
+                            options={franchiseeList}
+                          />
+                        </div>
+                      </Form.Group>
+                    </Col>
+                  ): (
+                    <Col lg={9} md={12}>
+                      <Form.Group>
+                        <Form.Label>Select Franchisee</Form.Label>
+                        <div className="select-with-plus">
+                          <Multiselect
+                            disable={true}
+                            placeholder={""}
+                            // singleSelect={true}
+                            displayValue="key"
+                            selectedValues={franchiseeList?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))}
+                            className="multiselect-box default-arrow-select"
+                            onKeyPressFn={function noRefCheck() { }}
+                            onRemove={function noRefCheck(data) {}}
+                            onSearch={function noRefCheck() { }}
+                            onSelect={function noRefCheck(data) {}}
+                            options={franchiseeList}
+                          />
+                        </div>
+                      </Form.Group>
+                    </Col>
+                  )
+                }
               </Row>
 
               <Row className="mt-4">
