@@ -1503,10 +1503,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 src={'/img/mini_loader1.gif'}
                 alt=""
                 />
-                  Submitting...
+                  {
+                    localStorage.getItem('user_role') === 'guardian'
+                    ? "Saving..."
+                    : "Submitting..."
+                  }
               </>
-            ) : (
-            'Submit')}
+            ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
           </Button>
           </div>
         </Form>

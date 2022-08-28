@@ -689,10 +689,13 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                   src={'/img/mini_loader1.gif'}
                   alt=""
                   />
-                    Submitting...
+                    {
+                      localStorage.getItem('user_role') === 'guardian'
+                      ? "Saving..."
+                      : "Submitting..."
+                    }
                 </>
-              ) : (
-              'Submit')}
+              ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
             </Button>
           </div>
           {/* <div className="cta text-center mt-5 mb-5">
