@@ -192,13 +192,18 @@ const ParentsDashboard = () => {
         let { children } = parentData;
         console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
         // FILTERING THE CHILDREN WHOSE ENROLLMENT FORM HASN'T BEEN FILLED
-        childIds = children.filter(d => d.isEnrollmentInitiated === false);
+        childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 0);
         console.log('CHILDREN TO BE ENROLLED:', childIds);
         // FETCHING AN ARRAY OF THEIR IDs.
         childIds = childIds.map(d => d.id);
-        console.log('ARRAY OF CHILD IDs:', childIds);
+        console.log('ARRAY OF CHILD IDs present:', childIds);
 
-        setNonEnrolledChildIds(childIds);
+        if(childIds.length > 0) {
+          setNonEnrolledChildIds(childIds);
+        } 
+        // else {
+        //   setLogUserOutDialog(true);
+        // }
       } else {
         // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
         console.log('NO CHILD IS ASSIGNED TO YOU!!!!!!!!!!');
