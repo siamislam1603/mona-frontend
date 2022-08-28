@@ -258,11 +258,12 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
     console.log('SIGNATURE RESPONSE:', response);
     if(response.status === 201 && response.data.status === "success") {
-      let { signature } = response.data;
-      console.log('Signature:', signature);
+      let { signature: signatureURL } = response.data;
+      // console.log('Signature:', signatureURL);
+      // setSignatureString(signatureURL);
       setConsentData(prevState => ({
         ...prevState,
-        consent_signature: signature
+        consent_signature: signatureURL
       }));
     }
   }
@@ -321,7 +322,6 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>to provide care and education to my child; and nominated assistant/s</Form.Label>
                     <Form.Control
                       type="text"
-                      disables={true}
                       name="to_provide_care_and_education_to_my_child"
                       value={educatorData?.filter(d => parseInt(d.id) === parseInt(consent.educator_id))[0].assistant}
                       // onChange={}

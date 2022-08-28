@@ -107,7 +107,9 @@ const Training = () => {
 
   useEffect(() => {
     fetchTrainingCategories();
-    if (localStorage.getItem('user_role') !== 'franchisor_admin') {
+    if (localStorage.getItem('user_role') === 'franchisor_admin') {
+      setTabLinkPath('/created-training');
+    } else {
       setTabLinkPath('/available-training');
     }
 

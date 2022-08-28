@@ -269,8 +269,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const fetchChildDataAndPopulate = async () => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
-    let enrolledChildId = localStorage.getItem('enrolled_child_id') || paramsChildId;
-    console.log('Enrolled child id:', enrolledChildId);
+    let enrolledChildId = paramsChildId;
+    console.log('Enrolled child id:', paramsChildId);
     let token = localStorage.getItem('token');
 
     let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
@@ -282,6 +282,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       let { child } = response.data;
       let { parent } = response.data;
       
+      console.log('FETCHED CHILD DATA:', child);
+      console.log('FETCHED PARENT DATA:', parent);
 
       setFormOneChildData(prevState => ({
         ...prevState,
@@ -346,7 +348,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
-  // formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
+  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
   // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
