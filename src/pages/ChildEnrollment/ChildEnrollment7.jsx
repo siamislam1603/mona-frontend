@@ -89,11 +89,12 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   // UPDATING FORM SEVEN DATA;
   const updateFormSevenData = async () => {
+    console.log('UPDATING FORM SEVEMN DATA');
     setLoader(true);
     let token = localStorage.getItem('token');
     // let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData, form_step: 1}, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -124,12 +125,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
         }
         
         if(localStorage.getItem('user_role') !== 'guardian' && localStorage.getItem('change_count') > 0) {
+          console.log('ASKING FOR PARENT CONSENT WITH CONSENT FORM');
           setLoader(false);
           setUserConsentFormDialog(true);
-        }
-        
-        if(localStorage.getItem('user_role') === 'guardian') {
-          setFormSubmissionSuccessDialog(true);
+        } else if(localStorage.getItem('user_role') === 'guardian') {
+            setFormSubmissionSuccessDialog(true);
         } else {
           nextStep();
         }
