@@ -411,24 +411,24 @@ const FranchiseeDashboard = () => {
                             <Link to="/form/response" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            {ToolkitProvider ? (<>
+                            {userData.length > 0 ? (
+                              <>
+                                <ToolkitProvider
+                                  keyField="name"
+                                  data={userData}
+                                  columns={columns1}
+                                  search
+                                >
+                                  {(props) => (
+                                    <BootstrapTable
+                                      {...props.baseProps}
+                                    // selectRow={selectRow}
+                                    // pagination={paginationFactory()}
+                                    />
+                                  )}
+                                </ToolkitProvider>
 
-                              <ToolkitProvider
-                                keyField="name"
-                                data={userData}
-                                columns={columns1}
-                                search
-                              >
-                                {(props) => (
-                                  <BootstrapTable
-                                    {...props.baseProps}
-                                  // selectRow={selectRow}
-                                  // pagination={paginationFactory()}
-                                  />
-                                )}
-                              </ToolkitProvider>
-
-                            </>) : (<><div className="text-center mb-5 mt-5"><strong>No Data</strong></div></>)}
+                              </>) : (<><div className="text-center mb-5 mt-5"><strong>No Children Enrolled Yet</strong></div></>)}
 
                           </div>
                         </div>
