@@ -454,8 +454,6 @@ const handelSearch = async (e) =>{
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
-  childId && console.log('CHILD ID:', childId);
-  childList && console.log('Child List:', childList);
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>

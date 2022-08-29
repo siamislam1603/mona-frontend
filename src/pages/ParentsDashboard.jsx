@@ -200,10 +200,9 @@ const ParentsDashboard = () => {
 
         if(childIds.length > 0) {
           setNonEnrolledChildIds(childIds);
-        } 
-        // else {
-        //   setLogUserOutDialog(true);
-        // }
+        } else {
+          setLogUserOutDialog(true);
+        }
       } else {
         // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
         console.log('NO CHILD IS ASSIGNED TO YOU!!!!!!!!!!');
