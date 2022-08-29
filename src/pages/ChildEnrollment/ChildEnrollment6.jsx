@@ -47,7 +47,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
         console.log('VALID CONDITION');
         setAcceptedAllPoints(user.accepted_all_points);
       }
-      window.scrollTo(0, 0);
+      // window.scrollTo(0, 0);
         // setLoader(true);
         // createConcentForm(data);
     }
@@ -92,6 +92,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchParentDataAndPopulate();
   }, [formStepData]);
 

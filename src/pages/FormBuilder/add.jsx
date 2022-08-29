@@ -100,9 +100,19 @@ function AddFormBuilder(props) {
       })
         .then((res) => res.json())
         .then((res) => {
-          navigate('/form/setting', {
-            state: { id: res?.result?.id, form_name: res?.result?.form_name },
-          });
+          if(res.success===false)
+          {
+            let errorData={...errors};
+            errorData["form_name"]=res.message;
+            setErrors(errorData);
+          }
+          else
+          {
+            navigate('/form/setting', {
+              state: { id: res?.result?.id, form_name: res?.result?.form_name },
+            });
+          }
+          
         });
     }
   };

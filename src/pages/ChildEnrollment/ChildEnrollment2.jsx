@@ -21,7 +21,7 @@ let disease_name = [
   "varicella"
 ];
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
-  let { parentId: paramsParentId } = useParams();
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   const [healthInformation, setHealthInformation] = useState({
     medical_service: "",
     telephone: "",
@@ -81,7 +81,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   // UPDATEING FORM TWO DATA
   const updateFormTwoData = async () => {
     setLoader(true);
-    let childId = localStorage.getItem('enrolled_child_id');
+    // let childId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
     // SENDING HEALTH INFORMATION REQUEST
     let response = await axios.patch(`${BASE_URL}/enrollment/health-information/${idList.health_information_id}`, { ...healthInformation }, {
@@ -107,16 +107,16 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         if (response.status === 201 && response.data.status === "success") {
 
           // UPDATING CHILD DETAILS
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childDetails }, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...childDetails }, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
           });
 
           if (response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
+            // let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
 
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, { ...parentData }, {
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${paramsParentId}`, { ...parentData }, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
@@ -181,7 +181,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         if (response.status === 201 && response.data.status === "success") {
 
           // UPDATING CHILD DETAILS
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childDetails }, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...childDetails }, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
@@ -189,8 +189,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
           // UPDATING PARENT PERMISSION
           if (response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('user_id');
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, { ...parentData }, {
+            // let parentId = localStorage.getItem('user_id');
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${paramsParentId}`, { ...parentData }, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
@@ -241,10 +241,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         let { child_health_information: healthInfo } = child;
         setHealthInformation(prevState => ({
           ...prevState,
-          medical_service: healthInfo.medical_service,
-          telephone: healthInfo.telephone,
-          medical_service_address: healthInfo.medical_service_address,
-          maternal_and_child_health_centre: healthInfo.maternal_and_child_health_centre,
+          medical_service: healthInfo?.medical_service,
+          telephone: healthInfo?.telephone,
+          medical_service_address: healthInfo?.medical_service_address,
+          maternal_and_child_health_centre: healthInfo?.maternal_and_child_health_centre,
         }));
         setIdList(prevState => ({
           ...prevState,
@@ -330,6 +330,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   useEffect(() => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
 
@@ -474,23 +475,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Doctor’s Name/Medical Service *</Form.Label>
+                      <Form.Label>Doctor's Name/Medical Service *</Form.Label>
                       <Form.Control
                         type="text"
                         name="medical_service"
+                        placeholder="Doctor's Name/Medical Service"
                         value={healthInformation?.medical_service || ""}
                         onChange={(e) => {
-                          if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                            setHealthInformation(prevState => ({
-                              ...prevState,
-                              medical_service: e.target.value
-                            }));
-                          } else {
-                            setHealthInformation(prevState => ({
-                              ...prevState,
-                              medical_service: e.target.value.slice(0, -1)
-                            }));
-                          }
+                          setHealthInformation(prevState => ({
+                            ...prevState,
+                            medical_service: e.target.value
+                          }))
 
                           setHealthInfoFormErrors(prevState => ({
                             ...prevState,
@@ -515,19 +510,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="tel"
                         name="telephone"
+                        maxLength={10}
+                        placeholder="3375005467"
                         value={healthInformation?.telephone || ""}
                         onChange={(e) => {
-                          if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                            setHealthInformation(prevState => ({
-                              ...prevState,
-                              telephone: e.target.value.slice(0, -1)
-                            }));
-                          } else {
-                            setHealthInformation(prevState => ({
-                              ...prevState,
-                              telephone: e.target.value
-                            }));
-                          }
+                          setHealthInformation(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
                           setHealthInfoFormErrors(prevState => ({
                             ...prevState,
                             telephone: null
@@ -551,6 +541,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="text"
                         name="medical_service_address"
+                        placeholder="Doctor's Address/Medical Service"
                         value={healthInformation?.medical_service_address || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
@@ -581,6 +572,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="text"
                         name="maternal_and_child_health_centre"
+                        placeholder="Maternal And Child Health Centre"
                         value={healthInformation.maternal_and_child_health_centre || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({

@@ -12,34 +12,6 @@ import { BASE_URL } from '../components/App';
 import moment from 'moment';
 
 
-
-
-const products1 = [
-  {
-    id: 1,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 2,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 3,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 4,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-
-];
-
-
-
 const FranchisorDashboard = () => {
   const navigate = useNavigate();
   const [count, setcount] = React.useState(null);
@@ -80,29 +52,9 @@ const FranchisorDashboard = () => {
               <img src="../img/dot-ico.svg" alt="" />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <button
-                onClick={() => {
-                  console.log(
-                    navigate('/form/response', {
-                      state: {
-                        id: MeFormData[Index]?.forms[innerIndex]
-                          ?.id,
-                      },
-                    }),"aaaaaaaaaaaaaaaaaaa"
-                  )
-              navigate('/form/response', {
-                state: {
-                id: MeFormData[Index]?.forms[innerIndex]
-              ?.id,
-                    },
-                  });
-                }}
-              >
-              View Response
-            </button>
-            <Dropdown.Item href="/form/response">View</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+              <Dropdown.Item href="/form/response">View</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div></>)
       },
     }

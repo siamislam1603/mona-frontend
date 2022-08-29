@@ -333,7 +333,7 @@ const EditUser = () => {
 
   // FETCHING SUBURB DATA
   const fetchSuburbData = () => {
-    const suburbAPI = `http://localhost:4000/api/suburbs/data/${suburbSearchString}`;
+    const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
     const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
     axios.all([getSuburbList]).then(
       axios.spread((...data) => {

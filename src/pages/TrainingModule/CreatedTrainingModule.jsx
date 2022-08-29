@@ -6,8 +6,8 @@ import Multiselect from 'multiselect-react-dropdown';
 import { FullLoader } from "../../components/Loader";
 
 const CreatedTraining = ({ filter, selectedFranchisee }) => {
-  const [myTrainingData, setMyTrainingData] = useState();
-  const [otherTrainingData, setOtherTrainingData] = useState();
+  const [myTrainingData, setMyTrainingData] = useState([]);
+  const [otherTrainingData, setOtherTrainingData] = useState([]);
   const [applicableToAll, setApplicableToAll] = useState(false);
   const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
@@ -92,33 +92,70 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       ]);
     }
   };
-
-  const trainingCreatedByOther = async () => {
-    try {
-      let user_id = localStorage.getItem('user_id');
-      let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training?category_id=${filter.category_id}&search=${filter.search}&limit=${page}`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
-      if(response)
-        setfullLoaderStatus(false)
-
-
-
-      if (response.status === 200 && response.data.status === "success") {
-        const { searchedData } = response.data;
-        let myTrainings = searchedData.filter(training => training.addedBy === parseInt(user_id));
-        let otherTrainings = searchedData.filter(training => training.addedBy !== parseInt(user_id));
-
-        // setMyTrainingData(myTrainings);
-        setOtherTrainingData(otherTrainings);
+  const trainingCreatedByMe = async() =>{
+    let user_id = localStorage.getItem('user_id');
+    // http://localhost:4000/training/trainingCreatedByMeOnly/52?limit=5&offset=0&search=a .
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=5&search=${filter.search}`, {
+      headers: {
+        "Authorization": "Bearer " + token
       }
-    } catch (error) {
-      console.log('Erorr:', error);
+    });
+    console.log('Training created by me',response)
+    if(response.status===200 && response.data.status === "success"){
+      const {searchedData} = response.data
+      setMyTrainingData(searchedData)
+      setfullLoaderStatus(false)
+
+      
     }
-  };
+
+  }
+  const trainingCreatedByOther = async() =>{
+    let user_id = localStorage.getItem('user_id');
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    console.log('Training created by OTHER',response)
+    if(response.status===200 && response.data.status === "success"){
+      const {searchedData} = response.data
+      setOtherTrainingData(searchedData)
+      setfullLoaderStatus(false)
+
+      
+    }
+
+  }
+
+  // const trainingCreatedByOther = async () => {
+  //   try {
+  //     let user_id = localStorage.getItem('user_id');
+  //     let token = localStorage.getItem('token');
+  //     const response = await axios.get(`${BASE_URL}/training?category_id=${filter.category_id}&search=${filter.search}&limit=${page}`, {
+  //       headers: {
+  //         "Authorization": "Bearer " + token
+  //       }
+  //     });
+  //     if(response)
+  //       setfullLoaderStatus(false)
+
+
+
+  //     if (response.status === 200 && response.data.status === "success") {
+  //       const { searchedData } = response.data;
+  //       let myTrainings = searchedData.filter(training => training.addedBy === parseInt(user_id));
+  //       let otherTrainings = searchedData.filter(training => training.addedBy !== parseInt(user_id));
+
+  //       // setMyTrainingData(myTrainings);
+  //       setOtherTrainingData(otherTrainings);
+  //     }
+  //   } catch (error) {
+  //     console.log('Erorr:', error);
+  //   }
+  // };
 
   window.onscroll = function () {
     let userScrollHeight = window.innerHeight + window.scrollY;
@@ -127,32 +164,32 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                     setPage(page + 5)
           }
 }
-  const fetchCreatedTrainings = async () => {
-    try {
-      let user_id = localStorage.getItem('user_id');
-      let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training?category_id=${filter.category_id}&search=${filter.search}`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
-      if(response)
-        setfullLoaderStatus(false)
+  // const fetchCreatedTrainings = async () => {
+  //   try {
+  //     let user_id = localStorage.getItem('user_id');
+  //     let token = localStorage.getItem('token');
+  //     const response = await axios.get(`${BASE_URL}/training?category_id=${filter.category_id}&search=${filter.search}`, {
+  //       headers: {
+  //         "Authorization": "Bearer " + token
+  //       }
+  //     });
+  //     if(response)
+  //       setfullLoaderStatus(false)
 
 
 
-      if (response.status === 200 && response.data.status === "success") {
-        const { searchedData } = response.data;
-        let myTrainings = searchedData.filter(training => training.addedBy === parseInt(user_id));
-        let otherTrainings = searchedData.filter(training => training.addedBy !== parseInt(user_id));
+  //     if (response.status === 200 && response.data.status === "success") {
+  //       const { searchedData } = response.data;
+  //       let myTrainings = searchedData.filter(training => training.addedBy === parseInt(user_id));
+  //       let otherTrainings = searchedData.filter(training => training.addedBy !== parseInt(user_id));
 
-        setMyTrainingData(myTrainings);
-        setOtherTrainingData(otherTrainings);
-      }
-    } catch (error) {
-      console.log('Erorr:', error);
-    }
-  };
+  //       setMyTrainingData(myTrainings);
+  //       setOtherTrainingData(otherTrainings);
+  //     }
+  //   } catch (error) {
+  //     console.log('Erorr:', error);
+  //   }
+  // };
 
   const handleTrainingDelete = async (trainingId) => {
     console.log('DELETING THE TRAINING!');
@@ -210,13 +247,17 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }, 4000)
   }, [successMessageToast]);
 
-  useEffect(() => {
-    fetchCreatedTrainings();
-  }, [filter, trainingDeleteMessage]);
+  // useEffect(() => {
+  //   fetchCreatedTrainings();
+  // }, [filter, trainingDeleteMessage]);
 
   useEffect(() => {
     fetchUserList();
   }, [selectedFranchisee]);
+  useEffect(() =>{
+    trainingCreatedByMe()
+  },[filter,page,trainingDeleteMessage])
+
   useEffect(() =>{
     trainingCreatedByOther()
   },[filter,page,trainingDeleteMessage])
@@ -241,7 +282,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   // fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
   otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
   myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
-  formSettings && console.log('FORM SETTINGS:', formSettings);
+  // formSettings && console.log('FORM SETTINGS:', formSettings);
   return (
     <>
       <div id="main">
@@ -341,7 +382,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
               );
             })}
           </Row>
-          {otherTrainingData?.length>0 && myTrainingData?.length>0 ?
+          {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
           null
             :     
                     <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
