@@ -201,7 +201,11 @@ const ParentsDashboard = () => {
         if(childIds.length > 0) {
           setNonEnrolledChildIds(childIds);
         } else {
-          setLogUserOutDialog(true);
+          childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 1);
+          childIds = childIds.map(d => d.id);
+
+          if(childIds.length === 0)
+            setLogUserOutDialog(true);
         }
       } else {
         // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
@@ -220,6 +224,7 @@ const ParentsDashboard = () => {
     let parentId = localStorage.getItem('user_id');
     nonEnrolledChildIds?.forEach(childId => {
       let link = `/child-enrollment/${childId}/${parentId}`;
+      console.log('LINK GENERATED:', link);
       linkArray.push(link);
     });
 

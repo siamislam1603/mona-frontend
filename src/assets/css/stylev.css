@@ -2975,7 +2975,7 @@ p.error {
     .responses-header-right {
         padding-top: 0 !important;
     }
-    .btn, .extra-btn .btn-btn-outline, .extra-btn .ctaact {
+    .extra-btn .btn-btn-outline, .extra-btn .ctaact {
         min-width: 110px !important;
     }
 }
