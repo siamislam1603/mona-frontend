@@ -722,6 +722,10 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 }
 @media screen and (min-width:1200px) and (max-width:1300px){
 .three-col .item{flex:0 0 48%}
+.sec-column { padding: 40px 0 0 20px; }
+.column-list.access-list .item .pic { margin-right: 0.5rem; flex: 0 0 30px; }
+.column-list.access-list .item .name { font-size: var(--fontsm); line-height: normal; }
+.column-list .item { padding: 15px; }
 }
 @media only screen and (max-width:1199px){
 .forms-managment-right{flex-wrap:wrap}
