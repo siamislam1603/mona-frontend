@@ -93,7 +93,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     let token = localStorage.getItem('token');
     // let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData}, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData, form_step: 1}, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -123,11 +123,16 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           }
         }
         
-        if(localStorage.getItem('user_role') === 'coordinator' && localStorage.getItem('change_count') > 0) {
+        if(localStorage.getItem('user_role') !== 'guardian' && localStorage.getItem('change_count') > 0) {
           setLoader(false);
           setUserConsentFormDialog(true);
         }
-        setFormSubmissionSuccessDialog(true);
+        
+        if(localStorage.getItem('user_role') === 'guardian') {
+          setFormSubmissionSuccessDialog(true);
+        } else {
+          nextStep();
+        }
       }
     }
   };
@@ -163,7 +168,12 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
         console.log('CLOSING THE DIALOG!');
         setUserConsentFormDialog(false);
         localStorage.removeItem('change_count');
-        setFormSubmissionSuccessDialog(true);
+        
+        if(localStorage.getItem('user_role') === 'guardian') {
+          setFormSubmissionSuccessDialog(true)
+        } else {
+          nextStep();
+        }
       }
     }
   };
@@ -288,6 +298,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, [])
 

@@ -21,7 +21,7 @@ let disease_name = [
   "varicella"
 ];
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
-  let { parentId: paramsParentId } = useParams();
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   const [healthInformation, setHealthInformation] = useState({
     medical_service: "",
     telephone: "",
@@ -81,7 +81,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   // UPDATEING FORM TWO DATA
   const updateFormTwoData = async () => {
     setLoader(true);
-    let childId = localStorage.getItem('enrolled_child_id');
+    // let childId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
     // SENDING HEALTH INFORMATION REQUEST
     let response = await axios.patch(`${BASE_URL}/enrollment/health-information/${idList.health_information_id}`, { ...healthInformation }, {
@@ -107,16 +107,16 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         if (response.status === 201 && response.data.status === "success") {
 
           // UPDATING CHILD DETAILS
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childDetails }, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...childDetails }, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
           });
 
           if (response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
+            // let parentId = localStorage.getItem('enrolled_parent_id') || localStorage.getItem('user_id');
 
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, { ...parentData }, {
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${paramsParentId}`, { ...parentData }, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
@@ -181,7 +181,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         if (response.status === 201 && response.data.status === "success") {
 
           // UPDATING CHILD DETAILS
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childDetails }, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...childDetails }, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
@@ -189,8 +189,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
           // UPDATING PARENT PERMISSION
           if (response.status === 201 && response.data.status === "success") {
-            let parentId = localStorage.getItem('user_id');
-            response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, { ...parentData }, {
+            // let parentId = localStorage.getItem('user_id');
+            response = await axios.patch(`${BASE_URL}/enrollment/parent/${paramsParentId}`, { ...parentData }, {
               headers: {
                 "Authorization": `Bearer ${token}`
               }
@@ -330,6 +330,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   useEffect(() => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
 

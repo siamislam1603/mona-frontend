@@ -320,6 +320,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   useEffect(() => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
 
