@@ -107,7 +107,9 @@ const Training = () => {
 
   useEffect(() => {
     fetchTrainingCategories();
-    if (localStorage.getItem('user_role') !== 'franchisor_admin') {
+    if (localStorage.getItem('user_role') === 'franchisor_admin') {
+      setTabLinkPath('/created-training');
+    } else {
       setTabLinkPath('/available-training');
     }
 
@@ -245,7 +247,8 @@ const Training = () => {
                   <div className="training-column">
                     {tabLinkPath === "/available-training"
                       && <AvailableTrainingModule
-                        filter={filterData} />}
+                        filter={filterData}
+                        selectedFranchisee={selectedFranchisee} />}
                     {tabLinkPath === "/complete-training"
                       && <CompleteTrainingModule
                         filter={filterData} />}

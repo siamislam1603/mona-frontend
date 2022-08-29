@@ -15,7 +15,6 @@ export default function DropAllFile({ onSave,Files, setErrors, title="Files", ty
     }
   }
   
-  console.log("The files",Files)
   const [data, setData] = useState([]);
   const [theFiles,setTheFiles] = useState();
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {

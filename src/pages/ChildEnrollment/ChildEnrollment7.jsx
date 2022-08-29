@@ -89,11 +89,12 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   // UPDATING FORM SEVEN DATA;
   const updateFormSevenData = async () => {
+    console.log('UPDATING FORM SEVEMN DATA');
     setLoader(true);
     let token = localStorage.getItem('token');
     // let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData}, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -123,11 +124,15 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           }
         }
         
-        if(localStorage.getItem('user_role') === 'coordinator' && localStorage.getItem('change_count') > 0) {
+        if(localStorage.getItem('user_role') !== 'guardian' && localStorage.getItem('change_count') > 0) {
+          console.log('ASKING FOR PARENT CONSENT WITH CONSENT FORM');
           setLoader(false);
           setUserConsentFormDialog(true);
+        } else if(localStorage.getItem('user_role') === 'guardian') {
+            setFormSubmissionSuccessDialog(true);
+        } else {
+          nextStep();
         }
-        setFormSubmissionSuccessDialog(true);
       }
     }
   };
@@ -163,7 +168,12 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
         console.log('CLOSING THE DIALOG!');
         setUserConsentFormDialog(false);
         localStorage.removeItem('change_count');
-        setFormSubmissionSuccessDialog(true);
+        
+        if(localStorage.getItem('user_role') === 'guardian') {
+          setFormSubmissionSuccessDialog(true)
+        } else {
+          nextStep();
+        }
       }
     }
   };
@@ -288,6 +298,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, [])
 
@@ -413,10 +424,13 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                   src={'/img/mini_loader1.gif'}
                   alt=""
                   />
-                    Submitting...
+                    {
+                      localStorage.getItem('user_role') === 'guardian'
+                      ? "Saving..."
+                      : "Submitting..."
+                    }
                 </>
-              ) : (
-              'Submit')}
+              ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
             </Button>
           </div>
         </Form>

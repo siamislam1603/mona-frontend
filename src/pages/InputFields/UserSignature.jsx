@@ -11,7 +11,8 @@ const UserSignature = (props) => {
   };
   const trim = (e) => {
     e.preventDefault();
-    props.handleSignatureDialog(sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
+    props.setShowSignatureDialog(false);
+    props.onChange(sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
   };
   return (
     <Col sm={6}>
