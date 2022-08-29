@@ -30,6 +30,7 @@ function ViewFormBuilder(props) {
   const [Index, setIndex] = useState(0);
   const [innerIndex, setInnerIndex] = useState(0);
   const [MeFormData, setMeFormData] = useState([]);
+  
   console.log(MeFormData, 'MeFormData');
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
@@ -1093,6 +1094,7 @@ function ViewFormBuilder(props) {
                   MeFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item) => {
                       return (
+                        // http://13.237.14.155:4000/form/response?search=&form_id=11&user_id=2&user_role=franchisor_admin
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">
@@ -1140,6 +1142,7 @@ function ViewFormBuilder(props) {
                               </h4>
                               <button
                                 onClick={() => {
+
                                   navigate('/form/response', {
                                     state: {
                                       id: MeFormData[Index]?.forms[innerIndex]

@@ -18,6 +18,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     dob: "",
     home_address: "",
     gender: "M",
+    educator: []
   });
   const [educatorData, setEducatorData] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
@@ -81,7 +82,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     event.preventDefault();
     console.log('SUBMITTING FORM DATA');
     
-    let errorObj = enrollmentInitiationFormValidation(formOneChildData, educatorData);
+    let errorObj = enrollmentInitiationFormValidation(formOneChildData);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {

@@ -35,38 +35,47 @@ const CompleteTraining = ({ filter }) => {
       <div id="main">
         <div className="training-column">
           <Row>
-          {completedTrainingData?.map((item) => {
-            return(
-            <Col lg={4} md={6} key={item.id}>
-              <div className="item mt-3 mb-3">
-                <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={`${item.training.coverImage}`} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                <div className="fixcol">
-                  <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                  <div className="iconame">
-                    <a href="/training-detail">{item.training.title}</a>
-                    <div className="datecol">
-                      <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
-                      <span className="time">{ item.training.completion_time }</span>
+          {completedTrainingData.length>0 ? 
+          (
+            completedTrainingData?.map((item) => {
+              return(
+              <Col lg={4} md={6} key={item.id}>
+                <div className="item mt-3 mb-3">
+                  <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={`${item.training.coverImage}`} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
+                  <div className="fixcol">
+                    <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
+                    <div className="iconame">
+                      <a href="/training-detail">{item.training.title}</a>
+                      <div className="datecol">
+                        <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
+                        <span className="time">{ item.training.completion_time }</span>
+                      </div>
                     </div>
+                    {
+                      (localStorage.getItem('user_role') !== 'coordinator' && localStorage.getItem('user_role') !== 'educator') &&
+                      <div className="cta-col">
+                        <Dropdown> 
+                          <Dropdown.Toggle variant="transparent" id="ctacol">
+                            <img src="../img/dot-ico.svg" alt=""/>
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Item href="#">Delete</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </div>
+                    }
                   </div>
-                  {
-                    (localStorage.getItem('user_role') !== 'coordinator' && localStorage.getItem('user_role') !== 'educator') &&
-                    <div className="cta-col">
-                      <Dropdown> 
-                        <Dropdown.Toggle variant="transparent" id="ctacol">
-                          <img src="../img/dot-ico.svg" alt=""/>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item href="#">Delete</Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  }
                 </div>
-              </div>
-            </Col>
-              );
-            })}
+              </Col>
+                );
+              })
+          ):
+          (
+            <div className="text-center mb-5 mt-5">  <strong>No trainings available!</strong> </div>
+
+          )
+            
+        }
           </Row>
         </div>
       </div>

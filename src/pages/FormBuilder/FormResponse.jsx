@@ -11,9 +11,12 @@ function FormResponse(props) {
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
   const token = localStorage.getItem('token');
+
   useEffect(() => {
     getResponse('');
+    getResponseTow('');
   }, []);
+
   const getResponse = (search) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -24,8 +27,7 @@ function FormResponse(props) {
     };
 
     fetch(
-      `${BASE_URL}/form/response?search=${search}&form_id=${
-        location?.state?.id ? location?.state?.id : 1
+      `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1
       }&user_id=${localStorage.getItem(
         'user_id'
       )}&user_role=${localStorage.getItem('user_role')}`,
@@ -38,6 +40,31 @@ function FormResponse(props) {
       })
       .catch((error) => console.log('error', error));
   };
+
+
+
+  const getResponseTow = (search) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+
+    fetch(
+      `${BASE_URL}/form/response?search=&form_id=11&user_id=2&user_role=franchisor_admin`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        setResponseData(result?.result);
+        setFormData(result?.form);
+      })
+      .catch((error) => console.log('error', error));
+  };
+
+  
   return (
     <>
       <div id="main">
@@ -106,12 +133,12 @@ function FormResponse(props) {
                                           className={
                                             responseData[index].length - 1 ===
                                               inner_index ||
-                                            (inner_index > 0 &&
-                                              responseData[index][
-                                                inner_index - 1
-                                              ]?.user.fullname.includes(
-                                                inner_item.user.fullname
-                                              ))
+                                              (inner_index > 0 &&
+                                                responseData[index][
+                                                  inner_index - 1
+                                                ]?.user.fullname.includes(
+                                                  inner_item.user.fullname
+                                                ))
                                               ? 'responses-header-detail'
                                               : 'responses-header-detail response-header-left-line'
                                           }
@@ -124,43 +151,43 @@ function FormResponse(props) {
                                           <h5>
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                  inner_index - 1
-                                                ].user.fullname.includes(
-                                                  inner_item.user.fullname
-                                                ) && inner_item.user.fullname
+                                                inner_index - 1
+                                              ].user.fullname.includes(
+                                                inner_item.user.fullname
+                                              ) && inner_item.user.fullname
                                               : inner_item.user.fullname}
                                           </h5>
                                           <h6>
                                             <span className="text-capitalize">
                                               {inner_index > 0
                                                 ? !responseData[index][
-                                                    inner_index - 1
-                                                  ].user.role
-                                                    .split('_')
-                                                    .join(' ')
-                                                    .includes(
-                                                      inner_item?.user.role
-                                                        .split('_')
-                                                        .join(' ')
-                                                    ) &&
-                                                  inner_item?.user.role
-                                                    .split('_')
-                                                    .join(' ') + ','
+                                                  inner_index - 1
+                                                ].user.role
+                                                  .split('_')
+                                                  .join(' ')
+                                                  .includes(
+                                                    inner_item?.user.role
+                                                      .split('_')
+                                                      .join(' ')
+                                                  ) &&
+                                                inner_item?.user.role
+                                                  .split('_')
+                                                  .join(' ') + ','
                                                 : inner_item?.user.role
-                                                    .split('_')
-                                                    .join(' ') + ','}
+                                                  .split('_')
+                                                  .join(' ') + ','}
                                             </span>{' '}
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                  inner_index - 1
-                                                ].user?.franchisee?.franchisee_name.includes(
-                                                  inner_item?.user?.franchisee
-                                                    ?.franchisee_name
-                                                ) &&
+                                                inner_index - 1
+                                              ].user?.franchisee?.franchisee_name.includes(
                                                 inner_item?.user?.franchisee
                                                   ?.franchisee_name
+                                              ) &&
+                                              inner_item?.user?.franchisee
+                                                ?.franchisee_name
                                               : inner_item?.user?.franchisee
-                                                  ?.franchisee_name}
+                                                ?.franchisee_name}
                                           </h6>
                                         </div>
                                       );
@@ -220,28 +247,27 @@ function FormResponse(props) {
                                               )[inner_index]?.includes(
                                                 'data:image'
                                               ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.png'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.jpg'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.jpeg'
-                                              ) ? (
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.png'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.jpg'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.jpeg'
+                                                ) ? (
                                                 <>
                                                   <img
-                                                    src={`${
-                                                      Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index]
-                                                    }`}
+                                                    src={`${Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                      }`}
                                                   ></img>
                                                 </>
                                               ) : (

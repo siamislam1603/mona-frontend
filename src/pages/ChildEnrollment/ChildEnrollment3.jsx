@@ -158,6 +158,7 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchChildDetailsAndPopulate();
   }, [])
 
@@ -824,10 +825,13 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                   src={'/img/mini_loader1.gif'}
                   alt=""
                   />
-                    Submitting...
+                    {
+                      localStorage.getItem('user_role') === 'guardian'
+                      ? "Saving..."
+                      : "Submitting..."
+                    }
                 </>
-              ) : (
-              'Submit')}
+              ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
             </Button>
           </div>
         </Form>

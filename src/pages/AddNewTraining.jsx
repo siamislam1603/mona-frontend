@@ -347,6 +347,12 @@ const AddNewTraining = () => {
     fetchFranchiseeUsers(trainingSettings?.assigned_franchisee);
   }, [trainingSettings.assigned_franchisee]);
 
+  useEffect(() => {
+    if(localStorage.getItem('user_role') === 'guardian') {
+      window.location.href=`/parents-dashboard`;
+    }
+  }, []);
+
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">

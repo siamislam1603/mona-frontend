@@ -320,6 +320,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
   useEffect(() => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
 
@@ -932,10 +933,13 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   src={'/img/mini_loader1.gif'}
                   alt=""
                   />
-                    Submitting...
+                    {
+                      localStorage.getItem('user_role') === 'guardian'
+                      ? "Saving..."
+                      : "Submitting..."
+                    }
                 </>
-              ) : (
-              'Submit')}
+              ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
             </Button>
           </div>
         </Form>

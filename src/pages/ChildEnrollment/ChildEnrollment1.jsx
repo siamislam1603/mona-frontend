@@ -11,17 +11,6 @@ import { useParams } from 'react-router-dom';
 
 let nextstep = 2;
 let step = 1;
-let telDigitCount = 0;
-
-var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-
-// let countryData = [
-//   {
-//     id: 1,
-//     value: "Australia",
-//     label: "Australia"
-//   }
-// ]
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 1);
@@ -334,6 +323,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, []);
 
@@ -1078,10 +1068,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               </Row>
             </div>
           </div>
-          <div className="enrollment-form-sec mt-5">
+          <div className="enrollment-form-sec mt-3">
             <Form onSubmit={submitFormData}>
               <div className="enrollment-form-column">
-                <h2 className="title-xs mb-3">Information about the child’s parents or guardians</h2>
+                <h2 className="title-xs">Information about the child’s parents or guardians</h2>
                 <div className="grayback">
                   <Row>
                     <Col md={12}>
@@ -1501,10 +1491,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 src={'/img/mini_loader1.gif'}
                 alt=""
                 />
-                  Submitting...
+                  {
+                    localStorage.getItem('user_role') === 'guardian'
+                    ? "Saving..."
+                    : "Submitting..."
+                  }
               </>
-            ) : (
-            'Submit')}
+            ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
           </Button>
           </div>
         </Form>
