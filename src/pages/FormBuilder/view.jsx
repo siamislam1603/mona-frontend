@@ -807,7 +807,7 @@ function ViewFormBuilder(props) {
                                                               />{' '}
                                                               Edit
                                                             </Dropdown.Item>
-                                                            <Dropdown.Item
+                                                            {inner_item.id!==11 && <Dropdown.Item
                                                               onClick={() => {
                                                                 deleteForm(
                                                                   inner_item.id
@@ -818,7 +818,7 @@ function ViewFormBuilder(props) {
                                                                 icon={faRemove}
                                                               />{' '}
                                                               Remove
-                                                            </Dropdown.Item>
+                                                            </Dropdown.Item>}
                                                           </Dropdown.Menu>
                                                         </Dropdown>
                                                       </div>
@@ -984,7 +984,7 @@ function ViewFormBuilder(props) {
                                                                   />{' '}
                                                                   Edit
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item
+                                                                {inner_item.id!==11 &&<Dropdown.Item
                                                                   onClick={() => {
                                                                     deleteForm(
                                                                       inner_item.id
@@ -997,7 +997,7 @@ function ViewFormBuilder(props) {
                                                                     }
                                                                   />{' '}
                                                                   Remove
-                                                                </Dropdown.Item>
+                                                                </Dropdown.Item>}
                                                               </Dropdown.Menu>
                                                             </Dropdown>
                                                           )}
