@@ -52,29 +52,9 @@ const FranchisorDashboard = () => {
               <img src="../img/dot-ico.svg" alt="" />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <button
-                onClick={() => {
-                  console.log(
-                    navigate('/form/response', {
-                      state: {
-                        id: MeFormData[Index]?.forms[innerIndex]
-                          ?.id,
-                      },
-                    }),"aaaaaaaaaaaaaaaaaaa"
-                  )
-              navigate('/form/response', {
-                state: {
-                id: MeFormData[Index]?.forms[innerIndex]
-              ?.id,
-                    },
-                  });
-                }}
-              >
-              View Response
-            </button>
-            <Dropdown.Item href="/form/response">View</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+              <Dropdown.Item href="/form/response">View</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div></>)
       },
     }
