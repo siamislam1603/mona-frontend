@@ -1257,20 +1257,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Control 
                             type="tel" 
                             placeholder="3375005467"
+                            maxLength={10}
                             name="telephone"
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
-                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  telephone: e.target.value.slice(0, -1)
-                                }));
-                              } else {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  telephone: e.target.value
-                                }));
-                              }
+                              handleParentData(e);
                               setParentFormErrors(prevState => ({
                                 ...prevState,
                                 telephone: null

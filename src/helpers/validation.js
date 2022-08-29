@@ -1,3 +1,10 @@
+// const isEmail = (email) => {
+//   console.log('EMAIL DURSING VALIDATION:', email);
+//   return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+// }
+
+import moment from 'moment';
+
 export const DynamicFormValidation = (
   form,
   data,
@@ -444,6 +451,9 @@ export const UserFormValidation = (formObj) => {
 
   if (!email) errors.email = 'Email is required!';
 
+  if (!(/^[A-Z0-9]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
+    errors.email = "Please use a valid email!";
+
   if (!phone) errors.phone = 'Phone number is required!';
 
   if(phone.length > 0 && phone.length < 10) 
@@ -459,9 +469,15 @@ export const personValidation = (personValidationForm) => {
 
   if (!name) errors.name = 'Name is required!';
 
+  if(!(/^[a-zA-Z ]+$/i.test(name)))
+    errors.name = 'Name shoudln\'t contain digits & special characters!';
+
   if (!address) errors.address = 'Address is required!';
 
   if (!telephone) errors.telephone = 'Telephone number is required!';
+
+  if(!(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Telephone should only contain digits!"; 
 
   if(telephone.length > 1 && telephone.length < 10)
     errors.telephone = 'Telephone number must be at least 10-digit long.'
@@ -470,8 +486,22 @@ export const personValidation = (personValidationForm) => {
     errors.relationship_to_the_child =
       'Specify their relationship to the child!';
 
+  if(!(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
+    errors.relationship_to_the_child = 'Relationship shoudln\'t contain digits & special characters!';
+
   return errors;
 };
+
+export const personValidation2 = (personValidationForm) => {
+  let errors = {};
+  let { telephone } =
+    personValidationForm;
+
+  if(telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Telephone should only contain digits!"; 
+
+  return errors;
+}
 
 export const person2Validation = (obj) => {
   let errors = {};
@@ -482,6 +512,23 @@ export const person2Validation = (obj) => {
 
   return errors;
 };
+
+export const digitalSignatureValidator = (form) => {
+  let errors = {};
+  let {
+    consent_signature,
+    consent_date
+  } = form;
+  let date = moment(consent_date);
+
+  if(!consent_signature)
+    errors.consent_signature = "Please provide your signature below!";
+
+  if(!date.isValid())
+    errors.consent_date = "Please provide a date!";
+
+  return errors;
+}
 
 
 export const childDailyRoutineValidation = (childDailyRoutineForm) => {
