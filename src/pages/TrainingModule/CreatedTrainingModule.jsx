@@ -103,8 +103,10 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     });
     console.log('Training created by me',response)
     if(response.status===200 && response.data.status === "success"){
-      const {trainingList} = response.data
-      setMyTrainingData(trainingList)
+      const {searchedData} = response.data
+      setMyTrainingData(searchedData)
+      setfullLoaderStatus(false)
+
       
     }
 
@@ -119,8 +121,10 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     });
     console.log('Training created by OTHER',response)
     if(response.status===200 && response.data.status === "success"){
-      const {trainingList} = response.data
-      setOtherTrainingData(trainingList)
+      const {searchedData} = response.data
+      setOtherTrainingData(searchedData)
+      setfullLoaderStatus(false)
+
       
     }
 
@@ -276,13 +280,13 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
 
   // formSettings && console.log('FORM SETTINGS:', formSettings);
   // fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
-  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData.length);
-  myTrainingData && console.log('MY TRAINING DATA:', myTrainingData.length);
+  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
+  myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
   // formSettings && console.log('FORM SETTINGS:', formSettings);
   return (
     <>
       <div id="main">
-      {/* <FullLoader loading={fullLoaderStatus} /> */}
+      <FullLoader loading={fullLoaderStatus} />
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
         <div className="training-column">
           <Row style={{ marginBottom: '40px' }}>
