@@ -196,52 +196,40 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
-      // if(croppedImage) {
-      //   setFormErrors(prevState => ({
-      //     ...prevState,
-      //     profile_pic: null
-      //   }));
-      // } else {
-      //   setFormErrors(prevState => ({
-      //     ...prevState,
-      //     profile_pic: 'Image is required!'
-      //   }));
-      // }
     } else {
-      console.log('Erorrs removed!');
-      let data=new FormData();
-      let doc=[];
-      trainingDocuments?.map(async(item)=>{
-        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
-        // doc.push(blob);
-        data.append('images', blob);
-      })
-      
-      if(croppedImage) {
-        const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-        // doc.push(blob);
-        data.append('images', blob);
-      }
-      
-      Object.keys(formData)?.map((item,index) => {
-        data.append(item,Object.values(formData)[index]);
-      })
-      
-      // data.append("images", doc);
-      let errorObject = UserFormValidation(formData);
+        console.log('Erorrs removed!');
+        let data=new FormData();
+        let doc=[];
+        trainingDocuments?.map(async(item)=>{
+          const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+          // doc.push(blob);
+          data.append('images', blob);
+        })
+        
+        if(croppedImage) {
+          const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+          // doc.push(blob);
+          data.append('images', blob);
+        }
+        
+        Object.keys(formData)?.map((item,index) => {
+          data.append(item,Object.values(formData)[index]);
+        })
+        
+        // data.append("images", doc);
+        let errorObject = UserFormValidation(formData);
 
-      if(Object.keys(errorObject).length > 0) {
-          console.log('THERE ARE STILL ERRORS', errorObject);
-          setFormErrors(errorObject);
-      } else {
-          console.log('CREATING USER!');
-          setCreateUserModal(true);
-          setLoaderMessage("Creating New User")
-          setLoader(true)
-          createUser(data);
-      }
-      
-      createUser(data);
+        if(Object.keys(errorObject).length > 0) {
+            console.log('THERE ARE STILL ERRORS', errorObject);
+            setFormErrors(errorObject);
+        } else {
+            console.log('CREATING USER!');
+            setCreateUserModal(true);
+            setLoaderMessage("Creating New User")
+            setLoader(true)
+            createUser(data);
+        } 
+        createUser(data);
     }
   };
 
@@ -511,6 +499,8 @@ const NewUser = () => {
     fetchCoordinatorData(formData.franchisee)
   }, [formData.franchisee]);
 
+  formErrors && console.log('FORM ERRORS:', formErrors);
+
   useEffect(() => { 
     if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') {
       let franchisee_id = localStorage.getItem('franchisee_id');
@@ -725,7 +715,7 @@ const NewUser = () => {
                                   e.target.value = e.target.value.replace(/\s/g, "");
                                   // handleChange(e);
                                   if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                                    setFormErrors(prevState => ({
+                                    setFormData(prevState => ({
                                       ...prevState,
                                       phone: e.target.value.slice(0, -1)
                                     })); 
@@ -735,6 +725,11 @@ const NewUser = () => {
                                       phone: e.target.value
                                     }));
                                   }
+
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    phone: null
+                                  }));
                                 }}
                               />
                             </div>
