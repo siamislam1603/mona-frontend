@@ -600,10 +600,10 @@ button:focus {
     padding-left: 35px;
 }
 
-/* .multiselect-box .optionListContainer {
-    z-index: 10;
-    display: none;
-} */
+.multiselect-box .optionListContainer {
+    z-index: 999;
+    /* display: none; */
+}
 
 /* .default-arrow-select:before{
     display: none;
