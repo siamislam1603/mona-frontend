@@ -12,16 +12,8 @@
     --gray: #e5e5e5;
     --fontsm: 14px;
 }
-.Accordion-menu {
-    background-color: #ebebeb !important;
-    padding: 10px 0px;
-    height: 100vh;
-}
-
-.menu_search {
-    margin: 10px;
-    width: -webkit-fill-available;
-}
+.Accordion-menu{background-color:#ebebeb!important;padding:10px 0;height:100vh}
+.menu_search{margin:10px;width:-webkit-fill-available}
 
 .accordion-body.menu_list:hover {
     background-color: #8ea29f;
@@ -600,10 +592,10 @@ button:focus {
     padding-left: 35px;
 }
 
-/* .multiselect-box .optionListContainer {
-    z-index: 10;
-    display: none;
-} */
+.multiselect-box .optionListContainer {
+    z-index: 999;
+    /* display: none; */
+}
 
 /* .default-arrow-select:before{
     display: none;
@@ -2975,7 +2967,7 @@ p.error {
     .responses-header-right {
         padding-top: 0 !important;
     }
-    .extra-btn .btn-btn-outline, .extra-btn .ctaact {
+    .btn, .extra-btn .btn-btn-outline, .extra-btn .ctaact {
         min-width: 110px !important;
     }
 }

@@ -107,6 +107,29 @@ const FilerepoUploadFile = () => {
             setChild(response.data.children)
         }
     }
+    //======================== GET User List==================
+
+    const getUser = async () => {
+        var myHeaders = new Headers();
+        myHeaders.append(
+            'authorization',
+            'Bearer ' + localStorage.getItem('token')
+        );
+
+        var request = {
+            headers: myHeaders,
+        };
+
+        let franchiseeArr = formSettings.franchisee
+
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
+        if (response.status === 200) {
+            // console.log(response.data.users, "respo")
+            setUser(response.data.users)
+            console.log(user, "userSList")
+        }
+    };
+
 
     function onSelectChild(selectedItem) {
         let selectedchildarr = selectedItem
@@ -120,17 +143,17 @@ const FilerepoUploadFile = () => {
         console.log(selectedChild, "Selllee")
         setSelectedChild(selectedchildarr)
     }
-
-
-
     useEffect(() => {
         getFileCategory();
         getChildren();
         fetchFranchiseeList();
+        getUser();
     }, [])
-
-
-
+    useEffect(() => {
+        getUser();
+        getChildren()
+    }, [formSettings.franchisee])
+    
     const setField = (field, value) => {
         if (value === null || value === undefined) {
             setFormSettingData({ ...formSettingData, setting_files: field });
@@ -280,6 +303,8 @@ const FilerepoUploadFile = () => {
         });
         console.log('selectedUser---->', selectedUser);
     }
+
+
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
         const index = selectedUser.findIndex((object) => {
@@ -289,19 +314,6 @@ const FilerepoUploadFile = () => {
         {
             console.log('selectedUser---->', selectedUser);
         }
-    }
-
-    function onSelectChild(selectedItem) {
-        let selectedchildarr = selectedItem
-        selectedItem = selectedItem.map((item) => {
-            return item.id
-        })
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_childs: selectedItem
-        }));
-        console.log(selectedChild, "Selllee")
-        setSelectedChild(selectedchildarr)
     }
 
     function onRemoveChild(removedItem) {
@@ -316,7 +328,6 @@ const FilerepoUploadFile = () => {
         console.log(selectedChild, "Selllee")
         setSelectedChild(removedchildarr)
     }
-
 
 
     function onSelect(index) {
@@ -336,6 +347,8 @@ const FilerepoUploadFile = () => {
         }
         setUser(data);
     }
+
+
     post && console.log("post Data", '++++++++++++++++++++++++++++++:', post.map(data => data));
 
     const handleLinkClick = event => {
