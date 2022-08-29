@@ -11,21 +11,10 @@ import { useParams } from 'react-router-dom';
 
 let nextstep = 2;
 let step = 1;
-let telDigitCount = 0;
-
-var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-
-// let countryData = [
-//   {
-//     id: 1,
-//     value: "Australia",
-//     label: "Australia"
-//   }
-// ]
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 1);
-  let { childId: paramsChildId } = useParams();
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
@@ -94,13 +83,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     // UPDATING CHILD DETAIL
     let response;
     if(formStepData > step) {
-      response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData }, {
+      response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...childData }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
       });
     } else {
-      response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData, form_step:  nextstep, isChildEnrolled: 1 }, {
+      response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...childData, form_step:  nextstep, isChildEnrolled: 1 }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -110,7 +99,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     if(response.status === 201 && response.data.status === "success") {
       // UPDATIN PARENT DETAIL
       console.log('PARENT DATA BEFORE UPDATION:', parentData);
-      response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
+      response = await axios.patch(`${BASE_URL}/enrollment/parent/${paramsParentId}`, {...parentData}, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -334,6 +323,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, []);
 
@@ -1501,10 +1491,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 src={'/img/mini_loader1.gif'}
                 alt=""
                 />
-                  Submitting...
+                  {
+                    localStorage.getItem('user_role') === 'guardian'
+                    ? "Saving..."
+                    : "Submitting..."
+                  }
               </>
-            ) : (
-            'Submit')}
+            ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
           </Button>
           </div>
         </Form>

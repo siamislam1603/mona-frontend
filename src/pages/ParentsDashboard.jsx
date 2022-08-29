@@ -185,19 +185,28 @@ const ParentsDashboard = () => {
 
     if (response.status === 200 && response.data.status === 'success') {
       let { parentData } = response.data;
+      console.log('PARENT DATA:', parentData);
 
       if (parentData !== null && parentData.children.length > 0) {
         console.log('PARENT DATA ISN\'T NULL');
         let { children } = parentData;
         console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
         // FILTERING THE CHILDREN WHOSE ENROLLMENT FORM HASN'T BEEN FILLED
-        childIds = children.filter(d => d.isChildEnrolled === 0);
+        childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 0);
         console.log('CHILDREN TO BE ENROLLED:', childIds);
         // FETCHING AN ARRAY OF THEIR IDs.
         childIds = childIds.map(d => d.id);
-        console.log('ARRAY OF CHILD IDs:', childIds);
+        console.log('ARRAY OF CHILD IDs present:', childIds);
 
-        setNonEnrolledChildIds(childIds);
+        if(childIds.length > 0) {
+          setNonEnrolledChildIds(childIds);
+        } else {
+          childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 1);
+          childIds = childIds.map(d => d.id);
+
+          if(childIds.length === 0)
+            setLogUserOutDialog(true);
+        }
       } else {
         // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
         console.log('NO CHILD IS ASSIGNED TO YOU!!!!!!!!!!');
@@ -215,6 +224,7 @@ const ParentsDashboard = () => {
     let parentId = localStorage.getItem('user_id');
     nonEnrolledChildIds?.forEach(childId => {
       let link = `/child-enrollment/${childId}/${parentId}`;
+      console.log('LINK GENERATED:', link);
       linkArray.push(link);
     });
 

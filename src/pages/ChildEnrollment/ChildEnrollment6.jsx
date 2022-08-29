@@ -47,7 +47,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
         console.log('VALID CONDITION');
         setAcceptedAllPoints(user.accepted_all_points);
       }
-      window.scrollTo(0, 0);
+      // window.scrollTo(0, 0);
         // setLoader(true);
         // createConcentForm(data);
     }
@@ -92,6 +92,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchParentDataAndPopulate();
   }, [formStepData]);
 
@@ -147,10 +148,13 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
                   src={'/img/mini_loader1.gif'}
                   alt=""
                   />
-                    Submitting...
+                    {
+                      localStorage.getItem('user_role') === 'guardian'
+                      ? "Saving..."
+                      : "Submitting..."
+                    }
                 </>
-              ) : (
-              'Submit')}
+              ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
             </Button>
           </div>
         </Form>

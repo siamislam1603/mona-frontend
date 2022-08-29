@@ -16,6 +16,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
+import FilerepoUploadFile from './FilerepoUploadFile';
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
 const animatedComponents = makeAnimated();
@@ -252,7 +253,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 );
                 formdata.append(
                     'assigned_users',
-                    selectedUserId.slice(0, -1)
+                    selectedUserId.slice(0, -1) == "" ? null : selectedUserId.slice(0, -1)
                 );
                 formdata.append(
                     'accessibleToRole',
@@ -275,7 +276,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             redirect: 'follow',
         };
 
-        console.log(formdata, "formdata")
 
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
@@ -291,7 +291,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 if (result) {
                     setLoaderFlag(false);
                     setShow(false);
-                    Navigate(`/file-repository-List-me/${formSettingData.file_category}`)
+                    Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
                 }
             })
             .catch((error) => console.log('error', error));
@@ -411,7 +411,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }, [])
 
     const handleTrainingDelete = async (cell) => {
-
         let token = localStorage.getItem('token');
         // let userId = localStorage.getItem('user_id');
         const response = await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
@@ -604,13 +603,15 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         if (window.confirm("Are you sure you want to delete ?"))
                                             handleTrainingDelete(cell)
                                     }}>Delete</Dropdown.Item>
-                                   
+
                                     <Dropdown.Item href={`/file-repository-Edit/${cell}`}>Edit</Dropdown.Item>
-                                   
-                                    {getUser_Role === "guardian" ? (<></>) : (<><Dropdown.Item href="#" onClick={() => {
-                                        setSaveFileId(cell);
-                                        setShowModal(true)
-                                    }}>Share</Dropdown.Item> </>)}
+                                    {getUser_Role === "guardian" ? (<></>) : (<>
+                                        <Dropdown.Item href="#" onClick={() => {
+                                            setSaveFileId(cell);
+                                            setShowModal(true)
+                                        }}>Share</Dropdown.Item>
+                                    </>)}
+
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>
@@ -734,7 +735,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                         </footer>
                                                                     </Dropdown.Menu>
                                                                 </Dropdown> */}
-                                                                <span
+                                                                <FilerepoUploadFile />
+                                                                {/* <span
                                                                     className="btn btn-primary me-3"
                                                                     onClick={handleShow}
                                                                 >
@@ -742,7 +744,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                         icon={faArrowUpFromBracket}
                                                                     />{' '}
                                                                     Upload File
-                                                                </span>
+                                                                </span> */}
                                                                 {/* <Dropdown>
                                                                     <Dropdown.Toggle
                                                                         id="extrabtn"
@@ -792,8 +794,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     <Row>
                                         <Col md={12}>
                                             <Form.Group>
+                                                <Form.Label>Upload File:*</Form.Label>
                                                 <DragDropRepository onChange={setField} />
-                                                {error && !formSettingData.setting_files && < span className="error"> File is required!</span>}
+                                                {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                                                 <p className="error">{errors.setting_files}</p>
                                             </Form.Group>
                                         </Col>
@@ -852,6 +855,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         })}
                                                     </Form.Select>
                                                 </>)}
+
+
                                             {error && !formSettingData.file_category && < span className="error"> File is required!</span>}
                                         </Form.Group>
                                     </Col>
@@ -919,16 +924,22 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             setFormSettings((prevState) => ({
                                                                 ...prevState,
                                                                 assigned_franchisee: [...data.map(data => data.id)],
-                                                                franchisee: [...data.map(data => data.id)],
+                                                                franchisee: [...data.map(data => data.id)]
                                                             }));
+
+                                                            setSelectedUser([])
+                                                            setSelectedChild([])
                                                         }}
 
                                                         onSelect={function noRefCheck(data) {
                                                             setFormSettings((prevState) => ({
                                                                 ...prevState,
                                                                 assigned_franchisee: [...data.map((data) => data.id)],
-                                                                franchisee: [...data.map(data => data.id)],
+                                                                franchisee: [...data.map(data => data.id)]
                                                             }));
+
+                                                            setSelectedUser([])
+                                                            setSelectedChild([])
                                                         }}
                                                         options={franchiseeList}
                                                     />
@@ -1107,14 +1118,14 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                                 .toString()
                                                                                 .includes('coordinator')
                                                                         ) {
-                                                                            data['shared_role'] += 'coordinator,';
+                                                                            data['shared_role'] += 'coordinator';
                                                                         }
                                                                         if (
                                                                             !data['shared_role']
                                                                                 .toString()
                                                                                 .includes('all')
                                                                         ) {
-                                                                            data['shared_role'] += 'all,';
+                                                                            data['shared_role'] += ',';
                                                                         }
                                                                         setFormSettingData(data);
                                                                     } else {
@@ -1123,7 +1134,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     }
                                                                 }}
                                                                 checked={formSettingData?.shared_role?.includes(
-                                                                    'all'
+                                                                    'guardian,educator,coordinator'
                                                                 )}
                                                             />
                                                             <span className="checkmark"></span>
@@ -1133,6 +1144,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             ) : null}
                                             {formSettingData.accessible_to_role === 0 ? (
                                                 <>
+
                                                     <Form.Group>
                                                         <Form.Label>Select User</Form.Label>
                                                         <div className="select-with-plus">
@@ -1150,7 +1162,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         </div>
                                                         <p className="error">{errors.franchisee}</p>
                                                     </Form.Group>
-
                                                     <Form.Group>
                                                         <Form.Label>Select Child</Form.Label>
                                                         <div className="select-with-plus">

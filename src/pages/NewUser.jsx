@@ -10,6 +10,7 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import validateForm from '../helpers/validateForm';
 import { BASE_URL } from '../components/App';
+import { suburbData } from '../assets/data/suburbData';
 import { Link } from 'react-router-dom';
 import { UserFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
@@ -48,7 +49,7 @@ const NewUser = () => {
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
-  const [cityData, setCityData] = useState([]);
+  const [cityData, setCityData] = useState(suburbData);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [franchiseeData, setFranchiseeData] = useState(null);
@@ -57,6 +58,7 @@ const NewUser = () => {
   const [pdcData, setPdcData] = useState([]);
   const [businessAssetData, setBuinessAssetData] = useState([]);
   const [trainingDocuments, setTrainingDocuments] = useState();
+  const [suburbSearchString, setSuburbSearchString] = useState("");
 
   // IMAGE CROPPING STATES
   const [image, setImage] = useState(null);
@@ -377,24 +379,22 @@ const NewUser = () => {
     }
   };
 
-  // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-  const fetchCities = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/cities`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    if (response.status === 200) {
-      const { cityList } = response.data;
-      setCityData(
-        cityList.map((city) => ({
-          value: city.name,
-          label: city.name,
-        }))
-      );
-    }
-  };
+  // FETCHING SUBURB DATA
+  const fetchSuburbData = () => {
+    const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
+    const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+    axios.all([getSuburbList]).then(
+      axios.spread((...data) => {
+        console.log('SUBURB DATA:', data[0].data.data);
+        let sdata = data[0].data.data;
+        setCityData(sdata.map(d => ({
+          id: d.id,
+          value: d.name,
+          label: d.name
+        })));
+      })
+    )
+  }
 
   const fetchTrainingCategories = async () => {
     const response = await axios.get(
@@ -497,12 +497,15 @@ const NewUser = () => {
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
-    fetchCities();
     fetchTrainingCategories();
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
     fetchFranchiseeList();
   }, []);
+
+  useEffect(() => {
+    fetchSuburbData();
+  }, [suburbSearchString])
 
   useEffect(() => {
     fetchCoordinatorData(formData.franchisee)
@@ -525,8 +528,6 @@ const NewUser = () => {
   }, [currentRole]);
 
   formData && console.log('FORM ERRORS:', formData);
-  // franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
-  // formErrors && console.log('FORM ERRORS:', formErrors);
   formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
 
   return (
@@ -630,14 +631,17 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Suburb</Form.Label>
                             <Select
-                              placeholder="Which Suburb?"
+                              placeholder="Search Your Suburb"
                               closeMenuOnSelect={true}
                               options={cityData}
                               value={cityData?.filter(d => d.label === formData?.city)}
+                              onInputChange={(e) => {
+                                setSuburbSearchString(e);
+                              }}
                               onChange={(e) => {
-                                setFormData((prevState) => ({
+                                setFormData(prevState => ({
                                   ...prevState,
-                                  city: e.value,
+                                  city: e.value
                                 }));
 
                                 setFormErrors(prevState => ({

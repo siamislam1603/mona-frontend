@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import VideoPop from "../components/VideoPop";
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
+import FilerepoUploadFile from './FilerepoUploadFile';
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem('franchisee_id')
 const animatedComponents = makeAnimated();
@@ -653,7 +654,8 @@ const FileRpositoryList = () => {
                                                                         </footer>
                                                                     </Dropdown.Menu>
                                                                 </Dropdown> */}
-                                                                <span
+                                                                <FilerepoUploadFile />
+                                                                {/* <span
                                                                     className="btn btn-primary me-3"
                                                                     onClick={handleShow}
                                                                 >
@@ -661,7 +663,7 @@ const FileRpositoryList = () => {
                                                                         icon={faArrowUpFromBracket}
                                                                     />{' '}
                                                                     Upload File
-                                                                </span>
+                                                                </span> */}
                                                                 {/* <Dropdown>
                                                                     <Dropdown.Toggle
                                                                         id="extrabtn"
