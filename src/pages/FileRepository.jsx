@@ -24,6 +24,7 @@ import { BASE_URL } from '../components/App';
 import { useNavigate } from 'react-router-dom';
 import FileRepoShairWithme from './FileRepoShairWithme';
 import FileRepodAddbyMe from './FileRepodAddbyMe';
+import FilerepoUploadFile from './FilerepoUploadFile';
 
 
 let selectedUserId = '';
@@ -353,71 +354,7 @@ const FileRepository = () => {
       .catch((error) => console.log('error', error));
   };
 
-  // { console.log(formSettingData.setting_files, ")>>>>>>>>>>") }
 
-  // const getFilesassigned_usersMeData = () => {
-  //   var myHeaders = new Headers();
-  //   myHeaders.append(
-  //     'authorization',
-  //     'Bearer ' + localStorage.getItem('token')
-  //   );
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     redirect: 'follow',
-  //     headers: myHeaders,
-  //   };
-  //   fetch(
-  //     `${BASE_URL}/uploads/assigned_usersMe/${localStorage.getItem('user_id')}`,
-  //     requestOptions
-  //   )
-  //     .then((response) => response.json())
-  //     .then((res) => {
-  //       setassigned_usersMeFileRepoData(res);
-  //     })
-  //     .catch((error) => console.log('error', error));
-  // };
-
-
-  // const getMyAddedFileRepoData = () => {
-  //   var myHeaders = new Headers();
-  //   myHeaders.append(
-  //     'authorization',
-  //     'Bearer ' + localStorage.getItem('token')
-  //   );
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     redirect: 'follow',
-  //     headers: myHeaders,
-  //   };
-
-  //   fetch(
-  //     `${BASE_URL}/uploads/dashboardFiles/${localStorage.getItem('user_id')}`,
-  //     requestOptions
-  //   )
-  //     .then((response) => response.json())
-  //     .then((result) => {
-
-  //       console.log('data--->', result);
-
-  //       setFileRepoData(result);
-  //     })
-  //     .catch((error) => console.log('error', error));
-  // };
-
-  // const getUserRoleAndFranchiseeData = () => {
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     redirect: 'follow',
-  //   };
-
-  //   fetch(`${BASE_URL}/fileRepo/`, requestOptions)
-  //     .then((response) => response.json())
-  //     .then((res) => {
-  //       setUserRole(res?.userRoleList);
-  //       console.log('response0-------->1', res?.userRoleList);
-  //     })
-  //     .catch((error) => console.log('error', error));
-  // };
 
   function onSelectUser(optionsList, selectedItem) {
     console.log('selected_item---->2', selectedItem);
@@ -494,6 +431,7 @@ const FileRepository = () => {
     <>
       {console.log('hello----->', formSettingData)}
       <div id="main">
+
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -590,7 +528,8 @@ const FileRepository = () => {
                                     </footer>
                                   </Dropdown.Menu>
                                 </Dropdown> */}
-                                <span
+                                <FilerepoUploadFile />
+                                {/* <span
                                   className="btn btn-primary me-3"
                                   onClick={handleShow}
                                 >
@@ -598,7 +537,7 @@ const FileRepository = () => {
                                     icon={faArrowUpFromBracket}
                                   />{' '}
                                   Upload File
-                                </span>
+                                </span> */}
                                 {/* <Dropdown>
                                   <Dropdown.Toggle
                                     id="extrabtn"
