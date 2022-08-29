@@ -92,6 +92,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchParentDataAndPopulate();
   }, [formStepData]);
 

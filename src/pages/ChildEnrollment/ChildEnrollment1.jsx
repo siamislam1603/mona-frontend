@@ -336,6 +336,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, []);
 
