@@ -11,19 +11,10 @@ import { useParams } from 'react-router-dom';
 
 let nextstep = 2;
 let step = 1;
-let telDigitCount = 0;
-
-var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-// let countryData = [
-//   {
-//     id: 1,
-//     value: "Australia",
-//     label: "Australia"
-//   }
-// ]
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
-  let { childId: paramsChildId } = useParams();
+  console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 1);
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
@@ -92,13 +83,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     // UPDATING CHILD DETAIL
     let response;
     if(formStepData > step) {
-      response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData }, {
+      response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...childData }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
       });
     } else {
-      response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...childData, form_step:  nextstep, isChildEnrolled: 1 }, {
+      response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...childData, form_step:  nextstep, isChildEnrolled: 1 }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -108,7 +99,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     if(response.status === 201 && response.data.status === "success") {
       // UPDATIN PARENT DETAIL
       console.log('PARENT DATA BEFORE UPDATION:', parentData);
-      response = await axios.patch(`${BASE_URL}/enrollment/parent/${parentId}`, {...parentData}, {
+      response = await axios.patch(`${BASE_URL}/enrollment/parent/${paramsParentId}`, {...parentData}, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -332,6 +323,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, []);
 
@@ -682,7 +674,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         type="radio"
                         name="aboriginaltorres"
                         id="yestorres"
-                        checked={formOneChildData?.child_origin.toUpperCase() === "TSI"}
+                        checked={formOneChildData?.child_origin?.toUpperCase() === "TSI"}
                         label="Yes, Torres Straight Islander"
                         onChange={(event) => {
                           setFormOneChildData(prevState => ({
@@ -1076,10 +1068,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               </Row>
             </div>
           </div>
-          <div className="enrollment-form-sec mt-5">
+          <div className="enrollment-form-sec mt-3">
             <Form onSubmit={submitFormData}>
               <div className="enrollment-form-column">
-                <h2 className="title-xs mb-3">Information about the child’s parents or guardians</h2>
+                <h2 className="title-xs">Information about the child’s parents or guardians</h2>
                 <div className="grayback">
                   <Row>
                     <Col md={12}>
@@ -1264,21 +1256,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>Telephone *</Form.Label>
                           <Form.Control 
                             type="tel" 
-                            placeholder="+3375005467"
+                            placeholder="3375005467"
+                            maxLength={10}
                             name="telephone"
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
-                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  telephone: e.target.value.slice(0, -1)
-                                }));
-                              } else {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  telephone: e.target.value
-                                }));
-                              }
+                              handleParentData(e);
                               setParentFormErrors(prevState => ({
                                 ...prevState,
                                 telephone: null
@@ -1499,10 +1482,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 src={'/img/mini_loader1.gif'}
                 alt=""
                 />
-                  Submitting...
+                  {
+                    localStorage.getItem('user_role') === 'guardian'
+                    ? "Saving..."
+                    : "Submitting..."
+                  }
               </>
-            ) : (
-            'Submit')}
+            ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
           </Button>
           </div>
         </Form>

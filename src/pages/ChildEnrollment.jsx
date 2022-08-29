@@ -10,13 +10,17 @@ import StepFive from "./ChildEnrollment/ChildEnrollment5";
 import StepSix from "./ChildEnrollment/ChildEnrollment6";
 import StepSeven from "./ChildEnrollment/ChildEnrollment7";
 import StepEight from "./ChildEnrollment/ChildEnrollment8";
+import { useLocation } from "react-router-dom";
+
 import { useEffect } from "react";
 import axios from 'axios';
 import { BASE_URL } from "../components/App";
 import { useParams } from 'react-router-dom';
 
 function ChildEnrollment() {
-  // let page = window.location.search.split('=')[1];
+  // let queryPage = null;
+  // queryPage = window.location.search.split('=')[1];
+  // console.log('Query STRING:', queryStringPageStep);
   let { childId, parentId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
@@ -59,17 +63,24 @@ function ChildEnrollment() {
 
       // console.log('ASKED FOR CONSENT:', localStorage.getItem('asked_for_consent'));
       if(localStorage.getItem('asked_for_consent') === "true") {
-        // console.log('ASKED FOR CONSENT');
         setstep(1);  
       } else {
-        // console.log('Didn\'t ask for consent');
-          console.log('Stepping Inside Sever fetched step!');
-          setstep(form_step);
+        console.log('Stepping Inside Sever fetched step!');
+        // console.log('STEP VALUE:', queryPage ? queryPage : form_step);
+        const query = new URL(window.location.href);
+        console.log('QWUERY:', query);
+        console.log('PAGE:', query.searchParams.get('page'));
+
+        setstep(parseInt(query.searchParams.get('page')) || form_step);
       }
     } else {
       setstep(1);
     }
   };
+
+  useEffect(() => {
+    console.log('STEP RIGHT NOW:', step);
+  }, [step])
 
   useEffect(() => {
     console.log('Updating step from Database!');

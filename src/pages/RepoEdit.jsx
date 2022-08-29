@@ -93,7 +93,7 @@ const RepoEdit = () => {
         event.preventDefault();
         setLoaderFlag(true);
         console.log('DATA:', data);
-        if (!data.image || !data.description || !data.categoryId) {
+        if (!data.image || !data.description|| data.description == "" || !data.categoryId) {
             setError(true);
             return false
         }
@@ -120,7 +120,7 @@ const RepoEdit = () => {
                 console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
                     console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
-                    window.location.href = '/file-repository';
+                    navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
             } else if (typeof data.image === 'object') {
                 let dataObj = new FormData();
@@ -137,12 +137,12 @@ const RepoEdit = () => {
                 if (response.status === 200 && response.data.status === "success") {
                     setLoaderFlag(false);
                     console.log('DATA UPDATED SUCCESSFULLT => type: object');
-                    window.location.href = '/file-repository';
+                    navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
             }
             setLoaderFlag(false);
             console.log('DATA UPDATED SUCCESSFULLT');
-            window.location.href = '/file-repository';
+            navigate(`/file-repository-List-me/${data.categoryId}`);
         } else {
             setLoaderFlag(false);
         }
@@ -196,6 +196,7 @@ const RepoEdit = () => {
         );
         if (response.status === 200 && response.data.status === "success") {
             const categoryList = response.data.category;
+            console.log(categoryList,"category Listtt")
             setCategory([
                 ...categoryList.map((data) => ({
                     id: data.id,
@@ -261,6 +262,25 @@ const RepoEdit = () => {
         console.log(selectedChild, "Selllee")
         setSelectedChild(removedchildarr)
     }
+
+    const isAllRolesChecked = () => {
+        let bool = false;
+        if(getUser_Role == "franchisor_admin"){
+          bool = ["guardian","educator","coordinator","franchisee_admin"].every(item => data?.shared_role?.includes(item))
+        }
+        else if(getUser_Role == "franchisee_admin"){
+          bool = ["guardian","educator","coordinator"].every(item => data?.shared_role?.includes(item))
+        }
+        else if(getUser_Role == "coordinator"){
+          bool = ["guardian","educator"].every(item => data?.shared_role?.includes(item))
+        }
+        else if(getUser_Role == "educator"){
+          bool = ["guardian"].every(item => data?.shared_role?.includes(item))
+        }
+    
+        return bool;
+      }
+
     useEffect(() => {
         GetData();
         getFileCategory();
@@ -355,7 +375,7 @@ const RepoEdit = () => {
                                                     <Col lg={12}>
                                                         <div className="metadescription">
                                                             <Form.Group className="mb-3">
-                                                                <Form.Label>Meta Description</Form.Label>
+                                                                <Form.Label>Meta Description*</Form.Label>
                                                                 <Form.Control
                                                                     as="textarea"
                                                                     rows={2}
@@ -377,9 +397,10 @@ const RepoEdit = () => {
                                                                         onChange={(e) => {
                                                                             setField(e.target.name, e.target.value);
                                                                         }}
+                                                                        value={data?.categoryId}
                                                                     >
                                                                         <option value="">Select File Category</option>
-                                                                        <option value="8">Guardian</option>
+                                                                        <option value="8">General</option>
                                                                     </Form.Select>
                                                                 </>) : (
                                                                 <>
@@ -388,11 +409,12 @@ const RepoEdit = () => {
                                                                         onChange={(e) => {
                                                                             setField(e.target.name, e.target.value);
                                                                         }}
+                                                                        value={data?.categoryId}
                                                                     >
                                                                         <option value="">Select File Category</option>
                                                                         {category?.map((item) => {
                                                                             return (
-                                                                                <option value={item.id}>{item.category_name}</option>
+                                                                                <option value={item.id}>{item.value}</option>
                                                                             );
                                                                         })}
                                                                     </Form.Select>
@@ -424,6 +446,7 @@ const RepoEdit = () => {
                                                                                         }));
                                                                                         setSendToAllFranchisee('all')
                                                                                     }}
+                                                                                    disabled={getUser_Role !== 'franchisor_admin'}
                                                                                 />
                                                                                 <span className="radio-round"></span>
                                                                                 <p>Yes</p>
@@ -443,6 +466,7 @@ const RepoEdit = () => {
                                                                                         }));
                                                                                         setSendToAllFranchisee('none')
                                                                                     }}
+                                                                                    disabled={getUser_Role !== 'franchisor_admin'}
                                                                                 />
                                                                                 <span className="radio-round"></span>
                                                                                 <p>No</p>
@@ -456,7 +480,7 @@ const RepoEdit = () => {
                                                                     <Form.Label>Select Franchisee</Form.Label>
                                                                     <div className="select-with-plus">
                                                                         <Multiselect
-                                                                            disable={sendToAllFranchisee === 'all'}
+                                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                                                                             placeholder={"Select Franchisee"}
                                                                             displayValue="key"
                                                                             className="multiselect-box default-arrow-select"
@@ -464,6 +488,8 @@ const RepoEdit = () => {
                                                                                 setData((prevState) => ({
                                                                                     ...prevState,
                                                                                     franchise: [...data.map(data => data.id)],
+                                                                                    assigned_childs: [],
+                                                                                    assigned_users: []
                                                                                 }));
                                                                             }}
                                                                             selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
@@ -536,7 +562,31 @@ const RepoEdit = () => {
                                                                     <Form.Group>
                                                                         <Form.Label>Select User Roles</Form.Label>
                                                                         <div className="modal-two-check user-roles-box">
-                                                                            <label className="container">
+                                                                        {['franchisor_admin'].includes(getUser_Role) ? (<label className="container">
+                                                                                Franchisee Admin
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    name="shared_role"
+                                                                                    id="franchisee_admin"
+                                                                                    checked={data?.user_roles?.toString().includes('franchisee_admin')}
+                                                                                    onChange={() => {
+                                                                                        if (data.user_roles?.includes("franchisee_admin")) {
+                                                                                            let Data = data.user_roles.filter(t => t !== "franchisee_admin");
+                                                                                            setData(prevState => ({
+                                                                                                ...prevState,
+                                                                                                user_roles: [...Data]
+                                                                                            }));
+                                                                                        }
+                                                                                        if (!data.user_roles?.includes("franchisee_admin"))
+                                                                                            setData(prevState => ({
+                                                                                                ...prevState,
+                                                                                                user_roles: [...data.user_roles, "franchisee_admin"]
+                                                                                            }))
+                                                                                    }}
+                                                                                />
+                                                                                <span className="checkmark"></span>
+                                                                            </label>) : null}
+                                                                            {['franchisor_admin','franchisee_admin'].includes(getUser_Role) ? (<label className="container">
                                                                                 Co-ordinators
                                                                                 {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                                 <input
@@ -560,8 +610,8 @@ const RepoEdit = () => {
                                                                                     }}
                                                                                 />
                                                                                 <span className="checkmark"></span>
-                                                                            </label>
-                                                                            <label className="container">
+                                                                            </label>) : null}
+                                                                            {['franchisor_admin','franchisee_admin', 'coordinator'].includes(getUser_Role) ? ( <label className="container">
                                                                                 Educators
                                                                                 <input
                                                                                     type="checkbox"
@@ -584,13 +634,13 @@ const RepoEdit = () => {
                                                                                     }}
                                                                                 />
                                                                                 <span className="checkmark"></span>
-                                                                            </label>
-                                                                            <label className="container">
+                                                                            </label>) : null}
+                                                                            {!['guardian'].includes(getUser_Role) ? (<label className="container">
                                                                                 Guardian
                                                                                 <input
                                                                                     type="checkbox"
                                                                                     name="shared_role"
-                                                                                    id="Guardian"
+                                                                                    id="guardian"
                                                                                     checked={data?.user_roles.includes('guardian')}
                                                                                     onChange={() => {
                                                                                         if (data.user_roles?.includes("guardian")) {
@@ -608,14 +658,14 @@ const RepoEdit = () => {
                                                                                     }}
                                                                                 />
                                                                                 <span className="checkmark"></span>
-                                                                            </label>
-                                                                            <label className="container">
+                                                                            </label>) : null}
+                                                                            {!['educator','guardian'].includes(getUser_Role) ? (<label className="container">
                                                                                 All Roles
                                                                                 <input
                                                                                     type="checkbox"
                                                                                     name="shared_role"
                                                                                     id="all_roles"
-                                                                                    checked={data?.user_roles?.includes('guardian' && 'educator' && 'coordinator')}
+                                                                                    checked={isAllRolesChecked()}
                                                                                     onChange={() => {
                                                                                         if (data.user_roles?.includes("coordinator")
                                                                                             && data.user_roles.includes("educator")
@@ -636,7 +686,7 @@ const RepoEdit = () => {
                                                                                             )
                                                                                     }} />
                                                                                 <span className="checkmark"></span>
-                                                                            </label>
+                                                                            </label>) : null}
                                                                         </div>
                                                                     </Form.Group>
                                                                 ) : null}

@@ -10,6 +10,7 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import validateForm from '../helpers/validateForm';
 import { BASE_URL } from '../components/App';
+import { suburbData } from '../assets/data/suburbData';
 import { Link } from 'react-router-dom';
 import { UserFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
@@ -48,7 +49,7 @@ const NewUser = () => {
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
-  const [cityData, setCityData] = useState([]);
+  const [cityData, setCityData] = useState(suburbData);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [franchiseeData, setFranchiseeData] = useState(null);
@@ -57,6 +58,7 @@ const NewUser = () => {
   const [pdcData, setPdcData] = useState([]);
   const [businessAssetData, setBuinessAssetData] = useState([]);
   const [trainingDocuments, setTrainingDocuments] = useState();
+  const [suburbSearchString, setSuburbSearchString] = useState("");
 
   // IMAGE CROPPING STATES
   const [image, setImage] = useState(null);
@@ -194,52 +196,40 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
-      // if(croppedImage) {
-      //   setFormErrors(prevState => ({
-      //     ...prevState,
-      //     profile_pic: null
-      //   }));
-      // } else {
-      //   setFormErrors(prevState => ({
-      //     ...prevState,
-      //     profile_pic: 'Image is required!'
-      //   }));
-      // }
     } else {
-      console.log('Erorrs removed!');
-      let data=new FormData();
-      let doc=[];
-      trainingDocuments?.map(async(item)=>{
-        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
-        // doc.push(blob);
-        data.append('images', blob);
-      })
-      
-      if(croppedImage) {
-        const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-        // doc.push(blob);
-        data.append('images', blob);
-      }
-      
-      Object.keys(formData)?.map((item,index) => {
-        data.append(item,Object.values(formData)[index]);
-      })
-      
-      // data.append("images", doc);
-      let errorObject = UserFormValidation(formData);
+        console.log('Erorrs removed!');
+        let data=new FormData();
+        let doc=[];
+        trainingDocuments?.map(async(item)=>{
+          const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+          // doc.push(blob);
+          data.append('images', blob);
+        })
+        
+        if(croppedImage) {
+          const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+          // doc.push(blob);
+          data.append('images', blob);
+        }
+        
+        Object.keys(formData)?.map((item,index) => {
+          data.append(item,Object.values(formData)[index]);
+        })
+        
+        // data.append("images", doc);
+        let errorObject = UserFormValidation(formData);
 
-      if(Object.keys(errorObject).length > 0) {
-          console.log('THERE ARE STILL ERRORS', errorObject);
-          setFormErrors(errorObject);
-      } else {
-          console.log('CREATING USER!');
-          setCreateUserModal(true);
-          setLoaderMessage("Creating New User")
-          setLoader(true)
-          createUser(data);
-      }
-      
-      createUser(data);
+        if(Object.keys(errorObject).length > 0) {
+            console.log('THERE ARE STILL ERRORS', errorObject);
+            setFormErrors(errorObject);
+        } else {
+            console.log('CREATING USER!');
+            setCreateUserModal(true);
+            setLoaderMessage("Creating New User")
+            setLoader(true)
+            createUser(data);
+        } 
+        createUser(data);
     }
   };
 
@@ -377,24 +367,22 @@ const NewUser = () => {
     }
   };
 
-  // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-  const fetchCities = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/cities`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    if (response.status === 200) {
-      const { cityList } = response.data;
-      setCityData(
-        cityList.map((city) => ({
-          value: city.name,
-          label: city.name,
-        }))
-      );
-    }
-  };
+  // FETCHING SUBURB DATA
+  const fetchSuburbData = () => {
+    const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
+    const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+    axios.all([getSuburbList]).then(
+      axios.spread((...data) => {
+        console.log('SUBURB DATA:', data[0].data.data);
+        let sdata = data[0].data.data;
+        setCityData(sdata.map(d => ({
+          id: d.id,
+          value: d.name,
+          label: d.name
+        })));
+      })
+    )
+  }
 
   const fetchTrainingCategories = async () => {
     const response = await axios.get(
@@ -497,7 +485,6 @@ const NewUser = () => {
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
-    fetchCities();
     fetchTrainingCategories();
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
@@ -505,8 +492,14 @@ const NewUser = () => {
   }, []);
 
   useEffect(() => {
+    fetchSuburbData();
+  }, [suburbSearchString])
+
+  useEffect(() => {
     fetchCoordinatorData(formData.franchisee)
   }, [formData.franchisee]);
+
+  formErrors && console.log('FORM ERRORS:', formErrors);
 
   useEffect(() => { 
     if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') {
@@ -525,8 +518,6 @@ const NewUser = () => {
   }, [currentRole]);
 
   formData && console.log('FORM ERRORS:', formData);
-  // franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
-  // formErrors && console.log('FORM ERRORS:', formErrors);
   formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
 
   return (
@@ -630,14 +621,17 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Suburb</Form.Label>
                             <Select
-                              placeholder="Which Suburb?"
+                              placeholder="Search Your Suburb"
                               closeMenuOnSelect={true}
                               options={cityData}
                               value={cityData?.filter(d => d.label === formData?.city)}
+                              onInputChange={(e) => {
+                                setSuburbSearchString(e);
+                              }}
                               onChange={(e) => {
-                                setFormData((prevState) => ({
+                                setFormData(prevState => ({
                                   ...prevState,
-                                  city: e.value,
+                                  city: e.value
                                 }));
 
                                 setFormErrors(prevState => ({
@@ -717,9 +711,11 @@ const NewUser = () => {
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={(e) => {
+
+                                  e.target.value = e.target.value.replace(/\s/g, "");
                                   // handleChange(e);
                                   if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                                    setFormErrors(prevState => ({
+                                    setFormData(prevState => ({
                                       ...prevState,
                                       phone: e.target.value.slice(0, -1)
                                     })); 
@@ -729,6 +725,11 @@ const NewUser = () => {
                                       phone: e.target.value
                                     }));
                                   }
+
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    phone: null
+                                  }));
                                 }}
                               />
                             </div>

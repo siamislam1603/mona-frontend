@@ -134,6 +134,12 @@ const TrainingDetail = () => {
       fetchTrainingFormDetails(trainingDetails?.training_form_id);
   }, [trainingDetails])
 
+
+  useEffect(() => {
+    if(localStorage.getItem('user_role') === 'guardian') {
+      window.location.href=`/parents-dashboard`;
+    }
+  }, []);
   // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
   // relatedForms && console.log('RELATED FORMS:', relatedForms);
   return (

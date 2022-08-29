@@ -185,19 +185,28 @@ const ParentsDashboard = () => {
 
     if (response.status === 200 && response.data.status === 'success') {
       let { parentData } = response.data;
+      console.log('PARENT DATA:', parentData);
 
       if (parentData !== null && parentData.children.length > 0) {
         console.log('PARENT DATA ISN\'T NULL');
         let { children } = parentData;
         console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
         // FILTERING THE CHILDREN WHOSE ENROLLMENT FORM HASN'T BEEN FILLED
-        childIds = children.filter(d => d.isChildEnrolled === 0);
+        childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 0);
         console.log('CHILDREN TO BE ENROLLED:', childIds);
         // FETCHING AN ARRAY OF THEIR IDs.
         childIds = childIds.map(d => d.id);
-        console.log('ARRAY OF CHILD IDs:', childIds);
+        console.log('ARRAY OF CHILD IDs present:', childIds);
 
-        setNonEnrolledChildIds(childIds);
+        if(childIds.length > 0) {
+          setNonEnrolledChildIds(childIds);
+        } else {
+          childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 1);
+          childIds = childIds.map(d => d.id);
+
+          if(childIds.length === 0)
+            setLogUserOutDialog(true);
+        }
       } else {
         // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
         console.log('NO CHILD IS ASSIGNED TO YOU!!!!!!!!!!');
@@ -215,6 +224,7 @@ const ParentsDashboard = () => {
     let parentId = localStorage.getItem('user_id');
     nonEnrolledChildIds?.forEach(childId => {
       let link = `/child-enrollment/${childId}/${parentId}`;
+      console.log('LINK GENERATED:', link);
       linkArray.push(link);
     });
 
@@ -280,245 +290,34 @@ const ParentsDashboard = () => {
                             </>
                           })
                         ) : (<div className="text-center mb-5 mt-5"><strong>No Educators</strong></div>)}
-
-                        <div className="event-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h4 className="title-sm mb-0"><strong>Events</strong></h4>
-                            <Link to="/announcements" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list event-list">
-                            {event.map((item) => {
-                              return <>
-                                {!item.title ? "" : <div className="item">
-                                  <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">{item.title}</a> <span className="date">{getAddedTime(item.scheduled_date)}</span></div>
-                                  <div className="cta-col">
-                                    <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item href="/announcements">View</Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  </div>
-                                </div>}
-                              </>
-                            })}
-                            {/* <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt="" />
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div> */}
-                            {/* <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt="" />
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div> */}
-                            {/* <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt="" />
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div> */}
-                            {/* <div className="item">
-                              <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
-                              <div className="name"><a href="">Some title of the event</a> <span className="date">03/06/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt="" />
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div> */}
-                          </div>
-                        </div>
-                        {/*<div className="files-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h2 className="title-sm mb-0"><strong>Files</strong></h2>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list files-list two-col">
-                            <div className="item">
-                              <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-                              <div className="name">document1.docx <span className="time">3 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-                              <div className="name">document2.pdf <span className="time">3 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/audio-ico.png" alt=""/></div>
-                              <div className="name">audiofile1.mp3 <span className="time">2 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/audio-ico.png" alt=""/></div>
-                              <div className="name">audiofile2.mp3 <span className="time">2 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/ppt-ico.png" alt=""/></div>
-                              <div className="name">presentation1.pptx <span className="time">2 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/ppt-ico.png" alt=""/></div>
-                              <div className="name">presentation1.pptx <span className="time">3 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
+                        {!event ? (<>
+                          <div className="event-sec pb-5">
+                            <header className="title-head mb-4 justify-content-between">
+                              <h4 className="title-sm mb-0"><strong>Events</strong></h4>
+                              <Link to="/announcements" className="viewall">View All</Link>
+                            </header>
+                            <div className="column-list event-list">
+                              {event.map((item) => {
+                                return <>
+                                  {!item.title ? "" : <div className="item">
+                                    <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
+                                    <div className="name"><a href="">{item.title}</a> <span className="date">{getAddedTime(item.scheduled_date)}</span></div>
+                                    <div className="cta-col">
+                                      <Dropdown>
+                                        <Dropdown.Toggle variant="transparent" id="ctacol">
+                                          <img src="../img/dot-ico.svg" alt="" />
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item href="/announcements">View</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  </div>}
+                                </>
+                              })}
                             </div>
                           </div>
-                        </div>
-                        <div className="files-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h3 className="title-sm mb-0"><strong>Forms</strong></h3>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list files-list two-col">
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          </div>
-                        </div>*/}
+                        </>) : (<></>)}
                       </div>
                     </Col>
                     <Col md={5}>

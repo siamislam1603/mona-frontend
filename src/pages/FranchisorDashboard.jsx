@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Progress } from 'react-sweet-progress';
 import "react-sweet-progress/lib/style.css";
 import BootstrapTable from "react-bootstrap-table-next";
@@ -12,77 +12,69 @@ import { BASE_URL } from '../components/App';
 import moment from 'moment';
 
 
-
-
-const products1 = [
-  {
-    id: 1,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 2,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 3,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-  {
-    id: 4,
-    formname: "../img/audit-form.png, AuditForm-v1.0, Audited on: 01/22/2022",
-    educatorname: "../img/user.png, James Smith, Homecare For Children",
-  },
-
-];
-const columns1 = [
-  {
-    dataField: 'formname',
-    text: 'Form Name',
-    formatter: (cell) => {
-      return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on:  {moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
-    },
-  },
-  {
-    dataField: 'educatorname',
-    text: 'Educator Name',
-    formatter: (cell) => {
-      console.log("EDUCATIN CELL", cell)
-      cell = cell.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
-    },
-  },
-  {
-    dataField: "action",
-    text: "",
-    formatter: (cell) => {
-      return (<><div className="cta-col">
-        <Dropdown>
-          <Dropdown.Toggle variant="transparent" id="ctacol">
-            <img src="../img/dot-ico.svg" alt="" />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item href="/form/response">View</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div></>)
-    },
-  }
-];
-
-
 const FranchisorDashboard = () => {
-
+  const navigate = useNavigate();
   const [count, setcount] = React.useState(null);
   const [state, setstate] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
   const [formData, setFormData] = useState([])
+  const [Index, setIndex] = useState(0);
+  const [innerIndex, setInnerIndex] = useState(0);
+  const [MeFormData, setMeFormData] = useState([]);
 
   let token = localStorage.getItem('token');
+  const columns1 = [
+    {
+      dataField: 'formname',
+      text: 'Form Name',
+      formatter: (cell) => {
+        return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on:  {moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
+      },
+    },
+    {
+      dataField: 'educatorname',
+      text: 'Educator Name',
+      formatter: (cell) => {
+        console.log("EDUCATIN CELL", cell)
+        cell = cell.split(",");
+        return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      },
+    },
+    {
+      dataField: "action",
+      text: "",
+      formatter: (cell) => {
+        return (<><div className="cta-col">
+          <Dropdown>
+            <Dropdown.Toggle variant="transparent" id="ctacol">
+              <img src="../img/dot-ico.svg" alt="" />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item href="/form/response">View</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div></>)
+      },
+    }
+  ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const Forms_count = () => {
     let token = localStorage.getItem('token');
@@ -384,7 +376,7 @@ const FranchisorDashboard = () => {
                               </Link>
                             </div>
                             <div className="listing">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
+                              <a className="item" href="/user-management/Guardian">
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalChildren}</span>

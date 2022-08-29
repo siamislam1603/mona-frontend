@@ -8,6 +8,7 @@ import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { useParams } from 'react-router-dom';
+import { suburbData } from '../assets/data/suburbData';
 import { BASE_URL } from '../components/App';
 import { Link } from 'react-router-dom';
 import UserSignature from './InputFields/UserSignature';
@@ -40,7 +41,7 @@ const EditUser = () => {
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
-  const [cityData, setCityData] = useState([]);
+  const [cityData, setCityData] = useState(suburbData);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [franchiseeData, setFranchiseeData] = useState(null);
@@ -51,6 +52,7 @@ const EditUser = () => {
   const [businessAssetData, setBuinessAssetData] = useState([]);
   const [trainingDocuments, setTrainingDocuments] = useState();
   const [editUserData, setEditUserData] = useState();
+  const [suburbSearchString, setSuburbSearchString] = useState("");
 
   // IMAGE CROPPING STATES
   const [image, setImage] = useState(null);
@@ -229,7 +231,8 @@ const EditUser = () => {
   }
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    let { name, value } = event.target;
+    value = value.replace(/\s/g, "");
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -328,24 +331,22 @@ const EditUser = () => {
     }
   };
 
-  // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-  const fetchCities = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/cities`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    if (response.status === 200) {
-      const { cityList } = response.data;
-      setCityData(
-        cityList.map((city) => ({
-          value: city.name,
-          label: city.name,
-        }))
-      );
-    }
-  };
+  // FETCHING SUBURB DATA
+  const fetchSuburbData = () => {
+    const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
+    const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+    axios.all([getSuburbList]).then(
+      axios.spread((...data) => {
+        console.log('SUBURB DATA:', data[0].data.data);
+        let sdata = data[0].data.data;
+        setCityData(sdata.map(d => ({
+          id: d.id,
+          value: d.name,
+          label: d.name
+        })));
+      })
+    )
+  }
 
   const fetchTrainingCategories = async () => {
     let token = localStorage.getItem('token');
@@ -482,13 +483,16 @@ const EditUser = () => {
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
-    fetchCities();
     fetchTrainingCategories();
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
     fetchEditUserData();
     fetchFranchiseeList();
   }, []);
+
+  useEffect(() => {
+    fetchSuburbData();
+  }, [suburbSearchString])
 
   useEffect(() => {
     copyDataToState();
@@ -593,16 +597,24 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Suburb</Form.Label>
                             <Select
-                              placeholder={"Which Suburb?"}
+                              placeholder="Search Your Suburb"
                               closeMenuOnSelect={true}
-                              value={cityData?.filter(d => d.label === formData?.city) || ""}
                               options={cityData}
-                              onChange={(e) =>
-                                setFormData((prevState) => ({
+                              value={[{value: `${formData?.city}`, label: `${formData?.city}`}] || ""}
+                              onInputChange={(e) => {
+                                setSuburbSearchString(e);
+                              }}
+                              onChange={(e) => {
+                                setFormData(prevState => ({
                                   ...prevState,
-                                  city: e.value,
-                                }))
-                              }
+                                  city: e.value
+                                }));
+
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  city: null
+                                }));
+                              }}
                             />
                             <span className="error">
                               {!formData.city && formErrors.city}
@@ -880,7 +892,7 @@ const EditUser = () => {
                     I am happy to be reached if you have any questions.
                   </p>
 
-                  <img style={{ width: '200px', height: 'auto' }} src={signatureImage || formData?.signature_image} alt="consented user signature" />
+                  <img style={{ width: '200px', height: 'auto' }} src={signatureImage || formData?.user_signature} alt="consented user signature" />
                 </Row>
               </Modal.Body>
 
