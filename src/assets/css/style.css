@@ -693,7 +693,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .error-sec .mb-3.relative { margin-bottom: 2rem!important; }
 .error-sec .mb-3.relative .error { position: absolute; }
 
-
+canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 
 
 
@@ -829,4 +829,3 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .audit-form .totalaudit{max-width:80px;height:80px;min-width:80px}
 .audit-form p{font-size:var(--fontlg)}
 }
-canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}

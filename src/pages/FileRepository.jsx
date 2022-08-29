@@ -101,6 +101,7 @@ const FileRepository = () => {
 
 
   const getUser_Role = localStorage.getItem(`user_role`)
+  const getFranchisee = localStorage.getItem('franchisee_id')
 
   const GetData = async () => {
     let response = await axios.get(`${BASE_URL}/fileRepo/`, {
@@ -111,7 +112,7 @@ const FileRepository = () => {
 
     console.log(response, "+++++++++++++++++++++", "response")
     if (response.status === 200) {
-      const users = response.data.dataArray;
+      const users = response.data.dataDetails;
       console.log(users, "successsuccesssuccesssuccesssuccess")
       let tempData = users.map((dt) => ({
         name: `${dt.categoryId}, ${dt.count}`,
@@ -150,7 +151,7 @@ const FileRepository = () => {
       'Bearer ' + localStorage.getItem('token')
     );
 
-    let franchiseeArr = formSettings.assigned_franchisee
+    let franchiseeArr = getUser_Role == 'franchisor_admin' ?  formSettings.franchisee : [getFranchisee]
 
     var request = {
       headers: myHeaders,
@@ -176,6 +177,16 @@ const FileRepository = () => {
     onSubmit();
   }, []);
 
+useEffect(()=>{
+  let role = localStorage.getItem('user_role')
+  if(role != 'franchisor_admin'){
+    setFormSettings((prevState) => ({
+      ...prevState,
+      assigned_franchisee: [getFranchisee],
+      franchisee: [getFranchisee]
+    }))
+  }
+},[])
   // if (!post) return null;
   const getFileCategory = async () => {
     var myHeaders = new Headers();
@@ -204,13 +215,20 @@ const FileRepository = () => {
       headers: myHeaders,
     };
 
-    let franchiseeArr = formSettings.franchisee
+    let franchiseeArr = getUser_Role == 'franchisor_admin' ?  formSettings.franchisee : [getFranchisee]
 
     let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
     if (response.status === 200) {
       // console.log(response.data.users, "respo")
-      setUser(response.data.users)
-      console.log(user, "userSList")
+      let userList = response.data.users
+      if(getUser_Role == 'franchisee_admin'){
+        userList = response.data.users.filter(c => ['coordinator','educator','guardian']?.includes(c.role + ""))
+      } else if(getUser_Role == 'coordinator'){
+        userList = response.data.users.filter(c => ['educator','guardian']?.includes(c.role + ""))
+      } else if(getUser_Role == 'educator'){
+        userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
+      }
+      setUser(userList)
     }
   };
 
@@ -310,7 +328,7 @@ const FileRepository = () => {
         );
         formdata.append(
           'assigned_users',
-          selectedUserId.slice(0, -1) == "" ? null : selectedUserId.slice(0, -1)
+          selectedUserId.slice(0, -1) == "" ? [] : selectedUserId.slice(0, -1)
         );
         formdata.append(
           'accessibleToRole',
@@ -428,8 +446,23 @@ const FileRepository = () => {
     setTabLinkPath(path);
   }
 
+  const isAllRolesChecked = () => {
+    let bool = false;
+    if(getUser_Role == "franchisor_admin"){
+      bool = ["guardian","educator","coordinator","franchisee_admin"].every(item => formSettingData?.shared_role?.includes(item))
+    }
+    else if(getUser_Role == "franchisee_admin"){
+      bool = ["guardian","educator","coordinator"].every(item => formSettingData?.shared_role?.includes(item))
+    }
+    else if(getUser_Role == "coordinator"){
+      bool = ["guardian","educator"].every(item => formSettingData?.shared_role?.includes(item))
+    }
+    else if(getUser_Role == "educator"){
+      bool = ["guardian"].every(item => formSettingData?.shared_role?.includes(item))
+    }
 
-  
+    return bool;
+  }
   return (
     <>
       {console.log('hello----->', formSettingData)}
@@ -677,7 +710,7 @@ const FileRepository = () => {
                           }}
                         >
                           <option value="">Select File Category</option>
-                          <option value="8">General</option>
+                          <option value="8" selected={true}>General</option>
                         </Form.Select>
                       </>) : (
                       <>
@@ -701,7 +734,9 @@ const FileRepository = () => {
                   </Form.Group>
                 </Col>
               </Row>
-              {getUser_Role === "guardian" ? (<></>) : (<>
+              {getUser_Role === "guardian" ? (<></>) : (
+              
+              <>
                 <Row className="mt-4">
                   <Col lg={3} md={6}>
                     <Form.Group>
@@ -722,6 +757,7 @@ const FileRepository = () => {
                                 }));
                                 setSendToAllFranchisee('all')
                               }}
+                              disabled={getUser_Role !== 'franchisor_admin'}
                             />
                             <span className="radio-round"></span>
                             <p>Yes</p>
@@ -742,6 +778,7 @@ const FileRepository = () => {
                                 }));
                                 setSendToAllFranchisee('none')
                               }}
+                              disabled={getUser_Role !== 'franchisor_admin'}
                             />
                             <span className="radio-round"></span>
                             <p>No</p>
@@ -756,7 +793,7 @@ const FileRepository = () => {
                       <Form.Label>Select Franchisee</Form.Label>
                       <div className="select-with-plus">
                         <Multiselect
-                          disable={sendToAllFranchisee === 'all'}
+                          disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                           placeholder={"Select User Names"}
                           displayValue="key"
                           className="multiselect-box default-arrow-select"
@@ -766,11 +803,10 @@ const FileRepository = () => {
                               assigned_franchisee: [...data.map(data => data.id)],
                               franchisee: [...data.map(data => data.id)]
                             }));
-
                             setSelectedUser([])
                             setSelectedChild([])
                           }}
-
+                          selectedValues={getUser_Role != 'franchisor_admin' ? (franchiseeList && franchiseeList.filter(c => c.id == getFranchisee)) : ""}
                           onSelect={function noRefCheck(data) {
                             setFormSettings((prevState) => ({
                               ...prevState,
@@ -833,8 +869,40 @@ const FileRepository = () => {
                       <Form.Group>
                         <Form.Label>Select User Roles</Form.Label>
                         <div className="modal-two-check user-roles-box">
-                          <label className="container">
-                            Co-ordinators
+                        {['franchisor_admin'].includes(getUser_Role) ? (<label className="container">
+                            Franchisee Admin
+                            <input
+                              type="checkbox"
+                              name="shared_role"
+                              id="franchisee_admin"
+                              onClick={(e) => {
+                                let data = { ...formSettingData };
+                                if (
+                                  !data['shared_role']
+                                    .toString()
+                                    .includes(e.target.id)
+                                ) {
+                                  data['shared_role'] += e.target.id + ',';
+                                } else {
+                                  data['shared_role'] = data[
+                                    'shared_role'
+                                  ].replace(e.target.id + ',', '');
+                                  if (data['shared_role'].includes('all')) {
+                                    data['shared_role'] = data[
+                                      'shared_role'
+                                    ].replace('all,', '');
+                                  }
+                                }
+                                setFormSettingData(data);
+                              }}
+                              checked={formSettingData?.shared_role
+                                ?.toString()
+                                .includes('franchisee_admin')}
+                            />
+                            <span className="checkmark"></span>
+                          </label>) : null}
+                          {['franchisor_admin','franchisee_admin'].includes(getUser_Role) ? (<label className="container">
+                            Coordinators
                             <input
                               type="checkbox"
                               name="shared_role"
@@ -864,8 +932,8 @@ const FileRepository = () => {
                                 .includes('coordinator')}
                             />
                             <span className="checkmark"></span>
-                          </label>
-                          <label className="container">
+                          </label>) : null}
+                          {['franchisor_admin','franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<label className="container">
                             Educators
                             <input
                               type="checkbox"
@@ -896,13 +964,13 @@ const FileRepository = () => {
                                 .includes('educator')}
                             />
                             <span className="checkmark"></span>
-                          </label>
-                          <label className="container">
+                          </label>) : null}
+                          {!['guardian'].includes(getUser_Role) ? (<label className="container">
                             Guardian
                             <input
                               type="checkbox"
                               name="shared_role"
-                              id="Guardian"
+                              id="guardian"
                               onClick={(e) => {
                                 let data = { ...formSettingData };
                                 if (
@@ -928,8 +996,8 @@ const FileRepository = () => {
                               )}
                             />
                             <span className="checkmark"></span>
-                          </label>
-                          <label className="container">
+                          </label>) : null}
+                          {!['educator','guardian'].includes(getUser_Role) ? (<label className="container">
                             All Roles
                             <input
                               type="checkbox"
@@ -942,30 +1010,39 @@ const FileRepository = () => {
                                   if (
                                     !data['shared_role']
                                       .toString()
-                                      .includes('guardian')
+                                      .includes('guardian') && ['franchisor_admin','franchisee_admin','coordinator','educator'].includes(getUser_Role)
                                   ) {
                                     data['shared_role'] += 'guardian,';
                                   }
                                   if (
                                     !data['shared_role']
                                       .toString()
-                                      .includes('educator')
+                                      .includes('educator')  && ['franchisor_admin','franchisee_admin','coordinator'].includes(getUser_Role)
                                   ) {
                                     data['shared_role'] += 'educator,';
                                   }
                                   if (
                                     !data['shared_role']
                                       .toString()
-                                      .includes('coordinator')
+                                      .includes('coordinator') && ['franchisor_admin','franchisee_admin'].includes(getUser_Role)
                                   ) {
-                                    data['shared_role'] += 'coordinator';
+                                    data['shared_role'] += 'coordinator,';
                                   }
+                                  if (
+                                    !data['shared_role']
+                                      .toString()
+                                      .includes('franchisee_admin') && ['franchisor_admin'].includes(getUser_Role)
+                                  ) {
+                                    data['shared_role'] += 'franchisee_admin';
+                                  }
+
                                   if (
                                     !data['shared_role']
                                       .toString()
                                       .includes('all')
                                   ) {
                                     data['shared_role'] += ',';
+                                    console.log(data,"dtatatatat")
                                   }
                                   setFormSettingData(data);
                                 } else {
@@ -973,12 +1050,10 @@ const FileRepository = () => {
                                   setFormSettingData(data);
                                 }
                               }}
-                              checked={formSettingData?.shared_role?.includes(
-                                'guardian,educator,coordinator'
-                              )}
+                              checked={isAllRolesChecked()}
                             />
                             <span className="checkmark"></span>
-                          </label>
+                          </label>) : null}
                         </div>
                       </Form.Group>
                     ) : null}
@@ -1019,10 +1094,14 @@ const FileRepository = () => {
                           </div>
                         </Form.Group>
                       </>
+
                     ) : null}
                   </Col>
                 </Row>
-              </>)}
+              </>
+              
+              )
+              }
             </div>
           </div>
         </Modal.Body>
