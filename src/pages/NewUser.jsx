@@ -124,6 +124,14 @@ const NewUser = () => {
 
   // }
 
+  const handleEmailValidation = (event) => {
+    const { key } = event;
+    // console.log('DATA EMAIL:', value);
+    if(key === "+" || key === " " || key === ".") {
+     console.log(event.target.value);
+    }
+  }
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -527,8 +535,7 @@ const NewUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  formData && console.log('FORM ERRORS:', formData);
-  formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
+  formData && console.log('FORM DATA:', formData);
 
   return (
     <>
@@ -573,9 +580,9 @@ const NewUser = () => {
                               type="email"
                               name="email"
                               placeholder="Enter Your Email ID"
-                              value={formData?.email}
-                              onChange={(e) => {
-                                handleChange(e);
+                              // value={formData?.email}
+                              onKeyUp={(e) => {
+                                handleEmailValidation(e);
                                 setFormErrors(prevState => ({
                                   ...prevState,
                                   email: null

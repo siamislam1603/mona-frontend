@@ -94,7 +94,6 @@ const LeftNavbar = () => {
     fetchPermissionList();
   }, []);
 
-  permissionList && console.log('PERMISSION LIST:', permissionList);
   return (
     <>
       <div className="logo-column text-center">
