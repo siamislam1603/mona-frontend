@@ -111,7 +111,7 @@ const FileRepository = () => {
 
     console.log(response, "+++++++++++++++++++++", "response")
     if (response.status === 200) {
-      const users = response.data.dataArray;
+      const users = response.data.dataDetails;
       console.log(users, "successsuccesssuccesssuccesssuccess")
       let tempData = users.map((dt) => ({
         name: `${dt.categoryId}, ${dt.count}`,
@@ -327,7 +327,7 @@ useEffect(()=>{
         );
         formdata.append(
           'assigned_users',
-          selectedUserId.slice(0, -1) == "" ? null : selectedUserId.slice(0, -1)
+          selectedUserId.slice(0, -1) == "" ? [] : selectedUserId.slice(0, -1)
         );
         formdata.append(
           'accessibleToRole',
@@ -771,7 +771,7 @@ useEffect(()=>{
                           }}
                         >
                           <option value="">Select File Category</option>
-                          <option value="8">General</option>
+                          <option value="8" selected={true}>General</option>
                         </Form.Select>
                       </>) : (
                       <>
