@@ -39,7 +39,7 @@ const training = [
 
 let DeleteId = [];
 
-const UserManagement = () => {
+const ChildrenEnrol = () => {
   const Key = useParams()
   console.log('Key+++++++++', Key.key)
   const navigate = useNavigate();
@@ -52,6 +52,8 @@ const UserManagement = () => {
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true)
+  const [formData, setFormData] = useState([])
+
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
@@ -139,51 +141,46 @@ const UserManagement = () => {
     }
   }
 
-  const selectRow = {
-    mode: 'checkbox',
-    onSelect: (row, isSelect, rowIndex, e) => {
-      if (DeleteId.includes(row.userID)) {
-        let Index;
-        DeleteId.map((item, index) => {
-          if (item === row.userID) {
-            Index = index;
-          }
-        })
-        DeleteId.splice(Index, 1);
-      }
-      else {
-        DeleteId.push(row.userID);
-      }
-
+  const columns1 = [
+    {
+      dataField: 'name',
+      text: 'Name',
+      formatter: (cell) => {
+        return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on: </small></span></div></>)
+      },
     },
-    onSelectAll: (isSelect, rows, e) => {
-      if (isSelect) {
-        userData.map((item) => {
-          DeleteId.push(item.userID);
-        });
-      }
-      else {
-        DeleteId = [];
-      }
-    }
-  };
-  const onDeleteAll = async () => {
-
-    if (window.confirm('Are you sure you want to delete All Records?')) {
-
-      let response = await axios.post(`${BASE_URL}/auth/user/delete/all`, { id: DeleteId }, {
-
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`,
+    {
+        dataField: 'parentName',
+        text: 'Parent Name',
+        formatter: (cell) => {
+          return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on: </small></span></div></>)
         },
+      },
+      {
+        dataField: 'educatorassisgned',
+        text: 'Educator Assigned',
+        formatter: (cell) => {
+          return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on: </small></span></div></>)
+        },
+      },
+      {
+        dataField: 'specailneed',
+        text: 'Special Need',
+        formatter: (cell) => {
+          return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on: </small></span></div></>)
+        },
+      },     
+    {
+      dataField: 'franchise',
+      text: 'Franchise ',
+      formatter: (cell) => {
+        console.log("EDUCATIN CELL", cell)
+        cell = cell.split(",");
+        return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+      },
+    },
+  ];
 
-      });
-      if (response.status === 200) {
-        fetchUserDetails();
-        DeleteId = [];
-      }
-    }
-  }
   const columns = [
     {
       dataField: 'name',
@@ -342,7 +339,7 @@ const UserManagement = () => {
       if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
         tempData = tempData.filter(d => d.action === 1);
       }
-
+      
       setUserDataAfterFilter(tempData);
       setIsLoading(false)
 
@@ -374,25 +371,25 @@ const UserManagement = () => {
     let role = localStorage.getItem('user_role');
     let filteredData = null;
 
-    if (role === 'franchisor_admin') {
+    if(role === 'franchisor_admin') {
       filteredData = data.filter(d => d.role !== 'franchisor_admin');
     }
 
-    if (role === 'franchisee_admin') {
+    if(role === 'franchisee_admin') {
       filteredData = data.filter(d => d.role !== 'franchisor_admin')
       filteredData = filteredData.filter(d => d.role !== 'franchisee_admin')
-
+          
     }
 
-    if (role === 'coordinator') {
+    if(role === 'coordinator') {
       filteredData = data.filter(d => d.role === 'educator' || d.role === 'guardian');
       console.log('COORDINATOR:', filteredData);
     }
 
-    if (role === 'educator') {
+    if(role === 'educator') {
       filteredData = data.filter(d => d.role === 'guardian');
     }
-
+    
     setUserData(filteredData);
   };
 
@@ -487,10 +484,29 @@ const UserManagement = () => {
   // useEffect(() => {
   //   render_user_filter()
   // }, [tempData])
+  const FormData = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("FORM Data", response)
+    if (response.status == 200) {
+      let data = response.data.data.formData;
+      let tempData = data.map((dt) => ({
+        formname: `${dt.audited_on}`,
+        franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
+        // console.log("THe dt",)
 
+      }))
+      setFormData(tempData);
+    }
+  }
 
   useEffect(() => {
     Show_eduactor()
+    FormData()
   }, [])
 
 
@@ -550,7 +566,7 @@ const UserManagement = () => {
                         topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
                       }
                       <header className="title-head">
-                        <h1 className="title-lg">All User</h1>
+                        <h1 className="title-lg">Children Enrol</h1>
                         <div className="othpanel">
                           <div className="extra-btn">
                             <div className="data-search me-3">
@@ -576,7 +592,7 @@ const UserManagement = () => {
                                 />
                               </Form.Group>
                             </div>
-                            <Dropdown className="filtercol me-3">
+                            {/* <Dropdown className="filtercol me-3">
                               <Dropdown.Toggle
                                 id="extrabtn"
                                 variant="btn-outline"
@@ -673,7 +689,7 @@ const UserManagement = () => {
                                         />
                                       </Form.Group>
                                     </div> */}
-                                <footer>
+                                {/* <footer>
                                   <Button
                                     variant="transparent"
                                     type="submit"
@@ -688,14 +704,14 @@ const UserManagement = () => {
                                   >
                                     Apply
                                   </Button>
-                                </footer>
-                              </Dropdown.Menu>
-                            </Dropdown>
+                                </footer> */}
+                              {/* </Dropdown.Menu> */}
+                            {/* </Dropdown> */} 
                             {
                               verifyPermission("user_management", "add") &&
                               <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
                             }
-                            <Dropdown>
+                            {/* <Dropdown>
                               <Dropdown.Toggle
                                 id="extrabtn"
                                 className="ctaact"
@@ -723,12 +739,12 @@ const UserManagement = () => {
                                   Delete All Row
                                 </Dropdown.Item>
                               </Dropdown.Menu>
-                            </Dropdown>
+                            </Dropdown> */}
                           </div>
                         </div>
                       </header>
                       {/* userEducator */}
-                      {!Key.key ? (
+                      {/* {!Key.key ? (
                         <>
                           <ToolkitProvider
                             keyField="name"
@@ -765,9 +781,24 @@ const UserManagement = () => {
                               </>
                             )}
                           </ToolkitProvider>
-                        </>)}
+                        </>)} */}
 
                     </>
+                    {
+                              formData?.length > 0 ?
+                                (
+                                  <BootstrapTable
+                                    keyField="name"
+                                    data={formData}
+                                    columns={columns1}
+                                  />
+                                ) : (
+                                  <div className="text-center mb-5 mt-5"><strong>
+                                    No forms present!
+                                  </strong></div>
+
+                                )
+                            }
 
                   </div>
                 </div>
@@ -780,4 +811,4 @@ const UserManagement = () => {
   );
 };
 
-export default UserManagement;
+export default ChildrenEnrol;

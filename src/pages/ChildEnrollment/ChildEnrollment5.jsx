@@ -133,6 +133,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
     
     let childDailyRoutineErrorObj = childDailyRoutineValidation(childDailyRoutineData);
     if(Object.keys(childDailyRoutineErrorObj).length > 0) {
+      window.scrollTo(0, 0);
       setChildDailyRoutineError(childDailyRoutineErrorObj);
     } else {
       if(formStepData >= step) {

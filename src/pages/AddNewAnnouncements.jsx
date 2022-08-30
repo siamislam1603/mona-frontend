@@ -70,7 +70,7 @@ const [titleError,setTitleError] = useState(null);
   const [allFranchise,setAllFranchise] = useState(false)
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
-
+  const [titleChecking,setTitleChecking] = useState(true)
 
 
 
@@ -88,9 +88,12 @@ const fetchUserRoles = async () => {
 };
 
 const createAnnouncement = async (data) => {
+  console.log("CALLING CREATED ANNOUCNEMENT")
   try {
-    console.log('CREATING THE ANNOUNCEMENT');
-  const token = localStorage.getItem('token');
+    
+    // console.log("title checking", resp)
+    const token = localStorage.getItem('token');
+
   const response = await axios.post(
     `${BASE_URL}/announcement/`, data, {
       headers: {
@@ -98,6 +101,7 @@ const createAnnouncement = async (data) => {
       }
     }
   );
+
   console.log("ADde anncunement response",response);
   console.log("jjjjjjjjjjjjjjjjjjjj");
   if(response.status === 200 && response.data.status === "fail"){
@@ -140,7 +144,7 @@ const createAnnouncement = async (data) => {
           console.log('ERROR RESPONSE!');
           setTopErrorMessage("Unable to save cover image!");
           setLoader(false)
-    setAddnewAnnouncement(false)
+          setAddnewAnnouncement(false)
 
 
           setTimeout(() => {
@@ -278,13 +282,16 @@ const createAnnouncement = async (data) => {
     const handleDataSubmit = event => {
       event.preventDefault();
       // if()
+      console.log("All frnahise",allFranchise)
       console.log("The annoucement after submit ",announcementData)
-      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage);
+      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage, allFranchise);
+
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
        }
        else{
+        console.log("INSDIE ERROR EMPTY")
         setError({});
         if(announcementData && coverImage && videoTutorialFiles) {
           let data = new FormData();
@@ -295,6 +302,7 @@ const createAnnouncement = async (data) => {
     
           videoTutorialFiles.forEach((file, index) => {
             data.append(`images`, file);
+            console.log("APPEND VIDEO")
           });
     
           relatedFiles.forEach((file, index) => {
@@ -302,8 +310,15 @@ const createAnnouncement = async (data) => {
           });
           setAddnewAnnouncement(true)
           setLoader(true);
-          createAnnouncement(data);
-        console.log("The data",data)
+          // {
+          //   titleChecking ? 
+          // createAnnouncement(data) :
+          // null
+
+          // }
+          console.log("titlechecing",titleChecking)
+          titleChecking && createAnnouncement(data);
+         console.log("The data",data)
        }
       }
       console.log("The datad adndsjkvnskdja ")
@@ -336,6 +351,26 @@ const createAnnouncement = async (data) => {
 // }
 
   };
+  const titleCheck = async() =>{
+    const token = localStorage.getItem('token');
+console.log(announcementData.title)
+    const resp = await axios.get(`${BASE_URL}/announcement/check-title?title=${announcementData.title}`,{
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("title checking", resp)
+    if(resp.status === 200 && resp.data.status === "success"){
+      setTitleChecking(true)
+    }
+    else{
+      setTitleChecking(false)
+    setAddnewAnnouncement(false)
+
+       setTitleError("Title already exit")
+
+    }
+  }
   console.log("Date",new Date().toISOString().slice(0,10))
   // console.log("Time",new Date().getHours() + ":" + new Date().getMinutes())
   useEffect(() => {
@@ -372,6 +407,9 @@ const createAnnouncement = async (data) => {
       // hour()
       // theDate()
     },[])
+    useEffect(() =>{
+      titleCheck()
+    },[announcementData.title])
 
    
   // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
@@ -468,7 +506,7 @@ const createAnnouncement = async (data) => {
                           )
                         }
                             <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Franchisee</Form.Label>
+                            <Form.Label>Select Franchise</Form.Label>
         
                             {
                             localStorage.getItem('user_role') === 'franchisor_admin' ?
@@ -500,8 +538,10 @@ const createAnnouncement = async (data) => {
                               }}
                               options={franchiseeData}
                            />
+
                             
                             </div>
+                            
                           : <div className="select-with-plus">
                               <Select
                                
@@ -513,7 +553,15 @@ const createAnnouncement = async (data) => {
                             </div>
 
                           }
-                            
+                        {allFranchise? null: <>
+                            {   
+                             error.franchise && <p className="form-errors">{error.franchise}</p>}
+
+                           </>}
+                           {/* {
+                           error.franchise && <p className="form-errors">{error.franchise}</p>} */}
+
+
                           </Form.Group>
                           </Row>
                           <Row>

@@ -34,6 +34,7 @@ import EditTraining from '../pages/EditTraining';
 import TrainingDetail from '../pages/TrainingDetail';
 import FileRepository from '../pages/FileRepository';
 import Announcements from '../pages/Announcements';
+import TrainingCreatedByMe from '../pages/TrainingModule/TrainingCreatedByMe';
 import AddNewAnnouncements from '../pages/AddNewAnnouncements';
 import DynamicForm from '../pages/DynamicForm';
 import UploadFile from '../pages/UploadFile';
@@ -59,6 +60,8 @@ import RepoEdit from '../pages/RepoEdit';
 import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
 import SearchResult from '../pages/SearchResult';
+import ChildrenEnrol from '../pages/ChildrenEnrol';
+import TrainingCreatedByOther from '../pages/TrainingModule/TrainingCreatedByOther';
 function returnDashboard(role) {
 
   if (role === 'franchisor_admin')
@@ -179,6 +182,16 @@ const Main = () => {
             </Protected>
           }
         />
+        <Route
+          path="/children-all"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <ChildrenEnrol />
+            </Protected>
+          }
+        />
+
 
         <Route
           path="/child-enrollment/:childId/:parentId"
@@ -483,6 +496,24 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <Training />
+            </Protected>
+          }
+        />
+         <Route
+          path="/training-created-other"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <TrainingCreatedByOther />
+            </Protected>
+          }
+        />
+         <Route
+          path="/training-createdby-me"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <TrainingCreatedByMe />
             </Protected>
           }
         />

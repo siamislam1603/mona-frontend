@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const temp = () => {};
 
-export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto="", setFormErrors=temp }) {
+export default function   DragDropSingle({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto="", setFormErrors=temp }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -25,6 +25,8 @@ export default function DragDropSingle({ onSave, setPopupVisible, croppedImage, 
     },
   });
 
+
+  
   const handleFileDelete = (file) => {
     let temp = [...data];
     temp.splice(temp.indexOf(file), 1);
