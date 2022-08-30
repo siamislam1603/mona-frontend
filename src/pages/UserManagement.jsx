@@ -182,7 +182,6 @@ const UserManagement = () => {
         fetchUserDetails();
         DeleteId = [];
       }
-
     }
   }
   const columns = [
@@ -343,7 +342,7 @@ const UserManagement = () => {
       if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
         tempData = tempData.filter(d => d.action === 1);
       }
-      
+
       setUserDataAfterFilter(tempData);
       setIsLoading(false)
 
@@ -375,25 +374,25 @@ const UserManagement = () => {
     let role = localStorage.getItem('user_role');
     let filteredData = null;
 
-    if(role === 'franchisor_admin') {
+    if (role === 'franchisor_admin') {
       filteredData = data.filter(d => d.role !== 'franchisor_admin');
     }
 
-    if(role === 'franchisee_admin') {
+    if (role === 'franchisee_admin') {
       filteredData = data.filter(d => d.role !== 'franchisor_admin')
       filteredData = filteredData.filter(d => d.role !== 'franchisee_admin')
-          
+
     }
 
-    if(role === 'coordinator') {
+    if (role === 'coordinator') {
       filteredData = data.filter(d => d.role === 'educator' || d.role === 'guardian');
       console.log('COORDINATOR:', filteredData);
     }
 
-    if(role === 'educator') {
+    if (role === 'educator') {
       filteredData = data.filter(d => d.role === 'guardian');
     }
-    
+
     setUserData(filteredData);
   };
 

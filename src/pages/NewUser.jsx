@@ -553,6 +553,8 @@ const NewUser = () => {
                             setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
+
+                        
                         
                       </div>
                       <form className="user-form error-sec" onSubmit={handleSubmit}>
@@ -687,54 +689,6 @@ const NewUser = () => {
                             />
                             { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
                           </Form.Group>
-
-                          <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Contact Number</Form.Label>
-                            <div className="tel-col">
-                              <Select
-                                closeMenuOnSelect={true}
-                                placeholder="+61"
-                                className="telcode"
-                                options={countryData}
-                                onChange={(e) =>
-                                  setFormData((prevState) => ({
-                                    ...prevState,
-                                    telcode: e.value.split('\n')[1],
-                                  }))
-                                }
-                              />
-                              <Form.Control
-                                type="tel"
-                                name="phone"
-                                // minLength={10}
-                                maxLength={10}
-                                placeholder="Enter Your Number"
-                                value={formData.phone}
-                                onChange={(e) => {
-
-                                  e.target.value = e.target.value.replace(/\s/g, "");
-                                  // handleChange(e);
-                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                                    setFormData(prevState => ({
-                                      ...prevState,
-                                      phone: e.target.value.slice(0, -1)
-                                    })); 
-                                  } else {
-                                    setFormData(prevState => ({
-                                      ...prevState,
-                                      phone: e.target.value
-                                    }));
-                                  }
-
-                                  setFormErrors(prevState => ({
-                                    ...prevState,
-                                    phone: null
-                                  }));
-                                }}
-                              />
-                            </div>
-                            { formErrors.phone !== null && <span className="error">{formErrors.phone}</span> }
-                          </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Training Categories</Form.Label>
@@ -768,6 +722,53 @@ const NewUser = () => {
                             />
                           </Form.Group>
                           
+                          <Form.Group className="col-md-6 mb-3 relative">
+                            <Form.Label>Contact Number</Form.Label>
+                            <div className="tel-col">
+                              <Select
+                                closeMenuOnSelect={true}
+                                placeholder="+61"
+                                className="telcode"
+                                options={countryData}
+                                onChange={(e) =>
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    telcode: e.value.split('\n')[1],
+                                  }))
+                                }
+                              />
+                              <Form.Control
+                                type="tel"
+                                name="phone"
+                                maxLength={10}
+                                placeholder="Enter Your Number"
+                                value={formData.phone}
+                                onChange={(e) => {
+
+                                  e.target.value = e.target.value.replace(/\s/g, "");
+                                  // handleChange(e);
+                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value.slice(0, -1)
+                                    })); 
+                                  } else {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value
+                                    }));
+                                  }
+
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    phone: null
+                                  }));
+                                }}
+                              />
+                            </div>
+                            { formErrors.phone !== null && <span className="error">{formErrors.phone}</span> }
+                          </Form.Group>
+                          
                           {
                             formData && formData?.role === 'educator' &&
                             <Form.Group className="col-md-6 mb-3 relative">
@@ -789,7 +790,7 @@ const NewUser = () => {
                             {
                               localStorage.getItem('user_role') === 'franchisor_admin' && 
                               <Select
-                                placeholder="Which Franchisee?"
+                                placeholder="Which Franchise?"
                                 closeMenuOnSelect={true}
                                 options={franchiseeData}
                                 onChange={(e) => {
@@ -814,7 +815,7 @@ const NewUser = () => {
                             {
                               (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') && 
                               <Select
-                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Which Franchisee?"}
+                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Which Franchise?"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}
@@ -909,7 +910,7 @@ const NewUser = () => {
 
                           <Col md={12}>
                             <div className="cta text-center mt-5">
-                              <Button variant="transparent">
+                              <Button variant="transparent" className="me-3">
                                 <Link to="/user-management">
                                   Back to All Users
                                 </Link>
