@@ -157,7 +157,7 @@ const EditUser = () => {
           setCreateUserModal(false);
           setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
-          window.location.href = '/user-management';
+
           setSignatureUploaded(true);
         } else if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "fail") {
           setTopErrorMessage(signatureImageResponse.data.msg);
@@ -424,7 +424,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The franchisee data",response)
+    console.log("The franchise data",response)
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 
@@ -437,7 +437,7 @@ const EditUser = () => {
   }
 
   const fetchCoordinatorData = async (franchisee_id) => {
-    console.log('Franchisee id', franchisee_id);
+    console.log('Franchise id', franchisee_id);
     console.log('FETCHING COORDINATOR DATA');
     const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
     if(response.status === 200 && response.data.status === "success") {
@@ -461,6 +461,7 @@ const EditUser = () => {
   const handleSignatureDialog = (data) => {
     setSignatureImage(data);
     if(signatureImage) {
+      console.log('SIGNATURE IMAGE:', signatureImage);
       setShowSignatureDialog(false);
     }
   }
@@ -522,12 +523,12 @@ const EditUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  // editUserData && console.log('EDIT USER DATA:', editUserData);
+  editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
   // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-  formData && console.log('FORM DATA:', formData);
-  signatureImage && console.log('Signature Image:', signatureImage);
-  // userRoleData && console.log('USER ROLE DATA:', userRoleData);
+  // formData && console.log('FORM DATA:', formData);
+  // signatureImage && console.log('Signature Image:', signatureImage);
+  userRoleData && console.log('USER ROLE DATA:', userRoleData);
   // currentRole && console.log('Current Role:', currentRole);
   return (
     <>
@@ -670,36 +671,6 @@ const EditUser = () => {
                               {!formData.email && formErrors.email}
                             </span> 
                           </Form.Group>
-
-                          <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Contact Number</Form.Label>
-                            <div className="tel-col">
-                              <Select
-                                closeMenuOnSelect={true}
-                                placeholder="+61"
-                                className="telcode"
-                                options={countryData}
-                                onChange={(e) =>
-                                  setFormData((prevState) => ({
-                                    ...prevState,
-                                    telcode: e.value.split('\n')[1],
-                                  }))
-                                }
-                              />
-                              <Form.Control
-                                type="tel"
-                                name="phone"
-                                placeholder="Enter Your Number"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                maxLength={10}
-                              />
-                            </div>
-                            <span className="error">
-                              {!formData.telcode ||
-                                (!formData.phone && formErrors.phone)}
-                            </span>
-                          </Form.Group>
                           
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Training Categories</Form.Label>
@@ -734,6 +705,48 @@ const EditUser = () => {
                               }}
                             />
                           </Form.Group>
+                          
+                          <Form.Group className="col-md-6 mb-3 relative">
+                            <Form.Label>Contact Number</Form.Label>
+                            <div className="tel-col">
+                              <Select
+                                closeMenuOnSelect={true}
+                                placeholder="+61"
+                                className="telcode"
+                                options={countryData}
+                                onChange={(e) =>
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    telcode: e.value.split('\n')[1],
+                                  }))
+                                }
+                              />
+                              <Form.Control
+                                type="tel"
+                                name="phone"
+                                maxLength={10}
+                                placeholder="Enter Your Number"
+                                value={formData.phone}
+                                onChange={(e) => {
+                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value.slice(0, -1)
+                                    })); 
+                                  } else {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value
+                                    }));
+                                  }
+                                }}
+                              />
+                            </div>
+                            <span className="error">
+                              {!formData.telcode ||
+                                (!formData.phone && formErrors.phone)}
+                            </span>
+                          </Form.Group>
 
                           {
                             formData && formData?.role === 'educator' &&
@@ -754,7 +767,7 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchisee</Form.Label>
                             <Select
-                              placeholder={"Which Franchisee?"}
+                              placeholder={"Which Franchise?"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
                               // isMulti
@@ -780,29 +793,32 @@ const EditUser = () => {
                             { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Select Primary Coordinator</Form.Label> 
-                            <Select
-                              isDisabled={formData.role !== 'educator'}
-                              placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
-                              closeMenuOnSelect={true}
-                              value={coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
-                              options={coordinatorData}
-                              onChange={(e) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  coordinator: e.id,
-                                }));
+                          {
+                            formData?.role === 'educator' &&
+                            <Form.Group className="col-md-6 mb-3 relative">
+                              <Form.Label>Select Primary Coordinator</Form.Label> 
+                              <Select
+                                isDisabled={formData.role !== 'educator'}
+                                placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
+                                closeMenuOnSelect={true}
+                                value={coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
+                                options={coordinatorData}
+                                onChange={(e) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    coordinator: e.id,
+                                  }));
 
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  coordinatorObj: e
-                                }))
-                              }}
-                            />
-                          </Form.Group>
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    coordinatorObj: e
+                                  }))
+                                }}
+                              />
+                            </Form.Group>
+                          }
 
-                          <Form.Group className="col-md-6 mb-3 relative">
+                          <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Business Assets</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -817,39 +833,6 @@ const EditUser = () => {
                                 }));
                               }}
                             />
-                          </Form.Group>
-
-                          <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Termination Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              disabled={true}
-                              name="terminationDate"
-                              value={moment(formData?.terminationDate).format('YYYY-MM-DD') || ""}
-                              onChange={(e) => setFormData(prevState => ({
-                                ...prevState,
-                                terminationData: e.target.value 
-                              }))}
-                            />
-                            {
-                              ((formData.termination_reach_me === false  || formData.termination_reach_me === null)) &&
-                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
-                              <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
-                            }
-                            {
-                              formData.termination_reach_me === true &&
-                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
-                              <div>
-                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData?.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
-                                <img style={{ width: "100px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
-                              </div>
-                              }
-                              {
-                                (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') && formData?.termination_reach_me === true && 
-                                <div>
-                                  <p style={{ fontSize: "14px", marginTop: '10px' }}>Consent Form: <strong style={{ color: '#C2488D', cursor: 'pointer' }} onClick={() => setShowUserAgreementDialog(true)}>Click Here!</strong></p>
-                                </div>
-                              }
                           </Form.Group>
 
                           {
@@ -936,6 +919,39 @@ const EditUser = () => {
                           </div>
                           
                           <Form.Group className="col-md-6 mb-3 relative">
+                            <Form.Label>Termination Date</Form.Label>
+                            <Form.Control
+                              type="date"
+                              disabled={true}
+                              name="terminationDate"
+                              value={moment(formData?.terminationDate).format('YYYY-MM-DD') || ""}
+                              onChange={(e) => setFormData(prevState => ({
+                                ...prevState,
+                                terminationData: e.target.value 
+                              }))}
+                            />
+                            {
+                              ((formData.termination_reach_me === false  || formData.termination_reach_me === null)) &&
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
+                              <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
+                            }
+                            {
+                              formData.termination_reach_me === true &&
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
+                              <div>
+                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData?.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
+                                <img style={{ width: "40px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
+                              </div>
+                              }
+                              {
+                                (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') && formData?.termination_reach_me === true && 
+                                <div>
+                                  <p style={{ fontSize: "14px", marginTop: '10px' }}>Consent Form: <strong style={{ color: '#C2488D', cursor: 'pointer' }} onClick={() => setShowUserAgreementDialog(true)}>Click Here!</strong></p>
+                                </div>
+                              }
+                          </Form.Group>
+                          
+                          <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               title="Video"
@@ -1080,6 +1096,7 @@ const EditUser = () => {
                   <UserSignature
                     field_label="Signature:"
                     handleSignatureDialog={handleSignatureDialog}
+                    setShowSignatureDialog={setShowSignatureDialog}
                     onChange={setSignatureImage} />
                 </Row>
               </Modal.Body>

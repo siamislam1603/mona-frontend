@@ -213,30 +213,30 @@ const EducatorDashboard = () => {
                                 <div className="name">Story park</div>
                               </a>
                             </div>
-                            <div className="item">
+                            {/* <div className="item">
                               <a href="https://sp8.harmonykids.com.au/UserAccount/Login" className="flex">
                                 <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                                 <div className="name">Harmony</div>
                               </a>
-                            </div>
-                            <div className="item">
+                            </div> */}
+                            {/* <div className="item">
                               <a href="https://app.engagebay.com/login" className="flex">
                                 <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
                                 <div className="name">Engagebay</div>
                               </a>
-                            </div>
-                            <div className="item">
+                            </div> */}
+                            {/* <div className="item">
                               <a href="https://login.xero.com/identity/user/login" className="flex">
                                 <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
                                 <div className="name">Xero</div>
                               </a>
-                            </div>
-                            <div className="item nolink">
+                            </div> */}
+                            {/* <div className="item nolink">
                               <div className="flex">
                                 <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
                                 <div className="name">BI Tool</div>
                               </div>
-                            </div>
+                            </div> */}
                             {/*<div className="item">
                               <a href="/" className="flex">
                                 <div className="pic"><img src="../img/intranet-ico.png" alt="" /></div>
