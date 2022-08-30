@@ -911,7 +911,7 @@ const NewUser = () => {
 
                           <Col md={12}>
                             <div className="cta text-center mt-5">
-                              <Button variant="transparent">
+                              <Button variant="transparent" className="me-3">
                                 <Link to="/user-management">
                                   Back to All Users
                                 </Link>
