@@ -754,7 +754,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .logo-column .navbar-brand{padding:0;margin:0}
 .ico-column{display:none}
 .app-sidebar{flex:auto!important;width:auto!important;order:none!important;border-right:none}
-.app-sidebar .navbar-toggler{position:absolute;top:35px;padding:0;background:0 0;border:none}
+.app-sidebar .navbar-toggler{position:absolute;top:35px;padding:0;background:0 0;border:none;z-index: 9;}
 .sec-column{padding:20px 0 0 0!important}
 .topheader .rpanel .user-sec li{margin:0 0 0 10px!important}
 .topheader{padding-left:140px}
