@@ -137,8 +137,11 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         if (response.status === 201 && response.data.status === "success") {
             console.log("submitted successfully")
             setLoaderFlag(false);
+            window.location.reload()
         } else {
             setLoaderFlag(false);
+            
+            window.location.reload()
         }
 
         console.log(formSettings, "share final")
@@ -930,6 +933,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             setSelectedUser([])
                                                             setSelectedChild([])
                                                         }}
+                                                        selectedValues={franchiseeList && franchiseeList.filter(c => formSettings.franchisee?.includes(c.id + ""))}
 
                                                         onSelect={function noRefCheck(data) {
                                                             setFormSettings((prevState) => ({
@@ -1283,7 +1287,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 // singleSelect={true}
                                                 displayValue="key"
                                                 className="multiselect-box default-arrow-select"
-                                                selectedValues={franchiseeList?.filter(d => parseInt(formSettings?.franchisee) === d.id).length == 0 ? franchiseeList?.filter(d => parseInt(getFranchisee) === d.id) : franchiseeList?.filter(d => parseInt(formSettings?.franchisee) === d.id) }
+                                                selectedValues={franchiseeList && franchiseeList.filter(d => formSettings?.franchisee?.includes(d.id.toString())).length == 0 ? franchiseeList?.filter(d => getFranchisee.includes(d.id.toString())) : franchiseeList?.filter(d => formSettings?.franchisee.includes(d.id.toString())) }
                                                 onKeyPressFn={function noRefCheck() { }}
                                                 onRemove={function noRefCheck(data) {
                                                     setFormSettings((prevState) => ({
@@ -1325,8 +1329,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
                                                                 ...prevState,
-                                                                assigned_users: [],
-                                                                assigned_users_data: [],
+                                                                // assigned_users: [],
+                                                                // assigned_users_data: [],
                                                                 accessibleToRole: 1
                                                             }));
                                                             setApplicableToAll(true);
@@ -1348,7 +1352,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
                                                                 ...prevState,
-                                                                assigned_role: [],
+                                                                // assigned_role: [],
                                                                 accessibleToRole: 0
                                                             }));
                                                             setApplicableToAll(false);
@@ -1373,7 +1377,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             checked={formSettings.assigned_role.includes("franchisee_admin")}
-                                                            label="franchisee_admin"
+                                                            label="Franchisee Admin"
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("franchisee_admin")) {
                                                                     let data = formSettings.assigned_role.filter(t => t !== "franchisee_admin");
@@ -1395,7 +1399,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             checked={formSettings.assigned_role.includes("coordinator")}
-                                                            label="Co-ordinators"
+                                                            label="Coordinators"
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("coordinator")) {
                                                                     let data = formSettings.assigned_role.filter(t => t !== "coordinator");
