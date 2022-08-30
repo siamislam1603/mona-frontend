@@ -97,7 +97,6 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const trainingCreatedByMe = async() =>{
     try {
       let user_id = localStorage.getItem('user_id');
-      // http://localhost:4000/training/trainingCreatedByMeOnly/52?limit=5&offset=0&search=a .
       let token = localStorage.getItem('token');
       const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}`, {
         headers: {
@@ -302,7 +301,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
                             
                             }
-                            <Link to="/training-createdby-me" className="viewall">View All</Link>
+                          { myTrainingData?.length >0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
                           </header>
             {myTrainingData?.map((training) => {
               return (
@@ -354,7 +353,10 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             <h3 className="title-sm mb-0"><strong>Created by Other</strong></h3>
                             
                             }
+                            {otherTrainingData?.length > 0 && 
                             <Link to="/training-created-other" className="viewall">View All</Link>
+                            
+                            }
                           </header>
             {otherTrainingData?.map((training) => {
               return (

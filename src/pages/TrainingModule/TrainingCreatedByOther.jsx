@@ -17,6 +17,7 @@ import axios from 'axios';
 import { BASE_URL } from "../../components/App";
 import LeftNavbar from "../../components/LeftNavbar";
 import { Link } from "react-router-dom";
+import { FullLoader } from "../../components/Loader";
 
 // const animatedComponents = makeAnimated();
 const styles = {
@@ -50,6 +51,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [page,setPage] = useState(5)
+//   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
@@ -82,7 +84,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     );
    console.log("Response catrogy",response)
     if(response)
-      setfullLoaderStatus(false)
+    //   setfullLoaderStatus(false)
 
 
     if (response.status === 200 && response.data.status === "success") {
@@ -106,6 +108,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
 
   const trainingCreatedByOther = async() =>{
    try {
+    setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=&search=${filterData.search}&category_id=${filterData.category_id}`, {
@@ -116,12 +119,14 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     console.log('Training created by OTHER',response)
     if(response.status===200 && response.data.status === "success"){
       const {searchedData} = response.data
-      setOtherTrainingData(searchedData)
       setfullLoaderStatus(false)
+
+      setOtherTrainingData(searchedData)
 
       
     }
    } catch (error) {
+        setfullLoaderStatus(false)
         setOtherTrainingData([])
    }
 
@@ -178,7 +183,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                   // setSelectedFranchisee={setSelectedFranchisee} 
                   />
 
-                  {/* <FullLoader loading={fullLoaderStatus} /> */}
+                  <FullLoader loading={fullLoaderStatus} />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Training Created by Other</h1>
@@ -308,7 +313,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
           {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
           null
             :     
-                    <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
+            fullLoaderStatus ? null :   <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
           }
              {/* {
 

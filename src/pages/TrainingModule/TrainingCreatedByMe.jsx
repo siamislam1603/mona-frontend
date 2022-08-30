@@ -19,6 +19,7 @@ import { BASE_URL } from "../../components/App";
 import LeftNavbar from "../../components/LeftNavbar";
 import { Link } from "react-router-dom";
 import { FullLoader } from "../../components/Loader";
+import { FixedSizeList } from "react-window";
 
 // const animatedComponents = makeAnimated();
 const styles = {
@@ -90,7 +91,7 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
     );
    console.log("Response catrogy",response)
     if(response)
-      setfullLoaderStatus(false)
+      // setfullLoaderStatus(false)
 
 
     if (response.status === 200 && response.data.status === "success") {
@@ -131,27 +132,9 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
 
 
 
-  const trainingCreatedByMe = async() =>{
-    let user_id = localStorage.getItem('user_id');
-    // http://localhost:4000/training/trainingCreatedByMeOnly/52?limit=5&offset=0&search=a .
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=5&search=${filter.search}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    console.log('Training created by me',response)
-    if(response.status===200 && response.data.status === "success"){
-      const {searchedData} = response.data
-      setMyTrainingData(searchedData)
-      setfullLoaderStatus(false)
-
-      
-    }
-
-  }
   const CreatedByme = async()=>{
    try {
+    setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=&search=${filterData.search}&category_id=${filterData.category_id}`, {
@@ -163,15 +146,17 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
     if(response.status===200 && response.data.status === "success"){
       const {searchedData} = response.data
       console.log("Searched Data",searchedData)
-      setMyTrainingData(searchedData)
       setfullLoaderStatus(false)
+
+      setMyTrainingData(searchedData)
 
       
     }
    } catch (error) {
     if(error.response.status === 404){
-      setMyTrainingData([])
       setfullLoaderStatus(false)
+
+      setMyTrainingData([])
     }
     console.log("error created by me",error)
    }
@@ -188,7 +173,7 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
   },[filterData.search,filterData.category_id])
 
   console.log("TRAIING DATA",filterData.category_id)
-  console.log("Rohan",fullLoaderStatus)
+  console.log("Rohan",fullLoaderStatus,!fullLoaderStatus)
 
   return (
     <>
@@ -283,6 +268,8 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
                     </div>
                   </header>
                   <div className="training-column">
+
+        
           <Row style={{ marginBottom: '40px' }}>
             {/* {myTrainingData?.length > 0 && <h1></h1>} */}
    
@@ -326,8 +313,9 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
             })}
              
           </Row>
+
             
-          <Row>
+          {/* <Row>
             {
               otherTrainingData?.length > 0 && <h1 style={{ marginBottom: '25px' }}>Created by others</h1>
             }
@@ -377,12 +365,12 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
                 </Col>
               );
             })}
-          </Row>
-          {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
+          </Row> */}
+          { myTrainingData?.length>0 ?
           null
             :    
             
-            !fullLoaderStatus &&  <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
+            fullLoaderStatus ? null :  <div className="text-center mb-5 mt-5"> <strong>No trainings available !</strong> </div>
 
             
           }
