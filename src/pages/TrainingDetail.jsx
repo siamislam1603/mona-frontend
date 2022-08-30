@@ -45,13 +45,16 @@ const TrainingDetail = () => {
   }
 
   const handleFinishTraining = (event) => {
-    updateFinishTraining();
+    // updateFinishTraining();
+    setTimeout(() => {
+      setShowSurveyForm(true);
+    }, 2000);
   };
 
   const handleSurveyTransition = () => {
     console.log('handling survey transition!');
     // console.log('LINK:', `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`);
-    window.location.href = `http://3.26.240.23:5000/form/dynamic/${relatedForms.form_name}`;
+    window.location.href = `/form/dynamic/${relatedForms.form_name}?trainingId=${trainingId}`;
   }
 
   // FETCHING THE LIST OF USERS WHO FINISHED THIS TRAINING
@@ -141,7 +144,7 @@ const TrainingDetail = () => {
     }
   }, []);
   // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  // relatedForms && console.log('RELATED FORMS:', relatedForms);
+  relatedForms && console.log('RELATED FORMS:', relatedForms);
   return (
     <>
       <div id="main">
@@ -260,14 +263,14 @@ const TrainingDetail = () => {
                                   <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
                                   <div className="name"><a href="">{relatedForms.form_name}</a></div>
                                   <div className="cta-col">
-                                    <Dropdown>
+                                    {/* <Dropdown>
                                       <Dropdown.Toggle variant="transparent" id="ctacol">
                                         <img src="../img/dot-ico.svg" alt="" />
                                       </Dropdown.Toggle>
                                       <Dropdown.Menu>
-                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
+                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
+                                      {/* </Dropdown.Menu> */}
+                                    {/* </Dropdown> */}
                                   </div>
                                 </div>
                               </div>
