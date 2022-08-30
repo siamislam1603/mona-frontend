@@ -237,6 +237,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
        Object.keys(authorizedNomineeErrorObj2).length > 0 ||
        Object.keys(authorizedPersonErrorObj2).length > 0 ||
        Object.keys(otherAuthorizedPersonErrorObj2).length > 0) {
+        window.scrollTo(0, 0);
         setEmergencyContactError(emergencyContactErrorObj);
         setAuthorizedNomineeError(authorizedNomineeErrorObj);
         setAuthorizedPersonError(authorizedPersonErrorObj);

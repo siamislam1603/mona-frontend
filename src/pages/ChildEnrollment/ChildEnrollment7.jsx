@@ -415,6 +415,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                     type="date" 
                     placeholder="" 
                     name="consent_date"
+                    min={new Date().toISOString().slice(0, 10)}
                     value={consentData?.consent_date || ""}
                     onChange={(e) => setConsentData(prevState => ({
                       ...prevState,

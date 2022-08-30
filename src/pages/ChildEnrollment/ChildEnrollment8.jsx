@@ -146,6 +146,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Label>Date</Form.Label>
                   <Form.Control 
                     type="date" 
+                    disabled={true}
                     min={new Date().toISOString().slice(0, 10)}
                     value={moment(officeUseData?.date).format('YYYY-MM-DD')} 
                     name="dob"
