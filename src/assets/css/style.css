@@ -576,7 +576,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .audit-form p{margin:0;line-height:normal;text-align:center;font-size:var(--fontxl)}
 .audit-form .totalaudit{background-color:var(--purple);min-width:100px;max-width:100px;height:100px;border-radius:100%;display:flex;align-items:center;justify-content:center;margin-left:1rem;color:var(--white);font-weight:700;font-size:1.7rem}
 .change-pass-sec{max-width:700px;margin:auto}
-.react-bootstrap-table{display:block;width:100%;overflow: hidden; -webkit-overflow-scrolling:touch}
+.react-bootstrap-table{display:block;width:100%;overflow: hidden;padding-bottom: 70px; -webkit-overflow-scrolling:touch}
 .react-bootstrap-table .table{width: 99%; margin: auto;}
 .cursor{cursor:pointer}
 .file-container{width:200px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
