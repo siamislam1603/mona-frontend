@@ -38,6 +38,7 @@ const FilerepoUploadFile = () => {
     const [franchiseeList, setFranchiseeList] = useState();
     const [post, setPost] = React.useState([]);
     const [child, setChild] = useState([]);
+    const [UpladFile, setUpladFile] = useState('');
     const [tabLinkPath, setTabLinkPath] = useState("/available-Files");
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [user, setUser] = useState([]);
@@ -153,7 +154,7 @@ const FilerepoUploadFile = () => {
         getUser();
         getChildren()
     }, [formSettings.franchisee])
-    
+
     const setField = (field, value) => {
         if (value === null || value === undefined) {
             setFormSettingData({ ...formSettingData, setting_files: field });
@@ -189,8 +190,6 @@ const FilerepoUploadFile = () => {
             setError(true);
             return false
         }
-
-
         setLoaderFlag(true);
 
         var myHeaders = new Headers();
@@ -273,7 +272,6 @@ const FilerepoUploadFile = () => {
             redirect: 'follow',
         };
 
-
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
                 response.json()
@@ -281,6 +279,7 @@ const FilerepoUploadFile = () => {
                 if (response.statusText === "Created") {
                     setLoaderFlag(false);
                     setShow(false);
+                    setUpladFile("File Upload successfully");
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
                 }
             })
@@ -293,6 +292,13 @@ const FilerepoUploadFile = () => {
             })
             .catch((error) => console.log('error', error));
     };
+
+    useEffect(() => {
+        setTimeout(() => {
+            setUpladFile(null)
+        }, 3000);
+    }, [UpladFile])
+
 
     function onSelectUser(optionsList, selectedItem) {
         console.log('selected_item---->2', selectedItem);
@@ -356,8 +362,12 @@ const FilerepoUploadFile = () => {
         setTabLinkPath(path);
     }
 
+
     return (
         <div>
+            {
+                UpladFile && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{UpladFile}</p>
+            }
             <span
                 className="btn btn-primary me-3"
                 onClick={handleShow}
