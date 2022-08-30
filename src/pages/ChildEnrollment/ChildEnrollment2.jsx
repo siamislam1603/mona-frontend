@@ -314,6 +314,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
     const errors = healthInformationFormValidator(healthInformation);
     if (Object.keys(errors).length > 0) {
+      window.scrollTo(0, 0);
       setHealthInfoFormErrors(errors);
     } else {
       if (formStepData && formStepData > step) {

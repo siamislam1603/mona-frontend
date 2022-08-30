@@ -34,6 +34,7 @@ import EditTraining from '../pages/EditTraining';
 import TrainingDetail from '../pages/TrainingDetail';
 import FileRepository from '../pages/FileRepository';
 import Announcements from '../pages/Announcements';
+import TrainingCreatedByMe from '../pages/TrainingModule/TrainingCreatedByMe';
 import AddNewAnnouncements from '../pages/AddNewAnnouncements';
 import DynamicForm from '../pages/DynamicForm';
 import UploadFile from '../pages/UploadFile';
@@ -483,6 +484,15 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <Training />
+            </Protected>
+          }
+        />
+         <Route
+          path="/training-createdby-me"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <TrainingCreatedByMe />
             </Protected>
           }
         />
