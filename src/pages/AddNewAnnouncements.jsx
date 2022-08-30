@@ -88,6 +88,7 @@ const fetchUserRoles = async () => {
 };
 
 const createAnnouncement = async (data) => {
+  console.log("CALLING CREATED ANNOUCNEMENT")
   try {
     console.log('CREATING THE ANNOUNCEMENT');
   const token = localStorage.getItem('token');
@@ -140,7 +141,7 @@ const createAnnouncement = async (data) => {
           console.log('ERROR RESPONSE!');
           setTopErrorMessage("Unable to save cover image!");
           setLoader(false)
-    setAddnewAnnouncement(false)
+          setAddnewAnnouncement(false)
 
 
           setTimeout(() => {
@@ -285,6 +286,7 @@ const createAnnouncement = async (data) => {
         setError(errorObj);
        }
        else{
+        console.log("INSDIE ERROR EMPTY")
         setError({});
         if(announcementData && coverImage && videoTutorialFiles) {
           let data = new FormData();
@@ -295,6 +297,7 @@ const createAnnouncement = async (data) => {
     
           videoTutorialFiles.forEach((file, index) => {
             data.append(`images`, file);
+            console.log("APPEND VIDEO")
           });
     
           relatedFiles.forEach((file, index) => {
