@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import UserSignature from './InputFields/UserSignature';
 import moment from 'moment';
 import DragDropSingle from '../components/DragDropSingle';
+import { editUserValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
@@ -38,6 +39,9 @@ const EditUser = () => {
     role: '',
     telcode: '+61',
     terminationDate: "",
+    password: "",
+    assign_random_password: false,
+    change_pwd_next_login: false
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
@@ -89,7 +93,11 @@ const EditUser = () => {
         copyDataToState(user);
       } else {
         localStorage.setItem('success_msg', 'User doesn\'t exist!');
-        window.location.href="/user-management";
+        const userRole = localStorage.getItem('user_role');
+        if(userRole === 'guardian')
+          window.location.href = '/';
+        else
+          window.location.href = '/user-management';
       }
     }
   };
@@ -115,7 +123,9 @@ const EditUser = () => {
       terminationDate: user?.termination_date || "",
       termination_reach_me: user?.termination_reach_me,
       user_signature: user?.user_signature,
-      profile_photo: user?.profile_photo
+      profile_photo: user?.profile_photo,
+      assign_random_password: user?.assign_random_password ? true : false,
+      change_pwd_next_login: user?.change_pwd_next_login ? true : false
     }));
     setCroppedImage(user?.profile_photo);
   }
@@ -151,7 +161,12 @@ const EditUser = () => {
           setCreateUserModal(false);
           setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
-          window.location.href = '/user-management';
+          const userRole = localStorage.getItem('guardian');
+          if(userRole === 'guardian')
+            window.location.href = '/';
+          else
+            window.location.href = '/user-management';
+
           setSignatureUploaded(true);
         } else if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "fail") {
           setTopErrorMessage(signatureImageResponse.data.msg);
@@ -196,7 +211,12 @@ const EditUser = () => {
       if(createResponse.status === 200 && createResponse.data.status === "success") {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
         localStorage.setItem('success_msg', 'User updated successfully!');
-        window.location.href = '/user-management';
+
+        const userRole = localStorage.getItem('user_role');
+        if(userRole === 'guardian')
+          window.location.href = '/';
+        else
+          window.location.href = '/user-management';
       } else {
         console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
       }
@@ -212,8 +232,12 @@ const EditUser = () => {
         
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
         localStorage.setItem('success_msg', 'User updated successfully!');
-        window.location.href = '/user-management';
-        // setLoader(false);
+        
+        const userRole = localStorage.getItem('user_role');
+        if(userRole=== 'guardian')
+          window.location.href = '/';
+        else
+          window.location.href = '/user-management';        // setLoader(false);
         // setCreateUserModal(false);
         // localStorage.setItem('success_msg', 'User created successfully!');
 
@@ -250,34 +274,39 @@ const EditUser = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let data = new FormData();
-    trainingDocuments?.map(async(item)=>{
-      const blob=await fetch(await toBase64(item)).then((res) => res.blob());
-      data.append('images', blob);
-    })
-
-    let blob;
-    if(croppedImage) {
-      if(typeof croppedImage === "object") {
-        console.log('Image Type: Object');
-        blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+    let error = editUserValidation(formData);
+    if(Object.keys(error).length > 0) {
+      setFormErrors(error);
+    } else {
+      let data = new FormData();
+      trainingDocuments?.map(async(item)=>{
+        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
         data.append('images', blob);
-      } else {
-        console.log('Image Type: String');
-        blob = croppedImage
-        data.append('profile_photo', blob);
+      })
+
+      let blob;
+      if(croppedImage) {
+        if(typeof croppedImage === "object") {
+          console.log('Image Type: Object');
+          blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+          data.append('images', blob);
+        } else {
+          console.log('Image Type: String');
+          blob = croppedImage
+          data.append('profile_photo', blob);
+        }
       }
+      
+      Object.keys(formData)?.map((item,index) => {
+        data.append(item,Object.values(formData)[index]);
+      });
+
+      trainingDocuments.map(doc => data.append('images', doc));
+
+      setCreateUserModal(true);
+      setLoader(true)
+      updateUserDetails(data);
     }
-    
-    Object.keys(formData)?.map((item,index) => {
-      data.append(item,Object.values(formData)[index]);
-    });
-
-    trainingDocuments.map(doc => data.append('images', doc));
-
-    setCreateUserModal(true);
-    setLoader(true)
-    updateUserDetails(data);
   };
 
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
@@ -413,7 +442,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The franchisee data",response)
+    console.log("The franchise data",response)
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 
@@ -426,7 +455,7 @@ const EditUser = () => {
   }
 
   const fetchCoordinatorData = async (franchisee_id) => {
-    console.log('Franchisee id', franchisee_id);
+    console.log('Franchise id', franchisee_id);
     console.log('FETCHING COORDINATOR DATA');
     const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
     if(response.status === 200 && response.data.status === "success") {
@@ -450,6 +479,7 @@ const EditUser = () => {
   const handleSignatureDialog = (data) => {
     setSignatureImage(data);
     if(signatureImage) {
+      console.log('SIGNATURE IMAGE:', signatureImage);
       setShowSignatureDialog(false);
     }
   }
@@ -511,12 +541,12 @@ const EditUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  // editUserData && console.log('EDIT USER DATA:', editUserData);
+  editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
   // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-  formData && console.log('FORM DATA:', formData);
-  signatureImage && console.log('Signature Image:', signatureImage);
-  // userRoleData && console.log('USER ROLE DATA:', userRoleData);
+  // formData && console.log('FORM DATA:', formData);
+  // signatureImage && console.log('Signature Image:', signatureImage);
+  userRoleData && console.log('USER ROLE DATA:', userRoleData);
   // currentRole && console.log('Current Role:', currentRole);
   return (
     <>
@@ -557,9 +587,9 @@ const EditUser = () => {
                         }
                         
                       </div>
-                      <form className="user-form" onSubmit={handleSubmit}>
+                      <form className="user-form error-sec" onSubmit={handleSubmit}>
                         <Row>
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Full Name</Form.Label>
                             <Form.Control
                               type="text"
@@ -573,7 +603,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>User Role</Form.Label>
                             <Select
                               placeholder="Which Role?"
@@ -594,7 +624,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Suburb</Form.Label>
                             <Select
                               placeholder="Search Your Suburb"
@@ -621,7 +651,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Address</Form.Label>
                             <Form.Control
                               type="text"
@@ -635,7 +665,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Postal Code</Form.Label>
                             <Form.Control
                               type="number"
@@ -646,7 +676,7 @@ const EditUser = () => {
                             />
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Email Address</Form.Label>
                             <Form.Control
                               type="email"
@@ -659,8 +689,42 @@ const EditUser = () => {
                               {!formData.email && formErrors.email}
                             </span> 
                           </Form.Group>
+                          
+                          <Form.Group className="col-md-6 mb-3 relative">
+                            <Form.Label>Training Categories</Form.Label>
+                            <Select
+                              closeMenuOnSelect={false}
+                              components={animatedComponents}
+                              isMulti
+                              value={trainingCategoryData?.filter(d => formData?.trainingCategories?.includes(parseInt(d.id)))}
+                              options={trainingCategoryData}
+                              onChange={(selectedOptions) => {
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  trainingCategories: [...selectedOptions.map(option => option.id)],
+                                }));
+                              }}
+                            />
+                          </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
+                            <Form.Label>Professional Development Categories</Form.Label>
+                            <Select
+                              closeMenuOnSelect={false}
+                              components={animatedComponents}
+                              isMulti
+                              value={pdcData?.filter(d => formData?.professionalDevCategories?.includes(parseInt(d.id)))}
+                              options={pdcData}
+                              onChange={(selectedOptions) => {
+                                setFormData((prevState) => ({
+                                  ...prevState,
+                                  professionalDevCategories: [...selectedOptions.map(option => option.id)],
+                                }));
+                              }}
+                            />
+                          </Form.Group>
+                          
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Contact Number</Form.Label>
                             <div className="tel-col">
                               <Select
@@ -678,10 +742,22 @@ const EditUser = () => {
                               <Form.Control
                                 type="tel"
                                 name="phone"
+                                maxLength={10}
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
-                                onChange={handleChange}
-                                maxLength={10}
+                                onChange={(e) => {
+                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value.slice(0, -1)
+                                    })); 
+                                  } else {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value
+                                    }));
+                                  }
+                                }}
                               />
                             </div>
                             <span className="error">
@@ -689,44 +765,10 @@ const EditUser = () => {
                                 (!formData.phone && formErrors.phone)}
                             </span>
                           </Form.Group>
-                          
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Training Categories</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              value={trainingCategoryData?.filter(d => formData?.trainingCategories?.includes(parseInt(d.id)))}
-                              options={trainingCategoryData}
-                              onChange={(selectedOptions) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  trainingCategories: [...selectedOptions.map(option => option.id)],
-                                }));
-                              }}
-                            />
-                          </Form.Group>
-
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Professional Development Categories</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              value={pdcData?.filter(d => formData?.professionalDevCategories?.includes(parseInt(d.id)))}
-                              options={pdcData}
-                              onChange={(selectedOptions) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  professionalDevCategories: [...selectedOptions.map(option => option.id)],
-                                }));
-                              }}
-                            />
-                          </Form.Group>
 
                           {
                             formData && formData?.role === 'educator' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Nominated Assistant</Form.Label>
                               <Form.Control
                                 type="text"
@@ -740,10 +782,10 @@ const EditUser = () => {
                             </Form.Group>
                           }
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchisee</Form.Label>
                             <Select
-                              placeholder={"Which Franchisee?"}
+                              placeholder={"Which Franchise?"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
                               // isMulti
@@ -769,29 +811,32 @@ const EditUser = () => {
                             { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Primary Coordinator</Form.Label> 
-                            <Select
-                              isDisabled={formData.role !== 'educator'}
-                              placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
-                              closeMenuOnSelect={true}
-                              value={coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
-                              options={coordinatorData}
-                              onChange={(e) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  coordinator: e.id,
-                                }));
+                          {
+                            formData?.role === 'educator' &&
+                            <Form.Group className="col-md-6 mb-3 relative">
+                              <Form.Label>Select Primary Coordinator</Form.Label> 
+                              <Select
+                                isDisabled={formData.role !== 'educator'}
+                                placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
+                                closeMenuOnSelect={true}
+                                value={coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
+                                options={coordinatorData}
+                                onChange={(e) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    coordinator: e.id,
+                                  }));
 
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  coordinatorObj: e
-                                }))
-                              }}
-                            />
-                          </Form.Group>
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    coordinatorObj: e
+                                  }))
+                                }}
+                              />
+                            </Form.Group>
+                          }
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Business Assets</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -807,15 +852,91 @@ const EditUser = () => {
                               }}
                             />
                           </Form.Group>
-                          
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Upload Documents</Form.Label>
-                            <DragDropMultiple 
-                              title="Video"
-                              onSave={setTrainingDocuments} />
-                          </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          {
+                            formData?.assign_random_password === false &&
+                            <>
+                              <Form.Group className="col-md-6 mb-3 relative">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                  type="password"
+                                  name="password"
+                                  disabled={formData?.assign_random_password === true}
+                                  placeholder={"Type Your Password"}
+                                  value={formData.password ?? ''}
+                                  onChange={(e) => {
+                                    handleChange(e);
+                                    setFormErrors(prevState => ({
+                                      ...prevState,
+                                      password: null
+                                    }));
+                                  }}
+                                />
+                                { formErrors.password !== null && <span className="error">{formErrors.password}</span> }
+                              </Form.Group>
+
+                              <Form.Group className="col-md-6 mb-3 relative">
+                                <Form.Label>Confirm Password</Form.Label>
+                                <Form.Control
+                                  type="password"
+                                  name="confirm_password"
+                                  disabled={formData?.assign_random_password === true}
+                                  placeholder="Re-type Password"
+                                  value={formData.confirm_password ?? ''}
+                                  onChange={(e) => {
+                                    handleChange(e);
+                                    setFormErrors(prevState => ({
+                                      ...prevState,
+                                      confirm_password: null
+                                    }));
+                                  }}
+                                />
+                                { formErrors.confirm_password !== null && <span className="error">{formErrors.confirm_password}</span> }
+                              </Form.Group>
+                            </>
+                          }
+                          <div className="col-md-12 mb-3 relative passopt">
+                          <Form.Label>Password Settings</Form.Label>
+                          <Form.Group>
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                type="checkbox"
+                                id="assign" className="p-0"
+                                checked={formData?.assign_random_password}
+                                label="Assign random password (sent to user via email)"
+                                onChange={(e) => {
+                                  if(formData?.assign_random_password === false) {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      password: null,
+                                      confirm_password: null
+                                    }));
+                                  }
+                                  setFormData(prevState => ({
+                                    ...prevState,
+                                    assign_random_password: !formData?.assign_random_password
+                                  }))
+                                }} />
+                            </div>
+
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                type="checkbox"
+                                id="change" className="p-0"
+                                checked={formData?.change_pwd_next_login}
+                                label="Change password during next login"
+                                onChange={(e) => {
+                                  setFormData(prevState => ({
+                                    ...prevState,
+                                    change_pwd_next_login: !formData?.change_pwd_next_login
+
+                                  }))
+                                }} />
+                            </div>
+                          </Form.Group>
+                          </div>
+                          
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
                               type="date"
@@ -837,7 +958,7 @@ const EditUser = () => {
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
                               <div>
                                 <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData?.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
-                                <img style={{ width: "100px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
+                                <img style={{ width: "40px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
                               </div>
                               }
                               {
@@ -847,10 +968,17 @@ const EditUser = () => {
                                 </div>
                               }
                           </Form.Group>
+                          
+                          <Form.Group className="col-md-12 mb-3 relative">
+                            <Form.Label>Upload Documents</Form.Label>
+                            <DragDropMultiple 
+                              title="Video"
+                              onSave={setTrainingDocuments} />
+                          </Form.Group>
 
                           <Col md={12}>
                             <div className="cta text-center mt-5">
-                              <Button variant="transparent">
+                              <Button variant="transparent" className="me-3">
                                 <Link to="/user-management">
                                   Back to All Users
                                 </Link>
@@ -924,7 +1052,7 @@ const EditUser = () => {
                     <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of:</p>
                   </div>
 
-                  <Form.Group className="col-md-6 mb-3 mt-4">
+                  <Form.Group className="col-md-6 mb-3 relative mt-4">
                     <Form.Label>Termination Date</Form.Label>
                     <Form.Control
                       type="date"
@@ -986,6 +1114,7 @@ const EditUser = () => {
                   <UserSignature
                     field_label="Signature:"
                     handleSignatureDialog={handleSignatureDialog}
+                    setShowSignatureDialog={setShowSignatureDialog}
                     onChange={setSignatureImage} />
                 </Row>
               </Modal.Body>

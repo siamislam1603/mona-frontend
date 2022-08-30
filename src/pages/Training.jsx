@@ -70,7 +70,7 @@ const Training = () => {
       }
     }
     );
-
+   console.log("Response catrogy",response)
     if(response)
       setfullLoaderStatus(false)
 
