@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import $ from "jquery";
 import moment from "moment";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import {logoutUser} from '../helpers/logout';
 // import { FullLoader } from "./Loader";
 
 let temp = () => { }
@@ -258,7 +259,8 @@ const handelSearch = async (e) =>{
   };
 
   const handleLogout = (event) => {
-    logout();
+    logoutUser()
+    // logout();
   };
 
 
@@ -269,6 +271,8 @@ const handelSearch = async (e) =>{
       setSelectedFranchisee('all');
     } else {
       setFranchiseeId({ ...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
+      localStorage.setItem('selected_franchisee', JSON.stringify(franchiseeId))
+
       setSelectedFranchisee(e);
     }
   };
@@ -454,6 +458,7 @@ const handelSearch = async (e) =>{
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
+  // console.log("selected_franchiseeeeeeeeeeeeeeeeeeeeeeeeee", JSON.parse(localStorage.getItem('selected_franchisee')).franchisee_name)
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
@@ -493,9 +498,9 @@ const handelSearch = async (e) =>{
               </div>
               : <div className="selectdropdown">
                 <Dropdown onSelect={selectFranchisee}>
+                  
                   <Dropdown.Toggle id="dropdown-basic">
-                    {franchiseeId?.franchisee_name ||
-                      franchiseeList[0]?.franchisee_name ||
+                    {JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name || franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name ||  
                       'No Data Available'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>

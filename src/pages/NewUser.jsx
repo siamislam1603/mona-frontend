@@ -789,7 +789,7 @@ const NewUser = () => {
                             {
                               localStorage.getItem('user_role') === 'franchisor_admin' && 
                               <Select
-                                placeholder="Which Franchisee?"
+                                placeholder="Which Franchise?"
                                 closeMenuOnSelect={true}
                                 options={franchiseeData}
                                 onChange={(e) => {
@@ -814,7 +814,7 @@ const NewUser = () => {
                             {
                               (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') && 
                               <Select
-                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Which Franchisee?"}
+                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Which Franchise?"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}
