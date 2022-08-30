@@ -314,6 +314,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
     const errors = healthInformationFormValidator(healthInformation);
     if (Object.keys(errors).length > 0) {
+      window.scrollTo(0, 0);
       setHealthInfoFormErrors(errors);
     } else {
       if (formStepData && formStepData > step) {
@@ -482,17 +483,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         placeholder="Doctor's Name/Medical Service"
                         value={healthInformation?.medical_service || ""}
                         onChange={(e) => {
-                          if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                            setHealthInformation(prevState => ({
-                              ...prevState,
-                              medical_service: e.target.value
-                            }));
-                          } else {
-                            setHealthInformation(prevState => ({
-                              ...prevState,
-                              medical_service: e.target.value.slice(0, -1)
-                            }));
-                          }
+                          setHealthInformation(prevState => ({
+                            ...prevState,
+                            medical_service: e.target.value
+                          }))
 
                           setHealthInfoFormErrors(prevState => ({
                             ...prevState,
@@ -517,20 +511,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="tel"
                         name="telephone"
+                        maxLength={10}
                         placeholder="3375005467"
                         value={healthInformation?.telephone || ""}
                         onChange={(e) => {
-                          if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                            setHealthInformation(prevState => ({
-                              ...prevState,
-                              telephone: e.target.value.slice(0, -1)
-                            }));
-                          } else {
-                            setHealthInformation(prevState => ({
-                              ...prevState,
-                              telephone: e.target.value
-                            }));
-                          }
+                          setHealthInformation(prevState => ({
+                            ...prevState,
+                            telephone: e.target.value
+                          }));
                           setHealthInfoFormErrors(prevState => ({
                             ...prevState,
                             telephone: null

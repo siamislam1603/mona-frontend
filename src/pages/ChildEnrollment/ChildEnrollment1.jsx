@@ -52,6 +52,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     ethnicity: "",
     primary_language: "",
     occupation: "",
+    address_similar_to_child: false,
     child_live_with_this_parent: false,
     log: []
   });
@@ -191,6 +192,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     let errorParent = parentFormValidator(formOneParentData);
 
     if(Object.keys(errorChild).length > 0 || Object.keys(errorParent).length > 0) {
+      window.scrollTo(0, 0);
       setChildFormErrors(errorChild);
       setParentFormErrors(errorParent);
     } else {
@@ -308,7 +310,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         place_of_birth: child?.parents[0].place_of_birth,
         ethnicity: child?.parents[0].ethnicity,
         primary_language: child?.parents[0].primary_language,
-        occupation: child?.parents[0].occupation
+        occupation: child?.parents[0].occupation,
+        address_similar_to_child: child?.parents[0].address_similar_to_child
       }));
 
       setFormStepData(child.form_step);
@@ -326,6 +329,15 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, []);
+
+  useEffect(() => {
+    if(formOneParentData?.address_similar_to_child === true) {
+      setFormOneParentData(prevState => ({
+        ...prevState,
+        address_as_per_child: formOneChildData?.home_address
+      }));
+    }
+  }, [formOneParentData?.address_similar_to_child])
 
   // useEffect(() => {
   //   console.log("checking useEffect!")
@@ -1250,6 +1262,20 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             }}
                           />
                           { parentFormErrors?.address_as_per_child !== null && <span className="error">{parentFormErrors?.address_as_per_child}</span> }
+
+                          <div style={{ paddingLeft: "-1.5rem", marginTop: "1.2rem" }}>
+                            <Form.Check
+                              type="checkbox"
+                              id="update"
+                              checked={formOneParentData?.address_similar_to_child}
+                              label="Address as per child"
+                              onChange={(e) => {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  address_similar_to_child: !formOneParentData?.address_similar_to_child,
+                                }))
+                              }} />
+                          </div>
                         </Form.Group>
                         
                         <Form.Group className="mb-3 relative">
@@ -1257,20 +1283,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Control 
                             type="tel" 
                             placeholder="3375005467"
+                            maxLength={10}
                             name="telephone"
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
-                              if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  telephone: e.target.value.slice(0, -1)
-                                }));
-                              } else {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  telephone: e.target.value
-                                }));
-                              }
+                              handleParentData(e);
                               setParentFormErrors(prevState => ({
                                 ...prevState,
                                 telephone: null
