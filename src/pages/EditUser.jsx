@@ -894,6 +894,7 @@ const EditUser = () => {
                               </Form.Group>
                             </>
                           }
+                          <div className="col-md-12 mb-3 relative passopt">
                           <Form.Label>Password Options</Form.Label>
                           <Form.Group>
                             <div className="btn-checkbox">
@@ -932,6 +933,7 @@ const EditUser = () => {
                                 }} />
                             </div>
                           </Form.Group>
+                          </div>
                           
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
