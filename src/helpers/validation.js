@@ -467,6 +467,18 @@ export const UserFormValidation = (formObj) => {
   return errors;
 };
 
+export const editUserValidation = (form) => {
+  let errors = {};
+  let { password, confirm_password } = form;
+
+  if(password && confirm_password && password !== confirm_password) {
+    errors.password = "Passwords don't match!";
+    errors.confirm_password = "Passwords don't match!";
+  }
+
+  return errors;
+}
+
 export const personValidation = (personValidationForm) => {
   let errors = {};
   let { name, address, telephone, relationship_to_the_child } =
