@@ -818,7 +818,7 @@ const EditUser = () => {
                             </Form.Group>
                           }
 
-                          <Form.Group className="col-md-6 mb-3 relative">
+                          <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Business Assets</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -833,39 +833,6 @@ const EditUser = () => {
                                 }));
                               }}
                             />
-                          </Form.Group>
-
-                          <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Termination Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              disabled={true}
-                              name="terminationDate"
-                              value={moment(formData?.terminationDate).format('YYYY-MM-DD') || ""}
-                              onChange={(e) => setFormData(prevState => ({
-                                ...prevState,
-                                terminationData: e.target.value 
-                              }))}
-                            />
-                            {
-                              ((formData.termination_reach_me === false  || formData.termination_reach_me === null)) &&
-                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
-                              <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
-                            }
-                            {
-                              formData.termination_reach_me === true &&
-                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
-                              <div>
-                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData?.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
-                                <img style={{ width: "40px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
-                              </div>
-                              }
-                              {
-                                (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') && formData?.termination_reach_me === true && 
-                                <div>
-                                  <p style={{ fontSize: "14px", marginTop: '10px' }}>Consent Form: <strong style={{ color: '#C2488D', cursor: 'pointer' }} onClick={() => setShowUserAgreementDialog(true)}>Click Here!</strong></p>
-                                </div>
-                              }
                           </Form.Group>
 
                           {
@@ -952,6 +919,39 @@ const EditUser = () => {
                           </div>
                           
                           <Form.Group className="col-md-6 mb-3 relative">
+                            <Form.Label>Termination Date</Form.Label>
+                            <Form.Control
+                              type="date"
+                              disabled={true}
+                              name="terminationDate"
+                              value={moment(formData?.terminationDate).format('YYYY-MM-DD') || ""}
+                              onChange={(e) => setFormData(prevState => ({
+                                ...prevState,
+                                terminationData: e.target.value 
+                              }))}
+                            />
+                            {
+                              ((formData.termination_reach_me === false  || formData.termination_reach_me === null)) &&
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
+                              <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
+                            }
+                            {
+                              formData.termination_reach_me === true &&
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
+                              <div>
+                                <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData?.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
+                                <img style={{ width: "40px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
+                              </div>
+                              }
+                              {
+                                (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') && formData?.termination_reach_me === true && 
+                                <div>
+                                  <p style={{ fontSize: "14px", marginTop: '10px' }}>Consent Form: <strong style={{ color: '#C2488D', cursor: 'pointer' }} onClick={() => setShowUserAgreementDialog(true)}>Click Here!</strong></p>
+                                </div>
+                              }
+                          </Form.Group>
+                          
+                          <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               title="Video"
