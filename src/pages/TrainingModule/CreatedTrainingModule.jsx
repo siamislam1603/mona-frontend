@@ -62,6 +62,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }
   };
 
+  console.log('THE filter',filter)
   const handleTrainingSharing = async () => {
     let token = localStorage.getItem('token');
     let user_id = localStorage.getItem('user_id')
@@ -94,35 +95,34 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }
   };
   const trainingCreatedByMe = async() =>{
-    let user_id = localStorage.getItem('user_id');
-    // http://localhost:4000/training/trainingCreatedByMeOnly/52?limit=5&offset=0&search=a .
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}`, {
-      headers: {
-        "Authorization": "Bearer " + token
+    try {
+      let user_id = localStorage.getItem('user_id');
+      // http://localhost:4000/training/trainingCreatedByMeOnly/52?limit=5&offset=0&search=a .
+      let token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      console.log('Training created by me',response)
+      if(response.status===200 && response.data.status === "success"){
+        const {searchedData} = response.data
+        setMyTrainingData(searchedData)
+        setfullLoaderStatus(false)
+  
+        
       }
-    });
-    console.log('Training created by me',response)
-    if(response.status===200 && response.data.status === "success"){
-      const {searchedData} = response.data
-      setMyTrainingData(searchedData)
-      setfullLoaderStatus(false)
-
-      
+    } catch (error) {
+      setMyTrainingData([])
     }
 
   }
   const trainingCreatedByOther = async() =>{
-    let user_id = localStorage.getItem('user_id');
+    try {
+      let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
     console.log("Search inside training other",filter.search)
-    if(filter.search){
-      console.log("Search is here",filter.search)
-    }
-    if(!filter.search){
-      console.log("Search is not here",filter.search)
-    }
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -134,6 +134,9 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       setfullLoaderStatus(false)
 
       
+    }
+    } catch (error) {
+      setOtherTrainingData([])
     }
 
   }
@@ -192,6 +195,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   //     console.log('Erorr:', error);
   //   }
   // };
+
 
   const handleTrainingDelete = async (trainingId) => {
     console.log('DELETING THE TRAINING!');
@@ -402,7 +406,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
           {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
           null
             :     
-                    <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
+                   !fullLoaderStatus &&  <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
           }
              {/* {
 
