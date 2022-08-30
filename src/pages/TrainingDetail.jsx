@@ -45,10 +45,14 @@ const TrainingDetail = () => {
   }
 
   const handleFinishTraining = (event) => {
-    // updateFinishTraining();
-    setTimeout(() => {
-      setShowSurveyForm(true);
-    }, 2000);
+
+    if(relatedForms) {
+      setTimeout(() => {
+        setShowSurveyForm(true);
+      }, 2000);
+    } else {
+      updateFinishTraining();
+    }
   };
 
   const handleSurveyTransition = () => {
