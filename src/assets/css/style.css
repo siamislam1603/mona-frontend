@@ -322,7 +322,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .user-management-sec.repository-sec .table tr td:nth-child(3n){width:20%}
 .user-management-sec.repository-sec .table tr td:nth-child(4n){width:25%}
 .user-management-sec.repository-sec .table tr td:nth-child(5n){width:20%}
-.page-item.active .page-link{background-color:var(--primary);border-color:transparent;border-radius:4px}
+.page-item.active .page-link{background-color:var(--primary);border-color:transparent;border-radius:4px;color: var(--white);}
 .page-item:not(:first-child) .page-link{margin-left:0}
 .page-link{border:none;color:var(--primary);border-radius:4px}
 .page-link:hover{color:var(--primary);background-color:transparent;border-color:transparent}
