@@ -70,7 +70,7 @@ const Training = () => {
       }
     }
     );
-
+   console.log("Response catrogy",response)
     if(response)
       setfullLoaderStatus(false)
 
@@ -142,7 +142,7 @@ const Training = () => {
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
 
-                  <FullLoader loading={fullLoaderStatus} />
+                  {/* <FullLoader loading={fullLoaderStatus} /> */}
 
 
                 <div className="entry-container">

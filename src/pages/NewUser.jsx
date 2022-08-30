@@ -45,7 +45,7 @@ const NewUser = () => {
     terminationDate: "",
     telcode: '+61',
     franchisee: "",
-    open_coordinator: false
+    open_coordinator: false,
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
@@ -196,52 +196,40 @@ const NewUser = () => {
     if(Object.keys(errorObj).length > 0) {
       console.log('There are errors in the code!');
       setFormErrors(errorObj);
-      // if(croppedImage) {
-      //   setFormErrors(prevState => ({
-      //     ...prevState,
-      //     profile_pic: null
-      //   }));
-      // } else {
-      //   setFormErrors(prevState => ({
-      //     ...prevState,
-      //     profile_pic: 'Image is required!'
-      //   }));
-      // }
     } else {
-      console.log('Erorrs removed!');
-      let data=new FormData();
-      let doc=[];
-      trainingDocuments?.map(async(item)=>{
-        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
-        // doc.push(blob);
-        data.append('images', blob);
-      })
-      
-      if(croppedImage) {
-        const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-        // doc.push(blob);
-        data.append('images', blob);
-      }
-      
-      Object.keys(formData)?.map((item,index) => {
-        data.append(item,Object.values(formData)[index]);
-      })
-      
-      // data.append("images", doc);
-      let errorObject = UserFormValidation(formData);
+        console.log('Erorrs removed!');
+        let data=new FormData();
+        let doc=[];
+        trainingDocuments?.map(async(item)=>{
+          const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+          // doc.push(blob);
+          data.append('images', blob);
+        })
+        
+        if(croppedImage) {
+          const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+          // doc.push(blob);
+          data.append('images', blob);
+        }
+        
+        Object.keys(formData)?.map((item,index) => {
+          data.append(item,Object.values(formData)[index]);
+        })
+        
+        // data.append("images", doc);
+        let errorObject = UserFormValidation(formData);
 
-      if(Object.keys(errorObject).length > 0) {
-          console.log('THERE ARE STILL ERRORS', errorObject);
-          setFormErrors(errorObject);
-      } else {
-          console.log('CREATING USER!');
-          setCreateUserModal(true);
-          setLoaderMessage("Creating New User")
-          setLoader(true)
-          createUser(data);
-      }
-      
-      createUser(data);
+        if(Object.keys(errorObject).length > 0) {
+            console.log('THERE ARE STILL ERRORS', errorObject);
+            setFormErrors(errorObject);
+        } else {
+            console.log('CREATING USER!');
+            setCreateUserModal(true);
+            setLoaderMessage("Creating New User")
+            setLoader(true)
+            createUser(data);
+        } 
+        createUser(data);
     }
   };
 
@@ -511,6 +499,8 @@ const NewUser = () => {
     fetchCoordinatorData(formData.franchisee)
   }, [formData.franchisee]);
 
+  formErrors && console.log('FORM ERRORS:', formErrors);
+
   useEffect(() => { 
     if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') {
       let franchisee_id = localStorage.getItem('franchisee_id');
@@ -563,11 +553,13 @@ const NewUser = () => {
                             setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
+
+                        
                         
                       </div>
-                      <form className="user-form" onSubmit={handleSubmit}>
+                      <form className="user-form error-sec" onSubmit={handleSubmit}>
                         <Row>
-                        <Form.Group className="col-md-6 mb-3">
+                        <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Email Address</Form.Label>
                             <Form.Control
                               type="email"
@@ -588,7 +580,7 @@ const NewUser = () => {
                             { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>User Role</Form.Label>
                             <Select
                               placeholder="Which Role?"
@@ -610,7 +602,7 @@ const NewUser = () => {
                             { formErrors.role !== null && <span className="error">{formErrors.role}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Full Name</Form.Label>
                             <Form.Control
                               type="text"
@@ -628,7 +620,7 @@ const NewUser = () => {
                             { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Suburb</Form.Label>
                             <Select
                               placeholder="Search Your Suburb"
@@ -653,7 +645,7 @@ const NewUser = () => {
                             { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Address</Form.Label>
                             <Form.Control
                               type="text"
@@ -671,7 +663,7 @@ const NewUser = () => {
                             { formErrors.address !== null && <span className="error">{formErrors.address}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Postal Code</Form.Label>
                             <Form.Control
                               type="tel"
@@ -698,7 +690,7 @@ const NewUser = () => {
                             { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Contact Number</Form.Label>
                             <div className="tel-col">
                               <Select
@@ -725,7 +717,7 @@ const NewUser = () => {
                                   e.target.value = e.target.value.replace(/\s/g, "");
                                   // handleChange(e);
                                   if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
-                                    setFormErrors(prevState => ({
+                                    setFormData(prevState => ({
                                       ...prevState,
                                       phone: e.target.value.slice(0, -1)
                                     })); 
@@ -735,13 +727,18 @@ const NewUser = () => {
                                       phone: e.target.value
                                     }));
                                   }
+
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    phone: null
+                                  }));
                                 }}
                               />
                             </div>
                             { formErrors.phone !== null && <span className="error">{formErrors.phone}</span> }
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Training Categories</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -757,7 +754,7 @@ const NewUser = () => {
                             />
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Professional Development Categories</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -775,7 +772,7 @@ const NewUser = () => {
                           
                           {
                             formData && formData?.role === 'educator' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Nominated Assistant</Form.Label>
                               <Form.Control
                                 type="text"
@@ -789,7 +786,7 @@ const NewUser = () => {
                             </Form.Group>
                           }
                             
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchise</Form.Label>
                             {
                               localStorage.getItem('user_role') === 'franchisor_admin' && 
@@ -830,7 +827,7 @@ const NewUser = () => {
 
                           {
                             formData?.role === 'educator' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Select Primary Coordinator</Form.Label>
                               <Select
                                 isDisabled={formData.role !== 'educator'}
@@ -846,7 +843,7 @@ const NewUser = () => {
                               />
                             </Form.Group>
                           }
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Business Assets</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -861,8 +858,7 @@ const NewUser = () => {
                               }}
                             />
                           </Form.Group>
-
-                          {/* <Form.Group className="mb-3">
+                          {/* <Form.Group className="mb-3 relative">
                             <div className="btn-checkbox">
                               <Form.Check
                                 type="checkbox"
@@ -875,7 +871,7 @@ const NewUser = () => {
                             </div>
                           </Form.Group> */}
                           
-                          {/* <Form.Group className="col-md-6 mb-3">
+                          {/* <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
                               type="date"
@@ -890,16 +886,32 @@ const NewUser = () => {
                             />
                             { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
                           </Form.Group> */}
-                          
-                          <Form.Group className="col-md-6 mb-3">
+
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               onSave={setTrainingDocuments} />
                           </Form.Group>
 
+                          {/* <Form.Group className="mb-3 relative">
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                type="checkbox"
+                                id="accept"
+                                checked={formData?.assign_random_password}
+                                label="Assign random password (sent to user via email)"
+                                onChange={(e) => {
+                                  setFormData(prevState => ({
+                                    ...prevState,
+                                    assign_random_password: !formData?.assign_random_password
+                                  }))
+                                }} />
+                            </div>
+                          </Form.Group> */}
+
                           <Col md={12}>
                             <div className="cta text-center mt-5">
-                              <Button variant="transparent">
+                              <Button variant="transparent" className="me-3">
                                 <Link to="/user-management">
                                   Back to All Users
                                 </Link>

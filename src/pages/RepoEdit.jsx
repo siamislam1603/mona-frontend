@@ -93,7 +93,7 @@ const RepoEdit = () => {
         event.preventDefault();
         setLoaderFlag(true);
         console.log('DATA:', data);
-        if (!data.image || !data.description|| data.description == "" || !data.categoryId) {
+        if (!data.image || !data.description || data.description == "" || !data.categoryId) {
             setError(true);
             return false
         }
@@ -196,7 +196,7 @@ const RepoEdit = () => {
         );
         if (response.status === 200 && response.data.status === "success") {
             const categoryList = response.data.category;
-            console.log(categoryList,"category Listtt")
+            console.log(categoryList, "category Listtt")
             setCategory([
                 ...categoryList.map((data) => ({
                     id: data.id,
@@ -265,21 +265,21 @@ const RepoEdit = () => {
 
     const isAllRolesChecked = () => {
         let bool = false;
-        if(getUser_Role == "franchisor_admin"){
-          bool = ["guardian","educator","coordinator","franchisee_admin"].every(item => data?.shared_role?.includes(item))
+        if (getUser_Role == "franchisor_admin") {
+            bool = ["guardian", "educator", "coordinator", "franchisee_admin"].every(item => data?.shared_role?.includes(item))
         }
-        else if(getUser_Role == "franchisee_admin"){
-          bool = ["guardian","educator","coordinator"].every(item => data?.shared_role?.includes(item))
+        else if (getUser_Role == "franchisee_admin") {
+            bool = ["guardian", "educator", "coordinator"].every(item => data?.shared_role?.includes(item))
         }
-        else if(getUser_Role == "coordinator"){
-          bool = ["guardian","educator"].every(item => data?.shared_role?.includes(item))
+        else if (getUser_Role == "coordinator") {
+            bool = ["guardian", "educator"].every(item => data?.shared_role?.includes(item))
         }
-        else if(getUser_Role == "educator"){
-          bool = ["guardian"].every(item => data?.shared_role?.includes(item))
+        else if (getUser_Role == "educator") {
+            bool = ["guardian"].every(item => data?.shared_role?.includes(item))
         }
-    
+
         return bool;
-      }
+    }
 
     useEffect(() => {
         GetData();
@@ -352,7 +352,18 @@ const RepoEdit = () => {
                                                                                             />
                                                                                         </div>
                                                                                     </>
-                                                                                ) : (<></>)}
+                                                                                ) : (
+                                                                                    <>
+                                                                                        <span className="user-pic-tow">
+                                                                                            <a href={data.image} download >
+                                                                                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                                                            </a>
+                                                                                        </span>
+                                                                                        <span className="user-name">
+                                                                                            data={data.image}
+                                                                                        </span>
+                                                                                    </>
+                                                                                )}
                                                                     </>
                                                                     )
                                                                     : (<></>)}
@@ -562,7 +573,7 @@ const RepoEdit = () => {
                                                                     <Form.Group>
                                                                         <Form.Label>Select User Roles</Form.Label>
                                                                         <div className="modal-two-check user-roles-box">
-                                                                        {['franchisor_admin'].includes(getUser_Role) ? (<label className="container">
+                                                                            {['franchisor_admin'].includes(getUser_Role) ? (<label className="container">
                                                                                 Franchisee Admin
                                                                                 <input
                                                                                     type="checkbox"
@@ -586,7 +597,7 @@ const RepoEdit = () => {
                                                                                 />
                                                                                 <span className="checkmark"></span>
                                                                             </label>) : null}
-                                                                            {['franchisor_admin','franchisee_admin'].includes(getUser_Role) ? (<label className="container">
+                                                                            {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
                                                                                 Co-ordinators
                                                                                 {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                                 <input
@@ -611,7 +622,7 @@ const RepoEdit = () => {
                                                                                 />
                                                                                 <span className="checkmark"></span>
                                                                             </label>) : null}
-                                                                            {['franchisor_admin','franchisee_admin', 'coordinator'].includes(getUser_Role) ? ( <label className="container">
+                                                                            {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<label className="container">
                                                                                 Educators
                                                                                 <input
                                                                                     type="checkbox"
@@ -659,7 +670,7 @@ const RepoEdit = () => {
                                                                                 />
                                                                                 <span className="checkmark"></span>
                                                                             </label>) : null}
-                                                                            {!['educator','guardian'].includes(getUser_Role) ? (<label className="container">
+                                                                            {!['educator', 'guardian'].includes(getUser_Role) ? (<label className="container">
                                                                                 All Roles
                                                                                 <input
                                                                                     type="checkbox"

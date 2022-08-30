@@ -202,7 +202,7 @@ console.log("THE EVENT PROPS",props.allEvent)
                 <div className="video-col">
                 {data?.announcement_files?.map((detail,index) =>(
                   <>
-                      {detail.fileType == ".mp4" && !detail.is_deleted  ? (
+                      {detail.fileType == ".mp4" || detail.fileType === ".mkv" && !detail.is_deleted  ? (
                                  <AnnouncementVideo 
                                       data={detail}
                                       title={`Training Video ${index + 1}`}
@@ -228,7 +228,27 @@ console.log("THE EVENT PROPS",props.allEvent)
                     </div>
                   </div>
               }
-              {data?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+          
+              {data?.announcement_files?.length>0 ? <>
+                { data?.announcement_files[0]?.fileType === ".mp4" ||data?.announcement_files[0].fileType === ".mkv" ? 
+                                  (
+                                    null
+                                  ):
+                                  (
+                                    <div className="head">Related Files :</div>
+                                  )}
+           
+            </>
+
+            :(
+              null
+            )
+
+             }  
+            
+
+
+                                                  
                 <div className="cont">
                   <div className="related-files">
                   {data?.announcement_files && data?.announcement_files?.map((detail,index) =>(

@@ -80,6 +80,16 @@ const EducatorDashboard = () => {
   const [training, setTraining] = useState([])
   const [coordinator, setCoordinator] = useState([])
   const [childrenData, setChildrenData] = useState([])
+
+  const first = training[0];
+  const second = training[1];
+  const third = training[2];
+
+  // 👇️ Make sure first is not undefined
+
+
+
+
   const Userannouncements = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/educator/quick-access-announcements`, {
@@ -92,6 +102,7 @@ const EducatorDashboard = () => {
       const training = response.data.recentAnnouncement;
       setannouncements(training);
     }
+
   };
   const Children = async () => {
     const token = localStorage.getItem('token');
@@ -368,71 +379,78 @@ const EducatorDashboard = () => {
                           <Row>
                             <Col md={12}>
                               <div className="training-column">
+                                {console.log(training[0], "training")}
                                 {training.length !== 0 ? (
-                                  training.map((item) => {
-                                    return <>
-                                      <div className="item">
-                                        <div className="pic"><a href="/training"><img src={item.coverImage} alt="" /></a></div>
-                                        <div className="fixcol">
-                                          <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
-                                          <div className="iconame">
-                                            <a href="/" className="nowrap">{item.title}</a>
-                                            <div className="datecol">
-                                              <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
-                                              <span className="time">{item.completion_time}</span>
-                                            </div>
-                                          </div>
-                                          <div className="cta-col">
-                                            <Dropdown>
-                                              <Dropdown.Toggle variant="transparent" id="ctacol">
-                                                <img src="../img/dot-ico.svg" alt="" />
-                                              </Dropdown.Toggle>
-                                              <Dropdown.Menu>
-                                                <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                              </Dropdown.Menu>
-                                            </Dropdown>
-                                          </div>
+                                  <div className="item">
+                                    <div className="pic"><a href="/training"><img src={first?.coverImage} alt="" /></a></div>
+                                    <div className="fixcol">
+                                      <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
+                                      <div className="iconame">
+                                        <a href="/" className="nowrap">{first?.title}</a>
+                                        <div className="datecol">
+                                          <span className="red-date">Due Date:{' '}{moment(first?.createdAt).format('DD/MM/YYYY')}</span>
+                                          <span className="time">{first?.completion_time}</span>
                                         </div>
                                       </div>
-                                    </>
-                                  })
-                                ) :
-                                  (<div className="text-center mb-5 mt-5"><strong>No Training</strong></div>)}
-
-                              </div>
-                            </Col>
-                            {/* <Col md={6}>
-                              <div className="training-column">
-                                <div className="item">
-                                  <div className="pic"><a href="/"><img src="../img/training-pic1.jpg" alt="" /></a></div>
-                                  <div className="fixcol">
-                                    <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
-                                    <div className="iconame">
-                                      <a href="/" className="nowrap">Getting and staying organized</a>
-                                      <div className="datecol">
-                                        <span className="time">3 Hours</span>
+                                      <div className="cta-col">
+                                        <Dropdown>
+                                          <Dropdown.Toggle variant="transparent" id="ctacol">
+                                            <img src="../img/dot-ico.svg" alt="" />
+                                          </Dropdown.Toggle>
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
+
+                                ) :
+                                  (<div className="text-center mb-5 mt-5"><strong>No Training</strong></div>)}
                               </div>
                             </Col>
                             <Col md={6}>
-                              <div className="training-column">
-                                <div className="item">
-                                  <div className="pic"><a href="/"><img src="../img/training-pic1.jpg" alt="" /></a></div>
-                                  <div className="fixcol">
-                                    <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
-                                    <div className="iconame">
-                                      <a href="/" className="nowrap">Getting and staying organized</a>
-                                      <div className="datecol">
-                                        <span className="time">3 Hours</span>
+                              {second ? (<>
+                                < div className="training-column">
+                                  <div className="item">
+                                    <div className="pic">
+                                      <a href="/">
+                                        <img src={second?.coverImage} alt="" />
+                                      </a></div>
+                                    <div className="fixcol">
+                                      <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
+                                      <div className="iconame">
+                                        <a href="/" className="nowrap">{second?.title}</a>
+                                        <div className="datecol">
+                                          <span className="time">{second?.completion_time}</span>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            </Col> */}
+                              </>) : (<></>)}
+                            </Col>
+                            <Col md={6}>
+                              {third ? (<>
+                                < div className="training-column">
+                                  <div className="item">
+                                    <div className="pic">
+                                      <a href="/">
+                                        <img src={third?.coverImage} alt="" />
+                                      </a></div>
+                                    <div className="fixcol">
+                                      <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
+                                      <div className="iconame">
+                                        <a href="/" className="nowrap">{third?.title}</a>
+                                        <div className="datecol">
+                                          <span className="time">{third?.completion_time}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </>) : (<></>)}
+                            </Col>
                           </Row>
                         </div>
                         <div className="announcements-sec pb-5">
@@ -453,7 +471,6 @@ const EducatorDashboard = () => {
 
                                           <div>
                                             <span className="timesec">{getAddedTime(item?.createdAt)}</span>
-
                                           </div>
                                         </div>
                                         {/* {console.log("THE TIME",item.scheduled_date,getAddedTime(item.scheduled_date))} */}

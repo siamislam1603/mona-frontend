@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Select from 'react-select';
+import { suburbData } from '../assets/data/suburbData';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { FranchiseeFormValidation } from '../helpers/validation';
@@ -23,12 +24,15 @@ const NewFranchisees = () => {
         contact: "",
     });
     const [australianStatesData, setAustralianStatesData] = useState();
-    const [cityData, setCityData] = useState([]);
+    // const [cityData, setCityData] = useState([]);
+  const [cityData, setCityData] = useState(suburbData);
+
     const [selectedFranchisee, setSelectedFranchisee] = useState();
     const [topErrorMessage, setTopErrorMessage] = useState(null);
     const [loader, setLoader] = useState(false);
     const [createFranchiseeModal, setCreateFranchiseeModal] = useState(false);
-    
+    const [suburbSearchString, setSuburbSearchString] = useState("");
+
     // ERROR STATES
     const [formErrors, setFormErrors] = useState({});
 
@@ -61,7 +65,21 @@ const NewFranchisees = () => {
         }
     }
 
-
+    const fetchSuburbData = () => {
+        const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
+        const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+        axios.all([getSuburbList]).then(
+          axios.spread((...data) => {
+            console.log('SUBURB DATA:', data[0].data.data);
+            let sdata = data[0].data.data;
+            setCityData(sdata.map(d => ({
+              id: d.id,
+              value: d.name,
+              label: d.name
+            })));
+          })
+        )
+      }
     // FETCHES AUSTRALIAN STATES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
     const fetchAustralianStates = async () => {
         const response = await axios.get(`${BASE_URL}/api/australian-states`);
@@ -117,6 +135,9 @@ const NewFranchisees = () => {
         fetchAustralianStates();
         fetchCities();
     }, []);
+    useEffect(() => {
+        fetchSuburbData();
+      }, [suburbSearchString])
 
     franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
 
@@ -182,6 +203,9 @@ const NewFranchisees = () => {
                                                 placeholder="Which Suburb?"
                                                 closeMenuOnSelect={true}
                                                 options={cityData}
+                                                onInputChange={(e) => {
+                                                    setSuburbSearchString(e);
+                                                  }}
                                                 onChange={(e) => {
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,
