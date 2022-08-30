@@ -407,7 +407,7 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!city) {
-    errors.city = 'City is required!';
+    errors.city = 'Suburb is required!';
   }
 
   if (!state) {
@@ -449,7 +449,7 @@ export const UserFormValidation = (formObj) => {
 
   if (!role) errors.role = 'User role is required!';
 
-  if (!city) errors.city = 'City is required!';
+  if (!city) errors.city = 'Suburb is required!';
 
   if(password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match!";
