@@ -29,7 +29,7 @@ import { createCategoryValidation } from '../../helpers/validation';
 
 let upperRoleUser = '';
 let selectedUserId = '';
-
+let count=0;
 const OperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -536,6 +536,7 @@ const OperatingManual = () => {
                                   // {
                                   //   item['access'] = false;
                                   // }
+                                  {count=0;}
                                   return categoryFilter ===
                                     item.category_name ? (
                                     <div className="module-drop-down">
@@ -557,6 +558,21 @@ const OperatingManual = () => {
                                       {item.operating_manuals.length > 0 &&
                                         item.operating_manuals.map(
                                           (inner_item) => {
+                                            {verifyPermission(
+                                              'operating_manual',
+                                              'add'
+                                            ) &&
+                                            (inner_item.created_by ===
+                                              parseInt(
+                                                localStorage.getItem(
+                                                  'user_id'
+                                                )
+                                              ) ||
+                                              inner_item.upper_role.includes
+                                                (localStorage.getItem(
+                                                  'user_role'
+                                                ))) ? inner_item["allow_access_to_edit"]=true : inner_item["allow_access_to_edit"]=false }
+                                                {inner_item["allow_access_to_edit"]===true && count++;}
                                             return (
                                               verifyPermission(
                                                 'operating_manual',
@@ -571,7 +587,7 @@ const OperatingManual = () => {
                                                 inner_item.upper_role.includes
                                                   (localStorage.getItem(
                                                     'user_role'
-                                                  ))) && (
+                                                  ))) && inner_item["allow_access_to_edit"]===true && count===1 &&   (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -623,6 +639,21 @@ const OperatingManual = () => {
                                       {item.operating_manuals.length > 0 &&
                                         item.operating_manuals.map(
                                           (inner_item) => {
+                                            {verifyPermission(
+                                              'operating_manual',
+                                              'add'
+                                            ) &&
+                                            (inner_item.created_by ===
+                                              parseInt(
+                                                localStorage.getItem(
+                                                  'user_id'
+                                                )
+                                              ) ||
+                                              inner_item.upper_role.includes
+                                                (localStorage.getItem(
+                                                  'user_role'
+                                                ))) ? inner_item["allow_access_to_edit"]=true : inner_item["allow_access_to_edit"]=false }
+                                                {inner_item["allow_access_to_edit"]===true && count++;}
                                             return (
                                               verifyPermission(
                                                 'operating_manual',
@@ -637,7 +668,7 @@ const OperatingManual = () => {
                                                 inner_item.upper_role.includes
                                                   (localStorage.getItem(
                                                     'user_role'
-                                                  ))) && (
+                                                  ))) && inner_item["allow_access_to_edit"]===true && count===1 && (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
