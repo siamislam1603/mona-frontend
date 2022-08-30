@@ -30,7 +30,9 @@ const [announcementFiles,setAnnouncementFiles] = useState([])
 const [show, setShow] = useState(false);
 const handleClose = () => setShow(false);
 const [searchData,setSearchData] = useState()
+const [realtedFile,setRelatedFile] = useState(false)
  
+
   const AllAnnouncementData = async () =>{
     try {
       // console.log("Announcement detial API")
@@ -50,7 +52,10 @@ const [searchData,setSearchData] = useState()
       if(response.status === 200 && response.data.status === "success") {
           setAnnouncementDetail(response.data.result.searchedData);
           setIsLoading(true)
+         
+    
         }
+        
     } catch (error) {
         if(error.response.status === 404){
           // console.log("The code is 404")
@@ -147,6 +152,18 @@ const getAddedTime = (str) =>{
   // return Added
 
 }
+const realtedFile1 = ( )=>{
+  announcementDetails?.map((data)=>{
+    // data.map((detial) =>{
+    //   console.log("announcement",detial.announcement_files)
+    // })
+    console.log("the annoucneme",data.announcement_files)
+    if(data.announcement_files.fileType != ".mp4"){
+       console.log("data inside if else",data.announcement_files[0].fileType)
+       setRelatedFile(true)
+    }
+})
+}
 useEffect(() => {
   AllAnnouncementData()
   const user_role = localStorage.getItem("user_role")
@@ -195,7 +212,27 @@ useEffect(() =>{
     // console.log("THE LOAD MORE DATA EMPY ")
   }
 },[props.loadMoreData])
+useEffect(() =>{
+  // const results = announcementDetails?mapannouncement_files?.map(detail => {
+  //   // 👇️ using OR (||) operator
+  //    if(detail.fileType === ".mp4"||detail.fileType ===".mkv"){
+  //     console.log("THE MP4")
+  //    }
+  // });
+  // announcementDetails.map((details)=>{
+  //   // <div>
+  //   //   <h1>{details.title}</h1>
+  //   // </div>
+  // //  details.map((data) =>(
+  // //     console.log("The data",data)
+  // //   ))
+       
+    
+  // //   })
+  // realtedFile1()
 
+
+},[announcementDetails])
 //  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
 
 // console.log("The franhise",props.franchisee)
@@ -203,7 +240,7 @@ useEffect(() =>{
 // console.log("The annoumce all ",props.allAnnouncement)
 //   // console.log("The seach in all announcement", props.search)
   {console.log("THE ANNOINCE",announcementDetails)}
-
+console.log("realted f",realtedFile)
   return (
     <div className="announcement-accordion">
        
@@ -275,7 +312,7 @@ useEffect(() =>{
                                    
                                      {   details?.announcement_files?.map((detail,index) =>(
                                               <>
-                                              {detail.fileType == ".mp4" && !detail.is_deleted  ? (
+                                              {detail.fileType == ".mp4"||detail.fileType == ".mkv"  && !detail.is_deleted  ? (
                                                  <AnnouncementVideo 
                                                    data={detail}
                                                    title={`Training Video ${index + 1}`}
@@ -305,18 +342,67 @@ useEffect(() =>{
                                      </div>
                                    </div>
    
+                                
+                                 {/* {details?.announcement_files?.map((data) => {
+                                  if(data.fileType != ".mp4" || data.fileType != '.mkv'){
+                                       setRelatedFile(true)
+                                       break;
+                                       
+                                  }
+                                 
+                                 } )} */}
+                                 {/* {
+                                  details?.announcement_files.every(function(elem) {
+                                    console.log(elem); //result: "My","name"
+                                    if(elem.fileType != ".mp4" || elem.fileType != '.mkv'){
+                                       return setRelatedFile(true)
+                                      // break;
+                                      
+                                 }
+                                  })
+                                 } */}
 
-                          {details?.announcement_files?.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                     
+
+{details?.announcement_files?.length>0 ? <>
+                { details?.announcement_files[0]?.fileType === ".mp4" ||details?.announcement_files[0].fileType === ".mkv" ? 
+                                  (
+                                    null
+                                  ):
+                                  (
+                                    <div className="head">Related Files :</div>
+                                  )}
+           
+               
+              </>
+            :(
+              null
+            )
+
+             }  
+
+
+                               
+                                  {/* // ( <div className="head">Related Files :</div> )
+                                  // :(null)}                      */}
+                                  {/* {
+                                    realtedFile.length>0 ? (
+                                      <h2>dsa</h2>
+                                    ):(
+                                      <h1>d</h1>
+                                    )
+                                  } */}
                                      <div className="cont">
                                      <div className="related-files">
                                        {details?.announcement_files?.map((detail,index) =>(
                                               <>
                                                
-                                              {detail.fileType !== ".mp4" && !detail.is_deleted ?(
+                                              {detail.fileType != ".mp4" && detail.fileType != '.mkv' && !detail.is_deleted ?(
+
                                                 <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
                                                  <p>{getRelatedFileName(detail.file)}</p>
                                                  <small>
                                                  {getAddedTime(detail.createdAt)}
+                                                 
                                                  {/* {console.log("COnsole date",detail.createdAt)} */}
                                                  </small></span></a></div>
                                               ):(

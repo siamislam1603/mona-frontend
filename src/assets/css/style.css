@@ -576,7 +576,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .audit-form p{margin:0;line-height:normal;text-align:center;font-size:var(--fontxl)}
 .audit-form .totalaudit{background-color:var(--purple);min-width:100px;max-width:100px;height:100px;border-radius:100%;display:flex;align-items:center;justify-content:center;margin-left:1rem;color:var(--white);font-weight:700;font-size:1.7rem}
 .change-pass-sec{max-width:700px;margin:auto}
-.react-bootstrap-table{display:block;width:100%;-webkit-overflow-scrolling:touch}
+.react-bootstrap-table{display:block;width:100%;overflow: hidden; -webkit-overflow-scrolling:touch}
+.react-bootstrap-table .table{width: 99%; margin: auto;}
 .cursor{cursor:pointer}
 .file-container{width:200px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .file-thumbnail{width:100px;height:auto}
@@ -694,6 +695,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .error-sec .mb-3.relative .error { position: absolute; }
 
 canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
+.passopt .btn-checkbox, .passopt .btn-radio { margin-bottom: 0; }
 
 
 
@@ -793,7 +795,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .topheader .lpanel{display:block}
 .topheader .rpanel{position:absolute;top:-80px;right:0;z-index:5}
 .search-bar{right:85px}
-.selectdropdown .dropdown .btn-primary,.selectdropdown .dropdown .btn-primary:active{min-width:100%}
+.selectdropdown .dropdown .btn-primary,.selectdropdown .dropdown .btn-primary:active{min-width:100%!important;}
 .topheader .rpanel .user-sec .dropdown .user-name{display:none}
 .topheader .rpanel .user-sec .dropdown .btn-primary{padding-right:22px}
 .sec-column{padding:95px 0 0 0!important}
@@ -820,6 +822,9 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .forms-header-section .tab-section .nav-tabs li button{margin:0 auto}
 .btn,.extra-btn .btn-btn-outline,.extra-btn .ctaact{padding:5px 7px}
 .data-search.me-3,.extra-btn .btn.btn-primary.me-3,.filtercol.me-3.dropdown{margin-right:3px!important}
+.new-user-sec { display: block; }
+.new-user-sec .user-pic-sec .file-upload-form { margin: auto; }
+.passopt .btn-checkbox, .passopt .btn-radio { margin-bottom: 15px; }
 }
 @media only screen and (max-width:480px){
 .three-col .item,.two-col .item{flex:0 0 100%;margin-right:0}

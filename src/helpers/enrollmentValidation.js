@@ -73,10 +73,7 @@ export const parentFormValidator = (parentForm) => {
     errors.telephone = "Telephone number is required!";
 
   if(!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Telephone should only contain digits!";
-
-  if(telephone.length > 1 && telephone.length < 10)
-    errors.telephone = 'Telephone number must be at least 10-digit long.' 
+    errors.telephone = "Telephone should only contain digits!"; 
 
   if(!email)
     errors.email = "Email is required!";
@@ -116,9 +113,6 @@ export const healthInformationFormValidator = (healthInformationForm) => {
 
   if(!(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Telephone should only contain digits!";  
-
-  if(telephone.length > 1 && telephone.length < 10)
-    errors.telephone = 'Telephone number must be at least 10-digit long.'
 
   if(!medical_service_address)
     errors.medical_service_address = "Medical Service address is required!";
