@@ -20,7 +20,7 @@ const LeftNavbar = () => {
     }
 
     menu_list = menu_list.map(d => {
-      if(d.controller.controller_label === 'Child Enrolment') {
+      if(d.controller.controller_label === 'Child Enrollment') {
         return {
           controller: {
             id: d.controller.id,
