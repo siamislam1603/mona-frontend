@@ -45,7 +45,10 @@ const NewUser = () => {
     terminationDate: "",
     telcode: '+61',
     franchisee: "",
-    open_coordinator: false
+    open_coordinator: false,
+    password: "",
+    assign_random_password: false,
+    change_pwd_next_login: false
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
@@ -857,6 +860,49 @@ const NewUser = () => {
                             />
                           </Form.Group>
 
+                          {
+                            formData?.assign_random_password === false &&
+                            <>
+                              <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Password</Form.Label>
+                              <Form.Control
+                                type="password"
+                                name="password"
+                                disabled={formData?.assign_random_password === true}
+                                placeholder={"Type Your Password"}
+                                value={formData.password ?? ''}
+                                onChange={(e) => {
+                                  handleChange(e);
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    password: null
+                                  }));
+                                }}
+                              />
+                              { formErrors.password !== null && <span className="error">{formErrors.password}</span> }
+                            </Form.Group>
+
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Confirm Password</Form.Label>
+                              <Form.Control
+                                type="password"
+                                name="confirm_password"
+                                disabled={formData?.assign_random_password === true}
+                                placeholder="Re-type Password"
+                                value={formData.confirm_password ?? ''}
+                                onChange={(e) => {
+                                  handleChange(e);
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    confirm_password: null
+                                  }));
+                                }}
+                              />
+                              { formErrors.confirm_password !== null && <span className="error">{formErrors.confirm_password}</span> }
+                            </Form.Group>
+                          </>
+                        }
+
                           {/* <Form.Group className="mb-3">
                             <div className="btn-checkbox">
                               <Form.Check
@@ -885,12 +931,66 @@ const NewUser = () => {
                             />
                             { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
                           </Form.Group> */}
-                          
+
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               onSave={setTrainingDocuments} />
                           </Form.Group>
+
+                          <Form.Group>
+                            <div style={{ paddingLeft: "-1.5rem" }}>
+                              <Form.Check
+                                type="checkbox"
+                                id="assign"
+                                checked={formData?.assign_random_password}
+                                label="Assign random password (sent to user via email)"
+                                onChange={(e) => {
+                                  if(formData?.assign_random_password === false) {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      password: null,
+                                      confirm_password: null
+                                    }));
+                                  }
+                                  setFormData(prevState => ({
+                                    ...prevState,
+                                    assign_random_password: !formData?.assign_random_password
+                                  }))
+                                }} />
+                            </div>
+
+                            <div style={{ paddingLeft: "-1.5rem" }}>
+                              <Form.Check
+                                type="checkbox"
+                                id="change"
+                                checked={formData?.change_pwd_next_login}
+                                label="Change password during next login"
+                                onChange={(e) => {
+                                  setFormData(prevState => ({
+                                    ...prevState,
+                                    change_pwd_next_login: !formData?.change_pwd_next_login
+
+                                  }))
+                                }} />
+                            </div>
+                          </Form.Group>
+
+                          {/* <Form.Group className="mb-3">
+                            <div className="btn-checkbox">
+                              <Form.Check
+                                type="checkbox"
+                                id="accept"
+                                checked={formData?.assign_random_password}
+                                label="Assign random password (sent to user via email)"
+                                onChange={(e) => {
+                                  setFormData(prevState => ({
+                                    ...prevState,
+                                    assign_random_password: !formData?.assign_random_password
+                                  }))
+                                }} />
+                            </div>
+                          </Form.Group> */}
 
                           <Col md={12}>
                             <div className="cta text-center mt-5">
