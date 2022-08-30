@@ -711,7 +711,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .training-column .item .fixcol .date,.training-column .item .fixcol .red-date,.training-column .item .fixcol .time{font-size:var(--fontxxs)}
 .training-column .item .fixcol .iconame{font-size:var(--fontsm);line-height:1.4}
 .training-cat li a{font-size:var(--fontlg)}
-.title-lg,h1{font-size:26px}
+.title-lg,h1{font-size:24px}
 .title-md,h2{font-size:22px}
 .title-sm,h3{font-size:18px}
 .title-xs,h4{font-size:16px}
@@ -723,7 +723,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .column-list.access-list .item .name{font-size:var(--fontlg)}
 }
 @media screen and (min-width:1141px) and (max-width:1300px){
-.sec-column { padding: 40px 0 0 20px; }
+.sec-column { padding: 20px 0 0 20px; }
 .column-list.access-list .item .pic { margin-right: 0.5rem; flex: 0 0 30px; }
 .column-list.access-list .item .name { font-size: var(--fontsm); line-height: normal; }
 .column-list .item { padding: 15px; }
@@ -739,6 +739,11 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
   --fontxs: 10px;
   --fontxxs: 9px;
 }
+.title-lg,h1,.forms-managment-left h6{font-size:22px}
+.title-md,h2,.related_files h1, .reference_wrp h1{font-size:20px}
+.title-sm,h3, .page_title{font-size:18px}
+.title-xs,h4{font-size:16px}
+.title-xxs,h5, .tab-section .nav-tabs .nav-link{font-size:14px!important}
 .topheader .rpanel .user-sec li { margin-right: 15px; }
 .app-sidebar .collapse:not(.show) { display: block; }
 .navbar-expand-xl .navbar-toggler { display: none; }
@@ -747,6 +752,9 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .app-sidebar .navbar-expand-xl .navbar-nav .nav-link { padding-left: 10px; }
 .app-sidebar .navbar-expand-xl .navbar-nav .nav-link .ico { margin-right: 15px; }
 .selectdropdown .dropdown .btn-primary, .selectdropdown .dropdown .btn-primary:active { min-width: 250px; }
+.Text_design { font-size: 14px; }
+.tree_wrp { padding: 15px; margin-left: -20px; }
+.logo-column .navbar-brand { padding: 20px 0; }
 }
 @media only screen and (max-width:1140px){
 .forms-managment-right{flex-wrap:wrap}

@@ -1817,7 +1817,7 @@ font-size: 14px;
 }
 
 .print {
-padding: 20px !important;
+padding: 20px 0 !important;
 }
 
 .ck-editor__editable {
