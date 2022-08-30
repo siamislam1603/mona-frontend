@@ -12,8 +12,14 @@ export const childFormValidator = (childForm) => {
   if(!fullname)
     errors.fullname = "Full Name is required!";
 
+  if(!(/^[a-zA-Z ]+$/i.test(fullname)))
+    errors.fullname = "Name shoudln't contain numbers & special characters."
+
   if(!family_name)
     errors.family_name = "Family Name is required!";
+  
+  if(!(/^[a-zA-Z ]+$/i.test(family_name)))
+    errors.family_name = "Name shoudln't contain numbers & special characters."
 
   if(!dob)
     errors.dob = "Date of Birth is required!";
@@ -48,8 +54,14 @@ export const parentFormValidator = (parentForm) => {
   if(!family_name)
     errors.family_name = "Family Name is required!";
 
+  if(!(/^[a-zA-Z ]+$/i.test(family_name)))
+    errors.family_name = "Name shoudln't contain numbers & special characters."
+
   if(!given_name)
     errors.given_name = "Given name is required!";
+
+  if(!(/^[a-zA-Z ]+$/i.test(given_name)))
+    errors.given_name = "Name shouldn't contain numbers & special characters."
 
   if(!dob)  
     errors.dob = "Date of birth is required!";
@@ -60,8 +72,8 @@ export const parentFormValidator = (parentForm) => {
   if(!telephone)
     errors.telephone = "Telephone number is required!";
 
-  if(telephone.length > 1 && telephone.length < 10)
-    errors.telephone = 'Telephone number must be at least 10-digit long.' 
+  if(!(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Telephone should only contain digits!"; 
 
   if(!email)
     errors.email = "Email is required!";
@@ -93,11 +105,14 @@ export const healthInformationFormValidator = (healthInformationForm) => {
   if(!medical_service)  
     errors.medical_service = "Doctor's Name/Medical Service is required!";
 
+  if(!(/^[a-zA-Z ]+$/i.test(medical_service)))
+    errors.medical_service = "Name shouldn't contain numbers & special characters."
+
   if(!telephone)  
     errors.telephone = "Telephone number is required!";
 
-  if(telephone.length > 1 && telephone.length < 10)
-    errors.telephone = 'Telephone number must be at least 10-digit long.'
+  if(!(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Telephone should only contain digits!";  
 
   if(!medical_service_address)
     errors.medical_service_address = "Medical Service address is required!";

@@ -1,3 +1,10 @@
+// const isEmail = (email) => {
+//   console.log('EMAIL DURSING VALIDATION:', email);
+//   return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+// }
+
+import moment from 'moment';
+
 export const DynamicFormValidation = (
   form,
   data,
@@ -154,11 +161,11 @@ export const createOperatingManualValidation = (form) => {
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form, coverImage) => {
+export const AddNewAnnouncementValidation = (form, coverImage,allFranchise) => {
   console.log('The form validation', form);
   let newErrors = {};
   console.log('The form validat', form);
-  let { title, meta_description, start_date, start_time } = form;
+  let { title, meta_description, start_date, start_time,franchise } = form;
   console.log('The tile valdiation', start_date);
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required';
@@ -169,7 +176,16 @@ export const AddNewAnnouncementValidation = (form, coverImage) => {
     newErrors.start_time = 'Start Time Required';
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Announcement Description is Required';
+  
+    if(!franchise ||franchise.length ===0 ){
+        if(!allFranchise){
+          newErrors.franchise ="Please Select Franchise"
 
+        }
+       
+    }
+
+ 
   return newErrors;
 };
 export const EditAnnouncementValidation = (form, coverImage, Data) => {
@@ -391,7 +407,7 @@ export const FranchiseeFormValidation = (formObj) => {
   }
 
   if (!city) {
-    errors.city = 'City is required!';
+    errors.city = 'Suburb is required!';
   }
 
   if (!state) {
@@ -424,7 +440,7 @@ export const FranchiseeFormValidation = (formObj) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
 
-  let { fullname, role, city, address, postalCode, email, phone, franchisee } =
+  let { fullname, role, city, address, postalCode, email, phone, franchisee, password, confirm_password } =
     formObj;
 
   if (!fullname) errors.fullname = 'Fullname is required!';
@@ -433,7 +449,12 @@ export const UserFormValidation = (formObj) => {
 
   if (!role) errors.role = 'User role is required!';
 
-  if (!city) errors.city = 'City is required!';
+  if (!city) errors.city = 'Suburb is required!';
+
+  if(password && confirm_password && password !== confirm_password) {
+    errors.password = "Passwords don't match!";
+    errors.confirm_password = "Passwords don't match!";
+  }
 
   if (!address) errors.address = 'Address is required!';
 
@@ -444,6 +465,9 @@ export const UserFormValidation = (formObj) => {
 
   if (!email) errors.email = 'Email is required!';
 
+  if (!(/^[A-Z0-9]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
+    errors.email = "Please use a valid email!";
+
   if (!phone) errors.phone = 'Phone number is required!';
 
   if(phone.length > 0 && phone.length < 10) 
@@ -452,6 +476,18 @@ export const UserFormValidation = (formObj) => {
   return errors;
 };
 
+export const editUserValidation = (form) => {
+  let errors = {};
+  let { password, confirm_password } = form;
+
+  if(password && confirm_password && password !== confirm_password) {
+    errors.password = "Passwords don't match!";
+    errors.confirm_password = "Passwords don't match!";
+  }
+
+  return errors;
+}
+
 export const personValidation = (personValidationForm) => {
   let errors = {};
   let { name, address, telephone, relationship_to_the_child } =
@@ -459,9 +495,15 @@ export const personValidation = (personValidationForm) => {
 
   if (!name) errors.name = 'Name is required!';
 
+  if(!(/^[a-zA-Z ]+$/i.test(name)))
+    errors.name = 'Name shoudln\'t contain digits & special characters!';
+
   if (!address) errors.address = 'Address is required!';
 
   if (!telephone) errors.telephone = 'Telephone number is required!';
+
+  if(!(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Telephone should only contain digits!"; 
 
   if(telephone.length > 1 && telephone.length < 10)
     errors.telephone = 'Telephone number must be at least 10-digit long.'
@@ -470,8 +512,22 @@ export const personValidation = (personValidationForm) => {
     errors.relationship_to_the_child =
       'Specify their relationship to the child!';
 
+  if(!(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
+    errors.relationship_to_the_child = 'Relationship shoudln\'t contain digits & special characters!';
+
   return errors;
 };
+
+export const personValidation2 = (personValidationForm) => {
+  let errors = {};
+  let { telephone } =
+    personValidationForm;
+
+  if(telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Telephone should only contain digits!"; 
+
+  return errors;
+}
 
 export const person2Validation = (obj) => {
   let errors = {};
@@ -482,6 +538,23 @@ export const person2Validation = (obj) => {
 
   return errors;
 };
+
+export const digitalSignatureValidator = (form) => {
+  let errors = {};
+  let {
+    consent_signature,
+    consent_date
+  } = form;
+  let date = moment(consent_date);
+
+  if(!consent_signature)
+    errors.consent_signature = "Please provide your signature below!";
+
+  if(!date.isValid())
+    errors.consent_date = "Please provide a date!";
+
+  return errors;
+}
 
 
 export const childDailyRoutineValidation = (childDailyRoutineForm) => {

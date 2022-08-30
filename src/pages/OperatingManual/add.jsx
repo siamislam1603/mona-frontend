@@ -294,13 +294,6 @@ const AddOperatingManual = () => {
     }
   };
 
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
   const getCategory = async () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -328,6 +321,7 @@ const AddOperatingManual = () => {
 
   const uploadFiles = async (name, file) => {
     let flag = false;
+    console.log("file---->",file);
     if (name === 'cover_image') {
       if (file.size > 2048 * 1024) {
         let errorData = { ...errors };
@@ -372,8 +366,7 @@ const AddOperatingManual = () => {
       }
 
       const body = new FormData();
-      const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-      body.append('image', blob, file.name);
+      body.append('image',file);
       body.append('description', 'operating manual');
       body.append('title', name);
       body.append('uploadedBy', 'vaibhavi');
@@ -381,6 +374,7 @@ const AddOperatingManual = () => {
       var myHeaders = new Headers();
       myHeaders.append('shared_role', 'admin');
       myHeaders.append('authorization', 'Bearer ' + token);
+      
       fetch(`${BASE_URL}/uploads/uiFiles`, {
         method: 'post',
         body: body,

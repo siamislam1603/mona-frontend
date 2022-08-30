@@ -116,7 +116,7 @@ const Children = () => {
     };
 
     const handleEnrollmentPageRedirection = async (childId, parentId) => {
-        window.location.href=`/child-enrollment/${childId}/${parentId}`    
+        window.location.href=`/child-enrollment/${childId}/${parentId}?page=1`    
     };
 
     const DeactivateChild = async (id) => {

@@ -21,8 +21,6 @@ function ChildEnrollment() {
   // let queryPage = null;
   // queryPage = window.location.search.split('=')[1];
   // console.log('Query STRING:', queryStringPageStep);
-  // const query = new URLSearchParams(useLocation().search);
-  // console.log('QWUERY:', query);
   let { childId, parentId } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState();
 
@@ -69,12 +67,20 @@ function ChildEnrollment() {
       } else {
         console.log('Stepping Inside Sever fetched step!');
         // console.log('STEP VALUE:', queryPage ? queryPage : form_step);
-        setstep(form_step);
+        const query = new URL(window.location.href);
+        console.log('QWUERY:', query);
+        console.log('PAGE:', query.searchParams.get('page'));
+
+        setstep(parseInt(query.searchParams.get('page')) || form_step);
       }
     } else {
       setstep(1);
     }
   };
+
+  useEffect(() => {
+    console.log('STEP RIGHT NOW:', step);
+  }, [step])
 
   useEffect(() => {
     console.log('Updating step from Database!');
