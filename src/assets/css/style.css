@@ -135,7 +135,7 @@ img.custom_logo_image{width:10%}
 .custom_signin_page{padding:79px 55px;margin:50px;border-radius:20px;position:relative;background-position:top center;background-image:linear-gradient(to right top,#fff,#f8f8f8,#f2f2f2,#ebebeb,#e5e5e5)}
 .custom_content{margin:0;padding:150px 80px;position:relative}
 .custom_content .custom_content-col{position:relative;z-index:2}
-.custom_content:before{position:absolute;content:'';width:100%;height:100%;top:0;left:0;background:url(../img/kids-ply.svg) no-repeat;background-position:center;z-index:1;opacity:.1}
+.custom_content:before{position:absolute;content:'';background-size: contain;width:100%;height:100%;top:0;left:0;background:url(../img/kids-ply.svg) no-repeat;background-position:center;z-index:1;opacity:.1}
 .custom_signin_page .form-check-input:checked{background-color:var(--secondary);border-color:var(--secondary)}
 .custom_title{padding-bottom:49px}
 .custom_rest{color:var(--primary)}
@@ -755,6 +755,10 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .Text_design { font-size: 14px; }
 .tree_wrp { padding: 15px; margin-left: -20px; }
 .logo-column .navbar-brand { padding: 20px 0; }
+.custom_content { padding: 80px 40px; }
+.custom_signin_page { padding: 40px; margin: 20px; }
+.custom_main_title { font-size: 28px; padding: 20px 0 0 0; }
+.custom_main_content { font-size: 18px; line-height: 26px; }
 }
 @media only screen and (max-width:1140px){
 .forms-managment-right{flex-wrap:wrap}
