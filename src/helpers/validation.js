@@ -161,11 +161,11 @@ export const createOperatingManualValidation = (form) => {
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form, coverImage) => {
+export const AddNewAnnouncementValidation = (form, coverImage,allFranchise) => {
   console.log('The form validation', form);
   let newErrors = {};
   console.log('The form validat', form);
-  let { title, meta_description, start_date, start_time } = form;
+  let { title, meta_description, start_date, start_time,franchise } = form;
   console.log('The tile valdiation', start_date);
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required';
@@ -176,7 +176,16 @@ export const AddNewAnnouncementValidation = (form, coverImage) => {
     newErrors.start_time = 'Start Time Required';
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Announcement Description is Required';
+  
+    if(!franchise ||franchise.length ===0 ){
+        if(!allFranchise){
+          newErrors.franchise ="Please Select Franchise"
 
+        }
+       
+    }
+
+ 
   return newErrors;
 };
 export const EditAnnouncementValidation = (form, coverImage, Data) => {
