@@ -806,7 +806,7 @@ const OperatingManual = () => {
                                   <PdfComponent {...inner_item} />
                                   <Row>
                                     {inner_item.reference_video && (
-                                      <Col sm={7}>
+                                      <Col xl={7} lg={6}>
                                         <div className="reference_wrp">
                                           <h1>Reference Videos</h1>
                                           <div className="reference_videos">
@@ -839,7 +839,7 @@ const OperatingManual = () => {
                                       </Col>
                                     )}
                                     {inner_item.related_files.length !== 0 ? (
-                                      <Col sm={5}>
+                                      <Col xl={5} lg={6}>
                                         <div className="related_files">
                                           <h1>Related Files</h1>
                                           {inner_item.related_files.map(

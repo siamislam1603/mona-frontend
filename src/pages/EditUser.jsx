@@ -895,7 +895,7 @@ const EditUser = () => {
                             </>
                           }
                           <div className="col-md-12 mb-3 relative passopt">
-                          <Form.Label>Password Options</Form.Label>
+                          <Form.Label>Password Settings</Form.Label>
                           <Form.Group>
                             <div className="btn-checkbox">
                               <Form.Check
