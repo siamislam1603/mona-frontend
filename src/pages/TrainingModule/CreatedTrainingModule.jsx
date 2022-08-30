@@ -4,6 +4,7 @@ import { BASE_URL } from "../../components/App";
 import axios from "axios";
 import Multiselect from 'multiselect-react-dropdown';
 import { FullLoader } from "../../components/Loader";
+import { Link } from "react-router-dom";
 
 const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [myTrainingData, setMyTrainingData] = useState([]);
@@ -114,6 +115,13 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const trainingCreatedByOther = async() =>{
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
+    console.log("Search inside training other",filter.search)
+    if(filter.search){
+      console.log("Search is here",filter.search)
+    }
+    if(!filter.search){
+      console.log("Search is not here",filter.search)
+    }
     const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}`, {
       headers: {
         "Authorization": "Bearer " + token
@@ -157,13 +165,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   //   }
   // };
 
-  window.onscroll = function () {
-    let userScrollHeight = window.innerHeight + window.scrollY;
-          let windowBottomHeight = document.documentElement.offsetHeight;
-          if (userScrollHeight >= windowBottomHeight) {
-                    setPage(page + 5)
-          }
-}
+
   // const fetchCreatedTrainings = async () => {
   //   try {
   //     let user_id = localStorage.getItem('user_id');
@@ -290,7 +292,14 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
         <div className="training-column">
           <Row style={{ marginBottom: '40px' }}>
-            {myTrainingData?.length > 0 && <h1>Created by me</h1>}
+            {/* {myTrainingData?.length > 0 && <h1></h1>} */}
+            <header className="title-head mb-4 justify-content-between">
+                            {myTrainingData?.length > 0 && 
+                            <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
+                            
+                            }
+                            <Link to="/training-createdby-me" className="viewall">View All</Link>
+                          </header>
             {myTrainingData?.map((training) => {
               return (
                 <Col lg={4} md={6} key={training.id}>
@@ -329,6 +338,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                 </Col>
               );
             })}
+             
           </Row>
             
           <Row>
