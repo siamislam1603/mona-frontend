@@ -157,7 +157,7 @@ const EditUser = () => {
           setCreateUserModal(false);
           setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
-          window.location.href = '/user-management';
+
           setSignatureUploaded(true);
         } else if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "fail") {
           setTopErrorMessage(signatureImageResponse.data.msg);
@@ -424,7 +424,7 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The franchisee data",response)
+    console.log("The franchise data",response)
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 
@@ -437,7 +437,7 @@ const EditUser = () => {
   }
 
   const fetchCoordinatorData = async (franchisee_id) => {
-    console.log('Franchisee id', franchisee_id);
+    console.log('Franchise id', franchisee_id);
     console.log('FETCHING COORDINATOR DATA');
     const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
     if(response.status === 200 && response.data.status === "success") {
@@ -461,6 +461,7 @@ const EditUser = () => {
   const handleSignatureDialog = (data) => {
     setSignatureImage(data);
     if(signatureImage) {
+      console.log('SIGNATURE IMAGE:', signatureImage);
       setShowSignatureDialog(false);
     }
   }
@@ -522,12 +523,12 @@ const EditUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  // editUserData && console.log('EDIT USER DATA:', editUserData);
+  editUserData && console.log('EDIT USER DATA:', editUserData);
   // formData && console.log('FORM DATA:', formData);
   // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-  formData && console.log('FORM DATA:', formData);
-  signatureImage && console.log('Signature Image:', signatureImage);
-  // userRoleData && console.log('USER ROLE DATA:', userRoleData);
+  // formData && console.log('FORM DATA:', formData);
+  // signatureImage && console.log('Signature Image:', signatureImage);
+  userRoleData && console.log('USER ROLE DATA:', userRoleData);
   // currentRole && console.log('Current Role:', currentRole);
   return (
     <>
@@ -689,10 +690,22 @@ const EditUser = () => {
                               <Form.Control
                                 type="tel"
                                 name="phone"
+                                maxLength={10}
                                 placeholder="Enter Your Number"
                                 value={formData.phone}
-                                onChange={handleChange}
-                                maxLength={10}
+                                onChange={(e) => {
+                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value.slice(0, -1)
+                                    })); 
+                                  } else {
+                                    setFormData(prevState => ({
+                                      ...prevState,
+                                      phone: e.target.value
+                                    }));
+                                  }
+                                }}
                               />
                             </div>
                             <span className="error">
@@ -754,7 +767,7 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchisee</Form.Label>
                             <Select
-                              placeholder={"Which Franchisee?"}
+                              placeholder={"Which Franchise?"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
                               // isMulti
@@ -780,27 +793,30 @@ const EditUser = () => {
                             { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Select Primary Coordinator</Form.Label> 
-                            <Select
-                              isDisabled={formData.role !== 'educator'}
-                              placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
-                              closeMenuOnSelect={true}
-                              value={coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
-                              options={coordinatorData}
-                              onChange={(e) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  coordinator: e.id,
-                                }));
+                          {
+                            formData?.role === 'educator' &&
+                            <Form.Group className="col-md-6 mb-3 relative">
+                              <Form.Label>Select Primary Coordinator</Form.Label> 
+                              <Select
+                                isDisabled={formData.role !== 'educator'}
+                                placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
+                                closeMenuOnSelect={true}
+                                value={coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
+                                options={coordinatorData}
+                                onChange={(e) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    coordinator: e.id,
+                                  }));
 
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  coordinatorObj: e
-                                }))
-                              }}
-                            />
-                          </Form.Group>
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    coordinatorObj: e
+                                  }))
+                                }}
+                              />
+                            </Form.Group>
+                          }
 
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Business Assets</Form.Label>
@@ -841,7 +857,7 @@ const EditUser = () => {
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
                               <div>
                                 <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData?.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
-                                <img style={{ width: "100px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
+                                <img style={{ width: "40px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
                               </div>
                               }
                               {
@@ -1080,6 +1096,7 @@ const EditUser = () => {
                   <UserSignature
                     field_label="Signature:"
                     handleSignatureDialog={handleSignatureDialog}
+                    setShowSignatureDialog={setShowSignatureDialog}
                     onChange={setSignatureImage} />
                 </Row>
               </Modal.Body>
