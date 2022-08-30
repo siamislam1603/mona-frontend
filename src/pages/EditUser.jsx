@@ -911,7 +911,7 @@ const EditUser = () => {
                             </>
                           }
                           <div className="col-md-12 mb-3 relative passopt">
-                          <Form.Label>Password Options</Form.Label>
+                          <Form.Label>Password Settings</Form.Label>
                           <Form.Group>
                             <div className="btn-checkbox">
                               <Form.Check
@@ -960,7 +960,7 @@ const EditUser = () => {
 
                           <Col md={12}>
                             <div className="cta text-center mt-5">
-                              <Button variant="transparent">
+                              <Button variant="transparent" className="me-3">
                                 <Link to="/user-management">
                                   Back to All Users
                                 </Link>

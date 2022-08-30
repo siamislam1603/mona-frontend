@@ -20,7 +20,7 @@ const Radio = (props) => {
       <Col sm={6}>
         <Form.Group>
           <Form.Label>{controls.field_label}</Form.Label>
-          <div className="new-form-radio">
+          <div className="new-form-radio flex_wrap_radio">
             {eval(controls.option)?.map((item, index) => {
               return (
                 <>
