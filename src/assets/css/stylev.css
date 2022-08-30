@@ -1817,7 +1817,7 @@ font-size: 14px;
 }
 
 .print {
-padding: 20px !important;
+padding: 20px 0 !important;
 }
 
 .ck-editor__editable {
@@ -2954,10 +2954,10 @@ flex: 0 0 auto; }
 .custom-menu-dots .edit-module .dropdown-item.tab-trash svg, .custom-menu-dots .edit-module .dropdown-item.active.tab-trash svg { max-width: 13px; }
 .custom-menu-dots .edit-module .dropdown-item:hover svg, .custom-menu-dots .edit-module .dropdown-item.active:hover svg { opacity: 1; }
 
-@media only screen and (max-width: 1199px) {
-.new-form-radio-box {
-margin: 0 20px 20px 0 !important; 
-}
+
+/*Responsive Start*/
+@media only screen and (max-width: 1140px) {
+.new-form-radio-box { margin: 0 20px 20px 0 !important; }
 }
 @media only screen and (max-width: 767px) {
 .responses-header-row {

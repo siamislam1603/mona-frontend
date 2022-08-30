@@ -9,6 +9,11 @@ import TopHeader from '../components/TopHeader';
 let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
+
+  const query = new URL(window.location.href);
+  console.log('QWUERY:', query);
+  console.log('TRAINING ID:', query.searchParams.get('trainingId'));
+
   const location = useLocation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState([]);
