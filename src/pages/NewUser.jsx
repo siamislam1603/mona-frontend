@@ -553,6 +553,8 @@ const NewUser = () => {
                             setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
+
+                        
                         
                       </div>
                       <form className="user-form error-sec" onSubmit={handleSubmit}>

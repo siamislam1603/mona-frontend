@@ -73,30 +73,28 @@ const AllFranchisees = () => {
     // const onFilter = debounce(() => {
     //     fetchUserDetails();
     //   }, 200);
-    const deleteAlert = (id) =>{
-        if(window.confirm('Are you sure you want to delete?')){
+    const deleteAlert = (id) => {
+        if (window.confirm('Are you sure you want to delete?')) {
             deleteFranchisees(id);
         }
     }
-    const deleteFranchisees = async(id) =>{
-        console.log("The id",id)
-        let response = await axios.patch(`${BASE_URL}/role/franchisee/delete/${id}`,{
-            isDeleted:1
+
+    const deleteFranchisees = async (id) => {
+        console.log("The id", id)
+        let response = await axios.patch(`${BASE_URL}/role/franchisee/delete/${id}`, {
+            isDeleted: 1
         }, {
             headers: {
-              "Authorization": `Bearer ${localStorage.getItem('token')}`
+                "Authorization": `Bearer ${localStorage.getItem('token')}`
             }
-          })
-        if(response.status === 200 && response.data.status==="success" ){
+        })
+        if (response.status === 200 && response.data.status === "success") {
             setDeleteResponseMessage("Franchisee Delete")
             fetchFranchisees()
-
         }
-      
-        else{
-            console.log("The error res",response)
+        else {
+            console.log("The error res", response)
         }
-       
     }
 
 
@@ -109,53 +107,53 @@ const AllFranchisees = () => {
         console.log(id);
         console.log("id");
         let api_url = '';
-        if(role === "franchisor_admin") {
+        if (role === "franchisor_admin") {
             api_url = `${BASE_URL}/role/franchisee/users`;
             if (search) {
                 api_url = `${BASE_URL}/role/franchisee/users?search=${search}`;
-              }
-        } else{
+            }
+        } else {
             api_url = `${BASE_URL}/role/franchisee/${id}`;
             if (search) {
                 api_url = `${BASE_URL}/role/franchisee/${id}?search=${search}`;
             }
 
         }
-    
+
         const response = await axios.get(api_url, {
             headers: {
-                "Authorization": `Bearer ${token}` 
+                "Authorization": `Bearer ${token}`
             }
         });
 
         console.log('SERVER RESPONSE:', response);
-        if(response)
+        if (response)
             setfullLoaderStatus(false)
 
 
-        if(response.status === 200 && response.data.status === "success") {
+        if (response.status === 200 && response.data.status === "success") {
             const { franchisees } = response.data;
             console.log('FRANCHISEE LIST:', franchisees);
             let temp = franchisees.map(franchisee => ({
                 id: franchisee.id,
                 name: franchisee.franchisee_name,
                 location: franchisee.city + ", " + franchisee.state,
-                educators: 
+                educators:
                     franchisee.users.filter(user => user.role === 'educator').length,
-                children: 
+                children:
                     franchisee.users.filter(user => user.role === 'child').length,
-                isDeleted:franchisee.isDeleted 
+                isDeleted: franchisee.isDeleted
             }));
             // temp = temp.filter((data) => data.isDeleted === 0);
             console.log("franchise data  franchise datafranchise datafranchise datafranchise data", temp)
             let tempData = temp.filter((data) => data.isDeleted === null || data.isDeleted === 0);
             setFranchiseeData(tempData)
         }
-      
+
     };
 
     useEffect(() => {
-        if(localStorage.getItem('success_msg')) {
+        if (localStorage.getItem('success_msg')) {
             setTopSuccessMessage(localStorage.getItem('success_msg'));
             localStorage.removeItem('success_msg');
 
@@ -171,14 +169,14 @@ const AllFranchisees = () => {
 
     useEffect(() => {
         fetchFranchisees();
-        console.log("searched datata",search)
+        console.log("searched datata", search)
     }, [search]);
-    useEffect(() =>{
+    useEffect(() => {
         setTimeout(() => {
             setDeleteResponseMessage(null)
         }, 3000);
-    },[deleteResponseMessage])
-    
+    }, [deleteResponseMessage])
+
     console.log('PERMISSION TO ADD FRANCHISEE:', verifyPermission("user_management", "add"));
 
     return (
@@ -198,31 +196,31 @@ const AllFranchisees = () => {
 
                                 <div className="entry-container">
                                     <div className="user-management-sec">
-                                    {
-                                        topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
-                                    } 
-                                     {
-                                        deleteResponseMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{deleteResponseMessage}</p>
-                                    } 
+                                        {
+                                            topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                                        }
+                                        {
+                                            deleteResponseMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{deleteResponseMessage}</p>
+                                        }
                                         <>
                                             <header className="title-head">
                                                 <h1 className="title-lg">All Franchises</h1>
                                                 <div className="othpanel">
                                                     <div className="extra-btn">
                                                         <div className="data-search me-3">
-                                                        <label for="search-bar" className="search-label">
-                                                            <input 
-                                                            id="search-bar" 
-                                                            type="text" 
-                                                            className="form-control" 
-                                                            placeholder="Search" 
-                                                            value={search}
-                                                            onChange={(e) => {
-                                                                setSearch(e.target.value);
-                                                              }}
-                                                            
-                                                            />
-                                                        </label>
+                                                            <label for="search-bar" className="search-label">
+                                                                <input
+                                                                    id="search-bar"
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    placeholder="Search"
+                                                                    value={search}
+                                                                    onChange={(e) => {
+                                                                        setSearch(e.target.value);
+                                                                    }}
+
+                                                                />
+                                                            </label>
 
 
 
@@ -231,115 +229,115 @@ const AllFranchisees = () => {
                                                         {
                                                             localStorage.getItem('user_role') === 'stanley' &&
                                                             <Dropdown className="filtercol me-3">
-                                                            <Dropdown.Toggle
-                                                                id="extrabtn"
-                                                                variant="btn-outline"
-                                                            >
-                                                                <i className="filter-ico"></i> Add Filters
-                                                            </Dropdown.Toggle>
-                                                            <Dropdown.Menu>
-                                                                <header>Filter by:</header>
-                                                                <div className="custom-radio btn-radio mb-2">
-                                                                    <label>Users:</label>
-                                                                    <Form.Group>
-                                                                        <Form.Check
-                                                                            inline
-                                                                            label="Admin"
-                                                                            value="Admin"
-                                                                            name="users"
-                                                                            type="radio"
-                                                                            id="one"
-                                                                            onChange={(event) =>
-                                                                                setFilter((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    user: event.target.value,
-                                                                                }))
-                                                                            }
-                                                                        />
-                                                                        <Form.Check
-                                                                            inline
-                                                                            label="Co-ordinator"
-                                                                            value="Coordinator"
-                                                                            name="users"
-                                                                            type="radio"
-                                                                            id="two"
-                                                                            onChange={(event) =>
-                                                                                setFilter((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    user: event.target.value,
-                                                                                }))
-                                                                            }
-                                                                        />
-                                                                        <Form.Check
-                                                                            inline
-                                                                            label="Educator"
-                                                                            value="Educator"
-                                                                            name="users"
-                                                                            type="radio"
-                                                                            id="three"
-                                                                            onChange={(event) =>
-                                                                                setFilter((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    user: event.target.value,
-                                                                                }))
-                                                                            }
-                                                                        />
-                                                                        <Form.Check
-                                                                            inline
-                                                                            label="Parent/Guardian"
-                                                                            value="Guardian"
-                                                                            name="users"
-                                                                            type="radio"
-                                                                            id="four"
-                                                                            onChange={(event) =>
-                                                                                setFilter((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    user: event.target.value,
-                                                                                }))
-                                                                            }
-                                                                        />
-                                                                    </Form.Group>
-                                                                </div>
-                                                                <div className="custom-radio">
-                                                                    <label className="mb-2">Location:</label>
-                                                                    <Form.Group>
-                                                                        <Select
-                                                                            closeMenuOnSelect={false}
-                                                                            components={animatedComponents}
-                                                                            isMulti
-                                                                            options={training}
-                                                                            onChange={(event) =>
-                                                                                setFilter((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    location: [
-                                                                                        ...event.map(
-                                                                                            (data) => data.label
-                                                                                        ),
-                                                                                    ],
-                                                                                }))
-                                                                            }
-                                                                        />
-                                                                    </Form.Group>
-                                                                </div>
-                                                                <footer>
-                                                                    <Button
-                                                                        variant="transparent"
-                                                                        type="submit"
-                                                                        onClick={handleCancelFilter}
-                                                                    >
-                                                                        Reset
-                                                                    </Button>
-                                                                    <Button
-                                                                        variant="primary"
-                                                                        type="submit"
-                                                                        onClick={handleApplyFilter}
-                                                                    >
-                                                                        Apply
-                                                                    </Button>
-                                                                </footer>
-                                                            </Dropdown.Menu>
-                                                            
-                                                        </Dropdown>}
+                                                                <Dropdown.Toggle
+                                                                    id="extrabtn"
+                                                                    variant="btn-outline"
+                                                                >
+                                                                    <i className="filter-ico"></i> Add Filters
+                                                                </Dropdown.Toggle>
+                                                                <Dropdown.Menu>
+                                                                    <header>Filter by:</header>
+                                                                    <div className="custom-radio btn-radio mb-2">
+                                                                        <label>Users:</label>
+                                                                        <Form.Group>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                label="Admin"
+                                                                                value="Admin"
+                                                                                name="users"
+                                                                                type="radio"
+                                                                                id="one"
+                                                                                onChange={(event) =>
+                                                                                    setFilter((prevState) => ({
+                                                                                        ...prevState,
+                                                                                        user: event.target.value,
+                                                                                    }))
+                                                                                }
+                                                                            />
+                                                                            <Form.Check
+                                                                                inline
+                                                                                label="Co-ordinator"
+                                                                                value="Coordinator"
+                                                                                name="users"
+                                                                                type="radio"
+                                                                                id="two"
+                                                                                onChange={(event) =>
+                                                                                    setFilter((prevState) => ({
+                                                                                        ...prevState,
+                                                                                        user: event.target.value,
+                                                                                    }))
+                                                                                }
+                                                                            />
+                                                                            <Form.Check
+                                                                                inline
+                                                                                label="Educator"
+                                                                                value="Educator"
+                                                                                name="users"
+                                                                                type="radio"
+                                                                                id="three"
+                                                                                onChange={(event) =>
+                                                                                    setFilter((prevState) => ({
+                                                                                        ...prevState,
+                                                                                        user: event.target.value,
+                                                                                    }))
+                                                                                }
+                                                                            />
+                                                                            <Form.Check
+                                                                                inline
+                                                                                label="Parent/Guardian"
+                                                                                value="Guardian"
+                                                                                name="users"
+                                                                                type="radio"
+                                                                                id="four"
+                                                                                onChange={(event) =>
+                                                                                    setFilter((prevState) => ({
+                                                                                        ...prevState,
+                                                                                        user: event.target.value,
+                                                                                    }))
+                                                                                }
+                                                                            />
+                                                                        </Form.Group>
+                                                                    </div>
+                                                                    <div className="custom-radio">
+                                                                        <label className="mb-2">Location:</label>
+                                                                        <Form.Group>
+                                                                            <Select
+                                                                                closeMenuOnSelect={false}
+                                                                                components={animatedComponents}
+                                                                                isMulti
+                                                                                options={training}
+                                                                                onChange={(event) =>
+                                                                                    setFilter((prevState) => ({
+                                                                                        ...prevState,
+                                                                                        location: [
+                                                                                            ...event.map(
+                                                                                                (data) => data.label
+                                                                                            ),
+                                                                                        ],
+                                                                                    }))
+                                                                                }
+                                                                            />
+                                                                        </Form.Group>
+                                                                    </div>
+                                                                    <footer>
+                                                                        <Button
+                                                                            variant="transparent"
+                                                                            type="submit"
+                                                                            onClick={handleCancelFilter}
+                                                                        >
+                                                                            Reset
+                                                                        </Button>
+                                                                        <Button
+                                                                            variant="primary"
+                                                                            type="submit"
+                                                                            onClick={handleApplyFilter}
+                                                                        >
+                                                                            Apply
+                                                                        </Button>
+                                                                    </footer>
+                                                                </Dropdown.Menu>
+
+                                                            </Dropdown>}
                                                         {/* <a
                                                             href="/new-franchisees"
                                                             className="btn btn-primary me-3"
@@ -374,7 +372,7 @@ const AllFranchisees = () => {
                                                 </div>
                                             </header>
                                             <Row>
-                                                {console.log("checking franchise", franchiseeData)    }
+                                                {console.log("checking franchise", franchiseeData)}
                                                 {
 
                                                     franchiseeData && franchiseeData.map(data => {
@@ -396,16 +394,16 @@ const AllFranchisees = () => {
                                                                         <div className="cta-col">
                                                                             <Dropdown>
                                                                                 <Dropdown.Toggle variant="transparent" id="ctacol">
-                                                                                <img src="../img/dot-ico.svg" alt="" />
+                                                                                    <img src="../img/dot-ico.svg" alt="" />
                                                                                 </Dropdown.Toggle>
                                                                                 <Dropdown.Menu>
-                                                                                <Dropdown.Item onClick={() =>{
-                                                                                    deleteAlert(data.id)
-                                                                                }}>Delete</Dropdown.Item>
-                                                                                <Dropdown.Item href={`/edit-franchisees/${data.id}`}>Edit</Dropdown.Item>
+                                                                                    <Dropdown.Item onClick={() => {
+                                                                                        deleteAlert(data.id)
+                                                                                    }}>Delete</Dropdown.Item>
+                                                                                    <Dropdown.Item href={`/edit-franchisees/${data.id}`}>Edit</Dropdown.Item>
                                                                                 </Dropdown.Menu>
                                                                             </Dropdown>
-                                                                            </div>
+                                                                        </div>
                                                                         {/*<div style={{ paddingLeft: "2rem" }}>
                                                                              <b><AiOutlineArrowRight className="Arrow_icon" /></b> 
                                                                         </div>*/}

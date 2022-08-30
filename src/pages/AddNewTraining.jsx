@@ -278,7 +278,7 @@ const AddNewTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
-
+    console.log(coverImage, "coverImage")
     let errorObj = TrainingFormValidation(trainingData, coverImage);
     console.log(errorObj);
     if (Object.keys(errorObj).length > 0) {
@@ -335,7 +335,7 @@ const AddNewTraining = () => {
 
 
   useEffect(() => {
-    if(trainingSettings?.assigned_franchisee.length === 0) {
+    if (trainingSettings?.assigned_franchisee.length === 0) {
       setTrainingSettings(prevState => ({
         ...prevState,
         assigned_users: []
@@ -348,17 +348,17 @@ const AddNewTraining = () => {
   }, [trainingSettings.assigned_franchisee]);
 
   useEffect(() => {
-    if(localStorage.getItem('user_role') === 'guardian') {
-      window.location.href=`/parents-dashboard`;
+    if (localStorage.getItem('user_role') === 'guardian') {
+      window.location.href = `/parents-dashboard`;
     }
   }, []);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
-      {
-        saveSettingsToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{saveSettingsToast}</p>
-      }
+        {
+          saveSettingsToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{saveSettingsToast}</p>
+        }
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -396,10 +396,10 @@ const AddNewTraining = () => {
                             // }}
                             onChange={(e) => {
                               // if (trainingData.title.length <= 20) {
-                                setTrainingData(prevState => ({
-                                  ...prevState,
-                                  title: e.target.value
-                                }));
+                              setTrainingData(prevState => ({
+                                ...prevState,
+                                title: e.target.value
+                              }));
                               // }
 
                               if (trainingData.title.length > 2) {
