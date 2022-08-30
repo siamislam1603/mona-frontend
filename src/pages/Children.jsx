@@ -341,7 +341,7 @@ const Children = () => {
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                        <Dropdown.Item href="#">Edit</Dropdown.Item>
+                                        {/* <Dropdown.Item href="#">Edit</Dropdown.Item> */}
                                         <Dropdown.Item href="#">Add Educator</Dropdown.Item>
                                         <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
                                         <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>
