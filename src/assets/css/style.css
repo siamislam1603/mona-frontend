@@ -135,7 +135,7 @@ img.custom_logo_image{width:10%}
 .custom_signin_page{padding:79px 55px;margin:50px;border-radius:20px;position:relative;background-position:top center;background-image:linear-gradient(to right top,#fff,#f8f8f8,#f2f2f2,#ebebeb,#e5e5e5)}
 .custom_content{margin:0;padding:150px 80px;position:relative}
 .custom_content .custom_content-col{position:relative;z-index:2}
-.custom_content:before{position:absolute;content:'';width:100%;height:100%;top:0;left:0;background:url(../img/kids-ply.svg) no-repeat;background-position:center;z-index:1;opacity:.1}
+.custom_content:before{position:absolute;content:'';background-size: contain;width:100%;height:100%;top:0;left:0;background:url(../img/kids-ply.svg) no-repeat;background-position:center;z-index:1;opacity:.1}
 .custom_signin_page .form-check-input:checked{background-color:var(--secondary);border-color:var(--secondary)}
 .custom_title{padding-bottom:49px}
 .custom_rest{color:var(--primary)}
@@ -258,7 +258,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .selectdropdown .dropdown .btn-primary:focus{outline:0;box-shadow:none}
 .selectdropdown .dropdown .loction-pic{width:28px;height:28px;overflow:hidden;border-radius:100%;display:block;margin-right:10px}
 .selectdropdown .dropdown .loction-pic img{display:block}
-.selectdropdown .dropdown .dropdown-menu{width:100%;border-radius:12px;border:none;box-shadow:0 0 10px 0 rgba(0,0,0,.2);padding:0;overflow:hidden}
+.selectdropdown .dropdown .dropdown-menu{width:100%;border-radius:12px;border:none;box-shadow:0 0 10px 0 rgba(0,0,0,.2);padding:0;overflow:auto; min-width: 355px; height: 275px;}
 .selectdropdown .dropdown .dropdown-menu .dropdown-item,.selectdropdown .dropdown .dropdown-menu .dropdown-item:active{display:flex;align-items:center;font-weight:500;font-size:var(--fontsm);color:var(--secondary);border-bottom:1px solid rgba(0,0,0,.1);padding:13px 15px;background-color:transparent}
 .selectdropdown .dropdown .dropdown-menu .dropdown-item:hover{background-color:var(--gray)}
 .entry-container{padding:40px 0 0 0}
@@ -576,7 +576,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .audit-form p{margin:0;line-height:normal;text-align:center;font-size:var(--fontxl)}
 .audit-form .totalaudit{background-color:var(--purple);min-width:100px;max-width:100px;height:100px;border-radius:100%;display:flex;align-items:center;justify-content:center;margin-left:1rem;color:var(--white);font-weight:700;font-size:1.7rem}
 .change-pass-sec{max-width:700px;margin:auto}
-.react-bootstrap-table{display:block;width:100%;overflow: hidden; -webkit-overflow-scrolling:touch}
+.react-bootstrap-table{display:block;width:100%;overflow: hidden;padding-bottom: 70px; -webkit-overflow-scrolling:touch}
 .react-bootstrap-table .table{width: 99%; margin: auto;}
 .cursor{cursor:pointer}
 .file-container{width:200px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -696,6 +696,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 
 canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .passopt .btn-checkbox, .passopt .btn-radio { margin-bottom: 0; }
+.content-icon-section { flex: 0 0 55px; max-width: 55px; }
 
 
 
@@ -723,7 +724,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .column-list.access-list .item .name{font-size:var(--fontlg)}
 }
 @media screen and (min-width:1141px) and (max-width:1300px){
-.sec-column { padding: 20px 0 0 20px; }
+.sec-column { padding: 20px 0 20px 20px; }
 .column-list.access-list .item .pic { margin-right: 0.5rem; flex: 0 0 30px; }
 .column-list.access-list .item .name { font-size: var(--fontsm); line-height: normal; }
 .column-list .item { padding: 15px; }
@@ -755,6 +756,16 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .Text_design { font-size: 14px; }
 .tree_wrp { padding: 15px; margin-left: -20px; }
 .logo-column .navbar-brand { padding: 20px 0; }
+.custom_content { padding: 80px 40px; }
+.custom_signin_page { padding: 40px; margin: 20px; }
+.custom_main_title { font-size: 28px; padding: 20px 0 0 0; }
+.custom_main_content { font-size: 18px; line-height: 26px; }
+.form-control { font-size: 12px; }
+.new-user-sec .user-pic-sec { lex: 0 0 215px; }
+.grayback { padding: 25px; }
+.reference_videos .vidico { height: 255px; }
+.content-icon-section { flex: 0 0 40px; max-width: 40px; }
+.content-title-section { margin-left: 5px; }
 }
 @media only screen and (max-width:1140px){
 .forms-managment-right{flex-wrap:wrap}
@@ -861,4 +872,5 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .search-bar.show{top:60px}
 .audit-form .totalaudit{max-width:80px;height:80px;min-width:80px}
 .audit-form p{font-size:var(--fontlg)}
+.selectdropdown .dropdown .dropdown-menu{min-width: 100%; }
 }

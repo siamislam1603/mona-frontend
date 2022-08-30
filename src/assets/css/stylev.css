@@ -2954,6 +2954,30 @@ flex: 0 0 auto; }
 .custom-menu-dots .edit-module .dropdown-item.tab-trash svg, .custom-menu-dots .edit-module .dropdown-item.active.tab-trash svg { max-width: 13px; }
 .custom-menu-dots .edit-module .dropdown-item:hover svg, .custom-menu-dots .edit-module .dropdown-item.active:hover svg { opacity: 1; }
 
+.flex_wrap_checkbox .dynamic-form-check {
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+}
+
+.flex_wrap_checkbox .dynamic-form-check label.container {
+    margin-left: 0;
+    display: inline-block;
+    width: auto;
+}
+
+
+.flex_wrap_radio {
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+}
+
+.flex_wrap_radio .new-form-radio-box {
+    margin-left: 0;
+    display: inline-block;
+    width: auto;
+    margin-bottom: 10px;
+}
+
 
 /*Responsive Start*/
 @media only screen and (max-width: 1140px) {
