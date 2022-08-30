@@ -568,9 +568,9 @@ const EditUser = () => {
                         }
                         
                       </div>
-                      <form className="user-form" onSubmit={handleSubmit}>
+                      <form className="user-form error-sec" onSubmit={handleSubmit}>
                         <Row>
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Full Name</Form.Label>
                             <Form.Control
                               type="text"
@@ -584,7 +584,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>User Role</Form.Label>
                             <Select
                               placeholder="Which Role?"
@@ -605,7 +605,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Suburb</Form.Label>
                             <Select
                               placeholder="Search Your Suburb"
@@ -632,7 +632,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Address</Form.Label>
                             <Form.Control
                               type="text"
@@ -646,7 +646,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Postal Code</Form.Label>
                             <Form.Control
                               type="number"
@@ -657,7 +657,7 @@ const EditUser = () => {
                             />
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Email Address</Form.Label>
                             <Form.Control
                               type="email"
@@ -671,7 +671,7 @@ const EditUser = () => {
                             </span> 
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Contact Number</Form.Label>
                             <div className="tel-col">
                               <Select
@@ -701,7 +701,7 @@ const EditUser = () => {
                             </span>
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Training Categories</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -718,7 +718,7 @@ const EditUser = () => {
                             />
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Professional Development Categories</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -737,7 +737,7 @@ const EditUser = () => {
 
                           {
                             formData && formData?.role === 'educator' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Nominated Assistant</Form.Label>
                               <Form.Control
                                 type="text"
@@ -751,7 +751,7 @@ const EditUser = () => {
                             </Form.Group>
                           }
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchisee</Form.Label>
                             <Select
                               placeholder={"Which Franchisee?"}
@@ -780,7 +780,7 @@ const EditUser = () => {
                             { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Primary Coordinator</Form.Label> 
                             <Select
                               isDisabled={formData.role !== 'educator'}
@@ -802,7 +802,7 @@ const EditUser = () => {
                             />
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Business Assets</Form.Label>
                             <Select
                               closeMenuOnSelect={false}
@@ -819,7 +819,7 @@ const EditUser = () => {
                             />
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
                               type="date"
@@ -855,7 +855,7 @@ const EditUser = () => {
                           {
                             formData?.assign_random_password === false &&
                             <>
-                              <Form.Group className="col-md-6 mb-3">
+                              <Form.Group className="col-md-6 mb-3 relative">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control
                                   type="password"
@@ -874,7 +874,7 @@ const EditUser = () => {
                                 { formErrors.password !== null && <span className="error">{formErrors.password}</span> }
                               </Form.Group>
 
-                              <Form.Group className="col-md-6 mb-3">
+                              <Form.Group className="col-md-6 mb-3 relative">
                                 <Form.Label>Confirm Password</Form.Label>
                                 <Form.Control
                                   type="password"
@@ -894,11 +894,13 @@ const EditUser = () => {
                               </Form.Group>
                             </>
                           }
+                          <div className="col-md-12 mb-3 relative passopt">
+                          <Form.Label>Password Options</Form.Label>
                           <Form.Group>
                             <div className="btn-checkbox">
                               <Form.Check
                                 type="checkbox"
-                                id="assign"
+                                id="assign" className="p-0"
                                 checked={formData?.assign_random_password}
                                 label="Assign random password (sent to user via email)"
                                 onChange={(e) => {
@@ -916,10 +918,10 @@ const EditUser = () => {
                                 }} />
                             </div>
 
-                            <div style={{ paddingLeft: "-1.5rem" }}>
+                            <div className="btn-checkbox">
                               <Form.Check
                                 type="checkbox"
-                                id="change"
+                                id="change" className="p-0"
                                 checked={formData?.change_pwd_next_login}
                                 label="Change password during next login"
                                 onChange={(e) => {
@@ -931,8 +933,9 @@ const EditUser = () => {
                                 }} />
                             </div>
                           </Form.Group>
+                          </div>
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               title="Video"
@@ -1015,7 +1018,7 @@ const EditUser = () => {
                     <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of:</p>
                   </div>
 
-                  <Form.Group className="col-md-6 mb-3 mt-4">
+                  <Form.Group className="col-md-6 mb-3 relative mt-4">
                     <Form.Label>Termination Date</Form.Label>
                     <Form.Control
                       type="date"
