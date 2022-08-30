@@ -161,11 +161,11 @@ export const createOperatingManualValidation = (form) => {
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form, coverImage) => {
+export const AddNewAnnouncementValidation = (form, coverImage,allFranchise) => {
   console.log('The form validation', form);
   let newErrors = {};
   console.log('The form validat', form);
-  let { title, meta_description, start_date, start_time } = form;
+  let { title, meta_description, start_date, start_time,franchise } = form;
   console.log('The tile valdiation', start_date);
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required';
@@ -176,7 +176,16 @@ export const AddNewAnnouncementValidation = (form, coverImage) => {
     newErrors.start_time = 'Start Time Required';
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Announcement Description is Required';
+  
+    if(!franchise ||franchise.length ===0 ){
+        if(!allFranchise){
+          newErrors.franchise ="Please Select Franchise"
 
+        }
+       
+    }
+
+ 
   return newErrors;
 };
 export const EditAnnouncementValidation = (form, coverImage, Data) => {
@@ -431,7 +440,7 @@ export const FranchiseeFormValidation = (formObj) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
 
-  let { fullname, role, city, address, postalCode, email, phone, franchisee } =
+  let { fullname, role, city, address, postalCode, email, phone, franchisee, password, confirm_password } =
     formObj;
 
   if (!fullname) errors.fullname = 'Fullname is required!';
@@ -441,6 +450,11 @@ export const UserFormValidation = (formObj) => {
   if (!role) errors.role = 'User role is required!';
 
   if (!city) errors.city = 'City is required!';
+
+  if(password && confirm_password && password !== confirm_password) {
+    errors.password = "Passwords don't match!";
+    errors.confirm_password = "Passwords don't match!";
+  }
 
   if (!address) errors.address = 'Address is required!';
 
@@ -461,6 +475,18 @@ export const UserFormValidation = (formObj) => {
 
   return errors;
 };
+
+export const editUserValidation = (form) => {
+  let errors = {};
+  let { password, confirm_password } = form;
+
+  if(password && confirm_password && password !== confirm_password) {
+    errors.password = "Passwords don't match!";
+    errors.confirm_password = "Passwords don't match!";
+  }
+
+  return errors;
+}
 
 export const personValidation = (personValidationForm) => {
   let errors = {};

@@ -68,14 +68,6 @@ const FranchisorDashboard = () => {
 
 
 
-
-
-
-
-
-
-
-
   const Forms_count = () => {
     let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/audit-forms-count`;
