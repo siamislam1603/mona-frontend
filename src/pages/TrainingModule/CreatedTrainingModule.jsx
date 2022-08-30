@@ -19,7 +19,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  const [page,setPage] = useState(5)
+  const [page,setPage] = useState(6)
 
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
@@ -97,7 +97,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     let user_id = localStorage.getItem('user_id');
     // http://localhost:4000/training/trainingCreatedByMeOnly/52?limit=5&offset=0&search=a .
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=5&search=${filter.search}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -342,9 +342,16 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
           </Row>
             
           <Row>
-            {
+            {/* {
               otherTrainingData?.length > 0 && <h1 style={{ marginBottom: '25px' }}>Created by others</h1>
-            }
+            } */}
+             <header className="title-head mb-4 justify-content-between">
+                            {otherTrainingData?.length > 0 && 
+                            <h3 className="title-sm mb-0"><strong>Created by Other</strong></h3>
+                            
+                            }
+                            <Link to="/training-created-other" className="viewall">View All</Link>
+                          </header>
             {otherTrainingData?.map((training) => {
               return (
                 <Col lg={4} md={6} key={training.id}>
