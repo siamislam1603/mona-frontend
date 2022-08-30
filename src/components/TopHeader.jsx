@@ -458,7 +458,7 @@ const handelSearch = async (e) =>{
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
-  // console.log("selected_franchiseeeeeeeeeeeeeeeeeeeeeeeeee", JSON.parse(localStorage.getItem('selected_franchisee')).franchisee_name)
+  console.log("selected_franchiseeeeeeeeeeeeeeeeeeeeeeeeee", JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name)
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
@@ -500,7 +500,7 @@ const handelSearch = async (e) =>{
                 <Dropdown onSelect={selectFranchisee}>
                   
                   <Dropdown.Toggle id="dropdown-basic">
-                    {JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name || franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name ||  
+                    { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name || 
                       'No Data Available'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
