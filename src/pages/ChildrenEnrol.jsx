@@ -701,7 +701,7 @@ const ChildrenEnrol = () => {
                         topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
                       }
                       <header className="title-head">
-                        <h1 className="title-lg">Children Enrolled</h1>
+                        <h1 className="title-lg">Children Enroled</h1>
                         <div className="othpanel">
                           <div className="extra-btn">
                             {/* <div className="data-search me-3">
