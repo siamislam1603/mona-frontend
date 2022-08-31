@@ -66,7 +66,7 @@ const columns = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="/form/response">View</Dropdown.Item>
+            <Dropdown.Item href="/children-all">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -408,7 +408,7 @@ const FranchiseeDashboard = () => {
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h3 className="title-sm mb-0"><strong>Children With Additional Needs</strong></h3>
-                            <Link to="/form/response" className="viewall">View All</Link>
+                            <Link to="/children-all" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {userData.length > 0 ? (
@@ -456,7 +456,7 @@ const FranchiseeDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/user-management/Guardian" className="item">
+                              <a href="/children-all" className="item">
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser.newEnrollments}</span>
@@ -474,7 +474,7 @@ const FranchiseeDashboard = () => {
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>New Enrollments</strong></h4>
-                            <Link to="/user-management/Guardian" className="viewall">View All</Link>
+                            <Link to="/children-all" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {enrollments ? (<>
