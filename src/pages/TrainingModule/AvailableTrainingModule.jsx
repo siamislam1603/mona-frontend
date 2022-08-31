@@ -4,6 +4,7 @@ import { BASE_URL } from "../../components/App";
 import axios from "axios";
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
+import { FullLoader } from "../../components/Loader";
 
 
 const AvailableTraining = ({ filter }) => {
@@ -26,6 +27,7 @@ const AvailableTraining = ({ filter }) => {
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [successMessageToast, setSuccessMessageToast] = useState(null);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const fetchAvailableTrainings = async () => {
     console.log('INSIDE AVAILABLE TRAINING MODULE',page)
@@ -47,6 +49,7 @@ const AvailableTraining = ({ filter }) => {
       let uniqueObjArray = [
         ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
       ];
+      setfullLoaderStatus(false)
       setAvailableTrainingData(uniqueObjArray)
 
       uniqueObjArray?.map((item) => {
@@ -222,6 +225,8 @@ window.onscroll = function () {
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
       <div id="main">
+      <FullLoader loading={fullLoaderStatus} />
+
         <div className="training-column">
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
           <Row>
@@ -344,7 +349,7 @@ window.onscroll = function () {
             }
 
             
-            {availableTrainingData && dueDataTraining === false && nodueData === false ?
+            {availableTrainingData && dueDataTraining === false && nodueData === false && fullLoaderStatus === false ?
             <div className="text-center mb-5 mt-5">  <strong>No trainings assigned to you!</strong> </div>
 
             : null }
