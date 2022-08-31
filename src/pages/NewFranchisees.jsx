@@ -47,7 +47,7 @@ const NewFranchisees = () => {
         if(response.status === 201 && response.data.status === "success") {
             setLoader(false);
             setCreateFranchiseeModal(false);
-            localStorage.setItem('success_msg', 'Franchisee Created Successfully!');
+            localStorage.setItem('success_msg', 'Franchise Created Successfully!');
             window.location.href="/all-franchisees";
         } else {
             setLoader(false);
@@ -416,13 +416,13 @@ const NewFranchisees = () => {
                 onHide={() => setCreateFranchiseeModal(false)}>
                     <Modal.Header>
                         <Modal.Title>
-                        Creating Franchisee
+                        Creating Franchise
                         </Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
                         <div className="create-training-modal" style={{ textAlign: 'center' }}>
-                        <p>Franchisee is being created!</p>
+                        <p>Franchise is being created!</p>
                         <p>Please Wait...</p>
                         </div>
                     </Modal.Body>

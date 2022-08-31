@@ -89,7 +89,7 @@ const AllFranchisees = () => {
             }
         })
         if (response.status === 200 && response.data.status === "success") {
-            setDeleteResponseMessage("Franchisee Delete")
+            setDeleteResponseMessage("Franchise Delete")
             fetchFranchisees()
         }
         else {
