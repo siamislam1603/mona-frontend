@@ -646,7 +646,7 @@ const handelSearch = async (e) =>{
                 <Dropdown>
                   <Dropdown.Toggle id="dropdown-basic">
                     <span className="user-pic">
-                      <img alt="" id="user-pic" src={localStorage.getItem('profile_photo') || ''} />
+                      <img alt="" id="user-pic" src={localStorage.getItem('profile_photo')==='null'? '../img/upload.jpg':localStorage.getItem('profile_photo')} />
                     </span>
                     <span className="user-name">
                       {localStorage.getItem('user_name')

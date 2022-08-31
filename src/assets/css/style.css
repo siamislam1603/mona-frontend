@@ -258,7 +258,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .selectdropdown .dropdown .btn-primary:focus{outline:0;box-shadow:none}
 .selectdropdown .dropdown .loction-pic{width:28px;height:28px;overflow:hidden;border-radius:100%;display:block;margin-right:10px}
 .selectdropdown .dropdown .loction-pic img{display:block}
-.selectdropdown .dropdown .dropdown-menu{width:100%;border-radius:12px;border:none;box-shadow:0 0 10px 0 rgba(0,0,0,.2);padding:0;overflow:auto; min-width: 355px; height: 275px;}
+.selectdropdown .dropdown .dropdown-menu{width:100%;border-radius:12px;border:none;box-shadow:0 0 10px 0 rgba(0,0,0,.2);padding:0;overflow:auto; min-width: 355px; max-height: 275px;}
 .selectdropdown .dropdown .dropdown-menu .dropdown-item,.selectdropdown .dropdown .dropdown-menu .dropdown-item:active{display:flex;align-items:center;font-weight:500;font-size:var(--fontsm);color:var(--secondary);border-bottom:1px solid rgba(0,0,0,.1);padding:13px 15px;background-color:transparent}
 .selectdropdown .dropdown .dropdown-menu .dropdown-item:hover{background-color:var(--gray)}
 .entry-container{padding:40px 0 0 0}
