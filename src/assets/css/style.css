@@ -135,7 +135,7 @@ img.custom_logo_image{width:10%}
 .custom_signin_page{padding:79px 55px;margin:50px;border-radius:20px;position:relative;background-position:top center;background-image:linear-gradient(to right top,#fff,#f8f8f8,#f2f2f2,#ebebeb,#e5e5e5)}
 .custom_content{margin:0;padding:150px 80px;position:relative}
 .custom_content .custom_content-col{position:relative;z-index:2}
-.custom_content:before{position:absolute;content:'';background-size: contain;width:100%;height:100%;top:0;left:0;background:url(../img/kids-ply.svg) no-repeat;background-position:center;z-index:1;opacity:.1}
+.custom_content:before{position:absolute;content:'';width:100%;height:100%;top:0;left:0;background:url(../img/kids-ply.svg) no-repeat;background-position:center;z-index:1;opacity:.1;background-size: contain;}
 .custom_signin_page .form-check-input:checked{background-color:var(--secondary);border-color:var(--secondary)}
 .custom_title{padding-bottom:49px}
 .custom_rest{color:var(--primary)}
@@ -322,7 +322,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .user-management-sec.repository-sec .table tr td:nth-child(3n){width:20%}
 .user-management-sec.repository-sec .table tr td:nth-child(4n){width:25%}
 .user-management-sec.repository-sec .table tr td:nth-child(5n){width:20%}
-.page-item.active .page-link{background-color:var(--primary);border-color:transparent;border-radius:4px}
+.page-item.active .page-link{background-color:var(--primary);border-color:transparent;border-radius:4px;color: var(--white);}
 .page-item:not(:first-child) .page-link{margin-left:0}
 .page-link{border:none;color:var(--primary);border-radius:4px}
 .page-link:hover{color:var(--primary);background-color:transparent;border-color:transparent}
@@ -576,7 +576,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .audit-form p{margin:0;line-height:normal;text-align:center;font-size:var(--fontxl)}
 .audit-form .totalaudit{background-color:var(--purple);min-width:100px;max-width:100px;height:100px;border-radius:100%;display:flex;align-items:center;justify-content:center;margin-left:1rem;color:var(--white);font-weight:700;font-size:1.7rem}
 .change-pass-sec{max-width:700px;margin:auto}
-.react-bootstrap-table{display:block;width:100%;overflow: hidden;padding-bottom: 70px; -webkit-overflow-scrolling:touch}
+.react-bootstrap-table{display:block;width:100%;overflow: hidden;padding-bottom: 75px; -webkit-overflow-scrolling:touch}
 .react-bootstrap-table .table{width: 99%; margin: auto;}
 .cursor{cursor:pointer}
 .file-container{width:200px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
