@@ -241,7 +241,7 @@ const DynamicForm = () => {
                   </div>
                 </Row>
                 <Form>
-                  <Row>
+                  <Row className='set-layout-row'>
                     {!(
                       formPermission?.target_user?.includes(
                         localStorage.getItem('user_role') === 'guardian'

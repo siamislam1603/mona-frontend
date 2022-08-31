@@ -67,7 +67,7 @@ const AddNewTraining = () => {
   const [saveSettingsToast, setSaveSettingsToast] = useState(null);
 
   const [trainingData, setTrainingData] = useState({
-    time_unit: "Hours",
+    time_unit: "Minutes",
     title: "",
     description: "",
     meta_description: "",
@@ -891,7 +891,7 @@ const AddNewTraining = () => {
                       <Form.Check
                         type="checkbox"
                         checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                        label="Co-ordinators"
+                        label="Coordinators"
                         onChange={() => {
                           if (trainingSettings.assigned_roles.includes("coordinator")) {
                             let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
