@@ -360,8 +360,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .activitylist .item .separator{color:var(--purple);font-weight:900;opacity:1;margin:0;flex:0 0 25%}
 .activitylist .item .num{flex:0 0 15%;text-align:right;font-family:var(--fontmanrope);font-size:30px;font-weight:600}
 .ads{opacity:.1}
-.viewall{flex:0 0 75px;text-align:right;color:var(--black);opacity:.5}
-.viewall:hover{color:var(--red);opacity:1}
+.viewall{flex:0 0 75px;text-align:right;color:var(--black);opacity:.5;text-decoration: underline;}
+.viewall:hover{color:var(--red);opacity:1;text-decoration: underline;}
 .column-table.user-management-sec .table tr td{font-size:var(--fontsm)}
 .column-table.user-management-sec .table tr td:first-child{width:50%}
 .column-table.user-management-sec .table tr td:nth-child(2n){width:40%}
