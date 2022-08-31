@@ -2978,7 +2978,15 @@ flex: 0 0 auto; }
     margin-bottom: 10px;
 }
 
-
+.set-layout-row h6.text-capitalize {
+    margin: 20px 0 10px 0;
+}
+.set-layout-row .col-sm-6:nth-child(3) ~ div {
+    margin-top: 15px;
+}
+p.error:empty {
+    display: none;
+}
 /*Responsive Start*/
 @media only screen and (max-width: 1140px) {
 .new-form-radio-box { margin: 0 20px 20px 0 !important; }
