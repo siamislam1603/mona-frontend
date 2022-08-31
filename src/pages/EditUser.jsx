@@ -690,39 +690,45 @@ const EditUser = () => {
                             </span> 
                           </Form.Group>
                           
-                          <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Training Categories</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              value={trainingCategoryData?.filter(d => formData?.trainingCategories?.includes(parseInt(d.id)))}
-                              options={trainingCategoryData}
-                              onChange={(selectedOptions) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  trainingCategories: [...selectedOptions.map(option => option.id)],
-                                }));
-                              }}
-                            />
-                          </Form.Group>
+                          {
+                            formData && formData?.role !== 'guardian' &&
+                            <Form.Group className="col-md-6 mb-3 relative">
+                              <Form.Label>Training Categories</Form.Label>
+                              <Select
+                                closeMenuOnSelect={false}
+                                components={animatedComponents}
+                                isMulti
+                                value={trainingCategoryData?.filter(d => formData?.trainingCategories?.includes(parseInt(d.id)))}
+                                options={trainingCategoryData}
+                                onChange={(selectedOptions) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    trainingCategories: [...selectedOptions.map(option => option.id)],
+                                  }));
+                                }}
+                              />
+                            </Form.Group>
+                            }
 
-                          <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Professional Development Categories</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              value={pdcData?.filter(d => formData?.professionalDevCategories?.includes(parseInt(d.id)))}
-                              options={pdcData}
-                              onChange={(selectedOptions) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  professionalDevCategories: [...selectedOptions.map(option => option.id)],
-                                }));
-                              }}
-                            />
-                          </Form.Group>
+                          {
+                            formData && formData?.role !== 'guardian' &&
+                            <Form.Group className="col-md-6 mb-3 relative">
+                              <Form.Label>Professional Development Categories</Form.Label>
+                              <Select
+                                closeMenuOnSelect={false}
+                                components={animatedComponents}
+                                isMulti
+                                value={pdcData?.filter(d => formData?.professionalDevCategories?.includes(parseInt(d.id)))}
+                                options={pdcData}
+                                onChange={(selectedOptions) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    professionalDevCategories: [...selectedOptions.map(option => option.id)],
+                                  }));
+                                }}
+                              />
+                            </Form.Group>
+                          }
                           
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Contact Number</Form.Label>
@@ -836,22 +842,25 @@ const EditUser = () => {
                             </Form.Group>
                           }
 
-                          <Form.Group className="col-md-12 mb-3 relative">
-                            <Form.Label>Business Assets</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              value={businessAssetData?.filter(d => formData?.businessAssets?.includes(parseInt(d.id)))}
-                              options={businessAssetData}
-                              onChange={(selectedOptions) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  businessAssets: [...selectedOptions.map(option => option.id)],
-                                }));
-                              }}
-                            />
-                          </Form.Group>
+                          {
+                            formData && formData?.role !== 'guardian' &&
+                            <Form.Group className="col-md-12 mb-3 relative">
+                              <Form.Label>Business Assets</Form.Label>
+                              <Select
+                                closeMenuOnSelect={false}
+                                components={animatedComponents}
+                                isMulti
+                                value={businessAssetData?.filter(d => formData?.businessAssets?.includes(parseInt(d.id)))}
+                                options={businessAssetData}
+                                onChange={(selectedOptions) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    businessAssets: [...selectedOptions.map(option => option.id)],
+                                  }));
+                                }}
+                              />
+                            </Form.Group>
+                          }
 
                           {
                             formData?.assign_random_password === false &&
