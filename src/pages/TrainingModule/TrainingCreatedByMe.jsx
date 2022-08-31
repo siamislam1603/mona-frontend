@@ -19,7 +19,7 @@ import { BASE_URL } from "../../components/App";
 import LeftNavbar from "../../components/LeftNavbar";
 import { Link } from "react-router-dom";
 import { FullLoader } from "../../components/Loader";
-import { FixedSizeList } from "react-window";
+// import { FixedSizeList } from "react-window";
 
 // const animatedComponents = makeAnimated();
 const styles = {

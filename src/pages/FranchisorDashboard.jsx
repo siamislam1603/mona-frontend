@@ -39,7 +39,7 @@ const FranchisorDashboard = () => {
       formatter: (cell) => {
         console.log("EDUCATIN CELL", cell)
         cell = cell.split(",");
-        return (<><div className="user-list"><span className="user-pic"><img src={cell[0] ==="null" ? "../img/upload.jpg": cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+        return (<><div className="user-list"><span className="user-pic"><img src={cell[0] === "null" ? "../img/upload.jpg" : cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
       },
     },
     {
@@ -166,7 +166,7 @@ const FranchisorDashboard = () => {
     Forms_count();
     FormData();
   }, []);
-  console.log("FORM DATA",formData)
+  console.log("FORM DATA", formData)
 
   selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
   console.log("The latest Announcement", latest_announcement)
@@ -369,7 +369,7 @@ const FranchisorDashboard = () => {
                               </Link>
                             </div>
                             <div className="listing">
-                              <a className="item" href="/user-management/Guardian">
+                              <a className="item" href="/children-all">
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.totalChildren}</span>
@@ -383,7 +383,7 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" href="/user-management/Guardian">
+                              <a className="item" href="/children-all">
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>

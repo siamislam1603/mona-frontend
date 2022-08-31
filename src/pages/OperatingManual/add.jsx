@@ -13,6 +13,8 @@ import {
 } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 let selectedUserId = '';
 let upperRoleUser = '';
 const AddOperatingManual = () => {
@@ -176,7 +178,7 @@ const AddOperatingManual = () => {
     let data = operatingManualData;
 
     if (!data?.id) {
-      alert('Please save first operating manual information');
+      toast.error('Please save the details of operating manual!!');
     } else {
       if (formSettingData.shared_role === '' && selectedUserId === '') {
         console.log('Hello');
@@ -444,6 +446,7 @@ const AddOperatingManual = () => {
   return (
     <>
       <div id="main">
+      <ToastContainer/>
         <section className="mainsection ">
           <Container>
             <div className="admin-wrapper">
@@ -1026,8 +1029,7 @@ const AddOperatingManual = () => {
                     type="number"
                     name="order"
                     min={1}
-                    placeholder="Enter Posi
-                    tion"
+                    placeholder="Enter Position"
                     onChange={(e) => {
                       setCategoryField(e.target.name, e.target.value);
                     }}
