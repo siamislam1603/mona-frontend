@@ -105,7 +105,7 @@ const columns = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="/form/response">View</Dropdown.Item>
+            <Dropdown.Item href="/children-all">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -308,7 +308,7 @@ const CoordinatorDashboard = () => {
                         <div className="children-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Children Wtih Additional Needs</strong></h4>
-                            <Link to="/user-management/Guardian" className="viewall">View All</Link>
+                            <Link to="/children-all" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {userData.length > 0 ? (<>
@@ -454,7 +454,7 @@ const CoordinatorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" href="/user-management/Guardian" >
+                              <a className="item" href="/children-all" >
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count.newEnrollments}</span>

@@ -9,6 +9,8 @@ import { createFormFieldValidation } from '../../../helpers/validation';
 import { BASE_URL } from '../../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Setting from '../Setting';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 let counter = 0;
 let selectedUserRole = [];
@@ -880,7 +882,7 @@ const AddFormField = (props) => {
                                               }
                                             });
                                           } else {
-                                            alert('Please Fill Option First');
+                                            toast.error('Please fill option first!!');
                                           }
 
                                           tempArr[index]['option'] = tempOption;
@@ -890,6 +892,7 @@ const AddFormField = (props) => {
                                       >
                                         Apply Condition
                                       </Button>
+                                      <ToastContainer />
                                     </>
                                   ) : null}
                                 </div>

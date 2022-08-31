@@ -718,7 +718,7 @@ useEffect(() =>{
                   {/* {theCommon && theCommon ===theCount ? (
                     null
                   ):(
-                    <button type="button" onClick={handelLoadMore} class="btn btn-primary">Load More</button>
+                    <button type="button" onClick={handelLoadMore} className="btn btn-primary">Load More</button>
 
                   ) } */}
                   {/* {
@@ -726,7 +726,7 @@ useEffect(() =>{
                       {theCommon ===theCount ? (
                         null
                       ):(
-                        <button type="button" onClick={handelLoadMore} class="btn btn-primary">Load More</button>
+                        <button type="button" onClick={handelLoadMore} className="btn btn-primary">Load More</button>
     
                       ) }
                     :(
@@ -743,7 +743,7 @@ useEffect(() =>{
                         {theCommon ===theCount ? (
                           null
                         ):(
-                          <button type="button" onClick={handelLoadMore} class="btn btn-primary">Load More</button>
+                          <button type="button" onClick={handelLoadMore} className="btn btn-primary">Load More</button>
 
                         )}</>
                        ) 
@@ -758,7 +758,7 @@ useEffect(() =>{
                           null
                         ):
                       (
-                        <button type="button" onClick={handleLoadMyAnnouncement} class="btn btn-primary">Load More</button>
+                        <button type="button" onClick={handleLoadMyAnnouncement} className="btn btn-primary">Load More</button>
                      )} 
                         </>
                     ):(
@@ -772,7 +772,7 @@ useEffect(() =>{
                         null
                       ):
                       (
-                        <button type="button" onClick={handleLoadMoreEvent} class="btn btn-primary">Load More</button>
+                        <button type="button" onClick={handleLoadMoreEvent} className="btn btn-primary">Load More</button>
 
                       )
                         
