@@ -34,7 +34,7 @@ function appendUserString(role) {
 
 const ResetPassword = () => {
   const query = new URL(window.location.href);
-  let resetType = query.searchParams.get('resetType');
+  // let resetType = query.searchParams.get('resetType');
 
 
 const [passwords, setPasswords] = useState({});
@@ -47,6 +47,7 @@ const [theToken, setTheToken] = useState(null)
 const [checkResetPassword,setCheckResetPassword]= useState(true);
 let token = searchParams.get("token")
 let userID = searchParams.get("user")
+let resetType = searchParams.get("resetType")
 
 const setField = (field, value) => {
     console.log("The field and value",field,value)
