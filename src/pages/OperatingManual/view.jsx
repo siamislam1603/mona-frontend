@@ -158,7 +158,7 @@ const OperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
+      if (selectedFranchisee === 'All' || selectedFranchisee === 'all') api_url = `${BASE_URL}/auth/users`;
       else
         api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
@@ -172,7 +172,7 @@ const OperatingManual = () => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All') setUser(result?.data);
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.data);
           else setUser(result?.users);
         } else setUser(result?.data);
       })
@@ -463,6 +463,7 @@ const OperatingManual = () => {
                       localStorage.getItem('user_role') === 'guardian'
                         ? localStorage.getItem('franchisee_id')
                         : id;
+                    getOperatingManual();
                     setSelectedFranchiseeId(id);
                     setSelectedFranchisee(id);
                     localStorage.setItem('f_id', id);

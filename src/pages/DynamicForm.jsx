@@ -183,7 +183,7 @@ const DynamicForm = () => {
                 if(res)
                 {
                   alert(result?.message);
-                  navigate('/form');
+                  navigate('/training');
                 }
               });
           } else {
