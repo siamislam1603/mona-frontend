@@ -537,7 +537,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
               </Modal.Body>
 
               {/* <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
-              <div class="text-center"> */}
+              <div className="text-center"> */}
                 {/* <button 
                   type="button" 
                   className="btn btn-primary" 

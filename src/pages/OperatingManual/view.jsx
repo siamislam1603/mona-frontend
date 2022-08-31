@@ -508,7 +508,7 @@ const OperatingManual = () => {
                           </Button>
                         )}
                         <div className="forms-toogle">
-                          <div class="custom-menu-dots">
+                          <div className="custom-menu-dots">
                             <Dropdown>
                               <Dropdown.Toggle id="dropdown-basic">
                                 <FontAwesomeIcon icon={faEllipsisVertical} />
@@ -759,7 +759,7 @@ const OperatingManual = () => {
                   <Col sm={8}>
                     <div className="create_model_bar">
                       <div className="forms-toogle">
-                        <div class="custom-menu-dots">
+                        <div className="custom-menu-dots">
                           {(operatingManualdata[Index]?.operating_manuals[
                             innerIndex
                           ]?.created_by ===
