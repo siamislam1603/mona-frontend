@@ -17,6 +17,7 @@ import axios from 'axios';
 import { BASE_URL } from "../../components/App";
 import LeftNavbar from "../../components/LeftNavbar";
 import { Link } from "react-router-dom";
+import { FullLoader } from "../../components/Loader";
 
 // const animatedComponents = makeAnimated();
 const styles = {
@@ -35,6 +36,7 @@ const training = [
     label: "Melbourne",
   },
 ];
+const animatedComponents = makeAnimated();
 
 const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   let location = useLocation();
@@ -49,6 +51,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [page,setPage] = useState(5)
+//   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
@@ -67,22 +70,48 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     category_id: null,
     search: ""
   });
-  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(false);
 
 
+  const fetchTrainingCategories = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(
+      `${BASE_URL}/training/get-training-categories`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    }
+    );
+   console.log("Response catrogy",response)
+    if(response)
+    //   setfullLoaderStatus(false)
 
+
+    if (response.status === 200 && response.data.status === "success") {
+      const { categoryList } = response.data;
+      setTrainingCategory([
+        {
+          id: 0,
+          value: 'select category',
+          label: 'Select Category'
+        },
+        ...categoryList.map((data) => ({
+          id: data.id,
+          value: data.category_name,
+          label: data.category_name,
+        })),
+      ]);
+
+      console.log('TRAINING CATEGORY:', trainingCategory);
+    }
+  };
 
   const trainingCreatedByOther = async() =>{
+   try {
+    setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    // console.log("Search inside training other",filter.search)
-    // if(filter.search){
-    //   console.log("Search is here",filter.search)
-    // }
-    // if(!filter.search){
-    //   console.log("Search is not here",filter.search)
-    // }
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=&search=${filterData.search}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=&search=${filterData.search}&category_id=${filterData.category_id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -90,11 +119,16 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     console.log('Training created by OTHER',response)
     if(response.status===200 && response.data.status === "success"){
       const {searchedData} = response.data
-      setOtherTrainingData(searchedData)
       setfullLoaderStatus(false)
+
+      setOtherTrainingData(searchedData)
 
       
     }
+   } catch (error) {
+        setfullLoaderStatus(false)
+        setOtherTrainingData([])
+   }
 
   }
 
@@ -125,11 +159,12 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     // trainingCreatedByMe()
     // CreatedByme()
     trainingCreatedByOther()
+    fetchTrainingCategories()
     console.log("Traingin created")
   }, []);
   useEffect(() =>{
     trainingCreatedByOther() 
-  },[filterData.search])
+  },[filterData.search,filterData.category_id])
 
   console.log("TRAIING DATA",myTrainingData)
 
@@ -148,10 +183,11 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                   // setSelectedFranchisee={setSelectedFranchisee} 
                   />
 
-                  {/* <FullLoader loading={fullLoaderStatus} /> */}
+                  <FullLoader loading={fullLoaderStatus} />
                 <div className="entry-container">
-                  <header className="title-head">
+                  <header className="title-head mb-3">
                     <h1 className="title-lg">Training Created by Other</h1>
+                    
                     <div className="othpanel">
                       <div className="extra-btn">
                         <div className="data-search me-3">
@@ -206,6 +242,23 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                       </div>
                     </div>
                   </header>
+                  <div className="training-cat d-md-flex align-items-center mb-3">
+                    <div className="selectdropdown ms-auto d-flex align-items-center">
+                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                        <Form.Label className="d-block me-2">Choose Category</Form.Label>
+                        <Select
+                          closeMenuOnSelect={true}
+                          components={animatedComponents}
+                          options={trainingCategory}
+                          className="selectdropdown-col"
+                          onChange={(e) => setFilterData(prevState => ({
+                            ...prevState,
+                            category_id: e.id === 0 ? null : e.id
+                          }))}
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
                   <div className="training-column">
                   {/* <h3 className="title-sm mb-0"><strong></strong></h3> */}
 
@@ -263,7 +316,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
           {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
           null
             :     
-                    <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
+            fullLoaderStatus ? null :   <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
           }
              {/* {
 

@@ -9,24 +9,24 @@ class DataComponent extends React.Component {
       <div
         className="print"
         dangerouslySetInnerHTML={{
-          __html: `<div class="module_detail">
-                <div class="image_banner">
+          __html: `<div className="module_detail">
+                <div className="image_banner">
                   ${this.props.cover_image && `<img src=${
                     this.props.cover_image
                     
                 } alt="" />`} 
                 </div>
                 ${this.props.cover_image && `<br />`}
-                <div class="module_title">
+                <div className="module_title">
                   <h3>
                    ${this.props.category}
                   </h3>
                   <span>
-                    <span class="module_dot"> • </span>
+                    <span className="module_dot"> • </span>
                     ${this.props.title}
                   </span>
                 </div>
-              </div><div class="description_wrp">${this.props.description}</div>`,
+              </div><div className="description_wrp">${this.props.description}</div>`,
         }}
       ></div>
     );

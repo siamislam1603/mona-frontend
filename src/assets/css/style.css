@@ -258,12 +258,12 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .selectdropdown .dropdown .btn-primary:focus{outline:0;box-shadow:none}
 .selectdropdown .dropdown .loction-pic{width:28px;height:28px;overflow:hidden;border-radius:100%;display:block;margin-right:10px}
 .selectdropdown .dropdown .loction-pic img{display:block}
-.selectdropdown .dropdown .dropdown-menu{width:100%;border-radius:12px;border:none;box-shadow:0 0 10px 0 rgba(0,0,0,.2);padding:0;overflow:auto; min-width: 355px; height: 275px;}
+.selectdropdown .dropdown .dropdown-menu{width:100%;border-radius:12px;border:none;box-shadow:0 0 10px 0 rgba(0,0,0,.2);padding:0;overflow:auto; min-width: 355px; max-height: 275px;}
 .selectdropdown .dropdown .dropdown-menu .dropdown-item,.selectdropdown .dropdown .dropdown-menu .dropdown-item:active{display:flex;align-items:center;font-weight:500;font-size:var(--fontsm);color:var(--secondary);border-bottom:1px solid rgba(0,0,0,.1);padding:13px 15px;background-color:transparent}
 .selectdropdown .dropdown .dropdown-menu .dropdown-item:hover{background-color:var(--gray)}
 .entry-container{padding:40px 0 0 0}
 .title-head{margin-bottom:3rem;display:flex;align-items:center}
-.title-head .title-lg,.title-head .title-md,.title-head .title-sm,.title-head .title-xl,.title-head .title-xs{margin:0}
+.title-head .title-lg,.title-head .title-md,.title-head .title-sm,.title-head .title-xl,.title-head .title-xs{margin:0 0 1rem 0;}
 .title-head .othpanel{margin-left:auto}
 .tel-col{display:flex;align-items:center}
 .tel-col .telcode{flex:0 0 100px}
@@ -322,6 +322,16 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .user-management-sec.repository-sec .table tr td:nth-child(3n){width:20%}
 .user-management-sec.repository-sec .table tr td:nth-child(4n){width:25%}
 .user-management-sec.repository-sec .table tr td:nth-child(5n){width:20%}
+
+.user-management-sec.childenrol-table .table tr td:first-child{width:15%}
+.user-management-sec.childenrol-table .table tr td:nth-child(2n){width:20%}
+.user-management-sec.childenrol-table .table tr td:nth-child(3n){width:20%}
+.user-management-sec.childenrol-table .table tr td:nth-child(4n){width:13%}
+.user-management-sec.childenrol-table .table tr td:nth-child(5n){width:17%}
+.user-management-sec.childenrol-table .table tr td:nth-child(6n){width:15%}
+.user-management-sec.childenrol-table .user-list { margin-top:10px; }
+.user-management-sec.childenrol-table .user-list:first-child { margin-top:0; }
+
 .page-item.active .page-link{background-color:var(--primary);border-color:transparent;border-radius:4px;color: var(--white);}
 .page-item:not(:first-child) .page-link{margin-left:0}
 .page-link{border:none;color:var(--primary);border-radius:4px}
@@ -360,8 +370,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .activitylist .item .separator{color:var(--purple);font-weight:900;opacity:1;margin:0;flex:0 0 25%}
 .activitylist .item .num{flex:0 0 15%;text-align:right;font-family:var(--fontmanrope);font-size:30px;font-weight:600}
 .ads{opacity:.1}
-.viewall{flex:0 0 75px;text-align:right;color:var(--black);opacity:.5}
-.viewall:hover{color:var(--red);opacity:1}
+.viewall{flex:0 0 75px;text-align:right;color:var(--black);opacity:.5;text-decoration: underline;}
+.viewall:hover{color:var(--red);opacity:1;text-decoration: underline;}
 .column-table.user-management-sec .table tr td{font-size:var(--fontsm)}
 .column-table.user-management-sec .table tr td:first-child{width:50%}
 .column-table.user-management-sec .table tr td:nth-child(2n){width:40%}
@@ -575,7 +585,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .audit-form{border-radius:15px;padding:25px;background-color:var(--yellow);display:flex;align-items:center;justify-content:center}
 .audit-form p{margin:0;line-height:normal;text-align:center;font-size:var(--fontxl)}
 .audit-form .totalaudit{background-color:var(--purple);min-width:100px;max-width:100px;height:100px;border-radius:100%;display:flex;align-items:center;justify-content:center;margin-left:1rem;color:var(--white);font-weight:700;font-size:1.7rem}
-.change-pass-sec{max-width:700px;margin:auto}
+.change-pass-sec{max-width:700px;margin:0}
 .react-bootstrap-table{display:block;width:100%;overflow: hidden;padding-bottom: 75px; -webkit-overflow-scrolling:touch}
 .react-bootstrap-table .table{width: 99%; margin: auto;}
 .cursor{cursor:pointer}
@@ -766,6 +776,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .reference_videos .vidico { height: 255px; }
 .content-icon-section { flex: 0 0 40px; max-width: 40px; }
 .content-title-section { margin-left: 5px; }
+.custom_submit .kids-art { left: -70px; }
 }
 @media only screen and (max-width:1140px){
 .forms-managment-right{flex-wrap:wrap}

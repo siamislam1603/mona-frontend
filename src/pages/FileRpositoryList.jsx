@@ -2,21 +2,17 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Container, Dropdown, Form, Modal, Row, Col } from 'react-bootstrap';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import paginationFactory from 'react-bootstrap-table2-paginator';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import Select from 'react-select';
 import Multiselect from 'multiselect-react-dropdown';
 import makeAnimated from 'react-select/animated';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Link, useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
 import DragDropRepository from '../components/DragDropRepository';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import VideoPop from "../components/VideoPop";
-import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 const getUser_Role = localStorage.getItem(`user_role`)

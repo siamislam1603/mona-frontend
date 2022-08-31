@@ -12,3 +12,7 @@ p.center{font-size:1rem}
 .notification-dialog-footer{background-color:#eb5757;padding:.4rem}
 .notification-link,.notification-title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff}
 .notification-title{color:#272727;font-size:1.2rem;font-weight:400;letter-spacing:.2px}
+
+.error-border {
+  border: 1px solid tomato;
+}

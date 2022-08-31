@@ -10,7 +10,6 @@ import { ResetPasswordValidation } from '../helpers/validation';
 import axios from 'axios';
 import ResetPasswordLink from './ResetPasswordLink';
 
-
 function appendUserString(role) {
   let roleStr = '';
 
@@ -72,32 +71,37 @@ const setField = (field, value) => {
         resetPassword()
     }
   }
+
+  const logout = async () => {
+    const response = await axios.get(`${BASE_URL}/auth/logout`);
+    if (response.status === 200) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user_id');
+      localStorage.removeItem('user_name');
+      localStorage.removeItem('user_role');
+      localStorage.removeItem('menu_list');
+      localStorage.removeItem('active_tab');
+      localStorage.removeItem('selectedFranchisee');
+      window.location.href = '/';
+    }
+  };
   const resetPassword = async () =>{
     const password =passwords.confirm_password
     let response = await axios.get(`${BASE_URL}/auth/passwordReset/?token=${theToken}&password=${password}`)
     if(response.status===200 && response.data.status === "success"){
       setTopMessage("Password Reset Successfully ")
-      setTimeout(() => {
-        window.location.href=`/${appendUserString(localStorage.getItem('user_role'))}-dashboard`;
-      }, 3000);
+      // userInfo()
+      // setTimeout(() => {
+      //   window.location.href=`/${appendUserString(localStorage.getItem('user_role'))}-dashboard`;
+      // }, 3000);
+      setTimeout(() =>{
+          logout()
+      },3000)
       console.log("The success",response)
   }
-    
-
 }
-// const logout = async () => {
-//   const response = await axios.get(`${BASE_URL}/auth/logout`);
-//   if (response.status === 200) {
-//     localStorage.removeItem('token');
-//     localStorage.removeItem('user_id');
-//     localStorage.removeItem('user_name');
-//     localStorage.removeItem('user_role');
-//     localStorage.removeItem('menu_list');
-//     localStorage.removeItem('active_tab');
-//     localStorage.removeItem('selectedFranchisee');
-//     window.location.href = '/';
-//   }
-// };
+
+
 const getUser =  async() =>{
  try {
   let response = await axios.get(`${BASE_URL}/auth/${userID}`)

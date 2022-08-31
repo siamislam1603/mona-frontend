@@ -26,6 +26,8 @@ import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { verifyPermission } from '../../helpers/roleBasedAccess';
 import { createCategoryValidation } from '../../helpers/validation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 let upperRoleUser = '';
 let selectedUserId = '';
@@ -158,7 +160,7 @@ const OperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
+      if (selectedFranchisee === 'All' || selectedFranchisee === 'all') api_url = `${BASE_URL}/auth/users`;
       else
         api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
@@ -172,7 +174,7 @@ const OperatingManual = () => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All') setUser(result?.data);
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.data);
           else setUser(result?.users);
         } else setUser(result?.data);
       })
@@ -409,7 +411,7 @@ const OperatingManual = () => {
     e.preventDefault();
     let data = singleOperatingManual;
     if (!data?.id) {
-      alert('Please save first operating manual information');
+      toast.error('Please save the details of operating manual!!');
     } else {
       if (formSettingData.shared_role === '' && selectedUserId === '') {
         data['accessible_to_role'] = null;
@@ -449,6 +451,7 @@ const OperatingManual = () => {
   return (
     <>
       <div id="main">
+        <ToastContainer/>
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -463,6 +466,7 @@ const OperatingManual = () => {
                       localStorage.getItem('user_role') === 'guardian'
                         ? localStorage.getItem('franchisee_id')
                         : id;
+                    getOperatingManual();
                     setSelectedFranchiseeId(id);
                     setSelectedFranchisee(id);
                     localStorage.setItem('f_id', id);
@@ -507,7 +511,7 @@ const OperatingManual = () => {
                           </Button>
                         )}
                         <div className="forms-toogle">
-                          <div class="custom-menu-dots">
+                          <div className="custom-menu-dots">
                             <Dropdown>
                               <Dropdown.Toggle id="dropdown-basic">
                                 <FontAwesomeIcon icon={faEllipsisVertical} />
@@ -636,7 +640,7 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      {item.operating_manuals.length > 0 &&
+                                      {item?.operating_manuals?.length > 0 &&
                                         item.operating_manuals.map(
                                           (inner_item) => {
                                             {verifyPermission(
@@ -758,7 +762,7 @@ const OperatingManual = () => {
                   <Col sm={8}>
                     <div className="create_model_bar">
                       <div className="forms-toogle">
-                        <div class="custom-menu-dots">
+                        <div className="custom-menu-dots">
                           {(operatingManualdata[Index]?.operating_manuals[
                             innerIndex
                           ]?.created_by ===
