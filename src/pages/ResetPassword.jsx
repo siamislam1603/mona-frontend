@@ -72,30 +72,7 @@ const setField = (field, value) => {
         resetPassword()
     }
   }
-  const userInfo = async () =>{
-    console.log("USer info call menu list")
-    const resp = await axios.get(`${BASE_URL}/auth/get_menu_list`) 
-    console.log("Rep res",resp) 
-    if (resp.status === 200 && resp.data.status === "success") {
-      let { permissionsObject } = resp.data;
-      console.log("persmission ",permissionsObject)
-      console.log('PERMISSIONS OBJECT:', permissionsObject)
-      localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
-    
-       let response = await axios.get(`${BASE_URL}/auth/userInfo/${userID}`)
-      console.log("user Info",response)
-    
-      localStorage.setItem('token', token);
-      localStorage.setItem('user_id', response.data.user.id);
-      localStorage.setItem('user_role', response.data.user.role);
-      localStorage.setItem('user_name', response.data.user.fullname);
-      localStorage.setItem('email', response.data.user.email);
-      localStorage.setItem('franchisee_id', response.data.user.franchisee_id);
-      localStorage.setItem('profile_photo', response.data.user.profile_photo);
-      
-      console.log("Reset password",response)
-    }
-  }
+
   const logout = async () => {
     const response = await axios.get(`${BASE_URL}/auth/logout`);
     if (response.status === 200) {
