@@ -320,7 +320,7 @@ const ChildrenEnrol = () => {
         dataField: 'specailneed',
         text: 'Special Need',
         formatter: (cell) => {
-          return (<><div className="user-list"><span className="user-pic"></span><span className="user-name">{cell === "true"? "Yes":<>
+          return (<><div className="user-list"><span className="user-name">{cell === "true"? "Yes":<>
           {
             cell === "false" ? " No":
             " "
@@ -716,7 +716,7 @@ const ChildrenEnrol = () => {
                 <FullLoader loading={fullLoaderStatus} />
 
                 <div className="entry-container">
-                  <div className="user-management-sec">
+                  <div className="user-management-sec childenrol-table">
 
                     <>
                       {
