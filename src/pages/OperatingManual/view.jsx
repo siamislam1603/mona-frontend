@@ -29,7 +29,7 @@ import { createCategoryValidation } from '../../helpers/validation';
 
 let upperRoleUser = '';
 let selectedUserId = '';
-
+let count=0;
 const OperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -158,7 +158,7 @@ const OperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
+      if (selectedFranchisee === 'All' || selectedFranchisee === 'all') api_url = `${BASE_URL}/auth/users`;
       else
         api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
@@ -172,7 +172,7 @@ const OperatingManual = () => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All') setUser(result?.data);
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.data);
           else setUser(result?.users);
         } else setUser(result?.data);
       })
@@ -463,6 +463,7 @@ const OperatingManual = () => {
                       localStorage.getItem('user_role') === 'guardian'
                         ? localStorage.getItem('franchisee_id')
                         : id;
+                    getOperatingManual();
                     setSelectedFranchiseeId(id);
                     setSelectedFranchisee(id);
                     localStorage.setItem('f_id', id);
@@ -536,6 +537,7 @@ const OperatingManual = () => {
                                   // {
                                   //   item['access'] = false;
                                   // }
+                                  {count=0;}
                                   return categoryFilter ===
                                     item.category_name ? (
                                     <div className="module-drop-down">
@@ -557,6 +559,21 @@ const OperatingManual = () => {
                                       {item.operating_manuals.length > 0 &&
                                         item.operating_manuals.map(
                                           (inner_item) => {
+                                            {verifyPermission(
+                                              'operating_manual',
+                                              'add'
+                                            ) &&
+                                            (inner_item.created_by ===
+                                              parseInt(
+                                                localStorage.getItem(
+                                                  'user_id'
+                                                )
+                                              ) ||
+                                              inner_item.upper_role.includes
+                                                (localStorage.getItem(
+                                                  'user_role'
+                                                ))) ? inner_item["allow_access_to_edit"]=true : inner_item["allow_access_to_edit"]=false }
+                                                {inner_item["allow_access_to_edit"]===true && count++;}
                                             return (
                                               verifyPermission(
                                                 'operating_manual',
@@ -571,7 +588,7 @@ const OperatingManual = () => {
                                                 inner_item.upper_role.includes
                                                   (localStorage.getItem(
                                                     'user_role'
-                                                  ))) && (
+                                                  ))) && inner_item["allow_access_to_edit"]===true && count===1 &&   (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -623,6 +640,21 @@ const OperatingManual = () => {
                                       {item.operating_manuals.length > 0 &&
                                         item.operating_manuals.map(
                                           (inner_item) => {
+                                            {verifyPermission(
+                                              'operating_manual',
+                                              'add'
+                                            ) &&
+                                            (inner_item.created_by ===
+                                              parseInt(
+                                                localStorage.getItem(
+                                                  'user_id'
+                                                )
+                                              ) ||
+                                              inner_item.upper_role.includes
+                                                (localStorage.getItem(
+                                                  'user_role'
+                                                ))) ? inner_item["allow_access_to_edit"]=true : inner_item["allow_access_to_edit"]=false }
+                                                {inner_item["allow_access_to_edit"]===true && count++;}
                                             return (
                                               verifyPermission(
                                                 'operating_manual',
@@ -637,7 +669,7 @@ const OperatingManual = () => {
                                                 inner_item.upper_role.includes
                                                   (localStorage.getItem(
                                                     'user_role'
-                                                  ))) && (
+                                                  ))) && inner_item["allow_access_to_edit"]===true && count===1 && (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -806,7 +838,7 @@ const OperatingManual = () => {
                                   <PdfComponent {...inner_item} />
                                   <Row>
                                     {inner_item.reference_video && (
-                                      <Col sm={7}>
+                                      <Col xl={7} lg={6}>
                                         <div className="reference_wrp">
                                           <h1>Reference Videos</h1>
                                           <div className="reference_videos">
@@ -839,7 +871,7 @@ const OperatingManual = () => {
                                       </Col>
                                     )}
                                     {inner_item.related_files.length !== 0 ? (
-                                      <Col sm={5}>
+                                      <Col xl={5} lg={6}>
                                         <div className="related_files">
                                           <h1>Related Files</h1>
                                           {inner_item.related_files.map(

@@ -9,7 +9,6 @@ import TopHeader from '../components/TopHeader';
 let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
-
   const query = new URL(window.location.href);
   console.log('QWUERY:', query);
   console.log('TRAINING ID:', query.searchParams.get('trainingId'));
@@ -24,6 +23,9 @@ const DynamicForm = () => {
   const [behalfOf, setBehalfOf] = useState('');
   const [childId, setChildId] = useState();
   const token = localStorage.getItem('token');
+  let training_id = location.search
+    ? location.search.split('?')[1].split('=')[1]
+    : null;
   const setField = (section, field, value) => {
     setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
     if (!!errors[field]) {
@@ -166,8 +168,28 @@ const DynamicForm = () => {
         .then((response) => response.text())
         .then((result) => {
           result = JSON.parse(result);
-          alert(result?.message);
-          navigate('/form');
+          if (training_id) {
+            const user_id = localStorage.getItem('user_id');
+            const token = localStorage.getItem('token');
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: JSON.stringify({}),
+              redirect: 'follow',
+            };
+            fetch(`${BASE_URL}/training/completeTraining/${training_id}/${user_id}?training_status=finished`, requestOptions)
+              .then((response) => response.json())
+              .then((res) => {
+                if(res)
+                {
+                  alert(result?.message);
+                  navigate('/training');
+                }
+              });
+          } else {
+            alert(result?.message);
+            navigate('/form');
+          }
         })
         .catch((error) => console.log('error', error));
     }
