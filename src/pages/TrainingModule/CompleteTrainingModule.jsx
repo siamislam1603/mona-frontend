@@ -3,15 +3,17 @@ import { Col, Row, Dropdown } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from "axios";
 import moment from 'moment';
+import { FullLoader } from "../../components/Loader";
 
 const CompleteTraining = ({ filter }) => {
   const [completedTrainingData, setCompletedTrainingData] = useState([]);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const fetchCompletedTrainingData = async () => {
     console.log('INSIDE COMPLETE TRAINING MODULE');
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/${user_id}`, {
+    const response = await axios.get(`${BASE_URL}/training/${user_id}?category_id=${filter.category_id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -20,6 +22,7 @@ const CompleteTraining = ({ filter }) => {
     console.log('RESPONSE DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       const { response: trainingList } = response.data;
+      setfullLoaderStatus(false)
       setCompletedTrainingData(trainingList);
     }
   };  
@@ -27,13 +30,18 @@ const CompleteTraining = ({ filter }) => {
   useEffect(() => {
     fetchCompletedTrainingData();
   }, []);
+  useEffect(() =>{
+    fetchCompletedTrainingData()
+  },[filter.category_id])
 
   completedTrainingData && console.log('COMPLETED TRAINING:', completedTrainingData);
-
+console.log("filter ",filter.category_id)
   return (
     <>
       <div id="main">
         <div className="training-column">
+        <FullLoader loading={fullLoaderStatus} />
+
           <Row>
           {completedTrainingData.length>0 ? 
           (
@@ -71,7 +79,7 @@ const CompleteTraining = ({ filter }) => {
               })
           ):
           (
-            <div className="text-center mb-5 mt-5">  <strong>No trainings available!</strong> </div>
+            <div className="text-center mb-5 mt-5">  <strong>{fullLoaderStatus === false ? 'No trainings available!':""}</strong> </div>
 
           )
             

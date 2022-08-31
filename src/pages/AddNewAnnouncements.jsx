@@ -289,6 +289,7 @@ const createAnnouncement = async (data) => {
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
+        window.scroll(0,0)
        }
        else{
         console.log("INSDIE ERROR EMPTY")

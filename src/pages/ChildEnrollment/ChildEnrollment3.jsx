@@ -2,11 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Row, Form, Table } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from "../../components/App";
+import moment from "moment";
 
 let nextstep = 4;
 let current_step = 3;
 let days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
+
+// HELPER FUNCTION TO CHECK ERRORS
+function checkErrorsExist(errorObject) {
+  let arr =  Object.values(errorObject);
+  var filteredError = arr.filter(d => d.to !== null);
+  return filteredError.length > 0;  
+}
 
 const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
   console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 3);
@@ -33,6 +41,10 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
   const [formStepData, setFormStepData] = useState(current_step);
   const [idList, setIdList] = useState({});
   const [loader, setLoader] = useState(false);
+
+  // ERRORS
+  const [bookingHoursErrors, setBookingHoursErrors] = useState({});
+  const [holidayHoursErrors, setHolidayHoursErrors] = useState({});
 
   const updateFormThreeData = async () => {
     setLoader(true);
@@ -148,12 +160,17 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    if(formStepData > current_step) {
-      console.log('UPDATING THE EXISTING DATA!');
-      updateFormThreeData();
+
+    if(checkErrorsExist(bookingHoursErrors) === false && checkErrorsExist(holidayHoursErrors) === false) {
+      if(formStepData > current_step) {
+        console.log('UPDATING THE EXISTING DATA!');
+        updateFormThreeData();
+      } else {
+        console.log('CREATING NEW DATA!')
+        saveFormThreeData();
+      }
     } else {
-      console.log('CREATING NEW DATA!')
-      saveFormThreeData();
+      window.scrollTo(0, 0);
     }
   };
 
@@ -162,8 +179,12 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
     fetchChildDetailsAndPopulate();
   }, [])
 
-  agreedBookingHours && console.log('Agreed Hours:', agreedBookingHours);
-  agreedHolidayHours && console.log('Agreed Holiday Hours:', agreedHolidayHours);
+  // agreedBookingHours && console.log('Agreed Hours:', agreedBookingHours);
+  // agreedHolidayHours && console.log('Agreed Holiday Hours:', agreedHolidayHours);
+  bookingHoursErrors && console.log('BOOKING HOURS ERROR:', checkErrorsExist(bookingHoursErrors));
+  holidayHoursErrors && console.log('HOLIDAY HOURS ERROR:', checkErrorsExist(holidayHoursErrors));
+
+  console.log('IS After:', moment(agreedBookingHours?.monday?.from, 'HH:mm').isAfter(moment(agreedBookingHours?.monday?.to, 'HH:mm')))
   return (
     <>
       <div className="enrollment-form-sec error-sec">
@@ -210,9 +231,27 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                     <td>
                       <Form.Group>
                         <Form.Control 
+                          // className={bookingHoursErrors?.monday?.to ? "error-border" : ""}
                           type="time"
+                          style={bookingHoursErrors?.monday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                           value={agreedBookingHours?.monday?.to || ""}
                           onChange={(e) => {
+                            if(moment(agreedBookingHours?.monday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                monday: {
+                                  to: "Time should be lesser than \"From\""
+                                }
+                              }))
+                            } else {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                monday: {
+                                  to: null
+                                }
+                              }))
+                            }
+
                             setAgreedBookingHours(prevState => ({
                               ...prevState,
                               monday: {...agreedBookingHours?.monday, to: e.target.value}
@@ -254,8 +293,25 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Group>
                         <Form.Control 
                           type="time"
+                          style={bookingHoursErrors?.tuesday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                           value={agreedBookingHours?.tuesday?.to || ""}
                           onChange={(e) => {
+                            if(moment(agreedBookingHours?.tuesday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                tuesday: {
+                                  to: "Time should be lesser than \"From\""
+                                }
+                              }))
+                            } else {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                tuesday: {
+                                  to: null
+                                }
+                              }))
+                            }
+
                             setAgreedBookingHours(prevState => ({
                               ...prevState,
                               tuesday: {...agreedBookingHours?.tuesday, to: e.target.value}
@@ -297,8 +353,25 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Group>
                         <Form.Control 
                           type="time"
+                          style={bookingHoursErrors?.wednesday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                           value={agreedBookingHours?.wednesday?.to || ""}
                           onChange={(e) => {
+                            if(moment(agreedBookingHours?.wednesday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                wednesday: {
+                                  to: "Time should be lesser than \"From\""
+                                }
+                              }))
+                            } else {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                wednesday: {
+                                  to: null
+                                }
+                              }))
+                            }
+
                             setAgreedBookingHours(prevState => ({
                               ...prevState,
                               wednesday: {...agreedBookingHours?.wednesday, to: e.target.value}
@@ -340,8 +413,25 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Group>
                         <Form.Control 
                           type="time"
+                          style={bookingHoursErrors?.thursday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                           value={agreedBookingHours?.thursday?.to || ""}
                           onChange={(e) => {
+                            if(moment(agreedBookingHours?.thursday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                thursday: {
+                                  to: "Time should be lesser than \"From\""
+                                }
+                              }))
+                            } else {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                thursday: {
+                                  to: null
+                                }
+                              }))
+                            }
+
                             setAgreedBookingHours(prevState => ({
                               ...prevState,
                               thursday: {...agreedBookingHours?.thursday, to: e.target.value}
@@ -383,8 +473,25 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Group>
                         <Form.Control 
                           type="time"
+                          style={bookingHoursErrors?.friday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                           value={agreedBookingHours?.friday?.to || ""}
                           onChange={(e) => {
+                            if(moment(agreedBookingHours?.friday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                friday: {
+                                  to: "Time should be lesser than \"From\""
+                                }
+                              }))
+                            } else {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                friday: {
+                                  to: null
+                                }
+                              }))
+                            }
+
                             setAgreedBookingHours(prevState => ({
                               ...prevState,
                               friday: {...agreedBookingHours?.friday, to: e.target.value}
@@ -426,8 +533,25 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Group>
                         <Form.Control 
                           type="time"
+                          style={bookingHoursErrors?.saturday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                           value={agreedBookingHours?.saturday?.to || ""}
                           onChange={(e) => {
+                            if(moment(agreedBookingHours?.saturday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                saturday: {
+                                  to: "Time should be lesser than \"From\""
+                                }
+                              }))
+                            } else {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                saturday: {
+                                  to: null
+                                }
+                              }))
+                            }
+
                             setAgreedBookingHours(prevState => ({
                               ...prevState,
                               saturday: {...agreedBookingHours?.saturday, to: e.target.value}
@@ -469,8 +593,25 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Group>
                         <Form.Control 
                           type="time"
+                          style={bookingHoursErrors?.sunday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                           value={agreedBookingHours?.sunday?.to || ""}
                           onChange={(e) => {
+                            if(moment(agreedBookingHours?.sunday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                sunday: {
+                                  to: "Time should be lesser than \"From\""
+                                }
+                              }))
+                            } else {
+                              setBookingHoursErrors(prevState => ({
+                                ...prevState,
+                                sunday: {
+                                  to: null
+                                }
+                              }))
+                            }
+
                             setAgreedBookingHours(prevState => ({
                               ...prevState,
                               sunday: {...agreedBookingHours?.sunday, to: e.target.value}
@@ -531,7 +672,24 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control 
                               type="time"
                               value={agreedHolidayHours?.monday?.to || ""}
+                              style={holidayHoursErrors?.monday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                               onChange={(e) => {
+                                if(moment(agreedHolidayHours?.monday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    monday: {
+                                      to: "Time should be lesser than \"From\""
+                                    }
+                                  }))
+                                } else {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    monday: {
+                                      to: null
+                                    }
+                                  }))
+                                }
+    
                                 setAgreedHolidayHours(prevState => ({
                                   ...prevState,
                                   monday: {...agreedHolidayHours?.monday, to: e.target.value}
@@ -574,7 +732,24 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control 
                               type="time"
                               value={agreedHolidayHours?.tuesday?.to || ""}
+                              style={holidayHoursErrors?.tuesday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                               onChange={(e) => {
+                                if(moment(agreedHolidayHours?.tuesday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    tuesday: {
+                                      to: "Time should be lesser than \"From\""
+                                    }
+                                  }))
+                                } else {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    tuesday: {
+                                      to: null
+                                    }
+                                  }))
+                                }
+
                                 setAgreedHolidayHours(prevState => ({
                                   ...prevState,
                                   tuesday: {...agreedHolidayHours?.tuesday, to: e.target.value}
@@ -617,7 +792,24 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control 
                               type="time"
                               value={agreedHolidayHours?.wednesday?.to || ""}
+                              style={holidayHoursErrors?.wednesday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                               onChange={(e) => {
+                                if(moment(agreedHolidayHours?.wednesday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    wednesday: {
+                                      to: "Time should be lesser than \"From\""
+                                    }
+                                  }))
+                                } else {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    wednesday: {
+                                      to: null
+                                    }
+                                  }))
+                                }
+
                                 setAgreedHolidayHours(prevState => ({
                                   ...prevState,
                                   wednesday: {...agreedHolidayHours?.wednesday, to: e.target.value}
@@ -660,7 +852,24 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control 
                               type="time"
                               value={agreedHolidayHours?.thursday?.to || ""}
+                              style={holidayHoursErrors?.thursday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                               onChange={(e) => {
+                                if(moment(agreedHolidayHours?.thursday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    thursday: {
+                                      to: "Time should be lesser than \"From\""
+                                    }
+                                  }))
+                                } else {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    thursday: {
+                                      to: null
+                                    }
+                                  }))
+                                }
+
                                 setAgreedHolidayHours(prevState => ({
                                   ...prevState,
                                   thursday: {...agreedHolidayHours?.thursday, to: e.target.value}
@@ -703,7 +912,24 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control 
                               type="time"
                               value={agreedHolidayHours?.friday?.to || ""}
+                              style={holidayHoursErrors?.friday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                               onChange={(e) => {
+                                if(moment(agreedHolidayHours?.friday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    friday: {
+                                      to: "Time should be lesser than \"From\""
+                                    }
+                                  }))
+                                } else {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    friday: {
+                                      to: null
+                                    }
+                                  }))
+                                }
+
                                 setAgreedHolidayHours(prevState => ({
                                   ...prevState,
                                   friday: {...agreedHolidayHours?.friday, to: e.target.value}
@@ -746,7 +972,24 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control 
                               type="time"
                               value={agreedHolidayHours?.saturday?.to || ""}
+                              style={holidayHoursErrors?.saturday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                               onChange={(e) => {
+                                if(moment(agreedHolidayHours?.saturday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    saturday: {
+                                      to: "Time should be lesser than \"From\""
+                                    }
+                                  }))
+                                } else {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    saturday: {
+                                      to: null
+                                    }
+                                  }))
+                                }
+
                                 setAgreedHolidayHours(prevState => ({
                                   ...prevState,
                                   saturday: {...agreedHolidayHours?.saturday, to: e.target.value}
@@ -789,7 +1032,24 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control 
                               type="time"
                               value={agreedHolidayHours?.sunday?.to || ""}
+                              style={holidayHoursErrors?.sunday?.to ? { border: "1px solid red", backgroundColor: '#FF634740',  } : {}}
                               onChange={(e) => {
+                                if(moment(agreedHolidayHours?.sunday?.from, 'HH:mm').isAfter(moment(e.target.value, 'HH:mm'))) {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    sunday: {
+                                      to: "Time should be lesser than \"From\""
+                                    }
+                                  }))
+                                } else {
+                                  setHolidayHoursErrors(prevState => ({
+                                    ...prevState,
+                                    sunday: {
+                                      to: null
+                                    }
+                                  }))
+                                }
+
                                 setAgreedHolidayHours(prevState => ({
                                   ...prevState,
                                   sunday: {...agreedHolidayHours?.sunday, to: e.target.value}

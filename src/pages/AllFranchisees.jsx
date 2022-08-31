@@ -89,7 +89,7 @@ const AllFranchisees = () => {
             }
         })
         if (response.status === 200 && response.data.status === "success") {
-            setDeleteResponseMessage("Franchisee Delete")
+            setDeleteResponseMessage("Franchise Delete")
             fetchFranchisees()
         }
         else {
@@ -381,8 +381,7 @@ const AllFranchisees = () => {
                                                                 <Card className="text-center Card_design">
                                                                     <Card.Body className="d-flex flex-row bd-highlight align-items-center">
                                                                         {/* <div className="edit-ico"><a href={`/edit-franchisees/${data.id}`}><img src="../img/edit-ico.png" alt="" /></a></div> */}
-                                                                        
-                                                                        
+                                                                    
                                                                         <img src={CardImg} alt="" width="55px" />
                                                                         <div className="p-1">
                                                                             <Card.Title className="mb-0 Text_design"

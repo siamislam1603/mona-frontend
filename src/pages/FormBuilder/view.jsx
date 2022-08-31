@@ -22,6 +22,8 @@ import TopHeader from '../../components/TopHeader';
 import { BASE_URL } from '../../components/App';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ViewFormBuilder(props) {
   const navigate = useNavigate();
@@ -30,7 +32,10 @@ function ViewFormBuilder(props) {
   const [Index, setIndex] = useState(0);
   const [innerIndex, setInnerIndex] = useState(0);
   const [MeFormData, setMeFormData] = useState([]);
-  
+  const [selectedFranchisee, setSelectedFranchisee] = useState(
+    localStorage.getItem('franchisee_id')
+  );
+
   console.log(MeFormData, 'MeFormData');
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
@@ -55,7 +60,7 @@ function ViewFormBuilder(props) {
     )
       .then((response) => response.json())
       .then((result) => {
-        alert(result?.message);
+        toast.success(result?.message);
         getFormData('');
       })
       .catch((error) => console.log('error', error));
@@ -147,7 +152,18 @@ function ViewFormBuilder(props) {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={(id) => {
+                    id =
+                      localStorage.getItem('user_role') === 'guardian'
+                        ? localStorage.getItem('franchisee_id')
+                        : id;
+                    getFormData('');
+                    setSelectedFranchisee(id);
+                    localStorage.setItem('f_id', id);
+                  }}
+                />
 
                 <div className="forms-header-section">
                   <div className="forms-managment-section">
@@ -275,6 +291,14 @@ function ViewFormBuilder(props) {
                                               onClick={() => {
                                                 if (inner_item.end_date) {
                                                   let todayDate = new Date();
+                                                  todayDate = new Date(
+                                                    todayDate
+                                                  ).toLocaleString('en-ZA', {
+                                                    timeZone: 'Australia/Perth',
+                                                  });
+                                                  todayDate = new Date(
+                                                    todayDate
+                                                  );
                                                   let dataAndTime =
                                                     inner_item.end_date +
                                                     ' ' +
@@ -282,24 +306,24 @@ function ViewFormBuilder(props) {
                                                   let endDate = new Date(
                                                     dataAndTime
                                                   );
-                                                  console.log(
-                                                    'endDate--->inner_item.end_time--->',
-                                                    inner_item.end_time
-                                                  );
-                                                  console.log(
-                                                    'endDate--->',
+                                                  endDate = new Date(
                                                     endDate
-                                                  );
+                                                  ).toLocaleString('en-ZA', {
+                                                    timeZone: 'Australia/Perth',
+                                                  });
+                                                  endDate = new Date(endDate);
                                                   if (
                                                     todayDate.getTime() >
                                                     endDate.getTime()
-                                                  )
-                                                    alert(
+                                                  ) {
+                                                    toast.error(
                                                       'Your form was expired on ' +
-                                                        inner_item.end_date +
+                                                        moment(
+                                                          inner_item.end_date
+                                                        ).format('DD/MM/YYYY') +
                                                         '.'
                                                     );
-                                                  else
+                                                  } else
                                                     navigate(
                                                       `/form/dynamic/${inner_item.form_name}`
                                                     );
@@ -613,17 +637,49 @@ function ViewFormBuilder(props) {
                                                           ) {
                                                             let todayDate =
                                                               new Date();
+                                                            todayDate =
+                                                              new Date(
+                                                                todayDate
+                                                              ).toLocaleString(
+                                                                'en-ZA',
+                                                                {
+                                                                  timeZone:
+                                                                    'Australia/Perth',
+                                                                }
+                                                              );
+                                                            todayDate =
+                                                              new Date(
+                                                                todayDate
+                                                              );
+                                                            let dataAndTime =
+                                                              inner_item.end_date +
+                                                              ' ' +
+                                                              inner_item.end_time;
                                                             let endDate =
                                                               new Date(
-                                                                inner_item.end_date
+                                                                dataAndTime
                                                               );
+                                                            endDate = new Date(
+                                                              endDate
+                                                            ).toLocaleString(
+                                                              'en-ZA',
+                                                              {
+                                                                timeZone:
+                                                                  'Australia/Perth',
+                                                              }
+                                                            );
+                                                            endDate = new Date(
+                                                              endDate
+                                                            );
                                                             if (
                                                               todayDate.getTime() >
                                                               endDate.getTime()
                                                             )
-                                                              alert(
+                                                              toast.error(
                                                                 'Your form was expired on ' +
-                                                                  inner_item.end_date +
+                                                                  moment(
+                                                                    inner_item.end_date
+                                                                  ).format('DD/MM/YYYY') +
                                                                   '.'
                                                               );
                                                             else
@@ -807,18 +863,23 @@ function ViewFormBuilder(props) {
                                                               />{' '}
                                                               Edit
                                                             </Dropdown.Item>
-                                                            {inner_item.id!==11 && <Dropdown.Item
-                                                              onClick={() => {
-                                                                deleteForm(
-                                                                  inner_item.id
-                                                                );
-                                                              }}
-                                                            >
-                                                              <FontAwesomeIcon
-                                                                icon={faRemove}
-                                                              />{' '}
-                                                              Remove
-                                                            </Dropdown.Item>}
+                                                            {inner_item.id !==
+                                                              11 && (
+                                                              <Dropdown.Item
+                                                                onClick={() => {
+                                                                  deleteForm(
+                                                                    inner_item.id
+                                                                  );
+                                                                }}
+                                                              >
+                                                                <FontAwesomeIcon
+                                                                  icon={
+                                                                    faRemove
+                                                                  }
+                                                                />{' '}
+                                                                Remove
+                                                              </Dropdown.Item>
+                                                            )}
                                                           </Dropdown.Menu>
                                                         </Dropdown>
                                                       </div>
@@ -984,20 +1045,23 @@ function ViewFormBuilder(props) {
                                                                   />{' '}
                                                                   Edit
                                                                 </Dropdown.Item>
-                                                                {inner_item.id!==11 &&<Dropdown.Item
-                                                                  onClick={() => {
-                                                                    deleteForm(
-                                                                      inner_item.id
-                                                                    );
-                                                                  }}
-                                                                >
-                                                                  <FontAwesomeIcon
-                                                                    icon={
-                                                                      faRemove
-                                                                    }
-                                                                  />{' '}
-                                                                  Remove
-                                                                </Dropdown.Item>}
+                                                                {inner_item.id !==
+                                                                  11 && (
+                                                                  <Dropdown.Item
+                                                                    onClick={() => {
+                                                                      deleteForm(
+                                                                        inner_item.id
+                                                                      );
+                                                                    }}
+                                                                  >
+                                                                    <FontAwesomeIcon
+                                                                      icon={
+                                                                        faRemove
+                                                                      }
+                                                                    />{' '}
+                                                                    Remove
+                                                                  </Dropdown.Item>
+                                                                )}
                                                               </Dropdown.Menu>
                                                             </Dropdown>
                                                           )}
@@ -1057,6 +1121,7 @@ function ViewFormBuilder(props) {
                     </Tabs>
                   </div>
                 </div>
+                <ToastContainer />
               </div>
             </div>
           </Container>
@@ -1142,7 +1207,6 @@ function ViewFormBuilder(props) {
                               </h4>
                               <button
                                 onClick={() => {
-
                                   navigate('/form/response', {
                                     state: {
                                       id: MeFormData[Index]?.forms[innerIndex]

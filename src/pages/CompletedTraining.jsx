@@ -7,8 +7,10 @@ import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
 import { useNavigate, useParams, NavLink, useLocation  } from 'react-router-dom';
 import axios from "axios";
+import { FullLoader } from "../components/Loader";
 
 const animatedComponents = makeAnimated();
+
 const styles = {
   option: (styles, state) => ({
     ...styles,
@@ -28,21 +30,32 @@ const training = [
 
 const CompleteTraining = () => {
   const [completedTrainingData, setCompletedTrainingData] = useState([]);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+
+
 
   const fetchCompletedTrainingData = async () => {
+    alert("dddddddddddddddddd")
     let user_id = localStorage.getItem('user_id');
     const response = await axios.get(`${BASE_URL}/training/${user_id}`);
 
     console.log('RESPONSE:', response);
     if(response.status === 200 && response.data.status === "success") {
       const { trainingList } = response.data;
+      // setfullLoaderStatus(false)
+
       setCompletedTrainingData(trainingList);
+
     }
   };  
 
   useEffect(() => {
     fetchCompletedTrainingData();
   }, []);
+
+console.log("ddddddddddddddddddddddd",fullLoaderStatus)
+
+
 
   return (
     <>
@@ -54,7 +67,10 @@ const CompleteTraining = () => {
                 <LeftNavbar/>
               </aside>
               <div className="sec-column">
+              <FullLoader loading={fullLoaderStatus} />
+
                 <TopHeader/>
+
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Trainings</h1>

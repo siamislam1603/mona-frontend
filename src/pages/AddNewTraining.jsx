@@ -12,6 +12,8 @@ import axios from 'axios';
 import { TrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
+import DragDropSingle from '../components/DragDropSingle';
+import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
 
 const animatedComponents = makeAnimated();
 
@@ -65,7 +67,7 @@ const AddNewTraining = () => {
   const [saveSettingsToast, setSaveSettingsToast] = useState(null);
 
   const [trainingData, setTrainingData] = useState({
-    time_unit: "Hours",
+    time_unit: "Minutes",
     title: "",
     description: "",
     meta_description: "",
@@ -93,7 +95,8 @@ const AddNewTraining = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
-
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [croppedImage, setCroppedImage] = useState(null);
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
   console.log(errors, "errors")
@@ -353,6 +356,9 @@ const AddNewTraining = () => {
     }
   }, []);
 
+  console.log(coverImage, "+++++")
+  console.log(croppedImage, "CROPIMAGE+++++")
+
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -563,6 +569,25 @@ const AddNewTraining = () => {
                             setErrors={setErrors}
                           // setTrainingData={setTraining}
                           />
+
+
+                          {/* <DragDropSingle
+                            croppedImage={croppedImage}
+                            setCroppedImage={setCroppedImage}
+                            onSave={setCoverImage}
+                            setPopupVisible={setPopupVisible}
+                            fetchedPhoto={""}
+                          />
+
+                          {
+                            popupVisible &&
+                            <ImageCropPopup
+                              image={coverImage}
+                              setCroppedImage={setCroppedImage}
+                              setPopupVisible={setPopupVisible} />
+                          } */}
+
+
                           <small className="fileinput">(png, jpg & jpeg)</small>
                           {errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span>}
                         </Form.Group>
@@ -866,7 +891,7 @@ const AddNewTraining = () => {
                       <Form.Check
                         type="checkbox"
                         checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                        label="Co-ordinators"
+                        label="Coordinators"
                         onChange={() => {
                           if (trainingSettings.assigned_roles.includes("coordinator")) {
                             let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");

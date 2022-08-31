@@ -7,6 +7,7 @@ import Main from "./Main";
 //  const FRONT_BASE_URL = "http://13.237.14.155:5000";
 const FRONT_BASE_URL = "http://54.206.190.120:5000";
 
+
 function App() {
   return (
     <div id="main">
