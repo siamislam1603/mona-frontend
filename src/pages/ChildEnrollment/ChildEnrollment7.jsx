@@ -447,7 +447,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                       : "Submitting..."
                     }
                 </>
-              ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
+              ) : ('Submit')}
             </Button>
           </div>
         </Form>

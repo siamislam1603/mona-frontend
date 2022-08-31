@@ -971,8 +971,7 @@ const EditUser = () => {
                           
                           <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
-                            <DragDropMultiple 
-                              title="Video"
+                            <DragDropMultiple
                               onSave={setTrainingDocuments} />
                           </Form.Group>
 
@@ -980,7 +979,7 @@ const EditUser = () => {
                             <div className="cta text-center mt-5">
                               <Button variant="transparent" className="me-3">
                                 <Link to="/user-management">
-                                  Back to All Users
+                                  Cancel
                                 </Link>
                               </Button>
                               <Button variant="primary" type="submit">

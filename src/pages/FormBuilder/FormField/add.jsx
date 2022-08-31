@@ -1462,7 +1462,7 @@ const AddFormField = (props) => {
                                                   <span className="checkmark"></span>
                                                 </label>
                                                 <label className="container">
-                                                  Co-ordinators
+                                                  Coordinators
                                                   <input
                                                     type="checkbox"
                                                     name="fill_access_users"
@@ -1611,7 +1611,7 @@ const AddFormField = (props) => {
                                                     <span className="checkmark"></span>
                                                   </label>
                                                   <label className="container">
-                                                    Co-ordinators
+                                                    Coordinators
                                                     <input
                                                       type="checkbox"
                                                       name="signatories_role"
