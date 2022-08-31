@@ -83,10 +83,10 @@ const ChildrenEnrol = () => {
                     //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
                     parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[2]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
                     educatorassisgned:`${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
-                    specailneed: `${dt.child_medical_information.has_special_needs}`,
-                    franchise:`${dt.franchisee_id}`,
-                    enrolldate:`${dt.enrollment_initiated}`,
-                    franchise:`${dt.franchisee.franchisee_name}`
+                    specailneed: `${dt?.child_medical_information?.has_special_needs}`,
+                    franchise:`${dt?.franchisee_id}`,
+                    enrolldate:`${dt?.enrollment_initiated}`,
+                    franchise:`${dt?.franchisee.franchisee_name}`
                     
                 }))
                 console.log("TEMPDATA",tempData)
@@ -245,14 +245,17 @@ const ChildrenEnrol = () => {
           console.log("Cell image",cell[3])
             
           return (<>
+           {
+            cell[0] !="undefined" &&
             <div className="user-list">
-              <span className="user-pic">
-                <img src={cell[3] === "undefined"? "../img/upload.jpg":cell[3]} />
-              </span>
-            <span className="user-name">
-              {cell[0] === "undefined"?null:cell[0]}
-              </span>
-            </div>
+            <span className="user-pic">
+              <img src={cell[3] === "undefined"? "../img/upload.jpg":cell[3]} />
+            </span>
+          <span className="user-name">
+            {cell[0] === "undefined"?null:cell[0]}
+            </span>
+          </div>
+           }
           
            {
             cell[1] !="undefined" && 
@@ -290,12 +293,15 @@ const ChildrenEnrol = () => {
         cell = cell.split(',');
 
           return (<>
-             <div className="user-list">
+             {
+              cell[0] != "undefined" && 
+              <div className="user-list">
                <span className="user-pic">
                  <img src={cell[1]  === "undefined" ?"../img/upload.jpg":cell[1] } />
               </span><span className="user-name">{cell[0]}
                 </span>
               </div>
+             }
 
               {
                 cell[2] != "undefined" &&
@@ -314,7 +320,12 @@ const ChildrenEnrol = () => {
         dataField: 'specailneed',
         text: 'Special Need',
         formatter: (cell) => {
-          return (<><div className="user-list"><span className="user-pic"></span><span className="user-name">{cell === "true"? "Yes":"No"}</span></div></>)
+          return (<><div className="user-list"><span className="user-pic"></span><span className="user-name">{cell === "true"? "Yes":<>
+          {
+            cell === "false" ? " No":
+            " "
+          }
+          </>}</span></div></>)
         },
       }, 
           {
@@ -339,7 +350,8 @@ const ChildrenEnrol = () => {
       formatter: (cell) => {
         console.log("frnahise CELL", cell)
         // cell = cell.split(",");
-        return (<><div className="user-list"><span className="user-name">{cell} </span></div></>)
+        return (<>
+        <div className="user-list"><span className="user-name">{cell} </span></div></>)
       },
     },
   ];
@@ -945,7 +957,7 @@ const ChildrenEnrol = () => {
                                 )
                             } */}
 
-                            {
+                           {
                                formData?.length > 0 ? 
                                <ToolkitProvider
                                keyField="name"
@@ -970,7 +982,7 @@ const ChildrenEnrol = () => {
 
                             )
                             }
-                  
+                   
 
                   </div>
                 </div>

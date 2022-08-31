@@ -195,8 +195,23 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
 
 
                 <div className="entry-container">
-                  <header className="title-head mb-3">
+                  <header className="title-head">
                     <h1 className="title-lg">Trainings Created By Me</h1>
+                    <div className="selectdropdown ms-auto d-flex align-items-center">
+                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                        <Form.Label className="d-block me-2">Choose Category</Form.Label>
+                        <Select
+                          closeMenuOnSelect={true}
+                          components={animatedComponents}
+                          options={trainingCategory}
+                          className="selectdropdown-col"
+                          onChange={(e) => setFilterData(prevState => ({
+                            ...prevState,
+                            category_id: e.id === 0 ? null : e.id
+                          }))}
+                        />
+                      </Form.Group>
+                    </div>
                     <div className="othpanel">
                       <div className="extra-btn">
                         <div className="data-search me-3">
@@ -251,23 +266,6 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
                       </div>
                     </div>
                   </header>
-                  <div className="training-cat d-md-flex align-items-center mb-3">
-                    <div className="selectdropdown ms-auto d-flex align-items-center">
-                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
-                        <Form.Label className="d-block me-2">Choose Category</Form.Label>
-                        <Select
-                          closeMenuOnSelect={true}
-                          components={animatedComponents}
-                          options={trainingCategory}
-                          className="selectdropdown-col"
-                          onChange={(e) => setFilterData(prevState => ({
-                            ...prevState,
-                            category_id: e.id === 0 ? null : e.id
-                          }))}
-                        />
-                      </Form.Group>
-                    </div>
-                  </div>
                   <div className="training-column">
 
         
