@@ -416,13 +416,13 @@ const NewFranchisees = () => {
                 onHide={() => setCreateFranchiseeModal(false)}>
                     <Modal.Header>
                         <Modal.Title>
-                        Creating Franchisee
+                        Creating Franchise
                         </Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
                         <div className="create-training-modal" style={{ textAlign: 'center' }}>
-                        <p>Franchisee is being created!</p>
+                        <p>Franchise is being created!</p>
                         <p>Please Wait...</p>
                         </div>
                     </Modal.Body>

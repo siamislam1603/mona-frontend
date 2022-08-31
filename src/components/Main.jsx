@@ -63,22 +63,18 @@ import SearchResult from '../pages/SearchResult';
 import ChildrenEnrol from '../pages/ChildrenEnrol';
 import TrainingCreatedByOther from '../pages/TrainingModule/TrainingCreatedByOther';
 function returnDashboard(role) {
-
   if (role === 'franchisor_admin')
     return <FranchisorDashboard />
-
-  if (role === 'franchise_admin')
+  else if (role === 'franchise_admin')
     return <FranchiseeDashboard />
-
-  if (role === 'coordinator')
+  else if (role === 'coordinator')
     return <CoordinatorDashboard />
-
-  if (role === 'educator')
+  else if (role === 'educator')
     return <EducatorDashboard />
-
-  if (role === 'guardian')
+  else if (role === 'guardian')
     return <ParentsDashboard />
-
+  else
+    <SignIn />
 }
 
 const Main = () => {
@@ -138,7 +134,7 @@ const Main = () => {
           activeClassName="active"
           path="/"
           element={
-            localStorage.getItem('user_id') || typeof localStorage.getItem('user_id') === 'undefined' ? returnDashboard(localStorage.getItem('user_role')) : <SignIn />
+            !localStorage.getItem('user_id') || typeof localStorage.getItem('user_id') === 'undefined' ? <SignIn /> : returnDashboard(localStorage.getItem('user_role'))
           }
         />
 

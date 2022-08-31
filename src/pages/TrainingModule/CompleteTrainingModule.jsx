@@ -45,7 +45,7 @@ const CompleteTraining = ({ filter }) => {
                   <div className="fixcol">
                     <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
                     <div className="iconame">
-                      <a href="/training-detail">{item.training.title}</a>
+                      <a href={`/training-detail/${item.training.id}`}>{item.training.title}</a>
                       <div className="datecol">
                         <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
                         <span className="time">{ item.training.completion_time }</span>
