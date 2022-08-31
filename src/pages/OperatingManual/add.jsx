@@ -66,7 +66,7 @@ const AddOperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      if (selectedFranchisee === 'All') api_url = `${BASE_URL}/auth/users`;
+      if (selectedFranchisee === 'All' || selectedFranchisee === 'all') api_url = `${BASE_URL}/auth/users`;
       else
         api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
@@ -79,7 +79,7 @@ const AddOperatingManual = () => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All') setUser(result?.data);
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.data);
           else setUser(result?.users);
         } else setUser(result?.data);
       })
