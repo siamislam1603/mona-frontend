@@ -1016,7 +1016,7 @@ const EditUser = () => {
 
                   <p></p>
 
-                  <p class="form-check-label" for="flexCheckDefault">
+                  <p className="form-check-label" for="flexCheckDefault">
                     I am happy to be reached if you have any questions.
                   </p>
 
@@ -1025,7 +1025,7 @@ const EditUser = () => {
               </Modal.Body>
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
-              <div class="text-center">
+              <div className="text-center">
                 <button 
                   type="button" 
                   className="btn btn-primary" 
@@ -1066,9 +1066,9 @@ const EditUser = () => {
                   </Form.Group>
 
                   <Form.Group className="col-md-12 mb-6 mt-4">
-                    <div class="form-check">
+                    <div className="form-check">
                       <input 
-                        class="form-check-input" 
+                        className="form-check-input" 
                         type="checkbox" 
                         value="" 
                         id="flexCheckDefault"
@@ -1079,7 +1079,7 @@ const EditUser = () => {
                             termination_reach_me: !formData?.termination_reach_me 
                           }));
                         }} />
-                      <label class="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" for="flexCheckDefault">
                         I am happy to be reached if you have any questions.
                       </label>
                     </div>
@@ -1088,7 +1088,7 @@ const EditUser = () => {
               </Modal.Body>
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
-              <div class="text-center">
+              <div className="text-center">
                 <button 
                   type="button" 
                   className="btn btn-primary" 
@@ -1120,7 +1120,7 @@ const EditUser = () => {
               </Modal.Body>
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
-              <div class="text-center">
+              <div className="text-center">
                 {/* <button 
                   type="button" 
                   className="btn btn-primary" 

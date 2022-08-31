@@ -499,7 +499,7 @@ const EducatorDashboard = () => {
                                     <img src={item.profile_photo} alt="" />
                                   </div>
                                   <div className="educator-detail">
-                                    <h1 class="edu-name mb-2">{item.fullname}</h1>
+                                    <h1 className="edu-name mb-2">{item.fullname}</h1>
                                     <div className="edu-tel mb-2"><a href="tel:+6145434234">{item.phone}</a></div>
                                     <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item.email}</a></div>
                                   </div>
@@ -516,7 +516,7 @@ const EducatorDashboard = () => {
                           //         <img src={item.profile_photo} alt="" />
                           //       </div>
                           //       <div className="educator-detail">
-                          //         <h1 class="edu-name mb-2">{item.fullname}</h1>
+                          //         <h1 className="edu-name mb-2">{item.fullname}</h1>
                           //         <div className="edu-tel mb-2"><a href="tel:+6145434234">{item.phone}</a></div>
                           //         <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item.email}</a></div>
                           //       </div>

@@ -356,8 +356,8 @@ const AddNewTraining = () => {
     }
   }, []);
 
-   console.log(coverImage, "+++++") 
-  console.log(croppedImage, "CROPIMAGE+++++") 
+  console.log(coverImage, "+++++")
+  console.log(croppedImage, "CROPIMAGE+++++")
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -563,15 +563,15 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image*:</Form.Label>
-                          {/* <DropOneFile
+                          <DropOneFile
                             title="Image"
                             onSave={setCoverImage}
                             setErrors={setErrors}
                           // setTrainingData={setTraining}
-                          /> */}
+                          />
 
 
-                          <DragDropSingle
+                          {/* <DragDropSingle
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
@@ -585,7 +585,7 @@ const AddNewTraining = () => {
                               image={coverImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
-                          }
+                          } */}
 
 
                           <small className="fileinput">(png, jpg & jpeg)</small>
