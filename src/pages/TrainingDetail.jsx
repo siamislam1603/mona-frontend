@@ -167,7 +167,10 @@ const TrainingDetail = () => {
                     <header className="title-head">
                       <div className="traning-head">
                         <h1 className="title-sm mb-2">{trainingDetails.title}</h1>
-                        <small class="d-block">Due Date: {trainingDetails?.end_date === null ? "None" : moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
+                        {
+                          trainingDetails?.end_date &&
+                          <small class="d-block">Due Date: {moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
+                        }
                       </div>
                       <div className="othpanel">
                         <div className="extra-btn">
