@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import $ from "jquery";
 import moment from "moment";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {logoutUser} from '../helpers/logout';
+import { logoutUser } from '../helpers/logout';
 // import { FullLoader } from "./Loader";
 
 let temp = () => { }
@@ -169,14 +169,14 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
 
 
-const handelSearch = async (e) =>{
+  const handelSearch = async (e) => {
 
-  e.preventDefault();
-  try {
-  let searchKey = e.target.value;
-  if(searchKey){
+    e.preventDefault();
+    try {
+      let searchKey = e.target.value;
+      if (searchKey) {
 
-    setSearchLoaderFlag(true)
+        setSearchLoaderFlag(true)
 
 
         const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
@@ -271,7 +271,7 @@ const handelSearch = async (e) =>{
       setSelectedFranchisee('all');
     } else {
       setFranchiseeId({ ...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
-    //   localStorage.setItem('selected_franchisee', JSON.stringify(franchiseeId))
+      //   localStorage.setItem('selected_franchisee', JSON.stringify(franchiseeId))
 
       setSelectedFranchisee(e);
     }
@@ -455,11 +455,11 @@ const handelSearch = async (e) =>{
   useEffect(() => {
     savePermissionInState();
   }, []);
-  console.log("local Storge ",localStorage.getItem('profile_photo'))
+  console.log("local Storge ", localStorage.getItem('profile_photo'))
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
-//   console.log("selected_franchiseeeeeeeeeeeeeeeeeeeeeeeeee", JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name)
+  //   console.log("selected_franchiseeeeeeeeeeeeeeeeeeeeeeeeee", JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name)
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
@@ -499,11 +499,10 @@ const handelSearch = async (e) =>{
               </div>
               : <div className="selectdropdown">
                 <Dropdown onSelect={selectFranchisee}>
-                  
+
                   <Dropdown.Toggle id="dropdown-basic">
-                    // { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name || 
-                      'No Data Available'}
-                    // { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || 'No Data Available'}
+                    {/* { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name ||  */}
+                    {franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || 'No Data Available'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
@@ -548,12 +547,12 @@ const handelSearch = async (e) =>{
                 <div className="tipsearch">
                   <div className="searchlisting cus-scr">
 
-                  {searchLoaderFlag == true ? (
-                        <div className="text-center">
-                           <CircularProgress />
-                           </div>
+                    {searchLoaderFlag == true ? (
+                      <div className="text-center">
+                        <CircularProgress />
+                      </div>
                     ) : ''
-                  }
+                    }
 
 
                     <ul>
@@ -587,24 +586,24 @@ const handelSearch = async (e) =>{
                         </li>
                       ))}
 
-                    {searchFranchise?.map((franchiseeData) => (
-                      <li>
-                        <a href={`/all-franchisees/`} className="d-flex">
-                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span className="sec-cont"><strong className="text-capitalize">{franchiseeData?.franchisee_name}</strong></span>
-                        </a>
-                      </li>
-                        ))}
+                      {searchFranchise?.map((franchiseeData) => (
+                        <li>
+                          <a href={`/all-franchisees/`} className="d-flex">
+                            {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                            <span className="sec-cont"><strong className="text-capitalize">{franchiseeData?.franchisee_name}</strong></span>
+                          </a>
+                        </li>
+                      ))}
 
 
                       {searchFileRepository?.map((fileRepoData) => (
-                      <li>
-                        <a href={`/file-repository-List/${fileRepoData?.repository_files[0]?.categoryId}`} className="d-flex">
-                       {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span className="sec-cont"><strong className="text-capitalize">{fileRepoData?.title}</strong></span>
-                        </a>
-                      </li>
-                        ))}
+                        <li>
+                          <a href={`/file-repository-List/${fileRepoData?.repository_files[0]?.categoryId}`} className="d-flex">
+                            {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                            <span className="sec-cont"><strong className="text-capitalize">{fileRepoData?.title}</strong></span>
+                          </a>
+                        </li>
+                      ))}
 
 
 
@@ -648,7 +647,7 @@ const handelSearch = async (e) =>{
                 <Dropdown>
                   <Dropdown.Toggle id="dropdown-basic">
                     <span className="user-pic">
-                      <img alt="" id="user-pic" src={localStorage.getItem('profile_photo')==='null'? '../img/upload.jpg':localStorage.getItem('profile_photo')} />
+                      <img alt="" id="user-pic" src={localStorage.getItem('profile_photo') === 'null' ? '../img/upload.jpg' : localStorage.getItem('profile_photo')} />
 
                     </span>
                     <span className="user-name">
@@ -710,7 +709,7 @@ const handelSearch = async (e) =>{
           </div>
         </div>
       </div>
-                      
+
       {/* {
         notificationDialog === true &&
         <div className="notification-dialog">
