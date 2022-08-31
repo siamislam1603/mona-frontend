@@ -199,7 +199,7 @@ const UserManagement = () => {
         } else if (parseInt(cell[3]) === 2) {
           status = "deleted"
         }
-        console.log('BIG STATUS:', status);
+        console.log('BIG STATUS:', cell[0]);
         return (
           <>
             <div className="user-list">
@@ -524,9 +524,10 @@ const UserManagement = () => {
   const csvLink = useRef();
 
 
-  userData && console.log('USER DATA:', userData.map(data => data));
+  // userData && console.log('USER DATA:', userData.map(data => data));
   userEducator && console.log('userEducator DATA:', userEducator.map(data => data))
   selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
+  console.log("USER DATA,",userData)
   return (
     <>
       <div id="main">
