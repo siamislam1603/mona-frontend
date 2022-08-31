@@ -13,7 +13,7 @@ const CompleteTraining = ({ filter }) => {
     console.log('INSIDE COMPLETE TRAINING MODULE');
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/${user_id}`, {
+    const response = await axios.get(`${BASE_URL}/training/${user_id}?category_id=${filter.category_id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -30,9 +30,12 @@ const CompleteTraining = ({ filter }) => {
   useEffect(() => {
     fetchCompletedTrainingData();
   }, []);
+  useEffect(() =>{
+    fetchCompletedTrainingData()
+  },[filter.category_id])
 
   completedTrainingData && console.log('COMPLETED TRAINING:', completedTrainingData);
-
+console.log("filter ",filter.category_id)
   return (
     <>
       <div id="main">
