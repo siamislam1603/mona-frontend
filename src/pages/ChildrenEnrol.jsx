@@ -929,7 +929,7 @@ const ChildrenEnrol = () => {
                         </>)} */}
 
                     </>
-                    {
+                    {/* {
                               formData?.length > 0 ?
                                 (
                                   <BootstrapTable
@@ -943,7 +943,34 @@ const ChildrenEnrol = () => {
                                   </strong></div>
 
                                 )
+                            } */}
+
+                            {
+                               formData?.length > 0 ? 
+                               <ToolkitProvider
+                               keyField="name"
+                               data={chidlEnroll}
+                               columns={columns1}
+                             >
+                               {(props) => (
+                                 <>
+                                   <BootstrapTable
+                                     {...props.baseProps}
+                                     // rowEvents={rowEvents}
+                                     // selectRow={selectRow}
+                                     pagination={paginationFactory()}
+                                   />
+                                 </>
+                               )}
+                             </ToolkitProvider>
+                             :(
+                              <div className="text-center mb-5 mt-5"><strong>
+                                No Child enroll Yet!
+                              </strong></div>
+
+                            )
                             }
+                  
 
                   </div>
                 </div>
