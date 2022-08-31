@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
+import moment from 'moment';
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
@@ -56,7 +57,44 @@ const ChildrenEnrol = () => {
 
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [chidlEnroll,setChildEnroll] = useState([])
 
+
+  const ChildernEnrolled = async () =>{
+        try {
+            let token = localStorage.getItem('token');
+            // let token = localStorage.getItem('token');
+            const response = await axios.get(`${BASE_URL}/children-listing/all-childrens-enrolled`, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+            });
+             console.log("response cdsada",response)
+              if(response.status === 200 && response.data.status === "success"){
+                let data = response.data.childrenEnrolled;
+                // setChildEnroll(response.data.childrenEnrolled)
+                // data.map((dt,index) =>{
+                //     console.log("dt",dt.parents[index].user.parent_name)
+                // })
+                console.log("Eductor data",data[0]?.users[0]?.educator_assigned)
+                let tempData = data.map((dt,index) =>
+                ({
+                    name :`${dt.child_name}`,
+                    //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
+                    parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${dt.enrollment_initiated}`,
+                    educatorassisgned:`${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
+                    specailneed: `${dt.child_medical_information.has_special_needs}`,
+                    franchise:`${dt.franchisee_id}`,
+                    
+                }))
+                console.log("TEMPDATA",tempData)
+                setChildEnroll(tempData)
+              } 
+            } 
+            catch (error) {
+                console.log("ERROR child enroll",error)
+            }
+        }
 
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
@@ -140,71 +178,19 @@ const ChildrenEnrol = () => {
 
     }
   }
-
-  const columns1 = [
-    {
-      dataField: 'name',
-      text: 'Name',
-      formatter: (cell) => {
-        return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on: </small></span></div></>)
-      },
-    },
-    {
-        dataField: 'parentName',
-        text: 'Parent Name',
-        formatter: (cell) => {
-          return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on: </small></span></div></>)
-        },
-      },
-      {
-        dataField: 'educatorassisgned',
-        text: 'Educator Assigned',
-        formatter: (cell) => {
-          return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on: </small></span></div></>)
-        },
-      },
-      {
-        dataField: 'specailneed',
-        text: 'Special Need',
-        formatter: (cell) => {
-          return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on: </small></span></div></>)
-        },
-      },     
-    {
-      dataField: 'franchise',
-      text: 'Franchise ',
-      formatter: (cell) => {
-        console.log("EDUCATIN CELL", cell)
-        cell = cell.split(",");
-        return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
-      },
-    },
-  ];
-
   const columns = [
     {
       dataField: 'name',
       text: 'Name',
       sort: true,
       formatter: (cell) => {
-        let status = null;
-        cell = cell.split(',');
-        if (parseInt(cell[3]) === 0) {
-          status = "inactive"
-        } else if (parseInt(cell[3]) === 1) {
-          status = "active"
-        } else if (parseInt(cell[3]) === 2) {
-          status = "deleted"
-        }
-        console.log('BIG STATUS:', status);
+       
+        // console.log('BIG STATUS:', status);
         return (
           <>
             <div className="user-list">
-              <span className="user-pic">
-                <img src={cell[0]} alt="" />
-              </span>
               <span className="user-name">
-                {cell[1]} <small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
+                {cell} <small>{cell}</small> <small></small>
               </span>
             </div>
           </>
@@ -212,72 +198,179 @@ const ChildrenEnrol = () => {
       },
     },
     {
-      dataField: 'email',
-      text: 'Email',
+      dataField: 'parentName',
+      text: 'Parent Name',
       sort: true,
     },
     {
-      dataField: 'number',
-      text: 'Phone',
+      dataField: 'educatorassisgned',
+      text: 'Educator Assigned',
       sort: true,
     },
     {
-      dataField: 'location',
-      text: 'Location',
+      dataField: 'specailneed',
+      text: 'Special Need',
       sort: true,
     },
     {
-      dataField: 'roleDetail',
-      text: 'Action',
+        dataField: 'franchise',
+        text: 'Franchise ',
+        formatter: (cell) => {
+          console.log("EDUCATIN CELL", cell)
+          cell = cell.split(",");
+          return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
+        },
+      },
+
+
+  ];
+
+  const columns1 = [
+    {
+      dataField: 'name',
+      text: 'Name',
       formatter: (cell) => {
-        cell = cell.split(',');
-        return (
-          <>
-            {
-              (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === "franchisee_admin" || localStorage.getItem('user_role') === 'coordinator') &&
-                (cell[0] === "guardian" && cell[1] == 0) ? (
-                <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
-                  New Children
-                </button>
-              ) : (cell[0] === "guardian" && cell[1] != 0) ?
-                (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
-                  View Children
-                </button>
-                ) : ""
-            }
-          </>
-        );
+        console.log("name cell", cell)
+        return (<><div className="user-list"><span className="user-name">{cell}</span></div></>)
       },
     },
     {
-      dataField: 'action',
-      text: '',
-      formatter: (cell) => {
-        let button = null;
+        dataField: 'parentName',
+        text: 'Parent Name',
+        formatter: (cell) => {
 
-        if (cell === 1) {
-          button = "Deactivate";
-        } else if (cell === 0) {
-          button = "Activate";
-        }
-        return (
-          <>
-            <div className="cta-col">
-              <Dropdown>
-                <Dropdown.Toggle variant="transparent" id="ctacol">
-                  <img src="../img/dot-ico.svg" alt="" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item href="#">{button}</Dropdown.Item>
-                  {cell === 1 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </>
-        );
+        cell = cell.split(',');
+
+            
+          return (<>
+            <div className="user-list"><span className="user-pic"><img src={cell[2] === "undefined"? "../img/upload.jpg":cell[2]} /></span><span className="user-name">{cell[0] === "undefined"?null:cell[0]} {cell[1] === "undefined"? null: ","+ cell[1]}<small>Audited on : {moment(cell[3]).format('DD/MM/YYYY')}  </small></span></div></>)
+        },
+      },
+      {
+        dataField: 'educatorassisgned',
+        text: 'Educator Assigned',
+        formatter: (cell) => {
+            console.log("Educator",cell)
+        cell = cell.split(',');
+
+          return (<><div className="user-list"><span className="user-pic"><img src={cell[1]  === "undefined" ?"../img/upload.jpg":cell[1] } /></span><span className="user-name">{cell[0]}<small>Audited on: </small></span></div></>)
+        },
+      },
+      {
+        dataField: 'specailneed',
+        text: 'Special Need',
+        formatter: (cell) => {
+          return (<><div className="user-list"><span className="user-pic"></span><span className="user-name">{cell === "true"? "Yes":"No"}<small>Audited on: </small></span></div></>)
+        },
+      },     
+    {
+      dataField: 'franchise',
+      text: 'Franchise ',
+      formatter: (cell) => {
+        console.log("frnahise CELL", cell)
+        // cell = cell.split(",");
+        return (<><div className="user-list"><span className="user-pic"><img src={cell} alt='' /></span><span className="user-name">{cell[1]} <small>{cell}</small></span></div></>)
       },
     },
   ];
+
+//   const columns = [
+//     {
+//       dataField: 'name',
+//       text: 'Name',
+//       sort: true,
+//       formatter: (cell) => {
+//         let status = null;
+//         cell = cell.split(',');
+//         if (parseInt(cell[3]) === 0) {
+//           status = "inactive"
+//         } else if (parseInt(cell[3]) === 1) {
+//           status = "active"
+//         } else if (parseInt(cell[3]) === 2) {
+//           status = "deleted"
+//         }
+//         console.log('BIG STATUS:', status);
+//         return (
+//           <>
+//             <div className="user-list">
+//               <span className="user-pic">
+//                 <img src={cell[0]} alt="" />
+//               </span>
+//               <span className="user-name">
+//                 {cell[1]} <small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
+//               </span>
+//             </div>
+//           </>
+//         );
+//       },
+//     },
+//     {
+//       dataField: 'email',
+//       text: 'Email',
+//       sort: true,
+//     },
+//     {
+//       dataField: 'number',
+//       text: 'Phone',
+//       sort: true,
+//     },
+//     {
+//       dataField: 'location',
+//       text: 'Location',
+//       sort: true,
+//     },
+//     {
+//       dataField: 'roleDetail',
+//       text: 'Action',
+//       formatter: (cell) => {
+//         cell = cell.split(',');
+//         return (
+//           <>
+//             {
+//               (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === "franchisee_admin" || localStorage.getItem('user_role') === 'coordinator') &&
+//                 (cell[0] === "guardian" && cell[1] == 0) ? (
+//                 <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
+//                   New Children
+//                 </button>
+//               ) : (cell[0] === "guardian" && cell[1] != 0) ?
+//                 (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
+//                   View Children
+//                 </button>
+//                 ) : ""
+//             }
+//           </>
+//         );
+//       },
+//     },
+//     {
+//       dataField: 'action',
+//       text: '',
+//       formatter: (cell) => {
+//         let button = null;
+
+//         if (cell === 1) {
+//           button = "Deactivate";
+//         } else if (cell === 0) {
+//           button = "Activate";
+//         }
+//         return (
+//           <>
+//             <div className="cta-col">
+//               <Dropdown>
+//                 <Dropdown.Toggle variant="transparent" id="ctacol">
+//                   <img src="../img/dot-ico.svg" alt="" />
+//                 </Dropdown.Toggle>
+//                 <Dropdown.Menu>
+//                   <Dropdown.Item href="#">{button}</Dropdown.Item>
+//                   {cell === 1 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
+//                 </Dropdown.Menu>
+//               </Dropdown>
+//             </div>
+//           </>
+//         );
+//       },
+//     },
+//   ];
   const onFilter = debounce(() => {
     fetchUserDetails();
   }, 200);
@@ -462,28 +555,7 @@ const ChildrenEnrol = () => {
   }
 
 
-  // const render_user_filter = async (arg) => {
-  //   let data;
-  //   console.log("datadatadatadatadatadatadatadatadatadata",userData)
 
-  //   var user_role = localStorage.getItem('user_role');
-  //     if(user_role==='franchisor_admin')
-  //       data = arg.filter(d=>d.role!=='franchisor_admin');
-  //     if(user_role==='franchisee_admin')
-  //       data = arg.filter(d=>d.role!=='franchisee_admin' && d.role!=='franchisor_admin')
-  //     if(user_role==='coordinator')
-  //       data = arg.filter(d=>d.role =='educator' && d.role=='guardian')
-  //     if(user_role==='educator')
-  //       data = arg.filter(d=>d.role=='guardian')
-
-
-  //       setUserData(data)
-  // }
-
-
-  // useEffect(() => {
-  //   render_user_filter()
-  // }, [tempData])
   const FormData = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, {
@@ -496,9 +568,10 @@ const ChildrenEnrol = () => {
       let data = response.data.data.formData;
       let tempData = data.map((dt) => ({
         formname: `${dt.audited_on}`,
-        franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
+        franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
         // console.log("THe dt",)
-
+     
+            
       }))
       setFormData(tempData);
     }
@@ -507,8 +580,9 @@ const ChildrenEnrol = () => {
   useEffect(() => {
     Show_eduactor()
     FormData()
+    ChildernEnrolled()
   }, [])
-
+  
 
   useEffect(() => {
     if (selectedFranchisee) {
@@ -543,6 +617,7 @@ const ChildrenEnrol = () => {
   userData && console.log('USER DATA:', userData.map(data => data));
   userEducator && console.log('userEducator DATA:', userEducator.map(data => data))
   selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
+  console.log("Child enorrled",chidlEnroll)
   return (
     <>
       <div id="main">
@@ -789,7 +864,7 @@ const ChildrenEnrol = () => {
                                 (
                                   <BootstrapTable
                                     keyField="name"
-                                    data={formData}
+                                    data={chidlEnroll}
                                     columns={columns1}
                                   />
                                 ) : (

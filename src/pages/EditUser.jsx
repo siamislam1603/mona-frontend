@@ -93,7 +93,11 @@ const EditUser = () => {
         copyDataToState(user);
       } else {
         localStorage.setItem('success_msg', 'User doesn\'t exist!');
-        window.location.href="/user-management";
+        const userRole = localStorage.getItem('user_role');
+        if(userRole === 'guardian')
+          window.location.href = '/';
+        else
+          window.location.href = '/user-management';
       }
     }
   };
@@ -157,6 +161,11 @@ const EditUser = () => {
           setCreateUserModal(false);
           setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
+          const userRole = localStorage.getItem('guardian');
+          if(userRole === 'guardian')
+            window.location.href = '/';
+          else
+            window.location.href = '/user-management';
 
           setSignatureUploaded(true);
         } else if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "fail") {
@@ -202,7 +211,12 @@ const EditUser = () => {
       if(createResponse.status === 200 && createResponse.data.status === "success") {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
         localStorage.setItem('success_msg', 'User updated successfully!');
-        window.location.href = '/user-management';
+
+        const userRole = localStorage.getItem('user_role');
+        if(userRole === 'guardian')
+          window.location.href = '/';
+        else
+          window.location.href = '/user-management';
       } else {
         console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
       }
@@ -218,8 +232,12 @@ const EditUser = () => {
         
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
         localStorage.setItem('success_msg', 'User updated successfully!');
-        window.location.href = '/user-management';
-        // setLoader(false);
+        
+        const userRole = localStorage.getItem('user_role');
+        if(userRole=== 'guardian')
+          window.location.href = '/';
+        else
+          window.location.href = '/user-management';        // setLoader(false);
         // setCreateUserModal(false);
         // localStorage.setItem('success_msg', 'User created successfully!');
 

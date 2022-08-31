@@ -465,7 +465,7 @@ export const UserFormValidation = (formObj) => {
 
   if (!email) errors.email = 'Email is required!';
 
-  if (!(/^[A-Z0-9]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
+  if (!(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
     errors.email = "Please use a valid email!";
 
   if (!phone) errors.phone = 'Phone number is required!';

@@ -45,10 +45,14 @@ const TrainingDetail = () => {
   }
 
   const handleFinishTraining = (event) => {
-    // updateFinishTraining();
-    setTimeout(() => {
-      setShowSurveyForm(true);
-    }, 2000);
+
+    if(relatedForms) {
+      setTimeout(() => {
+        setShowSurveyForm(true);
+      }, 2000);
+    } else {
+      updateFinishTraining();
+    }
   };
 
   const handleSurveyTransition = () => {
@@ -163,7 +167,10 @@ const TrainingDetail = () => {
                     <header className="title-head">
                       <div className="traning-head">
                         <h1 className="title-sm mb-2">{trainingDetails.title}</h1>
-                        <small class="d-block">Due Date: {trainingDetails?.end_date === null ? "None" : moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
+                        {
+                          trainingDetails?.end_date &&
+                          <small class="d-block">Due Date: {moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
+                        }
                       </div>
                       <div className="othpanel">
                         <div className="extra-btn">
@@ -291,7 +298,7 @@ const TrainingDetail = () => {
                                         <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
                                         <div className="name"><a href="">{user.name} <span class="time">{user.role}</span></a></div>
                                         <div className="completed-col">
-                                          Completed on <span class="date">{moment(user.finish_date).format('MM/DD/YYYY')}</span>
+                                          Completed on <span class="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
                                         </div>
                                       </div>
                                     );
