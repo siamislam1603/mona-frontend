@@ -905,7 +905,7 @@ const NewUser = () => {
                             <div className="cta text-center mt-5">
                               <Button variant="transparent" className="me-3">
                                 <Link to="/user-management">
-                                  Back to All Users
+                                  Cancel
                                 </Link>
                               </Button>
                               <Button variant="primary" type="submit">
