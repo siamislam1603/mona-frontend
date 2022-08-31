@@ -30,7 +30,10 @@ function ViewFormBuilder(props) {
   const [Index, setIndex] = useState(0);
   const [innerIndex, setInnerIndex] = useState(0);
   const [MeFormData, setMeFormData] = useState([]);
-  
+  const [selectedFranchisee, setSelectedFranchisee] = useState(
+    localStorage.getItem('franchisee_id')
+  );
+
   console.log(MeFormData, 'MeFormData');
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
@@ -147,7 +150,18 @@ function ViewFormBuilder(props) {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={(id) => {
+                    id =
+                      localStorage.getItem('user_role') === 'guardian'
+                        ? localStorage.getItem('franchisee_id')
+                        : id;
+                    getFormData('');
+                    setSelectedFranchisee(id);
+                    localStorage.setItem('f_id', id);
+                  }}
+                />
 
                 <div className="forms-header-section">
                   <div className="forms-managment-section">
@@ -807,18 +821,23 @@ function ViewFormBuilder(props) {
                                                               />{' '}
                                                               Edit
                                                             </Dropdown.Item>
-                                                            {inner_item.id!==11 && <Dropdown.Item
-                                                              onClick={() => {
-                                                                deleteForm(
-                                                                  inner_item.id
-                                                                );
-                                                              }}
-                                                            >
-                                                              <FontAwesomeIcon
-                                                                icon={faRemove}
-                                                              />{' '}
-                                                              Remove
-                                                            </Dropdown.Item>}
+                                                            {inner_item.id !==
+                                                              11 && (
+                                                              <Dropdown.Item
+                                                                onClick={() => {
+                                                                  deleteForm(
+                                                                    inner_item.id
+                                                                  );
+                                                                }}
+                                                              >
+                                                                <FontAwesomeIcon
+                                                                  icon={
+                                                                    faRemove
+                                                                  }
+                                                                />{' '}
+                                                                Remove
+                                                              </Dropdown.Item>
+                                                            )}
                                                           </Dropdown.Menu>
                                                         </Dropdown>
                                                       </div>
@@ -984,20 +1003,23 @@ function ViewFormBuilder(props) {
                                                                   />{' '}
                                                                   Edit
                                                                 </Dropdown.Item>
-                                                                {inner_item.id!==11 &&<Dropdown.Item
-                                                                  onClick={() => {
-                                                                    deleteForm(
-                                                                      inner_item.id
-                                                                    );
-                                                                  }}
-                                                                >
-                                                                  <FontAwesomeIcon
-                                                                    icon={
-                                                                      faRemove
-                                                                    }
-                                                                  />{' '}
-                                                                  Remove
-                                                                </Dropdown.Item>}
+                                                                {inner_item.id !==
+                                                                  11 && (
+                                                                  <Dropdown.Item
+                                                                    onClick={() => {
+                                                                      deleteForm(
+                                                                        inner_item.id
+                                                                      );
+                                                                    }}
+                                                                  >
+                                                                    <FontAwesomeIcon
+                                                                      icon={
+                                                                        faRemove
+                                                                      }
+                                                                    />{' '}
+                                                                    Remove
+                                                                  </Dropdown.Item>
+                                                                )}
                                                               </Dropdown.Menu>
                                                             </Dropdown>
                                                           )}
@@ -1142,7 +1164,6 @@ function ViewFormBuilder(props) {
                               </h4>
                               <button
                                 onClick={() => {
-
                                   navigate('/form/response', {
                                     state: {
                                       id: MeFormData[Index]?.forms[innerIndex]
