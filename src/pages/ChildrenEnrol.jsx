@@ -81,10 +81,11 @@ const ChildrenEnrol = () => {
                 ({
                     name :`${dt.child_name}`,
                     //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
-                    parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${dt.enrollment_initiated}`,
+                    parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo}`,
                     educatorassisgned:`${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
                     specailneed: `${dt.child_medical_information.has_special_needs}`,
                     franchise:`${dt.franchisee_id}`,
+                    enrolldate:`${dt.enrollment_initiated}`
                     
                 }))
                 console.log("TEMPDATA",tempData)
@@ -240,20 +241,57 @@ const ChildrenEnrol = () => {
         formatter: (cell) => {
 
         cell = cell.split(',');
-
+          console.log("Cell",cell[1])
             
           return (<>
-            <div className="user-list"><span className="user-pic"><img src={cell[2] === "undefined"? "../img/upload.jpg":cell[2]} /></span><span className="user-name">{cell[0] === "undefined"?null:cell[0]} {cell[1] === "undefined"? null: ","+ cell[1]}<small>Audited on : {moment(cell[3]).format('DD/MM/YYYY')}  </small></span></div></>)
+            <div className="user-list">
+              <span className="user-pic">
+                <img src={cell[2] === "undefined"? "../img/upload.jpg":cell[2]} />
+              </span>
+            <span className="user-name">
+              {cell[0] === "undefined"?null:cell[0]}
+              </span>
+            </div>
+          
+           {
+            cell[1] !="undefined" && 
+            <div className="user-list">
+              <span className="user-pic">
+                <img src={cell[3] === "undefined"? "../img/upload.jpg":cell[3]} />
+              </span>
+            <span className="user-name">
+               {cell[1] === "undefined"? null: cell[1]
+            } </span>
+            </div>
+           }
+            {/* <small>Audited on : {moment(cell[3]).format('DD/MM/YYYY')}  </small> */}
+          </>
+          
+          )
         },
       },
       {
         dataField: 'educatorassisgned',
         text: 'Educator Assigned',
         formatter: (cell) => {
-            console.log("Educator",cell)
+        console.log("Educator",cell)
         cell = cell.split(',');
 
-          return (<><div className="user-list"><span className="user-pic"><img src={cell[1]  === "undefined" ?"../img/upload.jpg":cell[1] } /></span><span className="user-name">{cell[0]}<small>Audited on: </small></span></div></>)
+          return (<>
+             <div className="user-list">
+               <span className="user-pic">
+                 <img src={cell[1]  === "undefined" ?"../img/upload.jpg":cell[1] } />
+              </span><span className="user-name">{cell[0]}
+                </span>
+              </div>
+              <div className="user-list">
+               <span className="user-pic">
+                 <img src={cell[3]  === "undefined" ?"../img/upload.jpg":cell[3] } />
+              </span><span className="user-name">{cell[2]}
+                </span>
+              </div>
+            </>
+          )
         },
       },
       {
@@ -262,16 +300,32 @@ const ChildrenEnrol = () => {
         formatter: (cell) => {
           return (<><div className="user-list"><span className="user-pic"></span><span className="user-name">{cell === "true"? "Yes":"No"}<small>Audited on: </small></span></div></>)
         },
-      },     
-    {
-      dataField: 'franchise',
-      text: 'Franchise ',
+      }, 
+          {
+      dataField: 'enrolldate',
+      text: 'Enrollment Initiated ',
       formatter: (cell) => {
         console.log("frnahise CELL", cell)
         // cell = cell.split(",");
-        return (<><div className="user-list"><span className="user-pic"><img src={cell} alt='' /></span><span className="user-name">{cell[1]} <small>{cell}</small></span></div></>)
+        return (<><div className="user-list">
+          <span className="user-name">
+         
+             {moment(cell).format('DD/MM/YYYY')} </span>
+             </div>
+          
+          
+          </>)
       },
-    },
+    },    
+    // {
+    //   dataField: 'franchise',
+    //   text: 'Franchise ',
+    //   formatter: (cell) => {
+    //     console.log("frnahise CELL", cell)
+    //     // cell = cell.split(",");
+    //     return (<><div className="user-list"><span className="user-pic"><img src={cell} alt='' /></span><span className="user-name">{cell[1]} <small>{cell}</small></span></div></>)
+    //   },
+    // },
   ];
 
 //   const columns = [
