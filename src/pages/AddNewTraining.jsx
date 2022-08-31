@@ -67,7 +67,7 @@ const AddNewTraining = () => {
   const [saveSettingsToast, setSaveSettingsToast] = useState(null);
 
   const [trainingData, setTrainingData] = useState({
-    time_unit: "Hours",
+    time_unit: "Minutes",
     title: "",
     description: "",
     meta_description: "",
@@ -356,8 +356,8 @@ const AddNewTraining = () => {
     }
   }, []);
 
-   console.log(coverImage, "+++++") 
-  console.log(croppedImage, "CROPIMAGE+++++") 
+  console.log(coverImage, "+++++")
+  console.log(croppedImage, "CROPIMAGE+++++")
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -563,15 +563,15 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image*:</Form.Label>
-                          {/* <DropOneFile
+                          <DropOneFile
                             title="Image"
                             onSave={setCoverImage}
                             setErrors={setErrors}
                           // setTrainingData={setTraining}
-                          /> */}
+                          />
 
 
-                          <DragDropSingle
+                          {/* <DragDropSingle
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
@@ -585,7 +585,7 @@ const AddNewTraining = () => {
                               image={coverImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
-                          }
+                          } */}
 
 
                           <small className="fileinput">(png, jpg & jpeg)</small>
@@ -891,7 +891,7 @@ const AddNewTraining = () => {
                       <Form.Check
                         type="checkbox"
                         checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                        label="Co-ordinators"
+                        label="Coordinators"
                         onChange={() => {
                           if (trainingSettings.assigned_roles.includes("coordinator")) {
                             let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");

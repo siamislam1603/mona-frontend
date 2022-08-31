@@ -540,7 +540,7 @@ const handelSearch = async (e) =>{
                   className="topsearch"
                   placeholder="Type here to search..."
                   name="query"
-                  autocomplete="off"
+                  autoComplete="off"
                   onChange={handelSearch}
 
                 />
@@ -548,7 +548,7 @@ const handelSearch = async (e) =>{
                   <div className="searchlisting cus-scr">
 
                   {searchLoaderFlag == true ? (
-                        <div class="text-center">
+                        <div className="text-center">
                            <CircularProgress />
                            </div>
                     ) : ''
@@ -559,9 +559,9 @@ const handelSearch = async (e) =>{
 
                       {searchAnnouncement?.map((announceData) => (
                         <li>
-                          <a href="/announcements" class="d-flex">
+                          <a href="/announcements" className="d-flex">
                             {/* <img alt="" src={announceData?.coverImage?announceData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span class="sec-cont"><strong class="text-capitalize">{announceData?.title}</strong></span>
+                            <span className="sec-cont"><strong className="text-capitalize">{announceData?.title}</strong></span>
                           </a>
                         </li>
                       ))}
@@ -569,9 +569,9 @@ const handelSearch = async (e) =>{
 
                       {searchTraining?.map((trainingData) => (
                         <li>
-                          <a href={`/training-detail/${trainingData.id}`} class="d-flex">
+                          <a href={`/training-detail/${trainingData.id}`} className="d-flex">
                             {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span class="sec-cont"><strong class="text-capitalize">{trainingData?.title}</strong></span>
+                            <span className="sec-cont"><strong className="text-capitalize">{trainingData?.title}</strong></span>
                           </a>
                         </li>
                       ))}
@@ -579,18 +579,18 @@ const handelSearch = async (e) =>{
 
                       {searchOperatingMannual?.map((operatingData) => (
                         <li>
-                          <a href={`/operatingmanual/?selected=${operatingData.id}`} class="d-flex">
+                          <a href={`/operatingmanual/?selected=${operatingData.id}`} className="d-flex">
                             {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span class="sec-cont"><strong class="text-capitalize">{operatingData?.title}</strong></span>
+                            <span className="sec-cont"><strong className="text-capitalize">{operatingData?.title}</strong></span>
                           </a>
                         </li>
                       ))}
 
                     {searchFranchise?.map((franchiseeData) => (
                       <li>
-                        <a href={`/all-franchisees/`} class="d-flex">
+                        <a href={`/all-franchisees/`} className="d-flex">
                        {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span class="sec-cont"><strong class="text-capitalize">{franchiseeData?.franchisee_name}</strong></span>
+                          <span className="sec-cont"><strong className="text-capitalize">{franchiseeData?.franchisee_name}</strong></span>
                         </a>
                       </li>
                         ))}
@@ -598,9 +598,9 @@ const handelSearch = async (e) =>{
 
                       {searchFileRepository?.map((fileRepoData) => (
                       <li>
-                        <a href={`/file-repository-List/${fileRepoData?.repository_files[0]?.categoryId}`} class="d-flex">
+                        <a href={`/file-repository-List/${fileRepoData?.repository_files[0]?.categoryId}`} className="d-flex">
                        {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                          <span class="sec-cont"><strong class="text-capitalize">{fileRepoData?.title}</strong></span>
+                          <span className="sec-cont"><strong className="text-capitalize">{fileRepoData?.title}</strong></span>
                         </a>
                       </li>
                         ))}
@@ -639,7 +639,7 @@ const handelSearch = async (e) =>{
                       // onMouseEnter={() => setNotificationDialog(true)} 
                       // onMouseLeave={() => setNotificationDialog(false)} 
                       src="/img/notification-icon.svg" />
-                    <span class="tag">{topHeaderNotificationCount ? topHeaderNotificationCount > 99 ? "99+" : topHeaderNotificationCount : 0}</span>
+                    <span className="tag">{topHeaderNotificationCount ? topHeaderNotificationCount > 99 ? "99+" : topHeaderNotificationCount : 0}</span>
                   </div>
                 </OverlayTrigger>
               </li>

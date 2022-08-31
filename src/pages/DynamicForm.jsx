@@ -6,6 +6,8 @@ import InputFields from './InputFields';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
@@ -177,18 +179,28 @@ const DynamicForm = () => {
               body: JSON.stringify({}),
               redirect: 'follow',
             };
-            fetch(`${BASE_URL}/training/completeTraining/${training_id}/${user_id}?training_status=finished`, requestOptions)
+            fetch(
+              `${BASE_URL}/training/completeTraining/${training_id}/${user_id}?training_status=finished`,
+              requestOptions
+            )
               .then((response) => response.json())
               .then((res) => {
-                if(res)
-                {
-                  alert(result?.message);
-                  navigate('/training');
+                if (res) {
+                  if (
+                    result?.message === 'You can add only one time form data!!'
+                  ) {
+                      toast.error(result?.message);
+                  } else {
+                    navigate('/training');
+                  }
                 }
               });
           } else {
-            alert(result?.message);
-            navigate('/form');
+            if (result?.message === 'You can add only one time form data!!') {
+              toast.error(result?.message);
+            } else {
+              navigate('/form');
+            }
           }
         })
         .catch((error) => console.log('error', error));
@@ -197,6 +209,7 @@ const DynamicForm = () => {
   return (
     <>
       <div id="main">
+        <ToastContainer />
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -228,7 +241,7 @@ const DynamicForm = () => {
                   </div>
                 </Row>
                 <Form>
-                  <Row>
+                  <Row className='set-layout-row'>
                     {!(
                       formPermission?.target_user?.includes(
                         localStorage.getItem('user_role') === 'guardian'

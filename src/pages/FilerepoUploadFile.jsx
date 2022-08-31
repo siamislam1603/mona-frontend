@@ -42,7 +42,8 @@ const FilerepoUploadFile = () => {
     const [tabLinkPath, setTabLinkPath] = useState("/available-Files");
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [user, setUser] = useState([]);
-
+    const [shareType, setShareType] = useState("roles");
+    const [applicableToAll, setApplicableToAll] = useState(false);
     const [selectedAll, setSelectedAll] = useState(false);
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
@@ -462,6 +463,7 @@ const FilerepoUploadFile = () => {
                             {getUser_Role === "guardian" ? (<></>) : (<>
                                 <Row className="mt-4">
                                     <Col lg={3} md={6}>
+
                                         <Form.Group>
                                             <Form.Label>Send to all franchisee:</Form.Label>
                                             <div className="new-form-radio d-block">
@@ -589,6 +591,7 @@ const FilerepoUploadFile = () => {
                                         {console.log(formSettingData, "{console.log(...formSettingData)}")}
                                         {formSettingData.accessible_to_role === 1 ? (
                                             <Form.Group>
+
                                                 <Form.Label>Select User Roles</Form.Label>
                                                 <div className="modal-two-check user-roles-box">
                                                     <label className="container">
@@ -660,6 +663,38 @@ const FilerepoUploadFile = () => {
                                                         <input
                                                             type="checkbox"
                                                             name="shared_role"
+                                                            id="guardian"
+                                                            onClick={(e) => {
+                                                                let data = { ...formSettingData };
+                                                                if (
+                                                                    !data['shared_role']
+                                                                        .toString()
+                                                                        .includes(e.target.id)
+                                                                ) {
+                                                                    data['shared_role'] += e.target.id + ',';
+                                                                } else {
+                                                                    data['shared_role'] = data[
+                                                                        'shared_role'
+                                                                    ].replace(e.target.id + ',', '');
+                                                                    if (data['shared_role'].includes('all')) {
+                                                                        data['shared_role'] = data[
+                                                                            'shared_role'
+                                                                        ].replace('all,', '');
+                                                                    }
+                                                                }
+                                                                setFormSettingData(data);
+                                                            }}
+                                                            checked={formSettingData?.shared_role
+                                                                ?.toString()
+                                                                .includes('guardian')}
+                                                        />
+                                                        <span className="checkmark"></span>
+                                                    </label>
+                                                    {/* <label className="container">
+                                                        Guardian
+                                                        <input
+                                                            type="checkbox"
+                                                            name="shared_role"
                                                             id="Guardian"
                                                             onClick={(e) => {
                                                                 let data = { ...formSettingData };
@@ -686,7 +721,31 @@ const FilerepoUploadFile = () => {
                                                             )}
                                                         />
                                                         <span className="checkmark"></span>
-                                                    </label>
+                                                    </label> */}
+
+                                                    {/* <Form.Check
+                                                        type="checkbox"
+                                                        label="All Roles"
+                                                        checked={formSettingData?.shared_role?.includes('guardian,educator,coordinator')}
+                                                        onChange={() => {
+                                                            if (formSettingData?.shared_role?.includes("guardian")
+                                                                && formSettingData?.shared_role?.includes("educator")
+                                                                && formSettingData?.shared_role?.includes("coordinator")) {
+                                                                setFormSettingData(prevState => ({
+                                                                    ...prevState,
+                                                                    assigned_roles: [],
+                                                                }));
+                                                            }
+
+                                                            if (!formSettingData?.shared_role?.includes("guardian")
+                                                                && !formSettingData?.shared_role?.includes("educator")
+                                                                && !formSettingData?.shared_role?.includes("coordinator"))
+                                                                setFormSettingData(prevState => ({
+                                                                    ...prevState,
+                                                                    assigned_roles: ["guardian", "educator", "coordinator"]
+                                                                })
+                                                                )
+                                                        }} /> */}
                                                     <label className="container">
                                                         All Roles
                                                         <input
@@ -780,6 +839,7 @@ const FilerepoUploadFile = () => {
                                         ) : null}
                                     </Col>
                                 </Row>
+
                             </>)}
                         </div>
                     </div>

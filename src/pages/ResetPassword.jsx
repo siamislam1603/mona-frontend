@@ -10,7 +10,6 @@ import { ResetPasswordValidation } from '../helpers/validation';
 import axios from 'axios';
 import ResetPasswordLink from './ResetPasswordLink';
 
-
 function appendUserString(role) {
   let roleStr = '';
 

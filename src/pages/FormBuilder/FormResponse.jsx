@@ -13,8 +13,16 @@ function FormResponse(props) {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    getResponse('');
-    getResponseTow('');
+    if(location?.state?.id)
+    {
+      getResponse('');
+    }
+    else
+    {
+      getResponseTow('');
+    }
+    
+    
   }, []);
 
   const getResponse = (search) => {

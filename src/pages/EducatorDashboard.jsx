@@ -67,7 +67,7 @@ const columns = [
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="/user-management/Guardian">View</Dropdown.Item>
+            <Dropdown.Item href="/children-all">View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -248,7 +248,7 @@ const EducatorDashboard = () => {
                         <div className="children-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h4 className="title-sm mb-0"><strong>Children</strong></h4>
-                            <Link to="/user-management/Guardian" className="viewall">View All</Link>
+                            <Link to="/children-all" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
                             {/* <BootstrapTable
@@ -499,7 +499,7 @@ const EducatorDashboard = () => {
                                     <img src={item.profile_photo} alt="" />
                                   </div>
                                   <div className="educator-detail">
-                                    <h1 class="edu-name mb-2">{item.fullname}</h1>
+                                    <h1 className="edu-name mb-2">{item.fullname}</h1>
                                     <div className="edu-tel mb-2"><a href="tel:+6145434234">{item.phone}</a></div>
                                     <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item.email}</a></div>
                                   </div>
@@ -516,7 +516,7 @@ const EducatorDashboard = () => {
                           //         <img src={item.profile_photo} alt="" />
                           //       </div>
                           //       <div className="educator-detail">
-                          //         <h1 class="edu-name mb-2">{item.fullname}</h1>
+                          //         <h1 className="edu-name mb-2">{item.fullname}</h1>
                           //         <div className="edu-tel mb-2"><a href="tel:+6145434234">{item.phone}</a></div>
                           //         <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item.email}</a></div>
                           //       </div>
