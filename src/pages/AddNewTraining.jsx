@@ -12,6 +12,8 @@ import axios from 'axios';
 import { TrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
+import DragDropSingle from '../components/DragDropSingle';
+import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
 
 const animatedComponents = makeAnimated();
 
@@ -93,7 +95,8 @@ const AddNewTraining = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
-
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [croppedImage, setCroppedImage] = useState(null);
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
   console.log(errors, "errors")
@@ -353,6 +356,9 @@ const AddNewTraining = () => {
     }
   }, []);
 
+   console.log(coverImage, "+++++") 
+  console.log(croppedImage, "CROPIMAGE+++++") 
+
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -557,12 +563,31 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image*:</Form.Label>
-                          <DropOneFile
+                          {/* <DropOneFile
                             title="Image"
                             onSave={setCoverImage}
                             setErrors={setErrors}
                           // setTrainingData={setTraining}
+                          /> */}
+
+
+                          <DragDropSingle
+                            croppedImage={croppedImage}
+                            setCroppedImage={setCroppedImage}
+                            onSave={setCoverImage}
+                            setPopupVisible={setPopupVisible}
+                            fetchedPhoto={""}
                           />
+
+                          {
+                            popupVisible &&
+                            <ImageCropPopup
+                              image={coverImage}
+                              setCroppedImage={setCroppedImage}
+                              setPopupVisible={setPopupVisible} />
+                          }
+
+
                           <small className="fileinput">(png, jpg & jpeg)</small>
                           {errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span>}
                         </Form.Group>
