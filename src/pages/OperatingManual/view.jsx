@@ -26,6 +26,8 @@ import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { verifyPermission } from '../../helpers/roleBasedAccess';
 import { createCategoryValidation } from '../../helpers/validation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 let upperRoleUser = '';
 let selectedUserId = '';
@@ -409,7 +411,7 @@ const OperatingManual = () => {
     e.preventDefault();
     let data = singleOperatingManual;
     if (!data?.id) {
-      alert('Please save first operating manual information');
+      toast.error('Please save the details of operating manual!!');
     } else {
       if (formSettingData.shared_role === '' && selectedUserId === '') {
         data['accessible_to_role'] = null;
@@ -449,6 +451,7 @@ const OperatingManual = () => {
   return (
     <>
       <div id="main">
+        <ToastContainer/>
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -637,7 +640,7 @@ const OperatingManual = () => {
                                       >
                                         {item.category_name}
                                       </Dropdown.Item>
-                                      {item.operating_manuals.length > 0 &&
+                                      {item?.operating_manuals?.length > 0 &&
                                         item.operating_manuals.map(
                                           (inner_item) => {
                                             {verifyPermission(
