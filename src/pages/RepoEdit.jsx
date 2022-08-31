@@ -76,6 +76,7 @@ const RepoEdit = () => {
         }));
         setCoverImage(data?.repository_files[0].filesPath);
     }
+
     const onChange = (e) => {
         const files = data.image;
         files.length > 0 && setUrl(files);
@@ -89,6 +90,7 @@ const RepoEdit = () => {
         }));
     };
     // Update API For File Repo
+
     const handleDataSubmit = async (event) => {
         event.preventDefault();
         setLoaderFlag(true);
@@ -102,8 +104,10 @@ const RepoEdit = () => {
             console.log(key, value);
             dataObj.append(key, value);
         }
+
         saveDataToServer(dataObj);
     }
+
     const saveDataToServer = async () => {
         console.log('SAVING DATA TO SERVER');
         setLoaderFlag(true);
@@ -122,7 +126,8 @@ const RepoEdit = () => {
                     console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
                     navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
-            } else if (typeof data.image === 'object') {
+            }
+            else if (typeof data.image === 'object') {
                 let dataObj = new FormData();
                 dataObj.append("image", data.image);
                 dataObj.append("id", Params.id);

@@ -99,6 +99,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
     const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      window.scroll(0,0)
     } 
     else{
       setErrors({})

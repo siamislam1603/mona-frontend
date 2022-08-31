@@ -5,6 +5,7 @@ import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Select from 'react-select';
 import { useParams } from 'react-router-dom';
+import { suburbData } from '../assets/data/suburbData';
 
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
@@ -27,7 +28,9 @@ const EditFranchisees = () => {
         contact: "",
     });
     const [australianStatesData, setAustralianStatesData] = useState();
-    const [cityData, setCityData] = useState([]);
+    const [cityData, setCityData] = useState(suburbData);
+
+
     const [franchiseeAdminData, setFranchiseeAdminData] = useState();
     const [selectedFranchisee, setSelectedFranchisee] = useState();
     const [topErrorMessage, setTopErrorMessage] = useState(null);
@@ -37,6 +40,7 @@ const EditFranchisees = () => {
     
     // ERROR STATES
     const [formErrors, setFormErrors] = useState({});
+    const [suburbSearchString, setSuburbSearchString] = useState("");
 
 
   // FETCHES THE DATA OF USER FOR EDITING
@@ -104,6 +108,24 @@ const EditFranchisees = () => {
             // }, 3000)
         }
     }
+
+
+    const fetchSuburbData = () => {
+        const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
+        const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+        axios.all([getSuburbList]).then(
+          axios.spread((...data) => {
+            console.log('SUBURB DATA:', data[0].data.data);
+            let sdata = data[0].data.data;
+            setCityData(sdata.map(d => ({
+              id: d.id,
+              value: d.name,
+              label: d.name
+            })));
+          })
+        )
+      }
+
 
 
     // FETCHES AUSTRALIAN STATES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
@@ -186,6 +208,13 @@ const EditFranchisees = () => {
         copyDataToLocalState();
     }, [editFranchiseeData]);
 
+
+    useEffect(() => {
+        fetchSuburbData();
+      }, [suburbSearchString])
+
+
+
     editFranchiseeData && console.log('EDIT DATA:', editFranchiseeData);
     franchiseeData && console.log('DATA:', franchiseeData);
     return (
@@ -254,6 +283,9 @@ const EditFranchisees = () => {
                                                 closeMenuOnSelect={true}
                                                 value={{ label: franchiseeData.city, value: franchiseeData.city }}
                                                 options={cityData}
+                                                onInputChange={(e) => {
+                                                    setSuburbSearchString(e);
+                                                  }}
                                                 onChange={(e) => {
                                                     setFranchiseeData((prevState) => ({
                                                         ...prevState,

@@ -47,7 +47,7 @@ const NewFranchisees = () => {
         if(response.status === 201 && response.data.status === "success") {
             setLoader(false);
             setCreateFranchiseeModal(false);
-            localStorage.setItem('success_msg', 'Franchisee Created Successfully!');
+            localStorage.setItem('success_msg', 'Franchise Created Successfully!');
             window.location.href="/all-franchisees";
         } else {
             setLoader(false);

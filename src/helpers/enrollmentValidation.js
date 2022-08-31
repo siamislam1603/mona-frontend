@@ -19,7 +19,7 @@ export const childFormValidator = (childForm) => {
     errors.family_name = "Family Name is required!";
   
   if(!(/^[a-zA-Z ]+$/i.test(family_name)))
-    errors.family_name = "Name shoudln't contain numbers & special characters."
+    errors.family_name = "Name shouldn't contain numbers & special characters."
 
   if(!dob)
     errors.dob = "Date of Birth is required!";
@@ -73,7 +73,7 @@ export const parentFormValidator = (parentForm) => {
     errors.telephone = "Telephone number is required!";
 
   if(!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Telephone should only contain digits!"; 
+    errors.telephone = "Telephone number is required, should contain digits!"; 
 
   if(!email)
     errors.email = "Email is required!";
@@ -112,7 +112,7 @@ export const healthInformationFormValidator = (healthInformationForm) => {
     errors.telephone = "Telephone number is required!";
 
   if(!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Telephone should only contain digits!";  
+    errors.telephone = "Telephone number is required, should contain digits!";  
 
   if(!medical_service_address)
     errors.medical_service_address = "Medical Service address is required!";

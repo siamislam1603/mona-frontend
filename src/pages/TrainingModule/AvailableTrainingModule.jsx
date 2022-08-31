@@ -4,6 +4,7 @@ import { BASE_URL } from "../../components/App";
 import axios from "axios";
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
+import { FullLoader } from "../../components/Loader";
 
 
 const AvailableTraining = ({ filter }) => {
@@ -19,47 +20,77 @@ const AvailableTraining = ({ filter }) => {
   });
   const [showModal, setShowModal] = useState(false);
   const [franchiseeList, setFranchiseeList] = useState(null);
-  const [dueDataTraining,setDueDataTraining]= useState(false)
-  const [nodueData,setNoDueData]= useState(false)
-  const [page,setPage] = useState(5)
+  const [dueDataTraining,setDueDataTraining]= useState([])
+  const [nodueData,setNoDueData]= useState([])
+  const [page,setPage] = useState(6)
 
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [successMessageToast, setSuccessMessageToast] = useState(null);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const fetchAvailableTrainings = async () => {
-    console.log('INSIDE AVAILABLE TRAINING MODULE',page)
-    let user_id = localStorage.getItem('user_id');
-    console.log('USER ID:', user_id)
-    console.log('URL:', `${BASE_URL}/training/assigeedTraining/${user_id}`);
-    const token = localStorage.getItem('token');
-
-    const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}`, {
-      headers: {
-        "Authorization": "Bearer " + token
+    try {
+      console.log('INSIDE AVAILABLE TRAINING MODULE',"duetraining",dueDataTraining,"No due",nodueData,page)
+      console.log()
+      let user_id = localStorage.getItem('user_id');
+      console.log('USER ID:', user_id)
+      console.log('URL:', `${BASE_URL}/training/assigeedTraining/${user_id}`);
+      const token = localStorage.getItem('token');
+  
+      const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      console.log("Log respon",response)
+      if (response.status === 200 && response.data.status === "success") {
+        console.log('RESPONSE:', response.data);
+        const { searchedData } = response.data;
+  
+        let uniqueObjArray = [
+          ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
+        ];
+        setfullLoaderStatus(false)
+        setAvailableTrainingData(searchedData)
+         console.log("Search data",searchedData)
+         setNoDueData(false)
+         setDueDataTraining(false)
+        searchedData?.length>0 &&  searchedData?.map((item) => {
+        
+          console.log("Indside Mao",dueDataTraining)
+         if(item.training.end_date) {
+          return  setDueDataTraining(true)
+          //  setNoDueData(false)
+         }
+         
+         else if(!item.training.end_date  ){
+          console.log("NO end data")
+          return setNoDueData(true)
+         }
+         else if(item.training.end_date && !item.training.end_date){
+            console.log("Item training end date",nodueData,item.training.end_date)
+         }
+        }) 
+        
+        if(searchedData?.length===0){
+          setNoDueData(false)
+        }
+        
       }
-    });
-
-    if (response.status === 200 && response.data.status === "success") {
-      console.log('RESPONSE:', response.data);
-      const { searchedData } = response.data;
-
-      let uniqueObjArray = [
-        ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
-      ];
-      setAvailableTrainingData(uniqueObjArray)
-
-      uniqueObjArray?.map((item) => {
-       if(item.training.end_date) {
-        return setDueDataTraining(true)
-       }
-       else if(!item.training.end_date){
-        return setNoDueData(true)
-       }
-      }) 
-    }
-    else {
-      setAvailableTrainingData([])
+      else{
+        setAvailableTrainingData([])
+        setfullLoaderStatus(false)
+        // setNoDueData(false)
+        // setDueDataTraining(false)
+      }
+   
+    } catch (error) {
+      
+        console.log("The error",error)
+        setAvailableTrainingData([])
+        setfullLoaderStatus(false)
+    
     }
   };
 
@@ -189,23 +220,23 @@ const AvailableTraining = ({ filter }) => {
 //         setPage(prevCount => prevCount + 5)
 //       }
 // };
-window.onscroll = function () {
-  let userScrollHeight = window.innerHeight + window.scrollY;
-        let windowBottomHeight = document.documentElement.offsetHeight;
-        if (userScrollHeight >= windowBottomHeight) {
-                  setPage(page + 5)
-        }
-    }
+// window.onscroll = function () {
+//   let userScrollHeight = window.innerHeight + window.scrollY;
+//         let windowBottomHeight = document.documentElement.offsetHeight;
+//         if (userScrollHeight >= windowBottomHeight) {
+//                   setPage(page + 5)
+//         }
+//     }
 
-  useEffect(() => {
-    setTimeout(() => {
-      setSuccessMessageToast(null);
-    }, 4000)
-  }, [successMessageToast]);
+//   useEffect(() => {
+//     setTimeout(() => {
+//       setSuccessMessageToast(null);
+//     }, 4000)
+//   }, [successMessageToast]);
 
   useEffect(() => {
     fetchAvailableTrainings();
-  }, [filter,page]);
+  }, [filter.search,page,filter.category_id]);
 
   useEffect(() => {
     fetchFranchiseeList();
@@ -222,6 +253,8 @@ window.onscroll = function () {
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
       <div id="main">
+      <FullLoader loading={fullLoaderStatus} />
+
         <div className="training-column">
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
           <Row>
@@ -284,7 +317,7 @@ window.onscroll = function () {
               )
               : null
             }
-            {dueDataTraining === false ? null : <hr/>}
+            {nodueData && dueDataTraining ? <hr/> : null}
 
 
              {availableTrainingData
@@ -344,7 +377,7 @@ window.onscroll = function () {
             }
 
             
-            {availableTrainingData && dueDataTraining === false && nodueData === false ?
+            {availableTrainingData && dueDataTraining === false && nodueData === false && fullLoaderStatus === false ?
             <div className="text-center mb-5 mt-5">  <strong>No trainings assigned to you!</strong> </div>
 
             : null }

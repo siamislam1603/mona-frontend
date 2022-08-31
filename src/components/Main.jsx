@@ -252,7 +252,7 @@ const Main = () => {
         <Route
           path="/edit-franchisees/:franchiseeId"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} test={isLoggedIn}>
               <SignIn />
               <EditFranchisees />
             </Protected>
@@ -489,6 +489,7 @@ const Main = () => {
         <Route
           path="/training"
           element={
+            // <Protected controller='training_files' action='listing'>
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <Training />
