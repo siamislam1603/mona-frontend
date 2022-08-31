@@ -638,30 +638,8 @@ const ChildrenEnrol = () => {
 
 
 
-  const FormData = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    })
-    console.log("FORM Data", response)
-    if (response.status == 200) {
-      let data = response.data.data.formData;
-      let tempData = data.map((dt) => ({
-        formname: `${dt.audited_on}`,
-        franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
-        // console.log("THe dt",)
-
-
-      }))
-      setFormData(tempData);
-    }
-  }
-
   useEffect(() => {
     Show_eduactor()
-    FormData()
     ChildernEnrolled()
   }, [])
 
@@ -958,7 +936,7 @@ const ChildrenEnrol = () => {
                             } */}
 
                     {
-                      formData?.length > 0 ?
+                      chidlEnroll?.length > 0 ?
                         <ToolkitProvider
                           keyField="name"
                           data={chidlEnroll}
