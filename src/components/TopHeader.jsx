@@ -502,8 +502,8 @@ const handelSearch = async (e) =>{
                   
                   <Dropdown.Toggle id="dropdown-basic">
                     // { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name || 
-                    //   'No Data Available'}
-                    { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || 'No Data Available'}
+                      'No Data Available'}
+                    // { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || 'No Data Available'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
