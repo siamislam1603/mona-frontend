@@ -199,12 +199,12 @@ const UserManagement = () => {
         } else if (parseInt(cell[3]) === 2) {
           status = "deleted"
         }
-        console.log('BIG STATUS:', status);
+        console.log('BIG STATUS:', cell[0]);
         return (
           <>
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[0]} alt="" />
+                <img src={cell[0]  === "null" ? "../img/upload.jpg":cell[0] } alt="" />
               </span>
               <span className="user-name">
                 {cell[1]} <small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
@@ -524,9 +524,10 @@ const UserManagement = () => {
   const csvLink = useRef();
 
 
-  userData && console.log('USER DATA:', userData.map(data => data));
+  // userData && console.log('USER DATA:', userData.map(data => data));
   userEducator && console.log('userEducator DATA:', userEducator.map(data => data))
   selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
+  console.log("USER DATA,",userData)
   return (
     <>
       <div id="main">

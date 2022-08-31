@@ -455,6 +455,7 @@ const handelSearch = async (e) =>{
   useEffect(() => {
     savePermissionInState();
   }, []);
+  console.log("local Storge ",localStorage.getItem('profile_photo'))
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
@@ -646,7 +647,7 @@ const handelSearch = async (e) =>{
                 <Dropdown>
                   <Dropdown.Toggle id="dropdown-basic">
                     <span className="user-pic">
-                      <img alt="" id="user-pic" src={localStorage.getItem('profile_photo') || ''} />
+                      <img alt="" id="user-pic" src={localStorage.getItem('profile_photo') || "../img/upload.jpg"} />
                     </span>
                     <span className="user-name">
                       {localStorage.getItem('user_name')
