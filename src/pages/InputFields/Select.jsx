@@ -10,7 +10,7 @@ const Select = (props) => {
         <Form.Select
           name={controls.field_name}
           onChange={(e) => {
-            props.onChange(e.target.name, e.target.value);
+            props.onChange(e.target.name, e.target.value,"select");
           }}
         >
             <option>Select {controls.label}</option>

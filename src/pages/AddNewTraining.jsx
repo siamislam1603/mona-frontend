@@ -208,7 +208,7 @@ const AddNewTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${franchisee_id}]`);
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([

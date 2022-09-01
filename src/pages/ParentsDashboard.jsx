@@ -29,6 +29,8 @@ const ParentsDashboard = () => {
       }
     });
 
+    // console.log('RESPONSE CONSENT:', checkPendingConsent);
+
     if (response.status === 200 && response.data.status === "success") {
       let { parentConsentData } = response.data;
       console.log('PDATA:', parentConsentData);
@@ -88,6 +90,7 @@ const ParentsDashboard = () => {
   };
 
   const Userannouncements = async () => {
+   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-announcements`, {
       headers: {
@@ -99,6 +102,11 @@ const ParentsDashboard = () => {
       const training = response.data.recentAnnouncement;
       setannouncements(training);
     }
+   } catch (error) {
+    setannouncements([])
+    console.log("error",error)
+
+   }
   };
 
   const assignededucators = async () => {
@@ -347,21 +355,29 @@ const ParentsDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-                            {announcements.map((item) => {
-                              return <>
-                                <div className="listing">
-                                  <a href="/announcements" className="item">
-                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{item.title}
-                                      <div>
-                                        <span className="timesec">{getAddedTime(item?.createdAt)}</span>
-                                      </div>
+                            {
+                              announcements?.length>0? (
+                                announcements.map((item) => {
+                                  return <>
+                                    <div className="listing">
+                                      <a href="/announcements" className="item">
+                                        <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                        <div className="name">{item.title}
+                                          <div>
+                                            <span className="timesec">{getAddedTime(item?.createdAt)}</span>
+                                          </div>
+                                        </div>
+    
+                                      </a>
                                     </div>
+                                  </>
+                                })
+                              )  :
+                              (
+                                <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
 
-                                  </a>
-                                </div>
-                              </>
-                            })}
+                              )
+                            }
 
                             {/* <div className="listing">
                               <a href="/" className="item">
@@ -420,7 +436,7 @@ const ParentsDashboard = () => {
         </Modal.Header>
 
         <Modal.Body>
-          <p>No child is <strong>enrolled</strong> under you right now. Reach out to your <strong>coordinator</strong> for the same.</p>
+          <p>Your child's enrolment form has not been processed as yet, please try again shortly or alternatively reach out to your <strong>coordinator</strong>.</p>
         </Modal.Body>
 
         <Modal.Footer>

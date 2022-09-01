@@ -37,7 +37,8 @@ const FranchisorDashboard = () => {
       dataField: 'formname',
       text: 'Form Name',
       formatter: (cell) => {
-        return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on:  {moment(cell[1]).format('DD/MM/YYYY')}</small></span></div></>)
+        console.log("frnahisro cell",cell)
+        return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on:  {moment(cell).format('DD/MM/YYYY')}</small></span></div></>)
       },
     },
     {
@@ -103,7 +104,9 @@ const FranchisorDashboard = () => {
       setlatest_announcement(response.data.recentAnnouncement);
       console.log(response.data)
     }).catch((e) => {
+      setlatest_announcement([])
       console.log("Error", e);
+
     })
   }
 
@@ -407,22 +410,32 @@ const FranchisorDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-                            {latest_announcement.map((data) => {
-                              return (
-                                <div className="listing">
-                                  <a href="/announcements" className="item">
-                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}
-                                      <div>
-                                        <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-
-                                      </div>
-
+                            {
+                              latest_announcement?.length>0 ?
+                              (
+                                latest_announcement?.map((data) => {
+                                  return (
+                                    <div className="listing">
+                                      <a href="/announcements" className="item">
+                                        <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                        <div className="name">{data.title }
+                                          <div>
+                                            <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+    
+                                          </div>
+    
+                                        </div>
+                                      </a>
                                     </div>
-                                  </a>
-                                </div>
-                              );
-                            })}
+                                  );
+                                })
+                              )
+                              :
+                              (
+                              <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+
+                              )
+                            }
                             {/* <div className="listing">
                               <a href="/" className="item">
                                 <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
