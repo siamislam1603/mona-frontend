@@ -46,12 +46,12 @@ const TrainingDetail = () => {
 
   const handleFinishTraining = (event) => {
 
-    if(relatedForms) {
+    if(typeof relatedForms === 'undefined') {
+      updateFinishTraining();
+    } else {
       setTimeout(() => {
         setShowSurveyForm(true);
       }, 2000);
-    } else {
-      updateFinishTraining();
     }
   };
 
@@ -95,9 +95,6 @@ const TrainingDetail = () => {
     if (response.status === 200 && response.data.status === "success") {
       setTrainingFinishedDate(response.data.finished_date);
       setHideTrainingFinishButton(true);
-      setTimeout(() => {
-        setShowSurveyForm(true);
-      }, 2000);
     }
   };
 
@@ -148,7 +145,7 @@ const TrainingDetail = () => {
     }
   }, []);
   // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  relatedForms && console.log('RELATED FORMS:', relatedForms);
+  console.log('RELATED FORMS:', relatedForms);
   return (
     <>
       <div id="main">

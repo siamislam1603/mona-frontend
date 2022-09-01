@@ -275,7 +275,6 @@ const FranchiseeDashboard = () => {
     // count_Api();
     Enrollments();
   }, []);
-  if (!countUser) return null;
   return (
     <>
       <div id="main">
