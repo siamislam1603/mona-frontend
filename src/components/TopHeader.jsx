@@ -305,7 +305,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
             <div className={topHeaderNotificationCount ? "notifitem unread" : "notifitem"}>
               <div className="notifimg">
-                <Link className="notilink" to="/">
+                <div className="notilink">
                   <div className="notifpic">
                     <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle" />
 
@@ -317,7 +317,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                       }} />
 
                   </div>
-                </Link>
+                </div>
               </div>
               <div className="notification-time">
                 {moment(details.createdAt).fromNow()}

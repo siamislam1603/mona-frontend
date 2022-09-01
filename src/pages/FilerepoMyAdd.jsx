@@ -1002,7 +1002,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     <Form.Label>Select User Roles</Form.Label>
                                                     <div className="modal-two-check user-roles-box">
                                                         <label className="container">
-                                                            Co-ordinators
+                                                            Coordinators
                                                             <input
                                                                 type="checkbox"
                                                                 name="shared_role"
