@@ -167,22 +167,17 @@ const FranchiseeDashboard = () => {
     })
     console.log("FORM Data", response)
     if (response.status === 200) {
-
-      let [data] = response.data.childrenEnrolled;
-      console.log(data.users[0].profile_photo, "FORM Data")
-
-      console.log(data.ful, "FORM+++++++")
-      const tempData = data.map((dt) => (
+      let data = response.data.childrenEnrolled;
+      console.log(data, "FORM+++++++")
+      const tempData = data.map((dt, index) => (
         {
           name: `${dt.fullname}`,
-          // educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo,
+          educatatoName: dt.users[index].fullname + "," + dt.users[index].profile_photo + "," + dt.users[index].fullname + "," + dt.users[index].profile_photo
         }
       ))
-
-
+      console.log(tempData, "FORM+++++++FORM")
       setUserData(tempData);
 
-      console.log(userData, "FORM+++++++")
 
     }
   }
