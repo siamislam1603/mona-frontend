@@ -91,7 +91,8 @@ const EducatorDashboard = () => {
 
 
   const Userannouncements = async () => {
-    const token = localStorage.getItem('token');
+    try {
+      const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/educator/quick-access-announcements`, {
       headers: {
         "Authorization": "Bearer " + token
@@ -101,6 +102,10 @@ const EducatorDashboard = () => {
     if (response.status === 200 && response.data.status === "success") {
       const training = response.data.recentAnnouncement;
       setannouncements(training);
+    }
+    } catch (error) {
+      setannouncements([])
+      console.log("error",error)
     }
 
   };
