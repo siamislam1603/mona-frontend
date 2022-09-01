@@ -322,9 +322,7 @@ const TrainingDetail = () => {
                                 'MMMM Do, YYYY'
                               )}</p>
                               : <p>
-                                Please acknowledge by clicking below that you have
-                                completed this training completely and can proceed
-                                further.
+                                Please acknowledge that you have completed this training in its entirety by clicking below.
                               </p>
 
                             }
@@ -353,7 +351,7 @@ const TrainingDetail = () => {
           <Modal.Body>
             <div>
               <p>You've finished this training successfully.</p>
-              <p>Click on <strong>Next</strong> to fill the survey form.</p>
+              <p>Click <strong>Next</strong> to continue to the assessment.</p>
             </div>
           </Modal.Body>
           <Modal.Footer>

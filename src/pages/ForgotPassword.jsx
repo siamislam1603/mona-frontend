@@ -35,7 +35,7 @@ const ForgotPassword = () => {
         let response = await axios.get(`${BASE_URL}/auth/forgotPassword/${email}`)
         console.log("The response",response)
        if(response.status === 200){
-          setTopMessage("Email sent Please check your email Address")
+          setTopMessage("Email sent, please check your inbox")
           console.log("The success")
       }
       // console.log("The response",repos)

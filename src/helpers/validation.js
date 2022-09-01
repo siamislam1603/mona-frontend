@@ -493,27 +493,27 @@ export const personValidation = (personValidationForm) => {
   let { name, address, telephone, relationship_to_the_child } =
     personValidationForm;
 
-  if (!name) errors.name = 'Name is required!';
+  if (!name) errors.name = 'Please complete mandatory Field!';
 
-  if(!(/^[a-zA-Z ]+$/i.test(name)))
-    errors.name = 'Name shoudln\'t contain digits & special characters!';
+  if(name.length >0 && !(/^[a-zA-Z ]+$/i.test(name)))
+    errors.name = 'Field shouldn\'t contain digits & special characters!';
 
-  if (!address) errors.address = 'Address is required!';
+  if (!address) errors.address = 'Please complete mandatory Field!';
 
-  if (!telephone) errors.telephone = 'Telephone number is required!';
+  if (!telephone) errors.telephone = 'Please complete mandatory Field!';
 
   if(!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Telephone number is required, should contain digits!"; 
+    errors.telephone = "Field should only contain digits!"; 
 
   if(telephone.length > 1 && telephone.length < 10)
-    errors.telephone = 'Telephone number must be at least 10-digit long.'
+    errors.telephone = 'Field must be at least 10-digit long.'
 
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
-      'Specify their relationship to the child!';
+      'Please complete mandatory Field!';
 
-  if(!(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
-    errors.relationship_to_the_child = 'Relationship shoudln\'t contain digits & special characters!';
+  if(relationship_to_the_child.length > 0 && !(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
+    errors.relationship_to_the_child = 'Field shouldn\'t contain digits & special characters!';
 
   return errors;
 };
@@ -524,7 +524,7 @@ export const personValidation2 = (personValidationForm) => {
     personValidationForm;
 
   if(telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Telephone number is required, should contain digits!";
+    errors.telephone = "Field should only contain digits!";
 
   return errors;
 }
@@ -572,26 +572,26 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
     comment,
   } = childDailyRoutineForm;
 
-  if (!sleep_time) errors.sleep_time = 'sleep time is required!';
+  if (!sleep_time) errors.sleep_time = 'Please complete mandatory Field!';
 
-  if (!bottle_time) errors.bottle_time = 'bottle time is required!';
+  if (!bottle_time) errors.bottle_time = 'Please complete mandatory Field!';
 
-  if (!toileting) errors.toileting = 'toilet time is required!';
+  if (!toileting) errors.toileting = 'Please complete mandatory Field!';
 
-  if (!routines) errors.routines = 'routine is required!';
+  if (!routines) errors.routines = 'Please complete mandatory Field!';
 
-  if (!likes_dislikes) errors.likes_dislikes = 'specify the likes or dislikes!';
+  if (!likes_dislikes) errors.likes_dislikes = 'Please complete mandatory Field!';
 
-  if (!comforter) errors.comforter = 'comforter is required!';
+  if (!comforter) errors.comforter = 'Please complete mandatory Field!';
 
-  if (!religion) errors.religion = 'religion is reuqired!';
+  if (!religion) errors.religion = 'Please complete mandatory Field!';
 
   if (!dietary_requirement)
-    errors.dietary_requirement = 'specify the dietary requirements!';
+    errors.dietary_requirement = 'Please complete mandatory Field!';
 
-  if (!allergy) errors.allergy = 'mention the alergies, if any!';
+  if (!allergy) errors.allergy = 'Please complete mandatory Field!';
 
-  if (!comment) errors.comment = 'provide a comment!';
+  if (!comment) errors.comment = 'Please complete mandatory Field!';
 
   return errors;
 };
