@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave,Files, setErrors, title="Files", type="file" }) {
+export default function DropAllFile({ onSave,Files, setErrors, title="Files", type="file",  module="usual" }) {
   let typeObj;
 
   if(type === "video") {
@@ -73,7 +73,7 @@ export default function DropAllFile({ onSave,Files, setErrors, title="Files", ty
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
         <span className="text-center uploadfile cursor">
-          <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add {title}
+          <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> {module === "user-management" ? "Upload": "Add" } {title}
         </span>
       </div>
 

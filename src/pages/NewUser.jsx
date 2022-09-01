@@ -908,6 +908,7 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
+                              module="user-management"
                               onSave={setTrainingDocuments} />
                           </Form.Group>
 
