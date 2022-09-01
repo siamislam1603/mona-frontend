@@ -516,7 +516,7 @@ const FranchiseeDashboard = () => {
                                       <div className="listing">
                                         <a href="/announcements" className="item">
                                           <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                          <div className="name">{!data.title ? "No Announcement" : data.title}
+                                          <div className="name">{data.title }
                                             <div>
                                               <span className="timesec">{getAddedTime(data?.createdAt)}</span>
       

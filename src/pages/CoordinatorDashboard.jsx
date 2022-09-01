@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
+import moment from 'moment';
+
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 const products = [
@@ -117,7 +119,48 @@ const CoordinatorDashboard = () => {
   const [count, setcount] = React.useState();
   const [user, setUser] = useState([]);
   const [userData, setUserData] = useState([]);
+  const [latest_announcement, setlatest_announcement] = React.useState([{}]);
 
+  const announcement = () => {
+    let token = localStorage.getItem('token');
+    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
+
+    axios.get(countUrl, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => {
+      setlatest_announcement(response.data.recentAnnouncement);
+      console.log(response.data)
+    }).catch((e) => {
+      setlatest_announcement([])
+      console.log("Error", e);
+
+    })
+  }
+  const getAddedTime = (str) => {
+    const Added = moment(str).format('DD/MM/YYYY')
+    var today = new Date();
+    let d = new Date(today);
+    let month = (d.getMonth() + 1).toString().padStart(2, '0');
+    let day = d.getDate().toString().padStart(2, '0');
+    let year = d.getFullYear();
+    let datae = [day, month, year].join('/');
+    //  const date1 = new Date(datae);
+    //  const date2 = new Date(str);
+    console.log("THE Date1", Added, datae)
+    if (datae === Added) {
+      return "Added today"
+    }
+    else if (Added < datae) {
+      return Added
+    }
+    else {
+      return Added
+    }
+    // return Added
+
+  }
   const Additional_Needs = async () => {
     var myHeaders = new Headers();
     myHeaders.append(
@@ -212,6 +255,7 @@ const CoordinatorDashboard = () => {
   console.log(count)
   React.useEffect(() => {
     count_Api();
+    announcement()
   }, []);
   console.log("USERDATA", userData)
   if (!count) return null;
@@ -463,6 +507,46 @@ const CoordinatorDashboard = () => {
                             <div className="kidsart">
                               <img src="../img/kid-art.svg" alt="" />
                             </div>
+                          </div>
+                        </div>
+                        <div className="announcements-sec pb-5">
+                          <header className="title-head mb-4 justify-content-between">
+                            <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
+                            <Link to="/announcements" className="viewall">View All</Link>
+                          </header>
+                          <div className="column-list announcements-list">
+                            {
+                              latest_announcement?.length>0 ?
+                              (
+                                latest_announcement?.map((data) => {
+                                  return (
+                                    <div className="listing">
+                                      <a href="/announcements" className="item">
+                                        <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                        <div className="name">{data.title}
+                                          <div>
+                                            <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+    
+                                          </div>
+    
+                                        </div>
+                                      </a>
+                                    </div>
+                                  );
+                                })
+                              )
+                              :
+                              (
+                              <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+
+                              )
+                            }
+                            {/* <div className="listing">
+                              <a href="/" className="item">
+                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
+                              </a>
+                            </div> */}
                           </div>
                         </div>
                         {/*<div className="files-sec pb-5">
