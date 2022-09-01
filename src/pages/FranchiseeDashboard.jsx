@@ -368,28 +368,28 @@ const FranchiseeDashboard = () => {
                               <a href="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.totalUsers}</span>
+                                <span className="num">{countUser?.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/user-management/Educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.totalLocations}</span>
+                                <span className="num">{countUser?.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/children-all" className="item">
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.newEnrollments}</span>
+                                <span className="num">{countUser?.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/form/response" className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.auditForms}</span>
+                                <span className="num">{countUser?.auditForms}</span>
                               </a>
                             </div>
                           </div>
