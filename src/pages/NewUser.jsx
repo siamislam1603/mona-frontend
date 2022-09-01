@@ -697,38 +697,44 @@ const NewUser = () => {
                             />
                             { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
                           </Form.Group>
+                            
+                          {
+                            formData && formData?.role !== 'guardian' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Training Categories</Form.Label>
+                              <Select
+                                closeMenuOnSelect={false}
+                                components={animatedComponents}
+                                isMulti
+                                options={trainingCategoryData}
+                                onChange={(selectedOptions) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    trainingCategories: [...selectedOptions.map(option => option.id + "")]
+                                  }));
+                                }}
+                              />
+                            </Form.Group>
+                          }
                           
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Training Categories</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              options={trainingCategoryData}
-                              onChange={(selectedOptions) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  trainingCategories: [...selectedOptions.map(option => option.id + "")]
-                                }));
-                              }}
-                            />
-                          </Form.Group>
-
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Professional Development Categories</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              options={pdcData}
-                              onChange={(selectedOptions) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  professionalDevCategories: [...selectedOptions.map(option => option.id + "")]
-                                }));
-                              }}
-                            />
-                          </Form.Group>
+                          {
+                            formData?.role !== 'guardian' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Professional Development Categories</Form.Label>
+                              <Select
+                                closeMenuOnSelect={false}
+                                components={animatedComponents}
+                                isMulti
+                                options={pdcData}
+                                onChange={(selectedOptions) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    professionalDevCategories: [...selectedOptions.map(option => option.id + "")]
+                                  }));
+                                }}
+                              />
+                            </Form.Group>
+                          }
                           
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Contact Number</Form.Label>
@@ -850,21 +856,25 @@ const NewUser = () => {
                               />
                             </Form.Group>
                           }
-                          <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Business Assets</Form.Label>
-                            <Select
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              options={businessAssetData}
-                              onChange={(selectedOptions) => {
-                                setFormData((prevState) => ({
-                                  ...prevState,
-                                  businessAssets: [...selectedOptions.map(option => option.id + "")]
-                                }));
-                              }}
-                            />
-                          </Form.Group>
+
+                          {
+                            formData && formData?.role !== 'guardian' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>Business Assets</Form.Label>
+                              <Select
+                                closeMenuOnSelect={false}
+                                components={animatedComponents}
+                                isMulti
+                                options={businessAssetData}
+                                onChange={(selectedOptions) => {
+                                  setFormData((prevState) => ({
+                                    ...prevState,
+                                    businessAssets: [...selectedOptions.map(option => option.id + "")]
+                                  }));
+                                }}
+                              />
+                            </Form.Group>
+                          }
 
                           {/* <Form.Group className="mb-3">
                             <div className="btn-checkbox">

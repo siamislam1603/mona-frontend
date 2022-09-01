@@ -14,7 +14,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let { parentId } = useParams();
 
   const [formOneChildData, setFormOneChildData] = useState({
-    fullname: "",
+    name: "",
     dob: "",
     home_address: "",
     gender: "M",
@@ -128,17 +128,17 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Label>Child's Full Name</Form.Label>
                                 <Form.Control
                                   type="text"
-                                  name="fullname"
+                                  name="name"
                                   placeholder="Child’s Full Name"
-                                  value={formOneChildData?.fullname || ""}
+                                  value={formOneChildData?.name || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
                                     setErrors(prevState => ({
                                       ...prevState,
-                                      fullname: null
+                                      name: null
                                     }))
                                   }} />
-                                  {errors.fullname !== null && <span className="error">{errors.fullname}</span>}
+                                  {errors.name !== null && <span className="error">{errors.name}</span>}
                               </Form.Group>
                             </Col>
                             

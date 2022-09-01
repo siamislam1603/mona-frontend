@@ -88,7 +88,7 @@ const EditFranchisees = () => {
         if(response.status === 200 && response.data.status === "success") {
             setLoader(false);
             setCreateFranchiseeModal(false);
-            localStorage.setItem('success_msg', 'Franchisee Updated Successfully!');
+            localStorage.setItem('success_msg', 'Franchise Updated Successfully!');
             window.location.href="/all-franchisees";
         } else {
             setLoader(false);
