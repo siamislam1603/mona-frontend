@@ -1073,8 +1073,7 @@ padding-right: 35px;
 }
 
 .responses-collapse .accordion-item .accordion-button:after {
-filter: brightness(100) invert(1) !important;
-transition: none !important;
+filter: brightness(70) invert(0.5) !important;
 }
 
 .forms-managment-left p {
