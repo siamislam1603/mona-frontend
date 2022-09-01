@@ -981,6 +981,7 @@ const EditUser = () => {
                           <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple
+                              module="user-management"
                               onSave={setTrainingDocuments} />
                           </Form.Group>
 
