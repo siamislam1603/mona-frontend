@@ -120,23 +120,26 @@ const FileRepodAddbyMe = () => {
     }, []);
     return (
         <div>
-            <ToolkitProvider
-                keyField="name"
-                data={userData}
-                columns={columns}
-                search
-            >
-                {(props) => (
-                    <>
-                        <BootstrapTable
-                            {...props.baseProps}
-                            selectRow={selectRow}
-                            pagination={paginationFactory()}
-                        />
-                    </>
-                )}
+            {userData.length > 0 ? (
+                <ToolkitProvider
+                    keyField="name"
+                    data={userData}
+                    columns={columns}
+                    search
+                >
+                    {(props) => (
+                        <>
+                            <BootstrapTable
+                                {...props.baseProps}
+                                selectRow={selectRow}
+                                pagination={paginationFactory()}
+                            />
+                        </>
+                    )}
 
-            </ToolkitProvider>
+                </ToolkitProvider>
+            ) : (<div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>)}
+
         </div>
     )
 }
