@@ -230,7 +230,7 @@ function FormResponse(props) {
                                       Filled By {item.user.fullname}{' '}
                                       {!item.section_name ||
                                         (item.section_name !== '' &&
-                                          `| ${item.section_name} Section`)}
+                                          `| ${item.section_name} Section`)} {`| Behalf of ${item.behalf_of_user.fullname}`}
                                     </h4>
 
                                     {Object.keys(JSON.parse(item.fields)).map(

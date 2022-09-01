@@ -282,28 +282,32 @@ const ParentsDashboard = () => {
                         <header className="title-head mb-4 justify-content-between">
                           <h4 className="title-sm mb-0"><strong>Educators</strong></h4>
                         </header>
-                        {console.log(editTrainingData.length)}
-                        {editTrainingData.length !== 0 ? (
-                          editTrainingData.map((item) => {
+                      
+                        {editTrainingData&& editTrainingData?.length >0 ? (
+                          editTrainingData?.map((item) => {
                             return <>
                               <div className="educator-sec mb-5">
-                                <div className="educator-pic"><img src={item.profile_photo} alt="" /></div>
+                                <div className="educator-pic"><img src={item?.profile_photo} alt="" /></div>
                                 <div className="educator-detail">
-                                  <h1 className="edu-name mb-2">{item.fullname}</h1>
-                                  <div className="edu-tel mb-2"><a href="tel:+6145434234">{item.phone}</a></div>
-                                  <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item.email}</a></div>
-                                  <div className="edu-know mb-2">{item.address}</div>
+                                  <h1 className="edu-name mb-2">{item?.fullname}</h1>
+                                  <div className="edu-tel mb-2"><a href="tel:+6145434234">{item?.phone}</a></div>
+                                  <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item?.email}</a></div>
+                                  <div className="edu-know mb-2">{item?.address}</div>
                                 </div>
                               </div>
                             </>
                           })
-                        ) : (<div className="text-center mb-5 mt-5"><strong>No Educators</strong></div>)}
-                        {!event ? (<>
-                          <div className="event-sec pb-5">
+                        ) : (
+                        <div className="text-center mb-5 mt-5"><strong>No Educators</strong></div>
+                        )}
                             <header className="title-head mb-4 justify-content-between">
                               <h4 className="title-sm mb-0"><strong>Events</strong></h4>
                               <Link to="/announcements" className="viewall">View All</Link>
                             </header>
+
+                        {!event ? (<>
+                          <div className="event-sec pb-5">
+                           
                             <div className="column-list event-list">
                               {event.map((item) => {
                                 return <>
@@ -325,7 +329,10 @@ const ParentsDashboard = () => {
                               })}
                             </div>
                           </div>
-                        </>) : (<></>)}
+                        </>) : (
+                        <div className="text-center mb-5 mt-5"><strong>No Events</strong></div>
+
+                        )}
                       </div>
                     </Col>
                     <Col md={5}>
