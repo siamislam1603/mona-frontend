@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -94,7 +95,7 @@ function FormResponse(props) {
                       >
                         <img src="../../img/back-arrow.svg" />
                       </Button>
-                      <h4 className="mynewForm">My New Form</h4>
+                      <h4 className="mynewForm">{location?.state?.form_name ? location?.state?.form_name: "Compliance Visit Form"}</h4>
                     </div>
                   </Col>
                 </Row>
@@ -205,7 +206,7 @@ function FormResponse(props) {
                                 <div className="responses-header-right">
                                   <p>
                                     Completed on: <br />
-                                    {item[0].createdAt.split('T')[0] +
+                                    {moment(item.createdAt).format('DD/MM/YYYY') +
                                       ', ' +
                                       item[0].createdAt
                                         .split('T')[1]

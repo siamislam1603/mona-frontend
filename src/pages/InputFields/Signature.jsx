@@ -12,7 +12,7 @@ const Signature = (props) => {
   };
   const trim = (e) => {
     e.preventDefault();
-    props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
+    props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"),"signature");
   };
   return (
     <Col sm={6}>

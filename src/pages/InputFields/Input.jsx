@@ -11,7 +11,7 @@ const Input = (props) => {
         type={controls.field_type}
         name={controls.field_name}
         onChange={(e) => {
-          props.onChange(e.target.name, e.target.value);
+          props.onChange(e.target.name, e.target.value,controls.field_type);
         }}
         isInvalid={!!controls.error[controls.field_name]}
       />
