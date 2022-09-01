@@ -29,7 +29,7 @@ const AddFormField = (props) => {
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
   const [user, setUser] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id') ? localStorage.getItem('franchisee_id')!=="none" ? localStorage.getItem('franchisee_id') : null : null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   // const [conditionModelData, setConditionModelData] = useState([]);
   const [franchisee, setFranchisee] = useState([]);
@@ -45,10 +45,10 @@ const AddFormField = (props) => {
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
-  const form_name=location?.state?.form_name;
+  const form_name=location?.state?.form_name ? location?.state?.form_name: null;
   useEffect(() => {
     setFormSettingFlag(false);
-    if (location?.state?.form_name) {
+    if (form_name) {
       getFormField();
       getFormData();
       getUserRoleAndFranchiseeData();
@@ -56,7 +56,7 @@ const AddFormField = (props) => {
   }, [user]);
   useEffect(() => {
     getUser();
-  }, [localStorage.getItem('f_id')]);
+  }, [selectedFranchisee]);
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -456,7 +456,7 @@ const AddFormField = (props) => {
       })
         .then((res) => res.json())
         .then((res) => {
-          navigate('/form');
+          navigate('/form',{state:{message: "form added successfully."}});
 
           res?.result?.map((item) => {
             if (item.option) {
@@ -527,6 +527,7 @@ const AddFormField = (props) => {
                       localStorage.getItem('user_role') === 'guardian'
                         ? localStorage.getItem('franchisee_id')
                         : id;
+                    setSelectedFranchisee(id);
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
                   }}
@@ -704,7 +705,7 @@ const AddFormField = (props) => {
                                     >
                                       Signature
                                     </option>
-                                    <option
+                                    {/* <option
                                       value="instruction_text"
                                       selected={
                                         form[index]?.field_type ===
@@ -712,7 +713,7 @@ const AddFormField = (props) => {
                                       }
                                     >
                                       Instruction Text
-                                    </option>
+                                    </option> */}
                                     <option
                                       value="headings"
                                       selected={
@@ -1122,7 +1123,7 @@ const AddFormField = (props) => {
                                         >
                                           Signature
                                         </option>
-                                        <option
+                                        {/* <option
                                           value="instruction_text"
                                           selected={
                                             Object.values(item)[0][
@@ -1131,7 +1132,7 @@ const AddFormField = (props) => {
                                           }
                                         >
                                           Instruction Text
-                                        </option>
+                                        </option> */}
                                         <option
                                           value="headings"
                                           selected={

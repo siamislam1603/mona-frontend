@@ -46,12 +46,12 @@ const TrainingDetail = () => {
 
   const handleFinishTraining = (event) => {
 
-    if(relatedForms) {
+    if(typeof relatedForms === 'undefined') {
+      updateFinishTraining();
+    } else {
       setTimeout(() => {
         setShowSurveyForm(true);
       }, 2000);
-    } else {
-      updateFinishTraining();
     }
   };
 
@@ -95,9 +95,6 @@ const TrainingDetail = () => {
     if (response.status === 200 && response.data.status === "success") {
       setTrainingFinishedDate(response.data.finished_date);
       setHideTrainingFinishButton(true);
-      setTimeout(() => {
-        setShowSurveyForm(true);
-      }, 2000);
     }
   };
 
@@ -148,7 +145,7 @@ const TrainingDetail = () => {
     }
   }, []);
   // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  relatedForms && console.log('RELATED FORMS:', relatedForms);
+  console.log('RELATED FORMS:', relatedForms);
   return (
     <>
       <div id="main">
@@ -322,9 +319,7 @@ const TrainingDetail = () => {
                                 'MMMM Do, YYYY'
                               )}</p>
                               : <p>
-                                Please acknowledge by clicking below that you have
-                                completed this training completely and can proceed
-                                further.
+                                Please acknowledge that you have completed this training in its entirety by clicking below.
                               </p>
 
                             }
@@ -353,7 +348,7 @@ const TrainingDetail = () => {
           <Modal.Body>
             <div>
               <p>You've finished this training successfully.</p>
-              <p>Click on <strong>Next</strong> to fill the survey form.</p>
+              <p>Click <strong>Next</strong> to continue to the assessment.</p>
             </div>
           </Modal.Body>
           <Modal.Footer>

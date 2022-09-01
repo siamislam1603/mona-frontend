@@ -51,13 +51,9 @@ const columns = [
       return (<>
         <div className="user-list">
           <span className="user-pic">
-            {console.log(cell[2], "cell[2].length")}
+         
             {cell[2] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[2]} alt="" /></>)}
-            {/* <img src={cell[2] ? (
-              cell[2]
-            ) : (
-              "../img/upload.jpg"
-            )} alt='' /> */}
+           
           </span>
           <span className="user-name">
             {cell[0]}
