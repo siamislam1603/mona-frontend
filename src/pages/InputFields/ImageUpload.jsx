@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Form, Col } from 'react-bootstrap';
 import { BASE_URL } from '../../components/App';
+import { toast } from 'react-toastify';
 
 const ImageUpload = (props) => {
   const { ...controls } = props;
@@ -44,8 +45,8 @@ const ImageUpload = (props) => {
           onChange={async (e) => {
             let file = e.target.files[0];
             await uploadFiles(file).then((url)=>{
-              alert("uploaded!!");
-              props.onChange(e.target.name, url);
+              toast.success("uploaded!!");
+              props.onChange(e.target.name, url,"image");
             });
           }}
           isInvalid={!!controls.error[controls.field_name]}
