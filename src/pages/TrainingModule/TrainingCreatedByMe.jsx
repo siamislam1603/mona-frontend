@@ -41,7 +41,7 @@ const training = [
 const animatedComponents = makeAnimated();
 
 
-const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
+const TrainingCreatedByMe = ({filter}) => {
   let location = useLocation();
   const [otherTrainingData, setOtherTrainingData] = useState([]);
   const [applicableToAll, setApplicableToAll] = useState(false);
@@ -67,10 +67,11 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
   const [successMessageToast, setSuccessMessageToast] = useState(null);
   const [myTrainingData, setMyTrainingData] = useState([]);
   const [search,setSearch]= useState()
+  const [selectedFranchisee, setSelectedFranchisee] = useState("all");
+
 
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
   const [tabLinkPath, setTabLinkPath] = useState("/available-training");
-  // const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
     category_id: null,
@@ -137,7 +138,7 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
     setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=&search=${filterData.search}&category_id=${filterData.category_id}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All"? "all":selectedFranchisee}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -146,17 +147,19 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
     if(response.status===200 && response.data.status === "success"){
       const {searchedData} = response.data
       console.log("Searched Data",searchedData)
+      setMyTrainingData(searchedData)
+
       setfullLoaderStatus(false)
 
-      setMyTrainingData(searchedData)
 
       
     }
    } catch (error) {
     if(error.response.status === 404){
+      setMyTrainingData([])
+
       setfullLoaderStatus(false)
 
-      setMyTrainingData([])
     }
     console.log("error created by me",error)
    }
@@ -164,16 +167,17 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
   useEffect(() => {
   
     // trainingCreatedByMe()
-    CreatedByme()
+    // CreatedByme()
     fetchTrainingCategories()
     console.log("Traingin created")
   }, []);
   useEffect(() =>{
     CreatedByme() 
-  },[filterData.search,filterData.category_id])
+  },[filterData.search,filterData.category_id,selectedFranchisee])
 
   console.log("TRAIING DATA",filterData.category_id)
   console.log("Rohan",fullLoaderStatus,!fullLoaderStatus)
+  console.log("Selected frnahise",selectedFranchisee)
 
   return (
     <>
@@ -189,7 +193,7 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
               <div className="sec-column">
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
-                  // setSelectedFranchisee={setSelectedFranchisee} 
+                  setSelectedFranchisee={setSelectedFranchisee} 
                   />
 
                   <FullLoader loading={fullLoaderStatus} />
@@ -315,65 +319,28 @@ const TrainingCreatedByMe = ({filter, selectedFranchisee}) => {
           </Row>
 
             
-          {/* <Row>
-            {
-              otherTrainingData?.length > 0 && <h1 style={{ marginBottom: '25px' }}>Created by others</h1>
-            }
-            {otherTrainingData?.map((training) => {
-              return (
-                <Col lg={4} md={6} key={training.id}>
-                  <div
-                    className="item mt-3 mb-3">
-                    <div className="pic">
-                      <a href={`/training-detail/${training.id}`}>
-                        <img src={training.coverImage} alt="" />
-                        <span className="lthumb">
-                          <img src="../img/logo-thumb.png" alt="" />
-                        </span>
-                      </a>
-                    </div>
-                    <div className="fixcol">
-                      <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
-                      <div className="cta-col">
-                        <Dropdown>
-                          <Dropdown.Toggle variant="transparent" id="ctacol">
-                            <img src="../img/dot-ico.svg" alt="" />
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                          <Dropdown.Item onClick={() => {
-                              if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
-                            }}>Delete</Dropdown.Item>
-                            <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
-                            <Dropdown.Item href="#" onClick={() => {
-                              setSaveTrainingId(training.id);
-                              setShowModal(true)
-                            }}>Share</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
-                    </div>
-                    <div className="created-by">
-                      <h4 className="title">Created by:</h4>
-                      <div className="createrimg">
-                        <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
-                      </div>
-                      <p>{training.user?.fullname}, <span>{training.user?.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
-                    </div>
-                  </div>
-                </Col>
-              );
-            })}
-          </Row> */}
+          
+          
           { myTrainingData?.length>0 ?
           null
             :    
-            
-            fullLoaderStatus ? null :  <div className="text-center mb-5 mt-5"> <strong>No trainings available !</strong> </div>
-
-            
+            !fullLoaderStatus &&  <div className="text-center mb-5 mt-5"> <strong>No trainings available !</strong> </div>            
           }
+          {/* {
+             fullLoaderStatus ? null : 
+             <>
+              {
+                myTrainingData?.length>0? null :
+                <div className="text-center mb-5 mt-5"> <strong>No trainings available !</strong> </div>            
+
+              }
+
+    
+             </>
+             
+
+          } */}
+
              {/* {
 
              }
