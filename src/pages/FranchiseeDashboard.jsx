@@ -183,38 +183,6 @@ const FranchiseeDashboard = () => {
   }
 
 
-  // const Additional_Needs = async () => {
-  //   var myHeaders = new Headers();
-  //   myHeaders.append(
-  //     'authorization',
-  //     'Bearer ' + localStorage.getItem('token')
-  //   );
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     redirect: 'follow',
-  //     headers: myHeaders,
-  //   };
-  //   let response = await fetch(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, requestOptions)
-  //   response = await response.json();
-  //   setUser(response.data)
-  //   if (response.status === 200 || "pass") {
-  //     const users = response.childrenEnrolled;
-  //     const user = users
-  //     console.log(user, "user")
-
-  //     let tempData = user.map((dt) => ({
-  //       name: `${dt.fullname}`,
-  //       // createdAt: dt.createdAt,
-  //       educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
-  //       // Shaired: dt.repository.repository_shares.length,
-  //       // categoryId: dt.categoryId
-  //     }));
-  //     console.log(tempData, "+++++++++++++")
-  //     setUserData(tempData);
-  //   }
-  // }
-
-
   const Enrollments = async () => {
     var myHeaders = new Headers();
     myHeaders.append(
@@ -266,29 +234,9 @@ const FranchiseeDashboard = () => {
     count_User_Api();
     announcement();
     FormData();
-    // Additional_Needs();
   }, []);
 
-  // const count_Api = async () => {
-  //   const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
-  //   var myHeaders = new Headers();
-  //   myHeaders.append(
-  //     'authorization',
-  //     'Bearer ' + localStorage.getItem('token')
-  //   );
-
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     redirect: 'follow',
-  //     headers: myHeaders,
-  //   };
-  //   await axios(countUrl, requestOptions).then((response) => {
-  //     setcountUser(response.data);
-  //   }).catch((e) => {
-  //     console.log(e);
-  //   })
-  //   console.log(countUser, ":lksjdgcasjhgjhjchvs")
-  // }
+ 
 
 
   const getAddedTime = (str) => {
@@ -375,70 +323,7 @@ const FranchiseeDashboard = () => {
 
                           </div>
                         </div>
-                        {/*<div className="files-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h2 className="title-sm mb-0"><strong>Forms</strong></h2>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list files-list two-col">
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          </div>
-                        </div>*/}
+                        
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h3 className="title-sm mb-0"><strong>Children With Additional Needs</strong></h3>
