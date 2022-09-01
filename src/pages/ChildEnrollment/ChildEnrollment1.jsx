@@ -261,7 +261,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const fetchChildDataAndPopulate = async () => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
     let enrolledChildId = paramsChildId;
-    console.log('Enrolled child id:', paramsChildId);
     let token = localStorage.getItem('token');
 
     let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
@@ -321,6 +320,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   };
 
+
+  // GIVING CONSENT FOR CHANGE
+  const giveConsentForChange = async () => {
+    const response = await axios.post(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`)
+  }
+
+
   useEffect(() => {
     fetchOccupationData();
     fetchEthnicityData();
@@ -342,12 +348,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }, [formOneParentData?.address_similar_to_child])
 
-  // useEffect(() => {
-  //   console.log("checking useEffect!")
-  //   if(localStorage.getItem('has_given_consent') !== null) {
-  //     setShowConsentCommentDialog(true);
-  //   }
-  // }, [])
+  useEffect(() => {
+    console.log("checking useEffect!")
+    if(localStorage.getItem('has_given_consent') === 'null') {
+      setShowConsentCommentDialog(true);
+    }
+  }, [])
 
   // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);

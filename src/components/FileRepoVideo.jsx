@@ -13,7 +13,12 @@ const FileRepoVideo = ({ data, title, duration, Src }) => {
                 <div className="vidcol">
                     <div className="align-items-center" onClick={handleShow}>
                         <div className="pic2">
-                            <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                            <video width="200">
+                                <source src={data} type="video/mp4" />
+                                <source src={data} type="video/ogg" />
+                                Your browser does not support HTML video.
+                            </video>
+                            {/* <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
                             {/* <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src='https://youtu.be/NUhFD3j5xBA' frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
                         </div>
                         <div className="vid-title">
