@@ -29,6 +29,8 @@ const ParentsDashboard = () => {
       }
     });
 
+    // console.log('RESPONSE CONSENT:', checkPendingConsent);
+
     if (response.status === 200 && response.data.status === "success") {
       let { parentConsentData } = response.data;
       console.log('PDATA:', parentConsentData);
@@ -434,7 +436,7 @@ const ParentsDashboard = () => {
         </Modal.Header>
 
         <Modal.Body>
-          <p>No child is <strong>enrolled</strong> under you right now. Reach out to your <strong>coordinator</strong> for the same.</p>
+          <p>Your child's enrolment form has not been processed as yet, please try again shortly or alternatively reach out to your <strong>coordinator</strong>.</p>
         </Modal.Body>
 
         <Modal.Footer>

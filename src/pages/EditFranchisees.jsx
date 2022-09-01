@@ -265,7 +265,7 @@ const EditFranchisees = () => {
                                                     name="abn" 
                                                     type="text" 
                                                     value={franchiseeData?.abn}
-                                                    placeholder="6743433"
+                                                    placeholder="45 666 777 888"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -382,7 +382,7 @@ const EditFranchisees = () => {
                                                     name="acn" 
                                                     type="text" 
                                                     value={franchiseeData?.acn}
-                                                    placeholder="3453453453"
+                                                    placeholder="666 777 888"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
