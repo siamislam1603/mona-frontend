@@ -132,6 +132,7 @@ const columns1 = [
     },
   }
 ];
+
 const FranchiseeDashboard = () => {
   const [countUser, setcountUser] = React.useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
@@ -167,16 +168,22 @@ const FranchiseeDashboard = () => {
     };
     let response = await fetch(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, requestOptions)
     response = await response.json();
+    console.log(response, "fullname")
     setUser(response.data)
-    const users = response.childrenEnrolled;
-    let tempData = users.map((dt) => ({
-      name: `${dt.fullname}`,
-      // createdAt: dt.createdAt,
-      educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
-      // Shaired: dt.repository.repository_shares.length,
-      // categoryId: dt.categoryId
-    }));
-    setUserData(tempData);
+    if (response.status === 200) {
+      const users = response.childrenEnrolled;
+      let tempData = users.map((dt) => ({
+        name: `${dt.fullname}`,
+        // createdAt: dt.createdAt,
+        educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
+        // Shaired: dt.repository.repository_shares.length,
+        // categoryId: dt.categoryId
+      }));
+      setUserData(tempData);
+    } else {
+      const users = response.msg;
+      console.log("users", users)
+    }
   }
 
 
@@ -227,7 +234,6 @@ const FranchiseeDashboard = () => {
     })
   }
 
-  console.log(countUser, "lksjgydtadHUJISKiaudygquISOIWUAYTDGH")
   React.useEffect(() => {
     count_User_Api();
     announcement();
@@ -266,7 +272,6 @@ const FranchiseeDashboard = () => {
     let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-    console.log("THE Date1", Added, datae)
     if (datae === Added) {
       return "Added today"
     }
