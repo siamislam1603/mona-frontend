@@ -139,6 +139,7 @@ const FranchiseeDashboard = () => {
   const [enrollments, setEnrollments] = useState()
   const [enrollmentssetUser, setEnrollmentssetUser] = useState()
 
+
   const announcement = () => {
     let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
@@ -150,42 +151,73 @@ const FranchiseeDashboard = () => {
       setlatest_announcement(response.data.recentAnnouncement);
     }).catch((e) => {
       console.log("Error", e);
-      setlatest_announcement([])
     })
   }
-  const [user, setUser] = useState([]);
-  const [userData, setUserData] = useState([]);
 
-  const Additional_Needs = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    let response = await fetch(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, requestOptions)
-    response = await response.json();
-    console.log(response, "fullname")
-    setUser(response.data)
+  const [userData, setUserData] = useState([]);
+  console.log(userData, "++++++++")
+
+
+  const FormData = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("FORM Data", response)
     if (response.status === 200) {
-      const users = response.childrenEnrolled;
-      let tempData = users.map((dt) => ({
-        name: `${dt.fullname}`,
-        // createdAt: dt.createdAt,
-        educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
-        // Shaired: dt.repository.repository_shares.length,
-        // categoryId: dt.categoryId
-      }));
+
+      let [data] = response.data.childrenEnrolled;
+      console.log(data.users[0].profile_photo, "FORM Data")
+
+      console.log(data.ful, "FORM+++++++")
+      const tempData = data.map((dt) => (
+        {
+          name: `${dt.fullname}`,
+          // educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo,
+        }
+      ))
+
+
       setUserData(tempData);
-    } else {
-      const users = response.msg;
-      console.log("users", users)
+
+      console.log(userData, "FORM+++++++")
+
     }
   }
+
+
+  // const Additional_Needs = async () => {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append(
+  //     'authorization',
+  //     'Bearer ' + localStorage.getItem('token')
+  //   );
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //     headers: myHeaders,
+  //   };
+  //   let response = await fetch(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, requestOptions)
+  //   response = await response.json();
+  //   setUser(response.data)
+  //   if (response.status === 200 || "pass") {
+  //     const users = response.childrenEnrolled;
+  //     const user = users
+  //     console.log(user, "user")
+
+  //     let tempData = user.map((dt) => ({
+  //       name: `${dt.fullname}`,
+  //       // createdAt: dt.createdAt,
+  //       educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
+  //       // Shaired: dt.repository.repository_shares.length,
+  //       // categoryId: dt.categoryId
+  //     }));
+  //     console.log(tempData, "+++++++++++++")
+  //     setUserData(tempData);
+  //   }
+  // }
 
 
   const Enrollments = async () => {
@@ -238,7 +270,8 @@ const FranchiseeDashboard = () => {
   React.useEffect(() => {
     count_User_Api();
     announcement();
-    Additional_Needs();
+    FormData();
+    // Additional_Needs();
   }, []);
 
   // const count_Api = async () => {
@@ -417,22 +450,23 @@ const FranchiseeDashboard = () => {
                             <Link to="/children-all" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
+                            <ToolkitProvider
+                              keyField="name"
+                              data={userData}
+                              columns={columns1}
+                              search
+                            >
+                              {(props) => (
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                // selectRow={selectRow}
+                                // pagination={paginationFactory()}
+                                />
+                              )}
+                            </ToolkitProvider>
                             {userData.length > 0 ? (
                               <>
-                                <ToolkitProvider
-                                  keyField="name"
-                                  data={userData}
-                                  columns={columns1}
-                                  search
-                                >
-                                  {(props) => (
-                                    <BootstrapTable
-                                      {...props.baseProps}
-                                    // selectRow={selectRow}
-                                    // pagination={paginationFactory()}
-                                    />
-                                  )}
-                                </ToolkitProvider>
+
 
                               </>) : (<><div className="text-center mb-5 mt-5"><strong>No Children Enrolled Yet</strong></div></>)}
 
@@ -495,10 +529,7 @@ const FranchiseeDashboard = () => {
                                     {...props.baseProps}
                                   />
                                 )}
-                              </ToolkitProvider></>) : (
-                              <>
-                              <div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div>
-                              </>)}
+                              </ToolkitProvider></>) : (<><div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div></>)}
 
                           </div>
                         </div>
@@ -508,32 +539,21 @@ const FranchiseeDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-                            {
-                              latest_announcement?.length>0 ? 
-                                (
-                                  latest_announcement?.map((data) => {
-                                    return (
-                                      <div className="listing">
-                                        <a href="/announcements" className="item">
-                                          <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                          <div className="name">{!data.title ? "No Announcement" : data.title}
-                                            <div>
-                                              <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-      
-                                            </div>
-                                          </div>
-                                        </a>
-                                      </div>
-                                    );
-                                  }
-                                )
-                               
-                            )
-                            :(
-                              <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+                            {latest_announcement.map((data) => {
+                              return (
+                                <div className="listing">
+                                  <a href="/announcements" className="item">
+                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}
+                                      <div>
+                                        <span className="timesec">{getAddedTime(data?.createdAt)}</span>
 
-                           )
-                          }
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              );
+                            })}
                             {/* <div className="listing">
                               <a href="/" className="item">
                                 <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
