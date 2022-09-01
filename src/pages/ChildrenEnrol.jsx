@@ -249,7 +249,7 @@ const ChildrenEnrol = () => {
             cell[0] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[3] === "undefined" ? "../img/upload.jpg" : cell[3]} />
+                <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
               </span>
               <span className="user-name">
                 {cell[0] === "undefined" ? null : cell[0]}
@@ -261,7 +261,7 @@ const ChildrenEnrol = () => {
             cell[1] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[4] === "undefined" ? "../img/upload.jpg" : cell[4]} />
+                <img src={cell[4] === "undefined"|| cell[3] === "null"  ? "../img/upload.jpg" : cell[4]} />
               </span>
               <span className="user-name">
                 {cell[1] === "undefined" ? null : cell[1]
@@ -272,7 +272,7 @@ const ChildrenEnrol = () => {
             cell[2] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[5] === "undefined" ? "../img/upload.jpg" : cell[5]} />
+                <img src={cell[5] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[5]} />
               </span>
               <span className="user-name">
                 {cell[2] === "undefined" ? null : cell[2]
@@ -297,7 +297,7 @@ const ChildrenEnrol = () => {
             cell[0] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[1] === "undefined" ? "../img/upload.jpg" : cell[1]} />
+                <img src={cell[1] === "undefined" || cell[3] === "null"  ? "../img/upload.jpg" : cell[1]} />
               </span><span className="user-name">{cell[0]}
               </span>
             </div>
@@ -307,7 +307,7 @@ const ChildrenEnrol = () => {
             cell[2] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[3] === "undefined" ? "../img/upload.jpg" : cell[3]} />
+                <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
               </span><span className="user-name">{cell[2]}
               </span>
             </div>
@@ -638,30 +638,8 @@ const ChildrenEnrol = () => {
 
 
 
-  const FormData = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    })
-    console.log("FORM Data", response)
-    if (response.status == 200) {
-      let data = response.data.data.formData;
-      let tempData = data.map((dt) => ({
-        formname: `${dt.audited_on}`,
-        franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
-        // console.log("THe dt",)
-
-
-      }))
-      setFormData(tempData);
-    }
-  }
-
   useEffect(() => {
     Show_eduactor()
-    FormData()
     ChildernEnrolled()
   }, [])
 
@@ -723,7 +701,7 @@ const ChildrenEnrol = () => {
                         topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
                       }
                       <header className="title-head">
-                        <h1 className="title-lg">Children Enrolled</h1>
+                        <h1 className="title-lg">Children Enroled</h1>
                         <div className="othpanel">
                           <div className="extra-btn">
                             {/* <div className="data-search me-3">
@@ -958,7 +936,7 @@ const ChildrenEnrol = () => {
                             } */}
 
                     {
-                      formData?.length > 0 ?
+                      chidlEnroll?.length > 0 ?
                         <ToolkitProvider
                           keyField="name"
                           data={chidlEnroll}

@@ -33,18 +33,21 @@ function appendUserString(role) {
 }
 
 const ResetPassword = () => {
+  const query = new URL(window.location.href);
+  // let resetType = query.searchParams.get('resetType');
+
+
 const [passwords, setPasswords] = useState({});
 const [errors, setErrors] = useState({});
 const [hide, setHide] = useState(true);
 const [secHide, setSecHide] = useState(true);
-
 const [topMessage, setTopMessage] = useState(null);
-
 const [searchParams, setSearchParams] = useSearchParams();
 const [theToken, setTheToken] = useState(null)
 const [checkResetPassword,setCheckResetPassword]= useState(true);
 let token = searchParams.get("token")
 let userID = searchParams.get("user")
+let resetType = searchParams.get("resetType")
 
 const setField = (field, value) => {
     console.log("The field and value",field,value)
@@ -91,13 +94,18 @@ const setField = (field, value) => {
     if(response.status===200 && response.data.status === "success"){
       setTopMessage("Password Reset Successfully ")
       // userInfo()
-      // setTimeout(() => {
-      //   window.location.href=`/${appendUserString(localStorage.getItem('user_role'))}-dashboard`;
-      // }, 3000);
-      setTimeout(() =>{
-          logout()
-      },3000)
-      console.log("The success",response)
+
+      if(resetType === "resetPWD") {
+        setTimeout(() =>{
+            logout()
+        },3000)
+      } else {
+        setTimeout(() => {
+          window.location.href=`/${appendUserString(localStorage.getItem('user_role'))}-dashboard`;
+        }, 3000);
+      }
+  
+      console.log("The success",response);
   }
 }
 
