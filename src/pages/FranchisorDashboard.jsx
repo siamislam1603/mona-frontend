@@ -14,7 +14,14 @@ import moment from 'moment';
 
 const FranchisorDashboard = () => {
   const navigate = useNavigate();
-  const [count, setcount] = React.useState(null);
+  const [count, setcount] = React.useState({
+    totalFranchisees:'',
+    totalUsers:0,
+    totalChildren:0,
+    totalLocations:0,
+    noOfEnrollmentFormsSignedInPast7Days:0,
+    usersYetToLogin:0
+  });
   const [state, setstate] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
@@ -166,11 +173,7 @@ const FranchisorDashboard = () => {
     Forms_count();
     FormData();
   }, []);
-  console.log("FORM DATA", formData)
 
-  selectedFranchisee && console.log('Selected Franchisee Inside Dashboard:', selectedFranchisee);
-  console.log("The latest Announcement", latest_announcement)
-  if (!count) return null;
   return (
     <>
       <div id="main">
@@ -358,42 +361,42 @@ const FranchisorDashboard = () => {
                               <Link to="/all-franchisees" className="item">
                                 <span className="name">Total Franchises</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.totalFranchisees}</span>
+                                <span className="num">{count?.totalFranchisees}</span>
                               </Link>
                             </div>
                             <div className="listing">
                               <Link to="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.totalUsers}</span>
+                                <span className="num">{count?.totalUsers}</span>
                               </Link>
                             </div>
                             <div className="listing">
                               <a className="item" href="/children-all">
                                 <span className="name">Total Children</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.totalChildren}</span>
+                                <span className="num">{count?.totalChildren}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/user-management/Educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.totalLocations}</span>
+                                <span className="num">{count?.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a className="item" href="/children-all">
                                 <span className="name">No. of enrolment forms signed in past 7 days</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.noOfEnrollmentFormsSignedInPast7Days}</span>
+                                <span className="num">{count?.noOfEnrollmentFormsSignedInPast7Days}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">Users yet to log in</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.usersYetToLogin}</span>
+                                <span className="num">{count?.usersYetToLogin}</span>
                               </a>
                             </div>
                           </div>
