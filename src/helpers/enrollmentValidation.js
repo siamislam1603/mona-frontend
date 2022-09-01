@@ -13,13 +13,13 @@ export const childFormValidator = (childForm) => {
     errors.fullname = " Please complete mandatory field!";
 
   if(fullname.length > 0 && !(/^[a-zA-Z ]+$/i.test(fullname)))
-    errors.fullname = "Field shouldn't contain numbers & special characters."
+    errors.fullname = "Field shouldn't contain numbers & special characters!"
 
   if(!family_name)
     errors.family_name = "Please complete mandatory field!";
   
   if(!(/^[a-zA-Z ]+$/i.test(family_name)))
-    errors.family_name = "Field shouldn't contain numbers & special characters."
+    errors.family_name = "Field shouldn't contain numbers & special characters!"
 
   if(!dob)
     errors.dob = "Please complete mandatory field!";
@@ -52,43 +52,43 @@ export const parentFormValidator = (parentForm) => {
   } = parentForm;
 
   if(!family_name)
-    errors.family_name = "Please complete mandatory field!!";
+    errors.family_name = "Please complete mandatory field!";
 
   if(family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(family_name)))
-    errors.fullname = "Field shouldn't contain numbers & special characters."
+    errors.fullname = "Field shouldn't contain numbers & special characters!"
 
   if(!given_name)
-    errors.given_name = "Please complete mandatory field!!";
+    errors.given_name = "Please complete mandatory field!";
 
   if(given_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(given_name)))
-    errors.given_name = "Field shouldn't contain numbers & special characters."
+    errors.given_name = "Field shouldn't contain numbers & special characters!"
 
   if(!dob)  
-    errors.dob = "Please complete mandatory field!!";
+    errors.dob = "Please complete mandatory field!";
 
   if(!address_as_per_child)
-    errors.address_as_per_child = "Please complete mandatory field!!";
+    errors.address_as_per_child = "Please complete mandatory field!";
 
   if(!telephone)
-    errors.telephone = "Please complete mandatory field!!";
+    errors.telephone = "Please complete mandatory field!";
 
   if(!(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Field should only contain digits!"; 
 
   if(!email)
-    errors.email = "Please complete mandatory field!!";
+    errors.email = "Please complete mandatory field!";
 
   if(!place_of_birth)
-    errors.place_of_birth = "Please complete mandatory field!!";
+    errors.place_of_birth = "Please complete mandatory field!";
 
   if(!ethnicity)
-    errors.ethnicity = "Please complete mandatory field!!";
+    errors.ethnicity = "Please complete mandatory field!";
 
   if(!primary_language)
-    errors.primary_language = "Please complete mandatory field!!";
+    errors.primary_language = "Please complete mandatory field!";
 
   if(!occupation)
-    errors.occupation = "Please complete mandatory field!!";
+    errors.occupation = "Please complete mandatory field!";
 
   return errors;
 };

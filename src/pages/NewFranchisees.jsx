@@ -186,6 +186,8 @@ const NewFranchisees = () => {
                                                 <Form.Control
                                                     name="abn" 
                                                     type="text" 
+                                                    maxLength={11}
+                                                    minLength={11}
                                                     placeholder="45 666 777 888"
                                                     onChange={(e) => {
                                                         handleChange(e);
@@ -295,6 +297,8 @@ const NewFranchisees = () => {
                                                 <Form.Control
                                                     name="acn" 
                                                     type="text" 
+                                                    maxLength={9}
+                                                    minLength={9}
                                                     placeholder="666 777 888"
                                                     onChange={(e) => {
                                                         handleChange(e);

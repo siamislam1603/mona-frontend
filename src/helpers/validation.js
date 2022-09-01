@@ -506,7 +506,7 @@ export const personValidation = (personValidationForm) => {
     errors.telephone = "Field should only contain digits!"; 
 
   if(telephone.length > 1 && telephone.length < 10)
-    errors.telephone = 'Field must be at least 10-digit long.'
+    errors.telephone = 'Field must be at least 10-digit long!'
 
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
