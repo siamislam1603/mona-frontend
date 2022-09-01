@@ -271,12 +271,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
       setSelectedFranchisee('all');
     } else {
       setFranchiseeId({ ...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
-<<<<<<< HEAD
-      // localStorage.setItem('selected_franchisee', JSON.stringify(franchiseeId))
-
-
-=======
->>>>>>> master
       setSelectedFranchisee(e);
     }
   };
@@ -463,11 +457,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
-<<<<<<< HEAD
-  // console.log("selected_franchiseeeeeeeeeeeeeeeeeeeeeeeeee", JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name)
-
-=======
->>>>>>> master
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
@@ -509,18 +498,13 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                 <Dropdown onSelect={selectFranchisee}>
 
                   <Dropdown.Toggle id="dropdown-basic">
-<<<<<<< HEAD
 
-                    {/* { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name ||  */}
-                    {franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || 'No Data Available'}
-                  </Dropdown.Toggle >
-=======
                     { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || 
                       'No Data Available'}
                     {/* { franchiseeId?.franchisee_name || franchiseeList[0]?.franchisee_name || JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name || 
-                      'No Data Available'} */}
+             
+             Available'} */}
                   </Dropdown.Toggle>
->>>>>>> master
                   <Dropdown.Menu>
                     {localStorage.getItem("user_role") === "franchisor_admin" ? <React.Fragment key="">
                       <Dropdown.Item eventKey="All">
@@ -725,11 +709,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
             </ul>
           </div>
         </div>
-<<<<<<< HEAD
-      </div >
-=======
-      </div>
->>>>>>> master
+    </div>
 
       {/* {
         notificationDialog === true &&
