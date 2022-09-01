@@ -58,21 +58,7 @@ const ParentsDashboard = () => {
     window.location.href = `/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
   }
 
-  // const educators_assigned = async () => {
-  //   let response = await axios.get(`${BASE_URL}/dashboard/parent/educators-assigned/84`, {
-  //     headers: {
-  //       authorization: `Bearer ${localStorage.getItem('token')}`,
-  //     },
-  //   });
-  //   console.log(response, "===============")
-  //   if (response.status === 200) {
-  //     const users = response.data.assignedEducatorData;
-  //     console.log('=========users', users)
-  //   }
-  // }
-  // useEffect(() => {
-  //   educators_assigned();
-  // }, [])
+
 
   const events = async () => {
     const token = localStorage.getItem('token');
@@ -105,7 +91,6 @@ const ParentsDashboard = () => {
    } catch (error) {
     setannouncements([])
     console.log("error",error)
-
    }
   };
 
@@ -119,8 +104,7 @@ const ParentsDashboard = () => {
     console.log(response, "response??????????????")
     if (response.status === 200 && response.data.status === "pass") {
       const result = response.data.assignedEducatorData.users;
-      // const result = response.data.assignedEducatorData
-      console.log(result, "<<<<<<<<<<<>>>>>>>>>>>>")
+     
       setEditTrainingData(result);
     }
   }
@@ -136,8 +120,7 @@ const ParentsDashboard = () => {
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
     let datae = [day, month, year].join('/');
-    //  const date1 = new Date(datae);
-    //  const date2 = new Date(str);
+
     console.log("THE Date1", Added, datae)
     if (datae === Added) {
       return "Added today"
@@ -151,31 +134,7 @@ const ParentsDashboard = () => {
     // return Added
 
   }
-  // const getAddedTime = (str) =>{
-  //   // const Added= moment(str).format('YYYY-MM-DD')
-  //   // console.log("THe astring",str)
-  //   const Added= moment(str).format('DD/MM/YYYY')
-  //   // console.log("THe data",dateww)
-  //   var today = new Date();
-  //   let d = new Date(today);
-  //   let month = (d.getMonth() + 1).toString().padStart(2, '0');
-  //   let day = d.getDate().toString().padStart(2, '0');
-  //   let year = d.getFullYear();
-  //    let datae =  [day, month, year].join('/');
-  //    console.log("THE DATE",datae,Added)
-  //    let temp;
-  //    if(datae === Added){
-  //     temp = "Added today";
-  //    }
-
-  //    if(Added < datae){
-  //     temp = Added;
-  //     // console.log("THE added date i smaller",typeof Added, typeof datae);
-  //    }
-
-  //    return temp;
-  // }
-  console.log(editTrainingData, "<<<<<<<<<<response")
+  
 
   const handleParentLogout = () => {
     setLogUserOutDialog(false);
@@ -313,7 +272,7 @@ const ParentsDashboard = () => {
                                 return <>
                                   {!item.title ? "" : <div className="item">
                                     <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
-                                    <div className="name"><a href="">{item.title}</a> <span className="date">{getAddedTime(item.scheduled_date)}</span></div>
+                                    <div className="name"><a href="">{item?.title}</a> <span className="date">{getAddedTime(item?.scheduled_date)}</span></div>
                                     <div className="cta-col">
                                       <Dropdown>
                                         <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -386,12 +345,7 @@ const ParentsDashboard = () => {
                               )
                             }
 
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+
                           </div>
                         </div>
                       </aside>
