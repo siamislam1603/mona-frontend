@@ -188,11 +188,11 @@ export const AddNewAnnouncementValidation = (form, coverImage,allFranchise) => {
  
   return newErrors;
 };
-export const EditAnnouncementValidation = (form, coverImage, Data) => {
+export const EditAnnouncementValidation = (form, coverImage, Data,allFranchise) => {
   let newErrors = {};
   console.log('The form validat', form);
   // console.log("The DATA VALIDATION",newData)
-  let { title, meta_description, start_date, start_time } = form;
+  let { title, meta_description, start_date, start_time,franchise } = form;
 
   console.log('All valiatiion', title, start_date, meta_description);
   if (!title || title === ' ') newErrors.title = 'Title is Required';
@@ -203,6 +203,13 @@ export const EditAnnouncementValidation = (form, coverImage, Data) => {
     newErrors.start_date = 'Start Date Required';
   if ((start_time === ' ' && !start_time) || start_time === ' ')
     newErrors.start_time = 'Start Time Required';
+    if(!franchise ||franchise.length ===0 ){
+      if(!allFranchise){
+        newErrors.franchise ="Please Select Franchise"
+
+      }
+     
+  }
   return newErrors;
 };
 export const ChildRegisterFormValidation = (form) => {
