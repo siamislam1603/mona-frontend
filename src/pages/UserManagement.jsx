@@ -271,8 +271,8 @@ const UserManagement = () => {
                   <img src="../img/dot-ico.svg" alt="" />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item href="#">{button}</Dropdown.Item>
                   {cell === 1 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
+                  <Dropdown.Item href="#">{button}</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -285,6 +285,12 @@ const UserManagement = () => {
     fetchUserDetails();
   }, 200);
 
+  const getFormattedName = (name) => {
+    let firstName = name?.split(" ")[0];
+    let secondName = name?.split(" ")?.slice(1).join(" ");
+
+    return `${firstName}\n${secondName}`
+  }
 
   const fetchUserDetails = async () => {
     let api_url = '';
@@ -318,7 +324,7 @@ const UserManagement = () => {
       const { users } = response.data;
       console.log('USERS:', users);
       let tempData = users.map((dt) => ({
-        name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
+        name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')}, ${dt.is_active}`,
