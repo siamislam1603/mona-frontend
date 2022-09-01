@@ -43,16 +43,18 @@ const columns = [
           <span className="user-name">
             {cell[0]}
           </span>
-        </div> <br />
-
-        <div className="user-list">
-          <span className="user-pic">
-            <img src={cell[3]} alt='' />
-          </span>
-          <span className="user-name">
-            {cell[2]}
-          </span>
         </div>
+        {cell[3] ? (<>
+          <br />
+          <div className="user-list">
+            <span className="user-pic">
+              <img src={cell[3]} alt='' />
+            </span>
+            <span className="user-name">
+              {cell[2]}
+            </span>
+          </div>
+        </>) : (<></>)}
       </>)
     },
   },
@@ -94,24 +96,32 @@ const columns1 = [
     text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      return (<>
-        <div className="user-list">
-          <span className="user-pic">
-            <img src={cell[1]} alt='' />
-          </span>
-          <span className="user-name">
-            {cell[0]}
-          </span>
-        </div> <br />
+      console.log(cell, "cell")
+      console.log(cell[2], "cell2")
 
-        <div className="user-list">
-          <span className="user-pic">
-            <img src={cell[3]} alt='' />
-          </span>
-          <span className="user-name">
-            {cell[2]}
-          </span>
-        </div>
+      return (<>
+        {
+          cell[0] != "undefined" &&
+          <div className="user-list">
+            <span className="user-pic">
+              <img src={cell[1]} />
+            </span>
+            <span className="user-name">
+              {cell[0]}
+            </span>
+          </div>
+        }
+        {
+          cell[2] != "undefined" &&
+          <div className="user-list">
+            <span className="user-pic">
+              <img src={cell[3]} />
+            </span>
+            <span className="user-name">
+              {cell[2]}
+            </span>
+          </div>
+        }
       </>)
     },
   },
@@ -155,9 +165,6 @@ const FranchiseeDashboard = () => {
   }
 
   const [userData, setUserData] = useState([]);
-  console.log(userData, "++++++++")
-
-
   const FormData = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, {
@@ -172,13 +179,12 @@ const FranchiseeDashboard = () => {
       const tempData = data.map((dt, index) => (
         {
           name: `${dt.fullname}`,
-          educatatoName: dt.users[index].fullname + "," + dt.users[index].profile_photo + "," + dt.users[index].fullname + "," + dt.users[index].profile_photo
+          educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo
+
         }
       ))
       console.log(tempData, "FORM+++++++FORM")
       setUserData(tempData);
-
-
     }
   }
 
@@ -236,7 +242,7 @@ const FranchiseeDashboard = () => {
     FormData();
   }, []);
 
- 
+
 
 
   const getAddedTime = (str) => {
@@ -322,7 +328,7 @@ const FranchiseeDashboard = () => {
 
                           </div>
                         </div>
-                        
+
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h3 className="title-sm mb-0"><strong>Children With Additional Needs</strong></h3>
@@ -362,28 +368,28 @@ const FranchiseeDashboard = () => {
                               <a href="/user-management" className="item">
                                 <span className="name">Total Users</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.totalUsers}</span>
+                                <span className="num">{countUser?.totalUsers}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/user-management/Educator" className="item">
                                 <span className="name">Total Locations</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.totalLocations}</span>
+                                <span className="num">{countUser?.totalLocations}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/children-all" className="item">
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.newEnrollments}</span>
+                                <span className="num">{countUser?.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a href="/form/response" className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
-                                <span className="num">{countUser.auditForms}</span>
+                                <span className="num">{countUser?.auditForms}</span>
                               </a>
                             </div>
                           </div>

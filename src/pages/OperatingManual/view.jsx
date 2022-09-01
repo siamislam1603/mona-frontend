@@ -1020,7 +1020,7 @@ const OperatingManual = () => {
                       </label>
                     )}
                     <label className="container">
-                      Co-ordinators
+                      Coordinator
                       <input
                         type="checkbox"
                         name="shared_role"
@@ -1054,7 +1054,7 @@ const OperatingManual = () => {
                       <span className="checkmark"></span>
                     </label>
                     <label className="container">
-                      Educators
+                      Educator
                       <input
                         type="checkbox"
                         name="shared_role"

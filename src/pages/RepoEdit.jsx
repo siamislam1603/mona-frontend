@@ -603,7 +603,7 @@ const RepoEdit = () => {
                                                                                 <span className="checkmark"></span>
                                                                             </label>) : null}
                                                                             {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
-                                                                                Co-ordinators
+                                                                                Coordinators
                                                                                 {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                                 <input
                                                                                     type="checkbox"
