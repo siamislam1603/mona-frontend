@@ -8,6 +8,7 @@ import makeAnimated from 'react-select/animated';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
+import DragDropFileEdit from '../components/DragDropFileEdit';
 
 
 let selectedUserId = '';
@@ -393,7 +394,8 @@ const FilerepoUploadFile = () => {
                                     <Col md={12}>
                                         <Form.Group>
                                             <Form.Label>Upload File:*</Form.Label>
-                                            <DragDropRepository onChange={setField} />
+                                            <DragDropFileEdit onChange={setField} />
+                                            {/* <DragDropRepository onChange={setField} /> */}
                                             {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
                                             <p className="error">{errors.setting_files}</p>
                                         </Form.Group>
@@ -690,62 +692,7 @@ const FilerepoUploadFile = () => {
                                                         />
                                                         <span className="checkmark"></span>
                                                     </label>
-                                                    {/* <label className="container">
-                                                        Guardian
-                                                        <input
-                                                            type="checkbox"
-                                                            name="shared_role"
-                                                            id="Guardian"
-                                                            onClick={(e) => {
-                                                                let data = { ...formSettingData };
-                                                                if (
-                                                                    !data['shared_role']
-                                                                        .toString()
-                                                                        .includes(e.target.id)
-                                                                ) {
-                                                                    data['shared_role'] += e.target.id + ',';
-                                                                } else {
-                                                                    data['shared_role'] = data[
-                                                                        'shared_role'
-                                                                    ].replace(e.target.id + ',', '');
-                                                                    if (data['shared_role'].includes('all')) {
-                                                                        data['shared_role'] = data[
-                                                                            'shared_role'
-                                                                        ].replace('all,', '');
-                                                                    }
-                                                                }
-                                                                setFormSettingData(data);
-                                                            }}
-                                                            checked={formSettingData?.shared_role?.includes(
-                                                                'guardian'
-                                                            )}
-                                                        />
-                                                        <span className="checkmark"></span>
-                                                    </label> */}
 
-                                                    {/* <Form.Check
-                                                        type="checkbox"
-                                                        label="All Roles"
-                                                        checked={formSettingData?.shared_role?.includes('guardian,educator,coordinator')}
-                                                        onChange={() => {
-                                                            if (formSettingData?.shared_role?.includes("guardian")
-                                                                && formSettingData?.shared_role?.includes("educator")
-                                                                && formSettingData?.shared_role?.includes("coordinator")) {
-                                                                setFormSettingData(prevState => ({
-                                                                    ...prevState,
-                                                                    assigned_roles: [],
-                                                                }));
-                                                            }
-
-                                                            if (!formSettingData?.shared_role?.includes("guardian")
-                                                                && !formSettingData?.shared_role?.includes("educator")
-                                                                && !formSettingData?.shared_role?.includes("coordinator"))
-                                                                setFormSettingData(prevState => ({
-                                                                    ...prevState,
-                                                                    assigned_roles: ["guardian", "educator", "coordinator"]
-                                                                })
-                                                                )
-                                                        }} /> */}
                                                     <label className="container">
                                                         All Roles
                                                         <input

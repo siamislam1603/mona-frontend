@@ -599,10 +599,10 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
 export const enrollmentInitiationFormValidation = (
   formOneChildData
 ) => {
-  let { fullname, dob, home_address, educator } = formOneChildData;
+  let { name, dob, home_address, educator } = formOneChildData;
   let errors = {};
 
-  if (!fullname) errors.fullname = 'Fullname is required!';
+  if (!name) errors.name = 'Fullname is required!';
 
   if (!dob) errors.dob = 'Date of birth is required!';
 

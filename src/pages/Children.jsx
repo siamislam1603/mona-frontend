@@ -242,7 +242,7 @@ const Children = () => {
 
     const productsTow = childrenList?.map((child)=>({
         id: child.id,
-        name: child.fullname,
+        name: child.name,
         Location : child.home_address,
         Educator: {educators:child.users, childId:child.id},
         EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated }
