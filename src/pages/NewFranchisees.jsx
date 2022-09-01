@@ -186,7 +186,9 @@ const NewFranchisees = () => {
                                                 <Form.Control
                                                     name="abn" 
                                                     type="text" 
-                                                    placeholder="6743433"
+                                                    maxLength={11}
+                                                    minLength={11}
+                                                    placeholder="45 666 777 888"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -295,7 +297,9 @@ const NewFranchisees = () => {
                                                 <Form.Control
                                                     name="acn" 
                                                     type="text" 
-                                                    placeholder="3453453453"
+                                                    maxLength={9}
+                                                    minLength={9}
+                                                    placeholder="666 777 888"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({

@@ -249,7 +249,7 @@ const ChildrenEnrol = () => {
             cell[0] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[3] === "undefined" ? "../img/upload.jpg" : cell[3]} />
+                <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
               </span>
               <span className="user-name">
                 {cell[0] === "undefined" ? null : cell[0]}
@@ -261,7 +261,7 @@ const ChildrenEnrol = () => {
             cell[1] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[4] === "undefined" ? "../img/upload.jpg" : cell[4]} />
+                <img src={cell[4] === "undefined"|| cell[3] === "null"  ? "../img/upload.jpg" : cell[4]} />
               </span>
               <span className="user-name">
                 {cell[1] === "undefined" ? null : cell[1]
@@ -272,7 +272,7 @@ const ChildrenEnrol = () => {
             cell[2] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[5] === "undefined" ? "../img/upload.jpg" : cell[5]} />
+                <img src={cell[5] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[5]} />
               </span>
               <span className="user-name">
                 {cell[2] === "undefined" ? null : cell[2]
@@ -297,7 +297,7 @@ const ChildrenEnrol = () => {
             cell[0] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[1] === "undefined" ? "../img/upload.jpg" : cell[1]} />
+                <img src={cell[1] === "undefined" || cell[3] === "null"  ? "../img/upload.jpg" : cell[1]} />
               </span><span className="user-name">{cell[0]}
               </span>
             </div>
@@ -307,7 +307,7 @@ const ChildrenEnrol = () => {
             cell[2] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[3] === "undefined" ? "../img/upload.jpg" : cell[3]} />
+                <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
               </span><span className="user-name">{cell[2]}
               </span>
             </div>

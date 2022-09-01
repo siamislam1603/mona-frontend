@@ -75,21 +75,26 @@ const AvailableTraining = ({ filter }) => {
         
         if(searchedData?.length===0){
           setNoDueData(false)
+         setDueDataTraining(false)
+
         }
         
       }
       else{
         setAvailableTrainingData([])
         setfullLoaderStatus(false)
-        // setNoDueData(false)
-        // setDueDataTraining(false)
+        setNoDueData(false)
+        setDueDataTraining(false)
       }
    
     } catch (error) {
       
         console.log("The error",error)
+        setNoDueData(false)
+        setDueDataTraining(false)
         setAvailableTrainingData([])
         setfullLoaderStatus(false)
+
     
     }
   };
@@ -248,7 +253,7 @@ const AvailableTraining = ({ filter }) => {
   }, [saveTrainingId]);
 
   // formSettings && console.log('FORM SETTINGS:', formSettings);
-  console.log('Available Training Data:', availableTrainingData,page);
+  console.log('Available Training Data:', availableTrainingData);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}

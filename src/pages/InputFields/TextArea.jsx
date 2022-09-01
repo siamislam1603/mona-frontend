@@ -14,7 +14,7 @@ const TextArea = (props) => {
           placeholder={controls.placeholder}
           onChange={(e) => {
             e.preventDefault();
-            props.onChange(e.target.name, e.target.value);
+            props.onChange(e.target.name, e.target.value,"textarea");
           }}
           isInvalid={!!controls.error[controls.field_name]}
         />

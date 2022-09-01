@@ -260,7 +260,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const fetchChildDataAndPopulate = async () => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
-    let enrolledChildId = localStorage.getItem('enrolled_child_id') || paramsChildId;
+    let enrolledChildId = paramsChildId;
     console.log('Enrolled child id:', enrolledChildId);
     let token = localStorage.getItem('token');
 
@@ -276,8 +276,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneChildData(prevState => ({
         ...prevState,
-        fullname: child?.fullname,
-        family_name: child?.family_name,
+
+        name: child?.name,
+        fullname: child?.name?.split(" ")[0],
+        family_name: child?.name?.split(" ")?.slice(1).join(" "),
+
         usually_called: child?.usually_called,
         dob: child?.dob,
         home_address: child?.home_address,
@@ -318,6 +321,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   };
 
+
+  // GIVING CONSENT FOR CHANGE
+  const giveConsentForChange = async () => {
+    const response = await axios.post(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`)
+  }
+
+
   useEffect(() => {
     fetchOccupationData();
     fetchEthnicityData();
@@ -339,12 +349,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }, [formOneParentData?.address_similar_to_child])
 
-  // useEffect(() => {
-  //   console.log("checking useEffect!")
-  //   if(localStorage.getItem('has_given_consent') !== null) {
-  //     setShowConsentCommentDialog(true);
-  //   }
-  // }, [])
+  useEffect(() => {
+    console.log("checking useEffect!")
+    if(localStorage.getItem('has_given_consent') === 'null') {
+      setShowConsentCommentDialog(true);
+    }
+  }, [])
 
   // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);

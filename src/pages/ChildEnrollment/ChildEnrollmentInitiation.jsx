@@ -14,7 +14,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let { parentId } = useParams();
 
   const [formOneChildData, setFormOneChildData] = useState({
-    fullname: "",
+    name: "",
     dob: "",
     home_address: "",
     gender: "M",
@@ -23,7 +23,19 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   const [educatorData, setEducatorData] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [loader, setLoader] = useState(false);
+  const [parentFranchiseeId, setParentFranchiseeId] = useState();
   const [errors, setErrors] = useState({});
+
+  const fetchParentData = async () => {
+    const response = await axios.get(`${BASE_URL}/auth/user/${parentId}`);
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { user } = response.data;
+      let { franchisee_id } = user;
+
+      setParentFranchiseeId(franchisee_id);
+    }
+  }
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/${typeof selectedFranchisee === 'undefined' ? 'all' : selectedFranchisee}`);
@@ -49,7 +61,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
   const initiateEnrollment = async () => {
     let token = localStorage.getItem('token');
-    let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: localStorage.getItem('franchisee_id') }, {
+    let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: parentFranchiseeId  }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -95,6 +107,10 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     console.log('FETCHING EDUCATOR LIST!');
     fetchEducatorList();
   }, [selectedFranchisee])
+
+  useEffect(() => {
+    fetchParentData();
+  }, [])
   
   formOneChildData && console.log('CHILD DATA:', formOneChildData);
   educatorData && console.log('EDUCATOR DATA:', educatorData);
@@ -128,17 +144,17 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Label>Child's First Name</Form.Label>
                                 <Form.Control
                                   type="text"
-                                  name="fullname"
+                                  name="name"
                                   placeholder="Child’s Full Name"
-                                  value={formOneChildData?.fullname || ""}
+                                  value={formOneChildData?.name || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
                                     setErrors(prevState => ({
                                       ...prevState,
-                                      fullname: null
+                                      name: null
                                     }))
                                   }} />
-                                  {errors.fullname !== null && <span className="error">{errors.fullname}</span>}
+                                  {errors.name !== null && <span className="error">{errors.name}</span>}
                               </Form.Group>
                             </Col>
                             

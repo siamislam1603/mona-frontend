@@ -8,6 +8,7 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import moment from 'moment';
 let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
@@ -28,20 +29,39 @@ const DynamicForm = () => {
   let training_id = location.search
     ? location.search.split('?')[1].split('=')[1]
     : null;
-  const setField = (section, field, value) => {
-    setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
+  const setField = (section, field, value,type) => {
+    console.log("section",section);
+    console.log("field",field);
+    console.log("value",value);
+    console.log("type",type);
+    if(type==="date")
+    {
+      value=moment(value).format("DD-MM-YYYY");
+      setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
+    }
+    if(type==="checkbox")
+    {
+      value=value.slice(0, -1)
+      setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
+    }
+    else{
+      setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
+    }
+    
     if (!!errors[field]) {
       setErrors({
         ...errors,
         [field]: null,
       });
     }
-    if (field === 'hobby') {
-      values.includes(value) ? values.pop(value) : values.push(value);
-      setForm({ ...form, [field]: values });
+    
 
-      console.log('Values', values);
-    }
+    // if (field === 'hobby') {
+    //   values.includes(value) ? values.pop(value) : values.push(value);
+    //   setForm({ ...form, [field]: values });
+
+      // console.log('Values', values);
+    // }
   };
   useEffect(() => {
     getFormFields();
@@ -199,7 +219,7 @@ const DynamicForm = () => {
             if (result?.message === 'You can add only one time form data!!') {
               toast.error(result?.message);
             } else {
-              navigate('/form');
+              navigate('/form',{state:{message: result.message}});
             }
           }
         })
@@ -208,6 +228,7 @@ const DynamicForm = () => {
   };
   return (
     <>
+    {console.log("Hello------>",form)}
       <div id="main">
         <ToastContainer />
         <section className="mainsection">
@@ -342,8 +363,8 @@ const DynamicForm = () => {
                                 <InputFields
                                   {...inner_item}
                                   error={errors}
-                                  onChange={(key, value) => {
-                                    setField(item, key, value);
+                                  onChange={(key, value,type) => {
+                                    setField(item, key, value, type);
                                   }}
                                 />
                               </>
@@ -351,8 +372,8 @@ const DynamicForm = () => {
                               <InputFields
                                 {...inner_item}
                                 error={errors}
-                                onChange={(key, value) => {
-                                  setField(key, value);
+                                onChange={(key, value, type) => {
+                                  setField(key, value, type);
                                 }}
                               />
                             );
@@ -364,8 +385,8 @@ const DynamicForm = () => {
                             <InputFields
                               {...inner_item}
                               error={errors}
-                              onChange={(key, value) => {
-                                setField(item, key, value);
+                              onChange={(key, value, type) => {
+                                setField(item, key, value, type);
                               }}
                             />
                           );
