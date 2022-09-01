@@ -20,10 +20,6 @@ const animatedComponents = makeAnimated();
 const timeqty =  [
   {
     value: 'minutes',
-    label: 'Minutes',
-  },
-  {
-    value: 'minutes',
     label: 'Minutes'
   },
   {

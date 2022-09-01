@@ -276,8 +276,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneChildData(prevState => ({
         ...prevState,
-        fullname: child?.fullname.split(" ")[0],
-        family_name: child?.fullname.split(" ")?.slice(1).join(" "),
+        fullname: child?.fullname,
+        family_name: child?.family_name,
         usually_called: child?.usually_called,
         dob: child?.dob,
         home_address: child?.home_address,
