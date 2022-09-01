@@ -503,7 +503,7 @@ export const personValidation = (personValidationForm) => {
   if (!telephone) errors.telephone = 'Telephone number is required!';
 
   if(!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Telephone should only contain digits!"; 
+    errors.telephone = "Telephone number is required, should contain digits!"; 
 
   if(telephone.length > 1 && telephone.length < 10)
     errors.telephone = 'Telephone number must be at least 10-digit long.'
@@ -524,7 +524,7 @@ export const personValidation2 = (personValidationForm) => {
     personValidationForm;
 
   if(telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Telephone should only contain digits!"; 
+    errors.telephone = "Telephone number is required, should contain digits!";
 
   return errors;
 }
@@ -599,10 +599,10 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
 export const enrollmentInitiationFormValidation = (
   formOneChildData
 ) => {
-  let { fullname, dob, home_address, educator } = formOneChildData;
+  let { name, dob, home_address, educator } = formOneChildData;
   let errors = {};
 
-  if (!fullname) errors.fullname = 'Fullname is required!';
+  if (!name) errors.name = 'Fullname is required!';
 
   if (!dob) errors.dob = 'Date of birth is required!';
 

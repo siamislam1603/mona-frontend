@@ -150,6 +150,7 @@ const FranchiseeDashboard = () => {
       setlatest_announcement(response.data.recentAnnouncement);
     }).catch((e) => {
       console.log("Error", e);
+      setlatest_announcement([])
     })
   }
   const [user, setUser] = useState([]);
@@ -494,7 +495,10 @@ const FranchiseeDashboard = () => {
                                     {...props.baseProps}
                                   />
                                 )}
-                              </ToolkitProvider></>) : (<><div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div></>)}
+                              </ToolkitProvider></>) : (
+                              <>
+                              <div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div>
+                              </>)}
 
                           </div>
                         </div>
@@ -504,21 +508,32 @@ const FranchiseeDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-                            {latest_announcement.map((data) => {
-                              return (
-                                <div className="listing">
-                                  <a href="/announcements" className="item">
-                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                    <div className="name">{!data.title ? "No Announcement" : data.title}
-                                      <div>
-                                        <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-
+                            {
+                              latest_announcement?.length>0 ? 
+                                (
+                                  latest_announcement?.map((data) => {
+                                    return (
+                                      <div className="listing">
+                                        <a href="/announcements" className="item">
+                                          <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                          <div className="name">{!data.title ? "No Announcement" : data.title}
+                                            <div>
+                                              <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+      
+                                            </div>
+                                          </div>
+                                        </a>
                                       </div>
-                                    </div>
-                                  </a>
-                                </div>
-                              );
-                            })}
+                                    );
+                                  }
+                                )
+                               
+                            )
+                            :(
+                              <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+
+                           )
+                          }
                             {/* <div className="listing">
                               <a href="/" className="item">
                                 <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
