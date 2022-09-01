@@ -383,11 +383,11 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                   <TopHeader setSelectedFranchisee={setSelectedFranchisee} />
 
                   <Row>
-                  <div className='entry-container'>
+                
                 <header className="title-head">
                     <h1 className="title-lg">Edit Announcement</h1>
                   </header>
-                </div>
+               
                 {/* {topErrorMessage && <p className="alert alert-success">{topErrorMessage}</p>}  */}
 
                 {/* <button onClick={()=>setSettingsModalPopup(true)}>
@@ -569,24 +569,12 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                          
 
 
-                          {/* <div className="select-with-plus">
+                         {allFranchise? null: <>
+                            {   
+                             errors.franchise && <p className="form-errors">{errors.franchise}</p>}
 
-                            <Select
-                              placeholder="Which Franchisee?"
-                              closeMenuOnSelect={true}
-                              isMulti
-                              options={franchiseeData} 
-                              value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
-                              onChange={(selectedOptions) => {
-                                setAnnouncementCopyData((prevState) => ({
-                                  ...prevState,
-                                  franchise: [...selectedOptions.map(option => option.id + "")]
-                                }));
-                              }}
-                            />
-                            
-                       
-                          </div> */}
+                           </>}
+      
 
                       
                          

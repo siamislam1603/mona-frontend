@@ -61,7 +61,11 @@ import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
 import SearchResult from '../pages/SearchResult';
 import ChildrenEnrol from '../pages/ChildrenEnrol';
+
 import TrainingCreatedByOther from '../pages/TrainingModule/TrainingCreatedByOther';
+import {logoutUser} from '../helpers/logout';
+import AllEvent from '../pages/AllEvent';
+
 function returnDashboard(role) {
   if (role === 'franchisor_admin')
     return <FranchisorDashboard />
@@ -83,29 +87,19 @@ const Main = () => {
   useEffect(() => {
     const item = localStorage.getItem('token');
 
-
     if (item) {
       // SETTING 2 HOURS TIMEOUT FOR LOGOUT
       const loginTime = new Date();
       const logoutTime = new Date();
       logoutTime.setTime(loginTime.getTime() + 6 * 60 * 60 * 1000); // 6 HOUR
-      console.log("Auto logout at:", logoutTime);
+      console.log("Auto logout atddddddddddddddddddddd:", logoutTime);
 
 
       function autoLogout() {
         (function loop() {
           var now = new Date();
           if (now > logoutTime) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user_id');
-            localStorage.removeItem('user_name');
-            localStorage.removeItem('user_role');
-            localStorage.removeItem('menu_list');
-            localStorage.removeItem('active_tab');
-            localStorage.removeItem('selectedFranchisee');
-            localStorage.removeItem("attempts")
-            localStorage.removeItem("enrolled_parent_id")
-            localStorage.removeItem("enrolled_child_id")
+            logoutUser()
             window.location.href = '/';
           }
           now = new Date();
@@ -113,7 +107,6 @@ const Main = () => {
           setTimeout(loop, delay);
         })();
       }
-
 
       autoLogout();
       setIsLoggedIn(true);
@@ -168,6 +161,11 @@ const Main = () => {
             </Protected>
           }
         />
+       
+
+        
+
+
 
         <Route
           path="/child-enrollment"
@@ -489,8 +487,8 @@ const Main = () => {
         <Route
           path="/training"
           element={
-            // <Protected controller='training_files' action='listing'>
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected controller='training_files' action='listing'>
+            {/* <Protected isLoggedIn={isLoggedIn}> */}
               <SignIn />
               <Training />
             </Protected>
