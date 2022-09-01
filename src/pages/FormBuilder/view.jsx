@@ -24,6 +24,7 @@ import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useLocation } from 'react-router-dom';
 
 function ViewFormBuilder(props) {
   const navigate = useNavigate();
@@ -40,9 +41,15 @@ function ViewFormBuilder(props) {
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
   const token = localStorage.getItem('token');
+  const location=useLocation();
   let hrFlag = false;
   let title_flag = false;
   useEffect(() => {
+    if(location?.state?.message)
+    {
+      toast.success(location?.state?.message);
+      navigate("/form", { state: {message: null} });
+    }
     getFormData('');
   }, []);
   const deleteForm = (id) => {
@@ -568,6 +575,7 @@ function ViewFormBuilder(props) {
                                                     navigate('/form/response', {
                                                       state: {
                                                         id: inner_item.id,
+                                                        form_name: inner_item.form_namee
                                                       },
                                                     });
                                                   }}
@@ -605,6 +613,7 @@ function ViewFormBuilder(props) {
                                                     navigate('/form/response', {
                                                       state: {
                                                         id: inner_item.id,
+                                                        form_name: inner_item.form_name
                                                       },
                                                     });
                                                   }}
@@ -1211,6 +1220,8 @@ function ViewFormBuilder(props) {
                                     state: {
                                       id: MeFormData[Index]?.forms[innerIndex]
                                         ?.id,
+                                      form_name: MeFormData[Index]?.forms[innerIndex]
+                                      ?.form_name,
                                     },
                                   });
                                 }}
@@ -1271,6 +1282,8 @@ function ViewFormBuilder(props) {
                                       id: OthersFormData[Index]?.forms[
                                         innerIndex
                                       ]?.id,
+                                      form_name: OthersFormData[Index]?.forms[innerIndex]
+                                        ?.form_name,
                                     },
                                   });
                                 }}
