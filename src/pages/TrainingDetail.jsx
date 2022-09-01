@@ -47,11 +47,11 @@ const TrainingDetail = () => {
   const handleFinishTraining = (event) => {
 
     if(typeof relatedForms === 'undefined') {
+      updateFinishTraining();
+    } else {
       setTimeout(() => {
         setShowSurveyForm(true);
       }, 2000);
-    } else {
-      updateFinishTraining();
     }
   };
 
@@ -145,7 +145,7 @@ const TrainingDetail = () => {
     }
   }, []);
   // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  relatedForms && console.log('RELATED FORMS:', relatedForms);
+  console.log('RELATED FORMS:', relatedForms);
   return (
     <>
       <div id="main">

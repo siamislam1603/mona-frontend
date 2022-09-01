@@ -34,7 +34,7 @@ const Radio = (props) => {
                           name={controls.field_name}
                           id={Object.keys(item)[0]}
                           onClick={(e) => {
-                            props.onChange(e.target.name, e.target.value);
+                            props.onChange(e.target.name, e.target.value,"radio");
                             setOptionValue(e.target.value);
                             setIndex(index);
                           }}

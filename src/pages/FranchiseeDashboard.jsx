@@ -139,6 +139,7 @@ const FranchiseeDashboard = () => {
   const [enrollments, setEnrollments] = useState()
   const [enrollmentssetUser, setEnrollmentssetUser] = useState()
 
+
   const announcement = () => {
     let token = localStorage.getItem('token');
     const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
@@ -150,40 +151,34 @@ const FranchiseeDashboard = () => {
       setlatest_announcement(response.data.recentAnnouncement);
     }).catch((e) => {
       console.log("Error", e);
-      setlatest_announcement([])
     })
   }
-  const [user, setUser] = useState([]);
-  const [userData, setUserData] = useState([]);
 
-  const Additional_Needs = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    let response = await fetch(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, requestOptions)
-    response = await response.json();
-    console.log(response, "fullname")
-    setUser(response.data)
+  const [userData, setUserData] = useState([]);
+  console.log(userData, "++++++++")
+
+
+  const FormData = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("FORM Data", response)
     if (response.status === 200) {
-      const users = response.childrenEnrolled;
-      let tempData = users.map((dt) => ({
-        name: `${dt.fullname}`,
-        // createdAt: dt.createdAt,
-        educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
-        // Shaired: dt.repository.repository_shares.length,
-        // categoryId: dt.categoryId
-      }));
+      let data = response.data.childrenEnrolled;
+      console.log(data, "FORM+++++++")
+      const tempData = data.map((dt, index) => (
+        {
+          name: `${dt.fullname}`,
+          educatatoName: dt.users[index].fullname + "," + dt.users[index].profile_photo + "," + dt.users[index].fullname + "," + dt.users[index].profile_photo
+        }
+      ))
+      console.log(tempData, "FORM+++++++FORM")
       setUserData(tempData);
-    } else {
-      const users = response.msg;
-      console.log("users", users)
+
+
     }
   }
 
@@ -238,29 +233,10 @@ const FranchiseeDashboard = () => {
   React.useEffect(() => {
     count_User_Api();
     announcement();
-    Additional_Needs();
+    FormData();
   }, []);
 
-  // const count_Api = async () => {
-  //   const countUrl = `${BASE_URL}/dashboard/franchisee/activity-count`;
-  //   var myHeaders = new Headers();
-  //   myHeaders.append(
-  //     'authorization',
-  //     'Bearer ' + localStorage.getItem('token')
-  //   );
-
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     redirect: 'follow',
-  //     headers: myHeaders,
-  //   };
-  //   await axios(countUrl, requestOptions).then((response) => {
-  //     setcountUser(response.data);
-  //   }).catch((e) => {
-  //     console.log(e);
-  //   })
-  //   console.log(countUser, ":lksjdgcasjhgjhjchvs")
-  // }
+ 
 
 
   const getAddedTime = (str) => {
@@ -293,7 +269,6 @@ const FranchiseeDashboard = () => {
     // count_Api();
     Enrollments();
   }, []);
-  if (!countUser) return null;
   return (
     <>
       <div id="main">
@@ -347,70 +322,7 @@ const FranchiseeDashboard = () => {
 
                           </div>
                         </div>
-                        {/*<div className="files-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h2 className="title-sm mb-0"><strong>Forms</strong></h2>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list files-list two-col">
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          </div>
-                        </div>*/}
+                        
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h3 className="title-sm mb-0"><strong>Children With Additional Needs</strong></h3>
@@ -433,7 +345,6 @@ const FranchiseeDashboard = () => {
                                     />
                                   )}
                                 </ToolkitProvider>
-
                               </>) : (<><div className="text-center mb-5 mt-5"><strong>No Children Enrolled Yet</strong></div></>)}
 
                           </div>
@@ -495,10 +406,7 @@ const FranchiseeDashboard = () => {
                                     {...props.baseProps}
                                   />
                                 )}
-                              </ToolkitProvider></>) : (
-                              <>
-                              <div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div>
-                              </>)}
+                              </ToolkitProvider></>) : (<><div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div></>)}
 
                           </div>
                         </div>
@@ -508,32 +416,21 @@ const FranchiseeDashboard = () => {
                             <Link to="/announcements" className="viewall">View All</Link>
                           </header>
                           <div className="column-list announcements-list">
-                            {
-                              latest_announcement?.length>0 ? 
-                                (
-                                  latest_announcement?.map((data) => {
-                                    return (
-                                      <div className="listing">
-                                        <a href="/announcements" className="item">
-                                          <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                          <div className="name">{data.title }
-                                            <div>
-                                              <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-      
-                                            </div>
-                                          </div>
-                                        </a>
-                                      </div>
-                                    );
-                                  }
-                                )
-                               
-                            )
-                            :(
-                              <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+                            {latest_announcement.map((data) => {
+                              return (
+                                <div className="listing">
+                                  <a href="/announcements" className="item">
+                                    <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                    <div className="name">{!data.title ? "No Announcement" : data.title}
+                                      <div>
+                                        <span className="timesec">{getAddedTime(data?.createdAt)}</span>
 
-                           )
-                          }
+                                      </div>
+                                    </div>
+                                  </a>
+                                </div>
+                              );
+                            })}
                             {/* <div className="listing">
                               <a href="/" className="item">
                                 <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
