@@ -459,6 +459,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           usually_called: e.target.value
                         }));
+                        
                         // } else {
                         //   setFormOneChildData(prevState => ({
                         //     ...prevState,
