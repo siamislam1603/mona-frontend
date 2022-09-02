@@ -1180,7 +1180,7 @@ function ViewFormBuilder(props) {
                                 }
                               >
                                 {
-                                  MeFormData[Index]?.forms[innerIndex]?.user
+                                  item[0]?.user
                                     ?.fullname
                                 }
                               </h4>
@@ -1195,9 +1195,7 @@ function ViewFormBuilder(props) {
                                     : 'text-capitalize'
                                 }
                               >
-                                {MeFormData[Index]?.forms[
-                                  innerIndex
-                                ]?.user?.role
+                                {item[0]?.user?.role
                                   .split('_')
                                   .join(' ')}
                               </h4>
@@ -1211,8 +1209,8 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item.createdAt).format('DD/MM/YYYY')} -
-                                {moment(item.createdAt).format('HH:MM:SS')}
+                                {moment(item[0].createdAt).format('DD/MM/YYYY')} -
+                                {moment(item[0].createdAt).format('HH:MM:SS')}
                               </h4>
                               <button
                                 onClick={() => {
@@ -1254,6 +1252,7 @@ function ViewFormBuilder(props) {
                           </div>
                           <div className="user_role">
                             <div className="user_detail">
+                              
                               <h4
                                 className={
                                   item[0]?.seen_flag === false
@@ -1261,7 +1260,7 @@ function ViewFormBuilder(props) {
                                     : 'text-capitalize'
                                 }
                               >
-                                {item[0]?.user?.role.split('_').join(' ')}
+                                {item?.user?.role.split('_').join(' ')}
                               </h4>
                             </div>
                           </div>
@@ -1273,7 +1272,7 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item.createdAt).format('DD/MM/YYYY')}
+                                {moment(item[0].createdAt).format('DD/MM/YYYY')}
                               </h4>
                               <button
                                 onClick={() => {
