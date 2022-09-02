@@ -4,52 +4,32 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/rea
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
-import makeAnimated from 'react-select/animated';
 import { Link, useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 import { FullLoader } from "../components/Loader";
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
-const animatedComponents = makeAnimated();
 const { SearchBar } = Search;
 let selectedUserId = '';
-let selectedUserRole = [];
-let selectedFranchiseeId = '';
-const training = [
-    {
-        value: 'sydney',
-        label: 'Sydney',
-    },
-    {
-        value: 'melbourne',
-        label: 'Melbourne',
-    },
-];
+
 const selectRow = {
     mode: 'checkbox',
     clickToSelect: true,
 };
 
 const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
-    const Navigate = useNavigate();
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    let Params = useParams();
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
-    const handleVideoShow = () => setVideo(true);
-    const [category, setCategory] = useState([]);
+
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
     const [userData, setUserData] = useState([]);
-    const [userTO, setUserTow] = useState([]);
-    const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
-    const [errors, setErrors] = useState({});
+    const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
     const [selectedUser, setSelectedUser] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [saveFileId, setSaveFileId] = useState(null);
@@ -59,8 +39,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState();
     const [shareType, setShareType] = useState("roles");
     const [applicableToAll, setApplicableToAll] = useState(false);
-    const [error, setError] = useState(false);
+
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -68,16 +49,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         assigned_childs: []
     });
     const [child, setChild] = useState([]);
-    const [selectedChild, setSelectedChild] = useState([]);
-    let Params = useParams();
-
-    const toBase64 = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
 
 
     const fetchFranchiseeList = async () => {
@@ -96,9 +67,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             })));
         }
     };
+
+
+
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
-        let user_id = localStorage.getItem('user_id')
+
         setLoaderFlag(true);
         if (
             formSettingData.accessible_to_role === null ||
@@ -162,56 +136,23 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         };
         let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
         response = await response.json();
-        setUserTow(response.result)
-
+        console.log(response, "response")
         if (response) {
             setfullLoaderStatus(false)
         }
-        
-        const users = response.files;
-        let tempData = users.map((dt) => ({
-            name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
-            createdAt: dt.createdAt,
-            userID: dt.id,
-            creatorName: dt.creatorName + "," + dt.creatorRole,
-            Shaired: dt.repository.repository_shares.length,
-            categoryId: dt.categoryId
-        }));
-        setUserData(tempData);
+        if (response.status === "success" || 200) {
+            const users = response.files;
+            let tempData = users.map((dt) => ({
+                name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                createdAt: dt.createdAt,
+                userID: dt.id,
+                creatorName: dt.creatorName + "," + dt.creatorRole,
+                Shaired: dt.repository.repository_shares.length,
+                categoryId: dt.categoryId
+            }));
+            setUserData(tempData);
+        }
     }
-
-
-    const setField = (field, value) => {
-        if (value === null || value === undefined) {
-            setFormSettingData({ ...formSettingData, setting_files: field });
-        } else {
-            setFormSettingData({ ...formSettingData, [field]: value });
-        }
-        if (!!errors[field]) {
-            setErrors({
-                ...errors,
-                [field]: null,
-            });
-        }
-    };
-
-    const getFileCategory = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-        let result = await fetch(`${BASE_URL}/fileRepo/files-category`, requestOptions);
-        result = await result.json()
-            .then((result) => setCategory(result.category))
-            .catch((error) => console.log('error', error));
-    };
-
 
     const getUser = async () => {
         var myHeaders = new Headers();
@@ -254,10 +195,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     useEffect(() => {
         GetFile();
-        getFileCategory();
         getUser();
         getChildren();
-    }, [trainingDeleteMessage, formSettings.franchisee])
+        handleTrainingDelete();
+    }, [, formSettings.franchisee])
 
 
     useEffect(() => {
@@ -266,49 +207,29 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');
-        const response = await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
+        await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
-        });
-        if (response.status === 200 && response.data.status === "success") {
-            setTrainingDeleteMessage(response.data.message);
-
-        } else if (response.status === 200 && response.data.status === "fail") {
-            setTrainingDeleteMessage(response.data.message);
-        }
+        }).then(function () {
+            SetfileDeleteMessage('Delete successful')
+            GetFile();
+        })
+            .catch(error => {
+                SetfileDeleteMessage("You don't have permission to delete this file !");
+            });
     }
 
-    // FETCH FILE DATA
-    const fetchFileData = async (fileId) => {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${fileId}`, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        });
-
-        if (response.status === 200 && response.data.status === "success") {
-            const { file } = response.data;
-            copyDataToStates(file);
-        }
-    };
-
-    const copyDataToStates = (file) => {
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_users: file?.repository_shares[0]?.assigned_users,
-            assigned_role: file?.repository_shares[0]?.assigned_roles,
-            franchisee: file?.repository_shares[0]?.franchisee,
-            assigned_childs: file?.repository_shares[0]?.assigned_childs,
-            accessibleToRole: file?.repository_shares[0].accessibleToRole,
-            accessibleToAll: file?.repository_shares[0].accessibleToAll,
-        }));
-    }
 
     useEffect(() => {
-        fetchFileData(saveFileId);
-    }, [saveFileId]);
+        setTimeout(() => {
+            SetfileDeleteMessage(null)
+        }, 3000);
+    }, [fileDeleteMessage])
+
+
+    // FETCH FILE DATA
+
 
     const isAllRolesChecked = () => {
         let bool = false;
@@ -337,7 +258,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 cell = cell.split(',');
                 return (
                     <>
-
                         <div div className="user-list">
                             {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" ?
                                 <>
@@ -475,6 +395,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     return (
         <>
             <div id="main">
+                {
+                    fileDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{fileDeleteMessage}</p>
+                }
                 <section className="mainsection">
                     <Container>
                         <div className="admin-wrapper">
@@ -494,7 +417,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         >
                                             {(props) => (
                                                 <>
-                                                    <h1 className="title-lg"><Link to="/file-repository"><img src="../../img/back-arrow.svg" /></Link> File Repository</h1>
+                                                    <h1 className="title-lg"><Link to="/file-repository"><img src="../../img/back-arrow.svg" alt="" /></Link> File Repository</h1>
                                                     <header className="title-head">
                                                         <div className="user-list">
                                                             <span>
@@ -547,7 +470,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                         <Modal.Title
                             id="contained-modal-title-vcenter"
                             className="modal-heading">
-                            <img src="../../img/carbon_settings.svg" />
+                            <img src="../../img/carbon_settings.svg" alt="" />
                             Share File
                         </Modal.Title>
                     </Modal.Header>
