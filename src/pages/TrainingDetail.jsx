@@ -145,6 +145,7 @@ const TrainingDetail = () => {
     }
   }, []);
   // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
+  console.log('USERS:', users);
   console.log('RELATED FORMS:', relatedForms);
   return (
     <>

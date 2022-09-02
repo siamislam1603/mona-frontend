@@ -161,11 +161,11 @@ export const createOperatingManualValidation = (form) => {
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form, coverImage,allFranchise) => {
+export const AddNewAnnouncementValidation = (form, coverImage, allFranchise) => {
   console.log('The form validation', form);
   let newErrors = {};
   console.log('The form validat', form);
-  let { title, meta_description, start_date, start_time,franchise } = form;
+  let { title, meta_description, start_date, start_time, franchise } = form;
   console.log('The tile valdiation', start_date);
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required';
@@ -176,23 +176,23 @@ export const AddNewAnnouncementValidation = (form, coverImage,allFranchise) => {
     newErrors.start_time = 'Start Time Required';
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Announcement Description is Required';
-  
-    if(!franchise ||franchise.length ===0 ){
-        if(!allFranchise){
-          newErrors.franchise ="Please Select Franchise"
 
-        }
-       
+  if (!franchise || franchise.length === 0) {
+    if (!allFranchise) {
+      newErrors.franchise = "Please Select Franchise"
+
     }
 
- 
+  }
+
+
   return newErrors;
 };
-export const EditAnnouncementValidation = (form, coverImage, Data,allFranchise) => {
+export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise) => {
   let newErrors = {};
   console.log('The form validat', form);
   // console.log("The DATA VALIDATION",newData)
-  let { title, meta_description, start_date, start_time,franchise } = form;
+  let { title, meta_description, start_date, start_time, franchise } = form;
 
   console.log('All valiatiion', title, start_date, meta_description);
   if (!title || title === ' ') newErrors.title = 'Title is Required';
@@ -203,12 +203,12 @@ export const EditAnnouncementValidation = (form, coverImage, Data,allFranchise) 
     newErrors.start_date = 'Start Date Required';
   if ((start_time === ' ' && !start_time) || start_time === ' ')
     newErrors.start_time = 'Start Time Required';
-    if(!franchise ||franchise.length ===0 ){
-      if(!allFranchise){
-        newErrors.franchise ="Please Select Franchise"
+  if (!franchise || franchise.length === 0) {
+    if (!allFranchise) {
+      newErrors.franchise = "Please Select Franchise"
 
-      }
-     
+    }
+
   }
   return newErrors;
 };
@@ -251,7 +251,7 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
-export const TrainingFormValidation = (form, coverImage) => {
+export const TrainingFormValidation = (form) => {
   let errors = {};
   let {
     title,
@@ -259,6 +259,7 @@ export const TrainingFormValidation = (form, coverImage) => {
     meta_description,
     category_id,
     time_required_to_complete,
+
   } = form;
 
   if (!title) {
@@ -285,9 +286,13 @@ export const TrainingFormValidation = (form, coverImage) => {
     errors.time_required_to_complete = 'Training time is required!';
   }
 
-  if (Object.keys(coverImage).length === 0) {
-    errors.coverImage = 'Cover image required!';
-  }
+  // if (!croppedImage) {
+  //   errors.croppedImage = 'Image time is required!';
+  // }
+  // croppedImage
+  // if (Object.keys(croppedImage).length === 0) {
+  //   errors.croppedImage = 'Cover image required!';
+  // }
   return errors;
 };
 
@@ -458,7 +463,7 @@ export const UserFormValidation = (formObj) => {
 
   if (!city) errors.city = 'Suburb is required!';
 
-  if(password && confirm_password && password !== confirm_password) {
+  if (password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match!";
     errors.confirm_password = "Passwords don't match!";
   }
@@ -477,7 +482,7 @@ export const UserFormValidation = (formObj) => {
 
   if (!phone) errors.phone = 'Phone number is required!';
 
-  if(phone.length > 0 && phone.length < 10) 
+  if (phone.length > 0 && phone.length < 10)
     errors.phone = 'Phone number must be 10-digits long.'
 
   return errors;
@@ -487,7 +492,7 @@ export const editUserValidation = (form) => {
   let errors = {};
   let { password, confirm_password } = form;
 
-  if(password && confirm_password && password !== confirm_password) {
+  if (password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match!";
     errors.confirm_password = "Passwords don't match!";
   }
@@ -502,24 +507,24 @@ export const personValidation = (personValidationForm) => {
 
   if (!name) errors.name = 'Please complete mandatory Field!';
 
-  if(name.length >0 && !(/^[a-zA-Z ]+$/i.test(name)))
+  if (name.length > 0 && !(/^[a-zA-Z ]+$/i.test(name)))
     errors.name = 'Field shouldn\'t contain digits & special characters!';
 
   if (!address) errors.address = 'Please complete mandatory Field!';
 
   if (!telephone) errors.telephone = 'Please complete mandatory Field!';
 
-  if(!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits!"; 
+  if (!(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Field should only contain digits!";
 
-  if(telephone.length > 1 && telephone.length < 10)
+  if (telephone.length > 1 && telephone.length < 10)
     errors.telephone = 'Field must be at least 10-digit long!'
 
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
       'Please complete mandatory Field!';
 
-  if(relationship_to_the_child.length > 0 && !(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
+  if (relationship_to_the_child.length > 0 && !(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
     errors.relationship_to_the_child = 'Field shouldn\'t contain digits & special characters!';
 
   return errors;
@@ -530,7 +535,7 @@ export const personValidation2 = (personValidationForm) => {
   let { telephone } =
     personValidationForm;
 
-  if(telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
+  if (telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Field should only contain digits!";
 
   return errors;
@@ -540,7 +545,7 @@ export const person2Validation = (obj) => {
   let errors = {};
   let { telephone } = obj;
 
-  if(telephone?.length > 1 && telephone?.length < 10)
+  if (telephone?.length > 1 && telephone?.length < 10)
     errors.telephone = 'Telephone number must be at least 10-digit long.'
 
   return errors;
@@ -554,10 +559,10 @@ export const digitalSignatureValidator = (form) => {
   } = form;
   let date = moment(consent_date);
 
-  if(!consent_signature)
+  if (!consent_signature)
     errors.consent_signature = "Please provide your signature below!";
 
-  if(!date.isValid())
+  if (!date.isValid())
     errors.consent_date = "Please provide a date!";
 
   return errors;

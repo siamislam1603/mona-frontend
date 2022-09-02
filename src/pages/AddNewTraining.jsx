@@ -14,6 +14,7 @@ import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
 import DragDropSingle from '../components/DragDropSingle';
 import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
+import DragDropTraning from '../components/DragDropTraning';
 
 const animatedComponents = makeAnimated();
 
@@ -65,7 +66,7 @@ const AddNewTraining = () => {
   const [loader, setLoader] = useState(false);
   const [createTrainingModal, setCreateTrainingModal] = useState(false);
   const [saveSettingsToast, setSaveSettingsToast] = useState(null);
-
+  const [error, setError] = useState(false);
   const [trainingData, setTrainingData] = useState({
     time_unit: "Minutes",
     title: "",
@@ -136,6 +137,14 @@ const AddNewTraining = () => {
     }
   };
 
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
     console.log('CREATING THE TRAINING');
@@ -151,30 +160,12 @@ const AddNewTraining = () => {
     console.log('Training Details Response:', response);
 
     if (response.status === 201 && response.data.status === "success") {
-      // let { id } = response.data.training;
-
-      // let token = localStorage.getItem('token');
-      // let user_id = localStorage.getItem('user_id')
-      // const shareResponse = await axios.post(`${BASE_URL}/share/${id}?titlePage=`, {
-      //   assigned_franchisee: trainingSettings.assigned_franchisee,
-      //   assigned_users: trainingSettings.assigned_users,
-      //   assigned_roles: trainingSettings.assigned_roles,
-      //   shared_by: user_id,
-      //   applicable_to: trainingSettings.applicable_to,
-      // }, {
-      //   headers: {
-      //     "Authorization": `Bearer ${token}`
-      //   }
-      // });
-
-      // console.log('TRAINING SHARED RESPONSE:', shareResponse);
-
-      // if(shareResponse.status === 201 && shareResponse.data.status === "success") {
       let { id } = response.data.training;
 
+      const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
       let data = new FormData();
       data.append('id', id);
-      data.append('image', coverImage[0]);
+      data.append('image', blob);
 
       let imgSaveResponse = await axios.post(
         `${BASE_URL}/training/coverImg?title="training"`, data, {
@@ -278,11 +269,13 @@ const AddNewTraining = () => {
     }));
   };
 
+  const [err, seterr] = useState(false)
+
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
     console.log(coverImage, "coverImage")
-    let errorObj = TrainingFormValidation(trainingData, coverImage);
+    let errorObj = TrainingFormValidation(trainingData);
     console.log(errorObj);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
@@ -290,8 +283,11 @@ const AddNewTraining = () => {
       setErrors({});
       if (!allowSubmit)
         setSettingsModalPopup(true);
-
-      if (settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+      if (!croppedImage) {
+        setError(true);
+        return false
+      }
+      if (settingsModalPopup === false && allowSubmit && trainingData && croppedImage) {
 
         let data = new FormData();
         for (let [key, values] of Object.entries(trainingSettings)) {
@@ -356,8 +352,14 @@ const AddNewTraining = () => {
     }
   }, []);
 
-  console.log(coverImage, "+++++")
-  console.log(croppedImage, "CROPIMAGE+++++")
+  // useEffect(() => {
+  //   setErrors(prevState => ({
+  //     ...prevState,
+  //     croppedImage: null
+  //   }))
+  // }, [croppedImage])
+
+  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -503,7 +505,7 @@ const AddNewTraining = () => {
                               style={{ flex: 6 }}
                               type="number"
                               min={1}
-                              max={100}
+                              max={2}
                               placeholder="Time Needed For This Training"
                               onChange={(event) => {
                                 setTrainingData((prevState) => ({
@@ -563,15 +565,19 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image*:</Form.Label>
-                          <DropOneFile
+                          {/* <DropOneFile
                             title="Image"
+                            croppedImage={croppedImage}
+                            setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
+                            setPopupVisible={setPopupVisible}
+                            fetchedPhoto={""}
                             setErrors={setErrors}
                           // setTrainingData={setTraining}
-                          />
+                          /> */}
 
-
-                          {/* <DragDropSingle
+                          {console.log(croppedImage, "croppedImage", coverImage)}
+                          <DragDropTraning
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
@@ -585,11 +591,11 @@ const AddNewTraining = () => {
                               image={coverImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
-                          } */}
-
-
+                          }
                           <small className="fileinput">(png, jpg & jpeg)</small>
-                          {errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span>}
+                          {error && !croppedImage && < span className="error"> File is required!</span>}
+                          {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
+
                         </Form.Group>
                       </Col>
 
