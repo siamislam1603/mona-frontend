@@ -251,7 +251,7 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
-export const TrainingFormValidation = (form, coverImage) => {
+export const TrainingFormValidation = (form) => {
   let errors = {};
   let {
     title,
@@ -285,9 +285,9 @@ export const TrainingFormValidation = (form, coverImage) => {
     errors.time_required_to_complete = 'Training time is required!';
   }
 
-  if (Object.keys(coverImage).length === 0) {
-    errors.coverImage = 'Cover image required!';
-  }
+  // if (Object.keys(croppedImage).length === 0) {
+  //   errors.croppedImage = 'Cover image required!';
+  // }
   return errors;
 };
 
