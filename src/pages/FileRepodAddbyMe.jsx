@@ -17,7 +17,7 @@ const FileRepodAddbyMe = () => {
 
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-    userData && console.log('USER DATA:', userData.map(data => data));
+   
 
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}`, {
@@ -38,7 +38,6 @@ const FileRepodAddbyMe = () => {
                 creatorName: dt.ModifierName + "," + dt.updatedBy
             }));
             setUserData(tempData);
-            let temp = tempData;
         }
     }
     const [columns, setColumns] = useState([
