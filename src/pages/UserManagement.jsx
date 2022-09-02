@@ -25,7 +25,6 @@ import { useParams } from 'react-router-dom';
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
-
 const training = [
   {
     value: 'sydney',
@@ -54,8 +53,9 @@ const UserManagement = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [parentFranchiseeId, setParentFranchiseeId] = useState(null);
 
-
+ 
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       // if (e.target.text === 'Delete') {

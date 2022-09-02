@@ -5,15 +5,17 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
+import { useParmas } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import EducatorAssignPopup from '../components/EducatorAssignPopup';
 import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
 const Children = () => {
+
     useEffect(()=>{
         init()                         
-    },[])
+    },[]);
 
     // Modal start
     const [show, setShow] = useState(false);
@@ -41,6 +43,7 @@ const Children = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const params = useParams();
+    const [parentFullname, setParentFullname] = useState(null);
     const [userData, setUserData] = useState([]);
     const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
     const [deleteResponse, setDeleteResponse] = useState(null);
@@ -51,12 +54,24 @@ const Children = () => {
     const [educators, setEducators] = useState([]); 
     const [parents, setParents] = useState([]);
     const [reloadFlag, setReloadFlag] = useState(false);
-    
+
     const init = async() => {
         // Set Parents Franchisee
         const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id');
           setFranchiseId(franchiseeId);
         
+        // FETCHING PARENT DATA
+        const fetchParentData = async () => {
+            const response = await axios.get(`${BASE_URL}/auth/user/${params.parentId}`);
+
+            if(response.status === 200 && response.data.status === "success") {
+                let { user } = response.data;
+                let { fullname } = user;  
+                console.log('PARENT FULL NAME:', fullname);
+                setParentFullname(fullname);
+            }
+        }
+
         // Children List
         let response = await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
             headers: {
@@ -66,7 +81,7 @@ const Children = () => {
           if (response.status === 200) {
             // console.log('RESPONSE:', response.data);
             const { parentData } = response.data;
-            // console.log(parentData,"users")
+            console.log(parentData,"users")
             if(parentData !== null) {
                 setChildrenList(parentData?.children)
              } else {
@@ -101,7 +116,7 @@ const Children = () => {
 
     const sendInitiationMail = async (childId) => {
         let token = localStorage.getItem('token');
-        const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${params.id}`, { childId }, {
+        const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${params.id}`, { childId, user_role: localStorage.getItem('user_role') }, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -242,7 +257,7 @@ const Children = () => {
 
     const productsTow = childrenList?.map((child)=>({
         id: child.id,
-        name: child.name,
+        name: `${child.fullname} ${child.family_name}`,
         Location : child.home_address,
         Educator: {educators:child.users, childId:child.id},
         EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated }
@@ -253,6 +268,10 @@ const Children = () => {
         {
             dataField: 'name',
             text: 'Name'
+        },
+        {
+            dataField: 'parent',
+            text: 'Parent'
         },
         {
             dataField: 'Educator',
