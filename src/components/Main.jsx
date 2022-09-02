@@ -63,7 +63,7 @@ import SearchResult from '../pages/SearchResult';
 import ChildrenEnrol from '../pages/ChildrenEnrol';
 
 import TrainingCreatedByOther from '../pages/TrainingModule/TrainingCreatedByOther';
-import {logoutUser} from '../helpers/logout';
+import { logoutUser } from '../helpers/logout';
 import AllEvent from '../pages/AllEvent';
 
 function returnDashboard(role) {
@@ -161,9 +161,9 @@ const Main = () => {
             </Protected>
           }
         />
-       
 
-        
+
+
 
 
 
@@ -463,7 +463,7 @@ const Main = () => {
             </Protected>
           }
         />
-       
+
         <Route
           path="/form"
           element={
@@ -488,13 +488,13 @@ const Main = () => {
           path="/training"
           element={
             <Protected controller='training_files' action='listing'>
-            {/* <Protected isLoggedIn={isLoggedIn}> */}
+              {/* <Protected isLoggedIn={isLoggedIn}> */}
               <SignIn />
               <Training />
             </Protected>
           }
         />
-         <Route
+        <Route
           path="/training-created-other"
           element={
             <Protected isLoggedIn={isLoggedIn}>
@@ -503,7 +503,7 @@ const Main = () => {
             </Protected>
           }
         />
-         <Route
+        <Route
           path="/training-createdby-me"
           element={
             <Protected isLoggedIn={isLoggedIn}>

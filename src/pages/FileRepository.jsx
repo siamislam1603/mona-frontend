@@ -9,7 +9,7 @@ import { BASE_URL } from '../components/App';
 import FileRepoShairWithme from './FileRepoShairWithme';
 import FileRepodAddbyMe from './FileRepodAddbyMe';
 import FilerepoUploadFile from './FilerepoUploadFile';
-
+import { FullLoader } from "../components/Loader";
 
 let selectedUserId = '';
 const { SearchBar } = Search;
@@ -34,8 +34,7 @@ const FileRepository = () => {
   const [userData, setUserData] = useState([]);
   const getUser_Role = localStorage.getItem(`user_role`)
   const getFranchisee = localStorage.getItem('franchisee_id')
-
-
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
@@ -44,7 +43,9 @@ const FileRepository = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-
+    if (response) {
+      setfullLoaderStatus(false)
+    }
     if (response.status === 200 && response.data.status === "success") {
       setFranchiseeList(response.data.franchiseeList.map(data => ({
         id: data.id,
@@ -53,7 +54,7 @@ const FileRepository = () => {
       })));
     }
   };
-  
+
   useEffect(() => {
     getUser();
   }, [formSettings.franchisee])
@@ -117,6 +118,7 @@ const FileRepository = () => {
               </aside>
               <div className="sec-column">
                 <TopHeader />
+                <FullLoader loading={fullLoaderStatus} />
                 {console.log("assigned_usersMeFileRepoData------>", assigned_usersMeFileRepoData)}
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
