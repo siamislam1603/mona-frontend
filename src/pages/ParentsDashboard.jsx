@@ -417,7 +417,7 @@ const ParentsDashboard = () => {
                 <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
                 <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrollment Form</strong> to enrol your</p>
                 <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
-                <p style={{ marginTop: "-5px" }}><strong>Child Enrollment Form.</strong></p>
+                <p style={{ marginTop: "-5px" }}><strong>Child Enrolment Form.</strong></p>
               </Modal.Body>
 
               <Modal.Footer>

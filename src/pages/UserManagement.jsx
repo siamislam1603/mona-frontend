@@ -527,6 +527,12 @@ const UserManagement = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if(localStorage.getItem('guardian')) {
+      window.location.href=`/parents-dashboard`;
+    }
+  }, [])
+
   const csvLink = useRef();
 
 

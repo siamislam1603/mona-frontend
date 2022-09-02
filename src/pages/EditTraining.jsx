@@ -488,6 +488,8 @@ const EditTraining = () => {
                               <Form.Control
                                 style={{ flex: 6 }}
                                 type="number"
+                                min={1}
+                                max={2}
                                 value={trainingData.time_required_to_complete}
                                 onChange={(e) => setTrainingData(prevState => ({
                                   ...prevState,
