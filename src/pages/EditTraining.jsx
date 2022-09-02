@@ -441,6 +441,7 @@ const EditTraining = () => {
                             <Select
                               closeMenuOnSelect={true}
                               components={animatedComponents}
+                              placeholder="Select"
                               options={trainingCategory}
                               value={trainingCategory.filter(c => c.id === trainingData.category_id) || trainingCategory.filter(c => c.id === trainingData.category_id)}
                               onChange={(e) => setTrainingData(prevState => ({
@@ -522,6 +523,7 @@ const EditTraining = () => {
                           <Select
                             closeMenuOnSelect={true}
                             components={animatedComponents}
+                            placeholder="Select"
                             options={trainingFormData}
                             value={trainingFormData?.filter(d => parseInt(d.id) === trainingData?.training_form_id)}
                             onChange={(event) => {
@@ -723,7 +725,7 @@ const EditTraining = () => {
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Send to all franchise:</Form.Label>
+                    <Form.Label>Send to all franchises:</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
                         <label for="all">
@@ -769,12 +771,12 @@ const EditTraining = () => {
 
                 <Col lg={9} md={12}>
                   <Form.Group>
-                    <Form.Label>Select Franchise</Form.Label>
+                    <Form.Label>Select Franchise(s)</Form.Label>
                     <div className="select-with-plus">
                       <Multiselect
                         disable={trainingSettings?.send_to_all_franchisee === true}
                         // singleSelect={true}
-                        placeholder={"Select Franchise Names"}
+                        placeholder={"Select"}
                         displayValue="key"
                         selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id) + ''))}
                         className="multiselect-box default-arrow-select"
@@ -854,7 +856,7 @@ const EditTraining = () => {
                       <Form.Check
                           type="checkbox"
                           checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
-                          label="Franchisee Admin"
+                          label="Franchise Admin"
                           onChange={() => {
                             if (trainingSettings.assigned_roles?.includes("franchisee_admin")) {
                               let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
@@ -947,7 +949,7 @@ const EditTraining = () => {
                       <Form.Group>
                         <Form.Label>Select User Names</Form.Label>
                         <Multiselect
-                          placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
+                          placeholder={fetchedFranchiseeUsers ? "Select" : "No User Available"}
                           displayValue="key"
                           selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users.includes(d.id + ''))}
                           className="multiselect-box default-arrow-select"

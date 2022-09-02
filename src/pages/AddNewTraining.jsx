@@ -385,12 +385,11 @@ const AddNewTraining = () => {
                     <Row>
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Name*</Form.Label>
+                          <Form.Label>Training Name *</Form.Label>
                           <Form.Control
                             type="text"
                             maxLength={100}
                             name="title"
-                            placeholder="Enter Training Title"
                             // onKeyPress={(e) => {
                             //     if (e.keyCode === 32) {
                             //       e.preventDefault();
@@ -424,9 +423,10 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Category*</Form.Label>
+                          <Form.Label>Training Category *</Form.Label>
                           <Select
                             closeMenuOnSelect={true}
+                            placeholder="Select"
                             components={animatedComponents}
                             options={trainingCategory}
                             onChange={(event) => {
@@ -447,11 +447,10 @@ const AddNewTraining = () => {
 
                       <Col md={12} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Description*</Form.Label>
+                          <Form.Label>Training Description *</Form.Label>
                           <Form.Control
                             as="textarea"
                             name="description"
-                            placeholder="Enter Training Description"
                             rows={3}
                             onChange={(e) => {
                               handleTrainingData(e);
@@ -467,12 +466,11 @@ const AddNewTraining = () => {
 
                       <Col md={12} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Meta Description*</Form.Label>
+                          <Form.Label>Meta Description *</Form.Label>
                           <Form.Control
                             as="textarea"
                             name="meta_description"
                             maxLength={255}
-                            placeholder="Enter Meta Description"
                             rows={3}
                             onChange={(e) => {
                               if (trainingData.meta_description.length >= 0 && trainingData.meta_description.length <= 250) {
@@ -500,7 +498,6 @@ const AddNewTraining = () => {
                               type="number"
                               min={1}
                               max={2}
-                              placeholder="Time Needed For This Training"
                               onChange={(event) => {
                                 setTrainingData((prevState) => ({
                                   ...prevState,
@@ -542,6 +539,7 @@ const AddNewTraining = () => {
                           <Form.Label>Select Training Form</Form.Label>
                           <Select
                             closeMenuOnSelect={true}
+                            placeholder="Select"
                             components={animatedComponents}
                             options={trainingFormData}
                             onChange={(event) => {
@@ -654,7 +652,7 @@ const AddNewTraining = () => {
             <Row>
               <Col lg={3} sm={6}>
                 <Form.Group>
-                  <Form.Label>Start Date*</Form.Label>
+                  <Form.Label>Start Date *</Form.Label>
                   <Form.Control
                     type="date"
                     name="start_date"
@@ -674,7 +672,7 @@ const AddNewTraining = () => {
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-sm-0">
                 <Form.Group>
-                  <Form.Label>Start Time*</Form.Label>
+                  <Form.Label>Start Time *</Form.Label>
                   <Form.Control
                     type="time"
                     name="start_time"
@@ -770,12 +768,12 @@ const AddNewTraining = () => {
 
               <Col lg={9} md={12}>
                 <Form.Group>
-                  <Form.Label>Select Franchise</Form.Label>
+                  <Form.Label>Select Franchise(s)</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
                       disable={trainingSettings?.send_to_all_franchisee === true}
                       // singleSelect={true}
-                      placeholder={"Select Franchise Names"}
+                      placeholder={"Select"}
                       displayValue="key"
                       selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id)))}
                       className="multiselect-box default-arrow-select"
@@ -866,7 +864,7 @@ const AddNewTraining = () => {
                       <Form.Check
                         type="checkbox"
                         checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
-                        label="Franchisee Admin"
+                        label="Franchise Admin"
                         onChange={() => {
                           if (trainingSettings.assigned_roles.includes("franchisee_admin")) {
                             let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
@@ -957,7 +955,7 @@ const AddNewTraining = () => {
                   <Form.Group>
                     <Form.Label>Select User Names</Form.Label>
                     <Multiselect
-                      placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
+                      placeholder={fetchedFranchiseeUsers ? "Select" : "No User Available"}
                       displayValue="key"
                       selectedValues={fetchedFranchiseeUsers.filter(d => trainingSettings.assigned_users.includes(parseInt(d.id)))}
                       className="multiselect-box default-arrow-select"

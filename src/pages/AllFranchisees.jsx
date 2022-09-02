@@ -134,7 +134,7 @@ const AllFranchisees = () => {
         if (response.status === 200 && response.data.status === "success") {
             const { franchisees } = response.data;
             console.log('FRANCHISEE LIST:', franchisees);
-            let temp = franchisees.map(franchisee => ({
+            let temp = franchisees?.map(franchisee => ({
                 id: franchisee.id,
                 name: franchisee.franchisee_name,
                 location: franchisee.city + ", " + franchisee.state,
