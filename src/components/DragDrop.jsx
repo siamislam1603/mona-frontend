@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 let random = () => { }
 
-export default function DropAllFile({ image, onSave, setTrainingData, setErrors, setFetchedCoverImage = random, title = "Files" }) {
+export default function DropAllFile({ image, onSave, setTrainingData, setErrors, setFetchedCoverImage = random, title = "Image" }) {
 
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();

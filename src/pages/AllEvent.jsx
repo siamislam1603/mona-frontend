@@ -141,16 +141,18 @@ console.log("THE EVENT PROPS",props.allEvent)
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
               <div className="title-xxs">{data.title}<small><span>
               <span className="timesec">{getAddedTime(data.createdAt)}</span>
-                {
-                              localStorage.getItem('user_role')
-                                  ? localStorage
-                                    .getItem('user_role')
-                                     .split('_')
-                                     .map(
-                                      (data) =>
-                                       data.charAt(0).toUpperCase() + data.slice(1)
-                                      ).join(' ')
-                          : ''} : </span>{userName}</small></div>              
+              {
+                                         data.user.role.split('_')
+                                         .map(
+                                          (data) =>
+                                           data.charAt(0).toUpperCase() + data.slice(1)
+                                          ).join(' ')
+                                      } : 
+                                  
+                             </span>
+                             {data.user.fullname[0].toUpperCase()+data.user.fullname.slice(1)}
+                          
+                          </small></div>              
               <div className="date">
                  
                   {/* <Dropdown.Toggle id="extrabtn" className="ctaact">
