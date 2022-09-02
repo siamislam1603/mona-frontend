@@ -279,6 +279,7 @@ const EditUser = () => {
       setFormErrors(error);
     } else {
       let data = new FormData();
+      
       trainingDocuments?.map(async(item)=>{
         const blob=await fetch(await toBase64(item)).then((res) => res.blob());
         data.append('images', blob);
@@ -571,6 +572,7 @@ const EditUser = () => {
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
                           setPopupVisible={setPopupVisible}
+
                           fetchedPhoto={formData?.profile_photo || ""}
                         />
                         <span className="error">
