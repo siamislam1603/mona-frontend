@@ -459,7 +459,7 @@ console.log(announcementData.title)
                             
                             <Form.Group className="col-md-6 mb-3">
                               <div className="btn-radio inline-col">
-                                <Form.Label>Send to all franchisee:</Form.Label>
+                                <Form.Label>Send to all Franchises:</Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
