@@ -6,6 +6,7 @@ import axios from "axios";
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import { FullLoader } from "../components/Loader";
 
 const selectRow = {
     mode: 'checkbox',
@@ -15,6 +16,7 @@ const selectRow = {
 const FileRepodAddbyMe = () => {
 
     const [userData, setUserData] = useState([]);
+    const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     userData && console.log('USER DATA:', userData.map(data => data));
 
     const GetData = async () => {
@@ -23,7 +25,9 @@ const FileRepodAddbyMe = () => {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })
-
+        if (response) {
+            setfullLoaderStatus(false)
+        }
         if (response.status === 200) {
             const users = response.data.dataDetails;
 
@@ -120,6 +124,7 @@ const FileRepodAddbyMe = () => {
     }, []);
     return (
         <div>
+            <FullLoader loading={fullLoaderStatus} />
             {userData.length > 0 ? (
                 <ToolkitProvider
                     keyField="name"

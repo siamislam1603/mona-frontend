@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
+import { FullLoader } from "../components/Loader";
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
 const animatedComponents = makeAnimated();
@@ -59,6 +60,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [shareType, setShareType] = useState("roles");
     const [applicableToAll, setApplicableToAll] = useState(false);
     const [error, setError] = useState(false);
+    const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -162,7 +164,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         response = await response.json();
         setUserTow(response.result)
 
-
+        if (response) {
+            setfullLoaderStatus(false)
+        }
+        
         const users = response.files;
         let tempData = users.map((dt) => ({
             name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
@@ -478,6 +483,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                             </aside>
                             <div className="sec-column">
                                 <TopHeader />
+                                <FullLoader loading={fullLoaderStatus} />
                                 <div className="entry-container">
                                     <div className="user-management-sec repository-sec">
                                         <ToolkitProvider
