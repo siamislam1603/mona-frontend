@@ -1217,7 +1217,7 @@ const OperatingManual = () => {
                     name="order"
                     min={1}
                     value={categoryData?.order}
-                    placeholder="Enter Position"
+                    placeholder="1"
                     onChange={(e) => {
                       setCategoryField(e.target.name, e.target.value);
                     }}

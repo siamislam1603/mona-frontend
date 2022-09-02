@@ -31,18 +31,34 @@ const AddNewAnnouncements = () => {
     return today
   }
   const hour = () =>{
+    let time 
+    let min 
     var date = new Date();
     let currentHours = date.getHours();
     currentHours = ("0" + currentHours).slice(-2);
     console.log("Current hour",currentHours)
-    let  min = date.getMinutes()
-    console.log("Time",typeof min)
-    min = ("0" + min).slice(-2);
+     min = date.getMinutes()+10
+    console.log("the large min out",min)
+
+    if(min>60){
+      console.log("in is large then 60",min)
+      let currentHours = date.getHours()+1;
+       let newd=min- 60
+      currentHours = ("0" + currentHours).slice(-2);
+      console.log("in is large new ",newd,min,date.getMinutes(),date.getMinutes()-min, typeof min,typeof date.getMinutes())
+       time = currentHours + ":" + newd;
+       console.log("is large time",time)
+
+    }
+    else {
+      min = ("0" + min).slice(-2);
 
 
-    let time = currentHours + ":" + min
-    console.log("time and current hour",time,"min",min+"10",currentHours)
+       time = currentHours + ":" + min
+    }
+    console.log("time",time)
     return time;
+
     
    } 
 

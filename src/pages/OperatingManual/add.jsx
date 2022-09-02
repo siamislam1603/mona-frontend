@@ -543,7 +543,7 @@ const AddOperatingManual = () => {
                             type="text"
                             name="title"
                             value={operatingManualData?.title}
-                            placeholder="Enter Title"
+                            // placeholder="Enter Title"
                             onChange={(e) => {
                               setOperatingManualField(
                                 e.target.name,
@@ -568,7 +568,7 @@ const AddOperatingManual = () => {
                             min={1}
                             
                             value={operatingManualData?.order}
-                            placeholder="Enter Position"
+                            placeholder="1"
                             onChange={(e) => {
                               setOperatingManualField(
                                 e.target.name,
@@ -616,7 +616,7 @@ const AddOperatingManual = () => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Cover Image :
+                            Upload Cover Image
                           </Form.Label>
                           <div className="upload_cover_box">
                             <div className="cover_image">
@@ -668,7 +668,7 @@ const AddOperatingManual = () => {
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Video :
+                            Upload Video
                           </Form.Label>
 
                           <div className="upload_cover_box video_reference">
@@ -730,7 +730,7 @@ const AddOperatingManual = () => {
                         <div className="upload_related_files">
                           <Form.Group>
                             <Form.Label className="formlabel">
-                              Upload File :
+                              Upload File
                             </Form.Label>
 
                             <DropAllRelatedFile
@@ -1029,7 +1029,7 @@ const AddOperatingManual = () => {
                     type="number"
                     name="order"
                     min={1}
-                    placeholder="Enter Position"
+                    placeholder="1"
                     onChange={(e) => {
                       setCategoryField(e.target.name, e.target.value);
                     }}
