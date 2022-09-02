@@ -594,7 +594,6 @@ const EditUser = () => {
                             <Form.Control
                               type="text"
                               name="fullname"
-                              placeholder="Enter Full Name"
                               value={formData?.fullname}
                               onChange={handleChange}
                             />
@@ -606,7 +605,7 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>User Role</Form.Label>
                             <Select
-                              placeholder="Which Role?"
+                              placeholder="Select"
                               closeMenuOnSelect={true}
                               isDisabled={localStorage.getItem('user_role') === 'educator' || localStorage.getItem('user_role') === 'guardian'}
                               value={userRoleData.filter(d => d.value === formData?.role) || ""}
@@ -627,10 +626,10 @@ const EditUser = () => {
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Suburb</Form.Label>
                             <Select
-                              placeholder="Search Your Suburb"
+                              placeholder="Select"
                               closeMenuOnSelect={true}
                               options={cityData}
-                              value={[{value: `${formData?.city}`, label: `${formData?.city}`}] || ""}
+                              value={[{value: `${formData?.city}`, label: `${formData?.city}`}] || "Select"}
                               onInputChange={(e) => {
                                 setSuburbSearchString(e);
                               }}
@@ -656,7 +655,6 @@ const EditUser = () => {
                             <Form.Control
                               type="text"
                               name="address"
-                              placeholder="Enter Your Address"
                               value={formData.address}
                               onChange={handleChange}
                             />
@@ -670,7 +668,6 @@ const EditUser = () => {
                             <Form.Control
                               type="number"
                               name="postalCode"
-                              placeholder="Your Postal Code"
                               value={formData.postalCode}
                               onChange={handleChange}
                             />
@@ -681,7 +678,6 @@ const EditUser = () => {
                             <Form.Control
                               type="email"
                               name="email"
-                              placeholder="Enter Your Email ID"
                               value={formData.email}
                               onChange={handleChange}
                             />
@@ -698,6 +694,7 @@ const EditUser = () => {
                                 closeMenuOnSelect={false}
                                 components={animatedComponents}
                                 isMulti
+                                placeholder="Select"
                                 value={trainingCategoryData?.filter(d => formData?.trainingCategories?.includes(parseInt(d.id)))}
                                 options={trainingCategoryData}
                                 onChange={(selectedOptions) => {
@@ -718,6 +715,7 @@ const EditUser = () => {
                                 closeMenuOnSelect={false}
                                 components={animatedComponents}
                                 isMulti
+                                placeholder="Select"
                                 value={pdcData?.filter(d => formData?.professionalDevCategories?.includes(parseInt(d.id)))}
                                 options={pdcData}
                                 onChange={(selectedOptions) => {
@@ -749,7 +747,7 @@ const EditUser = () => {
                                 type="tel"
                                 name="phone"
                                 maxLength={10}
-                                placeholder="Enter Your Number"
+                                placeholder="XXX XXX XXXX"
                                 value={formData.phone}
                                 onChange={(e) => {
                                   if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
@@ -779,7 +777,6 @@ const EditUser = () => {
                               <Form.Control
                                 type="text"
                                 name="nominated_assistant"
-                                placeholder="Enter Full Name"
                                 value={formData?.nominated_assistant || ""}
                                 onChange={(e) => {
                                   handleChange(e);
@@ -789,9 +786,9 @@ const EditUser = () => {
                           }
                           
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Select Franchisee</Form.Label>
+                            <Form.Label>Select Franchise</Form.Label>
                             <Select
-                              placeholder={"Which Franchise?"}
+                              placeholder={"Select"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
                               // isMulti
@@ -823,7 +820,7 @@ const EditUser = () => {
                               <Form.Label>Select Primary Coordinator</Form.Label> 
                               <Select
                                 isDisabled={formData.role !== 'educator'}
-                                placeholder={formData.role === 'educator' ? "Which Co-ordinator?" : "disabled"}
+                                placeholder={formData.role === 'educator' ? "Select" : "disabled"}
                                 closeMenuOnSelect={true}
                                 value={coordinatorData?.filter(data => parseInt(data.id) === parseInt(formData?.coordinator))}
                                 options={coordinatorData}
@@ -850,6 +847,7 @@ const EditUser = () => {
                                 closeMenuOnSelect={false}
                                 components={animatedComponents}
                                 isMulti
+                                placeholder="Select"
                                 value={businessAssetData?.filter(d => formData?.businessAssets?.includes(parseInt(d.id)))}
                                 options={businessAssetData}
                                 onChange={(selectedOptions) => {
@@ -871,7 +869,6 @@ const EditUser = () => {
                                   type="password"
                                   name="password"
                                   disabled={formData?.assign_random_password === true}
-                                  placeholder={"Type Your Password"}
                                   value={formData.password ?? ''}
                                   onChange={(e) => {
                                     handleChange(e);
@@ -890,7 +887,6 @@ const EditUser = () => {
                                   type="password"
                                   name="confirm_password"
                                   disabled={formData?.assign_random_password === true}
-                                  placeholder="Re-type Password"
                                   value={formData.confirm_password ?? ''}
                                   onChange={(e) => {
                                     handleChange(e);
@@ -983,6 +979,7 @@ const EditUser = () => {
                             <DragDropMultiple
                               module="user-management"
                               onSave={setTrainingDocuments} />
+                            <small className="fileinput">(Upload 5 files max.)</small>
                           </Form.Group>
 
                           <Col md={12}>

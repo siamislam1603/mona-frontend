@@ -419,7 +419,7 @@ const RepoEdit = () => {
                                                                         }}
                                                                         value={data?.categoryId}
                                                                     >
-                                                                        <option value="">Select File Category</option>
+                                                                        <option value="">Select</option>
                                                                         <option value="8">General</option>
                                                                     </Form.Select>
                                                                 </>) : (
@@ -431,7 +431,7 @@ const RepoEdit = () => {
                                                                         }}
                                                                         value={data?.categoryId}
                                                                     >
-                                                                        <option value="">Select File Category</option>
+                                                                        <option value="">Select</option>
                                                                         {category?.map((item) => {
                                                                             return (
                                                                                 <option value={item.id}>{item.value}</option>
@@ -450,7 +450,7 @@ const RepoEdit = () => {
                                                         <Row className="mt-4">
                                                             <Col lg={3} md={6}>
                                                                 <Form.Group>
-                                                                    <Form.Label>Send to all franchises:</Form.Label>
+                                                                    <Form.Label>Send to all franchisee:</Form.Label>
                                                                     <div className="new-form-radio d-block">
                                                                         <div className="new-form-radio-box">
                                                                             <label for="all">
@@ -497,7 +497,7 @@ const RepoEdit = () => {
                                                             </Col>
                                                             <Col lg={9} md={12}>
                                                                 <Form.Group>
-                                                                    <Form.Label>Select Franchise</Form.Label>
+                                                                    <Form.Label>Select franchise(s)</Form.Label>
                                                                     <div className="select-with-plus">
                                                                         <Multiselect
                                                                             disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}

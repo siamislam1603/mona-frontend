@@ -1018,7 +1018,6 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
             <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Go Back</Button>
             <Button 
               variant="primary" 
-              disabled={loader ? true : false}
               type="submit">
               {loader === true ? (
                 <>

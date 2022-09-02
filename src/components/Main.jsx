@@ -69,7 +69,7 @@ import AllEvent from '../pages/AllEvent';
 function returnDashboard(role) {
   if (role === 'franchisor_admin')
     return <FranchisorDashboard />
-  else if (role === 'franchise_admin')
+  else if (role === 'franchisee_admin')
     return <FranchiseeDashboard />
   else if (role === 'coordinator')
     return <CoordinatorDashboard />

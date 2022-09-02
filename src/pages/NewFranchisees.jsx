@@ -169,8 +169,7 @@ const NewFranchisees = () => {
                                                 <Form.Label>Franchise Name</Form.Label>
                                                 <Form.Control
                                                     name="franchisee_name" 
-                                                    type="text" 
-                                                    placeholder="Special DayCare"
+                                                    type="text"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -202,7 +201,7 @@ const NewFranchisees = () => {
                                             <Form.Group className="mb-3">
                                                 <Form.Label>Suburb</Form.Label>
                                                 <Select
-                                                placeholder="Which Suburb?"
+                                                placeholder="Select"
                                                 closeMenuOnSelect={true}
                                                 options={cityData}
                                                 onInputChange={(e) => {
@@ -224,7 +223,7 @@ const NewFranchisees = () => {
                                             <Form.Group className="mb-3">
                                                 <Form.Label>State</Form.Label>
                                                 <Select
-                                                placeholder="Which State?"
+                                                placeholder="Select"
                                                 closeMenuOnSelect={true}
                                                 options={australianStatesData}
                                                 onChange={(e) => {
@@ -245,8 +244,7 @@ const NewFranchisees = () => {
                                                 <Form.Label> Contact Number</Form.Label>
                                                 <Form.Control 
                                                     name="contact"
-                                                    type="text" 
-                                                    placeholder="454 342 56"
+                                                    type="text"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -281,7 +279,6 @@ const NewFranchisees = () => {
                                                 <Form.Control 
                                                     name="franchisee_number"
                                                     type="text" 
-                                                    placeholder="ADS 00342"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -314,8 +311,7 @@ const NewFranchisees = () => {
                                                 <Form.Label>Street Address</Form.Label>
                                                 <Form.Control 
                                                     name="address"
-                                                    type="text" 
-                                                    placeholder="5th Avenue, Central Park Street, Broadway"
+                                                    type="text"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -327,11 +323,10 @@ const NewFranchisees = () => {
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                <Form.Label>Postcode</Form.Label>
+                                                <Form.Label>Post Code</Form.Label>
                                                 <Form.Control
                                                     name="postcode" 
                                                     type="text" 
-                                                    placeholder="24545"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({

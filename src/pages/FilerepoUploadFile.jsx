@@ -380,7 +380,7 @@ const FilerepoUploadFile = () => {
                                             <Form.Label>Upload File:*</Form.Label>
                                             <DragDropFileEdit onChange={setField} />
                                             {/* <DragDropRepository onChange={setField} /> */}
-                                            {error && !formSettingData?.setting_files && < span className="error"> File Category is required!</span>}
+                                            {error && !formSettingData?.setting_files && < span className="error"> File  is required!</span>}
                                             <p className="error">{errors.setting_files}</p>
                                         </Form.Group>
                                     </Col>
@@ -421,7 +421,7 @@ const FilerepoUploadFile = () => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
                                                 >
-                                                    <option value="">Select File Category</option>
+                                                    <option value="">Select</option>
                                                     <option value="8" selected={true}>General</option>
                                                 </Form.Select>
                                             </>) : (
@@ -432,7 +432,7 @@ const FilerepoUploadFile = () => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
                                                 >
-                                                    <option value="">Select File Category</option>
+                                                    <option value="">Select</option>
                                                     {category?.map((item) => {
                                                         return (
                                                             <option value={item.id}>{item.category_name}</option>
@@ -442,7 +442,7 @@ const FilerepoUploadFile = () => {
                                             </>)}
 
 
-                                        {error && !formSettingData.file_category && < span className="error"> File is required!</span>}
+                                        {error && !formSettingData.file_category && < span className="error">File Category is required!</span>}
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -452,7 +452,7 @@ const FilerepoUploadFile = () => {
                                     <Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
-                                                <Form.Label>Send to all Franchises:</Form.Label>
+                                                <Form.Label>Send to all Franchisee:</Form.Label>
                                                 <div className="new-form-radio d-block">
                                                     <div className="new-form-radio-box">
                                                         <label for="all">
@@ -502,11 +502,11 @@ const FilerepoUploadFile = () => {
 
                                         <Col lg={9} md={12}>
                                             <Form.Group>
-                                                <Form.Label>Select Franchise</Form.Label>
+                                                <Form.Label>Select Franchise(s)</Form.Label>
                                                 <div className="select-with-plus">
                                                     <Multiselect
                                                         disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
-                                                        placeholder={"Select User Names"}
+                                                        placeholder={"Select"}
                                                         displayValue="key"
                                                         className="multiselect-box default-arrow-select"
                                                         onRemove={function noRefCheck(data) {

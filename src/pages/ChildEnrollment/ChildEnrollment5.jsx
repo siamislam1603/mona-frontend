@@ -306,7 +306,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Bottle TIme/Breast Feeding Arrangements *</Form.Label>
+                    <Form.Label>Bottle Time/Breast Feeding Arrangements *</Form.Label>
                     <Form.Control 
                       type="text"
                       value={childDailyRoutineData?.bottle_time || ""}
@@ -387,7 +387,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Likes/ Dislikes *</Form.Label>
+                    <Form.Label>Likes/Dislikes *</Form.Label>
                     <Form.Control 
                       type="text"
                       name="likes_dislikes"
@@ -682,7 +682,6 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Go Back</Button>
             <Button 
               variant="primary" 
-              disabled={loader ? true : false}
               type="submit">
               {loader === true ? (
                 <>
