@@ -12,8 +12,9 @@ import axios from 'axios';
 import { TrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
-import DragDropSingle from '../components/DragDropSingle';
-import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
+
+import DragDropTraning from '../components/DragDropTraning';
+import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
 
 const animatedComponents = makeAnimated();
 
@@ -65,7 +66,7 @@ const AddNewTraining = () => {
   const [loader, setLoader] = useState(false);
   const [createTrainingModal, setCreateTrainingModal] = useState(false);
   const [saveSettingsToast, setSaveSettingsToast] = useState(null);
-
+  const [error, setError] = useState(false);
   const [trainingData, setTrainingData] = useState({
     time_unit: "Minutes",
     title: "",
@@ -268,6 +269,8 @@ const AddNewTraining = () => {
     }));
   };
 
+  const [err, seterr] = useState(false)
+
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
@@ -280,8 +283,11 @@ const AddNewTraining = () => {
       setErrors({});
       if (!allowSubmit)
         setSettingsModalPopup(true);
-
-      if (settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+      if (!croppedImage) {
+        setError(true);
+        return false
+      }
+      if (settingsModalPopup === false && allowSubmit && trainingData && croppedImage) {
 
         let data = new FormData();
         for (let [key, values] of Object.entries(trainingSettings)) {
@@ -383,6 +389,7 @@ const AddNewTraining = () => {
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
                   <div className="training-form">
                     <Row>
+
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Training Name *</Form.Label>
@@ -559,13 +566,17 @@ const AddNewTraining = () => {
                           <Form.Label>Upload Cover Image*:</Form.Label>
                           {/* <DropOneFile
                             title="Image"
+                            croppedImage={croppedImage}
+                            setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
+                            setPopupVisible={setPopupVisible}
+                            fetchedPhoto={""}
                             setErrors={setErrors}
                           // setTrainingData={setTraining}
                           /> */}
 
-
-                          <DragDropSingle
+                          {console.log(croppedImage, "croppedImage", coverImage)}
+                          <DragDropTraning
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
@@ -575,15 +586,15 @@ const AddNewTraining = () => {
 
                           {
                             popupVisible &&
-                            <ImageCropPopup
+                            <ImageCropTraning
                               image={coverImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }
-
-
                           <small className="fileinput">(png, jpg & jpeg)</small>
-                          {/* {errors.croppedmage !== null && <span className="error mt-2">{errors.croppedmage}</span>} */}
+                          {error && !croppedImage && < span className="error"> File is required!</span>}
+                          {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
+
                         </Form.Group>
                       </Col>
 
