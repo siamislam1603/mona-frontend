@@ -907,6 +907,7 @@ const NewUser = () => {
                             <DragDropMultiple 
                               module="user-management"
                               onSave={setTrainingDocuments} />
+                            <small className="fileinput">(Upload 5 files max.)</small>
                           </Form.Group>
 
                           <Col md={12}>
