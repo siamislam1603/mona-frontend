@@ -124,30 +124,21 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         selectedUser.splice(index, 1);
     }
     const GetFile = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-        let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
-        response = await response.json();
-        console.log(response, "response")
+        let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, {headers:{ "Authorization": "Bearer " + localStorage.getItem('token') }})
+
         if (response) {
             setfullLoaderStatus(false)
         }
-        if (response.status === "success" || 200) {
-            const users = response.files;
-            let tempData = users.map((dt) => ({
+
+        if (response.status === 200 && response.data.status === "success") {
+            const {files} = response.data;
+
+            let tempData = files.map((dt) => ({
                 name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
                 createdAt: dt.createdAt,
                 userID: dt.id,
                 creatorName: dt.creatorName + "," + dt.creatorRole,
-                Shaired: dt.repository.repository_shares.length,
+                Shaired: dt?.repository?.repository_shares?.length,
                 categoryId: dt.categoryId
             }));
             setUserData(tempData);

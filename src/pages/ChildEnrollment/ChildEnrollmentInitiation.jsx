@@ -24,19 +24,8 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   const [educatorData, setEducatorData] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [loader, setLoader] = useState(false);
-  const [parentFranchiseeId, setParentFranchiseeId] = useState();
   const [errors, setErrors] = useState({});
 
-  const fetchParentData = async () => {
-    const response = await axios.get(`${BASE_URL}/auth/user/${parentId}`);
-
-    if(response.status === 200 && response.data.status === "success") {
-      let { user } = response.data;
-      let { franchisee_id } = user;
-
-      setParentFranchiseeId(franchisee_id);
-    }
-  }
 
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/${typeof selectedFranchisee === 'undefined' ? 'all' : selectedFranchisee}`);
@@ -62,33 +51,44 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
   const initiateEnrollment = async () => {
     let token = localStorage.getItem('token');
-    let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: parentFranchiseeId || localStorage.getItem('franchisee_id')  }, {
+    let response = await axios.get(`${BASE_URL}/auth/user/${parentId}`, {
       headers: {
-        "Authorization": `Bearer ${token}`
+        "Authorization": "Bearer " + token
       }
     });
 
-    if(response.status === 201 && response.data.status === "success") {
-      let { child } = response.data;
-      // SAVING PARENT DETAIL
-      response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: parentId, childId: child.id}, {
+    if(response.status === 200 && response.data.status === "success") {
+      let { user } = response.data;
+      let { franchisee_id } = user;
+
+      response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: franchisee_id  }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
       });
-
+  
       if(response.status === 201 && response.data.status === "success") {
-        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${child.id}`, { educatorIds: formOneChildData.educator }, {
+        let { child } = response.data;
+        // SAVING PARENT DETAIL
+        response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: parentId, childId: child.id}, {
           headers: {
             "Authorization": `Bearer ${token}`
-          }     
-        }); 
+          }
+        });
+  
         if(response.status === 201 && response.data.status === "success") {
-          response = await axios.patch(`${BASE_URL}/auth/user/update/${parentId}`);
-
+          response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${child.id}`, { educatorIds: formOneChildData.educator }, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }     
+          }); 
           if(response.status === 201 && response.data.status === "success") {
-            setLoader(false);
-            window.location.href = `/children/${parentId}`;
+            response = await axios.patch(`${BASE_URL}/auth/user/update/${parentId}`);
+  
+            if(response.status === 201 && response.data.status === "success") {
+              setLoader(false);
+              window.location.href = `/children/${parentId}`;
+            }
           }
         }
       }
@@ -112,15 +112,11 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     console.log('FETCHING EDUCATOR LIST!');
     fetchEducatorList();
   }, [selectedFranchisee])
-
-  useEffect(() => {
-    fetchParentData();
-  }, [])
   
-  formOneChildData && console.log('CHILD DATA:', formOneChildData);
-  educatorData && console.log('EDUCATOR DATA:', educatorData);
-  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
-  errors && console.log('ERRORS:', errors);
+  // formOneChildData && console.log('CHILD DATA:', formOneChildData);
+  // educatorData && console.log('EDUCATOR DATA:', educatorData);
+  // selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
+  // errors && console.log('ERRORS:', errors);
   return (
     <>
       <div id="main">
