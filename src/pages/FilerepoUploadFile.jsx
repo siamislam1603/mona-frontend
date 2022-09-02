@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Form, Modal, Row, Col, } from 'react-bootstrap';
-import DragDropRepository from '../components/DragDropRepository';
 import Multiselect from 'multiselect-react-dropdown';
 import { BASE_URL } from '../components/App';
 import axios from "axios";
@@ -56,22 +55,19 @@ const FilerepoUploadFile = () => {
     //======================== GET FILE CATAGOREY==================
 
     const getFileCategory = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-        let result = await fetch(`${BASE_URL}/fileRepo/files-category`, requestOptions);
-        result = await result.json()
-            .then((result) => setCategory(result.category))
-            .catch((error) => console.log('error', error));
+        let result = await axios.get(`${BASE_URL}/fileRepo/files-category`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+            .then((res) => {
+                setCategory(res.data.category)
+            })
+            .catch((error) => {
+                console.error(error)
+            })
     };
-
+    console.log(category, " ")
     //======================== GET FILE Franchisee List==================
 
     const fetchFranchiseeList = async () => {
@@ -94,41 +90,27 @@ const FilerepoUploadFile = () => {
     //======================== GET Children List==================
 
     const getChildren = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-
         let franchiseeArr = formSettings.assigned_franchisee
-
-        var request = {
-            headers: myHeaders,
-        };
-
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, request)
+        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
         if (response.status === 200) {
             setChild(response.data.children)
         }
     }
     //======================== GET User List==================
-
     const getUser = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-
-        var request = {
-            headers: myHeaders,
-        };
-
         let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
 
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+
         if (response.status === 200) {
-            // console.log(response.data.users, "respo")
             let userList = response.data.users
             if (getUser_Role == 'franchisee_admin') {
                 userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))

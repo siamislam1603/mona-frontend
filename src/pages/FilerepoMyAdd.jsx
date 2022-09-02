@@ -527,12 +527,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </Container>
                 </section>
-
                 <Modal
                     show={showModal}
                     onHide={() => setShowModal(false)}
