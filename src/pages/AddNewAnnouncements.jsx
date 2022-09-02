@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
@@ -19,6 +19,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 const AddNewAnnouncements = () => {
 
+
   const theDate = () => {
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -35,11 +36,12 @@ const AddNewAnnouncements = () => {
     currentHours = ("0" + currentHours).slice(-2);
     console.log("Current hour",currentHours)
     let  min = date.getMinutes()
+    console.log("Time",typeof min)
     min = ("0" + min).slice(-2);
 
 
     let time = currentHours + ":" + min
-    console.log("time and current hour",time,currentHours)
+    console.log("time and current hour",time,"min",min+"10",currentHours)
     return time;
     
    } 
@@ -61,7 +63,7 @@ const [announcementData, setAnnouncementData] = useState({
   // start_time:new Date().getHours() + ":" + new Date().getMinutes()
   start_time:hour()
 });
-const [titleError,setTitleError] = useState(null);
+const [titleError,setTitleError] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
@@ -86,6 +88,7 @@ const fetchUserRoles = async () => {
     ]);
   }
 };
+
 
 const createAnnouncement = async (data) => {
   console.log("CALLING CREATED ANNOUCNEMENT")
@@ -278,18 +281,44 @@ const createAnnouncement = async (data) => {
       }
 
     };
+    const titleCheck = async() =>{
+      try {
+        const token = localStorage.getItem('token');
+        console.log(announcementData.title)
+            const resp = await axios.get(`${BASE_URL}/announcement/check-title?title=${announcementData.title}`,{
+              headers: {
+                "Authorization": "Bearer " + token
+              }
+            })
+            console.log("title checking", resp)
+            if(resp.status === 200 && resp.data.status === "success"){
+              setTitleChecking(true)
+            }
+      } catch (error) {
+         if(error.response.status === 404){
+          console.log("TItle checking error",error)
+          setTitleChecking(false)
+          setAddnewAnnouncement(false)
+          setTitleError("Title already exit")
+         }
+      }
+    }
 
     const handleDataSubmit = event => {
       event.preventDefault();
       // if()
       console.log("All frnahise",allFranchise)
       console.log("The annoucement after submit ",announcementData)
-      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage, allFranchise);
+      console.log("THe title error",titleError,titleChecking)
+      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,);
 
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
+        // errorRef.current.scrollIntoView();
+
         window.scroll(0,0)
+        
        }
        else{
         console.log("INSDIE ERROR EMPTY")
@@ -352,26 +381,9 @@ const createAnnouncement = async (data) => {
 // }
 
   };
-  const titleCheck = async() =>{
-    const token = localStorage.getItem('token');
-console.log(announcementData.title)
-    const resp = await axios.get(`${BASE_URL}/announcement/check-title?title=${announcementData.title}`,{
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    })
-    console.log("title checking", resp)
-    if(resp.status === 200 && resp.data.status === "success"){
-      setTitleChecking(true)
-    }
-    else{
-      setTitleChecking(false)
-    setAddnewAnnouncement(false)
 
-       setTitleError("Title already exit")
+  
 
-    }
-  }
   console.log("Date",new Date().toISOString().slice(0,10))
   // console.log("Time",new Date().getHours() + ":" + new Date().getMinutes())
   useEffect(() => {
@@ -408,13 +420,13 @@ console.log(announcementData.title)
       // hour()
       // theDate()
     },[])
-    useEffect(() =>{
-      titleCheck()
-    },[announcementData.title])
+    // useEffect(() =>{
+    //   titleCheck()
+    // },[announcementData.title])
 
    
   // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-  console.log("The franhiseData 1",allFranchise);
+  console.log("The franhiseData 1",allFranchise,titleChecking);
   console.log("SELECETED FRANHISE",selectedFranchisee,franchiseeData)
   announcementData && console.log('Announcement Data:', announcementData);
   return (
@@ -446,12 +458,12 @@ console.log(announcementData.title)
                           type="text" 
                           name="title"
                           onChange={handleAnnouncementData} 
-                          isInvalid = {!!error.title}
+                          isInvalid = {!!error.title || !!error.titleError}
                           />
                           <Form.Control.Feedback type="invalid">
                             {error.title}
                           </Form.Control.Feedback>
-                          {titleError && <div className="error">{titleError}</div>} 
+                          {/* {titleError && <div className="error">{titleError}</div>}  */}
                          
                         </Form.Group>
                         {
@@ -516,6 +528,8 @@ console.log(announcementData.title)
                               disable={allFranchise === false?false:true}
                               // singleSelect={true}
                               // placeholder={"Select Franchise Names"}
+                              // isInvalid = {!!error.franchise}
+
                               displayValue="key"
                               selectedValues={franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id)))}
                               className="multiselect-box default-arrow-select"
@@ -624,8 +638,8 @@ console.log(announcementData.title)
                     type="time"
                     name="start_time"
                     onChange={handleAnnouncementData}
-                    // defaultValue={new Date().getHours() + ":" + new Date().getMinutes()}
                     defaultValue={hour()}
+                    // min={moment().add(6, "hours")}
                     onInvalid={!!error.start_time}
                   />
                 </Form.Group>
@@ -679,7 +693,7 @@ console.log(announcementData.title)
                     <Row>
                       <Col sm={6}>
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label> Cover Image :</Form.Label>
+                          <Form.Label> Cover Image </Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
                           />
@@ -688,13 +702,13 @@ console.log(announcementData.title)
                       </Col>
                       <Col sm={6}>
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label>Upload Video :</Form.Label>
+                          <Form.Label>Upload Video </Form.Label>
                           <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label>Upload Files :</Form.Label>
+                          <Form.Label>Upload Files </Form.Label>
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>

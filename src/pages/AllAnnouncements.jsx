@@ -254,21 +254,22 @@ console.log("realted f",realtedFile)
                              <Accordion.Header>
                                <div className="head-title">
                                  <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
-                                 <div className="title-xxs">{details.title}
+                                 <div className="title-xxs">{details?.title}
                                  
                                  <small><span>
                                 <span className="timesec">{getAddedTime(details.createdAt)}</span>
                                   
-                                   {
-                                 localStorage.getItem('user_role')
-                                     ? localStorage
-                                       .getItem('user_role')
-                                        .split('_')
-                                        .map(
-                                         (data) =>
-                                          data.charAt(0).toUpperCase() + data.slice(1)
-                                         ).join(' ')
-                             : ''} : </span>{userName}
+                                      {
+                                         details.user.role.split('_')
+                                         .map(
+                                          (data) =>
+                                           data.charAt(0).toUpperCase() + data.slice(1)
+                                          ).join(' ')
+                                      } : 
+                                  
+                             </span>
+                             {details.user.fullname[0].toUpperCase()+details.user.fullname.slice(1)}
+
                              
                              </small>
                              </div>

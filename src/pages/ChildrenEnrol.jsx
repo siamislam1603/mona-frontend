@@ -76,8 +76,9 @@ const ChildrenEnrol = () => {
         // data.map((dt,index) =>{
         //     console.log("dt",dt.parents[index].user.parent_name)
         // })
-        console.log("Eductor data", data[0]?.users[0]?.educator_assigned)
+        console.log("Franchise name", data[0]?.franchisee.franchisee_name)
         let tempData = data.map((dt, index) =>
+
         ({
           name: `${dt.child_name}`,
           //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
@@ -86,9 +87,11 @@ const ChildrenEnrol = () => {
           specailneed: `${dt?.child_medical_information?.has_special_needs}`,
           franchise: `${dt?.franchisee_id}`,
           enrolldate: `${dt?.enrollment_initiated}`,
-          franchise: `${dt?.franchisee.franchisee_name}`
+          franchise: `${dt?.franchisee?.franchisee_name}`
 
-        }))
+        })
+        
+        )
         console.log("TEMPDATA", tempData)
         setChildEnroll(tempData)
       }
@@ -351,7 +354,7 @@ const ChildrenEnrol = () => {
         console.log("frnahise CELL", cell)
         // cell = cell.split(",");
         return (<>
-          <div className="user-list"><span className="user-name">{cell} </span></div></>)
+          <div className="user-list"><span className="user-name">{cell === "undefined" || cell  === "null" ? " ": cell} </span></div></>)
       },
     },
   ];

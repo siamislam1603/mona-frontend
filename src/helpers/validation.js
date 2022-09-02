@@ -161,8 +161,8 @@ export const createOperatingManualValidation = (form) => {
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form, coverImage, allFranchise) => {
-  console.log('The form validation', form);
+export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titleError,titleChecking) => {
+  console.log('The form validation', titleError,titleChecking);
   let newErrors = {};
   console.log('The form validat', form);
   let { title, meta_description, start_date, start_time, franchise } = form;
@@ -170,6 +170,10 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise) => 
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
+  if(titleError){
+    newErrors.title = 'Announcement Title already exit';
+
+  }
   if (!start_date || start_date === 'undefined')
     newErrors.start_date = 'Start Date Required';
   if (!start_time || start_time === 'undefined')

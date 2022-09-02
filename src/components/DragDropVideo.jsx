@@ -71,8 +71,7 @@ export default function DropVideo({ image,onSave, setTrainingData, setErrors, se
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
         <span className="text-center uploadfile cursor" style={{ display: 'inline-block' }}>
-          <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add
-          Files
+          <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add Video
         </span>
       </div>
       
