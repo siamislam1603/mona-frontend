@@ -36,25 +36,28 @@ const columns = [
     formatter: (cell) => {
       cell = cell.split(",");
       return (<>
-        <div className="user-list">
-          <span className="user-pic">
-            <img src={cell[1]} alt='' />
-          </span>
-          <span className="user-name">
-            {cell[0]}
-          </span>
-        </div>
-        {cell[3] ? (<>
-          <br />
+        {
+          cell[0] != "undefined" &&
           <div className="user-list">
             <span className="user-pic">
-              <img src={cell[3]} alt='' />
+              <img src={cell[1]} />
+            </span>
+            <span className="user-name">
+              {cell[0]}
+            </span>
+          </div>
+        }
+        {
+          cell[2] != "undefined" &&
+          <div className="user-list">
+            <span className="user-pic">
+              <img src={cell[3]} />
             </span>
             <span className="user-name">
               {cell[2]}
             </span>
           </div>
-        </>) : (<></>)}
+        }
       </>)
     },
   },
@@ -146,8 +149,7 @@ const columns1 = [
 const FranchiseeDashboard = () => {
   const [countUser, setcountUser] = React.useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
-  const [enrollments, setEnrollments] = useState()
-  const [enrollmentssetUser, setEnrollmentssetUser] = useState()
+  const [enrollments, setEnrollments] = useState([])
 
 
   const announcement = () => {
@@ -166,6 +168,7 @@ const FranchiseeDashboard = () => {
   }
 
   const [userData, setUserData] = useState([]);
+
   const FormData = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/dashboard/franchisee/children-with-additional-needs`, {
@@ -176,49 +179,59 @@ const FranchiseeDashboard = () => {
     console.log("FORM Data", response)
     if (response.status === 200) {
       let data = response.data.childrenEnrolled;
-      console.log(data, "FORM+++++++")
+
       const tempData = data.map((dt, index) => (
         {
           name: `${dt.fullname}`,
-          educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo
-
+          educatatoName: dt.users[0]?.fullname + "," + dt.users[0]?.profile_photo + "," + dt.users[1]?.fullname + "," + dt.users[1]?.profile_photo
         }
       ))
-      console.log(tempData, "FORM+++++++FORM")
+
       setUserData(tempData);
     }
   }
 
 
   const Enrollments = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'authorization',
-      'Bearer ' + localStorage.getItem('token')
-    );
+    const token = localStorage.getItem('token');
+    let response = await axios.get(`${BASE_URL}/dashboard/franchisee/new-enrollments`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("tempData>>>>>>>>>>>>>", response)
+    if (response.status === 200 || "pass") {
 
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
-    let response = await fetch(`${BASE_URL}/dashboard/franchisee/new-enrollments`, requestOptions)
-    // let response = fetch(`${BASE_URL}/dashboard/franchisee/new-enrollments`, requestOptions)
+      let data = response.data.newEnrollments;
+      console.log(data, "FORM+++++++")
+      const tempData = data.map((dt, index) => (
+        {
+          name: `${dt.fullname}`,
+          educatatoName: dt.users[0]?.fullname + "," + dt.users[0]?.profile_photo + "," + dt.users[1]?.fullname + "," + dt.users[1]?.profile_photo
+        }
+      ))
+      console.log(tempData, "FORM+++++++FORM")
+      setEnrollments(tempData);
 
-    response = await response.json();
 
-    setEnrollmentssetUser(response.data)
 
-    const users = response.newEnrollments;
 
-    let tempData = users.map((dt) => ({
-      name: `${dt.fullname}`,
-      educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
-    }));
 
-    setEnrollments(tempData);
-    console.log('tempData>>>>>>>>>>>>>', tempData)
-    console.log("response", response)
+      // const users = response.data.newEnrollments[0]
+      // console.log(users, 'tempData>>>>>>>>>>>>>',)
+
+      // let tempDataTow = users.map((dt) => (
+      //   {
+      //     name: dt.fullname,
+      //     // educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
+      //   }
+      // ));
+      // console.log(tempDataTow, 'tempData>>>>>>>>>>>>>', enrollments)
+      // setEnrollments(tempDataTow);
+      // console.log("response", response)
+    }
+
+
 
   }
 
@@ -401,7 +414,8 @@ const FranchiseeDashboard = () => {
                             <Link to="/children-all" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            {enrollments ? (<>
+
+                            {enrollments.length > 0 ? (<>
                               <ToolkitProvider
                                 keyField="name"
                                 data={enrollments}
@@ -413,10 +427,9 @@ const FranchiseeDashboard = () => {
                                     {...props.baseProps}
                                   />
                                 )}
-                              </ToolkitProvider></>) : (
-                              <>
-                              <div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div>
-                              </>)}
+
+                              </ToolkitProvider>
+                            </>) : (<><div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div></>)}
 
                           </div>
                         </div>

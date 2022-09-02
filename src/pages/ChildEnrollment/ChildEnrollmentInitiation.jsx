@@ -14,7 +14,8 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let { parentId } = useParams();
 
   const [formOneChildData, setFormOneChildData] = useState({
-    name: "",
+    fullname: "",
+    family_name: "",
     dob: "",
     home_address: "",
     gender: "M",
@@ -61,7 +62,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
   const initiateEnrollment = async () => {
     let token = localStorage.getItem('token');
-    let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: parentFranchiseeId  }, {
+    let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: parentFranchiseeId || localStorage.getItem('franchisee_id')  }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -83,8 +84,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
           }     
         }); 
         if(response.status === 201 && response.data.status === "success") {
-          setLoader(false);
-          window.location.href = `/children/${parentId}`;
+          response = await axios.patch(`${BASE_URL}/auth/user/update/${parentId}`);
+
+          if(response.status === 201 && response.data.status === "success") {
+            setLoader(false);
+            window.location.href = `/children/${parentId}`;
+          }
         }
       }
     }
@@ -141,29 +146,52 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Child's First Name</Form.Label>
+
+                                <Form.Label>Child's First Name *</Form.Label>
                                 <Form.Control
                                   type="text"
-                                  name="name"
-                                  placeholder="Child’s Full Name"
-                                  value={formOneChildData?.name || ""}
+                                  name="fullname"
+                                  value={formOneChildData?.fullname || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
                                     setErrors(prevState => ({
                                       ...prevState,
-                                      name: null
+                                      fullname: null
                                     }))
                                   }} />
-                                  {errors.name !== null && <span className="error">{errors.name}</span>}
+                                  {errors.fullname !== null && <span className="error">{errors.fullname}</span>}
                               </Form.Group>
                             </Col>
                             
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Date Of Birth</Form.Label>
+                                <Form.Label>Family Name *</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  minLenth={3}
+                                  maxLength={50}
+                                  name="family_name"
+                                  value={formOneChildData?.family_name || ""}
+                                  onChange={(e) => {
+                                    // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                    setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      family_name: e.target.value
+                                    }));
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      family_name: null,
+                                    }))
+                                  }} />
+                                { errors?.family_name !== null && <span className="error">{errors?.family_name}</span> }
+                              </Form.Group>
+                            </Col>
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <Form.Label>Date Of Birth *</Form.Label>
                                 <Form.Control
                                   type="date"
-                                  placeholder=""
                                   name="dob"
                                   max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.dob || ""}
@@ -180,7 +208,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                             <Col md={12}>
                               <Form.Group className="mb-3 relative">
                                 <div className="btn-radio inline-col">
-                                  <Form.Label>Sex</Form.Label>
+                                  <Form.Label>Sex *</Form.Label>
                                   <Form.Check
                                     type="radio"
                                     name="gender"
@@ -207,15 +235,16 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                             </Col>
                             <Col md={12}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Home Address</Form.Label>
+                                <Form.Label>Home Address *</Form.Label>
                                 <Form.Control
                                   as="textarea"
                                   rows={3}
-                                  placeholder="Home Address"
-                                  name="home_address"
                                   value={formOneChildData?.home_address || ""}
                                   onChange={(e) => {
-                                    handleChildData(e);
+                                    setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      home_address: e.target.value
+                                    }));
                                     setErrors(prevState => ({
                                       ...prevState,
                                       home_address: null
@@ -227,7 +256,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Select an Educator:</Form.Label>
+                                <Form.Label>Select An Educator *</Form.Label>
                                 <Select
                                   placeholder={formOneChildData?.language || "Select"}
                                   closeMenuOnSelect={true}

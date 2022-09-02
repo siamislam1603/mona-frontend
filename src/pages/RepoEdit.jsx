@@ -7,10 +7,10 @@ import Multiselect from 'multiselect-react-dropdown';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import Select from 'react-select';
+
 import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
-
+import { FullLoader } from "../components/Loader";
 
 
 const animatedComponents = makeAnimated();
@@ -35,6 +35,7 @@ const RepoEdit = () => {
     const [selectedChild, setSelectedChild] = useState([])
     const [child, setChild] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
+    const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -48,6 +49,9 @@ const RepoEdit = () => {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })
+        if (response) {
+            setfullLoaderStatus(false)
+        }
         console.log(response, "response")
         if (response.status === 200 && response.data.status === "success") {
             console.log('RESPONSE IS SUCCESS');
@@ -306,8 +310,8 @@ const RepoEdit = () => {
 
 
     return (
-
         <div style={{ position: "relative", overflow: "hidden" }}>
+            <FullLoader loading={fullLoaderStatus} />
             <div id="main">
                 <section className="mainsection">
                     <Container>
@@ -415,7 +419,7 @@ const RepoEdit = () => {
                                                                         }}
                                                                         value={data?.categoryId}
                                                                     >
-                                                                        <option value="">Select File Category</option>
+                                                                        <option value="">Select</option>
                                                                         <option value="8">General</option>
                                                                     </Form.Select>
                                                                 </>) : (
@@ -427,7 +431,7 @@ const RepoEdit = () => {
                                                                         }}
                                                                         value={data?.categoryId}
                                                                     >
-                                                                        <option value="">Select File Category</option>
+                                                                        <option value="">Select</option>
                                                                         {category?.map((item) => {
                                                                             return (
                                                                                 <option value={item.id}>{item.value}</option>
@@ -493,11 +497,11 @@ const RepoEdit = () => {
                                                             </Col>
                                                             <Col lg={9} md={12}>
                                                                 <Form.Group>
-                                                                    <Form.Label>Select Franchisee</Form.Label>
+                                                                    <Form.Label>Select franchise(s)</Form.Label>
                                                                     <div className="select-with-plus">
                                                                         <Multiselect
                                                                             disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
-                                                                            placeholder={"Select Franchisee"}
+                                                                            placeholder={"Select Franchise"}
                                                                             displayValue="key"
                                                                             className="multiselect-box default-arrow-select"
                                                                             onRemove={function noRefCheck(data) {
@@ -542,9 +546,7 @@ const RepoEdit = () => {
                                                                                             accessibleToRole: 1,
                                                                                         }));
                                                                                     }}
-                                                                                    // onChange={(e) => {
-                                                                                    //     setData(e.target.name, parseInt(e.target.value));
-                                                                                    // }}
+                                                                                   
                                                                                     checked={data.accessibleToRole === 1}
                                                                                 />
                                                                                 <span className="radio-round"></span>

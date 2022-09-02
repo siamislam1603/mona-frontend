@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useEffect } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import Select from 'react-select';
@@ -13,8 +13,13 @@ let nextstep = 2;
 let step = 1;
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
-  console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 1);
   let { childId: paramsChildId, parentId: paramsParentId } = useParams();
+  let errorChild = null;
+  let errorParent = null;
+  // USING REFs
+  const fullnameRef = useRef(null);
+  const familynameRef = useRef(null);
+
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
@@ -188,8 +193,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    let errorChild = childFormValidator(formOneChildData);
-    let errorParent = parentFormValidator(formOneParentData);
+    errorChild = childFormValidator(formOneChildData);
+    errorParent = parentFormValidator(formOneParentData);
 
     if(Object.keys(errorChild).length > 0 || Object.keys(errorParent).length > 0) {
       window.scrollTo(0, 0);
@@ -277,10 +282,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       setFormOneChildData(prevState => ({
         ...prevState,
 
-        name: child?.name,
-        fullname: child?.name?.split(" ")[0],
-        family_name: child?.name?.split(" ")?.slice(1).join(" "),
-
+        fullname: child?.fullname,
+        family_name: child?.family_name,
         usually_called: child?.usually_called,
         dob: child?.dob,
         home_address: child?.home_address,
@@ -349,6 +352,15 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }, [formOneParentData?.address_similar_to_child])
 
+  // useEffect(() => {
+  //   if(childFormErrors?.fullname)
+  //     fullnameRef.current.focus();
+
+  //   if(childFormErrors?.family_name)
+  //     familynameRef.current.focus();
+
+  // }, [childFormErrors]);
+
   useEffect(() => {
     console.log("checking useEffect!")
     if(localStorage.getItem('has_given_consent') === 'null') {
@@ -358,7 +370,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   // formStepData && console.log('You\'re on step:', formStepData);
   formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
-  // formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
+  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
   // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
@@ -371,12 +383,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Child’s First Name *</Form.Label>
+                    <Form.Label>Child's First Name *</Form.Label>
                     <Form.Control
                       type="text"
                       name="fullname"
+                      ref={fullnameRef}
+                      style={childFormErrors?.fullname ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                       maxLength={50}
-                      placeholder="Child’s Full Name"
                       value={formOneChildData?.fullname || ""}
                       onChange={(e) => {
                         // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
@@ -411,7 +424,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Label>Family Name *</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Family Name"
+                      ref={familynameRef}
+                      style={childFormErrors?.family_name ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                       minLenth={3}
                       maxLength={50}
                       name="family_name"
@@ -449,7 +463,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Label>Nickname</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Nickname"
                       minLenth={3}
                       maxLength={50}
                       name="usually_called"
@@ -482,7 +495,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Label>Date Of Birth *</Form.Label>
                     <Form.Control
                       type="date"
-                      placeholder=""
                       name="dob"
                       max={new Date().toISOString().slice(0, 10)}
                       value={formOneChildData?.dob || ""}
@@ -554,7 +566,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="Home Address"
                       name="home_address"
                       value={formOneChildData?.home_address || ""}
                       onChange={(e) => {
@@ -581,6 +592,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Select
                       placeholder={formOneChildData?.language || "Select"}
                       closeMenuOnSelect={true}
+                      style={childFormErrors?.language ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}} 
                       options={languageData}
                       onChange={(e) => {
                         setFormOneChildData((prevState) => ({
@@ -797,7 +809,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control
                           type="text"
                           name="child_crn"
-                          placeholder="Child CRN"
                           value={formOneChildData.child_crn || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -819,7 +830,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control
                           type="text"
                           name="parent_crn_1"
-                          placeholder="Parent CRN I"
                           value={formOneChildData.parent_crn_1 || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -841,7 +851,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control
                           type="text"
                           name="parent_crn_2"
-                          placeholder="Parent CRN II"
                           value={formOneChildData.parent_crn_2 || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -1003,7 +1012,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       <Form.Group className="mb-3 relative">
                         <Form.Control 
                           type="date"
-                          placeholder="" 
                           name="date_first_went_to_school"
                           max={new Date().toISOString().slice(0, 10)}
                           value={formOneChildData?.date_first_went_to_school || ""}
@@ -1033,7 +1041,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control 
                           type="text" 
                           name="name_of_school"
-                          placeholder="Name of School"
                           value={formOneChildData?.name_of_school || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -1050,8 +1057,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
                       <Form.Group className="mb-3 relative">
                         <Form.Control 
-                          type="text" 
-                          placeholder="Address of School" 
+                          type="text"  
                           name="address_of_school"
                           value={formOneChildData?.address_of_school || ""}
                           onChange={(e) => {
@@ -1093,7 +1099,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
           <div className="enrollment-form-sec mt-3">
             <Form onSubmit={submitFormData}>
               <div className="enrollment-form-column">
-                <h2 className="title-xs">Information about the child’s parents or guardians</h2>
+                <h2 className="title-xs">Information about the child's parents or guardians</h2>
                 <div className="grayback">
                   <Row>
                     <Col md={12}>
@@ -1147,7 +1153,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>First Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            placeholder="First Name"
                             name="family_name"
                             minLenth={3}
                             maxLength={50}
@@ -1186,7 +1191,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>Last Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            placeholder="Last Name"
                             name="given_name"
                             minLenth={3}
                             maxLength={50}
@@ -1223,8 +1227,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Group className="mb-3 relative">
                           <Form.Label>Date Of Birth *</Form.Label>
                           <Form.Control 
-                            type="date" 
-                            placeholder="" 
+                            type="date"  
                             name="dob"
                             max={new Date().toISOString().slice(0, 10)}
                             value={formOneParentData?.dob || ""}
@@ -1252,7 +1255,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Control 
                             as="textarea" 
                             rows={3} 
-                            placeholder="Address As Per Child"
                             name="address_as_per_child"
                             value={formOneParentData.address_as_per_child || ""}
                             onChange={(e) => {
@@ -1292,9 +1294,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>Telephone *</Form.Label>
                           <Form.Control 
                             type="tel" 
-                            placeholder="3375005467"
-                            maxLength={10}
+                            style={parentFormErrors?.telephone ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
+                            autoFocus={parentFormErrors?.telephone ? true : false}
                             name="telephone"
+                            maxLength={10}
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
                               handleParentData(e);
@@ -1319,7 +1322,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>Email Address *</Form.Label>
                           <Form.Control 
                             type="email" 
-                            placeholder="Email Address"
                             value={formOneParentData?.email || ""}
                             name="email"
                             onChange={(e) => {
@@ -1510,7 +1512,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
             </Form>
           </div>
           <div className="cta text-center mt-5 mb-5">
-          <Button variant="primary" disabled={loader ? true : false} type="submit">
+          <Button variant="primary" type="submit">
             {loader === true ? (
               <>
                 <img

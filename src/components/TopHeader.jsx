@@ -35,10 +35,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   const [searchLoaderFlag, setSearchLoaderFlag] = useState(false);
 
 
-  const savePermissionInState = async () => {
-    let menu_list = JSON.parse(localStorage.getItem('menu_list'));
-    setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
-  };
+  // const savePermissionInState = async () => {
+  //   let menu_list = JSON.parse(localStorage.getItem('menu_list'));
+  //   setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
+  // };
 
   const [userDashboardLink, setuserDashboardLink] = useState();
 
@@ -307,7 +307,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
               <div className="notifimg">
                 <div className="notilink">
                   <div className="notifpic">
-                    <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle" />
+                    <img src="/img/notification-ico1.png" alt="" className="logo-circle rounded-circle" />
 
                   </div>
                   <div className="notiftxt">
@@ -453,9 +453,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
   }, []);
 
-  useEffect(() => {
-    savePermissionInState();
-  }, []);
+  // useEffect(() => {
+  //   savePermissionInState();
+  // }, []);
+
   console.log("local Storge ", localStorage.getItem('profile_photo'))
 
   // notifData && console.log('DATA=>:', notifData);

@@ -25,7 +25,6 @@ import { useParams } from 'react-router-dom';
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
-
 const training = [
   {
     value: 'sydney',
@@ -41,7 +40,7 @@ let DeleteId = [];
 
 const UserManagement = () => {
   const Key = useParams()
-  console.log('Key+++++++++', Key.key)
+
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [userEducator, setEducator] = useState([]);
@@ -54,8 +53,9 @@ const UserManagement = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [parentFranchiseeId, setParentFranchiseeId] = useState(null);
 
-
+ 
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       // if (e.target.text === 'Delete') {
@@ -527,6 +527,12 @@ const UserManagement = () => {
     }
   }, []);
  
+
+  useEffect(() => {
+    if(localStorage.getItem('guardian')) {
+      window.location.href=`/parents-dashboard`;
+    }
+  }, [])
 
   const csvLink = useRef();
 

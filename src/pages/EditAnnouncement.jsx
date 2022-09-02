@@ -306,7 +306,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
     title: announcementData?.title,
     meta_description: announcementData?.meta_description,
     start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
-    start_time: moment(announcementData?.scheduled_date).utc().format('HH:mm'),
+    start_time: moment(announcementData?.scheduled_date).format('HH:mm'),
     franchise: announcementData.franchise,
     is_event: announcementData.is_event,
   }))
@@ -341,6 +341,8 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   useEffect(() => {
     fetchFranchiseeList();
   }, []);
+
+ 
 
   useEffect(() =>{
     copyFetchedData();
@@ -423,7 +425,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                             <Col lg={3} sm={6}>
                             <Form.Group className="col-md-12">
                               <div className="btn-radio inline-col">
-                                <Form.Label>Send to all franchisee:</Form.Label>
+                                <Form.Label>Send to all Franchises :</Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
@@ -439,6 +441,9 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                                     }));
                                   setAllFranchise(true)
                                   }}
+                                  
+                                // defaultChecked = {allFranchise}
+                                  
                                   
                                    />
                                 <Form.Check
@@ -458,7 +463,9 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                                   }
                                   
                                 }
-                                  
+                                
+                               
+                                // defaultChecked = {allFranchise}
                                 defaultChecked
                                   label="No"
                                    />
@@ -475,7 +482,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                         }
                
                         <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Franchisee</Form.Label>
+                            <Form.Label>Select Franchise</Form.Label>
                             {/* <div className="select-with-plus">
                             {/* <Select
                               placeholder="Which Franchisee?"
@@ -695,7 +702,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Cover Image :
+                            Upload Cover Image 
                           </Form.Label>
                           
                            <DropOneFile onSave={setCoverImage} 
@@ -718,7 +725,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Video :
+                            Upload Video
                           </Form.Label>
                           {/* <DropOneFile onSave={setVideoTutorialFiles}
 
@@ -757,31 +764,8 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                       
                      <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Files :</Form.Label>
-                          <DropAllFile onSave={setRelatedFiles}
-                            // Files={theRelatedFiles}
-                          />
-                              {/* {
-                                fetchedRelatedFiles &&
-                                fetchedRelatedFiles.map((file, index) => {
-                                  return (
-                                    // <div className="file-container">
-                                    //   {/* <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} /> */}
-                                    {/* //   <p className="file-text">{`${getRelatedFileName(file.file)}`}</p>
-                                    //   <img 
-                                    //     onClick={() => deleteAnnouncemetFile(file.id)}
-                                    //     className="file-remove" 
-                                    //     src="../img/removeIcon.svg" 
-                                    //     alt="" />
-                                    // </div>
-                                    <div>
-                                       <h1>{file.id}</h1>
-                                      </div>
-                                  )
-                                })
-                              } */}
-                            {/* </div> */} 
-                        
+                          <Form.Label>Upload Files </Form.Label>
+                          <DropAllFile onSave={setRelatedFiles}/>
                           <div className="media-container">
 
                           {fetchedRelatedFiles &&fetchedRelatedFiles.map((file) => (

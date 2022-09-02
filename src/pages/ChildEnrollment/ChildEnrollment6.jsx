@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
-
-
+import { acceptPointValidator } from '../../helpers/validation';
 
 let nextstep = 7;
 let step = 6;
@@ -13,6 +12,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   const [acceptedAllPoints, setAcceptedAllPoints] = useState(false);
   const [formStepData, setFormStepData] = useState(null);
   const [loader, setLoader] = useState(false);
+  const [errors, setErrors] = useState(false);
 
   const populateFormStepData = async () => {
     let token = localStorage.getItem('token');
@@ -87,8 +87,13 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
 
   const handleDataSubmit = (e) => {
     e.preventDefault();
+    let error = acceptPointValidator(acceptedAllPoints);
 
-    updateFormSixData();
+    if(Object.keys(error).length > 0) {
+      setErrors(error);
+    } else {
+      updateFormSixData();
+    }
   };
 
   useEffect(() => {
@@ -100,6 +105,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
     populateFormStepData();
   })
   acceptedAllPoints && console.log('Accepted all points:', acceptedAllPoints);
+  errors && console.log('Errors:', errors);
   return (
     <>
       <div className="enrollment-form-sec error-sec">
@@ -129,15 +135,24 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
                     id="accept" 
                     checked={acceptedAllPoints === true}
                     label="I have read and accept all the above points."
-                    onChange={() => setAcceptedAllPoints(!acceptedAllPoints)} />
+                    onChange={() => {
+                      setAcceptedAllPoints(!acceptedAllPoints)
+                      setErrors(prevState => ({
+                        ...prevState,
+                        value: null
+                      }))
+                    }} />
                 </div>
+                <br></br>
+                {
+                  errors?.value !== null && <span className="error">{errors?.value}</span> 
+                }
               </Form.Group>
             </div>
           </div>
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
             <Button
-              disabled={acceptedAllPoints === false} 
               variant="primary" 
               type="submit" 
               onClick={handleDataSubmit}>

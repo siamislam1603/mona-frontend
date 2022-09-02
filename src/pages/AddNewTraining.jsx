@@ -12,8 +12,9 @@ import axios from 'axios';
 import { TrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
-import DragDropSingle from '../components/DragDropSingle';
-import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
+
+import DragDropTraning from '../components/DragDropTraning';
+import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
 
 const animatedComponents = makeAnimated();
 
@@ -65,7 +66,7 @@ const AddNewTraining = () => {
   const [loader, setLoader] = useState(false);
   const [createTrainingModal, setCreateTrainingModal] = useState(false);
   const [saveSettingsToast, setSaveSettingsToast] = useState(null);
-
+  const [error, setError] = useState(false);
   const [trainingData, setTrainingData] = useState({
     time_unit: "Minutes",
     title: "",
@@ -136,6 +137,14 @@ const AddNewTraining = () => {
     }
   };
 
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
     console.log('CREATING THE TRAINING');
@@ -151,30 +160,12 @@ const AddNewTraining = () => {
     console.log('Training Details Response:', response);
 
     if (response.status === 201 && response.data.status === "success") {
-      // let { id } = response.data.training;
-
-      // let token = localStorage.getItem('token');
-      // let user_id = localStorage.getItem('user_id')
-      // const shareResponse = await axios.post(`${BASE_URL}/share/${id}?titlePage=`, {
-      //   assigned_franchisee: trainingSettings.assigned_franchisee,
-      //   assigned_users: trainingSettings.assigned_users,
-      //   assigned_roles: trainingSettings.assigned_roles,
-      //   shared_by: user_id,
-      //   applicable_to: trainingSettings.applicable_to,
-      // }, {
-      //   headers: {
-      //     "Authorization": `Bearer ${token}`
-      //   }
-      // });
-
-      // console.log('TRAINING SHARED RESPONSE:', shareResponse);
-
-      // if(shareResponse.status === 201 && shareResponse.data.status === "success") {
       let { id } = response.data.training;
 
+      const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
       let data = new FormData();
       data.append('id', id);
-      data.append('image', coverImage[0]);
+      data.append('image', blob);
 
       let imgSaveResponse = await axios.post(
         `${BASE_URL}/training/coverImg?title="training"`, data, {
@@ -278,11 +269,13 @@ const AddNewTraining = () => {
     }));
   };
 
+  const [err, seterr] = useState(false)
+
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
     console.log(coverImage, "coverImage")
-    let errorObj = TrainingFormValidation(trainingData, coverImage);
+    let errorObj = TrainingFormValidation(trainingData);
     console.log(errorObj);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
@@ -290,8 +283,11 @@ const AddNewTraining = () => {
       setErrors({});
       if (!allowSubmit)
         setSettingsModalPopup(true);
-
-      if (settingsModalPopup === false && allowSubmit && trainingData && coverImage) {
+      if (!croppedImage) {
+        setError(true);
+        return false
+      }
+      if (settingsModalPopup === false && allowSubmit && trainingData && croppedImage) {
 
         let data = new FormData();
         for (let [key, values] of Object.entries(trainingSettings)) {
@@ -356,8 +352,14 @@ const AddNewTraining = () => {
     }
   }, []);
 
-  console.log(coverImage, "+++++")
-  console.log(croppedImage, "CROPIMAGE+++++")
+  // useEffect(() => {
+  //   setErrors(prevState => ({
+  //     ...prevState,
+  //     croppedImage: null
+  //   }))
+  // }, [croppedImage])
+
+  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -387,14 +389,14 @@ const AddNewTraining = () => {
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
                   <div className="training-form">
                     <Row>
+
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Name*</Form.Label>
+                          <Form.Label>Training Name *</Form.Label>
                           <Form.Control
                             type="text"
                             maxLength={100}
                             name="title"
-                            placeholder="Enter Training Title"
                             // onKeyPress={(e) => {
                             //     if (e.keyCode === 32) {
                             //       e.preventDefault();
@@ -428,9 +430,10 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Category*</Form.Label>
+                          <Form.Label>Training Category *</Form.Label>
                           <Select
                             closeMenuOnSelect={true}
+                            placeholder="Select"
                             components={animatedComponents}
                             options={trainingCategory}
                             onChange={(event) => {
@@ -451,11 +454,10 @@ const AddNewTraining = () => {
 
                       <Col md={12} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Training Description*</Form.Label>
+                          <Form.Label>Training Description *</Form.Label>
                           <Form.Control
                             as="textarea"
                             name="description"
-                            placeholder="Enter Training Description"
                             rows={3}
                             onChange={(e) => {
                               handleTrainingData(e);
@@ -471,12 +473,11 @@ const AddNewTraining = () => {
 
                       <Col md={12} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Meta Description*</Form.Label>
+                          <Form.Label>Meta Description *</Form.Label>
                           <Form.Control
                             as="textarea"
                             name="meta_description"
                             maxLength={255}
-                            placeholder="Enter Meta Description"
                             rows={3}
                             onChange={(e) => {
                               if (trainingData.meta_description.length >= 0 && trainingData.meta_description.length <= 250) {
@@ -503,8 +504,7 @@ const AddNewTraining = () => {
                               style={{ flex: 6 }}
                               type="number"
                               min={1}
-                              max={100}
-                              placeholder="Time Needed For This Training"
+                              max={2}
                               onChange={(event) => {
                                 setTrainingData((prevState) => ({
                                   ...prevState,
@@ -546,6 +546,7 @@ const AddNewTraining = () => {
                           <Form.Label>Select Training Form</Form.Label>
                           <Select
                             closeMenuOnSelect={true}
+                            placeholder="Select"
                             components={animatedComponents}
                             options={trainingFormData}
                             onChange={(event) => {
@@ -563,15 +564,19 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Cover Image*:</Form.Label>
-                          <DropOneFile
+                          {/* <DropOneFile
                             title="Image"
+                            croppedImage={croppedImage}
+                            setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
+                            setPopupVisible={setPopupVisible}
+                            fetchedPhoto={""}
                             setErrors={setErrors}
                           // setTrainingData={setTraining}
-                          />
+                          /> */}
 
-
-                          {/* <DragDropSingle
+                          {console.log(croppedImage, "croppedImage", coverImage)}
+                          <DragDropTraning
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
@@ -581,15 +586,15 @@ const AddNewTraining = () => {
 
                           {
                             popupVisible &&
-                            <ImageCropPopup
+                            <ImageCropTraning
                               image={coverImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
-                          } */}
-
-
+                          }
                           <small className="fileinput">(png, jpg & jpeg)</small>
-                          {errors.coverImage !== null && <span className="error mt-2">{errors.coverImage}</span>}
+                          {error && !croppedImage && < span className="error"> File is required!</span>}
+                          {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
+
                         </Form.Group>
                       </Col>
 
@@ -658,7 +663,7 @@ const AddNewTraining = () => {
             <Row>
               <Col lg={3} sm={6}>
                 <Form.Group>
-                  <Form.Label>Start Date*</Form.Label>
+                  <Form.Label>Start Date *</Form.Label>
                   <Form.Control
                     type="date"
                     name="start_date"
@@ -678,7 +683,7 @@ const AddNewTraining = () => {
               </Col>
               <Col lg={3} sm={6} className="mt-3 mt-sm-0">
                 <Form.Group>
-                  <Form.Label>Start Time*</Form.Label>
+                  <Form.Label>Start Time *</Form.Label>
                   <Form.Control
                     type="time"
                     name="start_time"
@@ -774,12 +779,12 @@ const AddNewTraining = () => {
 
               <Col lg={9} md={12}>
                 <Form.Group>
-                  <Form.Label>Select Franchise</Form.Label>
+                  <Form.Label>Select Franchise(s)</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
                       disable={trainingSettings?.send_to_all_franchisee === true}
                       // singleSelect={true}
-                      placeholder={"Select Franchise Names"}
+                      placeholder={"Select"}
                       displayValue="key"
                       selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id)))}
                       className="multiselect-box default-arrow-select"
@@ -870,7 +875,7 @@ const AddNewTraining = () => {
                       <Form.Check
                         type="checkbox"
                         checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
-                        label="Franchisee Admin"
+                        label="Franchise Admin"
                         onChange={() => {
                           if (trainingSettings.assigned_roles.includes("franchisee_admin")) {
                             let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
@@ -961,7 +966,7 @@ const AddNewTraining = () => {
                   <Form.Group>
                     <Form.Label>Select User Names</Form.Label>
                     <Multiselect
-                      placeholder={fetchedFranchiseeUsers ? "Select User Names" : "No User Available"}
+                      placeholder={fetchedFranchiseeUsers ? "Select" : "No User Available"}
                       displayValue="key"
                       selectedValues={fetchedFranchiseeUsers.filter(d => trainingSettings.assigned_users.includes(parseInt(d.id)))}
                       className="multiselect-box default-arrow-select"
