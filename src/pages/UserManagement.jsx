@@ -41,7 +41,7 @@ let DeleteId = [];
 
 const UserManagement = () => {
   const Key = useParams()
-  console.log('Key+++++++++', Key.key)
+
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [userEducator, setEducator] = useState([]);
@@ -527,6 +527,12 @@ const UserManagement = () => {
     }
   }, []);
  
+
+  useEffect(() => {
+    if(localStorage.getItem('guardian')) {
+      window.location.href=`/parents-dashboard`;
+    }
+  }, [])
 
   const csvLink = useRef();
 

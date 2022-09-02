@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Form, Modal, Row, Col, } from 'react-bootstrap';
-import DragDropRepository from '../components/DragDropRepository';
 import Multiselect from 'multiselect-react-dropdown';
 import { BASE_URL } from '../components/App';
 import axios from "axios";
@@ -12,19 +11,9 @@ import DragDropFileEdit from '../components/DragDropFileEdit';
 
 
 let selectedUserId = '';
-const animatedComponents = makeAnimated();
-let selectedFranchisee = [
-    { id: 1, registered_name: 'ABC' },
-    { id: 2, registered_name: 'PQR' },
-];
-let selectedUserRole = [];
+
 let selectedFranchiseeId = '';
-const styles = {
-    option: (styles, state) => ({
-        ...styles,
-        backgroundColor: state.isSelected ? '#E27235' : '',
-    }),
-};
+
 const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
     const handleClose = () => setShow(false);
@@ -37,39 +26,32 @@ const FilerepoUploadFile = () => {
     const [selectedChild, setSelectedChild] = useState([]);
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
     const [franchiseeList, setFranchiseeList] = useState();
-    const [post, setPost] = React.useState([]);
     const [child, setChild] = useState([]);
     const [UpladFile, setUpladFile] = useState('');
-    const [tabLinkPath, setTabLinkPath] = useState("/available-Files");
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [user, setUser] = useState([]);
-    const [shareType, setShareType] = useState("roles");
-    const [applicableToAll, setApplicableToAll] = useState(false);
     const [selectedAll, setSelectedAll] = useState(false);
-    const [formSettings, setFormSettings] = useState({
-        assigned_franchisee: [],
-    });
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+    const [formSettings, setFormSettings] = useState({
+        assigned_franchisee: [],
+    });
 
     //======================== GET FILE CATAGOREY==================
 
     const getFileCategory = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-        let result = await fetch(`${BASE_URL}/fileRepo/files-category`, requestOptions);
-        result = await result.json()
-            .then((result) => setCategory(result.category))
-            .catch((error) => console.log('error', error));
+        let result = await axios.get(`${BASE_URL}/fileRepo/files-category`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+            .then((res) => {
+                setCategory(res.data.category)
+            })
+            .catch((error) => {
+                console.error(error)
+            })
     };
 
     //======================== GET FILE Franchisee List==================
@@ -94,52 +76,38 @@ const FilerepoUploadFile = () => {
     //======================== GET Children List==================
 
     const getChildren = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-
         let franchiseeArr = formSettings.assigned_franchisee
-
-        var request = {
-            headers: myHeaders,
-        };
-
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, request)
+        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
         if (response.status === 200) {
             setChild(response.data.children)
         }
     }
     //======================== GET User List==================
-
     const getUser = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-          'authorization',
-          'Bearer ' + localStorage.getItem('token')
-        );
-    
-        var request = {
-          headers: myHeaders,
-        };
-    
         let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-    
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
+
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+
         if (response.status === 200) {
-          // console.log(response.data.users, "respo")
-          let userList = response.data.users
-          if (getUser_Role == 'franchisee_admin') {
-            userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))
-          } else if (getUser_Role == 'coordinator') {
-            userList = response.data.users.filter(c => ['educator', 'guardian']?.includes(c.role + ""))
-          } else if (getUser_Role == 'educator') {
-            userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
-          }
-          setUser(userList)
+            let userList = response.data.users
+            if (getUser_Role == 'franchisee_admin') {
+                userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))
+            } else if (getUser_Role == 'coordinator') {
+                userList = response.data.users.filter(c => ['educator', 'guardian']?.includes(c.role + ""))
+            } else if (getUser_Role == 'educator') {
+                userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
+            }
+            setUser(userList)
         }
-      };
+    };
 
 
     function onSelectChild(selectedItem) {
@@ -157,13 +125,10 @@ const FilerepoUploadFile = () => {
     useEffect(() => {
         getFileCategory();
         getChildren();
+        getUser();
         fetchFranchiseeList();
-        getUser();
-    }, [])
-    useEffect(() => {
-        getUser();
-        getChildren()
     }, [formSettings.franchisee])
+
 
     const setField = (field, value) => {
         if (value === null || value === undefined) {
@@ -365,31 +330,23 @@ const FilerepoUploadFile = () => {
         setUser(data);
     }
 
-
-    post && console.log("post Data", '++++++++++++++++++++++++++++++:', post.map(data => data));
-
-    const handleLinkClick = event => {
-        let path = event.target.getAttribute('path');
-        setTabLinkPath(path);
-    }
-
     const isAllRolesChecked = () => {
         let bool = false;
         if (getUser_Role == "franchisor_admin") {
-          bool = ["guardian", "educator", "coordinator", "franchisee_admin"].every(item => formSettingData?.shared_role?.includes(item))
+            bool = ["guardian", "educator", "coordinator", "franchisee_admin"].every(item => formSettingData?.shared_role?.includes(item))
         }
         else if (getUser_Role == "franchisee_admin") {
-          bool = ["guardian", "educator", "coordinator"].every(item => formSettingData?.shared_role?.includes(item))
+            bool = ["guardian", "educator", "coordinator"].every(item => formSettingData?.shared_role?.includes(item))
         }
         else if (getUser_Role == "coordinator") {
-          bool = ["guardian", "educator"].every(item => formSettingData?.shared_role?.includes(item))
+            bool = ["guardian", "educator"].every(item => formSettingData?.shared_role?.includes(item))
         }
         else if (getUser_Role == "educator") {
-          bool = ["guardian"].every(item => formSettingData?.shared_role?.includes(item))
+            bool = ["guardian"].every(item => formSettingData?.shared_role?.includes(item))
         }
-    
+
         return bool;
-      }
+    }
 
 
     return (
@@ -407,478 +364,479 @@ const FilerepoUploadFile = () => {
                 Upload File
             </span>
             <Modal
-        className="training-modal"
-        size="lg"
-        show={show}
-        onHide={handleClose}
-      >
-        <Modal.Header closeButton className="f-c-modal"></Modal.Header>
-        <Modal.Body className="p-0">
-          <div className="form-settings-content">
-            <div className="modal-top">
-              <div className="modal-top-containt">
-                <Row>
-                  <Col md={12}>
-                    <Form.Group>
-                      <Form.Label>Upload File:*</Form.Label>
-                      <DragDropRepository onChange={setField} />
-                      {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
-                      <p className="error">{errors.setting_files}</p>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                className="training-modal"
+                size="lg"
+                show={show}
+                onHide={handleClose}
+            >
+                <Modal.Header closeButton className="f-c-modal"></Modal.Header>
+                <Modal.Body className="p-0">
+                    <div className="form-settings-content">
+                        <div className="modal-top">
+                            <div className="modal-top-containt">
+                                <Row>
+                                    <Col md={12}>
+                                        <Form.Group>
+                                            <Form.Label>Upload File:*</Form.Label>
+                                            <DragDropFileEdit onChange={setField} />
+                                            {/* <DragDropRepository onChange={setField} /> */}
+                                            {error && !formSettingData?.setting_files && < span className="error"> File Category is required!</span>}
+                                            <p className="error">{errors.setting_files}</p>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
 
-                <div className="setting-heading">
-                  <h2>Settings</h2>
-                </div>
-              </div>
-              <hr></hr>
-            </div>
-            <div className="modal-bottom">
-              <Row>
-                <Col lg={12}>
-                  <div className="metadescription">
-                    <Form.Group className="mb-3">
-                      <Form.Label>Meta Description*</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={2}
-                        name="meta_description"
-                        onChange={(e) => {
-                          setField(e.target.name, e.target.value);
-                        }}
-                      />
-                      {error && !formSettingData.meta_description && < span className="error"> Meta Description is required!</span>}
-                    </Form.Group>
-                  </div>
-                </Col>
-                <Col lg={12}>
-                  <Form.Group>
-                    <Form.Label>File Category*</Form.Label>
-                    {getUser_Role === "guardian" ? (
-                      <>
-                        <Form.Select
-                          name="file_category"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                        >
-                          <option value="">Select File Category</option>
-                          <option value="8" selected={true}>General</option>
-                        </Form.Select>
-                      </>) : (
-                      <>
-                        <Form.Select
-                          name="file_category"
-                          onChange={(e) => {
-                            setField(e.target.name, e.target.value);
-                          }}
-                        >
-                          <option value="">Select File Category</option>
-                          {category?.map((item) => {
-                            return (
-                              <option value={item.id}>{item.category_name}</option>
-                            );
-                          })}
-                        </Form.Select>
-                      </>)}
-
-
-                    {error && !formSettingData.file_category && < span className="error"> File is required!</span>}
-                  </Form.Group>
-                </Col>
-              </Row>
-              {getUser_Role === "guardian" ? (<></>) : (
-              
-              <>
-                <Row className="mt-4">
-                  <Col lg={3} md={6}>
-                    <Form.Group>
-                      <Form.Label>Send to all franchisee:</Form.Label>
-                      <div className="new-form-radio d-block">
-                        <div className="new-form-radio-box">
-                          <label for="all">
-                            <input
-                              type="radio"
-                              checked={sendToAllFranchisee === 'all'}
-                              name="send_to_all_franchisee"
-                              id="all"
-                              onChange={() => {
-                                setFormSettings(prevState => ({
-                                  ...prevState,
-                                  assigned_franchisee: ['all'],
-                                  franchisee: ['all']
-                                }));
-                                setSendToAllFranchisee('all')
-                              }}
-                              disabled={getUser_Role !== 'franchisor_admin'}
-                            />
-                            <span className="radio-round"></span>
-                            <p>Yes</p>
-                          </label>
+                                <div className="setting-heading">
+                                    <h2>Settings</h2>
+                                </div>
+                            </div>
+                            <hr></hr>
                         </div>
-                        <div className="new-form-radio-box m-0 mt-3">
-                          <label for="none">
-                            <input
-                              type="radio"
-                              name="send_to_all_franchisee"
-                              checked={sendToAllFranchisee === 'none'}
-                              id="none"
-                              onChange={() => {
-                                setFormSettings(prevState => ({
-                                  ...prevState,
-                                  assigned_franchisee: [],
-                                  franchisee: []
-                                }));
-                                setSendToAllFranchisee('none')
-                              }}
-                              disabled={getUser_Role !== 'franchisor_admin'}
-                            />
-                            <span className="radio-round"></span>
-                            <p>No</p>
-                          </label>
+                        <div className="modal-bottom">
+                            <Row>
+                                <Col lg={12}>
+                                    <div className="metadescription">
+                                        <Form.Group className="mb-3">
+                                            <Form.Label>Meta Description*</Form.Label>
+                                            <Form.Control
+                                                as="textarea"
+                                                rows={2}
+                                                name="meta_description"
+                                                onChange={(e) => {
+                                                    setField(e.target.name, e.target.value);
+                                                }}
+                                            />
+                                            {error && !formSettingData.meta_description && < span className="error"> Meta Description is required!</span>}
+                                        </Form.Group>
+                                    </div>
+                                </Col>
+                                <Col lg={12}>
+                                    <Form.Group>
+                                        <Form.Label>File Category*</Form.Label>
+                                        {getUser_Role === "guardian" ? (
+                                            <>
+                                                <Form.Select
+                                                    name="file_category"
+                                                    onChange={(e) => {
+                                                        setField(e.target.name, e.target.value);
+                                                    }}
+                                                >
+                                                    <option value="">Select File Category</option>
+                                                    <option value="8" selected={true}>General</option>
+                                                </Form.Select>
+                                            </>) : (
+                                            <>
+                                                <Form.Select
+                                                    name="file_category"
+                                                    onChange={(e) => {
+                                                        setField(e.target.name, e.target.value);
+                                                    }}
+                                                >
+                                                    <option value="">Select File Category</option>
+                                                    {category?.map((item) => {
+                                                        return (
+                                                            <option value={item.id}>{item.category_name}</option>
+                                                        );
+                                                    })}
+                                                </Form.Select>
+                                            </>)}
+
+
+                                        {error && !formSettingData.file_category && < span className="error"> File is required!</span>}
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                            {getUser_Role === "guardian" ? (<></>) : (
+
+                                <>
+                                    <Row className="mt-4">
+                                        <Col lg={3} md={6}>
+                                            <Form.Group>
+                                                <Form.Label>Send to all Franchises:</Form.Label>
+                                                <div className="new-form-radio d-block">
+                                                    <div className="new-form-radio-box">
+                                                        <label for="all">
+                                                            <input
+                                                                type="radio"
+                                                                checked={sendToAllFranchisee === 'all'}
+                                                                name="send_to_all_franchisee"
+                                                                id="all"
+                                                                onChange={() => {
+                                                                    setFormSettings(prevState => ({
+                                                                        ...prevState,
+                                                                        assigned_franchisee: ['all'],
+                                                                        franchisee: ['all']
+                                                                    }));
+                                                                    setSendToAllFranchisee('all')
+                                                                }}
+                                                                disabled={getUser_Role !== 'franchisor_admin'}
+                                                            />
+                                                            <span className="radio-round"></span>
+                                                            <p>Yes</p>
+                                                        </label>
+                                                    </div>
+                                                    <div className="new-form-radio-box m-0 mt-3">
+                                                        <label for="none">
+                                                            <input
+                                                                type="radio"
+                                                                name="send_to_all_franchisee"
+                                                                checked={sendToAllFranchisee === 'none'}
+                                                                id="none"
+                                                                onChange={() => {
+                                                                    setFormSettings(prevState => ({
+                                                                        ...prevState,
+                                                                        assigned_franchisee: [],
+                                                                        franchisee: []
+                                                                    }));
+                                                                    setSendToAllFranchisee('none')
+                                                                }}
+                                                                disabled={getUser_Role !== 'franchisor_admin'}
+                                                            />
+                                                            <span className="radio-round"></span>
+                                                            <p>No</p>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </Form.Group>
+                                        </Col>
+
+                                        <Col lg={9} md={12}>
+                                            <Form.Group>
+                                                <Form.Label>Select Franchise</Form.Label>
+                                                <div className="select-with-plus">
+                                                    <Multiselect
+                                                        disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
+                                                        placeholder={"Select User Names"}
+                                                        displayValue="key"
+                                                        className="multiselect-box default-arrow-select"
+                                                        onRemove={function noRefCheck(data) {
+                                                            setFormSettings((prevState) => ({
+                                                                ...prevState,
+                                                                assigned_franchisee: [...data.map(data => data.id)],
+                                                                franchisee: [...data.map(data => data.id)]
+                                                            }));
+                                                            setSelectedUser([])
+                                                            setSelectedChild([])
+                                                        }}
+                                                        selectedValues={getUser_Role != 'franchisor_admin' ? (franchiseeList && franchiseeList.filter(c => c.id == getFranchisee)) : ""}
+                                                        onSelect={function noRefCheck(data) {
+                                                            setFormSettings((prevState) => ({
+                                                                ...prevState,
+                                                                assigned_franchisee: [...data.map((data) => data.id)],
+                                                                franchisee: [...data.map(data => data.id)]
+                                                            }));
+
+                                                            setSelectedUser([])
+                                                            setSelectedChild([])
+                                                        }}
+                                                        options={franchiseeList}
+                                                    />
+                                                </div>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                    <Row className="mt-4">
+                                        <Col lg={3} md={6}>
+                                            <Form.Group>
+                                                <Form.Label>Accessible to:</Form.Label>
+                                                <div className="new-form-radio d-block">
+                                                    <div className="new-form-radio-box">
+                                                        <label for="yes">
+                                                            <input
+                                                                type="radio"
+                                                                value={1}
+                                                                name="accessible_to_role"
+                                                                id="yes"
+                                                                onChange={(e) => {
+                                                                    setField(e.target.name, parseInt(e.target.value));
+                                                                }}
+                                                                checked={formSettingData.accessible_to_role === 1}
+                                                            />
+                                                            <span className="radio-round"></span>
+                                                            <p>User Roles</p>
+                                                        </label>
+                                                    </div>
+                                                    <div className="new-form-radio-box m-0 mt-3">
+                                                        <label for="no">
+                                                            <input
+                                                                type="radio"
+                                                                value={0}
+                                                                name="accessible_to_role"
+                                                                id="no"
+                                                                onChange={(e) => {
+                                                                    setField(e.target.name, parseInt(e.target.value));
+                                                                }}
+                                                                checked={formSettingData.accessible_to_role === 0 || formSettingData.accessible_to_role === null}
+                                                            />
+                                                            <span className="radio-round"></span>
+                                                            <p>Specific Users</p>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </Form.Group>
+                                        </Col>
+                                        <Col lg={9} md={12}>
+                                            {console.log(formSettingData, "{console.log(...formSettingData)}")}
+                                            {formSettingData.accessible_to_role === 1 ? (
+                                                <Form.Group>
+                                                    <Form.Label>Select User Roles</Form.Label>
+                                                    <div className="modal-two-check user-roles-box">
+                                                        {['franchisor_admin'].includes(getUser_Role) ? (<label className="container">
+                                                            Franchisee Admin
+                                                            <input
+                                                                type="checkbox"
+                                                                name="shared_role"
+                                                                id="franchisee_admin"
+                                                                onClick={(e) => {
+                                                                    let data = { ...formSettingData };
+                                                                    if (
+                                                                        !data['shared_role']
+                                                                            .toString()
+                                                                            .includes(e.target.id)
+                                                                    ) {
+                                                                        data['shared_role'] += e.target.id + ',';
+                                                                    } else {
+                                                                        data['shared_role'] = data[
+                                                                            'shared_role'
+                                                                        ].replace(e.target.id + ',', '');
+                                                                        if (data['shared_role'].includes('all')) {
+                                                                            data['shared_role'] = data[
+                                                                                'shared_role'
+                                                                            ].replace('all,', '');
+                                                                        }
+                                                                    }
+                                                                    setFormSettingData(data);
+                                                                }}
+                                                                checked={formSettingData?.shared_role
+                                                                    ?.toString()
+                                                                    .includes('franchisee_admin')}
+                                                            />
+                                                            <span className="checkmark"></span>
+                                                        </label>) : null}
+                                                        {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
+                                                            Coordinators
+                                                            <input
+                                                                type="checkbox"
+                                                                name="shared_role"
+                                                                id="coordinator"
+                                                                onClick={(e) => {
+                                                                    let data = { ...formSettingData };
+                                                                    if (
+                                                                        !data['shared_role']
+                                                                            .toString()
+                                                                            .includes(e.target.id)
+                                                                    ) {
+                                                                        data['shared_role'] += e.target.id + ',';
+                                                                    } else {
+                                                                        data['shared_role'] = data[
+                                                                            'shared_role'
+                                                                        ].replace(e.target.id + ',', '');
+                                                                        if (data['shared_role'].includes('all')) {
+                                                                            data['shared_role'] = data[
+                                                                                'shared_role'
+                                                                            ].replace('all,', '');
+                                                                        }
+                                                                    }
+                                                                    setFormSettingData(data);
+                                                                }}
+                                                                checked={formSettingData?.shared_role
+                                                                    ?.toString()
+                                                                    .includes('coordinator')}
+                                                            />
+                                                            <span className="checkmark"></span>
+                                                        </label>) : null}
+                                                        {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<label className="container">
+                                                            Educators
+                                                            <input
+                                                                type="checkbox"
+                                                                name="shared_role"
+                                                                id="educator"
+                                                                onClick={(e) => {
+                                                                    let data = { ...formSettingData };
+                                                                    if (
+                                                                        !data['shared_role']
+                                                                            .toString()
+                                                                            .includes(e.target.id)
+                                                                    ) {
+                                                                        data['shared_role'] += e.target.id + ',';
+                                                                    } else {
+                                                                        data['shared_role'] = data[
+                                                                            'shared_role'
+                                                                        ].replace(e.target.id + ',', '');
+                                                                        if (data['shared_role'].includes('all')) {
+                                                                            data['shared_role'] = data[
+                                                                                'shared_role'
+                                                                            ].replace('all,', '');
+                                                                        }
+                                                                    }
+                                                                    setFormSettingData(data);
+                                                                }}
+                                                                checked={formSettingData?.shared_role
+                                                                    ?.toString()
+                                                                    .includes('educator')}
+                                                            />
+                                                            <span className="checkmark"></span>
+                                                        </label>) : null}
+                                                        {!['guardian'].includes(getUser_Role) ? (<label className="container">
+                                                            Guardian
+                                                            <input
+                                                                type="checkbox"
+                                                                name="shared_role"
+                                                                id="guardian"
+                                                                onClick={(e) => {
+                                                                    let data = { ...formSettingData };
+                                                                    if (
+                                                                        !data['shared_role']
+                                                                            .toString()
+                                                                            .includes(e.target.id)
+                                                                    ) {
+                                                                        data['shared_role'] += e.target.id + ',';
+                                                                    } else {
+                                                                        data['shared_role'] = data[
+                                                                            'shared_role'
+                                                                        ].replace(e.target.id + ',', '');
+                                                                        if (data['shared_role'].includes('all')) {
+                                                                            data['shared_role'] = data[
+                                                                                'shared_role'
+                                                                            ].replace('all,', '');
+                                                                        }
+                                                                    }
+                                                                    setFormSettingData(data);
+                                                                }}
+                                                                checked={formSettingData?.shared_role?.includes(
+                                                                    'guardian'
+                                                                )}
+                                                            />
+                                                            <span className="checkmark"></span>
+                                                        </label>) : null}
+                                                        {!['educator', 'guardian'].includes(getUser_Role) ? (<label className="container">
+                                                            All Roles
+                                                            <input
+                                                                type="checkbox"
+                                                                name="shared_role"
+                                                                id="all_roles"
+                                                                onClick={(e) => {
+                                                                    let data = { ...formSettingData };
+                                                                    console.log('e.target.checked', e.target.checked);
+                                                                    if (e.target.checked === true) {
+                                                                        if (
+                                                                            !data['shared_role']
+                                                                                .toString()
+                                                                                .includes('guardian') && ['franchisor_admin', 'franchisee_admin', 'coordinator', 'educator'].includes(getUser_Role)
+                                                                        ) {
+                                                                            data['shared_role'] += 'guardian,';
+                                                                        }
+                                                                        if (
+                                                                            !data['shared_role']
+                                                                                .toString()
+                                                                                .includes('educator') && ['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role)
+                                                                        ) {
+                                                                            data['shared_role'] += 'educator,';
+                                                                        }
+                                                                        if (
+                                                                            !data['shared_role']
+                                                                                .toString()
+                                                                                .includes('coordinator') && ['franchisor_admin', 'franchisee_admin'].includes(getUser_Role)
+                                                                        ) {
+                                                                            data['shared_role'] += 'coordinator,';
+                                                                        }
+                                                                        if (
+                                                                            !data['shared_role']
+                                                                                .toString()
+                                                                                .includes('franchisee_admin') && ['franchisor_admin'].includes(getUser_Role)
+                                                                        ) {
+                                                                            data['shared_role'] += 'franchisee_admin';
+                                                                        }
+
+                                                                        if (
+                                                                            !data['shared_role']
+                                                                                .toString()
+                                                                                .includes('all')
+                                                                        ) {
+                                                                            data['shared_role'] += ',';
+                                                                            console.log(data, "dtatatatat")
+                                                                        }
+                                                                        setFormSettingData(data);
+                                                                    } else {
+                                                                        data['shared_role'] = '';
+                                                                        setFormSettingData(data);
+                                                                    }
+                                                                }}
+                                                                checked={isAllRolesChecked()}
+                                                            />
+                                                            <span className="checkmark"></span>
+                                                        </label>) : null}
+                                                    </div>
+                                                </Form.Group>
+                                            ) : null}
+                                            {formSettingData.accessible_to_role === 0 ? (
+                                                <>
+
+                                                    <Form.Group>
+                                                        <Form.Label>Select User</Form.Label>
+                                                        <div className="select-with-plus">
+                                                            <Multiselect
+                                                                displayValue="email"
+                                                                className="multiselect-box default-arrow-select"
+                                                                // placeholder="Select Franchisee"
+                                                                selectedValues={selectedUser}
+                                                                // onKeyPressFn={function noRefCheck() {}}
+                                                                onRemove={onRemoveUser}
+                                                                // onSearch={function noRefCheck() {}}
+                                                                onSelect={onSelectUser}
+                                                                options={user}
+                                                            />
+                                                        </div>
+                                                        <p className="error">{errors.franchisee}</p>
+                                                    </Form.Group>
+                                                    <Form.Group>
+                                                        <Form.Label>Select Child</Form.Label>
+                                                        <div className="select-with-plus">
+                                                            <Multiselect
+                                                                displayValue="name"
+                                                                className="multiselect-box default-arrow-select"
+                                                                // placeholder="Select Franchisee"
+                                                                selectedValues={selectedChild}
+                                                                // onKeyPressFn={function noRefCheck() {}}
+                                                                onRemove={onRemoveChild}
+                                                                // onSearch={function noRefCheck() {}}
+                                                                onSelect={onSelectChild}
+                                                                options={child}
+                                                            />
+                                                        </div>
+                                                    </Form.Group>
+                                                </>
+
+                                            ) : null}
+                                        </Col>
+                                    </Row>
+                                </>
+
+                            )
+                            }
                         </div>
-                      </div>
-                    </Form.Group>
-                  </Col>
-
-                  <Col lg={9} md={12}>
-                    <Form.Group>
-                      <Form.Label>Select Franchisee</Form.Label>
-                      <div className="select-with-plus">
-                        <Multiselect
-                          disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
-                          placeholder={"Select User Names"}
-                          displayValue="key"
-                          className="multiselect-box default-arrow-select"
-                          onRemove={function noRefCheck(data) {
-                            setFormSettings((prevState) => ({
-                              ...prevState,
-                              assigned_franchisee: [...data.map(data => data.id)],
-                              franchisee: [...data.map(data => data.id)]
-                            }));
-                            setSelectedUser([])
-                            setSelectedChild([])
-                          }}
-                          selectedValues={getUser_Role != 'franchisor_admin' ? (franchiseeList && franchiseeList.filter(c => c.id == getFranchisee)) : ""}
-                          onSelect={function noRefCheck(data) {
-                            setFormSettings((prevState) => ({
-                              ...prevState,
-                              assigned_franchisee: [...data.map((data) => data.id)],
-                              franchisee: [...data.map(data => data.id)]
-                            }));
-
-                            setSelectedUser([])
-                            setSelectedChild([])
-                          }}
-                          options={franchiseeList}
-                        />
-                      </div>
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col lg={3} md={6}>
-                    <Form.Group>
-                      <Form.Label>Accessible to:</Form.Label>
-                      <div className="new-form-radio d-block">
-                        <div className="new-form-radio-box">
-                          <label for="yes">
-                            <input
-                              type="radio"
-                              value={1}
-                              name="accessible_to_role"
-                              id="yes"
-                              onChange={(e) => {
-                                setField(e.target.name, parseInt(e.target.value));
-                              }}
-                              checked={formSettingData.accessible_to_role === 1}
-                            />
-                            <span className="radio-round"></span>
-                            <p>User Roles</p>
-                          </label>
-                        </div>
-                        <div className="new-form-radio-box m-0 mt-3">
-                          <label for="no">
-                            <input
-                              type="radio"
-                              value={0}
-                              name="accessible_to_role"
-                              id="no"
-                              onChange={(e) => {
-                                setField(e.target.name, parseInt(e.target.value));
-                              }}
-                              checked={formSettingData.accessible_to_role === 0 || formSettingData.accessible_to_role === null}
-                            />
-                            <span className="radio-round"></span>
-                            <p>Specific Users</p>
-                          </label>
-                        </div>
-                      </div>
-                    </Form.Group>
-                  </Col>
-                  <Col lg={9} md={12}>
-                    {console.log(formSettingData, "{console.log(...formSettingData)}")}
-                    {formSettingData.accessible_to_role === 1 ? (
-                      <Form.Group>
-                        <Form.Label>Select User Roles</Form.Label>
-                        <div className="modal-two-check user-roles-box">
-                        {['franchisor_admin'].includes(getUser_Role) ? (<label className="container">
-                            Franchisee Admin
-                            <input
-                              type="checkbox"
-                              name="shared_role"
-                              id="franchisee_admin"
-                              onClick={(e) => {
-                                let data = { ...formSettingData };
-                                if (
-                                  !data['shared_role']
-                                    .toString()
-                                    .includes(e.target.id)
-                                ) {
-                                  data['shared_role'] += e.target.id + ',';
-                                } else {
-                                  data['shared_role'] = data[
-                                    'shared_role'
-                                  ].replace(e.target.id + ',', '');
-                                  if (data['shared_role'].includes('all')) {
-                                    data['shared_role'] = data[
-                                      'shared_role'
-                                    ].replace('all,', '');
-                                  }
-                                }
-                                setFormSettingData(data);
-                              }}
-                              checked={formSettingData?.shared_role
-                                ?.toString()
-                                .includes('franchisee_admin')}
-                            />
-                            <span className="checkmark"></span>
-                          </label>) : null}
-                          {['franchisor_admin','franchisee_admin'].includes(getUser_Role) ? (<label className="container">
-                            Coordinators
-                            <input
-                              type="checkbox"
-                              name="shared_role"
-                              id="coordinator"
-                              onClick={(e) => {
-                                let data = { ...formSettingData };
-                                if (
-                                  !data['shared_role']
-                                    .toString()
-                                    .includes(e.target.id)
-                                ) {
-                                  data['shared_role'] += e.target.id + ',';
-                                } else {
-                                  data['shared_role'] = data[
-                                    'shared_role'
-                                  ].replace(e.target.id + ',', '');
-                                  if (data['shared_role'].includes('all')) {
-                                    data['shared_role'] = data[
-                                      'shared_role'
-                                    ].replace('all,', '');
-                                  }
-                                }
-                                setFormSettingData(data);
-                              }}
-                              checked={formSettingData?.shared_role
-                                ?.toString()
-                                .includes('coordinator')}
-                            />
-                            <span className="checkmark"></span>
-                          </label>) : null}
-                          {['franchisor_admin','franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<label className="container">
-                            Educators
-                            <input
-                              type="checkbox"
-                              name="shared_role"
-                              id="educator"
-                              onClick={(e) => {
-                                let data = { ...formSettingData };
-                                if (
-                                  !data['shared_role']
-                                    .toString()
-                                    .includes(e.target.id)
-                                ) {
-                                  data['shared_role'] += e.target.id + ',';
-                                } else {
-                                  data['shared_role'] = data[
-                                    'shared_role'
-                                  ].replace(e.target.id + ',', '');
-                                  if (data['shared_role'].includes('all')) {
-                                    data['shared_role'] = data[
-                                      'shared_role'
-                                    ].replace('all,', '');
-                                  }
-                                }
-                                setFormSettingData(data);
-                              }}
-                              checked={formSettingData?.shared_role
-                                ?.toString()
-                                .includes('educator')}
-                            />
-                            <span className="checkmark"></span>
-                          </label>) : null}
-                          {!['guardian'].includes(getUser_Role) ? (<label className="container">
-                            Guardian
-                            <input
-                              type="checkbox"
-                              name="shared_role"
-                              id="guardian"
-                              onClick={(e) => {
-                                let data = { ...formSettingData };
-                                if (
-                                  !data['shared_role']
-                                    .toString()
-                                    .includes(e.target.id)
-                                ) {
-                                  data['shared_role'] += e.target.id + ',';
-                                } else {
-                                  data['shared_role'] = data[
-                                    'shared_role'
-                                  ].replace(e.target.id + ',', '');
-                                  if (data['shared_role'].includes('all')) {
-                                    data['shared_role'] = data[
-                                      'shared_role'
-                                    ].replace('all,', '');
-                                  }
-                                }
-                                setFormSettingData(data);
-                              }}
-                              checked={formSettingData?.shared_role?.includes(
-                                'guardian'
-                              )}
-                            />
-                            <span className="checkmark"></span>
-                          </label>) : null}
-                          {!['educator','guardian'].includes(getUser_Role) ? (<label className="container">
-                            All Roles
-                            <input
-                              type="checkbox"
-                              name="shared_role"
-                              id="all_roles"
-                              onClick={(e) => {
-                                let data = { ...formSettingData };
-                                console.log('e.target.checked', e.target.checked);
-                                if (e.target.checked === true) {
-                                  if (
-                                    !data['shared_role']
-                                      .toString()
-                                      .includes('guardian') && ['franchisor_admin','franchisee_admin','coordinator','educator'].includes(getUser_Role)
-                                  ) {
-                                    data['shared_role'] += 'guardian,';
-                                  }
-                                  if (
-                                    !data['shared_role']
-                                      .toString()
-                                      .includes('educator')  && ['franchisor_admin','franchisee_admin','coordinator'].includes(getUser_Role)
-                                  ) {
-                                    data['shared_role'] += 'educator,';
-                                  }
-                                  if (
-                                    !data['shared_role']
-                                      .toString()
-                                      .includes('coordinator') && ['franchisor_admin','franchisee_admin'].includes(getUser_Role)
-                                  ) {
-                                    data['shared_role'] += 'coordinator,';
-                                  }
-                                  if (
-                                    !data['shared_role']
-                                      .toString()
-                                      .includes('franchisee_admin') && ['franchisor_admin'].includes(getUser_Role)
-                                  ) {
-                                    data['shared_role'] += 'franchisee_admin';
-                                  }
-
-                                  if (
-                                    !data['shared_role']
-                                      .toString()
-                                      .includes('all')
-                                  ) {
-                                    data['shared_role'] += ',';
-                                    console.log(data,"dtatatatat")
-                                  }
-                                  setFormSettingData(data);
-                                } else {
-                                  data['shared_role'] = '';
-                                  setFormSettingData(data);
-                                }
-                              }}
-                              checked={isAllRolesChecked()}
-                            />
-                            <span className="checkmark"></span>
-                          </label>) : null}
-                        </div>
-                      </Form.Group>
-                    ) : null}
-                    {formSettingData.accessible_to_role === 0 ? (
-                      <>
-
-                        <Form.Group>
-                          <Form.Label>Select User</Form.Label>
-                          <div className="select-with-plus">
-                            <Multiselect
-                              displayValue="email"
-                              className="multiselect-box default-arrow-select"
-                              // placeholder="Select Franchisee"
-                              selectedValues={selectedUser}
-                              // onKeyPressFn={function noRefCheck() {}}
-                              onRemove={onRemoveUser}
-                              // onSearch={function noRefCheck() {}}
-                              onSelect={onSelectUser}
-                              options={user}
-                            />
-                          </div>
-                          <p className="error">{errors.franchisee}</p>
-                        </Form.Group>
-                        <Form.Group>
-                          <Form.Label>Select Child</Form.Label>
-                          <div className="select-with-plus">
-                            <Multiselect
-                              displayValue="name"
-                              className="multiselect-box default-arrow-select"
-                              // placeholder="Select Franchisee"
-                              selectedValues={selectedChild}
-                              // onKeyPressFn={function noRefCheck() {}}
-                              onRemove={onRemoveChild}
-                              // onSearch={function noRefCheck() {}}
-                              onSelect={onSelectChild}
-                              options={child}
-                            />
-                          </div>
-                        </Form.Group>
-                      </>
-
-                    ) : null}
-                  </Col>
-                </Row>
-              </>
-              
-              )
-              }
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="transparent" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={onSubmit}>
-            {loaderFlag === true ? (
-              <>
-                <img
-                  style={{ width: '24px' }}
-                  src={'/img/mini_loader1.gif'}
-                  alt=""
-                />
-                Uploading...
-              </>
-            ) : (
-              'Upload File'
-            )}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="transparent" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={onSubmit}>
+                        {loaderFlag === true ? (
+                            <>
+                                <img
+                                    style={{ width: '24px' }}
+                                    src={'/img/mini_loader1.gif'}
+                                    alt=""
+                                />
+                                Uploading...
+                            </>
+                        ) : (
+                            'Upload File'
+                        )}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }
