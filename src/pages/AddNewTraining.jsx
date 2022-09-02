@@ -12,9 +12,9 @@ import axios from 'axios';
 import { TrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
-import DragDropSingle from '../components/DragDropSingle';
-import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
+
 import DragDropTraning from '../components/DragDropTraning';
+import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
 
 const animatedComponents = makeAnimated();
 
@@ -389,6 +389,7 @@ const AddNewTraining = () => {
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
                   <div className="training-form">
                     <Row>
+
                       <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Training Name*</Form.Label>
@@ -587,7 +588,7 @@ const AddNewTraining = () => {
 
                           {
                             popupVisible &&
-                            <ImageCropPopup
+                            <ImageCropTraning
                               image={coverImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
