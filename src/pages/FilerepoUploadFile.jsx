@@ -11,19 +11,9 @@ import DragDropFileEdit from '../components/DragDropFileEdit';
 
 
 let selectedUserId = '';
-const animatedComponents = makeAnimated();
-let selectedFranchisee = [
-    { id: 1, registered_name: 'ABC' },
-    { id: 2, registered_name: 'PQR' },
-];
-let selectedUserRole = [];
+
 let selectedFranchiseeId = '';
-const styles = {
-    option: (styles, state) => ({
-        ...styles,
-        backgroundColor: state.isSelected ? '#E27235' : '',
-    }),
-};
+
 const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
     const handleClose = () => setShow(false);
@@ -36,21 +26,17 @@ const FilerepoUploadFile = () => {
     const [selectedChild, setSelectedChild] = useState([]);
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
     const [franchiseeList, setFranchiseeList] = useState();
-    const [post, setPost] = React.useState([]);
     const [child, setChild] = useState([]);
     const [UpladFile, setUpladFile] = useState('');
-    const [tabLinkPath, setTabLinkPath] = useState("/available-Files");
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [user, setUser] = useState([]);
-    const [shareType, setShareType] = useState("roles");
-    const [applicableToAll, setApplicableToAll] = useState(false);
     const [selectedAll, setSelectedAll] = useState(false);
-    const [formSettings, setFormSettings] = useState({
-        assigned_franchisee: [],
-    });
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+    const [formSettings, setFormSettings] = useState({
+        assigned_franchisee: [],
+    });
 
     //======================== GET FILE CATAGOREY==================
 
@@ -67,7 +53,7 @@ const FilerepoUploadFile = () => {
                 console.error(error)
             })
     };
-    console.log(category, " ")
+
     //======================== GET FILE Franchisee List==================
 
     const fetchFranchiseeList = async () => {
@@ -139,13 +125,10 @@ const FilerepoUploadFile = () => {
     useEffect(() => {
         getFileCategory();
         getChildren();
+        getUser();
         fetchFranchiseeList();
-        getUser();
-    }, [])
-    useEffect(() => {
-        getUser();
-        getChildren()
     }, [formSettings.franchisee])
+
 
     const setField = (field, value) => {
         if (value === null || value === undefined) {
@@ -347,14 +330,6 @@ const FilerepoUploadFile = () => {
         setUser(data);
     }
 
-
-    post && console.log("post Data", '++++++++++++++++++++++++++++++:', post.map(data => data));
-
-    const handleLinkClick = event => {
-        let path = event.target.getAttribute('path');
-        setTabLinkPath(path);
-    }
-
     const isAllRolesChecked = () => {
         let bool = false;
         if (getUser_Role == "franchisor_admin") {
@@ -405,7 +380,7 @@ const FilerepoUploadFile = () => {
                                             <Form.Label>Upload File:*</Form.Label>
                                             <DragDropFileEdit onChange={setField} />
                                             {/* <DragDropRepository onChange={setField} /> */}
-                                            {error && !formSettingData?.setting_files && < span className="error"> File Category is required!</span>}
+                                            {error && !formSettingData?.setting_files && < span className="error"> File  is required!</span>}
                                             <p className="error">{errors.setting_files}</p>
                                         </Form.Group>
                                     </Col>
@@ -446,7 +421,7 @@ const FilerepoUploadFile = () => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
                                                 >
-                                                    <option value="">Select File Category</option>
+                                                    <option value="">Select</option>
                                                     <option value="8" selected={true}>General</option>
                                                 </Form.Select>
                                             </>) : (
@@ -457,7 +432,7 @@ const FilerepoUploadFile = () => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
                                                 >
-                                                    <option value="">Select File Category</option>
+                                                    <option value="">Select</option>
                                                     {category?.map((item) => {
                                                         return (
                                                             <option value={item.id}>{item.category_name}</option>
@@ -467,7 +442,7 @@ const FilerepoUploadFile = () => {
                                             </>)}
 
 
-                                        {error && !formSettingData.file_category && < span className="error"> File is required!</span>}
+                                        {error && !formSettingData.file_category && < span className="error">File Category is required!</span>}
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -477,7 +452,7 @@ const FilerepoUploadFile = () => {
                                     <Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
-                                                <Form.Label>Send to all franchisee:</Form.Label>
+                                                <Form.Label>Send to all Franchisee:</Form.Label>
                                                 <div className="new-form-radio d-block">
                                                     <div className="new-form-radio-box">
                                                         <label for="all">
@@ -527,11 +502,11 @@ const FilerepoUploadFile = () => {
 
                                         <Col lg={9} md={12}>
                                             <Form.Group>
-                                                <Form.Label>Select Franchisee</Form.Label>
+                                                <Form.Label>Select Franchise(s)</Form.Label>
                                                 <div className="select-with-plus">
                                                     <Multiselect
                                                         disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
-                                                        placeholder={"Select User Names"}
+                                                        placeholder={"Select"}
                                                         displayValue="key"
                                                         className="multiselect-box default-arrow-select"
                                                         onRemove={function noRefCheck(data) {

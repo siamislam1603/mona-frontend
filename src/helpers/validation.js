@@ -267,27 +267,27 @@ export const TrainingFormValidation = (form) => {
   } = form;
 
   if (!title) {
-    errors.title = 'Training title is required!';
+    errors.title = 'Training title is required';
   }
 
   if (title <= 2) {
-    errors.title_length = 'Training title should be more than 2 characters.';
+    errors.title_length = 'Training title should be more than 2 characters';
   }
 
   if (!description) {
-    errors.description = 'Training description is required!';
+    errors.description = 'Training description is required';
   }
 
   if (!meta_description) {
-    errors.meta_description = 'Meta description is required!';
+    errors.meta_description = 'Meta description is required';
   }
 
   if (!category_id) {
-    errors.category_id = 'Training category title is required!';
+    errors.category_id = 'Training category title is required';
   }
 
   if (!time_required_to_complete) {
-    errors.time_required_to_complete = 'Training time is required!';
+    errors.time_required_to_complete = 'Training time is required';
   }
 
   // if (!croppedImage) {
@@ -325,7 +325,7 @@ export const EditFleRepo = (form, coverImage) => {
     form;
 
   if (!title) {
-    errors.title = ' title is required!';
+    errors.title = ' title is required';
   }
 
   // >>>>>>> master
@@ -334,23 +334,23 @@ export const EditFleRepo = (form, coverImage) => {
   }
 
   if (!description) {
-    errors.description = 'Training description is required!';
+    errors.description = 'Training description is required';
   }
 
   if (!categoryId) {
-    errors.categoryId = 'categoryid  is required!';
+    errors.categoryId = 'categoryid  is required';
   }
 
   if (!assigned_users) {
-    errors.assigned_users = 'assigned_user time is required!';
+    errors.assigned_users = 'assigned_user time is required';
   }
 
   if (!assigned_roles) {
-    errors.assigned_roles = 'user_roles time is required!';
+    errors.assigned_roles = 'user_roles time is required';
   }
 
   if (Object.keys(coverImage).length === 0) {
-    errors.coverImage = 'Cover image required!';
+    errors.coverImage = 'Cover image required';
   }
   return errors;
 };
@@ -360,7 +360,7 @@ export const PasswordValidation = (form) => {
   let { oldpassword, new_password, confirm_password } = form;
 
   if (!oldpassword) {
-    errors.oldpassword = 'Old password is required!';
+    errors.oldpassword = 'Old password is required';
   }
   if (!new_password) {
     errors.new_password = 'New Password is required';
@@ -415,43 +415,52 @@ export const FranchiseeFormValidation = (formObj) => {
   } = formObj;
 
   if (!franchisee_name) {
-    errors.franchisee_name = 'Franchise Name is required!';
+    errors.franchisee_name = 'Franchise name is required';
   }
 
   if (!abn) {
-    errors.abn = 'provide australian business number';
+    errors.abn = 'Australian business number is required';
   }
 
   if (!city) {
-    errors.city = 'Suburb is required!';
+    errors.city = 'Suburb is required';
   }
 
   if (!state) {
-    errors.state = 'State is required!';
+    errors.state = 'State is required';
   }
 
   if (!franchisee_number) {
-    errors.franchisee_number = 'Franchise number is required!';
+    errors.franchisee_number = 'Franchise number is required';
   }
 
   if (!acn) {
-    errors.acn = 'provide australian company number!';
+    errors.acn = 'Australian company number is required';
   }
 
   if (!address) {
-    errors.address = 'Address is required!';
+    errors.address = 'Address is required';
   }
 
   if (!postcode) {
-    errors.postcode = 'postal code is required!';
+    errors.postcode = 'Post code is required';
   }
 
   if (!contact) {
-    errors.contact = 'contact number is required!';
+    errors.contact = 'Contact number is required';
   }
 
   return errors;
 };
+
+export const acceptPointValidator = (value) => {
+  let errors = {};
+
+  if(value === false)
+    errors.value = "Please give your consent";
+
+  return errors;
+}
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
@@ -459,32 +468,32 @@ export const UserFormValidation = (formObj) => {
   let { fullname, role, city, address, postalCode, email, phone, franchisee, password, confirm_password } =
     formObj;
 
-  if (!fullname) errors.fullname = 'Fullname is required!';
+  if (!fullname) errors.fullname = 'Fullname is required';
 
-  if (!franchisee) errors.franchisee = 'Franchise is required!';
+  if (!franchisee) errors.franchisee = 'Franchise is required';
 
-  if (!role) errors.role = 'User role is required!';
+  if (!role) errors.role = 'User role is required';
 
-  if (!city) errors.city = 'Suburb is required!';
+  if (!city) errors.city = 'Suburb is required';
 
   if (password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match!";
-    errors.confirm_password = "Passwords don't match!";
+    errors.confirm_password = "Passwords don't match";
   }
 
-  if (!address) errors.address = 'Address is required!';
+  if (!address) errors.address = 'Address is required';
 
-  if (!postalCode) errors.postalCode = 'Postal code is required!';
+  if (!postalCode) errors.postalCode = 'Post code is required';
 
   if (postalCode.length !== 4)
-    errors.postalCodeLength = 'Postal code should be 4-digit long!';
+    errors.postalCodeLength = 'Post code should be 4-digit long';
 
-  if (!email) errors.email = 'Email is required!';
+  if (!email) errors.email = 'Email is required';
 
-  if (!(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
-    errors.email = "Please use a valid email!";
+  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
+    errors.email = "Email is invalid";
 
-  if (!phone) errors.phone = 'Phone number is required!';
+  if (!phone) errors.phone = 'Phone number is required';
 
   if (phone.length > 0 && phone.length < 10)
     errors.phone = 'Phone number must be 10-digits long.'
@@ -498,7 +507,7 @@ export const editUserValidation = (form) => {
 
   if (password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match!";
-    errors.confirm_password = "Passwords don't match!";
+    errors.confirm_password = "Passwords don't match";
   }
 
   return errors;
@@ -509,27 +518,27 @@ export const personValidation = (personValidationForm) => {
   let { name, address, telephone, relationship_to_the_child } =
     personValidationForm;
 
-  if (!name) errors.name = 'Please complete mandatory Field!';
+  if (!name) errors.name = 'Please complete mandatory field';
 
   if (name.length > 0 && !(/^[a-zA-Z ]+$/i.test(name)))
-    errors.name = 'Field shouldn\'t contain digits & special characters!';
+    errors.name = 'Field shouldn\'t contain digits & special characters';
 
-  if (!address) errors.address = 'Please complete mandatory Field!';
+  if (!address) errors.address = 'Please complete mandatory field';
 
-  if (!telephone) errors.telephone = 'Please complete mandatory Field!';
+  if (!telephone) errors.telephone = 'Please complete mandatory field';
 
-  if (!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits!";
+  if(!(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Field should only contain digits"; 
 
-  if (telephone.length > 1 && telephone.length < 10)
-    errors.telephone = 'Field must be at least 10-digit long!'
+  if(telephone.length > 1 && telephone.length < 10)
+    errors.telephone = 'Field must be at least 10-digit long'
 
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
-      'Please complete mandatory Field!';
+      'Please complete mandatory field!';
 
-  if (relationship_to_the_child.length > 0 && !(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
-    errors.relationship_to_the_child = 'Field shouldn\'t contain digits & special characters!';
+  if(relationship_to_the_child.length > 0 && !(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
+    errors.relationship_to_the_child = 'Field shouldn\'t contain digits & special characters';
 
   return errors;
 };
@@ -539,8 +548,8 @@ export const personValidation2 = (personValidationForm) => {
   let { telephone } =
     personValidationForm;
 
-  if (telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits!";
+  if(telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Field should only contain digits";
 
   return errors;
 }
@@ -549,8 +558,8 @@ export const person2Validation = (obj) => {
   let errors = {};
   let { telephone } = obj;
 
-  if (telephone?.length > 1 && telephone?.length < 10)
-    errors.telephone = 'Telephone number must be at least 10-digit long.'
+  if(telephone?.length > 1 && telephone?.length < 10)
+    errors.telephone = 'Telephone number must be at least 10-digit long'
 
   return errors;
 };
@@ -563,11 +572,11 @@ export const digitalSignatureValidator = (form) => {
   } = form;
   let date = moment(consent_date);
 
-  if (!consent_signature)
-    errors.consent_signature = "Please provide your signature below!";
+  if(!consent_signature)
+    errors.consent_signature = "Please provide your signature below";
 
-  if (!date.isValid())
-    errors.consent_date = "Please provide a date!";
+  if(!date.isValid())
+    errors.consent_date = "Please provide a date";
 
   return errors;
 }
@@ -588,26 +597,26 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
     comment,
   } = childDailyRoutineForm;
 
-  if (!sleep_time) errors.sleep_time = 'Please complete mandatory Field!';
+  if (!sleep_time) errors.sleep_time = 'Please complete mandatory field';
 
-  if (!bottle_time) errors.bottle_time = 'Please complete mandatory Field!';
+  if (!bottle_time) errors.bottle_time = 'Please complete mandatory field';
 
-  if (!toileting) errors.toileting = 'Please complete mandatory Field!';
+  if (!toileting) errors.toileting = 'Please complete mandatory field';
 
-  if (!routines) errors.routines = 'Please complete mandatory Field!';
+  if (!routines) errors.routines = 'Please complete mandatory field';
 
-  if (!likes_dislikes) errors.likes_dislikes = 'Please complete mandatory Field!';
+  if (!likes_dislikes) errors.likes_dislikes = 'Please complete mandatory field';
 
-  if (!comforter) errors.comforter = 'Please complete mandatory Field!';
+  if (!comforter) errors.comforter = 'Please complete mandatory field';
 
-  if (!religion) errors.religion = 'Please complete mandatory Field!';
+  if (!religion) errors.religion = 'Please complete mandatory field';
 
   if (!dietary_requirement)
-    errors.dietary_requirement = 'Please complete mandatory Field!';
+    errors.dietary_requirement = 'Please complete mandatory field';
 
-  if (!allergy) errors.allergy = 'Please complete mandatory Field!';
+  if (!allergy) errors.allergy = 'Please complete mandatory field';
 
-  if (!comment) errors.comment = 'Please complete mandatory Field!';
+  if (!comment) errors.comment = 'Please complete mandatory field';
 
   return errors;
 };
@@ -615,16 +624,18 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
 export const enrollmentInitiationFormValidation = (
   formOneChildData
 ) => {
-  let { name, dob, home_address, educator } = formOneChildData;
+  let { fullname, family_name, dob, home_address, educator } = formOneChildData;
   let errors = {};
 
-  if (!name) errors.name = 'Fullname is required!';
+  if (!fullname) errors.name = 'Fullname is required';
 
-  if (!dob) errors.dob = 'Date of birth is required!';
+  if(!family_name) errors.family_name = 'Family name is required'
 
-  if (!home_address) errors.home_address = 'Home address is required!';
+  if (!dob) errors.dob = 'Date of birth is required';
 
-  if (educator.length === 0) errors.educatorData = 'An Educator needs to be selected!';
+  if (!home_address) errors.home_address = 'Home address is required';
+
+  if (educator.length === 0) errors.educatorData = 'An Educator needs to be selected';
 
   return errors;
 };

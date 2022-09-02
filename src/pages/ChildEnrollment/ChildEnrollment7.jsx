@@ -430,7 +430,6 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Go Back</Button>
             <Button 
-              disabled={consentData?.consent_date === null}
               variant="primary" 
               type="submit" 
               onClick={handleDataSubmit}>

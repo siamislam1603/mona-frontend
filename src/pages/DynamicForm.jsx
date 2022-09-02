@@ -358,7 +358,7 @@ const DynamicForm = () => {
                               0 ? (
                               <>
                                 {index === 0 && (
-                                  <h6 className="text-capitalize">{item}</h6>
+                                  <h6 className="text-capitalize">{item.split("_").join(" ")}</h6>
                                 )}
                                 <InputFields
                                   {...inner_item}
