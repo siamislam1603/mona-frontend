@@ -93,19 +93,19 @@ const EducatorDashboard = () => {
   const Userannouncements = async () => {
     try {
       const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard/educator/quick-access-announcements`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
+      const response = await axios.get(`${BASE_URL}/dashboard/educator/quick-access-announcements`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
 
-    if (response.status === 200 && response.data.status === "success") {
-      const training = response.data.recentAnnouncement;
-      setannouncements(training);
-    }
+      if (response.status === 200 && response.data.status === "success") {
+        const training = response.data.recentAnnouncement;
+        setannouncements(training);
+      }
     } catch (error) {
       setannouncements([])
-      console.log("error",error)
+      console.log("error", error)
     }
 
   };
@@ -218,36 +218,7 @@ const EducatorDashboard = () => {
                                 <div className="name">Story park</div>
                               </a>
                             </div>
-                            {/* <div className="item">
-                              <a href="https://sp8.harmonykids.com.au/UserAccount/Login" className="flex">
-                                <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
-                                <div className="name">Harmony</div>
-                              </a>
-                            </div> */}
-                            {/* <div className="item">
-                              <a href="https://app.engagebay.com/login" className="flex">
-                                <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
-                                <div className="name">Engagebay</div>
-                              </a>
-                            </div> */}
-                            {/* <div className="item">
-                              <a href="https://login.xero.com/identity/user/login" className="flex">
-                                <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
-                                <div className="name">Xero</div>
-                              </a>
-                            </div> */}
-                            {/* <div className="item nolink">
-                              <div className="flex">
-                                <div className="pic"><img src="../img/bitool-ico.png" alt="" /></div>
-                                <div className="name">BI Tool</div>
-                              </div>
-                            </div> */}
-                            {/*<div className="item">
-                              <a href="/" className="flex">
-                                <div className="pic"><img src="../img/intranet-ico.png" alt="" /></div>
-                                <div className="name">Intranet</div>
-                              </a>
-                            </div>*/}
+
                           </div>
                         </div>
                         <div className="children-sec pb-5">
@@ -256,11 +227,7 @@ const EducatorDashboard = () => {
                             <Link to="/children-all" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
-                            {/* <BootstrapTable
-                              keyField="name"
-                              data={childrenData}
-                              columns={columns}
-                            /> */}
+
                             {
                               childrenData?.length > 0 ? (
                                 <BootstrapTable
@@ -275,103 +242,7 @@ const EducatorDashboard = () => {
                             }
                           </div>
                         </div>
-                        {/*<div className="files-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h2 className="title-sm mb-0"><strong>Forms</strong></h2>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list files-list two-col">
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="Policies-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h3 className="title-sm mb-0"><strong>Policies</strong></h3>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list policies-list">
-                            <div className="item">
-                              <div className="pic"><img src="../img/policies-ico.png" alt=""/></div>
-                              <div className="name">Title goes here <span className="time">Udpated on: 12 April, 2022</span></div>
-                              <div className="content">
-                                <p>Privacy Policy is meant to help you understand what information we collect, why we collect it, and how you can update, manage, export, and delete your account. Privacy Policy is meant to help you understand what information we collect, why we collect it, and how you can update, manage, export, and delete your account.</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="announcements-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h4 className="title-sm mb-0"><strong>Announcements</strong></h4>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list announcements-list">
-                            <div className="item grayback">
-                              <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
-                              <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              <Link to="/"><img src="../img/akar-icons.png" alt=""/></Link>
-                            </div>
-                            <div className="item grayback">
-                              <div className="pic"><img src="../img/announcement-ico.png" alt=""/></div>
-                              <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              <Link to="/"><img src="../img/akar-icons.png" alt=""/></Link>
-                            </div>
-                          </div>
-                        </div>*/}
+
                       </div>
                     </Col>
                     <Col md={5}>
@@ -465,8 +336,7 @@ const EducatorDashboard = () => {
                           </header>
                           <div className="column-list announcements-list">
                             <div className="listing">
-
-                              {announcements?.length> 0 ?
+                              {announcements?.length > 0 ?
                                 (announcements?.map((item) => {
                                   return <>
                                     <div className="listing">
@@ -478,18 +348,12 @@ const EducatorDashboard = () => {
                                             <span className="timesec">{getAddedTime(item?.createdAt)}</span>
                                           </div>
                                         </div>
-                                        {/* {console.log("THE TIME",item.scheduled_date,getAddedTime(item.scheduled_date))} */}
                                       </a>
                                     </div>
                                   </>
                                 })) : (<div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>)}
                             </div>
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+
                           </div>
                         </div>
                         <div className="educator-column">
@@ -501,12 +365,12 @@ const EducatorDashboard = () => {
                               return <>
                                 <div className="educator-sec mb-5">
                                   <div className="educator-pic">
-                                    <img src={item.profile_photo} alt="" />
+                                    <img src={item?.profile_photo} alt="" />
                                   </div>
                                   <div className="educator-detail">
-                                    <h1 className="edu-name mb-2">{item.fullname}</h1>
-                                    <div className="edu-tel mb-2"><a href="tel:+6145434234">{item.phone}</a></div>
-                                    <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item.email}</a></div>
+                                    <h1 className="edu-name mb-2">{item?.fullname}</h1>
+                                    <div className="edu-tel mb-2"><a href="tel:+6145434234">{item?.phone}</a></div>
+                                    <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item?.email}</a></div>
                                   </div>
                                 </div>
                               </>
@@ -514,20 +378,6 @@ const EducatorDashboard = () => {
                           ) : (
                             <div className="text-center mb-5 mt-5"><strong>No Co-ordinators</strong></div>
                           )}
-                          {/* // {coordinator.map((item) => {
-                          //   return <>
-                          //     <div className="educator-sec mb-5">
-                          //       <div className="educator-pic">
-                          //         <img src={item.profile_photo} alt="" />
-                          //       </div>
-                          //       <div className="educator-detail">
-                          //         <h1 className="edu-name mb-2">{item.fullname}</h1>
-                          //         <div className="edu-tel mb-2"><a href="tel:+6145434234">{item.phone}</a></div>
-                          //         <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item.email}</a></div>
-                          //       </div>
-                          //     </div>
-                          //   </>
-                          // })} */}
 
                         </div>
                       </aside>
