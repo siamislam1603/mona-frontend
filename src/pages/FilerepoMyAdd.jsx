@@ -3,56 +3,33 @@ import { Button, Container, Dropdown, Form, Modal, Row, Col } from 'react-bootst
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import Select from 'react-select';
 import Multiselect from 'multiselect-react-dropdown';
-import makeAnimated from 'react-select/animated';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Link, useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
-import DragDropRepository from '../components/DragDropRepository';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
+import { FullLoader } from "../components/Loader";
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
-const animatedComponents = makeAnimated();
 const { SearchBar } = Search;
 let selectedUserId = '';
-let selectedUserRole = [];
-let selectedFranchiseeId = '';
-const training = [
-    {
-        value: 'sydney',
-        label: 'Sydney',
-    },
-    {
-        value: 'melbourne',
-        label: 'Melbourne',
-    },
-];
+
 const selectRow = {
     mode: 'checkbox',
     clickToSelect: true,
 };
 
 const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
-    const Navigate = useNavigate();
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    let Params = useParams();
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
-    const handleVideoShow = () => setVideo(true);
-    const [category, setCategory] = useState([]);
+
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
     const [userData, setUserData] = useState([]);
-    const [userTO, setUserTow] = useState([]);
-    const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
-    const [errors, setErrors] = useState({});
+    const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
     const [selectedUser, setSelectedUser] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [saveFileId, setSaveFileId] = useState(null);
@@ -62,7 +39,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState();
     const [shareType, setShareType] = useState("roles");
     const [applicableToAll, setApplicableToAll] = useState(false);
-    const [error, setError] = useState(false);
+
+    const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -70,16 +49,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         assigned_childs: []
     });
     const [child, setChild] = useState([]);
-    const [selectedChild, setSelectedChild] = useState([]);
-    let Params = useParams();
-
-    const toBase64 = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
 
 
     const fetchFranchiseeList = async () => {
@@ -98,9 +67,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             })));
         }
     };
+
+
+
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
-        let user_id = localStorage.getItem('user_id')
+
         setLoaderFlag(true);
         if (
             formSettingData.accessible_to_role === null ||
@@ -126,8 +98,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         formSettings.franchisee = formSettings.franchisee[0] == "all" ? [] : formSettings.franchisee
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
-            // shared_by: user_id,
-            // is_applicable_to_all: applicableToAll
         }, {
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -135,27 +105,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         });
 
         if (response.status === 201 && response.data.status === "success") {
-            console.log("submitted successfully")
             setLoaderFlag(false);
             window.location.reload()
         } else {
             setLoaderFlag(false);
-            
+
             window.location.reload()
         }
-
-        console.log(formSettings, "share final")
     }
 
-    function onSelectUser(optionsList, selectedItem) {
-        console.log('selected_item---->2', selectedItem);
-        selectedUserId += selectedItem.id + ',';
-        selectedUser.push({
-            id: selectedItem.id,
-            email: selectedItem.email,
-        });
 
-    }
 
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
@@ -164,142 +123,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         });
         selectedUser.splice(index, 1);
     }
-
-    function onSelectChild(selectedItem) {
-        selectedItem = selectedItem.map((item) => {
-            return item.id
-        })
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_childs: selectedItem
-        }));
-    }
-
-    function onRemoveChild(removedItem) {
-        removedItem = removedItem.map((item) => {
-            return item.id
-        })
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_childs: removedItem
-        }));
-    }
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        selectedUser?.map((item) => {
-            selectedFranchiseeId += item.id + ',';
-        });
-
-        if (!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category) {
-            setError(true);
-            return false
-        }
-
-
-        setLoaderFlag(true);
-
-        var myHeaders = new Headers();
-
-        myHeaders.append(
-            'Authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-        const file = formSettingData.setting_files[0];
-        console.log('file------->', file);
-        const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-        console.log('reader---->');
-        var formdata = new FormData();
-
-        formdata.append('image', blob, file.name);
-        formdata.append('description', formSettingData.meta_description);
-        formdata.append('title', 'abc');
-        formdata.append('createdBy', localStorage.getItem('user_name'));
-        formdata.append('userId', localStorage.getItem('user_id'));
-        formdata.append('categoryId', formSettingData.file_category);
-        formdata.append('franchisee', formSettings?.assigned_franchisee[0] == "all" ? [] : formSettings?.assigned_franchisee);
-        if (
-            formSettingData.accessible_to_role === null ||
-            formSettingData.accessible_to_role === undefined
-        ) {
-            formdata.append(
-                'accessibleToRole',
-                ""
-            );
-            formdata.append(
-                'accessibleToAll',
-                true
-            );
-        }
-        else {
-            if (formSettingData.accessible_to_role === 1) {
-                formdata.append(
-                    'user_roles',
-                    formSettingData.shared_role.slice(0, -1)
-                );
-                formdata.append(
-                    'assigned_users',
-                    ""
-                );
-                formdata.append(
-                    'accessibleToRole',
-                    formSettingData.accessible_to_role
-                );
-                formdata.append(
-                    'accessibleToAll',
-                    false
-                );
-            } else {
-                formdata.append(
-                    'user_roles',
-                    ""
-                );
-                formdata.append(
-                    'assigned_users',
-                    selectedUserId.slice(0, -1) == "" ? null : selectedUserId.slice(0, -1)
-                );
-                formdata.append(
-                    'accessibleToRole',
-                    formSettingData.accessible_to_role
-                );
-                formdata.append(
-                    'accessibleToAll',
-                    false
-                );
-                formdata.append(
-                    'assigned_childs',
-                    formSettings.assigned_childs
-                )
-            }
-        }
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow',
-        };
-
-
-        fetch(`${BASE_URL}/fileRepo/`, requestOptions)
-            .then((response) => {
-                response.json()
-                console.log(response.statusText, "+++++++++++")
-                if (response.statusText === "Created") {
-                    setLoaderFlag(false);
-                    setShow(false);
-                    Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
-                }
-            })
-            .then((result) => {
-                if (result) {
-                    setLoaderFlag(false);
-                    setShow(false);
-                    Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
-                }
-            })
-            .catch((error) => console.log('error', error));
-    };
-
     const GetFile = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -313,53 +136,23 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         };
         let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
         response = await response.json();
-        setUserTow(response.result)
-
-
-        const users = response.files;
-        let tempData = users.map((dt) => ({
-            name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
-            createdAt: dt.createdAt,
-            userID: dt.id,
-            creatorName: dt.creatorName + "," + dt.creatorRole,
-            Shaired: dt.repository.repository_shares.length,
-            categoryId: dt.categoryId
-        }));
-        setUserData(tempData);
+        console.log(response, "response")
+        if (response) {
+            setfullLoaderStatus(false)
+        }
+        if (response.status === "success" || 200) {
+            const users = response.files;
+            let tempData = users.map((dt) => ({
+                name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                createdAt: dt.createdAt,
+                userID: dt.id,
+                creatorName: dt.creatorName + "," + dt.creatorRole,
+                Shaired: dt.repository.repository_shares.length,
+                categoryId: dt.categoryId
+            }));
+            setUserData(tempData);
+        }
     }
-
-
-    const setField = (field, value) => {
-        if (value === null || value === undefined) {
-            setFormSettingData({ ...formSettingData, setting_files: field });
-        } else {
-            setFormSettingData({ ...formSettingData, [field]: value });
-        }
-        if (!!errors[field]) {
-            setErrors({
-                ...errors,
-                [field]: null,
-            });
-        }
-    };
-
-    const getFileCategory = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-        let result = await fetch(`${BASE_URL}/fileRepo/files-category`, requestOptions);
-        result = await result.json()
-            .then((result) => setCategory(result.category))
-            .catch((error) => console.log('error', error));
-    };
-
 
     const getUser = async () => {
         var myHeaders = new Headers();
@@ -376,9 +169,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
-            // console.log(response.data.users, "respo")
             setUser(response.data.users)
-            console.log(user, "userSList")
+
         }
     };
 
@@ -403,10 +195,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     useEffect(() => {
         GetFile();
-        getFileCategory();
         getUser();
         getChildren();
-    }, [trainingDeleteMessage, formSettings.franchisee])
+        handleTrainingDelete();
+    }, [, formSettings.franchisee])
 
 
     useEffect(() => {
@@ -415,69 +207,47 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');
-        // let userId = localStorage.getItem('user_id');
-        const response = await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
+        await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
-        });
-        // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
-        if (response.status === 200 && response.data.status === "success") {
-            setTrainingDeleteMessage(response.data.message);
-
-        } else if (response.status === 200 && response.data.status === "fail") {
-            setTrainingDeleteMessage(response.data.message);
-        }
+        }).then(function () {
+            SetfileDeleteMessage('Delete successful')
+            GetFile();
+        })
+            .catch(error => {
+                SetfileDeleteMessage("You don't have permission to delete this file !");
+            });
     }
 
-    // FETCH FILE DATA
-    const fetchFileData = async (fileId) => {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${fileId}`, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        });
-
-        if (response.status === 200 && response.data.status === "success") {
-            const { file } = response.data;
-            copyDataToStates(file);
-        }
-    };
-
-    const copyDataToStates = (file) => {
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_users: file?.repository_shares[0]?.assigned_users,
-            assigned_role: file?.repository_shares[0]?.assigned_roles,
-            franchisee: file?.repository_shares[0]?.franchisee,
-            assigned_childs: file?.repository_shares[0]?.assigned_childs,
-            accessibleToRole: file?.repository_shares[0].accessibleToRole,
-            accessibleToAll: file?.repository_shares[0].accessibleToAll,
-        }));
-    }
 
     useEffect(() => {
-        fetchFileData(saveFileId);
-    }, [saveFileId]);
+        setTimeout(() => {
+            SetfileDeleteMessage(null)
+        }, 3000);
+    }, [fileDeleteMessage])
+
+
+    // FETCH FILE DATA
+
 
     const isAllRolesChecked = () => {
         let bool = false;
-        if(getUser_Role == "franchisor_admin"){
-          bool = formSettings.assigned_role.length === 4
+        if (getUser_Role == "franchisor_admin") {
+            bool = formSettings.assigned_role.length === 4
         }
-        else if(getUser_Role == "franchisee_admin"){
-            bool = formSettings.assigned_role.length === 3        
+        else if (getUser_Role == "franchisee_admin") {
+            bool = formSettings.assigned_role.length === 3
         }
-        else if(getUser_Role == "coordinator"){
+        else if (getUser_Role == "coordinator") {
             bool = formSettings.assigned_role.length === 2
         }
-        else if(getUser_Role == "educator"){
-          bool = ["guardian"].every(item => formSettingData?.shared_role?.includes(item))
+        else if (getUser_Role == "educator") {
+            bool = ["guardian"].every(item => formSettingData?.shared_role?.includes(item))
         }
-    
+
         return bool;
-      }
+    }
 
     const [columns, setColumns] = useState([
         {
@@ -488,7 +258,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 cell = cell.split(',');
                 return (
                     <>
-
                         <div div className="user-list">
                             {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" ?
                                 <>
@@ -626,6 +395,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     return (
         <>
             <div id="main">
+                {
+                    fileDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{fileDeleteMessage}</p>
+                }
                 <section className="mainsection">
                     <Container>
                         <div className="admin-wrapper">
@@ -634,6 +406,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                             </aside>
                             <div className="sec-column">
                                 <TopHeader />
+                                <FullLoader loading={fullLoaderStatus} />
                                 <div className="entry-container">
                                     <div className="user-management-sec repository-sec">
                                         <ToolkitProvider
@@ -644,21 +417,21 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         >
                                             {(props) => (
                                                 <>
-                                                    <h1 className="title-lg"><Link to="/file-repository"><img src="../../img/back-arrow.svg" /></Link> File Repository</h1>
+                                                    <h1 className="title-lg"><Link to="/file-repository"><img src="../../img/back-arrow.svg" alt="" /></Link> File Repository</h1>
                                                     <header className="title-head">
                                                         <div className="user-list">
                                                             <span>
                                                                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                                             </span>
                                                             <span className="user-name">
-                                                                {Params.id === "1" ? "Daily Use" :
-                                                                    Params.id === "2" ? "Business Management" :
-                                                                        Params.id === "3" ? "Employment" :
-                                                                            Params.id === "4" ? "Compliance" :
-                                                                                Params.id === "5" ? "Care Giving" :
-                                                                                    Params.id === "6" ? "Curriculum & Planning" :
-                                                                                        Params.id === "7" ? "Resources" :
-                                                                                            Params.id === "8" ? "General" : "Null"
+                                                                {Params?.id === "1" ? "Daily Use" :
+                                                                    Params?.id === "2" ? "Business Management" :
+                                                                        Params?.id === "3" ? "Employment" :
+                                                                            Params?.id === "4" ? "Compliance" :
+                                                                                Params?.id === "5" ? "Care Giving" :
+                                                                                    Params?.id === "6" ? "Curriculum & Planning" :
+                                                                                        Params?.id === "7" ? "Resources" :
+                                                                                            Params?.id === "8" ? "General" : "Null"
                                                                 }
                                                                 <small>{userData.length} files</small>
                                                             </span>
@@ -668,102 +441,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                 <div className="data-search me-3">
                                                                     <SearchBar {...props.searchProps} />
                                                                 </div>
-                                                                {/* <Dropdown className="filtercol me-3">
-                                                                    <Dropdown.Toggle
-                                                                        id="extrabtn"
-                                                                        variant="btn-outline"
-                                                                    >
-                                                                        <i className="filter-ico"></i> Add Filters
-                                                                    </Dropdown.Toggle>
-                                                                    <Dropdown.Menu>
-                                                                        <header>Filter by:</header>
-                                                                        <div className="custom-radio btn-radio mb-2">
-                                                                            <label>Users:</label>
-                                                                            <Form.Group>
-                                                                                <Form.Check
-                                                                                    inline
-                                                                                    label="Admin"
-                                                                                    value="Admin"
-                                                                                    name="users"
-                                                                                    type="radio"
-                                                                                    id="one"
-                                                                                />
-                                                                                <Form.Check
-                                                                                    inline
-                                                                                    label="Co-ordinator"
-                                                                                    value="Co-ordinator"
-                                                                                    name="users"
-                                                                                    type="radio"
-                                                                                    id="two"
-                                                                                />
-                                                                                <Form.Check
-                                                                                    inline
-                                                                                    label="Educator"
-                                                                                    value="Educator"
-                                                                                    name="users"
-                                                                                    type="radio"
-                                                                                    id="three"
-                                                                                />
-                                                                                <Form.Check
-                                                                                    inline
-                                                                                    label="Parent/Guardian"
-                                                                                    value="Parent-Guardian"
-                                                                                    name="users"
-                                                                                    type="radio"
-                                                                                    id="four"
-                                                                                />
-                                                                            </Form.Group>
-                                                                        </div>
-                                                                        <div className="custom-radio">
-                                                                            <label className="mb-2">Location:</label>
-                                                                            <Form.Group>
-                                                                                <Select
-                                                                                    closeMenuOnSelect={false}
-                                                                                    components={animatedComponents}
-                                                                                    isMulti
-                                                                                    options={training}
-                                                                                />
-                                                                            </Form.Group>
-                                                                        </div>
-                                                                        <footer>
-                                                                            <Button
-                                                                                variant="transparent"
-                                                                                type="submit"
-                                                                            >
-                                                                                Cancel
-                                                                            </Button>
-                                                                            <Button variant="primary" type="submit">
-                                                                                Apply
-                                                                            </Button>
-                                                                        </footer>
-                                                                    </Dropdown.Menu>
-                                                                </Dropdown> */}
                                                                 <FilerepoUploadFile />
-                                                                {/* <span
-                                                                    className="btn btn-primary me-3"
-                                                                    onClick={handleShow}
-                                                                >
-                                                                    <FontAwesomeIcon
-                                                                        icon={faArrowUpFromBracket}
-                                                                    />{' '}
-                                                                    Upload File
-                                                                </span> */}
-                                                                {/* <Dropdown>
-                                                                    <Dropdown.Toggle
-                                                                        id="extrabtn"
-                                                                        className="ctaact"
-                                                                    >
-                                                                        <img src="../img/dot-ico.svg" alt="" />
-                                                                    </Dropdown.Toggle>
-                                                                    <Dropdown.Menu>
-                                                                        <Dropdown.Item>
-                                                                           
-                                                                        </Dropdown.Item>
-                                                                        <Dropdown.Item href="#">
-                                                                            Delete All Row
-                                                                        </Dropdown.Item>
-                                                                    </Dropdown.Menu>
-                                                                </Dropdown> */}
                                                             </div>
                                                         </div>
                                                     </header>
@@ -778,442 +456,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </Container>
                 </section>
-                <Modal
-                    className="training-modal"
-                    size="lg"
-                    show={show}
-                    onHide={handleClose}
-                >
-                    <Modal.Header closeButton className="f-c-modal"></Modal.Header>
-                    <Modal.Body className="p-0">
-                        <div className="form-settings-content">
-                            <div className="modal-top">
-                                <div className="modal-top-containt">
-                                    <Row>
-                                        <Col md={12}>
-                                            <Form.Group>
-                                                <Form.Label>Upload File:*</Form.Label>
-                                                <DragDropRepository onChange={setField} />
-                                                {error && !formSettingData.setting_files && < span className="error"> File Category is required!</span>}
-                                                <p className="error">{errors.setting_files}</p>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-
-                                    <div className="setting-heading">
-                                        <h2>Settings</h2>
-                                    </div>
-                                </div>
-                                <hr></hr>
-                            </div>
-                            <div className="modal-bottom">
-                                <Row>
-                                    <Col lg={12}>
-                                        <div className="metadescription">
-                                            <Form.Group className="mb-3">
-                                                <Form.Label>Meta Description*</Form.Label>
-                                                <Form.Control
-                                                    as="textarea"
-                                                    rows={2}
-                                                    name="meta_description"
-                                                    onChange={(e) => {
-                                                        setField(e.target.name, e.target.value);
-                                                    }}
-                                                />
-                                                {error && !formSettingData.meta_description && < span className="error"> Meta Description is required!</span>}
-                                            </Form.Group>
-                                        </div>
-                                    </Col>
-                                    <Col lg={12}>
-                                        <Form.Group>
-                                            <Form.Label>File Category*</Form.Label>
-                                            {getUser_Role === "guardian" ? (
-                                                <>
-                                                    <Form.Select
-                                                        name="file_category"
-                                                        onChange={(e) => {
-                                                            setField(e.target.name, e.target.value);
-                                                        }}
-                                                    >
-                                                        <option value="8" selected={true}>General</option>
-                                                    </Form.Select>
-                                                </>) : (
-                                                <>
-                                                    <Form.Select
-                                                        name="file_category"
-                                                        onChange={(e) => {
-                                                            setField(e.target.name, e.target.value);
-                                                        }}
-                                                    >
-                                                        <option value="">Select File Category</option>
-                                                        {category?.map((item) => {
-                                                            return (
-                                                                <option value={item.id}>{item.category_name}</option>
-                                                            );
-                                                        })}
-                                                    </Form.Select>
-                                                </>)}
-
-
-                                            {error && !formSettingData.file_category && < span className="error"> File is required!</span>}
-                                        </Form.Group>
-                                    </Col>
-                                </Row>
-                                {getUser_Role === "guardian" ? (<></>) : (<>
-                                    <Row className="mt-4">
-                                        <Col lg={3} md={6}>
-                                            <Form.Group>
-                                                <Form.Label>Send to all franchisee:</Form.Label>
-                                                <div className="new-form-radio d-block">
-                                                    <div className="new-form-radio-box">
-                                                        <label for="all">
-                                                            <input
-                                                                type="radio"
-                                                                checked={sendToAllFranchisee === 'all'}
-                                                                name="send_to_all_franchisee"
-                                                                id="all"
-                                                                onChange={() => {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_franchisee: ['all'],
-                                                                        franchisee: ['all']
-                                                                    }));
-                                                                    setSendToAllFranchisee('all')
-                                                                }}
-                                                            />
-                                                            <span className="radio-round"></span>
-                                                            <p>Yes</p>
-                                                        </label>
-                                                    </div>
-                                                    <div className="new-form-radio-box m-0 mt-3">
-                                                        <label for="none">
-                                                            <input
-                                                                type="radio"
-                                                                name="send_to_all_franchisee"
-                                                                checked={sendToAllFranchisee === 'none'}
-                                                                id="none"
-                                                                onChange={() => {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_franchisee: [],
-                                                                        franchisee: []
-                                                                    }));
-                                                                    setSendToAllFranchisee('none')
-                                                                }}
-                                                            />
-                                                            <span className="radio-round"></span>
-                                                            <p>No</p>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </Form.Group>
-                                        </Col>
-
-                                        <Col lg={9} md={12}>
-                                            <Form.Group>
-                                                <Form.Label>Select Franchisee</Form.Label>
-                                                <div className="select-with-plus">
-                                                    <Multiselect
-                                                        disable={sendToAllFranchisee === 'all'}
-                                                        placeholder={"Select User Names"}
-                                                        displayValue="key"
-                                                        className="multiselect-box default-arrow-select"
-                                                        onRemove={function noRefCheck(data) {
-                                                            setFormSettings((prevState) => ({
-                                                                ...prevState,
-                                                                assigned_franchisee: [...data.map(data => data.id)],
-                                                                franchisee: [...data.map(data => data.id)]
-                                                            }));
-
-                                                            setSelectedUser([])
-                                                            setSelectedChild([])
-                                                        }}
-                                                        selectedValues={franchiseeList && franchiseeList.filter(c => formSettings.franchisee?.includes(c.id + ""))}
-
-                                                        onSelect={function noRefCheck(data) {
-                                                            setFormSettings((prevState) => ({
-                                                                ...prevState,
-                                                                assigned_franchisee: [...data.map((data) => data.id)],
-                                                                franchisee: [...data.map(data => data.id)]
-                                                            }));
-
-                                                            setSelectedUser([])
-                                                            setSelectedChild([])
-                                                        }}
-                                                        options={franchiseeList}
-                                                    />
-                                                </div>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-                                    <Row className="mt-4">
-                                        <Col lg={3} md={6}>
-                                            <Form.Group>
-                                                <Form.Label>Accessible to:</Form.Label>
-                                                <div className="new-form-radio d-block">
-                                                    <div className="new-form-radio-box">
-                                                        <label for="yes">
-                                                            <input
-                                                                type="radio"
-                                                                value={1}
-                                                                name="accessible_to_role"
-                                                                id="yes"
-                                                                onChange={(e) => {
-                                                                    setField(e.target.name, parseInt(e.target.value));
-                                                                }}
-                                                                checked={formSettingData.accessible_to_role === 1}
-                                                            />
-                                                            <span className="radio-round"></span>
-                                                            <p>User Roles</p>
-                                                        </label>
-                                                    </div>
-                                                    <div className="new-form-radio-box m-0 mt-3">
-                                                        <label for="no">
-                                                            <input
-                                                                type="radio"
-                                                                value={0}
-                                                                name="accessible_to_role"
-                                                                id="no"
-                                                                onChange={(e) => {
-                                                                    setField(e.target.name, parseInt(e.target.value));
-                                                                }}
-                                                                checked={formSettingData.accessible_to_role === 0}
-                                                            />
-                                                            <span className="radio-round"></span>
-                                                            <p>Specific Users</p>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </Form.Group>
-                                        </Col>
-                                        <Col lg={9} md={12}>
-                                            {console.log(formSettingData, "{console.log(...formSettingData)}")}
-                                            {formSettingData.accessible_to_role === 1 ? (
-                                                <Form.Group>
-
-
-
-
-                                                    <Form.Label>Select User Roles</Form.Label>
-                                                    <div className="modal-two-check user-roles-box">
-                                                        <label className="container">
-                                                            Coordinators
-                                                            <input
-                                                                type="checkbox"
-                                                                name="shared_role"
-                                                                id="coordinator"
-                                                                onClick={(e) => {
-                                                                    let data = { ...formSettingData };
-                                                                    if (
-                                                                        !data['shared_role']
-                                                                            .toString()
-                                                                            .includes(e.target.id)
-                                                                    ) {
-                                                                        data['shared_role'] += e.target.id + ',';
-                                                                    } else {
-                                                                        data['shared_role'] = data[
-                                                                            'shared_role'
-                                                                        ].replace(e.target.id + ',', '');
-                                                                        if (data['shared_role'].includes('all')) {
-                                                                            data['shared_role'] = data[
-                                                                                'shared_role'
-                                                                            ].replace('all,', '');
-                                                                        }
-                                                                    }
-                                                                    setFormSettingData(data);
-                                                                }}
-                                                                checked={formSettingData?.shared_role
-                                                                    ?.toString()
-                                                                    .includes('coordinator')}
-                                                            />
-                                                            <span className="checkmark"></span>
-                                                        </label>
-                                                        <label className="container">
-                                                            Educators
-                                                            <input
-                                                                type="checkbox"
-                                                                name="shared_role"
-                                                                id="educator"
-                                                                onClick={(e) => {
-                                                                    let data = { ...formSettingData };
-                                                                    if (
-                                                                        !data['shared_role']
-                                                                            .toString()
-                                                                            .includes(e.target.id)
-                                                                    ) {
-                                                                        data['shared_role'] += e.target.id + ',';
-                                                                    } else {
-                                                                        data['shared_role'] = data[
-                                                                            'shared_role'
-                                                                        ].replace(e.target.id + ',', '');
-                                                                        if (data['shared_role'].includes('all')) {
-                                                                            data['shared_role'] = data[
-                                                                                'shared_role'
-                                                                            ].replace('all,', '');
-                                                                        }
-                                                                    }
-                                                                    setFormSettingData(data);
-                                                                }}
-                                                                checked={formSettingData?.shared_role
-                                                                    ?.toString()
-                                                                    .includes('educator')}
-                                                            />
-                                                            <span className="checkmark"></span>
-                                                        </label>
-                                                        <label className="container">
-                                                            Guardian
-                                                            <input
-                                                                type="checkbox"
-                                                                name="shared_role"
-                                                                id="guardian"
-                                                                onClick={(e) => {
-                                                                    let data = { ...formSettingData };
-                                                                    if (
-                                                                        !data['shared_role']
-                                                                            .toString()
-                                                                            .includes(e.target.id)
-                                                                    ) {
-                                                                        data['shared_role'] += e.target.id + ',';
-                                                                    } else {
-                                                                        data['shared_role'] = data[
-                                                                            'shared_role'
-                                                                        ].replace(e.target.id + ',', '');
-                                                                        if (data['shared_role'].includes('all')) {
-                                                                            data['shared_role'] = data[
-                                                                                'shared_role'
-                                                                            ].replace('all,', '');
-                                                                        }
-                                                                    }
-                                                                    setFormSettingData(data);
-                                                                }}
-                                                                checked={formSettingData?.shared_role?.includes(
-                                                                    'guardian'
-                                                                )}
-                                                            />
-                                                            <span className="checkmark"></span>
-                                                        </label>
-                                                        <label className="container">
-                                                            All Roles
-                                                            <input
-                                                                type="checkbox"
-                                                                name="shared_role"
-                                                                id="all_roles"
-                                                                onClick={(e) => {
-                                                                    let data = { ...formSettingData };
-                                                                    console.log('e.target.checked', e.target.checked);
-                                                                    if (e.target.checked === true) {
-                                                                        if (
-                                                                            !data['shared_role']
-                                                                                .toString()
-                                                                                .includes('guardian')
-                                                                        ) {
-                                                                            data['shared_role'] += 'guardian,';
-                                                                        }
-                                                                        if (
-                                                                            !data['shared_role']
-                                                                                .toString()
-                                                                                .includes('educator')
-                                                                        ) {
-                                                                            data['shared_role'] += 'educator,';
-                                                                        }
-                                                                        if (
-                                                                            !data['shared_role']
-                                                                                .toString()
-                                                                                .includes('coordinator')
-                                                                        ) {
-                                                                            data['shared_role'] += 'coordinator';
-                                                                        }
-                                                                        if (
-                                                                            !data['shared_role']
-                                                                                .toString()
-                                                                                .includes('all')
-                                                                        ) {
-                                                                            data['shared_role'] += ',';
-                                                                        }
-                                                                        setFormSettingData(data);
-                                                                    } else {
-                                                                        data['shared_role'] = '';
-                                                                        setFormSettingData(data);
-                                                                    }
-                                                                }}
-                                                                checked={formSettingData?.shared_role?.includes(
-                                                                    'guardian,educator,coordinator'
-                                                                )}
-                                                            />
-                                                            <span className="checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                </Form.Group>
-                                            ) : null}
-                                            {formSettingData.accessible_to_role === 0 ? (
-                                                <>
-
-                                                    <Form.Group>
-                                                        <Form.Label>Select User</Form.Label>
-                                                        <div className="select-with-plus">
-                                                            <Multiselect
-                                                                displayValue="email"
-                                                                className="multiselect-box default-arrow-select"
-                                                                // placeholder="Select Franchisee"
-                                                                selectedValues={selectedUser}
-                                                                // onKeyPressFn={function noRefCheck() {}}
-                                                                onRemove={onRemoveUser}
-                                                                // onSearch={function noRefCheck() {}}
-                                                                onSelect={onSelectUser}
-                                                                options={user}
-                                                            />
-                                                        </div>
-                                                        <p className="error">{errors.franchisee}</p>
-                                                    </Form.Group>
-                                                    <Form.Group>
-                                                        <Form.Label>Select Child</Form.Label>
-                                                        <div className="select-with-plus">
-                                                            <Multiselect
-                                                                displayValue="fullname"
-                                                                className="multiselect-box default-arrow-select"
-                                                                // placeholder="Select Franchisee"
-                                                                selectedValues={selectedChild}
-                                                                // onKeyPressFn={function noRefCheck() {}}
-                                                                onRemove={onRemoveChild}
-                                                                // onSearch={function noRefCheck() {}}
-                                                                onSelect={onSelectChild}
-                                                                options={child}
-                                                            />
-                                                        </div>
-                                                    </Form.Group>
-                                                </>
-                                            ) : null}
-                                        </Col>
-                                    </Row>
-                                </>)}
-                            </div>
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="transparent" onClick={handleClose}>
-                            Cancel
-                        </Button>
-                        <Button variant="primary" onClick={onSubmit}>
-                            {loaderFlag === true ? (
-                                <>
-                                    <img
-                                        style={{ width: '24px' }}
-                                        src={'/img/mini_loader1.gif'}
-                                        alt=""
-                                    />
-                                    Uploading...
-                                </>
-                            ) : (
-                                'Upload File'
-                            )}
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
                 <Modal
                     show={showModal}
                     onHide={() => setShowModal(false)}
@@ -1225,11 +470,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                         <Modal.Title
                             id="contained-modal-title-vcenter"
                             className="modal-heading">
-                            <img src="../../img/carbon_settings.svg" />
+                            <img src="../../img/carbon_settings.svg" alt="" />
                             Share File
                         </Modal.Title>
                     </Modal.Header>
-
                     <Modal.Body>
                         <div className="form-settings-content">
                             <Row className="mt-4">
@@ -1291,7 +535,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 // singleSelect={true}
                                                 displayValue="key"
                                                 className="multiselect-box default-arrow-select"
-                                                selectedValues={franchiseeList && franchiseeList.filter(d => formSettings?.franchisee?.includes(d.id.toString())).length == 0 ? franchiseeList?.filter(d => getFranchisee.includes(d.id.toString())) : franchiseeList?.filter(d => formSettings?.franchisee.includes(d.id.toString())) }
+                                                selectedValues={franchiseeList && franchiseeList.filter(d => formSettings?.franchisee?.includes(d.id.toString())).length == 0 ? franchiseeList?.filter(d => getFranchisee.includes(d.id.toString())) : franchiseeList?.filter(d => formSettings?.franchisee.includes(d.id.toString()))}
                                                 onKeyPressFn={function noRefCheck() { }}
                                                 onRemove={function noRefCheck(data) {
                                                     setFormSettings((prevState) => ({
@@ -1377,7 +621,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             (<>
                                                 <Form.Label className="d-block">Select User Roles</Form.Label>
                                                 <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
-                                                {['franchisor_admin'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                                                    {['franchisor_admin'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                                                         <Form.Check
                                                             type="checkbox"
                                                             checked={formSettings.assigned_role.includes("franchisee_admin")}
@@ -1399,7 +643,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             }} />
                                                     </Form.Group>) : null}
 
-                                                    {['franchisor_admin','franchisee_admin'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox0">
+                                                    {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox0">
                                                         <Form.Check
                                                             type="checkbox"
                                                             checked={formSettings.assigned_role.includes("coordinator")}
@@ -1421,7 +665,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             }} />
                                                     </Form.Group>) : null}
 
-                                                    {['franchisor_admin','franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                                                    {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
                                                         <Form.Check
                                                             type="checkbox"
                                                             label="Educators"
@@ -1465,22 +709,22 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             }} />
                                                     </Form.Group>) : null}
 
-                                                    {!['educator','guardian'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                                                    {!['educator', 'guardian'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
                                                         <Form.Check
                                                             type="checkbox"
                                                             label="All Roles"
                                                             checked={isAllRolesChecked()}
                                                             onChange={() => {
-                                                                if(getUser_Role == 'franchisor_admin'){
+                                                                if (getUser_Role == 'franchisor_admin') {
                                                                     if (formSettings.assigned_role.includes("coordinator")
-                                                                    && formSettings.assigned_role.includes("educator")
-                                                                    && formSettings.assigned_role.includes("guardian")
-                                                                    && formSettings.assigned_role.includes("franchisee_admin")
+                                                                        && formSettings.assigned_role.includes("educator")
+                                                                        && formSettings.assigned_role.includes("guardian")
+                                                                        && formSettings.assigned_role.includes("franchisee_admin")
                                                                     ) {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [],
-                                                                    }));
+                                                                        setFormSettings(prevState => ({
+                                                                            ...prevState,
+                                                                            assigned_role: [],
+                                                                        }));
                                                                     }
 
                                                                     if (!formSettings.assigned_role.includes("coordinator")
@@ -1494,21 +738,21 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                         )
                                                                 }
 
-                                                                if(getUser_Role == 'franchisee_admin'){
+                                                                if (getUser_Role == 'franchisee_admin') {
                                                                     if (formSettings.assigned_role.includes("coordinator")
-                                                                    && formSettings.assigned_role.includes("educator")
-                                                                    && formSettings.assigned_role.includes("guardian")
+                                                                        && formSettings.assigned_role.includes("educator")
+                                                                        && formSettings.assigned_role.includes("guardian")
                                                                     ) {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [],
-                                                                    }));
+                                                                        setFormSettings(prevState => ({
+                                                                            ...prevState,
+                                                                            assigned_role: [],
+                                                                        }));
                                                                     }
 
                                                                     if (!formSettings.assigned_role.includes("coordinator")
                                                                         && !formSettings.assigned_role.includes("educator")
                                                                         && !formSettings.assigned_role.includes("guardian")
-                                                                        )
+                                                                    )
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_role: ["coordinator", "educator", "guardian"]
@@ -1516,20 +760,20 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                         )
                                                                 }
 
-                                                                if(getUser_Role == 'coordinator'){
+                                                                if (getUser_Role == 'coordinator') {
                                                                     if (
-                                                                    formSettings.assigned_role.includes("educator")
-                                                                    && formSettings.assigned_role.includes("guardian")
+                                                                        formSettings.assigned_role.includes("educator")
+                                                                        && formSettings.assigned_role.includes("guardian")
                                                                     ) {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [],
-                                                                    }));
+                                                                        setFormSettings(prevState => ({
+                                                                            ...prevState,
+                                                                            assigned_role: [],
+                                                                        }));
                                                                     }
 
                                                                     if (!formSettings.assigned_role.includes("educator")
                                                                         && !formSettings.assigned_role.includes("guardian")
-                                                                        )
+                                                                    )
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_role: ["educator", "guardian"]

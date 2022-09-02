@@ -41,6 +41,10 @@ const TrainingDetail = () => {
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
       setTrainingDetails(training);
+    } else {
+      localStorage.setItem('success_msg', 'Training Created Successfully!');
+      // localStorage.setItem('active_tab', '/created-training');
+      window.location.href = "/training";
     }
   }
 

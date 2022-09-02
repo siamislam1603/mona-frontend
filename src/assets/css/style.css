@@ -2,7 +2,7 @@
 font-family: 'Rubik', sans-serif;
 font-family: 'Noto Sans', sans-serif;
 font-family: 'Manrope', sans-serif;
-*/
+*/cta-col
 :root {
   --black: #333333;
   --white: #ffffff;
@@ -586,7 +586,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .audit-form p{margin:0;line-height:normal;text-align:center;font-size:var(--fontxl)}
 .audit-form .totalaudit{background-color:var(--purple);min-width:100px;max-width:100px;height:100px;border-radius:100%;display:flex;align-items:center;justify-content:center;margin-left:1rem;color:var(--white);font-weight:700;font-size:1.7rem}
 .change-pass-sec{max-width:700px;margin:0}
-.react-bootstrap-table{display:block;width:100%;overflow: hidden;padding-bottom: 75px; -webkit-overflow-scrolling:touch}
+.react-bootstrap-table{display:block;width:100%;padding-bottom: 30px; -webkit-overflow-scrolling:touch}
 .react-bootstrap-table .table{width: 99%; margin: auto;}
 .cursor{cursor:pointer}
 .file-container{width:200px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -824,6 +824,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .entry-container .row>.col-md-5,.entry-container .row>.col-md-7{width:100%}
 .rightcolumn{border-left:none;padding-left:0;height:auto}
 .col-md-6 .training-column .nowrap{width:100%}
+.react-bootstrap-table{overflow: auto;}
 }
 @media only screen and (max-width:767px){
 .new-form-radio-box{width:100%}

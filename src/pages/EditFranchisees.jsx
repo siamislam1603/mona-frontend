@@ -247,8 +247,7 @@ const EditFranchisees = () => {
                                                 <Form.Control
                                                     name="franchisee_name" 
                                                     type="text"
-                                                    value={franchiseeData?.franchisee_name} 
-                                                    placeholder="Special DayCare"
+                                                    value={franchiseeData?.franchisee_name}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -281,7 +280,7 @@ const EditFranchisees = () => {
                                             <Form.Group className="mb-3">
                                                 <Form.Label>Suburb</Form.Label>
                                                 <Select
-                                                placeholder={franchiseeData?.city || "Which Suburb?"}
+                                                placeholder={franchiseeData?.city || "Select"}
                                                 closeMenuOnSelect={true}
                                                 value={{ label: franchiseeData.city, value: franchiseeData.city }}
                                                 options={cityData}
@@ -305,7 +304,7 @@ const EditFranchisees = () => {
                                                 <Form.Label>State</Form.Label>
                                                 <Select
                                                 value={{ label: franchiseeData.state, value: franchiseeData.state }}
-                                                placeholder={franchiseeData?.state || "Which State?"}
+                                                placeholder={franchiseeData?.state || "State"}
                                                 closeMenuOnSelect={true}
                                                 options={australianStatesData }
                                                 onChange={(e) => {
@@ -327,7 +326,6 @@ const EditFranchisees = () => {
                                                     type="text" 
                                                     maxLength="10"
                                                     value={franchiseeData?.contact}
-                                                    placeholder="454 342 56"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -367,7 +365,6 @@ const EditFranchisees = () => {
                                                     name="franchisee_number"
                                                     type="text" 
                                                     value={franchiseeData?.franchisee_number}
-                                                    placeholder="ADS 00342"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -403,7 +400,6 @@ const EditFranchisees = () => {
                                                     name="address"
                                                     type="text" 
                                                     value={franchiseeData?.address}
-                                                    placeholder="5th Avenue, Central Park Street, Broadway"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -415,13 +411,12 @@ const EditFranchisees = () => {
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicPassword">
-                                                <Form.Label>Postcode</Form.Label>
+                                                <Form.Label>Post Code</Form.Label>
                                                 <Form.Control
                                                     name="postcode" 
                                                     type="text" 
                                                     value={franchiseeData?.postcode}
                                                     maxLength="4"
-                                                    placeholder="24545"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({

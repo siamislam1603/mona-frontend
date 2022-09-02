@@ -5,15 +5,8 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import axios from "axios";
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
-import {
-  Button,
-  Container,
-  Dropdown,
-  Form,
-  Modal,
-  Row,
-  Col,
-} from 'react-bootstrap';
+import { FullLoader } from "../components/Loader";
+
 import ToolkitProvider, {
   Search,
   CSVExport,
@@ -24,17 +17,20 @@ const selectRow = {
   mode: 'checkbox',
   clickToSelect: true,
 };
+
 const FileRepoShairWithme = ({ selectedFranchisee }) => {
   const [userData, setUserData] = useState([]);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   userData && console.log('USER DATA:', userData.map(data => data));
-
   const GetData = async () => {
     let response = await axios.get(`${BASE_URL}/fileRepo/`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     })
-
+    if (response) {
+      setfullLoaderStatus(false)
+    }
     console.log(response, "+++++++++++++++++++++", "response")
     if (response.status === 200) {
       const users = response.data.dataDetails;
@@ -141,6 +137,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
   selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   return (
     <div>
+      <FullLoader loading={fullLoaderStatus} />
       {userData.length > 0 ? (<>
         <ToolkitProvider
           keyField="name"

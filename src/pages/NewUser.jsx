@@ -572,7 +572,6 @@ const NewUser = () => {
                             <Form.Control
                               type="email"
                               name="email"
-                              placeholder="Enter Your Email ID"
                               value={formData?.email}
                               onChange={(e) => {
                                 handleChange(e);
@@ -591,7 +590,7 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>User Role</Form.Label>
                             <Select
-                              placeholder="Which Role?"
+                              placeholder="Select"
                               closeMenuOnSelect={true}
                               options={userRoleData}
                               value={userRoleData?.filter(d => d.value === formData?.role)}
@@ -615,7 +614,6 @@ const NewUser = () => {
                             <Form.Control
                               type="text"
                               name="fullname"
-                              placeholder="Enter Full Name"
                               value={formData?.fullname}
                               onChange={(e) => {
                                 handleChange(e);
@@ -631,7 +629,7 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Suburb</Form.Label>
                             <Select
-                              placeholder="Search Your Suburb"
+                              placeholder="Select"
                               closeMenuOnSelect={true}
                               options={cityData}
                               value={cityData?.filter(d => d.label === formData?.city)}
@@ -658,7 +656,6 @@ const NewUser = () => {
                             <Form.Control
                               type="text"
                               name="address"
-                              placeholder="Enter Your Address"
                               value={formData.address ?? ''}
                               onChange={(e) => {
                                 handleChange(e);
@@ -672,12 +669,11 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Postal Code</Form.Label>
+                            <Form.Label>Post Code</Form.Label>
                             <Form.Control
                               type="tel"
                               name="postalCode"
                               maxLength="4"
-                              placeholder="Your Postal Code"
                               value={formData.postalCode ?? ''}
                               onChange={(e) => {
 
@@ -704,6 +700,7 @@ const NewUser = () => {
                               <Form.Label>Training Categories</Form.Label>
                               <Select
                                 closeMenuOnSelect={false}
+                                placeholder="Select"
                                 components={animatedComponents}
                                 isMulti
                                 options={trainingCategoryData}
@@ -723,6 +720,7 @@ const NewUser = () => {
                               <Form.Label>Professional Development Categories</Form.Label>
                               <Select
                                 closeMenuOnSelect={false}
+                                placeholder="Select"
                                 components={animatedComponents}
                                 isMulti
                                 options={pdcData}
@@ -755,7 +753,6 @@ const NewUser = () => {
                                 type="tel"
                                 name="phone"
                                 maxLength={10}
-                                placeholder="Enter Your Number"
                                 value={formData.phone}
                                 onChange={(e) => {
 
@@ -790,7 +787,6 @@ const NewUser = () => {
                               <Form.Control
                                 type="text"
                                 name="nominated_assistant"
-                                placeholder="Enter Full Name"
                                 value={formData?.nominated_assistant}
                                 onChange={(e) => {
                                   handleChange(e);
@@ -804,7 +800,7 @@ const NewUser = () => {
                             {
                               localStorage.getItem('user_role') === 'franchisor_admin' && 
                               <Select
-                                placeholder="Which Franchise?"
+                                placeholder="Select"
                                 closeMenuOnSelect={true}
                                 options={franchiseeData}
                                 onChange={(e) => {
@@ -844,7 +840,7 @@ const NewUser = () => {
                               <Form.Label>Select Primary Coordinator</Form.Label>
                               <Select
                                 isDisabled={formData.role !== 'educator'}
-                                placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Which Co-ordinator?" : "Not Applicable"}
+                                placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Select?" : "Not Applicable"}
                                 closeMenuOnSelect={true}
                                 options={coordinatorData}
                                 onChange={(e) => {
@@ -865,6 +861,7 @@ const NewUser = () => {
                                 closeMenuOnSelect={false}
                                 components={animatedComponents}
                                 isMulti
+                                placeholder="Select"
                                 options={businessAssetData}
                                 onChange={(selectedOptions) => {
                                   setFormData((prevState) => ({
@@ -910,6 +907,7 @@ const NewUser = () => {
                             <DragDropMultiple 
                               module="user-management"
                               onSave={setTrainingDocuments} />
+                            <small className="fileinput">(Upload 5 files max.)</small>
                           </Form.Group>
 
                           <Col md={12}>
