@@ -481,7 +481,7 @@ const AddFormField = (props) => {
           .then((res) => res.json())
           .then((res) => {
             navigate('/form', {
-              state: { message: 'form added successfully.' },
+              state: { message: 'Form added successfully.' },
             });
 
             res?.result?.map((item) => {
