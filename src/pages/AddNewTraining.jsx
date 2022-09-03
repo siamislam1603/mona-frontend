@@ -96,6 +96,8 @@ const AddNewTraining = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
+
+  
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
   // LOG MESSAGES
@@ -591,7 +593,7 @@ const AddNewTraining = () => {
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }
-                          <small className="fileinput">(png, jpg & jpeg)</small>
+                          <small className="fileinput mt-1">(png, jpg & jpeg)</small>
                           {error && !croppedImage && < span className="error"> File is required!</span>}
                           {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
 
