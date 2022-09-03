@@ -96,6 +96,8 @@ const AddNewTraining = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
+
+  
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
   // LOG MESSAGES
@@ -563,7 +565,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Cover Image*:</Form.Label>
+                          <Form.Label>Upload Cover Image *</Form.Label>
                           {/* <DropOneFile
                             title="Image"
                             croppedImage={croppedImage}
@@ -591,7 +593,7 @@ const AddNewTraining = () => {
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }
-                          <small className="fileinput">(png, jpg & jpeg)</small>
+                          <small className="fileinput mt-1">(png, jpg & jpeg)</small>
                           {error && !croppedImage && < span className="error"> File is required!</span>}
                           {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
 
@@ -600,7 +602,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Video:</Form.Label>
+                          <Form.Label>Upload Video</Form.Label>
                           <DropAllFile
                             title="Video"
                             type="video"
@@ -612,7 +614,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload File:</Form.Label>
+                          <Form.Label>Upload File</Form.Label>
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />

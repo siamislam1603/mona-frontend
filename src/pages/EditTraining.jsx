@@ -14,14 +14,12 @@ import { TrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import moment from 'moment';
 import * as ReactBootstrap from 'react-bootstrap';
+import DragDropTraning from '../components/DragDropTraning';
+import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
 
 const animatedComponents = makeAnimated();
 
-const timeqty =  [
-  {
-    value: 'minutes',
-    label: 'Minutes',
-  },
+const timeqty = [
   {
     value: 'minutes',
     label: 'Minutes'
@@ -84,7 +82,6 @@ const EditTraining = () => {
   const [trainingData, setTrainingData] = useState({});
   const [trainingSettings, setTrainingSettings] = useState({});
 
-  const [coverImage, setCoverImage] = useState({});
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
@@ -94,13 +91,20 @@ const EditTraining = () => {
   const [franchiseeList, setFranchiseeList] = useState();
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState();
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
-
   const [fileDeleteResponse, setFileDeleteResponse] = useState();
   const [trainingFormData, setTrainingFormData] = useState([]);
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
+
+  // IMAGECROPER
+  const [coverImage, setCoverImage] = useState({});
+  const [image, setImage] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [popupVisible, setPopupVisible] = useState(false);
+
+
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
@@ -200,11 +204,13 @@ const EditTraining = () => {
     }));
 
     // COPYING FETCHED MEDIA FILES
-    setCoverImage(training?.coverImage);
+
+    setCroppedImage(training?.coverImage);
     setFetchedCoverImage(training?.coverImage);
     setFetchedVideoTutorialFiles(training?.training_files?.filter(file => file.fileType === ".mp4"));
     setFetchedRelatedFiles(training?.training_files?.filter(file => file.fileType !== '.mp4'));
   }
+  console.log(coverImage, "coverImage")
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const updateTraining = async (data) => {
@@ -222,10 +228,12 @@ const EditTraining = () => {
       let data = new FormData();
 
       let imgSaveResponse;
-      if (typeof coverImage === 'object') {
+
+      if (typeof croppedImage === 'object') {
 
         data.append('id', trainingId);
-        data.append('image', coverImage[0]);
+        imgSaveResponse = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
+        data.append('image', imgSaveResponse);
 
         imgSaveResponse = await axios.post(
           `${BASE_URL}/training/coverImg?title=training`, data, {
@@ -233,9 +241,10 @@ const EditTraining = () => {
             "Authorization": "Bearer " + token
           }
         });
-      } else if (typeof coverImage === 'string') {
+
+      } else if (typeof croppedImage === 'string') {
         imgSaveResponse = await axios.patch(
-          `${BASE_URL}/training/updateCoverImgString`, { coverImage, trainingId }, {
+          `${BASE_URL}/training/updateCoverImgString`, { croppedImage, trainingId }, {
           headers: {
             "Authorization": "Bearer " + token
           }
@@ -270,14 +279,14 @@ const EditTraining = () => {
   const fetchTrainingFormData = async () => {
     const response = await axios.get(`${BASE_URL}/training/forms/training`);
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       const { formData } = response.data;
       setTrainingFormData(formData.map(d => ({
         id: d.id,
         label: d.form_name,
         value: d.form_name
       })));
-    } 
+    }
   }
 
   // FETCHING TRAINING CATEGORIES
@@ -325,15 +334,12 @@ const EditTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
     window.scrollTo(0, 0);
-    
+
     let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
       setErrors({});
-
-      // if(allowSubmit !== true)
-      //   setSettingsModalPopup(true);
 
       if (settingsModalPopup === false && trainingData && coverImage) {
         let data = new FormData();
@@ -518,51 +524,68 @@ const EditTraining = () => {
                         </Col>
 
                         <Col md={6} className="mb-3">
-                        <Form.Group>
-                          <Form.Label>Select Training Form*</Form.Label>
-                          <Select
-                            closeMenuOnSelect={true}
-                            components={animatedComponents}
-                            placeholder="Select"
-                            options={trainingFormData}
-                            value={trainingFormData?.filter(d => parseInt(d.id) === trainingData?.training_form_id)}
-                            onChange={(event) => {
-                              setTrainingData((prevState) => ({
-                                ...prevState,
-                                training_form_id: event.id,
-                              }));
+                          <Form.Group>
+                            <Form.Label>Select Training Form*</Form.Label>
+                            <Select
+                              closeMenuOnSelect={true}
+                              components={animatedComponents}
+                              placeholder="Select"
+                              options={trainingFormData}
+                              value={trainingFormData?.filter(d => parseInt(d.id) === trainingData?.training_form_id)}
+                              onChange={(event) => {
+                                setTrainingData((prevState) => ({
+                                  ...prevState,
+                                  training_form_id: event.id,
+                                }));
 
-                              setErrors(prevState => ({
-                                ...prevState,
-                                training_form_id: null
-                              }));
-                            }}
-                          />
-                          { errors.training_form_id && <span className="error">{errors.training_form_id}</span> }
-                        </Form.Group>
-                      </Col>
+                                setErrors(prevState => ({
+                                  ...prevState,
+                                  training_form_id: null
+                                }));
+                              }}
+                            />
+                            {errors.training_form_id && <span className="error">{errors.training_form_id}</span>}
+                          </Form.Group>
+                        </Col>
                       </Row>
                       <Row>
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
                             <Form.Label>Upload Cover Image :</Form.Label>
-                            <DropOneFile
-                              onSave={setCoverImage}
-                              title="Image"
-                              setErrors={setErrors}
+                            {console.log(croppedImage, "croppedImage")}
+                            <DragDropTraning
+                              croppedImage={croppedImage}
+                              setCroppedImage={setCroppedImage}
+                              onSave={setImage}
+                              setPopupVisible={setPopupVisible}
                               setFetchedCoverImage={setFetchedCoverImage}
-                            // setTrainingData={setTraining}
+                              fetchedPhoto={""}
                             />
-                            <small className="fileinput">(png, jpg & jpeg)</small>
-                            {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
+                            <small className="fileinput mt-1">(png, jpg & jpeg)</small>
+
+                            {
+                              popupVisible &&
+                              <ImageCropTraning
+                                image={image}
+                                setCroppedImage={setCroppedImage}
+                                setPopupVisible={setPopupVisible} />
+                            }
+
+                            {typeof croppedImage === "string" ? (<>
+                              <img className="cover-image-style" src={croppedImage} alt="training cover image" />
+                            </>) :
+                              (<></>)
+                            }
+
+                            {/* {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />} */}
                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
                         </Col>
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload Video:</Form.Label>
+                            <Form.Label>Upload Video</Form.Label>
                             <DropAllFile
                               title="Videos"
                               type="video"
@@ -592,7 +615,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload File:</Form.Label>
+                            <Form.Label>Upload File</Form.Label>
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
@@ -852,8 +875,8 @@ const EditTraining = () => {
                   <div className={`custom-checkbox ${trainingSettings?.applicable_to === 'users' ? "d-none" : ""}`}>
                     <Form.Label className="d-block">Select User Roles</Form.Label>
                     <div className="btn-checkbox d-block">
-                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
-                      <Form.Check
+                      <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                        <Form.Check
                           type="checkbox"
                           checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
                           label="Franchise Admin"

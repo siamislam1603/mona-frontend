@@ -425,7 +425,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                             <Col lg={3} sm={6}>
                             <Form.Group className="col-md-12">
                               <div className="btn-radio inline-col">
-                                <Form.Label>Send to all Franchises :</Form.Label>
+                       <Form.Label>Send to all Franchises :</Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
