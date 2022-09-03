@@ -133,7 +133,7 @@ const FranchisorDashboard = () => {
     let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-    console.log("THE Date1", Added, datae)
+    // console.log("THE Date1", Added, datae)
     if (datae === Added) {
       return "Added today"
     }

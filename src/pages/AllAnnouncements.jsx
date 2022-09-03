@@ -139,7 +139,7 @@ const getAddedTime = (str) =>{
    let datae =  [day, month, year].join('/');
   //  const date1 = new Date(datae);
   //  const date2 = new Date(str);
-   console.log("THE Date1",Added,datae)
+  //  console.log("THE Date1",Added,datae)
    if(datae === Added){
     return "Added today"
    }
@@ -273,22 +273,7 @@ console.log("realted f",realtedFile)
                              
                              </small>
                              </div>
-                                 {/* <div className="date">
-                                    <Dropdown>
-                                     <Dropdown.Toggle id="extrabtn" className="ctaact">
-                                       <img src="../img/dot-ico.svg" alt=""/>
-                                     </Dropdown.Toggle>
-                                     <Dropdown.Menu>
-                                     {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
-                                     <Dropdown.Item href={`/edit-announcement/${details.id}`}>Edit</Dropdown.Item>
-                                          
-                                          ): (
-                                            null
-                                          )}
-                                       <Dropdown.Item onClick={() =>deleteAlert(details.id)}>Delete</Dropdown.Item>
-                                     </Dropdown.Menu>
-                                   </Dropdown>
-                                 </div> */}
+                                
                                </div>
                              </Accordion.Header>
                              <Accordion.Body>
@@ -344,26 +329,8 @@ console.log("realted f",realtedFile)
                                    </div>
    
                                 
-                                 {/* {details?.announcement_files?.map((data) => {
-                                  if(data.fileType != ".mp4" || data.fileType != '.mkv'){
-                                       setRelatedFile(true)
-                                       break;
-                                       
-                                  }
-                                 
-                                 } )} */}
-                                 {/* {
-                                  details?.announcement_files.every(function(elem) {
-                                    console.log(elem); //result: "My","name"
-                                    if(elem.fileType != ".mp4" || elem.fileType != '.mkv'){
-                                       return setRelatedFile(true)
-                                      // break;
-                                      
-                                 }
-                                  })
-                                 } */}
-
-
+                                
+            
 {details?.announcement_files?.length>0 ? <>
                 { details?.announcement_files[0]?.fileType === ".mp4" ||details?.announcement_files[0].fileType === ".mkv" ? 
                                   (
