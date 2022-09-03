@@ -468,7 +468,7 @@ export const UserFormValidation = (formObj) => {
   let { fullname, role, city, address, postalCode, email, phone, franchisee, password, confirm_password } =
     formObj;
 
-  if (!fullname) errors.fullname = 'Fullname is required';
+  if (!fullname) errors.fullname = 'Full name is required';
 
   if (!franchisee) errors.franchisee = 'Franchise is required';
 
@@ -488,7 +488,7 @@ export const UserFormValidation = (formObj) => {
   if (postalCode.length !== 4)
     errors.postalCodeLength = 'Post code should be 4-digit long';
 
-  if (!email) errors.email = 'Email is required';
+  if (!email) errors.email = 'Email address is required';
 
   if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
     errors.email = "Email is invalid";

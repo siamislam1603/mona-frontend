@@ -139,7 +139,6 @@ const SignIn = () => {
                     <Form.Control
                       type="email"
                       className="form_input"
-                      placeholder="Enter email"
                       onChange={(e) => setFields(prevState => ({
                         ...prevState,
                         email: e.target.value,
@@ -160,7 +159,6 @@ const SignIn = () => {
                     <Form.Control
                       className="form_input"
                       type={!hide ? 'text' : 'password'}
-                      placeholder="Password"
                       name="password"
                       onChange={handleChange}
                       value={password}
