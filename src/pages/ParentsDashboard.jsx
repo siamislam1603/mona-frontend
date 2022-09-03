@@ -369,7 +369,7 @@ const ParentsDashboard = () => {
 
               <Modal.Body>
                 <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
-                <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrollment Form</strong> to enrol your</p>
+                <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrolment Form</strong> to enrol your</p>
                 <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
                 <p style={{ marginTop: "-5px" }}><strong>Child Enrolment Form.</strong></p>
               </Modal.Body>
@@ -383,7 +383,7 @@ const ParentsDashboard = () => {
                   backgroundColor: '#3E5D58',
                   border: "none",
                   borderRadius: "5px"
-                }} onClick={() => moveToChildEnrollmentForm(link)}>Child Enrollment Form</button>
+                }} onClick={() => moveToChildEnrollmentForm(link)}>Child Enrolment Form</button>
               </Modal.Footer>
             </Modal>
           );
@@ -415,7 +415,7 @@ const ParentsDashboard = () => {
         </Modal.Header>
 
         <Modal.Body>
-          <p>You have a pending consent from your coordinator. Click on <strong>View Enrollment Form</strong> to go through it.</p>
+          <p>You have a pending consent from your coordinator. Click on <strong>View Enrolment Form</strong> to go through it.</p>
         </Modal.Body>
 
         <Modal.Footer>

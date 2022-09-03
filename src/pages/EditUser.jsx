@@ -664,7 +664,7 @@ const EditUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Postal Code</Form.Label>
+                            <Form.Label>Post Code</Form.Label>
                             <Form.Control
                               type="number"
                               name="postalCode"
