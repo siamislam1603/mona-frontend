@@ -111,6 +111,9 @@ export const healthInformationFormValidator = (healthInformationForm, i_give_med
   if(!telephone)  
     errors.telephone = "Please complete mandatory field";
 
+  if(telephone.length > 0 && telephone.length < 10) 
+    errors.telephone = "Field should have 10 digits!";
+
   if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Field should only contain digits";  
 

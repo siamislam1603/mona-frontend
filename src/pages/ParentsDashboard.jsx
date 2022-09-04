@@ -121,7 +121,7 @@ const ParentsDashboard = () => {
     let year = d.getFullYear();
     let datae = [day, month, year].join('/');
 
-    console.log("THE Date1", Added, datae)
+    // console.log("THE Date1", Added, datae)
     if (datae === Added) {
       return "Added today"
     }

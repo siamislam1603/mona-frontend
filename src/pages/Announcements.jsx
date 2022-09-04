@@ -586,8 +586,7 @@ useEffect(() =>{
         setLoadMoreEvent(loadMoreEvent.slice(0,5))
         // console.log("THE LOADDER DATA",loadMoreData.slice(0,5))
       }
-      // console.log("EVENT count and length",eventCount,eventLength,loadMoreEvent)
-      // setEventLength(loadMoreEvent.length)
+
       
      }
 
@@ -618,9 +617,10 @@ useEffect(() =>{
   },[])
   useEffect(()=>{
     setTheCommon(loadMoreData.length)
-    console.log("ALL CNN ",loadMoreData)
+    console.log("ALL CNN ",loadMoreData, loadMoreData.length)
   },[loadMoreData])
   useEffect(() =>{
+    console.log("my data length",myLoadData,myLoadData.length)
     setMyDataLength(myLoadData.length)
   },[myLoadData])
   useEffect(() =>{

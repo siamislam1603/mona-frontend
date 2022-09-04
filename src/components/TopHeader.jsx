@@ -462,8 +462,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
 
-  //   console.log("selected_franchiseeeeeeeeeeeeeeeeeeeeeeeeee", JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name)
-
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>

@@ -530,8 +530,9 @@ export const personValidation = (personValidationForm) => {
   if(!(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Field should only contain digits"; 
 
-  if(telephone.length > 1 && telephone.length < 10)
-    errors.telephone = 'Field must be at least 10-digit long'
+  if(telephone.length > 0 && telephone.length < 10) 
+    errors.telephone = "Field should contain 10 digits!";
+
 
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
@@ -548,8 +549,12 @@ export const personValidation2 = (personValidationForm) => {
   let { telephone } =
     personValidationForm;
 
-  if(telephone.length > 1 && !(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits";
+  if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
+    errors.telephone = "Field should only contain digits!";
+
+
+  if(telephone.length > 0 && telephone.length < 10) 
+    errors.telephone = "Field should contain 10 digits!";
 
   return errors;
 }

@@ -270,10 +270,6 @@ const Children = () => {
             text: 'Name'
         },
         {
-            dataField: 'parent',
-            text: 'Parent'
-        },
-        {
             dataField: 'Educator',
             text: 'Educator',
             formatter: (cell) => {

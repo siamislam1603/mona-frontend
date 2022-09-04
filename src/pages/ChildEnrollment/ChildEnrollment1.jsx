@@ -281,6 +281,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneChildData(prevState => ({
         ...prevState,
+
         fullname: child?.fullname,
         family_name: child?.family_name,
         usually_called: child?.usually_called,
@@ -387,7 +388,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       type="text"
                       name="fullname"
                       ref={fullnameRef}
-                      style={childFormErrors?.fullname ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
+                      // style={childFormErrors?.fullname ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                       maxLength={50}
                       value={formOneChildData?.fullname || ""}
                       onChange={(e) => {
@@ -424,7 +425,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       type="text"
                       ref={familynameRef}
-                      style={childFormErrors?.family_name ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
+                      // style={childFormErrors?.family_name ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                       minLenth={3}
                       maxLength={50}
                       name="family_name"
@@ -591,7 +592,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Select
                       placeholder={formOneChildData?.language || "Select"}
                       closeMenuOnSelect={true}
-                      style={childFormErrors?.language ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}} 
+                      // style={childFormErrors?.language ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}} 
                       options={languageData}
                       onChange={(e) => {
                         setFormOneChildData((prevState) => ({
@@ -1293,7 +1294,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>Telephone *</Form.Label>
                           <Form.Control 
                             type="tel" 
-                            style={parentFormErrors?.telephone ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
+                            // style={parentFormErrors?.telephone ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                             autoFocus={parentFormErrors?.telephone ? true : false}
                             name="telephone"
                             maxLength={10}

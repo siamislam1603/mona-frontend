@@ -149,8 +149,7 @@ const TrainingDetail = () => {
     }
   }, []);
   // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  console.log('USERS:', users);
-  console.log('RELATED FORMS:', relatedForms);
+
   return (
     <>
       <div id="main">
@@ -171,6 +170,7 @@ const TrainingDetail = () => {
                         <h1 className="title-sm mb-2">{trainingDetails.title}</h1>
                         {
                           trainingDetails?.end_date &&
+
                           <small className="d-block">Due Date: {moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
                         }
                       </div>

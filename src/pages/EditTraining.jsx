@@ -22,10 +22,6 @@ const animatedComponents = makeAnimated();
 const timeqty = [
   {
     value: 'minutes',
-    label: 'Minutes',
-  },
-  {
-    value: 'minutes',
     label: 'Minutes'
   },
   {
@@ -557,14 +553,6 @@ const EditTraining = () => {
                         <Col md={6} className="mb-3">
                           <Form.Group>
                             <Form.Label>Upload Cover Image :</Form.Label>
-
-                            {/* <DropOneFile
-                              onSave={setCoverImage}
-                              title="Image"
-                              setErrors={setErrors}
-                              setFetchedCoverImage={setFetchedCoverImage}
-                            // setTrainingData={setTraining}
-                            /> */}
                             {console.log(croppedImage, "croppedImage")}
                             <DragDropTraning
                               croppedImage={croppedImage}
@@ -597,7 +585,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload Video:</Form.Label>
+                            <Form.Label>Upload Video</Form.Label>
                             <DropAllFile
                               title="Videos"
                               type="video"
@@ -627,7 +615,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload File:</Form.Label>
+                            <Form.Label>Upload File</Form.Label>
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />

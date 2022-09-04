@@ -15,6 +15,7 @@ import moment from 'moment';
 const FranchisorDashboard = () => {
   const navigate = useNavigate();
   const [count, setcount] = React.useState({
+
     totalFranchisees: 0,
     totalUsers: 0,
     totalChildren: 0,
@@ -133,7 +134,7 @@ const FranchisorDashboard = () => {
     let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-    console.log("THE Date1", Added, datae)
+    // console.log("THE Date1", Added, datae)
     if (datae === Added) {
       return "Added today"
     }
