@@ -11,6 +11,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Setting from '../Setting';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FullLoader } from '../../../components/Loader';
+
 
 let counter = 0;
 let selectedUserRole = [];
@@ -23,6 +25,7 @@ const AddFormField = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [conditionFlag, setConditionFlag] = useState(false);
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
   const [groupFlag, setGroupFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
@@ -385,6 +388,9 @@ const AddFormField = (props) => {
             setCount(counter);
           }
         }
+        if (res) {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -570,6 +576,7 @@ const AddFormField = (props) => {
                     localStorage.setItem('f_id', id);
                   }}
                 />
+                <FullLoader loading={fullLoaderStatus} />
                 <Row>
                   <Col sm={8}>
                     <div className="mynewForm-heading">
