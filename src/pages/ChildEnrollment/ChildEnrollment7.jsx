@@ -6,6 +6,7 @@ import moment from 'moment';
 import Select from 'react-select';
 import UserSignature from '../InputFields/ConsentSignature';
 import { digitalSignatureValidator } from '../../helpers/validation';
+import { useParams } from 'react-router-dom';
 
 
 let nextstep = 8;
@@ -18,7 +19,7 @@ let step = 7;
 //   };
 
 const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
-
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   const [educatorData, setEducatorData] = useState(null);
   const [userSelectedEducators, setUserSelectedEducators] = useState(null);
   const [signatureString, setSignatureString] = useState(null);
@@ -59,7 +60,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const fetchChildDataAndPopulate = async () => {
     let token = localStorage.getItem('token');
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -69,14 +70,14 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     if(response.status === 200 && response.data.status === "success") {
       let { child } = response.data;
       let educators = child.users.map(e => e.id);
-      let { parents } = child;
+      let parentData = child.parents.filter(p => parseInt(p.user_parent_id) === parseInt(paramsParentId));
       let { consent } = response.data;
 
       setUserSelectedEducators(educators);
       //(child.consent_signature);
       setConsentData(prevState => ({
         ...prevState,
-        parent_name: parents[0].family_name,
+        parent_name: child.consent_parent_name ||  `${parentData[0].family_name} ${parentData[0].given_name}`,
         consent_date: moment(child.consent_date).format('YYYY-MM-DD'),
         consent_signature: child.consent_signature
       }));
@@ -267,6 +268,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       const blob = await fetch(signatureImage).then((res) => res.blob());
       console.log('BLOB:', blob);
       data.append('image', blob);
+      data.append('consent_parent_name', localStorage.getItem('user_name'))
     }
 
     let response = await axios.patch(`${BASE_URL}/enrollment/signature/${localStorage.getItem('enrolled_child_id')}`, data, {
@@ -277,12 +279,13 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
     console.log('SIGNATURE RESPONSE:', response);
     if(response.status === 201 && response.data.status === "success") {
-      let { signature: signatureURL } = response.data;
+      let { signature: signatureURL, consent_parent_name: parent_name } = response.data;
       // console.log('Signature:', signatureURL);
       // setSignatureString(signatureURL);
       setConsentData(prevState => ({
         ...prevState,
-        consent_signature: signatureURL
+        consent_signature: signatureURL,
+        parent_name
       }));
     }
   }
@@ -403,7 +406,10 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                   }
                   {
                     consentData?.consent_signature &&
-                    <img src={consentData?.consent_signature} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    <>
+                      <img src={consentData?.consent_signature} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                      <p className="signature-mode">{consentData?.parent_name}</p>
+                    </>
                   }
                   { formErrors?.consent_signature !== null && <span className="error">{formErrors?.consent_signature}</span> }
                 </Form.Group>

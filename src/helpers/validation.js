@@ -168,12 +168,9 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   let { title, meta_description, start_date, start_time, franchise } = form;
   console.log('The tile valdiation', start_date);
   if (!title || title === ' ')
-    newErrors.title = 'Announcement Title is Required';
+    newErrors.title = 'Announcement Title is Required s';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
-  if(titleError){
-    newErrors.title = 'Announcement Title already exit';
 
-  }
   if (!start_date || start_date === 'undefined')
     newErrors.start_date = 'Start Date Required';
   if (!start_time || start_time === 'undefined')
@@ -194,7 +191,7 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
 };
 export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise) => {
   let newErrors = {};
-  console.log('The form validat', form);
+  console.log('The form validat', form,allFranchise);
   // console.log("The DATA VALIDATION",newData)
   let { title, meta_description, start_date, start_time, franchise } = form;
 

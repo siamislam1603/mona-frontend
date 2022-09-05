@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
-import { Row, Col } from "react-bootstrap";
 import FileRepoVideo from '../components/FileRepoVideo';
 export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCrop }) {
     const [myFiles, setMyFiles] = useState([])
@@ -106,8 +105,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
             <div className="showfiles mt-3">
                 <ul>{Filess}</ul>
             </div>
-            {/* {console.log(myFiles[0].File, "sjh")} */}
-            {/* {files.length > 0 && <button onClick={removeAll}>Remove All</button>} */}
+           
         </div>
     );
 }

@@ -27,7 +27,6 @@ const AddNewAnnouncements = () => {
     var yyyy = today.getFullYear();
     
     today = yyyy + '-' + mm + '-' + dd;
-    console.log("Today",today)
     return today
   }
   const hour = () =>{
@@ -36,18 +35,13 @@ const AddNewAnnouncements = () => {
     var date = new Date();
     let currentHours = date.getHours();
     currentHours = ("0" + currentHours).slice(-2);
-    console.log("Current hour",currentHours)
      min = date.getMinutes()+10
-    console.log("the large min out",min)
 
     if(min>60){
-      console.log("in is large then 60",min)
       let currentHours = date.getHours()+1;
        let newd=min- 60
       currentHours = ("0" + currentHours).slice(-2);
-      console.log("in is large new ",newd,min,date.getMinutes(),date.getMinutes()-min, typeof min,typeof date.getMinutes())
        time = currentHours + ":" + newd;
-       console.log("is large time",time)
 
     }
     else {
@@ -56,7 +50,6 @@ const AddNewAnnouncements = () => {
 
        time = currentHours + ":" + min
     }
-    console.log("time",time)
     return time;
 
     
@@ -88,29 +81,12 @@ const [titleError,setTitleError] = useState();
   const [allFranchise,setAllFranchise] = useState(false)
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
-  const [titleChecking,setTitleChecking] = useState(true)
-
-
-
-const fetchUserRoles = async () => {
-  const response = await axios.get(`${BASE_URL}/api/user-role`);
-  if (response.status === 200) {
-    const { userRoleList } = response.data;
-    setUserRoles([
-      ...userRoleList.map((data) => ({
-        cat: data.role_name,
-        key: data.role_label,
-      })),
-    ]);
-  }
-};
+  const [titleChecking,setTitleChecking] = useState(false)
 
 
 const createAnnouncement = async (data) => {
-  console.log("CALLING CREATED ANNOUCNEMENT")
+  titleCheck()
   try {
-    
-    // console.log("title checking", resp)
     const token = localStorage.getItem('token');
 
   const response = await axios.post(
@@ -121,20 +97,17 @@ const createAnnouncement = async (data) => {
     }
   );
 
-  console.log("ADde anncunement response",response);
-  console.log("jjjjjjjjjjjjjjjjjjjj");
+
   if(response.status === 200 && response.data.status === "fail"){
     setAddnewAnnouncement(false)
-    console.log("TITLE ALREADY EXIT")
-    setTitleError("Title already exit")
+
+    // setTitleError("Title already exit")
   }
   
 
   if(response.status === 201 && response.data.status === "success" && coverImage.length > 0) {
-    console.log(typeof(coverImage));
 
-    console.log("datasaved");
-    console.log(response.data);
+
         let { id } = response.data.announcement;
     
         let data = new FormData();
@@ -148,11 +121,9 @@ const createAnnouncement = async (data) => {
               }
             }
           );
-          console.log(imgSaveResponse);
       
         if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
               
-          console.log('SUCCESS RESPONSE!');
           setLoader(false)
           localStorage.setItem('success_msg', 'Announcement Created Successfully!');
           localStorage.setItem('active_tab', '/created-announcement');
@@ -160,7 +131,6 @@ const createAnnouncement = async (data) => {
         
         } else {
       
-          console.log('ERROR RESPONSE!');
           setTopErrorMessage("Unable to save cover image!");
           setLoader(false)
           setAddnewAnnouncement(false)
@@ -172,25 +142,14 @@ const createAnnouncement = async (data) => {
         
         }      
     } 
-    // else if(response.status === 403 && response.data.status === "fail"){
-    //   console.log('ERROR RESPONSE! Permission Denied');
-    //   setTopErrorMessage("Permission Denied");
-    //   setLoader(false)
-    //   setAddnewAnnouncement(false)
-
-    //   setTimeout(() => {
-    //     setTopErrorMessage(null);
-    //   }, 3000)
-    // }
+  
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
     window.location.href="/announcements";
         
     }
    } catch (error) {
-    console.log("ERROR ADD ANNOUNCEMNT",error)
     if(error.response.status === 403 && error.response.data.status === "fail")
-    console.log('ERROR RESPONSE! Permission Denied');
-    setTopErrorMessage("Permission Denied");
+    setTopErrorMessage("Internal Server Error ");
     setAddnewAnnouncement(false)
 
     setLoader(false)
@@ -224,7 +183,6 @@ const createAnnouncement = async (data) => {
           "Authorization": `Bearer ${token}`
         }
       });
-      console.log("The franhsie list",response)
       if(response.status === 200 && response.data.status === "success") {
         let { franchiseeList } = response.data;
         setFranchiseeData(franchiseeList.map(franchisee => ({
@@ -258,12 +216,10 @@ const createAnnouncement = async (data) => {
         ...prevState,
         franchise: [...event.map(option => option.id + "")]
       }));
-      // console.log("EVENT ",event)
      
     };
 
     const announcementDescription = (field, value) => {
-      // console.log("The field and value in addnewannoucement",field,value)
       setAnnouncementData({ ...announcementData, [field]: value });
       if (!!error[field]) {
         setError({
@@ -275,7 +231,7 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
-      // console.log("The name and value",name,value)
+      setTitleError()
       if(localStorage.getItem("user_role") === "franchisee_admin"){
 
         let id = localStorage.getItem("franchisee_id")
@@ -288,6 +244,7 @@ const createAnnouncement = async (data) => {
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
+       
       })); 
       if (!!error[name]) {
         setError({
@@ -300,35 +257,32 @@ const createAnnouncement = async (data) => {
     const titleCheck = async() =>{
       try {
         const token = localStorage.getItem('token');
-        console.log(announcementData.title)
             const resp = await axios.get(`${BASE_URL}/announcement/check-title?title=${announcementData.title}`,{
               headers: {
                 "Authorization": "Bearer " + token
               }
             })
-            console.log("title checking", resp)
             if(resp.status === 200 && resp.data.status === "success"){
               setTitleChecking(true)
             }
       } catch (error) {
          if(error.response.status === 404){
-          console.log("TItle checking error",error)
           setTitleChecking(false)
-          setAddnewAnnouncement(false)
-          setTitleError("Title already exit")
+          // setAddnewAnnouncement(false)
+          setTitleError("Anouncement title already exit ")
+          
          }
       }
     }
-
+    const handleTitle = (e) =>{
+      titleCheck()
+      handleDataSubmit(e)
+    }
     const handleDataSubmit = event => {
       event.preventDefault();
-      // if()
-      console.log("All frnahise",allFranchise)
-      console.log("The annoucement after submit ",announcementData)
-      console.log("THe title error",titleError,titleChecking)
-      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,);
 
-      console.log("The error of announcement",errorObj)
+      
+      let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking);
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
         // errorRef.current.scrollIntoView();
@@ -337,7 +291,6 @@ const createAnnouncement = async (data) => {
         
        }
        else{
-        console.log("INSDIE ERROR EMPTY")
         setError({});
         if(announcementData && coverImage && videoTutorialFiles) {
           let data = new FormData();
@@ -348,7 +301,6 @@ const createAnnouncement = async (data) => {
     
           videoTutorialFiles.forEach((file, index) => {
             data.append(`images`, file);
-            console.log("APPEND VIDEO")
           });
     
           relatedFiles.forEach((file, index) => {
@@ -356,52 +308,13 @@ const createAnnouncement = async (data) => {
           });
           setAddnewAnnouncement(true)
           setLoader(true);
-          // {
-          //   titleChecking ? 
-          // createAnnouncement(data) :
-          // null
-
-          // }
-          console.log("titlechecing",titleChecking)
-          titleChecking && createAnnouncement(data);
-         console.log("The data",data)
+           createAnnouncement(data);
        }
       }
-      console.log("The datad adndsjkvnskdja ")
-       
-     
-    // }
-    // if (!announcementData.title) {
-    //   setError(prevError => {
-    //       return { 
-    //           ...prevError, 
-    //           title: "Required Title" 
-    //         }
-    //   }); 
-    // }
-  //   if (!announcementData.meta_description) {
-  //     setError(prevError => {
-  //         return {
-  //       ...prevError,
-  //       // meta_description: "Description must be at least ten characters long"
-  //     }
-  //   }); 
-  // }
-//   if (!announcementData.coverImage) {
-//     setError(prevError => {
-//         return {
-//       ...prevError,
-//       coverImage: "Required CoverImage"
-//     }
-//   }); 
-// }
-
   };
 
   
 
-  console.log("Date",new Date().toISOString().slice(0,10))
-  // console.log("Time",new Date().getHours() + ":" + new Date().getMinutes())
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
@@ -431,20 +344,14 @@ const createAnnouncement = async (data) => {
     });
     useEffect(() =>{
       const role = localStorage.getItem("user_role")
-      console.log("The role 3", role) 
       setUserRole(role)
       // hour()
       // theDate()
     },[])
-    // useEffect(() =>{
-    //   titleCheck()
-    // },[announcementData.title])
+
 
    
-  // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-  console.log("The franhiseData 1",allFranchise,titleChecking);
-  console.log("SELECETED FRANHISE",selectedFranchisee,franchiseeData)
-  announcementData && console.log('Announcement Data:', announcementData);
+
   return (
     
     <>
@@ -474,12 +381,12 @@ const createAnnouncement = async (data) => {
                           type="text" 
                           name="title"
                           onChange={handleAnnouncementData} 
-                          isInvalid = {!!error.title || !!error.titleError}
+                          isInvalid = {!!error.title || titleError}
                           />
                           <Form.Control.Feedback type="invalid">
                             {error.title}
                           </Form.Control.Feedback>
-                          {/* {titleError && <div className="error">{titleError}</div>}  */}
+                          {titleError && <div className="error">{titleError}</div>} 
                          
                         </Form.Group>
                         {
@@ -752,7 +659,7 @@ const createAnnouncement = async (data) => {
                         <div className="cta text-center mt-5 mb-5">
                         <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>
 
-                          <Button variant="primary" type="submit" onClick={handleDataSubmit}>Save</Button>
+                          <Button variant="primary" type="submit" onClick={handleTitle}>Save</Button>
                         </div>
                       </Col>
                     </Row>

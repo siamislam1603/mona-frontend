@@ -5,12 +5,16 @@ import axios from "axios";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import moment from 'moment';
+import { FullLoader } from "../components/Loader";
 
 
 const Noticefication = (props) => {
 
 const userName = localStorage.getItem("user_name");
 const [notificationDetails,setNotificationDetail] = useState([])
+const [notificationStatus,setNotificationStatus] = useState(null)
+const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+
 // const [show, setShow] = useState(false);
 // const handleClose = () => setShow(false);
  
@@ -28,12 +32,24 @@ const [notificationDetails,setNotificationDetail] = useState([])
       console.log("response responseresponseresponseresponseresponse", response.data.notification);
       
       if(response.status === 200 && response.data.status === "success") {
-          setNotificationDetail(response.data.notification.rows);
+      
+        if(response.data && response.data.notification?.count == 0)
+          setNotificationStatus('No Notification Available')
+        // console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnn", response.data.notification.count)
+        setfullLoaderStatus(false)
+        setNotificationDetail(response.data.notification.rows);
       }
     } catch (error) {
+
+      setfullLoaderStatus(false)
+      setNotificationStatus('No data found')
+      setNotificationDetail([])
+
+
+
         if(error.response.status === 404){
           // console.log("The code is 404")
-          setNotificationDetail([])
+
         }
     }
   
@@ -99,6 +115,8 @@ const handleLinkClick = notificationId => {
                 <TopHeader 
                   notificationType='Child Enrollment'/>
 
+                  <FullLoader loading={fullLoaderStatus} />
+
               <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Notifications</h1>
@@ -129,7 +147,7 @@ const handleLinkClick = notificationId => {
                   </div>
                 ))
                 ): (
-                  <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
+                  <div className="text-center mb-5 mt-5"><strong>{notificationStatus}</strong></div>
                 )
               }
             </div>

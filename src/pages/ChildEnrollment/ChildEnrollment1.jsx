@@ -8,6 +8,7 @@ import Select from 'react-select';
 import { BASE_URL } from "../../components/App";
 import { childFormValidator, parentFormValidator  } from "../../helpers/enrollmentValidation";
 import { useParams } from 'react-router-dom';
+import moment from "moment";
 
 let nextstep = 2;
 let step = 1;
@@ -81,7 +82,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // FUNCTION TO UPDATE THIS FORM DATA
   const updateFormOneData = async (childData, parentData) => {
     setLoader(true);
-    console.log('UPDATING FORM ONE DATA!');
     let token = localStorage.getItem('token');
     let childId = localStorage.getItem('enrolled_child_id')
     let parentId = localStorage.getItem('enrolled_parent_id');
@@ -104,7 +104,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
     if(response.status === 201 && response.data.status === "success") {
       // UPDATIN PARENT DETAIL
-      console.log('PARENT DATA BEFORE UPDATION:', parentData);
       response = await axios.patch(`${BASE_URL}/enrollment/parent/${paramsParentId}`, {...parentData}, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -133,46 +132,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
 
   };
-
-  // FUNCTION TO SAVE THIS FORM DATA
-  // const saveFormOneData = async (childData, parentData) => {
-  //   console.log('PARENT DATA:', parentData);
-  //   let token = localStorage.getItem('token');
-  //   let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...childData, nextstep }, {
-  //     headers: {
-  //       "Authorization": `Bearer ${token}`
-  //     }
-  //   });
-
-  //   if(response.status === 201 && response.data.status === "success") {
-  //     const { id: childId } = response.data.child;
-
-  //     // SAVING CHILD ID TO LOCAL STORAGE FOR FURTHER USE
-  //     localStorage.setItem('enrolled_child_id', childId);
-
-  //     // SAVING PARENT DETAIL
-  //     let user_id = localStorage.getItem('user_id');
-  //     response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId, user_parent_id: user_id}, {
-  //       headers: {
-  //         "Authorization": `Bearer ${token}`
-  //       }
-  //     });
-
-  //     console.log('PARENT RESPONSE:', response);
-  //     if(response.status === 201 && response.data.status === "success") {
-  //       let { parent } = response.data;
-  //       localStorage.setItem('enrolled_parent_id', parent.id);
-
-  //       // HIDING THE DIALOG BOX FROM DASHBOARD
-  //       let user_id = localStorage.getItem('user_id');
-  //       response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
-
-  //       if(response.status === 201 && response.data.status === "success") {
-  //         nextStep();
-  //       }
-  //     }
-  //   }
-  // };
 
   const handleChildData = event => {
     const { name, value } = event.target;
@@ -203,15 +162,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     } else {
       setLoader(true);
       updateFormOneData(formOneChildData, formOneParentData);
-      // if(formStepData > step) {
-      //   console.log('UPDATING THE EXISTING DATA!');
-      //   updateFormOneData(formOneChildData, formOneParentData);
-      // } else {
-      //   console.log('CREATING NEW DATA!')
-      //   saveFormOneData(formOneChildData, formOneParentData);
-      // }
     }
-    // nextStep();
   };
 
   // FETCHING THE REQUIRED DATA FROM APIs HERE
@@ -264,12 +215,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   };
 
   const fetchChildDataAndPopulate = async () => {
-    console.log('FETCHING CHILD DATA AND POPULATE!');
     let enrolledChildId = paramsChildId;
-    console.log('Enrolled child id:', enrolledChildId);
     let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -277,7 +226,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
       let { parent } = response.data;
-      
+      let parentData = child.parents.filter(p => parseInt(p.user_parent_id) === parseInt(paramsParentId));
 
       setFormOneChildData(prevState => ({
         ...prevState,
@@ -305,19 +254,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneParentData(prevState => ({
         ...prevState,
-        family_name: child?.parents[0].family_name || parent.fullname?.split(" ")[0],
-        given_name: child?.parents[0].given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
-        relation_type: child?.parents[0].relation_type,
-        address_as_per_child: child?.parents[0].address_as_per_child || parent.address,
-        telephone: child?.parents[0].telephone || parent.telephone,
-        email: child?.parents[0].email || parent.email,
-        dob: child?.parents[0].dob,
-        child_live_with_this_parent: child?.parents[0].child_live_with_this_parent,
-        place_of_birth: child?.parents[0].place_of_birth,
-        ethnicity: child?.parents[0].ethnicity,
-        primary_language: child?.parents[0].primary_language,
-        occupation: child?.parents[0].occupation,
-        address_similar_to_child: child?.parents[0].address_similar_to_child
+        family_name: parentData[0]?.family_name || parent.fullname?.split(" ")[0],
+        given_name: parentData[0]?.given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
+        relation_type: parentData[0]?.relation_type,
+        address_as_per_child: parentData[0]?.address_as_per_child || parent.address,
+        telephone: parentData[0]?.telephone || parent.telephone,
+        email: parentData[0]?.email || parent.email,
+        dob: parentData[0]?.dob,
+        child_live_with_this_parent: parentData[0]?.child_live_with_this_parent,
+        place_of_birth: parentData[0]?.place_of_birth,
+        ethnicity: parentData[0]?.ethnicity,
+        primary_language: parentData[0]?.primary_language,
+        occupation: parentData[0]?.occupation,
+        address_similar_to_child: parentData[0]?.address_similar_to_child
       }));
 
       setFormStepData(child.form_step);
@@ -352,26 +301,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }, [formOneParentData?.address_similar_to_child])
 
-  // useEffect(() => {
-  //   if(childFormErrors?.fullname)
-  //     fullnameRef.current.focus();
-
-  //   if(childFormErrors?.family_name)
-  //     familynameRef.current.focus();
-
-  // }, [childFormErrors]);
-
   useEffect(() => {
-    console.log("checking useEffect!")
     if(localStorage.getItem('has_given_consent') === 'null') {
       setShowConsentCommentDialog(true);
     }
   }, [])
 
-  // formStepData && console.log('You\'re on step:', formStepData);
-  formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
-  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
-  // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
       <div className="enrollment-form-sec error-sec my-5">
@@ -913,43 +848,80 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         }} />
                     </div>
                     <Form.Text className="text-muted">
-                      If you answered YES please specify day and hours at other service.
+                      If you answered YES please specify name, day and hours at other service.
                     </Form.Text>
                   </Form.Group>
                 </Col>
                 {
                   formOneChildData.another_service &&
                   <>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Monday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Tuesday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Wednesday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Thrusday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Friday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
+                    <Form.Group className="mb-3 relative">
+                      <Form.Label>Name of the Service</Form.Label>
+                      <Form.Control
+                        type="text"
+                        minLenth={3}
+                        maxLength={50}
+                        name="name_of_the_service"
+                        value={formOneChildData?.name_of_the_service || ""}
+                        onChange={(e) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            name_of_the_service: e.target.value
+                          })); 
+                        }} />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3 relative">
+                      <Form.Label>Day & Hours at the Service</Form.Label>
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Monday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Tuesday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Wednesday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Thrusday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Friday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Saturday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Sunday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                    </Form.Group>
                   </>
                 }
                 <Col md={12}>
@@ -1252,10 +1224,24 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         
                         <Form.Group className="mb-3 relative">
                           <Form.Label>Address *</Form.Label>
+                          <div style={{ paddingLeft: "-1.5rem", marginBottom: ".5rem" }}>
+                            <Form.Check
+                              type="checkbox"
+                              id="update"
+                              checked={formOneParentData?.address_similar_to_child}
+                              label="Address as per child"
+                              onChange={(e) => {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  address_similar_to_child: !formOneParentData?.address_similar_to_child,
+                                }))
+                              }} />
+                          </div>
                           <Form.Control 
                             as="textarea" 
                             rows={3} 
                             name="address_as_per_child"
+                            disabled={formOneParentData?.address_similar_to_child === true}
                             value={formOneParentData.address_as_per_child || ""}
                             onChange={(e) => {
                               handleParentData(e);
@@ -1274,20 +1260,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             }}
                           />
                           { parentFormErrors?.address_as_per_child !== null && <span className="error">{parentFormErrors?.address_as_per_child}</span> }
-
-                          <div style={{ paddingLeft: "-1.5rem", marginTop: "1.2rem" }}>
-                            <Form.Check
-                              type="checkbox"
-                              id="update"
-                              checked={formOneParentData?.address_similar_to_child}
-                              label="Address as per child"
-                              onChange={(e) => {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  address_similar_to_child: !formOneParentData?.address_similar_to_child,
-                                }))
-                              }} />
-                          </div>
                         </Form.Group>
                         
                         <Form.Group className="mb-3 relative">

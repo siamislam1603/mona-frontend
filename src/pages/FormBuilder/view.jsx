@@ -19,12 +19,13 @@ import {
 } from 'react-bootstrap';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, IGNORE_REMOVE_FORM } from '../../components/App';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useLocation } from 'react-router-dom';
+import { FullLoader } from '../../components/Loader';
 
 function ViewFormBuilder(props) {
   const navigate = useNavigate();
@@ -36,22 +37,47 @@ function ViewFormBuilder(props) {
   const [selectedFranchisee, setSelectedFranchisee] = useState(
     localStorage.getItem('franchisee_id')
   );
-
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
+  const [formId,setFormId]=useState(null);
   console.log(MeFormData, 'MeFormData');
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
   const token = localStorage.getItem('token');
-  const location=useLocation();
+  const location = useLocation();
   let hrFlag = false;
   let title_flag = false;
+  let form_id;
   useEffect(() => {
-    if(location?.state?.message)
-    {
+    getAllForm();
+    if (location?.state?.message) {
       toast.success(location?.state?.message);
-      navigate("/form", { state: {message: null} });
+      navigate('/form', { state: { message: null } });
     }
     getFormData('');
+    
   }, []);
+    const getAllForm = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/list`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.result?.map((item)=>{
+          if(item.form_name.toLowerCase()===IGNORE_REMOVE_FORM.toLowerCase())
+          {
+            setFormId(item.id);
+          }
+        })
+      })
+      .catch((error) => console.log('error', error));
+  };
   const deleteForm = (id) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -121,6 +147,10 @@ function ViewFormBuilder(props) {
         });
         setMeFormData(me);
         setOthersFormData(others);
+        if(result)
+        {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -151,6 +181,7 @@ function ViewFormBuilder(props) {
   };
   return (
     <>
+      {console.log("form_id--->",formId)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -171,6 +202,7 @@ function ViewFormBuilder(props) {
                     localStorage.setItem('f_id', id);
                   }}
                 />
+                <FullLoader loading={fullLoaderStatus} />
 
                 <div className="forms-header-section">
                   <div className="forms-managment-section">
@@ -246,7 +278,8 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
-                                            inner_item?.form_permission
+
+                                            inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -258,7 +291,8 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item?.form_permission
+
+                                              inner_item?.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -398,7 +432,8 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
-                                            inner_item?.form_permission
+
+                                            inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -410,7 +445,8 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item?.form_permission
+
+                                              inner_item?.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -528,7 +564,11 @@ function ViewFormBuilder(props) {
                                           localStorage.getItem('user_id')
                                         ) &&
                                           ((
+<<<<<<< HEAD
                                             inner_item?.form_permission
+=======
+                                            inner_item?.form_permissions[0]
+>>>>>>> master
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -540,7 +580,11 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
+<<<<<<< HEAD
                                               inner_item?.form_permission
+=======
+                                              inner_item?.form_permissions[0]
+>>>>>>> master
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -576,7 +620,8 @@ function ViewFormBuilder(props) {
                                                     navigate('/form/response', {
                                                       state: {
                                                         id: inner_item.id,
-                                                        form_name: inner_item.form_namee
+                                                        form_name:
+                                                          inner_item.form_name,
                                                       },
                                                     });
                                                   }}
@@ -614,7 +659,8 @@ function ViewFormBuilder(props) {
                                                     navigate('/form/response', {
                                                       state: {
                                                         id: inner_item.id,
-                                                        form_name: inner_item.form_name
+                                                        form_name:
+                                                          inner_item.form_name,
                                                       },
                                                     });
                                                   }}
@@ -689,7 +735,9 @@ function ViewFormBuilder(props) {
                                                                 'Your form was expired on ' +
                                                                   moment(
                                                                     inner_item.end_date
-                                                                  ).format('DD/MM/YYYY') +
+                                                                  ).format(
+                                                                    'DD/MM/YYYY'
+                                                                  ) +
                                                                   '.'
                                                               );
                                                             else
@@ -874,7 +922,7 @@ function ViewFormBuilder(props) {
                                                               Edit
                                                             </Dropdown.Item>
                                                             {inner_item.id !==
-                                                              11 && (
+                                                              formId && (
                                                               <Dropdown.Item
                                                                 onClick={() => {
                                                                   deleteForm(
@@ -1056,7 +1104,7 @@ function ViewFormBuilder(props) {
                                                                   Edit
                                                                 </Dropdown.Item>
                                                                 {inner_item.id !==
-                                                                  11 && (
+                                                                  formId && (
                                                                   <Dropdown.Item
                                                                     onClick={() => {
                                                                       deleteForm(
@@ -1180,10 +1228,7 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {
-                                  item[0]?.user
-                                    ?.fullname
-                                }
+                                {item[0]?.user?.fullname}
                               </h4>
                             </div>
                           </div>
@@ -1196,9 +1241,7 @@ function ViewFormBuilder(props) {
                                     : 'text-capitalize'
                                 }
                               >
-                                {item[0]?.user?.role
-                                  .split('_')
-                                  .join(' ')}
+                                {item[0]?.user?.role.split('_').join(' ')}
                               </h4>
                             </div>
                           </div>
@@ -1210,8 +1253,8 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item[0].createdAt).format('DD/MM/YYYY')} -
-                                {moment(item[0].createdAt).format('HH:MM:SS')}
+                                {moment(item[0].createdAt).format('DD/MM/YYYY')}{' '}
+                                - {item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":")} Hrs
                               </h4>
                               <button
                                 onClick={() => {
@@ -1219,8 +1262,9 @@ function ViewFormBuilder(props) {
                                     state: {
                                       id: MeFormData[Index]?.forms[innerIndex]
                                         ?.id,
-                                      form_name: MeFormData[Index]?.forms[innerIndex]
-                                      ?.form_name,
+                                      form_name:
+                                        MeFormData[Index]?.forms[innerIndex]
+                                          ?.form_name,
                                     },
                                   });
                                 }}
@@ -1236,6 +1280,9 @@ function ViewFormBuilder(props) {
                 : OthersFormData[Index]?.forms &&
                   OthersFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item, index) => {
+                      {
+                        console.log('item[0]-->', item[0]);
+                      }
                       return (
                         <div className="user_box">
                           <div className="user_name">
@@ -1253,7 +1300,6 @@ function ViewFormBuilder(props) {
                           </div>
                           <div className="user_role">
                             <div className="user_detail">
-                              
                               <h4
                                 className={
                                   item[0]?.seen_flag === false
@@ -1261,7 +1307,7 @@ function ViewFormBuilder(props) {
                                     : 'text-capitalize'
                                 }
                               >
-                                {item?.user?.role.split('_').join(' ')}
+                                {item[0]?.user?.role.split('_').join(' ')}
                               </h4>
                             </div>
                           </div>
@@ -1273,7 +1319,8 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item[0].createdAt).format('DD/MM/YYYY')}
+                                {moment(item[0].createdAt).format('DD/MM/YYYY')}{' '}
+                                - {item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":")} Hrs
                               </h4>
                               <button
                                 onClick={() => {
@@ -1282,8 +1329,9 @@ function ViewFormBuilder(props) {
                                       id: OthersFormData[Index]?.forms[
                                         innerIndex
                                       ]?.id,
-                                      form_name: OthersFormData[Index]?.forms[innerIndex]
-                                        ?.form_name,
+                                      form_name:
+                                        OthersFormData[Index]?.forms[innerIndex]
+                                          ?.form_name,
                                     },
                                   });
                                 }}

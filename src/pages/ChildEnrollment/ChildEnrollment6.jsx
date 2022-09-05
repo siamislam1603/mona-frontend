@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from '../../components/App';
 import { acceptPointValidator } from '../../helpers/validation';
+import { useParams } from 'react-router-dom';
 
 let nextstep = 7;
 let step = 6;
 
 const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
-
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   const [acceptedAllPoints, setAcceptedAllPoints] = useState(false);
   const [formStepData, setFormStepData] = useState(null);
   const [loader, setLoader] = useState(false);
@@ -17,7 +18,7 @@ const ChildEnrollment6 = ({nextStep, handleFormData, prevStep}) => {
   const populateFormStepData = async () => {
     let token = localStorage.getItem('token');
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
