@@ -15,21 +15,19 @@ import moment from 'moment';
 const FranchisorDashboard = () => {
   const navigate = useNavigate();
   const [count, setcount] = React.useState({
-    totalFranchisees:0,
-    totalUsers:0,
-    totalChildren:0,
-    totalLocations:0,
-    noOfEnrollmentFormsSignedInPast7Days:0,
-    usersYetToLogin:0
+
+    totalFranchisees: 0,
+    totalUsers: 0,
+    totalChildren: 0,
+    totalLocations: 0,
+    noOfEnrollmentFormsSignedInPast7Days: 0,
+    usersYetToLogin: 0
   });
-  const [state, setstate] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
   const [formData, setFormData] = useState([])
-  const [Index, setIndex] = useState(0);
-  const [innerIndex, setInnerIndex] = useState(0);
-  const [MeFormData, setMeFormData] = useState([]);
+
 
   let token = localStorage.getItem('token');
   const columns1 = [
@@ -37,7 +35,7 @@ const FranchisorDashboard = () => {
       dataField: 'formname',
       text: 'Form Name',
       formatter: (cell) => {
-        console.log("frnahisro cell",cell)
+        console.log("frnahisro cell", cell)
         return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on:  {moment(cell).format('DD/MM/YYYY')}</small></span></div></>)
       },
     },
@@ -136,7 +134,7 @@ const FranchisorDashboard = () => {
     let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-    console.log("THE Date1", Added, datae)
+    // console.log("THE Date1", Added, datae)
     if (datae === Added) {
       return "Added today"
     }
@@ -241,97 +239,10 @@ const FranchisorDashboard = () => {
                             <span className="totalaudit">{forms_count}</span>
                           </div>
                         </div>
-                        {/*<div className="record-column">
-                            <div className="item">
-                              <div className="fixcol">
-                                <div className="icopic"><img src="../img/folder-ico.png" alt=""/></div>
-                                <div className="iconame">COVID Survey 2022 <span className="date">Created on: 01/22/2022</span></div>
-                                <div className="cta-col">
-                                  <div className="record-modi">Last modified by: <br/> Special Daycare on 04/29/2022</div>
-                                  <Dropdown>
-                                    <Dropdown.Toggle variant="transparent" id="ctacol">
-                                      <img src="../img/dot-ico.svg" alt=""/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </div>
-                              <hr/>
-                              <div className="record-status">
-                                <Row>
-                                  <Col lg={5} md={6}>
-                                    <div className="cprogress text-center">
-                                      <Progress type="circle" width={150} strokeWidth={14} percent={56}
-                                        theme={{
-                                          active: {
-                                            trailColor: '#dbdbdb',
-                                            color: '#AA0061'
-                                          }
-                                        }} />
-                                    </div>
-                                  </Col>
-                                  <Col lg={7} md={6}>
-                                    <div className="status-col">
-                                      <div className="col">
-                                        <small>Status</small>
-                                        <p>Active</p>
-                                      </div>
-                                      <div className="col">
-                                        <small>Form Type</small>
-                                        <p>One time fill and submit</p>
-                                      </div>
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </div>
-                              <div className="record-submission">
-                                <Row>
-                                  <Col md={6}>
-                                    <div className="submission-col text-center">
-                                      <p>56</p>
-                                      <small>Total Submissions</small>
-                                    </div>
-                                  </Col>
-                                  <Col md={6}>
-                                    <div className="submission-col text-center">
-                                      <p>56</p>
-                                      <small>Pending Submissions</small>
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </div>
-                              <hr/>
-                              <div className="record-value">
-                                <div className="label">
-                                  <small>Label1</small>
-                                  <p>Value 1</p>
-                                </div>
-                                <div className="label">
-                                  <small>Label2</small>
-                                  <p>Value 2</p>
-                                </div>
-                                <div className="label">
-                                  <small>Label3</small>
-                                  <p>Value 3</p>
-                                </div>
-                                <div className="label">
-                                  <small>Label4</small>
-                                  <p>Value 4</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>*/}
+
                         <div className="enrollments-sec pb-5">
                           <div className="column-table user-management-sec">
-                            {/* <ToolkitProvider
-                              keyField="name"
-                              data={products1}
-                              columns={columns1}
-                              search
-                            >
-                              {(props) => ( */}
+
                             {
                               formData?.length > 0 ?
                                 (
@@ -411,30 +322,30 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="column-list announcements-list">
                             {
-                              latest_announcement?.length>0 ?
-                              (
-                                latest_announcement?.map((data) => {
-                                  return (
-                                    <div className="listing">
-                                      <a href="/announcements" className="item">
-                                        <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                        <div className="name">{data.title }
-                                          <div>
-                                            <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-    
-                                          </div>
-    
-                                        </div>
-                                      </a>
-                                    </div>
-                                  );
-                                })
-                              )
-                              :
-                              (
-                              <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+                              latest_announcement?.length > 0 ?
+                                (
+                                  latest_announcement?.map((data) => {
+                                    return (
+                                      <div className="listing">
+                                        <a href="/announcements" className="item">
+                                          <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                          <div className="name">{data?.title}
+                                            <div>
+                                              <span className="timesec">{getAddedTime(data?.createdAt)}</span>
 
-                              )
+                                            </div>
+
+                                          </div>
+                                        </a>
+                                      </div>
+                                    );
+                                  })
+                                )
+                                :
+                                (
+                                  <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+
+                                )
                             }
                             {/* <div className="listing">
                               <a href="/" className="item">

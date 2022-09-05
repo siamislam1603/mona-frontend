@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 
 const FileRepoVideo = ({ data, title, duration, Src }) => {
-    console.log(data, 'cellcellcell')
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
     const handleShow = () => setVideo(true);
@@ -13,7 +12,7 @@ const FileRepoVideo = ({ data, title, duration, Src }) => {
                 <div className="vidcol">
                     <div className="align-items-center" onClick={handleShow}>
                         <div className="pic2">
-                            <video width="200">
+                            <video width="200" style={{ maxHeight: "250px" }}>
                                 <source src={data} type="video/mp4" />
                                 <source src={data} type="video/ogg" />
                                 Your browser does not support HTML video.

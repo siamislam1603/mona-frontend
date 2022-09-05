@@ -5,28 +5,18 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import axios from "axios";
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
-import {
-  Button,
-  Container,
-  Dropdown,
-  Form,
-  Modal,
-  Row,
-  Col,
-} from 'react-bootstrap';
-import ToolkitProvider, {
-  Search,
-  CSVExport,
-} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import { FullLoader } from "../components/Loader";
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 
 const selectRow = {
   mode: 'checkbox',
   clickToSelect: true,
 };
+
 const FileRepoShairWithme = ({ selectedFranchisee }) => {
   const [userData, setUserData] = useState([]);
-  userData && console.log('USER DATA:', userData.map(data => data));
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const GetData = async () => {
     let response = await axios.get(`${BASE_URL}/fileRepo/`, {
@@ -34,21 +24,19 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     })
+    if (response) {
+      setfullLoaderStatus(false)
+    }
 
-    console.log(response, "+++++++++++++++++++++", "response")
     if (response.status === 200) {
       const users = response.data.dataDetails;
-      console.log(users, "successsuccesssuccesssuccesssuccess")
       let tempData = users.map((dt) => ({
         name: `${dt.categoryId}, ${dt.count}`,
         createdAt: dt.updatedAt,
         userID: dt.id,
         creatorName: dt.ModifierName + "," + dt.updatedBy
       }));
-      // tempData = tempData.filter((data) => data.is_deleted === 0);
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
       setUserData(tempData);
-      let temp = tempData;
     }
   }
   const [columns, setColumns] = useState([
@@ -132,15 +120,11 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
   ]);
   useEffect(() => {
     GetData();
-    // getUserRoleAndFranchiseeData();
-    // getMyAddedFileRepoData();
-    // getFilesSharedWithMeData();
-    // getFileCategory();
-    // getUser();
   }, []);
-  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
+
   return (
     <div>
+      <FullLoader loading={fullLoaderStatus} />
       {userData.length > 0 ? (<>
         <ToolkitProvider
           keyField="name"

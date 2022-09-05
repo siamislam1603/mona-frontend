@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
@@ -19,6 +19,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 const AddNewAnnouncements = () => {
 
+
   const theDate = () => {
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -30,17 +31,34 @@ const AddNewAnnouncements = () => {
     return today
   }
   const hour = () =>{
+    let time 
+    let min 
     var date = new Date();
     let currentHours = date.getHours();
     currentHours = ("0" + currentHours).slice(-2);
     console.log("Current hour",currentHours)
-    let  min = date.getMinutes()
-    min = ("0" + min).slice(-2);
+     min = date.getMinutes()+10
+    console.log("the large min out",min)
+
+    if(min>60){
+      console.log("in is large then 60",min)
+      let currentHours = date.getHours()+1;
+       let newd=min- 60
+      currentHours = ("0" + currentHours).slice(-2);
+      console.log("in is large new ",newd,min,date.getMinutes(),date.getMinutes()-min, typeof min,typeof date.getMinutes())
+       time = currentHours + ":" + newd;
+       console.log("is large time",time)
+
+    }
+    else {
+      min = ("0" + min).slice(-2);
 
 
-    let time = currentHours + ":" + min
-    console.log("time and current hour",time,currentHours)
+       time = currentHours + ":" + min
+    }
+    console.log("time",time)
     return time;
+
     
    } 
 
@@ -61,7 +79,7 @@ const [announcementData, setAnnouncementData] = useState({
   // start_time:new Date().getHours() + ":" + new Date().getMinutes()
   start_time:hour()
 });
-const [titleError,setTitleError] = useState(null);
+const [titleError,setTitleError] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
@@ -70,24 +88,11 @@ const [titleError,setTitleError] = useState(null);
   const [allFranchise,setAllFranchise] = useState(false)
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
-  const [titleChecking,setTitleChecking] = useState(true)
+  const [titleChecking,setTitleChecking] = useState(false)
 
-
-
-const fetchUserRoles = async () => {
-  const response = await axios.get(`${BASE_URL}/api/user-role`);
-  if (response.status === 200) {
-    const { userRoleList } = response.data;
-    setUserRoles([
-      ...userRoleList.map((data) => ({
-        cat: data.role_name,
-        key: data.role_label,
-      })),
-    ]);
-  }
-};
 
 const createAnnouncement = async (data) => {
+  titleCheck()
   console.log("CALLING CREATED ANNOUCNEMENT")
   try {
     
@@ -106,8 +111,9 @@ const createAnnouncement = async (data) => {
   console.log("jjjjjjjjjjjjjjjjjjjj");
   if(response.status === 200 && response.data.status === "fail"){
     setAddnewAnnouncement(false)
+    console.log("Response title",response.data)
     console.log("TITLE ALREADY EXIT")
-    setTitleError("Title already exit")
+    // setTitleError("Title already exit")
   }
   
 
@@ -153,16 +159,7 @@ const createAnnouncement = async (data) => {
         
         }      
     } 
-    // else if(response.status === 403 && response.data.status === "fail"){
-    //   console.log('ERROR RESPONSE! Permission Denied');
-    //   setTopErrorMessage("Permission Denied");
-    //   setLoader(false)
-    //   setAddnewAnnouncement(false)
-
-    //   setTimeout(() => {
-    //     setTopErrorMessage(null);
-    //   }, 3000)
-    // }
+  
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
     window.location.href="/announcements";
         
@@ -171,6 +168,7 @@ const createAnnouncement = async (data) => {
     console.log("ERROR ADD ANNOUNCEMNT",error)
     if(error.response.status === 403 && error.response.data.status === "fail")
     console.log('ERROR RESPONSE! Permission Denied');
+    console.log("Error permsission",error)
     setTopErrorMessage("Permission Denied");
     setAddnewAnnouncement(false)
 
@@ -256,6 +254,7 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
+      setTitleError()
       // console.log("The name and value",name,value)
       if(localStorage.getItem("user_role") === "franchisee_admin"){
 
@@ -269,6 +268,7 @@ const createAnnouncement = async (data) => {
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
+       
       })); 
       if (!!error[name]) {
         setError({
@@ -278,18 +278,49 @@ const createAnnouncement = async (data) => {
       }
 
     };
-
+    const titleCheck = async() =>{
+      try {
+        const token = localStorage.getItem('token');
+        console.log(announcementData.title)
+            const resp = await axios.get(`${BASE_URL}/announcement/check-title?title=${announcementData.title}`,{
+              headers: {
+                "Authorization": "Bearer " + token
+              }
+            })
+            console.log("title checking", resp)
+            if(resp.status === 200 && resp.data.status === "success"){
+              setTitleChecking(true)
+            }
+            console.log("Title check call", resp)
+      } catch (error) {
+         if(error.response.status === 404){
+          console.log("TItle checking error",error)
+          setTitleChecking(false)
+          // setAddnewAnnouncement(false)
+          setTitleError("Anouncement title already exit ")
+          
+         }
+      }
+    }
+    const handleTitle = (e) =>{
+      titleCheck()
+      handleDataSubmit(e)
+    }
     const handleDataSubmit = event => {
       event.preventDefault();
-      // if()
       console.log("All frnahise",allFranchise)
       console.log("The annoucement after submit ",announcementData)
-      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage, allFranchise);
+      console.log("THe title error",titleError,titleChecking)
+      
+      let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking);
 
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
+        // errorRef.current.scrollIntoView();
+
         window.scroll(0,0)
+        
        }
        else{
         console.log("INSDIE ERROR EMPTY")
@@ -311,67 +342,15 @@ const createAnnouncement = async (data) => {
           });
           setAddnewAnnouncement(true)
           setLoader(true);
-          // {
-          //   titleChecking ? 
-          // createAnnouncement(data) :
-          // null
-
-          // }
-          console.log("titlechecing",titleChecking)
-          titleChecking && createAnnouncement(data);
+           createAnnouncement(data);
          console.log("The data",data)
        }
       }
       console.log("The datad adndsjkvnskdja ")
-       
-     
-    // }
-    // if (!announcementData.title) {
-    //   setError(prevError => {
-    //       return { 
-    //           ...prevError, 
-    //           title: "Required Title" 
-    //         }
-    //   }); 
-    // }
-  //   if (!announcementData.meta_description) {
-  //     setError(prevError => {
-  //         return {
-  //       ...prevError,
-  //       // meta_description: "Description must be at least ten characters long"
-  //     }
-  //   }); 
-  // }
-//   if (!announcementData.coverImage) {
-//     setError(prevError => {
-//         return {
-//       ...prevError,
-//       coverImage: "Required CoverImage"
-//     }
-//   }); 
-// }
-
   };
-  const titleCheck = async() =>{
-    const token = localStorage.getItem('token');
-console.log(announcementData.title)
-    const resp = await axios.get(`${BASE_URL}/announcement/check-title?title=${announcementData.title}`,{
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    })
-    console.log("title checking", resp)
-    if(resp.status === 200 && resp.data.status === "success"){
-      setTitleChecking(true)
-    }
-    else{
-      setTitleChecking(false)
-    setAddnewAnnouncement(false)
 
-       setTitleError("Title already exit")
+  
 
-    }
-  }
   console.log("Date",new Date().toISOString().slice(0,10))
   // console.log("Time",new Date().getHours() + ":" + new Date().getMinutes())
   useEffect(() => {
@@ -408,13 +387,11 @@ console.log(announcementData.title)
       // hour()
       // theDate()
     },[])
-    useEffect(() =>{
-      titleCheck()
-    },[announcementData.title])
+
 
    
   // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-  console.log("The franhiseData 1",allFranchise);
+  console.log("The franhiseData 1",allFranchise,titleChecking);
   console.log("SELECETED FRANHISE",selectedFranchisee,franchiseeData)
   announcementData && console.log('Announcement Data:', announcementData);
   return (
@@ -446,7 +423,7 @@ console.log(announcementData.title)
                           type="text" 
                           name="title"
                           onChange={handleAnnouncementData} 
-                          isInvalid = {!!error.title}
+                          isInvalid = {!!error.title || titleError}
                           />
                           <Form.Control.Feedback type="invalid">
                             {error.title}
@@ -459,7 +436,7 @@ console.log(announcementData.title)
                             
                             <Form.Group className="col-md-6 mb-3">
                               <div className="btn-radio inline-col">
-                                <Form.Label>Send to all franchisee:</Form.Label>
+                                <Form.Label>Send to all Franchises:</Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
@@ -516,6 +493,8 @@ console.log(announcementData.title)
                               disable={allFranchise === false?false:true}
                               // singleSelect={true}
                               // placeholder={"Select Franchise Names"}
+                              // isInvalid = {!!error.franchise}
+
                               displayValue="key"
                               selectedValues={franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id)))}
                               className="multiselect-box default-arrow-select"
@@ -624,8 +603,8 @@ console.log(announcementData.title)
                     type="time"
                     name="start_time"
                     onChange={handleAnnouncementData}
-                    // defaultValue={new Date().getHours() + ":" + new Date().getMinutes()}
                     defaultValue={hour()}
+                    // min={moment().add(6, "hours")}
                     onInvalid={!!error.start_time}
                   />
                 </Form.Group>
@@ -679,7 +658,7 @@ console.log(announcementData.title)
                     <Row>
                       <Col sm={6}>
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label> Cover Image :</Form.Label>
+                          <Form.Label> Cover Image </Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
                           />
@@ -688,13 +667,13 @@ console.log(announcementData.title)
                       </Col>
                       <Col sm={6}>
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label>Upload Video :</Form.Label>
+                          <Form.Label>Upload Video </Form.Label>
                           <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label>Upload Files :</Form.Label>
+                          <Form.Label>Upload Files </Form.Label>
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
@@ -722,7 +701,7 @@ console.log(announcementData.title)
                         <div className="cta text-center mt-5 mb-5">
                         <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>
 
-                          <Button variant="primary" type="submit" onClick={handleDataSubmit}>Save</Button>
+                          <Button variant="primary" type="submit" onClick={handleTitle}>Save</Button>
                         </div>
                       </Col>
                     </Row>

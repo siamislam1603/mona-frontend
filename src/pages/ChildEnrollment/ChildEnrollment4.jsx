@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Button, Col, Row, Table, Form } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Button, Col, Row, Form } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from 'axios';
 import { personValidation, personValidation2 } from "../../helpers/validation";
-import { useEffect } from "react";
+import { useParams } from 'react-router-dom';
 
 let nextstep = 5;
 let step = 4;
@@ -11,6 +11,7 @@ let fields = ["name", "telephone", "address", "relationship_to_the_child"];
 
 
 const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 4);
   // REQUIRED STATES
   const [emergencyContactData, setEmergencyContactData] = useState({
@@ -322,7 +323,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -1018,7 +1019,6 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
             <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Go Back</Button>
             <Button 
               variant="primary" 
-              disabled={loader ? true : false}
               type="submit">
               {loader === true ? (
                 <>

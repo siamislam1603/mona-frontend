@@ -80,7 +80,7 @@ const MyAnnouncements = (props) => {
      let datae =  [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-     console.log("THE Date1",Added,datae)
+    //  console.log("THE Date1",Added,datae)
      if(datae === Added){
       return "Added today"
      }
@@ -176,16 +176,17 @@ const MyAnnouncements = (props) => {
                 <span>
               <span className="timesec">{getAddedTime(data.createdAt)}</span>
 
-                 {
-                              localStorage.getItem('user_role')
-                                  ? localStorage
-                                    .getItem('user_role')
-                                     .split('_')
-                                     .map(
-                                      (data) =>
-                                       data.charAt(0).toUpperCase() + data.slice(1)
-                                      ).join(' ')
-                          : ''} : </span>{userName}  
+              {
+                                         data.user.role.split('_')
+                                         .map(
+                                          (data) =>
+                                           data.charAt(0).toUpperCase() + data.slice(1)
+                                          ).join(' ')
+                                      } : 
+                                  
+                             </span>
+                             {data.user.fullname[0].toUpperCase()+data.user.fullname.slice(1)}
+                  
                           {/* {data.is_event === 1 ?<span style ={{color:"black",fontWeight:"bold"}}> Event</span>:<span style ={{color:"black",fontWeight:"900"}}> Announcement</span> } */}
                             
                           </small>
