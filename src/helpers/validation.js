@@ -191,7 +191,7 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
 };
 export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise) => {
   let newErrors = {};
-  console.log('The form validat', form);
+  console.log('The form validat', form,allFranchise);
   // console.log("The DATA VALIDATION",newData)
   let { title, meta_description, start_date, start_time, franchise } = form;
 

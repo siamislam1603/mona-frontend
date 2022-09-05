@@ -2,7 +2,7 @@ import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, IGNORE_REMOVE_FORM } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
 import { FullLoader } from '../../components/Loader';
 import TopHeader from '../../components/TopHeader';
@@ -13,21 +13,37 @@ function FormResponse(props) {
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
   const token = localStorage.getItem('token');
-  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   useEffect(() => {
-    if(location?.state?.id)
-    {
+    if (location?.state?.id) {
       getResponse('');
+    } else {
+      getAllForm();
     }
-    else
-    {
-      getResponseTow('');
-    }
-    
-    
   }, []);
+  const getAllForm = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
 
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/list`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.result?.map((item)=>{
+          if(item.form_name.toLowerCase()===IGNORE_REMOVE_FORM.toLowerCase())
+          {
+            getResponseTow(item.id);
+          }
+        })
+      })
+      .catch((error) => console.log('error', error));
+  };
   const getResponse = (search) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -38,7 +54,8 @@ function FormResponse(props) {
     };
 
     fetch(
-      `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1
+      `${BASE_URL}/form/response?search=${search}&form_id=${
+        location?.state?.id ? location?.state?.id : 1
       }&user_id=${localStorage.getItem(
         'user_id'
       )}&user_role=${localStorage.getItem('user_role')}`,
@@ -55,9 +72,7 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
-
-
-  const getResponseTow = (search) => {
+  const getResponseTow = (id) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
@@ -67,7 +82,7 @@ function FormResponse(props) {
     };
 
     fetch(
-      `${BASE_URL}/form/response?search=&form_id=55&user_id=2&user_role=franchisor_admin`,
+      `${BASE_URL}/form/response?search=&form_id=${id}&user_id=2&user_role=franchisor_admin`,
       requestOptions
     )
       .then((response) => response.json())
@@ -81,7 +96,6 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
-  
   return (
     <>
       <div id="main">
@@ -104,7 +118,11 @@ function FormResponse(props) {
                       >
                         <img src="../../img/back-arrow.svg" />
                       </Button>
-                      <h4 className="mynewForm">{location?.state?.form_name ? location?.state?.form_name: "Compliance Visit Form"}</h4>
+                      <h4 className="mynewForm">
+                        {location?.state?.form_name
+                          ? location?.state?.form_name
+                          : 'Compliance Visit Form'}
+                      </h4>
                     </div>
                   </Col>
                 </Row>
@@ -151,12 +169,13 @@ function FormResponse(props) {
                                           className={
                                             responseData[index].length - 1 ===
                                               inner_index ||
-                                              (inner_index > 0 &&
-                                                responseData[index][
-                                                  inner_index - 1
-                                                ]?.filled_user?.fullname?.includes(
-                                                  inner_item?.filled_user?.fullname
-                                                ))
+                                            (inner_index > 0 &&
+                                              responseData[index][
+                                                inner_index - 1
+                                              ]?.filled_user?.fullname?.includes(
+                                                inner_item?.filled_user
+                                                  ?.fullname
+                                              ))
                                               ? 'responses-header-detail'
                                               : 'responses-header-detail response-header-left-line'
                                           }
@@ -169,40 +188,48 @@ function FormResponse(props) {
                                           <h5>
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                inner_index - 1
-                                              ].filled_user?.fullname?.includes(
-                                                inner_item?.filled_user?.fullname
-                                              ) && inner_item?.filled_user?.fullname
-                                              : inner_item?.filled_user?.fullname}
+                                                  inner_index - 1
+                                                ].filled_user?.fullname?.includes(
+                                                  inner_item?.filled_user
+                                                    ?.fullname
+                                                ) &&
+                                                inner_item?.filled_user
+                                                  ?.fullname
+                                              : inner_item?.filled_user
+                                                  ?.fullname}
                                           </h5>
                                           <h6>
                                             <span className="text-capitalize">
                                               {inner_index > 0
                                                 ? !responseData[index][
-                                                  inner_index - 1
-                                                ]?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ')
-                                                  .includes(
-                                                    inner_item?.filled_user?.role
-                                                      .split('_')
-                                                      .join(' ')
-                                                  ) &&
-                                                inner_item?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ') + ','
+                                                    inner_index - 1
+                                                  ]?.filled_user?.role
+                                                    .split('_')
+                                                    .join(' ')
+                                                    .includes(
+                                                      inner_item?.filled_user?.role
+                                                        .split('_')
+                                                        .join(' ')
+                                                    ) &&
+                                                  inner_item?.filled_user?.role
+                                                    .split('_')
+                                                    .join(' ') + ','
                                                 : inner_item?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ') + ','}
+                                                    .split('_')
+                                                    .join(' ') + ','}
                                             </span>{' '}
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                inner_index - 1
-                                              ].filled_user?.franchisee?.franchisee_name.includes(
-                                                inner_item?.filled_user?.franchisee?.franchisee_name
-                                              ) &&
-                                              inner_item?.filled_user?.franchisee?.franchisee_name
-                                              : inner_item?.filled_user?.franchisee?.franchisee_name}
+                                                  inner_index - 1
+                                                ].filled_user?.franchisee?.franchisee_name.includes(
+                                                  inner_item?.filled_user
+                                                    ?.franchisee
+                                                    ?.franchisee_name
+                                                ) &&
+                                                inner_item?.filled_user
+                                                  ?.franchisee?.franchisee_name
+                                              : inner_item?.filled_user
+                                                  ?.franchisee?.franchisee_name}
                                           </h6>
                                         </div>
                                       );
@@ -212,9 +239,15 @@ function FormResponse(props) {
                                 <div className="responses-header-right">
                                   <p>
                                     Completed on: <br />
-                                    {moment(item[0].createdAt).format('DD/MM/YYYY') +
+                                    {moment(item[0].createdAt).format(
+                                      'DD/MM/YYYY'
+                                    ) +
                                       ', ' +
-                                      item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":") +
+                                      item[0].createdAt
+                                        .split('T')[1]
+                                        .split('.')[0]
+                                        .split(':', 2)
+                                        .join(':') +
                                       ' hrs'}
                                   </p>
                                 </div>
@@ -234,7 +267,10 @@ function FormResponse(props) {
                                       Filled By {item?.filled_user?.fullname}{' '}
                                       {!item.section_name ||
                                         (item.section_name !== '' &&
-                                          `| ${item.section_name.split("_").join(" ")} Section`)} {`| Behalf of ${item?.user?.fullname}`}
+                                          `| ${item.section_name
+                                            .split('_')
+                                            .join(' ')} Section`)}{' '}
+                                      {`| Behalf of ${item?.user?.fullname}`}
                                     </h4>
 
                                     {Object.keys(JSON.parse(item.fields)).map(
@@ -260,27 +296,28 @@ function FormResponse(props) {
                                               )[inner_index]?.includes(
                                                 'data:image'
                                               ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.png'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.jpg'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.jpeg'
-                                                ) ? (
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.png'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.jpg'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.jpeg'
+                                              ) ? (
                                                 <>
                                                   <img
-                                                    src={`${Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]
-                                                      }`}
+                                                    src={`${
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]
+                                                    }`}
                                                   ></img>
                                                 </>
                                               ) : (
