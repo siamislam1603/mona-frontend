@@ -189,7 +189,7 @@ function AddFormBuilder(props) {
                   <Row>
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label>Form title</Form.Label>
+                        <Form.Label>Form Title</Form.Label>
                         <Form.Control
                           type="text"
                           name="form_name"

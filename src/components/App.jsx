@@ -9,7 +9,7 @@ const FRONT_BASE_URL = "http://localhost:5000";
 
 //  const FRONT_BASE_URL = "http://13.237.14.155:5000";
 // const FRONT_BASE_URL = "http://54.206.190.120:5000";
-
+const IGNORE_REMOVE_FORM="Compliance Visit Form";
 
 function App() {
   return (
@@ -20,4 +20,4 @@ function App() {
 }
 
 export default App;
-export { BASE_URL, FRONT_BASE_URL };
+export { BASE_URL, FRONT_BASE_URL,IGNORE_REMOVE_FORM };

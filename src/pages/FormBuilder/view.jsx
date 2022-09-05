@@ -19,7 +19,7 @@ import {
 } from 'react-bootstrap';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
-import { BASE_URL } from '../../components/App';
+import { BASE_URL, IGNORE_REMOVE_FORM } from '../../components/App';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -38,7 +38,7 @@ function ViewFormBuilder(props) {
     localStorage.getItem('franchisee_id')
   );
   const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
-
+  const [formId,setFormId]=useState(null);
   console.log(MeFormData, 'MeFormData');
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
@@ -46,13 +46,38 @@ function ViewFormBuilder(props) {
   const location = useLocation();
   let hrFlag = false;
   let title_flag = false;
+  let form_id;
   useEffect(() => {
+    getAllForm();
     if (location?.state?.message) {
       toast.success(location?.state?.message);
       navigate('/form', { state: { message: null } });
     }
     getFormData('');
+    
   }, []);
+    const getAllForm = () => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/list`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result?.result?.map((item)=>{
+          if(item.form_name.toLowerCase()===IGNORE_REMOVE_FORM.toLowerCase())
+          {
+            setFormId(item.id);
+          }
+        })
+      })
+      .catch((error) => console.log('error', error));
+  };
   const deleteForm = (id) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -156,7 +181,7 @@ function ViewFormBuilder(props) {
   };
   return (
     <>
-      
+      {console.log("form_id--->",formId)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -885,7 +910,7 @@ function ViewFormBuilder(props) {
                                                               Edit
                                                             </Dropdown.Item>
                                                             {inner_item.id !==
-                                                              11 && (
+                                                              formId && (
                                                               <Dropdown.Item
                                                                 onClick={() => {
                                                                   deleteForm(
@@ -1067,7 +1092,7 @@ function ViewFormBuilder(props) {
                                                                   Edit
                                                                 </Dropdown.Item>
                                                                 {inner_item.id !==
-                                                                  11 && (
+                                                                  formId && (
                                                                   <Dropdown.Item
                                                                     onClick={() => {
                                                                       deleteForm(
