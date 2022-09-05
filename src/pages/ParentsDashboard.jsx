@@ -13,7 +13,7 @@ const ParentsDashboard = () => {
 
   const [userDetails, setUserDetails] = useState(null);
   const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(true);
-  const [event, setEvent] = useState([{}]);
+  const [event, setEvent] = useState([]);
   const [announcements, setannouncements] = useState([]);
   const [editTrainingData, setEditTrainingData] = useState([]);
   const [viewEnrollmentDialog, setViewEnrollmentDialog] = useState(false);
@@ -70,7 +70,8 @@ const ParentsDashboard = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       const training = response.data.recentAnnouncement;
-      console.log(training)
+
+      console.log("The event",training)
       setEvent(training);
     }
   };
@@ -264,7 +265,7 @@ const ParentsDashboard = () => {
                               <Link to="/announcements" className="viewall">View All</Link>
                             </header>
 
-                        {!event ? (<>
+                        {event ? (<>
                           <div className="event-sec pb-5">
                            
                             <div className="column-list event-list">
