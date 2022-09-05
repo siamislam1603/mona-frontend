@@ -77,7 +77,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       //(child.consent_signature);
       setConsentData(prevState => ({
         ...prevState,
-        parent_name: child.consent_parent_name || "",
+        parent_name: child.consent_parent_name ||  `${parentData[0].family_name} ${parentData[0].given_name}`,
         consent_date: moment(child.consent_date).format('YYYY-MM-DD'),
         consent_signature: child.consent_signature
       }));
