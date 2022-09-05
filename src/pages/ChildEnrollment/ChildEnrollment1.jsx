@@ -8,6 +8,7 @@ import Select from 'react-select';
 import { BASE_URL } from "../../components/App";
 import { childFormValidator, parentFormValidator  } from "../../helpers/enrollmentValidation";
 import { useParams } from 'react-router-dom';
+import moment from "moment";
 
 let nextstep = 2;
 let step = 1;
@@ -269,15 +270,20 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     console.log('Enrolled child id:', enrolledChildId);
     let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
     if(response.status === 200 && response.data.status === 'success') {
+      console.log('CHILD DATA:', response.data);
       let { child } = response.data;
-      let { parent } = response.data;
       
+      let { parent } = response.data;
+      console.log('PARENT:', parent);
+
+      let parentData = child.parents.filter(p => parseInt(p.user_parent_id) === parseInt(paramsParentId));
+      console.log('PARENT DATA:', parentData);
 
       setFormOneChildData(prevState => ({
         ...prevState,
@@ -305,19 +311,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneParentData(prevState => ({
         ...prevState,
-        family_name: child?.parents[0].family_name || parent.fullname?.split(" ")[0],
-        given_name: child?.parents[0].given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
-        relation_type: child?.parents[0].relation_type,
-        address_as_per_child: child?.parents[0].address_as_per_child || parent.address,
-        telephone: child?.parents[0].telephone || parent.telephone,
-        email: child?.parents[0].email || parent.email,
-        dob: child?.parents[0].dob,
-        child_live_with_this_parent: child?.parents[0].child_live_with_this_parent,
-        place_of_birth: child?.parents[0].place_of_birth,
-        ethnicity: child?.parents[0].ethnicity,
-        primary_language: child?.parents[0].primary_language,
-        occupation: child?.parents[0].occupation,
-        address_similar_to_child: child?.parents[0].address_similar_to_child
+        family_name: parentData[0]?.family_name || parent.fullname?.split(" ")[0],
+        given_name: parentData[0]?.given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
+        relation_type: parentData[0]?.relation_type,
+        address_as_per_child: parentData[0]?.address_as_per_child || parent.address,
+        telephone: parentData[0]?.telephone || parent.telephone,
+        email: parentData[0]?.email || parent.email,
+        dob: parentData[0]?.dob,
+        child_live_with_this_parent: parentData[0]?.child_live_with_this_parent,
+        place_of_birth: parentData[0]?.place_of_birth,
+        ethnicity: parentData[0]?.ethnicity,
+        primary_language: parentData[0]?.primary_language,
+        occupation: parentData[0]?.occupation,
+        address_similar_to_child: parentData[0]?.address_similar_to_child
       }));
 
       setFormStepData(child.form_step);

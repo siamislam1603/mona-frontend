@@ -234,6 +234,7 @@ const UserManagement = () => {
       text: 'Action',
       formatter: (cell) => {
         cell = cell.split(',');
+        console.log('CELL VALUE:', cell);
         return (
           <>
             {
