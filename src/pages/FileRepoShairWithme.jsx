@@ -6,11 +6,7 @@ import axios from "axios";
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { FullLoader } from "../components/Loader";
-
-import ToolkitProvider, {
-  Search,
-  CSVExport,
-} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 
 const selectRow = {
@@ -21,7 +17,7 @@ const selectRow = {
 const FileRepoShairWithme = ({ selectedFranchisee }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  userData && console.log('USER DATA:', userData.map(data => data));
+
   const GetData = async () => {
     let response = await axios.get(`${BASE_URL}/fileRepo/`, {
       headers: {
@@ -31,20 +27,16 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
     if (response) {
       setfullLoaderStatus(false)
     }
-    console.log(response, "+++++++++++++++++++++", "response")
+
     if (response.status === 200) {
       const users = response.data.dataDetails;
-      console.log(users, "successsuccesssuccesssuccesssuccess")
       let tempData = users.map((dt) => ({
         name: `${dt.categoryId}, ${dt.count}`,
         createdAt: dt.updatedAt,
         userID: dt.id,
         creatorName: dt.ModifierName + "," + dt.updatedBy
       }));
-      // tempData = tempData.filter((data) => data.is_deleted === 0);
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", tempData)
       setUserData(tempData);
-      let temp = tempData;
     }
   }
   const [columns, setColumns] = useState([
@@ -128,13 +120,8 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
   ]);
   useEffect(() => {
     GetData();
-    // getUserRoleAndFranchiseeData();
-    // getMyAddedFileRepoData();
-    // getFilesSharedWithMeData();
-    // getFileCategory();
-    // getUser();
   }, []);
-  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
+
   return (
     <div>
       <FullLoader loading={fullLoaderStatus} />

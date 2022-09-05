@@ -3,7 +3,6 @@ import { Button, Form, Modal, Row, Col, } from 'react-bootstrap';
 import Multiselect from 'multiselect-react-dropdown';
 import { BASE_URL } from '../components/App';
 import axios from "axios";
-import makeAnimated from 'react-select/animated';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +10,6 @@ import DragDropFileEdit from '../components/DragDropFileEdit';
 
 
 let selectedUserId = '';
-
 let selectedFranchiseeId = '';
 
 const FilerepoUploadFile = () => {
@@ -77,20 +75,23 @@ const FilerepoUploadFile = () => {
 
     const getChildren = async () => {
         let franchiseeArr = formSettings.assigned_franchisee
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, {
+        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, { franchisee_id: franchiseeArr }, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })
-        if (response.status === 200) {
-            setChild(response.data.children)
+        if (response.status === 200 && response.data.status === "success") {
+            setChild(response.data.children.map(data => ({
+                id: data.id,
+                name: data.fullname,
+                key: `${data.fullname}`
+            })));
         }
     }
     //======================== GET User List==================
     const getUser = async () => {
         let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, {
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees/`, { franchisee_id: franchiseeArr }, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -119,9 +120,10 @@ const FilerepoUploadFile = () => {
             ...prevState,
             assigned_childs: selectedItem
         }));
-        console.log(selectedChild, "Selllee")
+     
         setSelectedChild(selectedchildarr)
     }
+
     useEffect(() => {
         getFileCategory();
         getChildren();
@@ -175,9 +177,9 @@ const FilerepoUploadFile = () => {
             'Bearer ' + localStorage.getItem('token')
         );
         const file = formSettingData.setting_files[0];
-        console.log('file------->', file);
+ 
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-        console.log('reader---->');
+
         var formdata = new FormData();
 
         formdata.append('image', blob, file.name);
@@ -251,7 +253,7 @@ const FilerepoUploadFile = () => {
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
                 response.json()
-                console.log(response.statusText, "+++++++++++")
+               
                 if (response.statusText === "Created") {
                     setLoaderFlag(false);
                     setShow(false);
@@ -277,13 +279,13 @@ const FilerepoUploadFile = () => {
 
 
     function onSelectUser(optionsList, selectedItem) {
-        console.log('selected_item---->2', selectedItem);
+       
         selectedUserId += selectedItem.id + ',';
         selectedUser.push({
             id: selectedItem.id,
             email: selectedItem.email,
         });
-        console.log('selectedUser---->', selectedUser);
+        
     }
 
 
@@ -293,9 +295,7 @@ const FilerepoUploadFile = () => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
-        {
-            console.log('selectedUser---->', selectedUser);
-        }
+       
     }
 
     function onRemoveChild(removedItem) {
@@ -307,7 +307,7 @@ const FilerepoUploadFile = () => {
             ...prevState,
             assigned_childs: removedItem
         }));
-        console.log(selectedChild, "Selllee")
+      
         setSelectedChild(removedchildarr)
     }
 
@@ -576,7 +576,7 @@ const FilerepoUploadFile = () => {
                                             </Form.Group>
                                         </Col>
                                         <Col lg={9} md={12}>
-                                            {console.log(formSettingData, "{console.log(...formSettingData)}")}
+                                           
                                             {formSettingData.accessible_to_role === 1 ? (
                                                 <Form.Group>
                                                     <Form.Label>Select User Roles</Form.Label>
@@ -717,7 +717,7 @@ const FilerepoUploadFile = () => {
                                                                 id="all_roles"
                                                                 onClick={(e) => {
                                                                     let data = { ...formSettingData };
-                                                                    console.log('e.target.checked', e.target.checked);
+                                                                 
                                                                     if (e.target.checked === true) {
                                                                         if (
                                                                             !data['shared_role']
@@ -754,7 +754,7 @@ const FilerepoUploadFile = () => {
                                                                                 .includes('all')
                                                                         ) {
                                                                             data['shared_role'] += ',';
-                                                                            console.log(data, "dtatatatat")
+                                                                         
                                                                         }
                                                                         setFormSettingData(data);
                                                                     } else {
@@ -771,8 +771,9 @@ const FilerepoUploadFile = () => {
                                             ) : null}
                                             {formSettingData.accessible_to_role === 0 ? (
                                                 <>
-
                                                     <Form.Group>
+
+
                                                         <Form.Label>Select User</Form.Label>
                                                         <div className="select-with-plus">
                                                             <Multiselect
@@ -791,6 +792,7 @@ const FilerepoUploadFile = () => {
                                                     </Form.Group>
                                                     <Form.Group>
                                                         <Form.Label>Select Child</Form.Label>
+
                                                         <div className="select-with-plus">
                                                             <Multiselect
                                                                 displayValue="name"

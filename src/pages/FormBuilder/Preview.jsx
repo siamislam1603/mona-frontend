@@ -5,6 +5,7 @@ import TopHeader from '../../components/TopHeader';
 import LeftNavbar from '../../components/LeftNavbar';
 import InputFields from '../InputFields';
 import { BASE_URL } from '../../components/App';
+import { FullLoader } from '../../components/Loader';
 let values = [];
 const Preview = (props) => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Preview = (props) => {
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [errors, setErrors] = useState({});
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
   const [form, setForm] = useState({});
   const token = localStorage.getItem('token');
   const setField = (field, value) => {
@@ -57,6 +59,9 @@ const Preview = (props) => {
         setRole(res.created_by.role);
         setName(res.created_by.name);
         console.log(res.result);
+        if (result) {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -72,6 +77,7 @@ const Preview = (props) => {
               </aside>
               <div className="sec-column">
                 <TopHeader />
+                <FullLoader loading={fullLoaderStatus} />
                 <Row className="previewTitle">
                   <div className="forms-managment-left new-form-title mynewForm-heading">
                     <Button

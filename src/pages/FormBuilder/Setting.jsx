@@ -3,6 +3,7 @@ import { Button, Col, Form, Row, Table } from 'react-bootstrap';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Multiselect from 'multiselect-react-dropdown';
+import { FullLoader } from '../../components/Loader';
 
 let selectedFillAccessUserId = '';
 let selectedFillAccessUser = [];
@@ -36,6 +37,7 @@ function Setting(props) {
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const [count, setCount] = useState(0);
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
   const setFields = (field, value) => {
     setForm({ ...form, [field]: value });
   };
@@ -199,6 +201,9 @@ function Setting(props) {
           oldResult.fill_access_users = '';
           oldResult.response_visibility = '';
           setForm(oldResult);
+        }
+        if (result) {
+          setfullLoaderStatus(false);
         }
       })
       .catch((error) => console.log('error', error));
@@ -452,6 +457,7 @@ function Setting(props) {
   return (
     <>
       <Form>
+      <FullLoader loading={fullLoaderStatus} />
         <Row>
           <Col md={12} className="mt-3 mt-md-0">
             <div className="form_setting">
