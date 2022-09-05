@@ -54,6 +54,7 @@ import Children from '../pages/Children';
 import Preview from '../pages/FormBuilder/Preview';
 import ChildNotifications from '../pages/ChildEnrollment/ChildNotifications';
 import ChildEnrollmentInitiation from '../pages/ChildEnrollment/ChildEnrollmentInitiation';
+import EditChildEnrollmentInitiation from '../pages/ChildEnrollment/EditChildEnrollmentInitiation';
 import FileRpositoryList from '../pages/FileRpositoryList';
 import FilerepoMyAdd from '../pages/FilerepoMyAdd';
 import RepoEdit from '../pages/RepoEdit';
@@ -137,6 +138,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <ChildEnrollmentInitiation />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/child-enrollment-init/edit/:childId/:parentId"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <EditChildEnrollmentInitiation />
             </Protected>
           }
         />

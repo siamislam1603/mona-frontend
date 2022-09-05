@@ -5,6 +5,7 @@ import TopHeader from '../../components/TopHeader';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import { createFormValidation } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FullLoader } from '../../components/Loader';
 
 function AddFormBuilder(props) {
   const [formData, setFormData] = useState([]);
@@ -14,6 +15,7 @@ function AddFormBuilder(props) {
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const [errors, setErrors] = useState({});
   const [userRole, setUserRole] = useState([]);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem('token');
@@ -100,19 +102,15 @@ function AddFormBuilder(props) {
       })
         .then((res) => res.json())
         .then((res) => {
-          if(res.success===false)
-          {
-            let errorData={...errors};
-            errorData["form_name"]=res.message;
+          if (res.success === false) {
+            let errorData = { ...errors };
+            errorData['form_name'] = res.message;
             setErrors(errorData);
-          }
-          else
-          {
+          } else {
             navigate('/form/setting', {
               state: { id: res?.result?.id, form_name: res?.result?.form_name },
             });
           }
-          
         });
     }
   };
@@ -132,7 +130,12 @@ function AddFormBuilder(props) {
       requestOptions
     )
       .then((response) => response.json())
-      .then((result) => setForm(result?.result))
+      .then((result) => {
+        setForm(result?.result);
+        if (result) {
+          setfullLoaderStatus(false);
+        }
+      })
       .catch((error) => console.log('error', error));
   };
   const getFormData = () => {
@@ -167,6 +170,7 @@ function AddFormBuilder(props) {
                     localStorage.setItem('f_id', id);
                   }}
                 />
+                <FullLoader loading={fullLoaderStatus} />
                 <Row>
                   <Col sm={8}>
                     <div className="mynewForm-heading">

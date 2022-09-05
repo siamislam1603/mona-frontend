@@ -447,6 +447,7 @@ const OperatingManual = () => {
         });
     }
   };
+  console.log("Rohan manual",operatingManualdata)
 
   return (
     <>

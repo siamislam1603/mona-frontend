@@ -23,14 +23,26 @@ const CoparentAssignPopup = (props) => {
         });
        
         selectedParents.map(async(parent)=>{
+            let token = localStorage.getItem('token');
             let response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: parent, childId: childId}, {
                 headers: {
                   "Authorization": `Bearer ${localStorage.getItem('token')}`
                 }
               });
               if (response.status === 201) {
-                handleClose()
-                window.location.reload()
+                response = await axios.patch(`${BASE_URL}/auth/user/update/${parent}`);
+                if(response.status === 201 && response.data.status === "success") {
+                    const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${parent}`, { childId, user_role: localStorage.getItem('user_role') }, {
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
+            
+                    if(response.status === 201 && response.data.status === "success") {
+                        handleClose()
+                        window.location.reload()
+                    }
+                }
             }
         })
         

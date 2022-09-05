@@ -4,6 +4,7 @@ import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
+import { FullLoader } from '../../components/Loader';
 import TopHeader from '../../components/TopHeader';
 
 function FormResponse(props) {
@@ -12,6 +13,7 @@ function FormResponse(props) {
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
   const token = localStorage.getItem('token');
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
 
   useEffect(() => {
     if(location?.state?.id)
@@ -46,6 +48,9 @@ function FormResponse(props) {
       .then((result) => {
         setResponseData(result?.result);
         setFormData(result?.form);
+        if (result) {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -69,6 +74,9 @@ function FormResponse(props) {
       .then((result) => {
         setResponseData(result?.result);
         setFormData(result?.form);
+        if (result) {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -85,6 +93,7 @@ function FormResponse(props) {
               </aside>
               <div className="sec-column">
                 <TopHeader />
+                <FullLoader loading={fullLoaderStatus} />
                 <Row>
                   <Col sm={8}>
                     <div className="mynewForm-heading  mb-0">
@@ -205,9 +214,7 @@ function FormResponse(props) {
                                     Completed on: <br />
                                     {moment(item[0].createdAt).format('DD/MM/YYYY') +
                                       ', ' +
-                                      item[0].createdAt
-                                        .split('T')[1]
-                                        .split('.')[0] +
+                                      item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":") +
                                       ' hrs'}
                                   </p>
                                 </div>
