@@ -428,7 +428,7 @@ const selectFranhise = () =>{
                                     }));
                                   setAllFranchise(true)
                                   }}
-                                  defaultChecked={announcementCopyData?.franchise?.length>0?false:true }
+                                  checked={announcementCopyData?.franchise?.length===0 }
                                   
                                   
                                 // defaultChecked = {allFranchise}
@@ -453,7 +453,7 @@ const selectFranhise = () =>{
                                   
                                 }
                                 
-                                 defaultChecked={announcementCopyData?.franchise?.length>0?true:false}
+                                 checked={announcementCopyData?.franchise?.length>0}
                                   label="No"
                                    />
                                    

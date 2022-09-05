@@ -197,7 +197,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
 
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
-            <Button variant="primary" onClick={handleSubmitForm} disabled={loader ? true : false} type="submit">
+            <Button variant="primary" onClick={handleSubmitForm} type="submit">
             {loader === true ? (
               <>
                 <img

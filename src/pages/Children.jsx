@@ -13,6 +13,8 @@ import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
 const Children = () => {
 
+    const { id: paramsParentId } = useParams();
+
     useEffect(()=>{
         init()                         
     },[]);
@@ -179,32 +181,12 @@ const Children = () => {
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
+            console.log('ROW DATA:', row);
             if (e.target.text === 'Delete') {
-
-                async function deleteUserFromDB() {
-
-                    const response = await axios.patch(
-                        `${BASE_URL}/auth/user/delete/${row.userID}`,
-                        {
-                            is_deleted: 1,
-                        }, {
-                        headers: {
-                            "Authorization": `Bearer ${localStorage.getItem('token')}`
-                        }
-                    }
-                    );
-                    if (response.status === 200 && response.data.status === "success")
-                        setDeleteResponse(response);
-                }
-
-                if (window.confirm('Are you sure you want to delete?')) {
-
-                    deleteUserFromDB();
-
-                }
+                // CODE TO DELETE THE USER 
             }
             if (e.target.text === "Edit") {
-                navigate(`/edit-user/${row.userID}`);
+                navigate(`/child-enrollment-init/edit/${row.id}/${paramsParentId}`);
             }
             if (e.target.text === 'Add Educator'){
                 let defEducators = row.Educator.educators.map((edu)=>{
@@ -260,7 +242,8 @@ const Children = () => {
         name: `${child.fullname} ${child.family_name}`,
         Location : child.home_address,
         Educator: {educators:child.users, childId:child.id},
-        EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated }
+        EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated },
+        action: { enrollFlag: child.isChildEnrolled }
     }));
     // console.log('Products:', productsTow);
 
@@ -288,7 +271,7 @@ const Children = () => {
                                     <div className="user-list mt-3">
                                         <span className="user-pic">
                                             <img src={item.profile_photo ? item.profile_photo : "../img/user.png" } alt='' />
-                                        </span>Kumar
+                                        </span>
                                         <span className="user-name">
                                             {item.fullname}
                                         </span>
@@ -313,15 +296,25 @@ const Children = () => {
             formatter: (cell) => {
                 // console.log(cell, 'ENROLLED CELL');
                 return (
-                    <>  {   
-                            localStorage.getItem('user_role') !== 'guardian' ?
-                            (  
+                    <>  {
+                            cell.enrollFlag === 0 ?
+                            (   
+                                localStorage.getItem('user_role') !== 'guardian' ?
                                 <div className="cta-col">
                                     <button 
                                         className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
                                         disabled={cell.initiationFlag === true}
                                         onClick={() => sendInitiationMail(cell.childId)}>
                                         {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
+                                    </button>
+                                </div>
+                                : 
+                                <div className="cta-col">
+                                    <button 
+                                        className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                        // disabled={cell.initiationFlag === true}
+                                        onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
+                                        View Enrolment
                                     </button>
                                 </div>
                             )
@@ -345,6 +338,7 @@ const Children = () => {
             dataField: 'action',
             text: '',
             formatter: (cell) => {
+                // console.log('CELL DATA CHILDREN:', cell);
                 return (
                     <>  {
                             localStorage.getItem('user_role') !== 'guardian' &&
@@ -355,7 +349,7 @@ const Children = () => {
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                        <Dropdown.Item href="#">Edit</Dropdown.Item>
+                                        {cell.enrollFlag === 0 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
                                         <Dropdown.Item href="#">Add Educator</Dropdown.Item>
                                         <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
                                         <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>
