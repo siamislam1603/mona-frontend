@@ -35,7 +35,6 @@ const [realtedFile,setRelatedFile] = useState(false)
 
   const AllAnnouncementData = async () =>{
     try {
-      // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
 
       
@@ -47,7 +46,6 @@ const [realtedFile,setRelatedFile] = useState(false)
           "Authorization": "Bearer " + token
         }
       });
-      // console.log("The All Announcement",response.data.result);
       
       if(response.status === 200 && response.data.status === "success") {
           setAnnouncementDetail(response.data.result.searchedData);
@@ -58,7 +56,6 @@ const [realtedFile,setRelatedFile] = useState(false)
         
     } catch (error) {
         if(error.response.status === 404){
-          // console.log("The code is 404")
           setAnnouncementDetail([])
           setIsLoading(false)
 
@@ -67,7 +64,6 @@ const [realtedFile,setRelatedFile] = useState(false)
     }
   
 }
-// console.log("The props",props.search)
 
 const deleteAlert = (id) =>{
   if(window.confirm('Are you sure you want to delete?')){
@@ -84,7 +80,6 @@ const deleteAnnouncement = async (id) =>{
       "Authorization": "Bearer " + token
     }
   }); 
-  // console.log("The response after delete",response)
   if(response.status === 200){
       setTopMessage("Delete successfully")
       AllAnnouncementData()
@@ -94,7 +89,7 @@ const deleteAnnouncement = async (id) =>{
       }, 2000);
   }
   } catch (error) {
-    console.log("The error",error)
+    setTopMessage(error.data)    
   }
 }
 
@@ -105,30 +100,7 @@ const getRelatedFileName = (str) => {
   let name = fileName.concat(".",ext)
   return name;
 }
-// const getAddedTime = (str) =>{
-//   // const Added= moment(str).format('YYYY-MM-DD')
-//   // console.log("THe astring",str)
-//   const Added= moment(str).format('DD/MM/YYYY')
-//   // console.log("THe data",dateww)
-//   var today = new Date();
-//   let d = new Date(today);
-//   let month = (d.getMonth() + 1).toString().padStart(2, '0');
-//   let day = d.getDate().toString().padStart(2, '0');
-//   let year = d.getFullYear();
-//    let datae =  [day, month, year].join('/');
-//   //  console.log("THE DATE",datae,Added)
-//    let temp;
-//    if(datae === Added){
-//     temp = "Added today";
-//    }
 
-//    if(Added < datae){
-//     temp = Added;
-//     // console.log("THE added date i smaller",typeof Added, typeof datae);
-//    }
-
-//    return temp;
-// }
 const getAddedTime = (str) =>{
   const Added= moment(str).format('DD/MM/YYYY')
   var today = new Date();
@@ -137,9 +109,7 @@ const getAddedTime = (str) =>{
   let day = d.getDate().toString().padStart(2, '0');
   let year = d.getFullYear();
    let datae =  [day, month, year].join('/');
-  //  const date1 = new Date(datae);
-  //  const date2 = new Date(str);
-  //  console.log("THE Date1",Added,datae)
+
    if(datae === Added){
     return "Added today"
    }
@@ -154,12 +124,8 @@ const getAddedTime = (str) =>{
 }
 const realtedFile1 = ( )=>{
   announcementDetails?.map((data)=>{
-    // data.map((detial) =>{
-    //   console.log("announcement",detial.announcement_files)
-    // })
-    console.log("the annoucneme",data.announcement_files)
+
     if(data.announcement_files.fileType != ".mp4"){
-       console.log("data inside if else",data.announcement_files[0].fileType)
        setRelatedFile(true)
     }
 })
@@ -171,76 +137,35 @@ useEffect(() => {
   
 }, [])
 useEffect(() =>{
-  // console.log("The props.ssearch state change")
   setSearchData(props.search)
 },[props.search]) 
 useEffect(() =>{
   if(!props.search){
     AllAnnouncementData()
-    // console.log("The search value is not found",props.search)
   }
   else if(props.allAnnouncement){
-    // console.log("The search value have something",props.search)
-    // setAnnouncementDetail(props.search)
     setAnnouncementDetail(props.allAnnouncement)
   }
   else {
     setAnnouncementDetail(props.search)
   }
 },[search])
-//  useEffect(() =>{
-//     if(props.allAnnouncements?.length>0){
-//       // console.log("Don't have fanrhise")
-//     }
-//     setAnnouncementDetail(props.allAnnouncements)
-//     console.log("The frnahise under all announcement",props.allAnnouncements)
-    
-// },[props.franchisee])
+
 useEffect(() =>{
     if(props.allAnnouncement){
       setAnnouncementDetail(props.allAnnouncement)
-      console.log("THE Annoncement all props",props.allAnnouncement)
     }
 },[props.allAnnouncement])
 
 useEffect(() =>{
   if(props?.loadMoreData?.length>0){
     setAnnouncementDetail(props.loadMoreData)
-    // console.log("THE LOAD MORE DATA IS NOT EMPYU",props.loadMoreData)
   }
   else{
     // console.log("THE LOAD MORE DATA EMPY ")
   }
 },[props.loadMoreData])
-useEffect(() =>{
-  // const results = announcementDetails?mapannouncement_files?.map(detail => {
-  //   // 👇️ using OR (||) operator
-  //    if(detail.fileType === ".mp4"||detail.fileType ===".mkv"){
-  //     console.log("THE MP4")
-  //    }
-  // });
-  // announcementDetails.map((details)=>{
-  //   // <div>
-  //   //   <h1>{details.title}</h1>
-  //   // </div>
-  // //  details.map((data) =>(
-  // //     console.log("The data",data)
-  // //   ))
-       
-    
-  // //   })
-  // realtedFile1()
 
-
-},[announcementDetails])
-//  announcementDetails.filter(c => console.log("The announcment file",c.announcement_files))
-
-// console.log("The franhise",props.franchisee)
-//   console.log(" THE All  MORE DATA inside All ANnoncements",announcementDetails)
-// console.log("The annoumce all ",props.allAnnouncement)
-//   // console.log("The seach in all announcement", props.search)
-  {console.log("THE ANNOINCE",announcementDetails)}
-console.log("realted f",realtedFile)
   return (
     <div className="announcement-accordion">
        
@@ -297,8 +222,9 @@ console.log("realted f",realtedFile)
                                    <div className="video-col">
                                    
                                      {   details?.announcement_files?.map((detail,index) =>(
+                                     !detail.is_deleted? 
                                               <>
-                                              {detail.fileType == ".mp4"||detail.fileType == ".mkv"  && !detail.is_deleted  ? (
+                                              {detail.fileType == ".mp4"||detail.fileType == ".mkv" ? (
                                                  <AnnouncementVideo 
                                                    data={detail}
                                                    title={`Training Video ${index + 1}`}
@@ -308,7 +234,7 @@ console.log("realted f",realtedFile)
                                                null
                                               )}
    
-                                              </>
+                                              </>:(null)
                                        ))}
    
                                    </div>
@@ -371,7 +297,6 @@ console.log("realted f",realtedFile)
                                                  <small>
                                                  {getAddedTime(detail.createdAt)}
                                                  
-                                                 {/* {console.log("COnsole date",detail.createdAt)} */}
                                                  </small></span></a></div>
                                               ):(
                                                null
