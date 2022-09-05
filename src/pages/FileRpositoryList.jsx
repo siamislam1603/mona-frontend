@@ -5,31 +5,16 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/rea
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import makeAnimated from 'react-select/animated';
 import { Link, useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem('franchisee_id')
-const animatedComponents = makeAnimated();
+
 const { SearchBar } = Search;
-let selectedUserId = '';
-let selectedUserRole = [];
-let selectedFranchiseeId = '';
-const training = [
-    {
-        value: 'sydney',
-        label: 'Sydney',
-    },
-    {
-        value: 'melbourne',
-        label: 'Melbourne',
-    },
-];
 
 const selectRow = {
     mode: 'checkbox',
@@ -37,63 +22,22 @@ const selectRow = {
 };
 
 const FileRpositoryList = () => {
-    const Navigate = useNavigate();
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    let Params = useParams();
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
-    const handleVideoShow = () => setVideo(true);
     const [category, setCategory] = useState([]);
-    const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
     const [userData, setUserData] = useState([]);
-    const [errors, setErrors] = useState({});
-    const [selectedUser, setSelectedUser] = useState([]);
-    const [loaderFlag, setLoaderFlag] = useState(false);
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
-    console.log("userData", userData[0])
     const [user, setUser] = useState([]);
     const [franchiseeList, setFranchiseeList] = useState();
-    let Params = useParams();
-    const [error, setError] = useState(false);
+
     const [formSettings, setFormSettings] = useState({
         user_roles: [],
         assigned_franchisee: [],
         assigned_users: []
     });
+    
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
     const [child, setChild] = useState([]);
-    const [selectedChild, setSelectedChild] = useState([]);
-
-    const toBase64 = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
-
-
-    function onSelectUser(optionsList, selectedItem) {
-        console.log('selected_item---->2', selectedItem);
-        selectedUserId += selectedItem.id + ',';
-        selectedUser.push({
-            id: selectedItem.id,
-            email: selectedItem.email,
-        });
-        console.log('selectedUser---->', selectedUser);
-    }
-
-    function onRemoveUser(selectedList, removedItem) {
-        selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-        const index = selectedUser.findIndex((object) => {
-            return object.id === removedItem.id;
-        });
-        selectedUser.splice(index, 1);
-        {
-            console.log('selectedUser---->', selectedUser);
-        }
-    }
 
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
@@ -124,7 +68,6 @@ const FileRpositoryList = () => {
             redirect: 'follow',
             headers: myHeaders,
         };
-        // let response = await fetch(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, requestOptions)
         const ID_array = selectedFranchisee?.split(",");
         let data = ID_array?.length > 1 ? ID_array?.slice(1) : ID_array;
         let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=${data}`, requestOptions)
@@ -132,36 +75,16 @@ const FileRpositoryList = () => {
         setUser(response.result)
 
         const users = response.result.files;
-        console.log("+++++++++++++++++++++++++", users, "response")
         let tempData = users.map((dt) => ({
-            // name: `${dt.repository},${dt.fileName},${dt.filesPath}`,
             name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
             createdAt: dt.createdAt,
             userID: dt.id,
             creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
             Shaired: dt.repository.repository_files[0].length,
-            // categoryId: dt.categoryId
         }));
-        // tempData = tempData.filter((data) => data.is_deleted === 0);
-        // console.log(users.repository.repository, "success")
-        console.log(tempData, "++++++++++++++++++++++++++++tempData++++++++++++++++++++++++++++")
         setUserData(tempData);
     }
 
-
-    const setField = (field, value) => {
-        if (value === null || value === undefined) {
-            setFormSettingData({ ...formSettingData, setting_files: field });
-        } else {
-            setFormSettingData({ ...formSettingData, [field]: value });
-        }
-        if (!!errors[field]) {
-            setErrors({
-                ...errors,
-                [field]: null,
-            });
-        }
-    };
     const getFileCategory = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -224,56 +147,11 @@ const FileRpositoryList = () => {
         }
     }
 
-    function onSelectChild(selectedItem) {
-        let selectedchildarr = selectedItem
-        selectedItem = selectedItem.map((item) => {
-            return item.id
-        })
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_childs: selectedItem
-        }));
-        console.log(selectedChild, "Selllee")
-        setSelectedChild(selectedchildarr)
-    }
-
-    function onRemoveChild(removedItem) {
-        let removedchildarr = removedItem
-        removedItem = removedItem.map((item) => {
-            return item.id
-        })
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_childs: removedItem
-        }));
-        console.log(selectedChild, "Selllee")
-        setSelectedChild(removedchildarr)
-    }
-
-    const isAllRolesChecked = () => {
-        let bool = false;
-        if (getUser_Role == "franchisor_admin") {
-            bool = ["guardian", "educator", "coordinator", "franchisee_admin"].every(item => formSettingData?.shared_role?.includes(item))
-        }
-        else if (getUser_Role == "franchisee_admin") {
-            bool = ["guardian", "educator", "coordinator"].every(item => formSettingData?.shared_role?.includes(item))
-        }
-        else if (getUser_Role == "coordinator") {
-            bool = ["guardian", "educator"].every(item => formSettingData?.shared_role?.includes(item))
-        }
-        else if (getUser_Role == "educator") {
-            bool = ["guardian"].every(item => formSettingData?.shared_role?.includes(item))
-        }
-
-        return bool;
-    }
-
     useEffect(() => {
         GetFile();
         getFileCategory();
         getUser();
         fetchFranchiseeList();
-
     }, [])
 
     useEffect(() => {
@@ -460,14 +338,14 @@ const FileRpositoryList = () => {
                                                                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                                             </span>
                                                             <span className="user-name">
-                                                                {Params.id === "1" ? "Daily Use" :
-                                                                    Params.id === "2" ? "Business Management" :
-                                                                        Params.id === "3" ? "Employment" :
-                                                                            Params.id === "4" ? "Compliance" :
-                                                                                Params.id === "5" ? "Care Giving" :
-                                                                                    Params.id === "6" ? "Curriculum & Planning" :
-                                                                                        Params.id === "7" ? "Resources" :
-                                                                                            Params.id === "8" ? "General" : "Null"
+                                                                {Params?.id === "1" ? "Daily Use" :
+                                                                    Params?.id === "2" ? "Business Management" :
+                                                                        Params?.id === "3" ? "Employment" :
+                                                                            Params?.id === "4" ? "Compliance" :
+                                                                                Params?.id === "5" ? "Care Giving" :
+                                                                                    Params?.id === "6" ? "Curriculum & Planning" :
+                                                                                        Params?.id === "7" ? "Resources" :
+                                                                                            Params?.id === "8" ? "General" : "Null"
                                                                 }
                                                                 <small>{userData.length} files</small>
                                                             </span>

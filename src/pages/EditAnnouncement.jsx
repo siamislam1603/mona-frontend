@@ -298,6 +298,8 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
     console.log("The reponse after edit ",response.data)
     if(response.status === 200) {
       setAnnouncementData(response.data.data.all_announcements)
+
+
     }
  } 
  const copyFetchedData = () =>{
@@ -306,7 +308,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
     title: announcementData?.title,
     meta_description: announcementData?.meta_description,
     start_date: moment(announcementData?.scheduled_date).format('YYYY-MM-DD'),
-    start_time: moment(announcementData?.scheduled_date).utc().format('HH:mm'),
+    start_time: moment(announcementData?.scheduled_date).format('HH:mm'),
     franchise: announcementData.franchise,
     is_event: announcementData.is_event,
   }))
@@ -330,47 +332,41 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   let name = fileName.concat(".",ext)
   return name;
 }
+const selectFranhise = () =>{
+  if(announcementData?.franchise?.length === 0){
+    setAllFranchise(true)
+  }
+  else{
+    setAllFranchise(false)
+  }
+}
  useEffect(() => {
   copyFetchedData();
+  selectFranhise()
 }, [announcementData]);
  useEffect(() =>{
-  AnnouncementDetails();
-  // const role = localStorage.getItem("user_role")
-  // setUserRole(role)       
+  AnnouncementDetails();      
   },[])
   useEffect(() => {
     fetchFranchiseeList();
   }, []);
+
+ 
 
   useEffect(() =>{
     copyFetchedData();
     AnnouncementDetails()
 },[fileDeleteResponse])
  
-// console.log("The time",announcementData.scheduled_date.split("T")[1])
-// console.log("The Image settig",coverImage,typeof coverImage)
-  // selectedFranchisee && console.log('sds ->>>', selectedFranchisee);
-  // console.log("The COPY DATA",announcementCopyData )
-  // console.log("THE VIDEO DATA",fetchedVideoTutorialFiles)
   console.log("ANNOUNCEMENT DATA",announcementData)
   console.log("The cover image",announcementCopyData)
   console.log("FRaNHISEE DATA",franchiseeData)
-  // const dateToFormat = '1976-04-19T12:59-0500';
   console.log("ALL FRNHIASE",allFranchise)
-  
-  console.log("The value",franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + "")))
-  // start_time: moment(announcementData?.scheduled_date).format('HH:mm:ss'),
-
- 
+  console.log("The value",franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + "")))  
   return (
     <>
-      {/* {console.log('Annoucement--->', announcementData)}
-      {console.log("The franhciess",franchiseeData)}
-      {console.log('operating manual--->', announcementChangeData)} */}
+   
       <div id="main">
-      {/* {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}  */}
-
-
         <section className="mainsection ">
           <Container>
             <div className="admin-wrapper">
@@ -379,27 +375,20 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
               </aside>
               <div className="sec-column">
                 <div className="new_module">
-                  {/* <TopHeader/> */}
                   <TopHeader setSelectedFranchisee={setSelectedFranchisee} />
 
                   <Row>
-                  <div className='entry-container'>
+                
                 <header className="title-head">
                     <h1 className="title-lg">Edit Announcement</h1>
                   </header>
-                </div>
-                {/* {topErrorMessage && <p className="alert alert-success">{topErrorMessage}</p>}  */}
-
-                {/* <button onClick={()=>setSettingsModalPopup(true)}>
-                  The button 
-                </button> */}
+               
+              
                 <Form.Group className="col-md-6 mb-3" >
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                             type="text" 
                             name="title" 
-                            // value={announcementChangeData?.title}
-                            // value={announcementData.title || ""}
                             defaultValue={announcementCopyData.title}
                             placeholder="Enter Title"
                             onChange={(e) => {
@@ -423,7 +412,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                             <Col lg={3} sm={6}>
                             <Form.Group className="col-md-12">
                               <div className="btn-radio inline-col">
-                                <Form.Label>Send to all franchisee:</Form.Label>
+                       <Form.Label>Send to all Franchises :</Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
@@ -439,6 +428,11 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                                     }));
                                   setAllFranchise(true)
                                   }}
+                                  checked={announcementCopyData?.franchise?.length===0 }
+                                  
+                                  
+                                // defaultChecked = {allFranchise}
+                                  
                                   
                                    />
                                 <Form.Check
@@ -458,8 +452,8 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                                   }
                                   
                                 }
-                                  
-                                defaultChecked
+                                
+                                 checked={announcementCopyData?.franchise?.length>0}
                                   label="No"
                                    />
                                    
@@ -475,43 +469,12 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                         }
                
                         <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Franchisee</Form.Label>
-                            {/* <div className="select-with-plus">
-                            {/* <Select
-                              placeholder="Which Franchisee?"
-                              closeMenuOnSelect={true}
-                              isMulti
-                              options={franchiseeData} 
-                              value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
-                              onChange={(selectedOptions) => {
-                                setAnnouncementCopyData((prevState) => ({
-                                  ...prevState,
-                                  franchise: [...selectedOptions.map(option => option.id + "")]
-                                }));
-                              }}
-                            /> */}
+                            <Form.Label>Select Franchise</Form.Label>
                           {
                             localStorage.getItem('user_role') === 'franchisor_admin' ? (
                               <div className="select-with-plus">
-
-                              {/* <Select
-                                placeholder="Which Franchisee?"
-                                closeMenuOnSelect={true}
-                                isMulti
-                                options={franchiseeData} 
-                                value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
-                                onChange={(selectedOptions) => {
-                                  setAnnouncementCopyData((prevState) => ({
-                                    ...prevState,
-                                    franchise: [...selectedOptions.map(option => option.id + "")]
-                                  }));
-                                }}
-                              /> */}
                                  <Multiselect
                                    disable={allFranchise === false?false:true}
-                              // singleSelect={true}
-                              // placeholder={"Select Franchise Names"}
-                              // value="ds"
                                     displayValue="key"
                                     selectedValues={allFranchise === false ? (franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(parseInt(c.id) + ''))):(franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(parseInt(c.id) + '')))}
                                     // selectedValues={franchiseeData?.filter(d => announcementData?.franchise?.includes(parseInt(d.id)))}
@@ -522,14 +485,12 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                                         ...prevState,
                                         franchise: [...data.map(data => data.id + '')],
 
-                                        // : [...event.map(option => option.id + "")]
+                                       
                                       }));
                                     }}
-                              // onSearch={function noRefCheck() { }}
                                     onSelect={function noRefCheck(data) {
                                       setAnnouncementCopyData((prevState) => ({
                                         ...prevState,
-                                        // franchise: [...data.map(option => option.id + "")]
                                          franchise: [...data.map(data => data.id+'')],
 
                                       }));
@@ -569,24 +530,12 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                          
 
 
-                          {/* <div className="select-with-plus">
+                         {allFranchise? null: <>
+                            {   
+                             errors.franchise && <p className="form-errors">{errors.franchise}</p>}
 
-                            <Select
-                              placeholder="Which Franchisee?"
-                              closeMenuOnSelect={true}
-                              isMulti
-                              options={franchiseeData} 
-                              value={franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + ""))}
-                              onChange={(selectedOptions) => {
-                                setAnnouncementCopyData((prevState) => ({
-                                  ...prevState,
-                                  franchise: [...selectedOptions.map(option => option.id + "")]
-                                }));
-                              }}
-                            />
-                            
-                       
-                          </div> */}
+                           </>}
+      
 
                       
                          
@@ -707,7 +656,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Cover Image :
+                            Upload Cover Image 
                           </Form.Label>
                           
                            <DropOneFile onSave={setCoverImage} 
@@ -730,7 +679,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Video :
+                            Upload Video
                           </Form.Label>
                           {/* <DropOneFile onSave={setVideoTutorialFiles}
 
@@ -769,31 +718,8 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                       
                      <Col md={6} className="mb-3">
                         <Form.Group>
-                          <Form.Label>Upload Files :</Form.Label>
-                          <DropAllFile onSave={setRelatedFiles}
-                            // Files={theRelatedFiles}
-                          />
-                              {/* {
-                                fetchedRelatedFiles &&
-                                fetchedRelatedFiles.map((file, index) => {
-                                  return (
-                                    // <div className="file-container">
-                                    //   {/* <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} /> */}
-                                    {/* //   <p className="file-text">{`${getRelatedFileName(file.file)}`}</p>
-                                    //   <img 
-                                    //     onClick={() => deleteAnnouncemetFile(file.id)}
-                                    //     className="file-remove" 
-                                    //     src="../img/removeIcon.svg" 
-                                    //     alt="" />
-                                    // </div>
-                                    <div>
-                                       <h1>{file.id}</h1>
-                                      </div>
-                                  )
-                                })
-                              } */}
-                            {/* </div> */} 
-                        
+                          <Form.Label>Upload Files </Form.Label>
+                          <DropAllFile onSave={setRelatedFiles}/>
                           <div className="media-container">
 
                           {fetchedRelatedFiles &&fetchedRelatedFiles.map((file) => (

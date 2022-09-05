@@ -4,6 +4,7 @@ import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
+import { FullLoader } from '../../components/Loader';
 import TopHeader from '../../components/TopHeader';
 
 function FormResponse(props) {
@@ -12,6 +13,7 @@ function FormResponse(props) {
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
   const token = localStorage.getItem('token');
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
 
   useEffect(() => {
     if(location?.state?.id)
@@ -46,6 +48,9 @@ function FormResponse(props) {
       .then((result) => {
         setResponseData(result?.result);
         setFormData(result?.form);
+        if (result) {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -69,6 +74,9 @@ function FormResponse(props) {
       .then((result) => {
         setResponseData(result?.result);
         setFormData(result?.form);
+        if (result) {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -85,6 +93,7 @@ function FormResponse(props) {
               </aside>
               <div className="sec-column">
                 <TopHeader />
+                <FullLoader loading={fullLoaderStatus} />
                 <Row>
                   <Col sm={8}>
                     <div className="mynewForm-heading  mb-0">
@@ -145,8 +154,8 @@ function FormResponse(props) {
                                               (inner_index > 0 &&
                                                 responseData[index][
                                                   inner_index - 1
-                                                ]?.user.fullname.includes(
-                                                  inner_item.user.fullname
+                                                ]?.filled_user?.fullname?.includes(
+                                                  inner_item?.filled_user?.fullname
                                                 ))
                                               ? 'responses-header-detail'
                                               : 'responses-header-detail response-header-left-line'
@@ -161,42 +170,39 @@ function FormResponse(props) {
                                             {inner_index > 0
                                               ? !responseData[index][
                                                 inner_index - 1
-                                              ].user.fullname.includes(
-                                                inner_item.user.fullname
-                                              ) && inner_item.user.fullname
-                                              : inner_item.user.fullname}
+                                              ].filled_user?.fullname?.includes(
+                                                inner_item?.filled_user?.fullname
+                                              ) && inner_item?.filled_user?.fullname
+                                              : inner_item?.filled_user?.fullname}
                                           </h5>
                                           <h6>
                                             <span className="text-capitalize">
                                               {inner_index > 0
                                                 ? !responseData[index][
                                                   inner_index - 1
-                                                ].user.role
+                                                ]?.filled_user?.role
                                                   .split('_')
                                                   .join(' ')
                                                   .includes(
-                                                    inner_item?.user.role
+                                                    inner_item?.filled_user?.role
                                                       .split('_')
                                                       .join(' ')
                                                   ) &&
-                                                inner_item?.user.role
+                                                inner_item?.filled_user?.role
                                                   .split('_')
                                                   .join(' ') + ','
-                                                : inner_item?.user.role
+                                                : inner_item?.filled_user?.role
                                                   .split('_')
                                                   .join(' ') + ','}
                                             </span>{' '}
                                             {inner_index > 0
                                               ? !responseData[index][
                                                 inner_index - 1
-                                              ].user?.franchisee?.franchisee_name.includes(
-                                                inner_item?.user?.franchisee
-                                                  ?.franchisee_name
+                                              ].filled_user?.franchisee?.franchisee_name.includes(
+                                                inner_item?.filled_user?.franchisee?.franchisee_name
                                               ) &&
-                                              inner_item?.user?.franchisee
-                                                ?.franchisee_name
-                                              : inner_item?.user?.franchisee
-                                                ?.franchisee_name}
+                                              inner_item?.filled_user?.franchisee?.franchisee_name
+                                              : inner_item?.filled_user?.franchisee?.franchisee_name}
                                           </h6>
                                         </div>
                                       );
@@ -206,11 +212,9 @@ function FormResponse(props) {
                                 <div className="responses-header-right">
                                   <p>
                                     Completed on: <br />
-                                    {moment(item.createdAt).format('DD/MM/YYYY') +
+                                    {moment(item[0].createdAt).format('DD/MM/YYYY') +
                                       ', ' +
-                                      item[0].createdAt
-                                        .split('T')[1]
-                                        .split('.')[0] +
+                                      item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":") +
                                       ' hrs'}
                                   </p>
                                 </div>
@@ -227,10 +231,10 @@ function FormResponse(props) {
                                     }
                                   >
                                     <h4 className="content-wrap-title text-capitalize">
-                                      Filled By {item.user.fullname}{' '}
+                                      Filled By {item?.filled_user?.fullname}{' '}
                                       {!item.section_name ||
                                         (item.section_name !== '' &&
-                                          `| ${item.section_name} Section`)}
+                                          `| ${item.section_name.split("_").join(" ")} Section`)} {`| Behalf of ${item?.user?.fullname}`}
                                     </h4>
 
                                     {Object.keys(JSON.parse(item.fields)).map(

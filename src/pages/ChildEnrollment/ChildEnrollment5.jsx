@@ -3,12 +3,14 @@ import { Button, Col, Row, Form } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from 'axios';
 import { childDailyRoutineValidation } from '../../helpers/validation';
+import { useParams } from 'react-router-dom';
 
 let nextstep = 6;
 let step = 5;
 console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 5);
 
 const ChildEnrollment5 = ({ nextStep, prevStep }) => {
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
 
   const [childDailyRoutineData, setChildDailyRoutineData] = useState({
     sleep_time: "",
@@ -174,7 +176,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -306,7 +308,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Bottle TIme/Breast Feeding Arrangements *</Form.Label>
+                    <Form.Label>Bottle Time/Breast Feeding Arrangements *</Form.Label>
                     <Form.Control 
                       type="text"
                       value={childDailyRoutineData?.bottle_time || ""}
@@ -387,7 +389,7 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Likes/ Dislikes *</Form.Label>
+                    <Form.Label>Likes/Dislikes *</Form.Label>
                     <Form.Control 
                       type="text"
                       name="likes_dislikes"
@@ -682,7 +684,6 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Go Back</Button>
             <Button 
               variant="primary" 
-              disabled={loader ? true : false}
               type="submit">
               {loader === true ? (
                 <>

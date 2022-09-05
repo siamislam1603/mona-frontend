@@ -13,7 +13,7 @@ const ParentsDashboard = () => {
 
   const [userDetails, setUserDetails] = useState(null);
   const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(true);
-  const [event, setEvent] = useState([{}]);
+  const [event, setEvent] = useState([]);
   const [announcements, setannouncements] = useState([]);
   const [editTrainingData, setEditTrainingData] = useState([]);
   const [viewEnrollmentDialog, setViewEnrollmentDialog] = useState(false);
@@ -58,21 +58,7 @@ const ParentsDashboard = () => {
     window.location.href = `/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
   }
 
-  // const educators_assigned = async () => {
-  //   let response = await axios.get(`${BASE_URL}/dashboard/parent/educators-assigned/84`, {
-  //     headers: {
-  //       authorization: `Bearer ${localStorage.getItem('token')}`,
-  //     },
-  //   });
-  //   console.log(response, "===============")
-  //   if (response.status === 200) {
-  //     const users = response.data.assignedEducatorData;
-  //     console.log('=========users', users)
-  //   }
-  // }
-  // useEffect(() => {
-  //   educators_assigned();
-  // }, [])
+
 
   const events = async () => {
     const token = localStorage.getItem('token');
@@ -84,7 +70,8 @@ const ParentsDashboard = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       const training = response.data.recentAnnouncement;
-      console.log(training)
+
+      console.log("The event",training)
       setEvent(training);
     }
   };
@@ -105,7 +92,6 @@ const ParentsDashboard = () => {
    } catch (error) {
     setannouncements([])
     console.log("error",error)
-
    }
   };
 
@@ -119,8 +105,7 @@ const ParentsDashboard = () => {
     console.log(response, "response??????????????")
     if (response.status === 200 && response.data.status === "pass") {
       const result = response.data.assignedEducatorData.users;
-      // const result = response.data.assignedEducatorData
-      console.log(result, "<<<<<<<<<<<>>>>>>>>>>>>")
+     
       setEditTrainingData(result);
     }
   }
@@ -136,9 +121,8 @@ const ParentsDashboard = () => {
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
     let datae = [day, month, year].join('/');
-    //  const date1 = new Date(datae);
-    //  const date2 = new Date(str);
-    console.log("THE Date1", Added, datae)
+
+    // console.log("THE Date1", Added, datae)
     if (datae === Added) {
       return "Added today"
     }
@@ -151,31 +135,7 @@ const ParentsDashboard = () => {
     // return Added
 
   }
-  // const getAddedTime = (str) =>{
-  //   // const Added= moment(str).format('YYYY-MM-DD')
-  //   // console.log("THe astring",str)
-  //   const Added= moment(str).format('DD/MM/YYYY')
-  //   // console.log("THe data",dateww)
-  //   var today = new Date();
-  //   let d = new Date(today);
-  //   let month = (d.getMonth() + 1).toString().padStart(2, '0');
-  //   let day = d.getDate().toString().padStart(2, '0');
-  //   let year = d.getFullYear();
-  //    let datae =  [day, month, year].join('/');
-  //    console.log("THE DATE",datae,Added)
-  //    let temp;
-  //    if(datae === Added){
-  //     temp = "Added today";
-  //    }
-
-  //    if(Added < datae){
-  //     temp = Added;
-  //     // console.log("THE added date i smaller",typeof Added, typeof datae);
-  //    }
-
-  //    return temp;
-  // }
-  console.log(editTrainingData, "<<<<<<<<<<response")
+  
 
   const handleParentLogout = () => {
     setLogUserOutDialog(false);
@@ -282,34 +242,38 @@ const ParentsDashboard = () => {
                         <header className="title-head mb-4 justify-content-between">
                           <h4 className="title-sm mb-0"><strong>Educators</strong></h4>
                         </header>
-                        {console.log(editTrainingData.length)}
-                        {editTrainingData.length !== 0 ? (
-                          editTrainingData.map((item) => {
+                      
+                        {editTrainingData&& editTrainingData?.length >0 ? (
+                          editTrainingData?.map((item) => {
                             return <>
                               <div className="educator-sec mb-5">
-                                <div className="educator-pic"><img src={item.profile_photo} alt="" /></div>
+                                <div className="educator-pic"><img src={item?.profile_photo} alt="" /></div>
                                 <div className="educator-detail">
-                                  <h1 className="edu-name mb-2">{item.fullname}</h1>
-                                  <div className="edu-tel mb-2"><a href="tel:+6145434234">{item.phone}</a></div>
-                                  <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item.email}</a></div>
-                                  <div className="edu-know mb-2">{item.address}</div>
+                                  <h1 className="edu-name mb-2">{item?.fullname}</h1>
+                                  <div className="edu-tel mb-2"><a href="tel:+6145434234">{item?.phone}</a></div>
+                                  <div className="edu-email mb-2"><a href="mailto:sarahp@specialdaycare.com">{item?.email}</a></div>
+                                  <div className="edu-know mb-2">{item?.address}</div>
                                 </div>
                               </div>
                             </>
                           })
-                        ) : (<div className="text-center mb-5 mt-5"><strong>No Educators</strong></div>)}
-                        {!event ? (<>
-                          <div className="event-sec pb-5">
+                        ) : (
+                        <div className="text-center mb-5 mt-5"><strong>No Educators</strong></div>
+                        )}
                             <header className="title-head mb-4 justify-content-between">
                               <h4 className="title-sm mb-0"><strong>Events</strong></h4>
                               <Link to="/announcements" className="viewall">View All</Link>
                             </header>
+
+                        {event ? (<>
+                          <div className="event-sec pb-5">
+                           
                             <div className="column-list event-list">
                               {event.map((item) => {
                                 return <>
                                   {!item.title ? "" : <div className="item">
                                     <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
-                                    <div className="name"><a href="">{item.title}</a> <span className="date">{getAddedTime(item.scheduled_date)}</span></div>
+                                    <div className="name"><a href="">{item?.title}</a> <span className="date">{getAddedTime(item?.scheduled_date)}</span></div>
                                     <div className="cta-col">
                                       <Dropdown>
                                         <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -325,7 +289,10 @@ const ParentsDashboard = () => {
                               })}
                             </div>
                           </div>
-                        </>) : (<></>)}
+                        </>) : (
+                        <div className="text-center mb-5 mt-5"><strong>No Events</strong></div>
+
+                        )}
                       </div>
                     </Col>
                     <Col md={5}>
@@ -379,12 +346,7 @@ const ParentsDashboard = () => {
                               )
                             }
 
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+
                           </div>
                         </div>
                       </aside>
@@ -408,9 +370,9 @@ const ParentsDashboard = () => {
 
               <Modal.Body>
                 <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
-                <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrollment Form</strong> to enrol your</p>
+                <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrolment Form</strong> to enrol your</p>
                 <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
-                <p style={{ marginTop: "-5px" }}><strong>Child Enrollment Form.</strong></p>
+                <p style={{ marginTop: "-5px" }}><strong>Child Enrolment Form.</strong></p>
               </Modal.Body>
 
               <Modal.Footer>
@@ -422,7 +384,7 @@ const ParentsDashboard = () => {
                   backgroundColor: '#3E5D58',
                   border: "none",
                   borderRadius: "5px"
-                }} onClick={() => moveToChildEnrollmentForm(link)}>Child Enrollment Form</button>
+                }} onClick={() => moveToChildEnrollmentForm(link)}>Child Enrolment Form</button>
               </Modal.Footer>
             </Modal>
           );
@@ -454,7 +416,7 @@ const ParentsDashboard = () => {
         </Modal.Header>
 
         <Modal.Body>
-          <p>You have a pending consent from your coordinator. Click on <strong>View Enrollment Form</strong> to go through it.</p>
+          <p>You have a pending consent from your coordinator. Click on <strong>View Enrolment Form</strong> to go through it.</p>
         </Modal.Body>
 
         <Modal.Footer>

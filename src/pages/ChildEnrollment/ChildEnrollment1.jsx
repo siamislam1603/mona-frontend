@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useEffect } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import Select from 'react-select';
@@ -8,13 +8,19 @@ import Select from 'react-select';
 import { BASE_URL } from "../../components/App";
 import { childFormValidator, parentFormValidator  } from "../../helpers/enrollmentValidation";
 import { useParams } from 'react-router-dom';
+import moment from "moment";
 
 let nextstep = 2;
 let step = 1;
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
-  console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 1);
   let { childId: paramsChildId, parentId: paramsParentId } = useParams();
+  let errorChild = null;
+  let errorParent = null;
+  // USING REFs
+  const fullnameRef = useRef(null);
+  const familynameRef = useRef(null);
+
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
@@ -76,7 +82,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // FUNCTION TO UPDATE THIS FORM DATA
   const updateFormOneData = async (childData, parentData) => {
     setLoader(true);
-    console.log('UPDATING FORM ONE DATA!');
     let token = localStorage.getItem('token');
     let childId = localStorage.getItem('enrolled_child_id')
     let parentId = localStorage.getItem('enrolled_parent_id');
@@ -99,7 +104,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
     if(response.status === 201 && response.data.status === "success") {
       // UPDATIN PARENT DETAIL
-      console.log('PARENT DATA BEFORE UPDATION:', parentData);
       response = await axios.patch(`${BASE_URL}/enrollment/parent/${paramsParentId}`, {...parentData}, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -129,46 +133,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   };
 
-  // FUNCTION TO SAVE THIS FORM DATA
-  // const saveFormOneData = async (childData, parentData) => {
-  //   console.log('PARENT DATA:', parentData);
-  //   let token = localStorage.getItem('token');
-  //   let response = await axios.post(`${BASE_URL}/enrollment/child`, { ...childData, nextstep }, {
-  //     headers: {
-  //       "Authorization": `Bearer ${token}`
-  //     }
-  //   });
-
-  //   if(response.status === 201 && response.data.status === "success") {
-  //     const { id: childId } = response.data.child;
-
-  //     // SAVING CHILD ID TO LOCAL STORAGE FOR FURTHER USE
-  //     localStorage.setItem('enrolled_child_id', childId);
-
-  //     // SAVING PARENT DETAIL
-  //     let user_id = localStorage.getItem('user_id');
-  //     response = await axios.post(`${BASE_URL}/enrollment/parent/`, {...parentData, childId, user_parent_id: user_id}, {
-  //       headers: {
-  //         "Authorization": `Bearer ${token}`
-  //       }
-  //     });
-
-  //     console.log('PARENT RESPONSE:', response);
-  //     if(response.status === 201 && response.data.status === "success") {
-  //       let { parent } = response.data;
-  //       localStorage.setItem('enrolled_parent_id', parent.id);
-
-  //       // HIDING THE DIALOG BOX FROM DASHBOARD
-  //       let user_id = localStorage.getItem('user_id');
-  //       response = await axios.patch(`${BASE_URL}/auth/user/update/${user_id}`);
-
-  //       if(response.status === 201 && response.data.status === "success") {
-  //         nextStep();
-  //       }
-  //     }
-  //   }
-  // };
-
   const handleChildData = event => {
     const { name, value } = event.target;
 
@@ -188,8 +152,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    let errorChild = childFormValidator(formOneChildData);
-    let errorParent = parentFormValidator(formOneParentData);
+    errorChild = childFormValidator(formOneChildData);
+    errorParent = parentFormValidator(formOneParentData);
 
     if(Object.keys(errorChild).length > 0 || Object.keys(errorParent).length > 0) {
       window.scrollTo(0, 0);
@@ -198,15 +162,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     } else {
       setLoader(true);
       updateFormOneData(formOneChildData, formOneParentData);
-      // if(formStepData > step) {
-      //   console.log('UPDATING THE EXISTING DATA!');
-      //   updateFormOneData(formOneChildData, formOneParentData);
-      // } else {
-      //   console.log('CREATING NEW DATA!')
-      //   saveFormOneData(formOneChildData, formOneParentData);
-      // }
     }
-    // nextStep();
   };
 
   // FETCHING THE REQUIRED DATA FROM APIs HERE
@@ -259,11 +215,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   };
 
   const fetchChildDataAndPopulate = async () => {
-    console.log('FETCHING CHILD DATA AND POPULATE!');
     let enrolledChildId = paramsChildId;
     let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -271,15 +226,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
       let { parent } = response.data;
-      
-      console.log('FETCHED CHILD DATA:', child);
-      console.log('FETCHED PARENT DATA:', parent);
+
+      let parentData = child.parents.filter(p => parseInt(p.user_parent_id) === parseInt(paramsParentId));
 
       setFormOneChildData(prevState => ({
         ...prevState,
-        name: child?.name,
-        fullname: child?.name?.split(" ")[0],
-        family_name: child?.name?.split(" ")?.slice(1).join(" "),
+
+        fullname: child?.fullname,
+        family_name: child?.family_name,
         usually_called: child?.usually_called,
         dob: child?.dob,
         home_address: child?.home_address,
@@ -301,19 +255,19 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneParentData(prevState => ({
         ...prevState,
-        family_name: child?.parents[0].family_name || parent.fullname?.split(" ")[0],
-        given_name: child?.parents[0].given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
-        relation_type: child?.parents[0].relation_type,
-        address_as_per_child: child?.parents[0].address_as_per_child || parent.address,
-        telephone: child?.parents[0].telephone || parent.telephone,
-        email: child?.parents[0].email || parent.email,
-        dob: child?.parents[0].dob,
-        child_live_with_this_parent: child?.parents[0].child_live_with_this_parent,
-        place_of_birth: child?.parents[0].place_of_birth,
-        ethnicity: child?.parents[0].ethnicity,
-        primary_language: child?.parents[0].primary_language,
-        occupation: child?.parents[0].occupation,
-        address_similar_to_child: child?.parents[0].address_similar_to_child
+        family_name: parentData[0]?.family_name || parent.fullname?.split(" ")[0],
+        given_name: parentData[0]?.given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
+        relation_type: parentData[0]?.relation_type,
+        address_as_per_child: parentData[0]?.address_as_per_child || parent.address,
+        telephone: parentData[0]?.telephone || parent.telephone,
+        email: parentData[0]?.email || parent.email,
+        dob: parentData[0]?.dob,
+        child_live_with_this_parent: parentData[0]?.child_live_with_this_parent,
+        place_of_birth: parentData[0]?.place_of_birth,
+        ethnicity: parentData[0]?.ethnicity,
+        primary_language: parentData[0]?.primary_language,
+        occupation: parentData[0]?.occupation,
+        address_similar_to_child: parentData[0]?.address_similar_to_child
       }));
 
       setFormStepData(child.form_step);
@@ -349,16 +303,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   }, [formOneParentData?.address_similar_to_child])
 
   useEffect(() => {
-    console.log("checking useEffect!")
     if(localStorage.getItem('has_given_consent') === 'null') {
       setShowConsentCommentDialog(true);
     }
   }, [])
 
-  // formStepData && console.log('You\'re on step:', formStepData);
-  formOneParentData && console.log('FORM ONE PARENT DATA:', formOneParentData);
-  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
-  // console.log('IS PRESENT?', localStorage.getItem('enrolled_parent_id') !== null);
   return (
     <>
       <div className="enrollment-form-sec error-sec my-5">
@@ -370,12 +319,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Child’s First Name *</Form.Label>
+                    <Form.Label>Child's First Name *</Form.Label>
                     <Form.Control
                       type="text"
                       name="fullname"
+                      ref={fullnameRef}
+                      // style={childFormErrors?.fullname ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                       maxLength={50}
-                      placeholder="Child’s Full Name"
                       value={formOneChildData?.fullname || ""}
                       onChange={(e) => {
                         // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
@@ -410,7 +360,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Label>Family Name *</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Family Name"
+                      ref={familynameRef}
+                      // style={childFormErrors?.family_name ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                       minLenth={3}
                       maxLength={50}
                       name="family_name"
@@ -448,7 +399,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Label>Nickname</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Nickname"
                       minLenth={3}
                       maxLength={50}
                       name="usually_called"
@@ -482,7 +432,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Label>Date Of Birth *</Form.Label>
                     <Form.Control
                       type="date"
-                      placeholder=""
                       name="dob"
                       max={new Date().toISOString().slice(0, 10)}
                       value={formOneChildData?.dob || ""}
@@ -554,7 +503,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="Home Address"
                       name="home_address"
                       value={formOneChildData?.home_address || ""}
                       onChange={(e) => {
@@ -581,6 +529,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Select
                       placeholder={formOneChildData?.language || "Select"}
                       closeMenuOnSelect={true}
+                      // style={childFormErrors?.language ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}} 
                       options={languageData}
                       onChange={(e) => {
                         setFormOneChildData((prevState) => ({
@@ -797,7 +746,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control
                           type="text"
                           name="child_crn"
-                          placeholder="Child CRN"
                           value={formOneChildData.child_crn || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -819,7 +767,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control
                           type="text"
                           name="parent_crn_1"
-                          placeholder="Parent CRN I"
                           value={formOneChildData.parent_crn_1 || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -841,7 +788,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control
                           type="text"
                           name="parent_crn_2"
-                          placeholder="Parent CRN II"
                           value={formOneChildData.parent_crn_2 || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -904,43 +850,80 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         }} />
                     </div>
                     <Form.Text className="text-muted">
-                      If you answered YES please specify day and hours at other service.
+                      If you answered YES please specify name, day and hours at other service.
                     </Form.Text>
                   </Form.Group>
                 </Col>
                 {
                   formOneChildData.another_service &&
                   <>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Monday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Tuesday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Wednesday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Thrusday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Friday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
+                    <Form.Group className="mb-3 relative">
+                      <Form.Label>Name of the Service</Form.Label>
+                      <Form.Control
+                        type="text"
+                        minLenth={3}
+                        maxLength={50}
+                        name="name_of_the_service"
+                        value={formOneChildData?.name_of_the_service || ""}
+                        onChange={(e) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            name_of_the_service: e.target.value
+                          })); 
+                        }} />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3 relative">
+                      <Form.Label>Day & Hours at the Service</Form.Label>
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Monday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Tuesday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Wednesday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Thrusday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Friday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Saturday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Sunday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                    </Form.Group>
                   </>
                 }
                 <Col md={12}>
@@ -1003,7 +986,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       <Form.Group className="mb-3 relative">
                         <Form.Control 
                           type="date"
-                          placeholder="" 
                           name="date_first_went_to_school"
                           max={new Date().toISOString().slice(0, 10)}
                           value={formOneChildData?.date_first_went_to_school || ""}
@@ -1033,7 +1015,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control 
                           type="text" 
                           name="name_of_school"
-                          placeholder="Name of School"
                           value={formOneChildData?.name_of_school || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -1050,8 +1031,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
                       <Form.Group className="mb-3 relative">
                         <Form.Control 
-                          type="text" 
-                          placeholder="Address of School" 
+                          type="text"  
                           name="address_of_school"
                           value={formOneChildData?.address_of_school || ""}
                           onChange={(e) => {
@@ -1093,7 +1073,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
           <div className="enrollment-form-sec mt-3">
             <Form onSubmit={submitFormData}>
               <div className="enrollment-form-column">
-                <h2 className="title-xs">Information about the child’s parents or guardians</h2>
+                <h2 className="title-xs">Information about the child's parents or guardians</h2>
                 <div className="grayback">
                   <Row>
                     <Col md={12}>
@@ -1147,7 +1127,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>First Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            placeholder="First Name"
                             name="family_name"
                             minLenth={3}
                             maxLength={50}
@@ -1186,7 +1165,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>Last Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            placeholder="Last Name"
                             name="given_name"
                             minLenth={3}
                             maxLength={50}
@@ -1223,8 +1201,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Group className="mb-3 relative">
                           <Form.Label>Date Of Birth *</Form.Label>
                           <Form.Control 
-                            type="date" 
-                            placeholder="" 
+                            type="date"  
                             name="dob"
                             max={new Date().toISOString().slice(0, 10)}
                             value={formOneParentData?.dob || ""}
@@ -1249,11 +1226,24 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         
                         <Form.Group className="mb-3 relative">
                           <Form.Label>Address *</Form.Label>
+                          <div style={{ paddingLeft: "-1.5rem", marginBottom: ".5rem" }}>
+                            <Form.Check
+                              type="checkbox"
+                              id="update"
+                              checked={formOneParentData?.address_similar_to_child}
+                              label="Address as per child"
+                              onChange={(e) => {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  address_similar_to_child: !formOneParentData?.address_similar_to_child,
+                                }))
+                              }} />
+                          </div>
                           <Form.Control 
                             as="textarea" 
                             rows={3} 
-                            placeholder="Address As Per Child"
                             name="address_as_per_child"
+                            disabled={formOneParentData?.address_similar_to_child === true}
                             value={formOneParentData.address_as_per_child || ""}
                             onChange={(e) => {
                               handleParentData(e);
@@ -1272,29 +1262,16 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             }}
                           />
                           { parentFormErrors?.address_as_per_child !== null && <span className="error">{parentFormErrors?.address_as_per_child}</span> }
-
-                          <div style={{ paddingLeft: "-1.5rem", marginTop: "1.2rem" }}>
-                            <Form.Check
-                              type="checkbox"
-                              id="update"
-                              checked={formOneParentData?.address_similar_to_child}
-                              label="Address as per child"
-                              onChange={(e) => {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  address_similar_to_child: !formOneParentData?.address_similar_to_child,
-                                }))
-                              }} />
-                          </div>
                         </Form.Group>
                         
                         <Form.Group className="mb-3 relative">
                           <Form.Label>Telephone *</Form.Label>
                           <Form.Control 
                             type="tel" 
-                            placeholder="3375005467"
-                            maxLength={10}
+                            // style={parentFormErrors?.telephone ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
+                            autoFocus={parentFormErrors?.telephone ? true : false}
                             name="telephone"
+                            maxLength={10}
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
                               handleParentData(e);
@@ -1319,7 +1296,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>Email Address *</Form.Label>
                           <Form.Control 
                             type="email" 
-                            placeholder="Email Address"
                             value={formOneParentData?.email || ""}
                             name="email"
                             onChange={(e) => {
@@ -1510,7 +1486,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
             </Form>
           </div>
           <div className="cta text-center mt-5 mb-5">
-          <Button variant="primary" disabled={loader ? true : false} type="submit">
+          <Button variant="primary" type="submit">
             {loader === true ? (
               <>
                 <img

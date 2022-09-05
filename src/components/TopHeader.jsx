@@ -35,10 +35,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   const [searchLoaderFlag, setSearchLoaderFlag] = useState(false);
 
 
-  const savePermissionInState = async () => {
-    let menu_list = JSON.parse(localStorage.getItem('menu_list'));
-    setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
-  };
+  // const savePermissionInState = async () => {
+  //   let menu_list = JSON.parse(localStorage.getItem('menu_list'));
+  //   setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
+  // };
 
   const [userDashboardLink, setuserDashboardLink] = useState();
 
@@ -290,7 +290,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   }
 
   const popover = (
-    <Popover id="popover-basic" className="notificationpopup">
+    <Popover id="popover-basic" className= {topHeaderNotificationCount?"notificationpopup":"notificationpopup no-notification"}>
       <Popover.Header as="h3">
         Your Unread Notifications{" "}
         <Link style={{ marginLeft: 10 }} to="/notifications">
@@ -307,7 +307,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
               <div className="notifimg">
                 <div className="notilink">
                   <div className="notifpic">
-                    <img src="../img/notification-ico1.png" alt="" className="logo-circle rounded-circle" />
+                    <img src="/img/notification-ico1.png" alt="" className="logo-circle rounded-circle" />
 
                   </div>
                   <div className="notiftxt">
@@ -326,16 +326,21 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
           ))
         ) : (
-          <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
+          <div className="text-center mb-5 mt-5"><strong>No Unread Notification Available</strong></div>
         )
         }
 
       </Popover.Body>
-
+      {topHeaderNotificationCount?(
+        <>
       <div className="totalmsg">
         You have {topHeaderNotificationCount ? topHeaderNotificationCount : 0} unread notifications
       </div>
       <div className="totalreadmsg" onClick={() => handleMarkRearAll()}>Mark All to Read</div>
+      </>
+      ):''
+     
+      }
     </Popover>
   );
 
@@ -453,15 +458,14 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
   }, []);
 
-  useEffect(() => {
-    savePermissionInState();
-  }, []);
+  // useEffect(() => {
+  //   savePermissionInState();
+  // }, []);
+
   console.log("local Storge ", localStorage.getItem('profile_photo'))
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
-
-  //   console.log("selected_franchiseeeeeeeeeeeeeeeeeeeeeeeeee", JSON.parse(localStorage.getItem('selected_franchisee'))?.franchisee_name)
 
   return (
     <>

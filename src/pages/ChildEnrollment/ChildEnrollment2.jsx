@@ -219,7 +219,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -312,7 +312,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const submitFormData = (e) => {
     e.preventDefault();
 
-    const errors = healthInformationFormValidator(healthInformation);
+    const errors = healthInformationFormValidator(healthInformation, parentData?.i_give_medication_permission);
     if (Object.keys(errors).length > 0) {
       window.scrollTo(0, 0);
       setHealthInfoFormErrors(errors);
@@ -480,7 +480,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="text"
                         name="medical_service"
-                        placeholder="Doctor's Name/Medical Service"
                         value={healthInformation?.medical_service || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
@@ -512,7 +511,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         type="tel"
                         name="telephone"
                         maxLength={10}
-                        placeholder="3375005467"
                         value={healthInformation?.telephone || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
@@ -542,7 +540,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="text"
                         name="medical_service_address"
-                        placeholder="Doctor's Address/Medical Service"
                         value={healthInformation?.medical_service_address || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
@@ -573,7 +570,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="text"
                         name="maternal_and_child_health_centre"
-                        placeholder="Maternal And Child Health Centre"
                         value={healthInformation.maternal_and_child_health_centre || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
@@ -3144,6 +3140,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         i_give_medication_permission: !parentData.i_give_medication_permission,
                       }));
 
+                      setHealthInfoFormErrors(prevState => ({
+                        ...prevState,
+                        i_give_medication_permission: null
+                      }))
+
                       if (!parentData.log.includes("i_give_medication_permission")) {
                         setParentData(prevState => ({
                           ...prevState,
@@ -3152,12 +3153,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       }
                     }} />
                 </div>
+                <br></br>
+                {healthInfoFormErrors?.i_give_medication_permission !== null && <span className="error">{healthInfoFormErrors?.i_give_medication_permission}</span>}
               </Form.Group>
             </div>
             <div className="cta text-center mt-5 mb-5">
               <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Go Back</Button>
               <Button
-                disabled={parentData?.i_give_medication_permission === false} 
                 variant="primary" 
                 type="submit">
                 {loader === true ? (

@@ -25,7 +25,6 @@ import { useParams } from 'react-router-dom';
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
-
 const training = [
   {
     value: 'sydney',
@@ -41,7 +40,7 @@ let DeleteId = [];
 
 const UserManagement = () => {
   const Key = useParams()
-  console.log('Key+++++++++', Key.key)
+
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [userEducator, setEducator] = useState([]);
@@ -54,8 +53,9 @@ const UserManagement = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [parentFranchiseeId, setParentFranchiseeId] = useState(null);
 
-
+ 
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       // if (e.target.text === 'Delete') {
@@ -234,6 +234,7 @@ const UserManagement = () => {
       text: 'Action',
       formatter: (cell) => {
         cell = cell.split(',');
+        console.log('CELL VALUE:', cell);
         return (
           <>
             {
@@ -526,6 +527,18 @@ const UserManagement = () => {
       }, 3000);
     }
   }, []);
+  
+  useEffect(() => {
+    if(localStorage.getItem('guardian')) {
+      window.location.href=`/parents-dashboard`;
+    }
+  }, []);
+
+  useEffect(() => {
+    if(localStorage.getItem('guardian')) {
+      window.location.href=`/parents-dashboard`;
+    }
+  }, [])
 
   const csvLink = useRef();
 
@@ -533,7 +546,8 @@ const UserManagement = () => {
   // userData && console.log('USER DATA:', userData.map(data => data));
   userEducator && console.log('userEducator DATA:', userEducator.map(data => data))
   selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
-  console.log("USER DATA,",userData)
+  // console.log("USER DATA,",userData,"CSV",csvData)
+  console.log("CSV STATE",csvDownloadFlag)
   return (
     <>
       <div id="main">
@@ -722,13 +736,17 @@ const UserManagement = () => {
                                       filename="user_management.csv"
                                       ref={csvLink}
                                     >
-                                      {setCsvDownloadFlag(false)}
+                                      {/* {setCsvDownloadFlag(false)} */}
+                                  {    setTimeout(() => {
+                                      setCsvDownloadFlag(false)
+                                        
+                                      }, 1000)}
                                     </CSVDownload>
                                   )}
                                 </Dropdown.Item>
-                                <Dropdown.Item onClick={() => { onDeleteAll() }}>
+                                {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
                                   Delete All Row
-                                </Dropdown.Item>
+                                </Dropdown.Item> */}
                               </Dropdown.Menu>
                             </Dropdown>
                           </div>

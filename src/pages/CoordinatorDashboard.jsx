@@ -51,9 +51,9 @@ const columns = [
       return (<>
         <div className="user-list">
           <span className="user-pic">
-         
+
             {cell[2] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[2]} alt="" /></>)}
-           
+
           </span>
           <span className="user-name">
             {cell[0]}
@@ -112,7 +112,13 @@ const columns = [
 ];
 
 const CoordinatorDashboard = () => {
-  const [count, setcount] = React.useState();
+  const [count, setcount] = React.useState({
+    educatorsLoggedIn: 0,
+    overdueForms: 0,
+    overdueTrainings: 0,
+    newEnrollments: 0,
+  });
+
   const [user, setUser] = useState([]);
   const [userData, setUserData] = useState([]);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
@@ -144,7 +150,7 @@ const CoordinatorDashboard = () => {
     let datae = [day, month, year].join('/');
     //  const date1 = new Date(datae);
     //  const date2 = new Date(str);
-    console.log("THE Date1", Added, datae)
+    // console.log("THE Date1", Added, datae)
     if (datae === Added) {
       return "Added today"
     }
@@ -171,10 +177,7 @@ const CoordinatorDashboard = () => {
 
     let response = await fetch(`${BASE_URL}/dashboard/coordinator/children-enrolled`, requestOptions)
     response = await response.json();
-    // setUser(response)
-    // console.log("The data",response)
 
-    // const users = response.childrenEnrolled[0].users;
     if (response.status === "pass") {
       console.log(" data repsonse", response)
 
@@ -182,33 +185,20 @@ const CoordinatorDashboard = () => {
       let tempData = data.map((dt) => ({
         name: `${dt.fullname}`,
         educatorname: `${dt?.users[0]?.fullname},${dt?.users[1]?.fullname},${dt?.users[0]?.profile_photo},${dt?.users[1]?.profile_photo}`,
-
-        // educatorname: `${dt.users[0].fullname}`,
-
-        // formname: `${dt.form_name}, ${dt.audited_on}`,
-        // educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
-        // console.log("THe dt",)
-        // let data =  
-
       }))
       console.log("THE TEMPDATA", tempData)
       setUserData(tempData);
     }
-    // console.log(users, ">>>>>>>>>");
-    // let data = response.data.data.formData;
-    // let tempData = users.map((dt) => ({
-    // name: `${dt.fullname}`,
-    //   // educatorname : `${dt.users.profile_photo}, ${dt.users.fullname}`
-    //   // createdAt: dt.createdAt,
-    //   // creatorName: dt.creatorName + "," + dt.creatorRole,
-    //   // Shaired: dt.repository.repository_shares.length,
-    //   // categoryId: dt.categoryId
-    // }));
 
-    // console.log('tempData', tempData)
-    // setUserData(tempData);
   }
-  const [onboarding, setonboarding] = useState([]);
+  const [onboarding, setonboarding] = useState(
+    {
+      newEducators: 0,
+      newParents: 0,
+      newForms: 0,
+      newFiles: 0,
+    }
+  );
 
   const newonboarding = async () => {
     var myHeaders = new Headers();
@@ -254,7 +244,6 @@ const CoordinatorDashboard = () => {
     announcement()
   }, []);
   console.log("USERDATA", userData)
-  if (!count) return null;
   return (
     <>
       <div id="main">
@@ -317,7 +306,7 @@ const CoordinatorDashboard = () => {
                               <a className="item" style={{ cursor: "not-allowed" }}>
                                 <span className="name">New Educator Enrolled</span>
                                 <span className="separator">|</span>
-                                <span className="num">{onboarding.newEducators}</span>
+                                <span className="num">{onboarding?.newEducators}</span>
                               </a>
                             </div></>)}
 
@@ -325,21 +314,21 @@ const CoordinatorDashboard = () => {
                               <a href="/user-management/Guardian" className="item">
                                 <span className="name">New Parents Enrolled</span>
                                 <span className="separator">|</span>
-                                <span className="num">{onboarding.newParents}</span>
+                                <span className="num">{onboarding?.newParents}</span>
                               </a>
                             </div>
                             <div className="item">
                               <a className="item" href="/form/response">
                                 <span className="name">New Forms Submitted</span>
                                 <span className="separator">|</span>
-                                <span className="num">{onboarding.newForms}</span>
+                                <span className="num">{onboarding?.newForms}</span>
                               </a>
                             </div>
                             <div className="item">
                               <a className="item" href="/file-repository">
                                 <span className="name"> New Files</span>
                                 <span className="separator">|</span>
-                                <span className="num">{onboarding.newFiles}</span>
+                                <span className="num">{onboarding?.newFiles}</span>
                               </a>
                             </div>
                           </div>
@@ -370,99 +359,7 @@ const CoordinatorDashboard = () => {
                             </>)}
                           </div>
                         </div>
-                        {/*<div className="files-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h2 className="title-sm mb-0"><strong>Forms</strong></h2>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list files-list two-col">
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/folder-ico.png" alt=""/></div>
-                              <div className="name">Perfromance Evaluation <span className="time">Created on: 01/22/2022</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="Policies-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h3 className="title-sm mb-0"><strong>Policies</strong></h3>
-                            <Link to="/" className="viewall">View All</Link>
-                          </header>
-                          <div className="column-list policies-list">
-                            <div className="item">
-                              <div className="pic"><img src="../img/policies-ico.png" alt=""/></div>
-                              <div className="name">Title goes here <span className="time">Udpated on: 12 April, 2022</span></div>
-                              <div className="content">
-                                <p>Privacy Policy is meant to help you understand what information we collect, why we collect it, and how you can update, manage, export, and delete your account.</p>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/policies-ico.png" alt=""/></div>
-                              <div className="name">Title goes here <span className="time">Udpated on: 12 April, 2022</span></div>
-                              <div className="content">
-                                <p>Privacy Policy is meant to help you understand what information we collect, why we collect it, and how you can update, manage, export, and delete your account.</p>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/policies-ico.png" alt=""/></div>
-                              <div className="name">Title goes here <span className="time">Udpated on: 12 April, 2022</span></div>
-                              <div className="content">
-                                <p>Privacy Policy is meant to help you understand what information we collect, why we collect it, and how you can update, manage, export, and delete your account.</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>*/}
+
                       </div>
                     </Col>
                     <Col md={5}>
@@ -476,28 +373,28 @@ const CoordinatorDashboard = () => {
                               <a href="/user-management/Educator" className="item">
                                 <span className="name">Educators logged in</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.educatorsLoggedIn}</span>
+                                <span className="num">{count?.educatorsLoggedIn}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a className="item" href="/form/response">
                                 <span className="name">Overdue Forms</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.overdueForms}</span>
+                                <span className="num">{count?.overdueForms}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a className="item" href="/training">
                                 <span className="name">Overdue Training</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.overdueTrainings}</span>
+                                <span className="num">{count?.overdueTrainings}</span>
                               </a>
                             </div>
                             <div className="listing">
                               <a className="item" href="/children-all" >
                                 <span className="name">New Enrollments</span>
                                 <span className="separator">|</span>
-                                <span className="num">{count.newEnrollments}</span>
+                                <span className="num">{count?.newEnrollments}</span>
                               </a>
                             </div>
                             <div className="kidsart">
@@ -512,30 +409,29 @@ const CoordinatorDashboard = () => {
                           </header>
                           <div className="column-list announcements-list">
                             {
-                              latest_announcement?.length>0 ?
-                              (
-                                latest_announcement?.map((data) => {
-                                  return (
-                                    <div className="listing">
-                                      <a href="/announcements" className="item">
-                                        <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                        <div className="name">{data.title}
-                                          <div>
-                                            <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-    
-                                          </div>
-    
-                                        </div>
-                                      </a>
-                                    </div>
-                                  );
-                                })
-                              )
-                              :
-                              (
-                              <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+                              latest_announcement?.length > 0 ?
+                                (
+                                  latest_announcement?.map((data) => {
+                                    return (
+                                      <div className="listing">
+                                        <a href="/announcements" className="item">
+                                          <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
+                                          <div className="name">{data?.title}
+                                            <div>
+                                              <span className="timesec">{getAddedTime(data?.createdAt)}</span>
+                                            </div>
 
-                              )
+                                          </div>
+                                        </a>
+                                      </div>
+                                    );
+                                  })
+                                )
+                                :
+                                (
+                                  <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+
+                                )
                             }
                             {/* <div className="listing">
                               <a href="/" className="item">

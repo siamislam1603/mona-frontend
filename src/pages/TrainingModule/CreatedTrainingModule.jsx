@@ -98,7 +98,8 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     try {
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}`, {
+      console.log("TRaini created selectd",selectedFranchisee)
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${selectedFranchisee === "All"? "all":selectedFranchisee}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -112,6 +113,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
 
       }
     } catch (error) {
+      console.log("Error create by me",error)
       setMyTrainingData([])
     }
 
@@ -208,7 +210,8 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   }, [selectedFranchisee]);
   useEffect(() => {
     trainingCreatedByMe()
-  }, [filter, page, trainingDeleteMessage])
+
+  },[filter,page,trainingDeleteMessage,selectedFranchisee])
 
   useEffect(() => {
     trainingCreatedByOther()
@@ -235,6 +238,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
   myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
   // formSettings && console.log('FORM SETTINGS:', formSettings);
+  console.log("Franchise",selectedFranchisee)
   return (
     <>
       <div id="main">

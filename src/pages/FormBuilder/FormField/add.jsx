@@ -11,6 +11,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Setting from '../Setting';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FullLoader } from '../../../components/Loader';
+
 
 let counter = 0;
 let selectedUserRole = [];
@@ -23,13 +25,20 @@ const AddFormField = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [conditionFlag, setConditionFlag] = useState(false);
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
   const [groupFlag, setGroupFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
   const [user, setUser] = useState([]);
-  const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id') ? localStorage.getItem('franchisee_id')!=="none" ? localStorage.getItem('franchisee_id') : null : null);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(
+    localStorage.getItem('franchisee_id')
+      ? localStorage.getItem('franchisee_id') !== 'none'
+        ? localStorage.getItem('franchisee_id')
+        : null
+      : null
+  );
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   // const [conditionModelData, setConditionModelData] = useState([]);
   const [franchisee, setFranchisee] = useState([]);
@@ -45,11 +54,17 @@ const AddFormField = (props) => {
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
-  const form_name=location?.state?.form_name ? location?.state?.form_name: null;
+  const form_name = location?.state?.form_name
+    ? location?.state?.form_name
+    : null;
   useEffect(() => {
     setFormSettingFlag(false);
     if (form_name) {
-      getFormField();
+      if(counter===0)
+      {
+        getFormField();
+        counter++;
+      }
       getFormData();
       getUserRoleAndFranchiseeData();
     }
@@ -216,9 +231,9 @@ const AddFormField = (props) => {
     };
 
     fetch(
-      `${BASE_URL}/form?form_name=${location?.state?.form_name}&id=${localStorage.getItem(
-        'user_id'
-      )}&role=${localStorage.getItem(
+      `${BASE_URL}/form?form_name=${
+        location?.state?.form_name
+      }&id=${localStorage.getItem('user_id')}&role=${localStorage.getItem(
         'user_role'
       )}&franchisee_id=${localStorage.getItem('franchisee_id')}`,
       requestOptions
@@ -244,10 +259,7 @@ const AddFormField = (props) => {
       headers: myHeaders,
     };
 
-    fetch(
-      `${BASE_URL}/field?form_name=${form_name}`,
-      requestOptions
-    )
+    fetch(`${BASE_URL}/field?form_name=${form_name}`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res?.result.length > 0) {
@@ -298,7 +310,7 @@ const AddFormField = (props) => {
 
           setSection(sectionData);
           if (!conditionFlag && !groupFlag) {
-            if (res?.form_permission?.signatories === true && flag === false) {
+            if (res?.form[0]?.form_permissions[0]?.signatories === true && flag === false) {
               res?.result?.push({
                 field_label: 'Signature',
                 field_type: 'signature',
@@ -306,11 +318,14 @@ const AddFormField = (props) => {
             }
             setForm(res?.result);
             setGroupModelData(res?.result);
+            counter++;
+            setCount(counter);
           } else if (groupFlag) {
             setGroupModelData(res?.result);
           }
         } else {
-          if (res?.form?.previous_form !== '') {
+          
+          if (res?.form[0]?.previous_form !== '') {
             fetch(
               `${BASE_URL}/field?form_name=${res?.form[0]?.previous_form}`,
               requestOptions
@@ -369,7 +384,12 @@ const AddFormField = (props) => {
                 field_type: 'signature',
               },
             ]);
+            counter++;
+            setCount(counter);
           }
+        }
+        if (res) {
+          setfullLoaderStatus(false);
         }
       })
       .catch((error) => console.log('error', error));
@@ -391,80 +411,102 @@ const AddFormField = (props) => {
   const onSubmit = (e) => {
     e.preventDefault();
     const newErrors = createFormFieldValidation(form);
-    let error_flag = false;
-    newErrors.map((item) => {
-      if (Object.values(item)[0]) {
-        if (Array.isArray(Object.values(item)[0])) {
-          Object.values(item)[0].map((inner_item) => {
-            if (inner_item || !inner_item === '') {
-              error_flag = true;
+    console.log('form---->', form);
+    let flag = false;
+    form.map((item, index) => {
+      if (flag === false) {
+        form.map((inner_item, inner_index) => {
+          if (index !== inner_index) {
+            if (
+              item.field_label.toLowerCase() ===
+              inner_item.field_label.toLowerCase()
+            ) {
+              flag = true;
             }
-          });
-        } else {
-          if (!item === '' || item) {
-            error_flag = true;
           }
-        }
+        });
       }
     });
-    if (error_flag) {
-      setErrors(newErrors);
+    if (flag === true) {
+      toast.error('Label name must be different!!');
     } else {
-      var myHeaders = new Headers();
-      myHeaders.append('Content-Type', 'application/json');
-      myHeaders.append('authorization', 'Bearer ' + token);
-      let data = [...form];
-      data?.map((item) => {
-        console.log('item.accessible_to_role--->', item.accessible_to_role);
-        data['accessible_to_role'] = item.accessible_to_role;
-        data['signatories'] = item.signatories;
-        if (
-          item.accessible_to_role === '1' ||
-          item.accessible_to_role === true
-        ) {
-          item['signatories_role'] = item.signatories_role
-            ? item.signatories_role.slice(0, -1)
-            : null;
-          item['fill_access_users'] = item.fill_access_users
-            ? item.fill_access_users.slice(0, -1)
-            : null;
-        }
-        if (
-          item.accessible_to_role === '0' ||
-          item.accessible_to_role === false
-        ) {
-          item['signatories_role'] = selectedSignatoriesUserId
-            ? selectedSignatoriesUserId.slice(0, -1)
-            : null;
-          item['fill_access_users'] = selectedFillAccessUserId
-            ? selectedFillAccessUserId.slice(0, -1)
-            : null;
-        }
-        if (item.section_name) {
-          item['franchisee_id'] = localStorage.getItem('f_id');
-          item['shared_by'] = localStorage.getItem('user_id');
-          item['section'] = true;
-        } else {
-          item['section'] = false;
+      let error_flag = false;
+      newErrors.map((item) => {
+        if (Object.values(item)[0]) {
+          if (Array.isArray(Object.values(item)[0])) {
+            Object.values(item)[0].map((inner_item) => {
+              if (inner_item || !inner_item === '') {
+                error_flag = true;
+              }
+            });
+          } else {
+            if (!item === '' || item) {
+              error_flag = true;
+            }
+          }
         }
       });
-
-      fetch(`${BASE_URL}/field/add?form_name=${location?.state?.form_name}`, {
-        method: 'post',
-        body: JSON.stringify(data),
-        headers: myHeaders,
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          navigate('/form',{state:{message: "form added successfully."}});
-
-          res?.result?.map((item) => {
-            if (item.option) {
-              item.option = JSON.parse(item.option);
-            }
-          });
-          setForm(res?.result);
+      if (error_flag) {
+        setErrors(newErrors);
+      } else {
+        var myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('authorization', 'Bearer ' + token);
+        let data = [...form];
+        data?.map((item) => {
+          console.log('item.accessible_to_role--->', item.accessible_to_role);
+          data['accessible_to_role'] = item.accessible_to_role;
+          data['signatories'] = item.signatories;
+          if (
+            item.accessible_to_role === '1' ||
+            item.accessible_to_role === true
+          ) {
+            item['signatories_role'] = item.signatories_role
+              ? item.signatories_role.slice(0, -1)
+              : null;
+            item['fill_access_users'] = item.fill_access_users
+              ? item.fill_access_users.slice(0, -1)
+              : null;
+          }
+          if (
+            item.accessible_to_role === '0' ||
+            item.accessible_to_role === false
+          ) {
+            item['signatories_role'] = selectedSignatoriesUserId
+              ? selectedSignatoriesUserId.slice(0, -1)
+              : null;
+            item['fill_access_users'] = selectedFillAccessUserId
+              ? selectedFillAccessUserId.slice(0, -1)
+              : null;
+          }
+          if (item.section_name) {
+            item['franchisee_id'] = localStorage.getItem('f_id');
+            item['shared_by'] = localStorage.getItem('user_id');
+            item['section'] = true;
+          } else {
+            item['section'] = false;
+          }
         });
+
+        fetch(`${BASE_URL}/field/add?form_name=${location?.state?.form_name}`, {
+          method: 'post',
+          body: JSON.stringify(data),
+          headers: myHeaders,
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            navigate('/form', {
+              state: { message: 'Form added successfully.' },
+            });
+
+            res?.result?.map((item) => {
+              if (item.option) {
+                item.option = JSON.parse(item.option);
+              }
+            });
+            setForm(res?.result);
+          });
+      }
     }
   };
   const setField = (field, value, index, inner_index) => {
@@ -493,6 +535,7 @@ const AddFormField = (props) => {
       tempArr[index] = tempObj;
       setForm(tempArr);
     }
+    console.log('form--->', tempObj);
 
     if (!!errors[index][field]) {
       if (field === 'option') {
@@ -512,6 +555,7 @@ const AddFormField = (props) => {
   };
   return (
     <>
+      {console.log("form----->111122222",form)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -532,6 +576,7 @@ const AddFormField = (props) => {
                     localStorage.setItem('f_id', id);
                   }}
                 />
+                <FullLoader loading={fullLoaderStatus} />
                 <Row>
                   <Col sm={8}>
                     <div className="mynewForm-heading">
@@ -883,7 +928,9 @@ const AddFormField = (props) => {
                                               }
                                             });
                                           } else {
-                                            toast.error('Please fill option first!!');
+                                            toast.error(
+                                              'Please fill option first!!'
+                                            );
                                           }
 
                                           tempArr[index]['option'] = tempOption;
@@ -1319,7 +1366,7 @@ const AddFormField = (props) => {
                                   <label className="container">
                                     {item}
                                     <input
-                                      type="radio"
+                                      type="checkbox"
                                       id={item}
                                       value={item}
                                       name="section_name"
@@ -1332,14 +1379,56 @@ const AddFormField = (props) => {
                                           .toLocaleLowerCase()
                                           .split(' ')
                                           .join('_');
+                                        console.log("e.target.value--->",e.target.value);
+                                        console.log('form--->', form);
                                         const tempArr = [...form];
-                                        const tempObj = tempArr[Index];
-                                        tempObj[e.target.name] = e.target.value;
-                                        tempObj['fill_access_users'] = '';
-                                        tempObj['signatories_role'] = '';
-                                        tempObj['accessible_to_role'] = '1';
-                                        tempArr[Index] = tempObj;
-                                        setForm(tempArr);
+                                        let flag=false;
+                                        tempArr?.map((item, index) => {
+                                          if(flag===false)
+                                          {
+                                            if (item.section_name) {
+                                              console.log("item.section_name--->",item.section_name);
+                                              if (
+                                                item.section_name ===
+                                                e.target.value
+                                              ) {
+                                                console.log("matched-->");
+                                                const tempObj = tempArr[Index];
+                                                tempObj[e.target.name] =
+                                                  e.target.value;
+                                                tempObj['fill_access_users'] = item.fill_access_users;
+                                                tempObj['signatories_role'] = item.signatories_role;
+                                                tempObj['accessible_to_role'] =item.accessible_to_role;
+                                                tempObj['signatories']=item.signatories;
+                                                tempArr[Index] = tempObj;
+                                                setForm(tempArr);
+                                                flag=true;
+                                              } else {
+                                                console.log("Not matched-->");
+                                                const tempObj = tempArr[Index];
+                                                tempObj[e.target.name] =
+                                                  e.target.value;
+                                                tempObj['fill_access_users'] = '';
+                                                tempObj['signatories_role'] = '';
+                                                tempObj['accessible_to_role'] =
+                                                  '1';
+                                                tempArr[Index] = tempObj;
+                                                setForm(tempArr);
+                                              }
+                                            } else {
+                                              console.log("Not matched-->");
+                                              const tempObj = tempArr[Index];
+                                              tempObj[e.target.name] =
+                                                e.target.value;
+                                              tempObj['fill_access_users'] = '';
+                                              tempObj['signatories_role'] = '';
+                                              tempObj['accessible_to_role'] = '1';
+                                              tempArr[Index] = tempObj;
+                                              setForm(tempArr);
+                                            }
+                                          }
+                                          
+                                        });
                                       }}
                                     />
                                     <span className="checkmark"></span>

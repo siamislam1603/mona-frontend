@@ -5,15 +5,19 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
+import { useParmas } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import EducatorAssignPopup from '../components/EducatorAssignPopup';
 import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
 const Children = () => {
+
+    const { id: paramsParentId } = useParams();
+
     useEffect(()=>{
         init()                         
-    },[])
+    },[]);
 
     // Modal start
     const [show, setShow] = useState(false);
@@ -41,6 +45,7 @@ const Children = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const params = useParams();
+    const [parentFullname, setParentFullname] = useState(null);
     const [userData, setUserData] = useState([]);
     const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
     const [deleteResponse, setDeleteResponse] = useState(null);
@@ -51,12 +56,24 @@ const Children = () => {
     const [educators, setEducators] = useState([]); 
     const [parents, setParents] = useState([]);
     const [reloadFlag, setReloadFlag] = useState(false);
-    
+
     const init = async() => {
         // Set Parents Franchisee
         const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id');
           setFranchiseId(franchiseeId);
         
+        // FETCHING PARENT DATA
+        const fetchParentData = async () => {
+            const response = await axios.get(`${BASE_URL}/auth/user/${params.parentId}`);
+
+            if(response.status === 200 && response.data.status === "success") {
+                let { user } = response.data;
+                let { fullname } = user;  
+                console.log('PARENT FULL NAME:', fullname);
+                setParentFullname(fullname);
+            }
+        }
+
         // Children List
         let response = await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
             headers: {
@@ -66,7 +83,7 @@ const Children = () => {
           if (response.status === 200) {
             // console.log('RESPONSE:', response.data);
             const { parentData } = response.data;
-            // console.log(parentData,"users")
+            console.log(parentData,"users")
             if(parentData !== null) {
                 setChildrenList(parentData?.children)
              } else {
@@ -101,7 +118,7 @@ const Children = () => {
 
     const sendInitiationMail = async (childId) => {
         let token = localStorage.getItem('token');
-        const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${params.id}`, { childId }, {
+        const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${params.id}`, { childId, user_role: localStorage.getItem('user_role') }, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -164,32 +181,12 @@ const Children = () => {
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
+            console.log('ROW DATA:', row);
             if (e.target.text === 'Delete') {
-
-                async function deleteUserFromDB() {
-
-                    const response = await axios.patch(
-                        `${BASE_URL}/auth/user/delete/${row.userID}`,
-                        {
-                            is_deleted: 1,
-                        }, {
-                        headers: {
-                            "Authorization": `Bearer ${localStorage.getItem('token')}`
-                        }
-                    }
-                    );
-                    if (response.status === 200 && response.data.status === "success")
-                        setDeleteResponse(response);
-                }
-
-                if (window.confirm('Are you sure you want to delete?')) {
-
-                    deleteUserFromDB();
-
-                }
+                // CODE TO DELETE THE USER 
             }
             if (e.target.text === "Edit") {
-                navigate(`/edit-user/${row.userID}`);
+                navigate(`/child-enrollment-init/edit/${row.id}/${paramsParentId}`);
             }
             if (e.target.text === 'Add Educator'){
                 let defEducators = row.Educator.educators.map((edu)=>{
@@ -242,10 +239,11 @@ const Children = () => {
 
     const productsTow = childrenList?.map((child)=>({
         id: child.id,
-        name: child.name,
+        name: `${child.fullname} ${child.family_name}`,
         Location : child.home_address,
         Educator: {educators:child.users, childId:child.id},
-        EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated }
+        EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated },
+        action: { enrollFlag: child.isChildEnrolled }
     }));
     // console.log('Products:', productsTow);
 
@@ -301,13 +299,22 @@ const Children = () => {
                     <>  {
                             cell.enrollFlag === 0 ?
                             (   
-                                localStorage.getItem('user_role') !== 'guardian' &&
+                                localStorage.getItem('user_role') !== 'guardian' ?
                                 <div className="cta-col">
                                     <button 
                                         className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
                                         disabled={cell.initiationFlag === true}
                                         onClick={() => sendInitiationMail(cell.childId)}>
                                         {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
+                                    </button>
+                                </div>
+                                : 
+                                <div className="cta-col">
+                                    <button 
+                                        className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+                                        // disabled={cell.initiationFlag === true}
+                                        onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
+                                        View Enrolment
                                     </button>
                                 </div>
                             )
@@ -331,6 +338,7 @@ const Children = () => {
             dataField: 'action',
             text: '',
             formatter: (cell) => {
+                // console.log('CELL DATA CHILDREN:', cell);
                 return (
                     <>  {
                             localStorage.getItem('user_role') !== 'guardian' &&
@@ -341,7 +349,8 @@ const Children = () => {
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                        {/* <Dropdown.Item href="#">Edit</Dropdown.Item> */}
+
+                                        {cell.enrollFlag === 0 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
                                         <Dropdown.Item href="#">Add Educator</Dropdown.Item>
                                         <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
                                         <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>
