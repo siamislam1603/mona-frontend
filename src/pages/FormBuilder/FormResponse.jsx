@@ -205,9 +205,7 @@ function FormResponse(props) {
                                     Completed on: <br />
                                     {moment(item[0].createdAt).format('DD/MM/YYYY') +
                                       ', ' +
-                                      item[0].createdAt
-                                        .split('T')[1]
-                                        .split('.')[0] +
+                                      item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":") +
                                       ' hrs'}
                                   </p>
                                 </div>
