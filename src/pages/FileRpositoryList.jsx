@@ -5,17 +5,15 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/rea
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import makeAnimated from 'react-select/animated';
 import { Link, useParams } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem('franchisee_id')
-const animatedComponents = makeAnimated();
+
 const { SearchBar } = Search;
 
 const selectRow = {
@@ -24,17 +22,11 @@ const selectRow = {
 };
 
 const FileRpositoryList = () => {
-    const Navigate = useNavigate();
     let Params = useParams();
-
-    const [show, setShow] = useState(false);
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
-    const handleVideoShow = () => setVideo(true);
     const [category, setCategory] = useState([]);
     const [userData, setUserData] = useState([]);
-
-
     const [user, setUser] = useState([]);
     const [franchiseeList, setFranchiseeList] = useState();
 
@@ -43,6 +35,7 @@ const FileRpositoryList = () => {
         assigned_franchisee: [],
         assigned_users: []
     });
+    
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
     const [child, setChild] = useState([]);
 

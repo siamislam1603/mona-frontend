@@ -7,7 +7,6 @@ import Multiselect from 'multiselect-react-dropdown';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-
 import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
 import { FullLoader } from "../components/Loader";
@@ -52,15 +51,12 @@ const RepoEdit = () => {
         if (response) {
             setfullLoaderStatus(false)
         }
-        console.log(response, "response")
+
         if (response.status === 200 && response.data.status === "success") {
-            console.log('RESPONSE IS SUCCESS');
             const { file } = response.data;
-            console.log('result>>>>>>>', file)
             copyFetchedData(file);
         }
     }
-    console.log(data, "fileTypefileType")
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
@@ -98,14 +94,12 @@ const RepoEdit = () => {
     const handleDataSubmit = async (event) => {
         event.preventDefault();
         setLoaderFlag(true);
-        console.log('DATA:', data);
         if (!data.image || !data.description || data.description == "" || !data.categoryId) {
             setError(true);
             return false
         }
         let dataObj = new FormData();
         for (let [key, value] of Object.entries(data)) {
-            console.log(key, value);
             dataObj.append(key, value);
         }
 
@@ -113,7 +107,6 @@ const RepoEdit = () => {
     }
 
     const saveDataToServer = async () => {
-        console.log('SAVING DATA TO SERVER');
         setLoaderFlag(true);
         const token = localStorage.getItem('token');
         let response = await axios.put(`${BASE_URL}/fileRepo`, data, {
@@ -121,13 +114,10 @@ const RepoEdit = () => {
                 "Authorization": "Bearer " + token
             }
         });
-        console.log('DATA UPDATE RESPONSE:', response);
         if (response.status === 200 && response.data.status === "success") {
             if (typeof data.image === 'string') {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
-                console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
-                    console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
                     navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
             }
@@ -142,15 +132,12 @@ const RepoEdit = () => {
                         "Authorization": "Bearer " + token
                     }
                 });
-                console.log('SOLO IMAGE SAVE RESPONSE:', response);
                 if (response.status === 200 && response.data.status === "success") {
                     setLoaderFlag(false);
-                    console.log('DATA UPDATED SUCCESSFULLT => type: object');
                     navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
             }
             setLoaderFlag(false);
-            console.log('DATA UPDATED SUCCESSFULLT');
             navigate(`/file-repository-List-me/${data.categoryId}`);
         } else {
             setLoaderFlag(false);
@@ -159,7 +146,6 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
-        console.log("data frnahise", data.franchise)
         const response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, {
             franchisee_id: data.franchise
         },
@@ -168,7 +154,6 @@ const RepoEdit = () => {
                     "Authorization": `Bearer ${token}`
                 }
             })
-        console.log("CHIlD DATA after franhisee", response)
         if (response.status === 200 && response.data.status === "success") {
             setChild(response.data.children.map(data => ({
                 id: data.id,
@@ -205,7 +190,6 @@ const RepoEdit = () => {
         );
         if (response.status === 200 && response.data.status === "success") {
             const categoryList = response.data.category;
-            console.log(categoryList, "category Listtt")
             setCategory([
                 ...categoryList.map((data) => ({
                     id: data.id,
@@ -230,9 +214,7 @@ const RepoEdit = () => {
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
-            // console.log(response.data.users, "respo")
             setUser(response.data.users)
-            console.log(user, "userSList")
         }
     };
     function onSelectUser(optionsList, selectedItem) {
@@ -268,7 +250,6 @@ const RepoEdit = () => {
             ...prevState,
             assigned_childs: removedItem
         }));
-        console.log(selectedChild, "Selllee")
         setSelectedChild(removedchildarr)
     }
 
@@ -303,10 +284,6 @@ const RepoEdit = () => {
         getUser();
     }, [data.franchise])
 
-    data && console.log('FILE REPO DATA:', data.franchise);
-    data && console.log('FILE REPO DATA:', data);
-    data && console.log('TYPE OF IMAGE DATA:', typeof data.image);
-    console.log("Selected child", selectedChild)
 
 
     return (
@@ -546,7 +523,7 @@ const RepoEdit = () => {
                                                                                             accessibleToRole: 1,
                                                                                         }));
                                                                                     }}
-                                                                                   
+
                                                                                     checked={data.accessibleToRole === 1}
                                                                                 />
                                                                                 <span className="radio-round"></span>
@@ -606,7 +583,6 @@ const RepoEdit = () => {
                                                                             </label>) : null}
                                                                             {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
                                                                                 Coordinators
-                                                                                {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                                 <input
                                                                                     type="checkbox"
                                                                                     name="shared_role"

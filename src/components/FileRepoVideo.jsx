@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 
 const FileRepoVideo = ({ data, title, duration, Src }) => {
-    console.log(data, 'cellcellcell')
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
     const handleShow = () => setVideo(true);
