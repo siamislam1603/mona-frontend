@@ -288,7 +288,7 @@ const Children = () => {
                                     <div className="user-list mt-3">
                                         <span className="user-pic">
                                             <img src={item.profile_photo ? item.profile_photo : "../img/user.png" } alt='' />
-                                        </span>
+                                        </span>Kumar
                                         <span className="user-name">
                                             {item.fullname}
                                         </span>
@@ -313,10 +313,9 @@ const Children = () => {
             formatter: (cell) => {
                 // console.log(cell, 'ENROLLED CELL');
                 return (
-                    <>  {
-                            cell.enrollFlag === 0 ?
-                            (   
-                                localStorage.getItem('user_role') !== 'guardian' &&
+                    <>  {   
+                            localStorage.getItem('user_role') !== 'guardian' ?
+                            (  
                                 <div className="cta-col">
                                     <button 
                                         className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
