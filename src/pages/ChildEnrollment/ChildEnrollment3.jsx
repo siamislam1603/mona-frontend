@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Row, Form, Table } from "react-bootstrap";
 import axios from 'axios';
 import { BASE_URL } from "../../components/App";
+import { useParams } from 'react-router-dom';
 import moment from "moment";
 
 let nextstep = 4;
@@ -17,6 +18,7 @@ function checkErrorsExist(errorObject) {
 }
 
 const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
+  let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 3);
   const [agreedBookingHours, setAgreedBookingHours] = useState({
     // monday: {from: "", to: ""},
@@ -116,7 +118,7 @@ const ChildEnrollment3 = ({ nextStep, handleFormData, prevStep }) => {
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
 
-    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}`, {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/${enrolledChildId}?parentId=${paramsParentId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
