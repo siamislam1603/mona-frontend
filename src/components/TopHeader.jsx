@@ -290,9 +290,9 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   }
 
   const popover = (
-    <Popover id="popover-basic" className="notificationpopup">
+    <Popover id="popover-basic" className= {topHeaderNotificationCount?"notificationpopup":"notificationpopup no-notification"}>
       <Popover.Header as="h3">
-        Your Notifications{" "}
+        Your Unread Notifications{" "}
         <Link style={{ marginLeft: 10 }} to="/notifications">
           View All
         </Link>
@@ -326,16 +326,21 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
           ))
         ) : (
-          <div className="text-center mb-5 mt-5"><strong>No data found</strong></div>
+          <div className="text-center mb-5 mt-5"><strong>No Unread Notification Available</strong></div>
         )
         }
 
       </Popover.Body>
-
+      {topHeaderNotificationCount?(
+        <>
       <div className="totalmsg">
         You have {topHeaderNotificationCount ? topHeaderNotificationCount : 0} unread notifications
       </div>
       <div className="totalreadmsg" onClick={() => handleMarkRearAll()}>Mark All to Read</div>
+      </>
+      ):''
+     
+      }
     </Popover>
   );
 
