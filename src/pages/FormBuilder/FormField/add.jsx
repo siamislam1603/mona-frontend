@@ -520,6 +520,7 @@ const AddFormField = (props) => {
       tempArr[index] = tempObj;
       setForm(tempArr);
     }
+    console.log('form--->', tempObj);
 
     if (!!errors[index][field]) {
       if (field === 'option') {
@@ -1348,7 +1349,7 @@ const AddFormField = (props) => {
                                   <label className="container">
                                     {item}
                                     <input
-                                      type="radio"
+                                      type="checkbox"
                                       id={item}
                                       value={item}
                                       name="section_name"
@@ -1361,14 +1362,56 @@ const AddFormField = (props) => {
                                           .toLocaleLowerCase()
                                           .split(' ')
                                           .join('_');
+                                        console.log("e.target.value--->",e.target.value);
+                                        console.log('form--->', form);
                                         const tempArr = [...form];
-                                        const tempObj = tempArr[Index];
-                                        tempObj[e.target.name] = e.target.value;
-                                        tempObj['fill_access_users'] = '';
-                                        tempObj['signatories_role'] = '';
-                                        tempObj['accessible_to_role'] = '1';
-                                        tempArr[Index] = tempObj;
-                                        setForm(tempArr);
+                                        let flag=false;
+                                        tempArr?.map((item, index) => {
+                                          if(flag===false)
+                                          {
+                                            if (item.section_name) {
+                                              console.log("item.section_name--->",item.section_name);
+                                              if (
+                                                item.section_name ===
+                                                e.target.value
+                                              ) {
+                                                console.log("matched-->");
+                                                const tempObj = tempArr[Index];
+                                                tempObj[e.target.name] =
+                                                  e.target.value;
+                                                tempObj['fill_access_users'] = item.fill_access_users;
+                                                tempObj['signatories_role'] = item.signatories_role;
+                                                tempObj['accessible_to_role'] =item.accessible_to_role;
+                                                tempObj['signatories']=item.signatories;
+                                                tempArr[Index] = tempObj;
+                                                setForm(tempArr);
+                                                flag=true;
+                                              } else {
+                                                console.log("Not matched-->");
+                                                const tempObj = tempArr[Index];
+                                                tempObj[e.target.name] =
+                                                  e.target.value;
+                                                tempObj['fill_access_users'] = '';
+                                                tempObj['signatories_role'] = '';
+                                                tempObj['accessible_to_role'] =
+                                                  '1';
+                                                tempArr[Index] = tempObj;
+                                                setForm(tempArr);
+                                              }
+                                            } else {
+                                              console.log("Not matched-->");
+                                              const tempObj = tempArr[Index];
+                                              tempObj[e.target.name] =
+                                                e.target.value;
+                                              tempObj['fill_access_users'] = '';
+                                              tempObj['signatories_role'] = '';
+                                              tempObj['accessible_to_role'] = '1';
+                                              tempArr[Index] = tempObj;
+                                              setForm(tempArr);
+                                            }
+                                          }
+                                          
+                                        });
                                       }}
                                     />
                                     <span className="checkmark"></span>
