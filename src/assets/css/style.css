@@ -633,6 +633,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .search-bar{position:absolute;top:-90px;right:255px;z-index:9;transition-duration:.3s}
 .search-bar.show{top:7px}
 .notificationpopup{width:100%;max-width:400px;height:400px}
+.notificationpopup.no-notification{width:100%;max-width:400px;height:auto;}
 .notificationpopup .popover-body{position:relative;height:calc(100% - 110px);overflow:auto;padding:0}
 .notificationpopup .totalmsg{text-align:center;padding:5px 10px}
 .notificationpopup .totalreadmsg{border-bottom-left-radius:calc(.3rem - 1px);border-bottom-right-radius:calc(.3rem - 1px);color:var(--primary);cursor:pointer;text-align:center;padding:10px;background-color:var(--gray);font-weight:700}
@@ -643,8 +644,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .notificationpopup .notiftxt .title-xxs { font-size: 13px; }
 .notificationpopup .notifimg .notilink .notifpic img{width:40px;height:40px}
 .notificationpopup .notifitem{position:relative;padding:10px 15px;background-color:var(--white);border-bottom:1px solid rgba(0,0,0,.1)}
-.notificationpopup .notifitem:hover{background-color:var(--black)}
-.notificationpopup .notifitem:hover .notilink{color:var(--red)}
+/*.notificationpopup .notifitem:hover{background-color:var(--black)}
+.notificationpopup .notifitem:hover .notilink{color:var(--red)}*/
 .notificationpopup .notifitem .gdot{position:absolute;width:10px;height:10px;border-radius:100%;background-color:green;border:1px solid var(--ms-white);left:30px;bottom:0;z-index:2}
 .notificationpopup .notifitem.unread{font-weight:700;background-color:var(--gray)}
 .notification-popup{position:absolute;z-index:7;padding:0 0 50px 0;top:-500px;right:0;width:100%;max-width:400px;height:400px;border-radius:10px;background-color:var(--black);box-shadow:0 10px 10px 0 rgba(0,0,0,.2);transition-duration:.3s}
