@@ -57,7 +57,11 @@ const AddFormField = (props) => {
   useEffect(() => {
     setFormSettingFlag(false);
     if (form_name) {
-      getFormField();
+      if(counter===0)
+      {
+        getFormField();
+        counter++;
+      }
       getFormData();
       getUserRoleAndFranchiseeData();
     }
@@ -303,7 +307,7 @@ const AddFormField = (props) => {
 
           setSection(sectionData);
           if (!conditionFlag && !groupFlag) {
-            if (res?.form_permission?.signatories === true && flag === false) {
+            if (res?.form[0]?.form_permissions[0]?.signatories === true && flag === false) {
               res?.result?.push({
                 field_label: 'Signature',
                 field_type: 'signature',
@@ -311,11 +315,14 @@ const AddFormField = (props) => {
             }
             setForm(res?.result);
             setGroupModelData(res?.result);
+            counter++;
+            setCount(counter);
           } else if (groupFlag) {
             setGroupModelData(res?.result);
           }
         } else {
-          if (res?.form?.previous_form !== '') {
+          
+          if (res?.form[0]?.previous_form !== '') {
             fetch(
               `${BASE_URL}/field?form_name=${res?.form[0]?.previous_form}`,
               requestOptions
@@ -374,6 +381,8 @@ const AddFormField = (props) => {
                 field_type: 'signature',
               },
             ]);
+            counter++;
+            setCount(counter);
           }
         }
       })
@@ -540,6 +549,7 @@ const AddFormField = (props) => {
   };
   return (
     <>
+      {console.log("form----->111122222",form)}
       <div id="main">
         <section className="mainsection">
           <Container>
