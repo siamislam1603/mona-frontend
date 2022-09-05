@@ -41,14 +41,13 @@ function ViewFormBuilder(props) {
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
   const token = localStorage.getItem('token');
-  const location=useLocation();
+  const location = useLocation();
   let hrFlag = false;
   let title_flag = false;
   useEffect(() => {
-    if(location?.state?.message)
-    {
+    if (location?.state?.message) {
       toast.success(location?.state?.message);
-      navigate("/form", { state: {message: null} });
+      navigate('/form', { state: { message: null } });
     }
     getFormData('');
   }, []);
@@ -246,7 +245,7 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
-                                            inner_item?.form_permission
+                                            inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -258,7 +257,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item?.form_permission
+                                              inner_item?.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -398,7 +397,7 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
-                                            inner_item?.form_permission
+                                            inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -410,7 +409,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item?.form_permission
+                                              inner_item?.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -528,7 +527,7 @@ function ViewFormBuilder(props) {
                                           localStorage.getItem('user_id')
                                         ) &&
                                           ((
-                                            inner_item?.form_permission
+                                            inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -540,7 +539,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item?.form_permission
+                                              inner_item?.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -576,7 +575,8 @@ function ViewFormBuilder(props) {
                                                     navigate('/form/response', {
                                                       state: {
                                                         id: inner_item.id,
-                                                        form_name: inner_item.form_namee
+                                                        form_name:
+                                                          inner_item.form_name,
                                                       },
                                                     });
                                                   }}
@@ -614,7 +614,8 @@ function ViewFormBuilder(props) {
                                                     navigate('/form/response', {
                                                       state: {
                                                         id: inner_item.id,
-                                                        form_name: inner_item.form_name
+                                                        form_name:
+                                                          inner_item.form_name,
                                                       },
                                                     });
                                                   }}
@@ -689,7 +690,9 @@ function ViewFormBuilder(props) {
                                                                 'Your form was expired on ' +
                                                                   moment(
                                                                     inner_item.end_date
-                                                                  ).format('DD/MM/YYYY') +
+                                                                  ).format(
+                                                                    'DD/MM/YYYY'
+                                                                  ) +
                                                                   '.'
                                                               );
                                                             else
@@ -1180,10 +1183,7 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {
-                                  item[0]?.user
-                                    ?.fullname
-                                }
+                                {item[0]?.user?.fullname}
                               </h4>
                             </div>
                           </div>
@@ -1196,9 +1196,7 @@ function ViewFormBuilder(props) {
                                     : 'text-capitalize'
                                 }
                               >
-                                {item[0]?.user?.role
-                                  .split('_')
-                                  .join(' ')}
+                                {item[0]?.user?.role.split('_').join(' ')}
                               </h4>
                             </div>
                           </div>
@@ -1210,8 +1208,8 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item[0].createdAt).format('DD/MM/YYYY')} -
-                                {moment(item[0].createdAt).format('HH:MM:SS')}
+                                {moment(item[0].createdAt).format('DD/MM/YYYY')}{' '}
+                                - {item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":")} Hrs
                               </h4>
                               <button
                                 onClick={() => {
@@ -1219,8 +1217,9 @@ function ViewFormBuilder(props) {
                                     state: {
                                       id: MeFormData[Index]?.forms[innerIndex]
                                         ?.id,
-                                      form_name: MeFormData[Index]?.forms[innerIndex]
-                                      ?.form_name,
+                                      form_name:
+                                        MeFormData[Index]?.forms[innerIndex]
+                                          ?.form_name,
                                     },
                                   });
                                 }}
@@ -1236,6 +1235,9 @@ function ViewFormBuilder(props) {
                 : OthersFormData[Index]?.forms &&
                   OthersFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item, index) => {
+                      {
+                        console.log('item[0]-->', item[0]);
+                      }
                       return (
                         <div className="user_box">
                           <div className="user_name">
@@ -1253,7 +1255,6 @@ function ViewFormBuilder(props) {
                           </div>
                           <div className="user_role">
                             <div className="user_detail">
-                              
                               <h4
                                 className={
                                   item[0]?.seen_flag === false
@@ -1261,7 +1262,7 @@ function ViewFormBuilder(props) {
                                     : 'text-capitalize'
                                 }
                               >
-                                {item?.user?.role.split('_').join(' ')}
+                                {item[0]?.user?.role.split('_').join(' ')}
                               </h4>
                             </div>
                           </div>
@@ -1273,7 +1274,8 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item[0].createdAt).format('DD/MM/YYYY')}
+                                {moment(item[0].createdAt).format('DD/MM/YYYY')}{' '}
+                                - {item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":")} Hrs
                               </h4>
                               <button
                                 onClick={() => {
@@ -1282,8 +1284,9 @@ function ViewFormBuilder(props) {
                                       id: OthersFormData[Index]?.forms[
                                         innerIndex
                                       ]?.id,
-                                      form_name: OthersFormData[Index]?.forms[innerIndex]
-                                        ?.form_name,
+                                      form_name:
+                                        OthersFormData[Index]?.forms[innerIndex]
+                                          ?.form_name,
                                     },
                                   });
                                 }}

@@ -88,25 +88,11 @@ const [titleError,setTitleError] = useState();
   const [allFranchise,setAllFranchise] = useState(false)
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
-  const [titleChecking,setTitleChecking] = useState(true)
-
-
-
-const fetchUserRoles = async () => {
-  const response = await axios.get(`${BASE_URL}/api/user-role`);
-  if (response.status === 200) {
-    const { userRoleList } = response.data;
-    setUserRoles([
-      ...userRoleList.map((data) => ({
-        cat: data.role_name,
-        key: data.role_label,
-      })),
-    ]);
-  }
-};
+  const [titleChecking,setTitleChecking] = useState(false)
 
 
 const createAnnouncement = async (data) => {
+  titleCheck()
   console.log("CALLING CREATED ANNOUCNEMENT")
   try {
     
@@ -125,8 +111,9 @@ const createAnnouncement = async (data) => {
   console.log("jjjjjjjjjjjjjjjjjjjj");
   if(response.status === 200 && response.data.status === "fail"){
     setAddnewAnnouncement(false)
+    console.log("Response title",response.data)
     console.log("TITLE ALREADY EXIT")
-    setTitleError("Title already exit")
+    // setTitleError("Title already exit")
   }
   
 
@@ -172,16 +159,7 @@ const createAnnouncement = async (data) => {
         
         }      
     } 
-    // else if(response.status === 403 && response.data.status === "fail"){
-    //   console.log('ERROR RESPONSE! Permission Denied');
-    //   setTopErrorMessage("Permission Denied");
-    //   setLoader(false)
-    //   setAddnewAnnouncement(false)
-
-    //   setTimeout(() => {
-    //     setTopErrorMessage(null);
-    //   }, 3000)
-    // }
+  
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
     window.location.href="/announcements";
         
@@ -190,6 +168,7 @@ const createAnnouncement = async (data) => {
     console.log("ERROR ADD ANNOUNCEMNT",error)
     if(error.response.status === 403 && error.response.data.status === "fail")
     console.log('ERROR RESPONSE! Permission Denied');
+    console.log("Error permsission",error)
     setTopErrorMessage("Permission Denied");
     setAddnewAnnouncement(false)
 
@@ -275,6 +254,7 @@ const createAnnouncement = async (data) => {
 
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
+      setTitleError()
       // console.log("The name and value",name,value)
       if(localStorage.getItem("user_role") === "franchisee_admin"){
 
@@ -288,6 +268,7 @@ const createAnnouncement = async (data) => {
       setAnnouncementData((prevState) => ({
         ...prevState,
         [name]: value,
+       
       })); 
       if (!!error[name]) {
         setError({
@@ -310,23 +291,28 @@ const createAnnouncement = async (data) => {
             if(resp.status === 200 && resp.data.status === "success"){
               setTitleChecking(true)
             }
+            console.log("Title check call", resp)
       } catch (error) {
          if(error.response.status === 404){
           console.log("TItle checking error",error)
           setTitleChecking(false)
-          setAddnewAnnouncement(false)
-          setTitleError("Title already exit")
+          // setAddnewAnnouncement(false)
+          setTitleError("Anouncement title already exit ")
+          
          }
       }
     }
-
+    const handleTitle = (e) =>{
+      titleCheck()
+      handleDataSubmit(e)
+    }
     const handleDataSubmit = event => {
       event.preventDefault();
-      // if()
       console.log("All frnahise",allFranchise)
       console.log("The annoucement after submit ",announcementData)
       console.log("THe title error",titleError,titleChecking)
-      let errorObj = AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,);
+      
+      let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking);
 
       console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
@@ -356,46 +342,11 @@ const createAnnouncement = async (data) => {
           });
           setAddnewAnnouncement(true)
           setLoader(true);
-          // {
-          //   titleChecking ? 
-          // createAnnouncement(data) :
-          // null
-
-          // }
-          console.log("titlechecing",titleChecking)
-          titleChecking && createAnnouncement(data);
+           createAnnouncement(data);
          console.log("The data",data)
        }
       }
       console.log("The datad adndsjkvnskdja ")
-       
-     
-    // }
-    // if (!announcementData.title) {
-    //   setError(prevError => {
-    //       return { 
-    //           ...prevError, 
-    //           title: "Required Title" 
-    //         }
-    //   }); 
-    // }
-  //   if (!announcementData.meta_description) {
-  //     setError(prevError => {
-  //         return {
-  //       ...prevError,
-  //       // meta_description: "Description must be at least ten characters long"
-  //     }
-  //   }); 
-  // }
-//   if (!announcementData.coverImage) {
-//     setError(prevError => {
-//         return {
-//       ...prevError,
-//       coverImage: "Required CoverImage"
-//     }
-//   }); 
-// }
-
   };
 
   
@@ -436,9 +387,7 @@ const createAnnouncement = async (data) => {
       // hour()
       // theDate()
     },[])
-    // useEffect(() =>{
-    //   titleCheck()
-    // },[announcementData.title])
+
 
    
   // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
@@ -474,12 +423,12 @@ const createAnnouncement = async (data) => {
                           type="text" 
                           name="title"
                           onChange={handleAnnouncementData} 
-                          isInvalid = {!!error.title || !!error.titleError}
+                          isInvalid = {!!error.title || titleError}
                           />
                           <Form.Control.Feedback type="invalid">
                             {error.title}
                           </Form.Control.Feedback>
-                          {/* {titleError && <div className="error">{titleError}</div>}  */}
+                          {titleError && <div className="error">{titleError}</div>} 
                          
                         </Form.Group>
                         {
@@ -752,7 +701,7 @@ const createAnnouncement = async (data) => {
                         <div className="cta text-center mt-5 mb-5">
                         <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>
 
-                          <Button variant="primary" type="submit" onClick={handleDataSubmit}>Save</Button>
+                          <Button variant="primary" type="submit" onClick={handleTitle}>Save</Button>
                         </div>
                       </Col>
                     </Row>
