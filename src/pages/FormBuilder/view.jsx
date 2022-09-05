@@ -246,7 +246,7 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
-                                            inner_item.form_permissions[0]
+                                            inner_item?.form_permission
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -258,7 +258,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item.form_permissions[0]
+                                              inner_item?.form_permission
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -390,14 +390,15 @@ function ViewFormBuilder(props) {
                                   <Row>
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
-                                        return inner_item.end_date === null &&
+                                        console.log('OBJECT:>>>', inner_item);
+                                        return inner_item?.end_date === null &&
                                           !(
                                             inner_item?.form_filled_user || []
                                           ).includes(
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
-                                            inner_item.form_permissions[0]
+                                            inner_item?.form_permission
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -409,7 +410,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item.form_permissions[0]
+                                              inner_item?.form_permission
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -527,7 +528,7 @@ function ViewFormBuilder(props) {
                                           localStorage.getItem('user_id')
                                         ) &&
                                           ((
-                                            inner_item.form_permissions[0]
+                                            inner_item?.form_permission
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -539,7 +540,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item.form_permissions[0]
+                                              inner_item?.form_permission
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')

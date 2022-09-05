@@ -276,7 +276,7 @@ const Children = () => {
                 // console.log(cell,"celll")
                 return (
                     <>
-                        {cell.educators.length == 0 ?
+                        {cell.educators.length === 0 ?
                             <div className="user-list">
                                 <Button variant="outline-primary" onClick={()=>handleShow(cell.childId,cell.educators)} style={{ backgroundColor: "#3e5d58", color: "white" }}>
                                     Add Educator
