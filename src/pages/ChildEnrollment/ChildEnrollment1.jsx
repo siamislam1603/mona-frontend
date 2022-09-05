@@ -919,43 +919,80 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         }} />
                     </div>
                     <Form.Text className="text-muted">
-                      If you answered YES please specify day and hours at other service.
+                      If you answered YES please specify name, day and hours at other service.
                     </Form.Text>
                   </Form.Group>
                 </Col>
                 {
                   formOneChildData.another_service &&
                   <>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Monday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Tuesday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Wednesday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Thrusday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
-                    <Col xl={3} lg={4} md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Friday</Form.Label>
-                        <Form.Control type="number" />
-                      </Form.Group>
-                    </Col>
+                    <Form.Group className="mb-3 relative">
+                      <Form.Label>Name of the Service</Form.Label>
+                      <Form.Control
+                        type="text"
+                        minLenth={3}
+                        maxLength={50}
+                        name="name_of_the_service"
+                        value={formOneChildData?.name_of_the_service || ""}
+                        onChange={(e) => {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            name_of_the_service: e.target.value
+                          })); 
+                        }} />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3 relative">
+                      <Form.Label>Day & Hours at the Service</Form.Label>
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Monday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Tuesday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Wednesday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Thrusday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Friday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                      
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Saturday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={3} lg={4} md={6}>
+                        <Form.Group className="mb-3 relative">
+                          <Form.Label>Sunday</Form.Label>
+                          <Form.Control type="number" />
+                        </Form.Group>
+                      </Col>
+                    </Form.Group>
                   </>
                 }
                 <Col md={12}>
@@ -1257,11 +1294,25 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         </Form.Group>
                         
                         <Form.Group className="mb-3 relative">
+                          <div style={{ paddingLeft: "-1.5rem" }}>
+                            <Form.Check
+                              type="checkbox"
+                              id="update"
+                              checked={formOneParentData?.address_similar_to_child}
+                              label="Address as per child"
+                              onChange={(e) => {
+                                setFormOneParentData(prevState => ({
+                                  ...prevState,
+                                  address_similar_to_child: !formOneParentData?.address_similar_to_child,
+                                }))
+                              }} />
+                          </div>
                           <Form.Label>Address *</Form.Label>
                           <Form.Control 
                             as="textarea" 
                             rows={3} 
                             name="address_as_per_child"
+                            disabled={formOneParentData?.address_similar_to_child === true}
                             value={formOneParentData.address_as_per_child || ""}
                             onChange={(e) => {
                               handleParentData(e);
@@ -1280,20 +1331,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             }}
                           />
                           { parentFormErrors?.address_as_per_child !== null && <span className="error">{parentFormErrors?.address_as_per_child}</span> }
-
-                          <div style={{ paddingLeft: "-1.5rem", marginTop: "1.2rem" }}>
-                            <Form.Check
-                              type="checkbox"
-                              id="update"
-                              checked={formOneParentData?.address_similar_to_child}
-                              label="Address as per child"
-                              onChange={(e) => {
-                                setFormOneParentData(prevState => ({
-                                  ...prevState,
-                                  address_similar_to_child: !formOneParentData?.address_similar_to_child,
-                                }))
-                              }} />
-                          </div>
                         </Form.Group>
                         
                         <Form.Group className="mb-3 relative">

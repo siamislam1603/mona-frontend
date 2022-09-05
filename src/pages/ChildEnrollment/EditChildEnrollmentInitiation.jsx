@@ -294,7 +294,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                         </div>
                       </div>
                       <div className="cta text-center mt-5 mb-5">
-                        <Button variant="primary" disabled={loader ? true : false} type="submit">
+                        <Button variant="primary" type="submit">
                           {loader === true ? (
                             <>
                               <img
