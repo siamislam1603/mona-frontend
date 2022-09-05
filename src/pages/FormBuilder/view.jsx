@@ -25,6 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useLocation } from 'react-router-dom';
+import { FullLoader } from '../../components/Loader';
 
 function ViewFormBuilder(props) {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ function ViewFormBuilder(props) {
   const [selectedFranchisee, setSelectedFranchisee] = useState(
     localStorage.getItem('franchisee_id')
   );
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
 
   console.log(MeFormData, 'MeFormData');
   const [OthersFormData, setOthersFormData] = useState([]);
@@ -120,6 +122,10 @@ function ViewFormBuilder(props) {
         });
         setMeFormData(me);
         setOthersFormData(others);
+        if(result)
+        {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -150,6 +156,7 @@ function ViewFormBuilder(props) {
   };
   return (
     <>
+      
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -170,6 +177,7 @@ function ViewFormBuilder(props) {
                     localStorage.setItem('f_id', id);
                   }}
                 />
+                <FullLoader loading={fullLoaderStatus} />
 
                 <div className="forms-header-section">
                   <div className="forms-managment-section">
