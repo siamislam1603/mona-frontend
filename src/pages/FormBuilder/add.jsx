@@ -210,7 +210,7 @@ function AddFormBuilder(props) {
                           }}
                           isInvalid={!!errors.form_type}
                         >
-                          <option value="">Select Form Type</option>
+                          <option value="">Select</option>
                           <option
                             value="single_submission"
                             selected={form?.form_type === 'single_submission'}
@@ -313,7 +313,7 @@ function AddFormBuilder(props) {
                             }}
                             isInvalid={!!errors.previous_form}
                           >
-                            <option value="1">Select Previous Form</option>
+                            <option value="1">Select</option>
                             {formData?.map((item) => {
                               return (
                                 <option
@@ -343,7 +343,7 @@ function AddFormBuilder(props) {
                             setField(e.target.name, e.target.value);
                           }}
                         >
-                          <option value="">Select Category</option>
+                          <option value="">Select</option>
                           {formCategory?.map((item) => {
                             return (
                               <option
