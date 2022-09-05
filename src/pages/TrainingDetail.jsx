@@ -266,7 +266,7 @@ const TrainingDetail = () => {
                           relatedForms &&
                           <Col md={12}>
                             <div className="related-form-sec mb-5">
-                              <h3 className="title-sm">Related Form</h3>
+                              <h3 className="title-sm">Training Assessment Form</h3>
                               <div className="column-list files-list three-col">
                                 <div className="item">
                                   <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
