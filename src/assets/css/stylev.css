@@ -929,6 +929,7 @@ width: 14px;
     border-color: #e5e5e5;
     min-height: 45px;
     padding: 4px 4px !important;
+    margin-bottom: 10px;
 }
 
 .multiselect-box .searchWrapper input::placeholder {

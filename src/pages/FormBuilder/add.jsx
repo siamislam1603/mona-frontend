@@ -23,9 +23,7 @@ function AddFormBuilder(props) {
   useEffect(() => {
     if (location?.state?.id) {
       getParticularFormData();
-    }
-    else
-    {
+    } else {
       setfullLoaderStatus(false);
     }
     getFormData();
@@ -140,7 +138,10 @@ function AddFormBuilder(props) {
           setfullLoaderStatus(false);
         }
       })
-      .catch((error) => console.log('error', error));
+      .catch((error) => {
+        console.log('error', error);
+        setfullLoaderStatus(false);
+      });
   };
   const getFormData = () => {
     var myHeaders = new Headers();

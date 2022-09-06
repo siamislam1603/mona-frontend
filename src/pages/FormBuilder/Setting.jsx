@@ -37,7 +37,7 @@ function Setting(props) {
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const [count, setCount] = useState(0);
-  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const setFields = (field, value) => {
     setForm({ ...form, [field]: value });
   };
@@ -200,13 +200,17 @@ function Setting(props) {
           oldResult.target_user = '';
           oldResult.fill_access_users = '';
           oldResult.response_visibility = '';
+          oldResult.accessible_to_role = true;
           setForm(oldResult);
         }
         if (result) {
           setfullLoaderStatus(false);
         }
       })
-      .catch((error) => console.log('error', error));
+      .catch((error) => {
+        console.log('error', error);
+        setfullLoaderStatus(false);
+      });
   };
   const setCheckBoxField = (name, value, checked) => {
     let data = { ...form };
@@ -457,7 +461,7 @@ function Setting(props) {
   return (
     <>
       <Form>
-      <FullLoader loading={fullLoaderStatus} />
+        <FullLoader loading={fullLoaderStatus} />
         <Row>
           <Col md={12} className="mt-3 mt-md-0">
             <div className="form_setting">
