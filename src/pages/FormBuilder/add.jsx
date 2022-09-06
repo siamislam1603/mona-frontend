@@ -263,7 +263,7 @@ function AddFormBuilder(props) {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
-                    <Col md={6}>
+                    {!location?.state?.id && <><Col md={6}>
                       <Form.Group>
                         <Form.Label>
                           Select Previous Form as a Template
@@ -341,7 +341,7 @@ function AddFormBuilder(props) {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
-                    ) : null}
+                    ) : null} </>}
                     <Col md={6} className="mt-3 mt-md-0">
                       <Form.Group>
                         <Form.Label>Select Category</Form.Label>
