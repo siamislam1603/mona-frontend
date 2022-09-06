@@ -9,7 +9,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
-import { TrainingFormValidation } from '../helpers/validation';
+import { TrainingFormValidation } from '../helpers/validation'
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
 
@@ -58,7 +58,7 @@ const validateTrainingSettings = (trainingSettings) => {
   return errors;
 }
 
-const AddNewTraining = () => {
+const     AddNewTraining = () => {
   // const [show, setShow] = useState(false);
   // const handleClose = () => setShow(false);
 
