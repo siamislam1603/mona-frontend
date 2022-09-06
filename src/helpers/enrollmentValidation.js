@@ -41,7 +41,6 @@ export const parentFormValidator = (parentForm) => {
   let {
     family_name,
     given_name,
-    usually_called,
     dob,
     usually_called,
     address_as_per_child,
