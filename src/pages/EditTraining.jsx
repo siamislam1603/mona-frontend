@@ -147,7 +147,7 @@ const EditTraining = () => {
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
     let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
-    const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${f}]`);
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -401,6 +401,7 @@ const EditTraining = () => {
     fetchTrainingFormData();
   }, [fileDeleteResponse]);
 
+  fetchedRelatedFiles && console.log('FETCHED RELATED FILES:', fetchedRelatedFiles);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -628,7 +629,7 @@ const EditTraining = () => {
                                   return (
                                     <div className="file-container">
                                       <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
-                                      <p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p>
+                                      <a href={file.file}><p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p></a>
                                       <img
                                         onClick={() => handleTrainingFileDelete(file.id)}
                                         className="file-remove"

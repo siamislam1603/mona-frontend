@@ -299,16 +299,16 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
             {/* {
               otherTrainingData?.length > 0 && <h1 style={{ marginBottom: '25px' }}>Created by others</h1>
             } */}
-            <header className="title-head mb-4 justify-content-between">
-              {otherTrainingData?.length > 0 &&
-                <h3 className="title-sm mb-0"><strong>Created by Other</strong></h3>
-
-              }
-              {otherTrainingData?.length > 0 &&
-                <Link to="/training-created-other" className="viewall">View All</Link>
-
-              }
-            </header>
+             <header className="title-head mb-4 justify-content-between">
+                            {otherTrainingData?.length > 0 && 
+                            <h3 className="title-sm mb-0"><strong>Created by Others</strong></h3>
+                            
+                            }
+                            {otherTrainingData?.length > 0 && 
+                            <Link to="/training-created-other" className="viewall">View All</Link>
+                            
+                            }
+                          </header>
             {otherTrainingData?.map((training) => {
               return (
                 <Col lg={4} md={6} key={training.id}>
@@ -324,7 +324,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
+                      <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time}</span></div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">

@@ -43,6 +43,7 @@ export const parentFormValidator = (parentForm) => {
     given_name,
     usually_called,
     dob,
+    usually_called,
     address_as_per_child,
     telephone,
     email,
@@ -57,6 +58,9 @@ export const parentFormValidator = (parentForm) => {
 
   if(family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(family_name)))
     errors.fullname = "Field shouldn't contain numbers & special characters"
+
+  if(usually_called.length > 0 && !(/^[a-zA-Z ]+$/i.test(usually_called)))
+    errors.usually_called = "Field shouldn't contain numbers & special characters"
 
   if(!given_name)
     errors.given_name = "Please complete mandatory field";
@@ -111,9 +115,6 @@ export const healthInformationFormValidator = (healthInformationForm, i_give_med
 
   if(!telephone)  
     errors.telephone = "Please complete mandatory field";
-
-  if(telephone.length > 0 && telephone.length < 10) 
-    errors.telephone = "Field should have 10 digits!";
 
   if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Field should only contain digits";  

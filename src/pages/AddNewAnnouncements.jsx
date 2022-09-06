@@ -27,7 +27,6 @@ const AddNewAnnouncements = () => {
     var yyyy = today.getFullYear();
     
     today = yyyy + '-' + mm + '-' + dd;
-    console.log("Today",today)
     return today
   }
   const hour = () =>{
@@ -36,18 +35,13 @@ const AddNewAnnouncements = () => {
     var date = new Date();
     let currentHours = date.getHours();
     currentHours = ("0" + currentHours).slice(-2);
-    console.log("Current hour",currentHours)
      min = date.getMinutes()+10
-    console.log("the large min out",min)
 
     if(min>60){
-      console.log("in is large then 60",min)
       let currentHours = date.getHours()+1;
        let newd=min- 60
       currentHours = ("0" + currentHours).slice(-2);
-      console.log("in is large new ",newd,min,date.getMinutes(),date.getMinutes()-min, typeof min,typeof date.getMinutes())
        time = currentHours + ":" + newd;
-       console.log("is large time",time)
 
     }
     else {
@@ -56,7 +50,6 @@ const AddNewAnnouncements = () => {
 
        time = currentHours + ":" + min
     }
-    console.log("time",time)
     return time;
 
     
@@ -69,6 +62,7 @@ const handleSaveAndClose = () => setShow(false);
 // CUSTOM STATES
 const location = useLocation();
 const [loader, setLoader] = useState(false);
+const [timeError,setTimeError] = useState()
 const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
 const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
@@ -76,8 +70,7 @@ const [announcementData, setAnnouncementData] = useState({
   is_event:0,
   franchise:[],
   start_date:theDate(),
-  // start_time:new Date().getHours() + ":" + new Date().getMinutes()
-  start_time:hour()
+  start_time:moment().add(10,"minutes").format("HH:mm")
 });
 const [titleError,setTitleError] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -93,10 +86,7 @@ const [titleError,setTitleError] = useState();
 
 const createAnnouncement = async (data) => {
   titleCheck()
-  console.log("CALLING CREATED ANNOUCNEMENT")
   try {
-    
-    // console.log("title checking", resp)
     const token = localStorage.getItem('token');
 
   const response = await axios.post(
@@ -107,21 +97,17 @@ const createAnnouncement = async (data) => {
     }
   );
 
-  console.log("ADde anncunement response",response);
-  console.log("jjjjjjjjjjjjjjjjjjjj");
+
   if(response.status === 200 && response.data.status === "fail"){
     setAddnewAnnouncement(false)
-    console.log("Response title",response.data)
-    console.log("TITLE ALREADY EXIT")
+
     // setTitleError("Title already exit")
   }
   
 
   if(response.status === 201 && response.data.status === "success" && coverImage.length > 0) {
-    console.log(typeof(coverImage));
 
-    console.log("datasaved");
-    console.log(response.data);
+
         let { id } = response.data.announcement;
     
         let data = new FormData();
@@ -135,11 +121,9 @@ const createAnnouncement = async (data) => {
               }
             }
           );
-          console.log(imgSaveResponse);
       
         if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
               
-          console.log('SUCCESS RESPONSE!');
           setLoader(false)
           localStorage.setItem('success_msg', 'Announcement Created Successfully!');
           localStorage.setItem('active_tab', '/created-announcement');
@@ -147,7 +131,6 @@ const createAnnouncement = async (data) => {
         
         } else {
       
-          console.log('ERROR RESPONSE!');
           setTopErrorMessage("Unable to save cover image!");
           setLoader(false)
           setAddnewAnnouncement(false)
@@ -165,11 +148,8 @@ const createAnnouncement = async (data) => {
         
     }
    } catch (error) {
-    console.log("ERROR ADD ANNOUNCEMNT",error)
     if(error.response.status === 403 && error.response.data.status === "fail")
-    console.log('ERROR RESPONSE! Permission Denied');
-    console.log("Error permsission",error)
-    setTopErrorMessage("Permission Denied");
+    setTopErrorMessage("Internal Server Error ");
     setAddnewAnnouncement(false)
 
     setLoader(false)
@@ -203,7 +183,6 @@ const createAnnouncement = async (data) => {
           "Authorization": `Bearer ${token}`
         }
       });
-      console.log("The franhsie list",response)
       if(response.status === 200 && response.data.status === "success") {
         let { franchiseeList } = response.data;
         setFranchiseeData(franchiseeList.map(franchisee => ({
@@ -237,12 +216,10 @@ const createAnnouncement = async (data) => {
         ...prevState,
         franchise: [...event.map(option => option.id + "")]
       }));
-      // console.log("EVENT ",event)
      
     };
 
     const announcementDescription = (field, value) => {
-      // console.log("The field and value in addnewannoucement",field,value)
       setAnnouncementData({ ...announcementData, [field]: value });
       if (!!error[field]) {
         setError({
@@ -255,7 +232,6 @@ const createAnnouncement = async (data) => {
     const handleAnnouncementData = (event) => {
       const { name, value } = event.target;
       setTitleError()
-      // console.log("The name and value",name,value)
       if(localStorage.getItem("user_role") === "franchisee_admin"){
 
         let id = localStorage.getItem("franchisee_id")
@@ -281,20 +257,16 @@ const createAnnouncement = async (data) => {
     const titleCheck = async() =>{
       try {
         const token = localStorage.getItem('token');
-        console.log(announcementData.title)
             const resp = await axios.get(`${BASE_URL}/announcement/check-title?title=${announcementData.title}`,{
               headers: {
                 "Authorization": "Bearer " + token
               }
             })
-            console.log("title checking", resp)
             if(resp.status === 200 && resp.data.status === "success"){
               setTitleChecking(true)
             }
-            console.log("Title check call", resp)
       } catch (error) {
          if(error.response.status === 404){
-          console.log("TItle checking error",error)
           setTitleChecking(false)
           // setAddnewAnnouncement(false)
           setTitleError("Anouncement title already exit ")
@@ -308,22 +280,13 @@ const createAnnouncement = async (data) => {
     }
     const handleDataSubmit = event => {
       event.preventDefault();
-      console.log("All frnahise",allFranchise)
-      console.log("The annoucement after submit ",announcementData)
-      console.log("THe title error",titleError,titleChecking)
-      
       let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking);
-
-      console.log("The error of announcement",errorObj)
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
-        // errorRef.current.scrollIntoView();
-
         window.scroll(0,0)
         
        }
        else{
-        console.log("INSDIE ERROR EMPTY")
         setError({});
         if(announcementData && coverImage && videoTutorialFiles) {
           let data = new FormData();
@@ -334,7 +297,6 @@ const createAnnouncement = async (data) => {
     
           videoTutorialFiles.forEach((file, index) => {
             data.append(`images`, file);
-            console.log("APPEND VIDEO")
           });
     
           relatedFiles.forEach((file, index) => {
@@ -343,16 +305,12 @@ const createAnnouncement = async (data) => {
           setAddnewAnnouncement(true)
           setLoader(true);
            createAnnouncement(data);
-         console.log("The data",data)
        }
       }
-      console.log("The datad adndsjkvnskdja ")
   };
 
   
 
-  console.log("Date",new Date().toISOString().slice(0,10))
-  // console.log("Time",new Date().getHours() + ":" + new Date().getMinutes())
   useEffect(() => {
     fetchFranchiseeUsers(selectedFranchisee);
   }, [selectedFranchisee]);
@@ -373,27 +331,26 @@ const createAnnouncement = async (data) => {
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
   });
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
+
     useEffect(() =>{
       const role = localStorage.getItem("user_role")
-      console.log("The role 3", role) 
       setUserRole(role)
       // hour()
       // theDate()
     },[])
 
 
-   
-  // coverImage && console.log("TYPE OF IMAGE:", typeof coverImage);
-  console.log("The franhiseData 1",allFranchise,titleChecking);
-  console.log("SELECETED FRANHISE",selectedFranchisee,franchiseeData)
-  announcementData && console.log('Announcement Data:', announcementData);
+
+var ds=moment().add(10,"minutes").format("HH:mm")
+var cureent = moment().format("HH:mm")
+
+console.log("moment",moment(new Date(),"HH:mm"))
+console.log("ds",ds,cureent)
+// const valid = moment().add(10,"minutes").format("HH:mm").isAfter(cureent);
+// console.log("valid",valid)
+
+   console.log("Announcement Data",announcementData)
+
   return (
     
     <>
@@ -602,14 +559,16 @@ const createAnnouncement = async (data) => {
                   <Form.Control 
                     type="time"
                     name="start_time"
-                    onChange={handleAnnouncementData}
-                    defaultValue={hour()}
+                    onChange={handleAnnouncementData}  
+                    
+                    
+                    defaultValue={moment().add(10, 'minutes').format('HH:mm')}
                     // min={moment().add(6, "hours")}
                     onInvalid={!!error.start_time}
                   />
                 </Form.Group>
                 {error.start_time && <p className="form-errors">{error.start_time}</p>}
-             
+                <h1>{timeError}</h1>
               </Col>
 
               <Col lg={3} sm={6}>

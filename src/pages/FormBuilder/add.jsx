@@ -23,6 +23,8 @@ function AddFormBuilder(props) {
   useEffect(() => {
     if (location?.state?.id) {
       getParticularFormData();
+    } else {
+      setfullLoaderStatus(false);
     }
     getFormData();
     getFormCategory();
@@ -136,7 +138,10 @@ function AddFormBuilder(props) {
           setfullLoaderStatus(false);
         }
       })
-      .catch((error) => console.log('error', error));
+      .catch((error) => {
+        console.log('error', error);
+        setfullLoaderStatus(false);
+      });
   };
   const getFormData = () => {
     var myHeaders = new Headers();
@@ -189,7 +194,7 @@ function AddFormBuilder(props) {
                   <Row>
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label>Form title</Form.Label>
+                        <Form.Label>Form Title</Form.Label>
                         <Form.Control
                           type="text"
                           name="form_name"
@@ -258,7 +263,7 @@ function AddFormBuilder(props) {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
-                    <Col md={6}>
+                    {!location?.state?.id && <><Col md={6}>
                       <Form.Group>
                         <Form.Label>
                           Select Previous Form as a Template
@@ -336,7 +341,7 @@ function AddFormBuilder(props) {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
-                    ) : null}
+                    ) : null} </>}
                     <Col md={6} className="mt-3 mt-md-0">
                       <Form.Group>
                         <Form.Label>Select Category</Form.Label>

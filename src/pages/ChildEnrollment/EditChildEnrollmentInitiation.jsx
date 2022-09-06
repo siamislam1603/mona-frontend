@@ -121,6 +121,10 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     }
   }
 
+  const initiateCancelEvent = () => {
+    window.location.href=`/children/${paramsParentId}`;
+  }
+
   useEffect(() => {
     console.log('FETCHING EDUCATOR LIST!');
     fetchEducatorList();
@@ -130,10 +134,6 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     fetchAndPopulateChildData();
   }, []);
   
-  formOneChildData && console.log('CHILD DATA:', formOneChildData);
-  educatorData && console.log('EDUCATOR DATA:', educatorData);
-  // selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
-  // errors && console.log('ERRORS:', errors);
   return (
     <>
       <div id="main">
@@ -294,6 +294,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                         </div>
                       </div>
                       <div className="cta text-center mt-5 mb-5">
+                        <Button variant="outline" onClick={() => initiateCancelEvent()} className="me-3">Cancel</Button>
                         <Button variant="primary" type="submit">
                           {loader === true ? (
                             <>

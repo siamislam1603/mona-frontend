@@ -77,7 +77,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       //(child.consent_signature);
       setConsentData(prevState => ({
         ...prevState,
-        parent_name: child.consent_parent_name || "",
+        parent_name: child.consent_parent_name ||  `${parentData[0].family_name} ${parentData[0].given_name}`,
         consent_date: moment(child.consent_date).format('YYYY-MM-DD'),
         consent_signature: child.consent_signature
       }));
@@ -204,6 +204,10 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   };
 
   const handleSubmissionRedirection = async () => {
+    localStorage.removeItem('asked_for_consent');
+    localStorage.removeItem('consent_comment');
+    localStorage.removeItem('has_given_consent');
+    
     console.log('UPDATING THE ENROLLMENT STATE!');
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');

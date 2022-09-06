@@ -96,7 +96,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   const onSubmit = (e) => {
     e.preventDefault();
  
-    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData);
+    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData,allFranchise);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       window.scroll(0,0)
@@ -104,7 +104,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
     else{
       setErrors({})
       if(announcementCopyData ) {
-         console.log("After submit the buton",announcementCopyData)
+         
          let data = new FormData();
       
          for(let [ key, values ] of Object.entries(announcementCopyData)) {
@@ -118,33 +118,26 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
           });
           setUpdateAnnouncement(true);
           setLoader(true)
-          console.log("The edit announcement")
           UpdateAnnouncement(data)
       }
     }
   };
   const deleteAnnouncemetFile =  async (fileId) =>{
-    console.log(`The delete file with id : ${fileId}`)
     let token = localStorage.getItem('token')
     const deleteResponse = await axios.delete(`${BASE_URL}/announcement/?fileId=${fileId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The Delete reponse",deleteResponse)
     if(deleteResponse.status === 200){
-      console.log("Related file deleted")
       setFileDeleteResponse(!fileDeleteResponse)
 
     }
-    // console.log("The deleted File",deleteResponse)
   }
   const UpdateAnnouncement = async(data) =>{
     // data.append("")
     const theres = await  axios.post('https://httpbin.org/anything', data);
-        console.log("THE RESPONSE",theres)
         try {
-          console.log("Updating Annoucement")
           const token = localStorage.getItem('token');
           setTheMessage("Uploading The Documents")
           
@@ -153,20 +146,13 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
               "Authorization": "Bearer " + token
             }
            });
-           console.log("The cover image inside updating ",coverImage)
            
            if(response.status === 200 && response.data.status === "success" && coverImage){
               const id = announcementData.id;
-              console.log("The id",id)
-              console.log("The cover image inside 2",coverImage)
-             
-              // const theres = await  axios.post('https://httpbin.org/anything', data);
-              // console.log("THE RESPONSE",theres)
-              // console.log("THE COVER IMAGE TYPE",typeof coverImage)
+         
               if(typeof coverImage === "string"){
                 setTheMessage("Uploading The Images and Videos")
       
-                console.log("The String type")
                 let imageFile = await axios.put(`${BASE_URL}/announcement/createdAnnouncement/${id}`,{
                   coverImage: coverImage
                 },{
@@ -175,26 +161,21 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                   }
                 })
                 if(imageFile.status === 200){
-                  console.log("Announcement update successfully ")
                   window.location.href="/announcements";    
       
                    
                 }
               }
               
-              else if(coverImage === null){
-                console.log("The cover image is null")
-              }
+
               else if (typeof coverImage === "object" || coverImage === null || coverImage === "undefined"){
                 if(Object.keys(coverImage).length === 0){
-                    console.log("The cover image is empty")
                     window.location.href="/announcements"; 
                     setCoverImage(null) 
                     setFetchedCoverImage(null)  
 
                 }
                 else{
-                  console.log("The Object Type", typeof coverImage)
                 let data = new FormData()
                 data.append('id',id);
                 data.append('image', coverImage[0]);
@@ -207,9 +188,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                     }
                   }
                 );
-                console.log("The image",imgSaveResponse);
                 if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {            
-                  console.log('SUCCESS RESPONSE!');
                    setTheMessage(" ")
       
                   setLoader(false)
@@ -218,7 +197,6 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
                   window.location.href="/announcements";    
                 }
                 else{
-                      console.log('ERROR RESPONSE!');
                       setTopErrorMessage("unable to save cover image!");
                       setTimeout(() => {
                       setTopErrorMessage(null);
@@ -228,31 +206,16 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
               }
            }
            else{
-            console.log("The cover image is empty")
             window.location.href="/announcements";    
 
            }
          
           
         } catch (error) {
-          // if(response.status === 200 && response.data.status === "fail") {
-          //   console.log('ERROR RESPONSE!');
-          //   const { msg } = response.data;
-          
-          //   console.log("Annoncement Already exit",msg)
-          //   setTopErrorMessage(msg);
-          //   setLoader(false);
-          //   setUpdateAnnouncement(false);
-          //   setTimeout(() => {
-          //     setTopErrorMessage(null);
-          //   }, 3000)
-          // }
-          console.log("The error",error)
+
 
           if(error.response.status === 403 && error.response.data.status === "fail"){
-            console.log('ERROR RESPONSE!', error);
           
-            console.log("Annoncement Already exit",)
             setUpdateAnnouncement(false)
             setTopErrorMessage("Announcement Already exit");
             // setLoader(false);
@@ -270,7 +233,6 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The franchiselist",response.data)
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 
@@ -295,7 +257,6 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
        "Authorization": "Bearer " + token
      }
     })
-    console.log("The reponse after edit ",response.data)
     if(response.status === 200) {
       setAnnouncementData(response.data.data.all_announcements)
 
@@ -357,12 +318,8 @@ const selectFranhise = () =>{
     copyFetchedData();
     AnnouncementDetails()
 },[fileDeleteResponse])
- 
-  console.log("ANNOUNCEMENT DATA",announcementData)
-  console.log("The cover image",announcementCopyData)
-  console.log("FRaNHISEE DATA",franchiseeData)
-  console.log("ALL FRNHIASE",allFranchise)
-  console.log("The value",franchiseeData && franchiseeData.filter(c => announcementCopyData.franchise?.includes(c.id + "")))  
+  console.log("My annoucnement",announcementData)
+  
   return (
     <>
    
