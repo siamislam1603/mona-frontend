@@ -348,7 +348,7 @@ const Children = () => {
                                         <img src="../img/dot-ico.svg" alt="" />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
                                         {cell.enrollFlag === 0 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
                                         <Dropdown.Item href="#">Add Educator</Dropdown.Item>
                                         <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>

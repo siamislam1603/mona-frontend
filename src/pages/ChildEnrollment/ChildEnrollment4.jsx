@@ -475,7 +475,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
-                      maxLength={10}
+                      maxLength={20}
                       value={emergencyContactData?.telephone || ""}
                       type="tel"
                       onChange={(e) => {
@@ -544,7 +544,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control 
                       type="tel"
-                      maxLength={10}
+                      maxLength={20}
                       name="telephone"
                       onChange={(e) => {
                         handleEmergencyContact2(e)
@@ -624,7 +624,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control 
                       name="telephone"
                       type="tel"
-                      maxLength={10}
+                      maxLength={20}
                       value={authorizedNomineeData?.telephone || ""}
                       onChange={(e) => {
                         setAuthorizedNomineeData(prevState => ({
@@ -693,7 +693,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control 
                       type="tel"
-                      maxLength={10}
+                      maxLength={20}
                       name="telephone"
                       onChange={(e) => {
                         handleAuthorizedNominee2(e)
@@ -776,7 +776,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       name="telephone"
                       value={authorizedPersonData?.telephone || ""}
                       type="tel"
-                      maxLength={10}
+                      maxLength={20}
                       onChange={(e) => {
                         setAuthorizedPersonData(prevState => ({
                           ...prevState,
@@ -844,7 +844,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control 
                       type="tel"
-                      maxLength={10}
+                      maxLength={20}
                       name="telephone"
                       onChange={(e) => {
                         handleAuthorizedPerson2(e)
@@ -925,7 +925,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                       name="telephone"
                       value={otherAuthorizedPersonData?.telephone || ""}
                       type="tel"
-                      maxLength={10}
+                      maxLength={20}
                       onChange={(e) => {
                         setOtherAuthorizedPersonData(prevState => ({
                           ...prevState,
@@ -993,7 +993,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone</Form.Label>
                     <Form.Control 
                       type="tel"
-                      maxLength={10}
+                      maxLength={20}
                       name="telephone"
                       onChange={(e) => {
                         handleOtherAuthorizedPerson2(e)

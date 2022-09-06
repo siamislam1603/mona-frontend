@@ -179,7 +179,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
       if (response.status === 201 && response.data.status === "success") {
 
-        // SENDING IMMUNIZATION RECORD REQUEST  
+        // SENDING IMMUNISATION RECORD REQUEST  
         response = await axios.post(`${BASE_URL}/enrollment/immunisation-record`, { ...childImmunisationRecord, childId }, {
           headers: {
             "Authorization": `Bearer ${token}`
@@ -545,7 +545,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="tel"
                         name="telephone"
-                        maxLength={10}
+                        maxLength={20}
                         value={healthInformation?.telephone || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
@@ -756,7 +756,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   }
                 </Row>
               </div>
-              <h2 className="title-xs mt-4 mb-4">Child's immunization record R 162 (F)</h2>
+              <h2 className="title-xs mt-4 mb-4">Child's immunisation record R 162 (F)</h2>
               <div className="grayback">
                 <Row>
                   <Col md={12}>
@@ -845,7 +845,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </ol>
                 </div> */}
 
-                  <h2 className="title-xs mt-4 mb-4">Child's Immunization Record</h2>
+                  <h2 className="title-xs mt-4 mb-4">Child's Immunisation Record</h2>
 
                   <div className="grayback">
                     <Table responsive="md" className="text-left">
@@ -2592,7 +2592,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
                         <tr>
                           <td colspan="8">
-                            Additional immunizations for Aboriginals and Torres Strait Islander Children (If required)
+                            Additional immunisations for Aboriginals and Torres Strait Islander Children (If required)
                           </td>
                         </tr>
                       </tbody>
