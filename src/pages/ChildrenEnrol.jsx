@@ -333,7 +333,7 @@ const ChildrenEnrol = () => {
     },
     {
       dataField: 'enrolldate',
-      text: 'Enrollment Initiated ',
+      text: 'Enrolment Initiated ',
       formatter: (cell) => {
         console.log("frnahise CELL", cell)
         // cell = cell.split(",");

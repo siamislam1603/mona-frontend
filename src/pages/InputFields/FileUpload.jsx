@@ -1,5 +1,5 @@
-import { Form,Col } from "react-bootstrap";
-import { BASE_URL } from "../../components/App";
+import { Form, Col } from 'react-bootstrap';
+import { BASE_URL } from '../../components/App';
 import { toast } from 'react-toastify';
 
 const FileUpload = (props) => {
@@ -13,47 +13,48 @@ const FileUpload = (props) => {
     });
   const uploadFiles = async (file) => {
     if (file.size > 2048 * 1024) {
-      alert('File is too large. File limit 2 MB.');
-    }
-    const body = new FormData();
-    const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-    body.append('image', blob, file.name);
-    body.append('description', 'form module');
-    body.append('title', 'image');
-    body.append('uploadedBy', 'vaibhavi');
+      toast.error('File is too large. File limit 2 MB.');
+      return null;
+    } else {
+      const body = new FormData();
+      const blob = await fetch(await toBase64(file)).then((res) => res.blob());
+      body.append('image', blob, file.name);
+      body.append('description', 'form module');
+      body.append('title', 'image');
+      body.append('uploadedBy', 'vaibhavi');
 
-    var myHeaders = new Headers();
-    myHeaders.append('shared_role', 'admin');
-    let res= await fetch(`${BASE_URL}/uploads/uiFiles`, {
-      method: 'post',
-      body: body,
-      headers: myHeaders,
-    })
-    let data=await res.json();
-    return data?.url;
-       
+      var myHeaders = new Headers();
+      myHeaders.append('shared_role', 'admin');
+      let res = await fetch(`${BASE_URL}/uploads/uiFiles`, {
+        method: 'post',
+        body: body,
+        headers: myHeaders,
+      });
+      let data = await res.json();
+      toast.success('uploaded.');
+      return data?.url;
+    }
   };
   return (
     <Col sm={6}>
-    <Form.Group>
-      <Form.Label>{controls.field_label}</Form.Label>
+      <Form.Group>
+        <Form.Label>{controls.field_label}</Form.Label>
 
-      <Form.Control
-        type="file"
-        name={controls.field_name}
-        onChange={async(e) => {
-          let file = e.target.files[0];
-            await uploadFiles(file).then((url)=>{
-              toast.success("uploaded!!");
-              props.onChange(e.target.name, url,"file");
+        <Form.Control
+          type="file"
+          name={controls.field_name}
+          onChange={async (e) => {
+            let file = e.target.files[0];
+            await uploadFiles(file).then((url) => {
+              props.onChange(e.target.name, url, 'file');
             });
-        }}
-        isInvalid={!!controls.error[controls.field_name]}
-      />
-      <Form.Control.Feedback type="invalid">
-        {controls.error[controls.field_name]}
-      </Form.Control.Feedback>
-    </Form.Group>
+          }}
+          isInvalid={!!controls.error[controls.field_name]}
+        />
+        <Form.Control.Feedback type="invalid">
+          {controls.error[controls.field_name]}
+        </Form.Control.Feedback>
+      </Form.Group>
     </Col>
   );
 };

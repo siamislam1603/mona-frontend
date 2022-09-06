@@ -175,6 +175,11 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
     newErrors.start_date = 'Start Date Required';
   if (!start_time || start_time === 'undefined')
     newErrors.start_time = 'Start Time Required';
+  if(start_time){
+    if(start_time<moment().add(10,"minutes").format("HH:mm")){
+      newErrors.start_time = "You can only create an announcement past 10 minutes from the current date and time."
+    }
+  }
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Announcement Description is Required';
 
@@ -492,9 +497,6 @@ export const UserFormValidation = (formObj) => {
 
   if (!phone) errors.phone = 'Phone number is required';
 
-  if (phone.length > 0 && phone.length < 10)
-    errors.phone = 'Phone number must be 10-digits long.'
-
   return errors;
 };
 
@@ -525,11 +527,7 @@ export const personValidation = (personValidationForm) => {
   if (!telephone) errors.telephone = 'Please complete mandatory field';
 
   if(!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits"; 
-
-  if(telephone.length > 0 && telephone.length < 10) 
-    errors.telephone = "Field should contain 10 digits!";
-
+    errors.telephone = "Field should only contain digits";
 
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
@@ -548,10 +546,6 @@ export const personValidation2 = (personValidationForm) => {
 
   if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Field should only contain digits!";
-
-
-  if(telephone.length > 0 && telephone.length < 10) 
-    errors.telephone = "Field should contain 10 digits!";
 
   return errors;
 }

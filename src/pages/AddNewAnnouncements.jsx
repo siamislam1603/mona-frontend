@@ -62,6 +62,7 @@ const handleSaveAndClose = () => setShow(false);
 // CUSTOM STATES
 const location = useLocation();
 const [loader, setLoader] = useState(false);
+const [timeError,setTimeError] = useState()
 const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
 const [userRoles, setUserRoles] = useState([]);
 const [announcementData, setAnnouncementData] = useState({
@@ -69,8 +70,7 @@ const [announcementData, setAnnouncementData] = useState({
   is_event:0,
   franchise:[],
   start_date:theDate(),
-  // start_time:new Date().getHours() + ":" + new Date().getMinutes()
-  start_time:hour()
+  start_time:moment().add(10,"minutes").format("HH:mm")
 });
 const [titleError,setTitleError] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
@@ -280,13 +280,9 @@ const createAnnouncement = async (data) => {
     }
     const handleDataSubmit = event => {
       event.preventDefault();
-
-      
       let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking);
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
-        // errorRef.current.scrollIntoView();
-
         window.scroll(0,0)
         
        }
@@ -335,13 +331,7 @@ const createAnnouncement = async (data) => {
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
   });
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
+
     useEffect(() =>{
       const role = localStorage.getItem("user_role")
       setUserRole(role)
@@ -350,7 +340,16 @@ const createAnnouncement = async (data) => {
     },[])
 
 
-   
+
+var ds=moment().add(10,"minutes").format("HH:mm")
+var cureent = moment().format("HH:mm")
+
+console.log("moment",moment(new Date(),"HH:mm"))
+console.log("ds",ds,cureent)
+// const valid = moment().add(10,"minutes").format("HH:mm").isAfter(cureent);
+// console.log("valid",valid)
+
+   console.log("Announcement Data",announcementData)
 
   return (
     
@@ -560,14 +559,16 @@ const createAnnouncement = async (data) => {
                   <Form.Control 
                     type="time"
                     name="start_time"
-                    onChange={handleAnnouncementData}
-                    defaultValue={hour()}
+                    onChange={handleAnnouncementData}  
+                    
+                    
+                    defaultValue={moment().add(10, 'minutes').format('HH:mm')}
                     // min={moment().add(6, "hours")}
                     onInvalid={!!error.start_time}
                   />
                 </Form.Group>
                 {error.start_time && <p className="form-errors">{error.start_time}</p>}
-             
+                <h1>{timeError}</h1>
               </Col>
 
               <Col lg={3} sm={6}>

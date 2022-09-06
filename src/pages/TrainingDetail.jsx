@@ -55,7 +55,7 @@ const TrainingDetail = () => {
     } else {
       setTimeout(() => {
         setShowSurveyForm(true);
-      }, 2000);
+      }, 0);
     }
   };
 
@@ -345,9 +345,10 @@ const TrainingDetail = () => {
 
       {
         <Modal 
-          show={showSurveyForm}>
-          <Modal.Header>
-            <Modal.Title>Congratulations!</Modal.Title>
+          show={showSurveyForm}
+          onHide={() => setShowSurveyForm(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Proceed to your assessment</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>

@@ -14,25 +14,27 @@ const ImageUpload = (props) => {
     });
   const uploadFiles = async (file) => {
     if (file.size > 2048 * 1024) {
-      alert('File is too large. File limit 2 MB.');
-    }
-    const body = new FormData();
-    const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-    body.append('image', blob, file.name);
-    body.append('description', 'form module');
-    body.append('title', 'image');
-    body.append('uploadedBy', 'vaibhavi');
+      toast.error('File is too large. File limit 2 MB.');
+      return null;
+    } else {
+      const body = new FormData();
+      const blob = await fetch(await toBase64(file)).then((res) => res.blob());
+      body.append('image', blob, file.name);
+      body.append('description', 'form module');
+      body.append('title', 'image');
+      body.append('uploadedBy', 'vaibhavi');
 
-    var myHeaders = new Headers();
-    myHeaders.append('shared_role', 'admin');
-    let res= await fetch(`${BASE_URL}/uploads/uiFiles`, {
-      method: 'post',
-      body: body,
-      headers: myHeaders,
-    })
-    let data=await res.json();
-    return data?.url;
-       
+      var myHeaders = new Headers();
+      myHeaders.append('shared_role', 'admin');
+      let res = await fetch(`${BASE_URL}/uploads/uiFiles`, {
+        method: 'post',
+        body: body,
+        headers: myHeaders,
+      });
+      let data = await res.json();
+      toast.success('uploaded.');
+      return data?.url;
+    }
   };
   return (
     <Col sm={6}>
@@ -45,7 +47,6 @@ const ImageUpload = (props) => {
           onChange={async (e) => {
             let file = e.target.files[0];
             await uploadFiles(file).then((url)=>{
-              toast.success("uploaded!!");
               props.onChange(e.target.name, url,"image");
             });
           }}

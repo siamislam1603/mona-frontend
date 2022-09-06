@@ -37,8 +37,8 @@ function ViewFormBuilder(props) {
   const [selectedFranchisee, setSelectedFranchisee] = useState(
     localStorage.getItem('franchisee_id')
   );
-  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
-  const [formId,setFormId]=useState(null);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [formId, setFormId] = useState(null);
   console.log(MeFormData, 'MeFormData');
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState('created-by-me');
@@ -54,9 +54,8 @@ function ViewFormBuilder(props) {
       navigate('/form', { state: { message: null } });
     }
     getFormData('');
-    
   }, []);
-    const getAllForm = () => {
+  const getAllForm = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
 
@@ -69,12 +68,13 @@ function ViewFormBuilder(props) {
     fetch(`${BASE_URL}/form/list`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        result?.result?.map((item)=>{
-          if(item.form_name.toLowerCase()===IGNORE_REMOVE_FORM.toLowerCase())
-          {
+        result?.result?.map((item) => {
+          if (
+            item.form_name.toLowerCase() === IGNORE_REMOVE_FORM.toLowerCase()
+          ) {
             setFormId(item.id);
           }
-        })
+        });
       })
       .catch((error) => console.log('error', error));
   };
@@ -147,12 +147,14 @@ function ViewFormBuilder(props) {
         });
         setMeFormData(me);
         setOthersFormData(others);
-        if(result)
-        {
+        if (result) {
           setfullLoaderStatus(false);
         }
       })
-      .catch((error) => console.log('error', error));
+      .catch((error) => {
+        console.log('error', error);
+        setfullLoaderStatus(false);
+      });
   };
   const seenFormResponse = (data) => {
     let seenData = [];
@@ -181,7 +183,7 @@ function ViewFormBuilder(props) {
   };
   return (
     <>
-      {console.log("form_id--->",formId)}
+      {console.log('form_id--->', formId)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -228,9 +230,10 @@ function ViewFormBuilder(props) {
                       {(localStorage.getItem('user_role') ===
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
-                          'franchisor_admin' ||
-                        localStorage.getItem('user_role') ===
-                          'coordinator') && (
+                          'franchisor_admin' 
+                        // || localStorage.getItem('user_role') ===
+                        //   'coordinator'
+                          ) && (
                         <div className="forms-create">
                           <Button
                             variant="primary"
@@ -247,7 +250,11 @@ function ViewFormBuilder(props) {
                   </div>
                   <div className="tab-section">
                     <Tabs
-                      defaultActiveKey="forms-to-complete"
+                      defaultActiveKey={
+                        location?.state?.form_template
+                          ? 'form-templates'
+                          : 'forms-to-complete'
+                      }
                       id="uncontrolled-tab-example"
                       className="mb-3"
                     >
@@ -278,7 +285,7 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
-                                            inner_item?.form_permissions[0]
+                                            inner_item.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -290,7 +297,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item?.form_permissions[0]
+                                              inner_item.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -422,7 +429,6 @@ function ViewFormBuilder(props) {
                                   <Row>
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
-                                        console.log('OBJECT:>>>', inner_item);
                                         return inner_item?.end_date === null &&
                                           !(
                                             inner_item?.form_filled_user || []
@@ -442,7 +448,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item?.form_permissions[0]
+                                              inner_item.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem('user_id')
@@ -462,6 +468,7 @@ function ViewFormBuilder(props) {
                                           <>
                                             {item.title_flag === false && (
                                               <>
+                                                {(item['title_flag'] = true)}
                                                 <Col lg={12}>
                                                   <h2 className="page_title">
                                                     {item.category}
@@ -769,14 +776,16 @@ function ViewFormBuilder(props) {
                         <Tab eventKey="form-templates" title="Form Templates">
                           <div className="tab-created">
                             <Tabs
-                              defaultActiveKey={key}
+                              defaultActiveKey={localStorage.getItem('user_role') ===
+                          'coordinator' ? "created-by-others" : key}
                               id="uncontrolled-tab-example"
                               className="mb-3"
                               onSelect={(k) => {
                                 setKey(k);
                               }}
                             >
-                              <Tab
+                              {!localStorage.getItem('user_role') ===
+                          'coordinator' && <Tab
                                 className="create-me create_by_me_list"
                                 eventKey="created-by-me"
                                 title="Created by me"
@@ -940,7 +949,7 @@ function ViewFormBuilder(props) {
                                     );
                                   })}
                                 </div>
-                              </Tab>
+                              </Tab>}
                               <Tab
                                 className="create-me"
                                 eventKey="created-by-others"
@@ -1242,7 +1251,13 @@ function ViewFormBuilder(props) {
                                 }
                               >
                                 {moment(item[0].createdAt).format('DD/MM/YYYY')}{' '}
-                                - {item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":")} Hrs
+                                -{' '}
+                                {item[0].createdAt
+                                  .split('T')[1]
+                                  .split('.')[0]
+                                  .split(':', 2)
+                                  .join(':')}{' '}
+                                Hrs
                               </h4>
                               <button
                                 onClick={() => {
@@ -1308,7 +1323,13 @@ function ViewFormBuilder(props) {
                                 }
                               >
                                 {moment(item[0].createdAt).format('DD/MM/YYYY')}{' '}
-                                - {item[0].createdAt.split('T')[1].split('.')[0].split(":",2).join(":")} Hrs
+                                -{' '}
+                                {item[0].createdAt
+                                  .split('T')[1]
+                                  .split('.')[0]
+                                  .split(':', 2)
+                                  .join(':')}{' '}
+                                Hrs
                               </h4>
                               <button
                                 onClick={() => {
