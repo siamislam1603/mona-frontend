@@ -108,6 +108,10 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     }
   }
 
+  const initiateCancelEvent = () => {
+    window.location.href=`/children/${parentId}`;
+  }
+
   useEffect(() => {
     console.log('FETCHING EDUCATOR LIST!');
     fetchEducatorList();
@@ -142,6 +146,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
+
                                 <Form.Label>Child's First Name *</Form.Label>
                                 <Form.Control
                                   type="text"
@@ -276,6 +281,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                         </div>
                       </div>
                       <div className="cta text-center mt-5 mb-5">
+                        <Button variant="outline" onClick={() => initiateCancelEvent()} className="me-3">Cancel</Button>
                         <Button variant="primary" type="submit">
                           {loader === true ? (
                             <>

@@ -159,6 +159,7 @@ console.log("checkPassword", checkResetPassword)
                     <Form.Control
                       className="form_input"
                       type={!hide ? 'text' : 'password'}
+
                       name="new_password"
                       onChange={(e) => {
                           setField(e.target.name,e.target.value)
@@ -196,6 +197,7 @@ console.log("checkPassword", checkResetPassword)
                     <Form.Control
                       className="form_input"
                       type={!secHide ? 'text' : 'password'}
+
                       name="confirm_password"
                       onChange={(e) => {
                           setField(e.target.name,e.target.value)

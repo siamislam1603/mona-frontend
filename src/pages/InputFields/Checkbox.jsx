@@ -6,7 +6,7 @@ const Checkbox = (props) => {
   return (
     <Col sm={6}>
       <div className="child_info_field sex flex_wrap_checkbox">
-        <label className="form-label">{controls.field_label}:</label>
+        <label className="form-label">{controls.field_label}</label>
         <div className="d-flex mt-2"></div>
         <div className="btn-radio d-flex align-items-center modal-two-check dynamic-form-check">
           {console.log('eval(controls.option)', eval(controls.option))}

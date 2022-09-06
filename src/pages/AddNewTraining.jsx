@@ -9,7 +9,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
-import { TrainingFormValidation } from '../helpers/validation';
+import { TrainingFormValidation } from '../helpers/validation'
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
 
@@ -58,7 +58,7 @@ const validateTrainingSettings = (trainingSettings) => {
   return errors;
 }
 
-const AddNewTraining = () => {
+const     AddNewTraining = () => {
   // const [show, setShow] = useState(false);
   // const handleClose = () => setShow(false);
 
@@ -363,8 +363,7 @@ const AddNewTraining = () => {
   //   }))
   // }, [croppedImage])
 
-  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
-
+  trainingData && console.log('TRAINING DATA:', trainingData);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -391,10 +390,10 @@ const AddNewTraining = () => {
                     </h1>
                   </header>
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
-                  <div className="training-form">
+                  <div className="training-form error-sec">
                     <Row>
 
-                      <Col md={6} className="mb-3">
+                      <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Training Name *</Form.Label>
                           <Form.Control
@@ -432,7 +431,7 @@ const AddNewTraining = () => {
                         </Form.Group>
                       </Col>
 
-                      <Col md={6} className="mb-3">
+                      <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Training Category *</Form.Label>
                           <Select
@@ -456,7 +455,7 @@ const AddNewTraining = () => {
                         </Form.Group>
                       </Col>
 
-                      <Col md={12} className="mb-3">
+                      <Col md={12} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Training Description *</Form.Label>
                           <Form.Control
@@ -475,7 +474,7 @@ const AddNewTraining = () => {
                         </Form.Group>
                       </Col>
 
-                      <Col md={12} className="mb-3">
+                      <Col md={12} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Meta Description *</Form.Label>
                           <Form.Control
@@ -500,8 +499,8 @@ const AddNewTraining = () => {
                         </Form.Group>
                       </Col>
 
-                      <Col md={6} className="mb-3">
-                        <Form.Group className="relative">
+                      <Col md={6} className="mb-3 relative">
+                        <Form.Group>
                           <Form.Label>Time required to complete*</Form.Label>
                           <div style={{ display: "flex", gap: "5px" }}>
                             <Form.Control
@@ -545,7 +544,7 @@ const AddNewTraining = () => {
                           </Form.Control.Feedback> */}
                       </Col>
 
-                      <Col md={6} className="mb-3">
+                      <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Select Training Form</Form.Label>
                           <Select
@@ -565,7 +564,7 @@ const AddNewTraining = () => {
                     </Row>
                     <Row>
 
-                      <Col md={6} className="mb-3">
+                      <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Upload Cover Image *</Form.Label>
                           {/* <DropOneFile
@@ -602,7 +601,7 @@ const AddNewTraining = () => {
                         </Form.Group>
                       </Col>
 
-                      <Col md={6} className="mb-3">
+                      <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Upload Video</Form.Label>
                           <DropAllFile
@@ -614,7 +613,7 @@ const AddNewTraining = () => {
                         </Form.Group>
                       </Col>
 
-                      <Col md={6} className="mb-3">
+                      <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Upload File</Form.Label>
                           <DropAllFile

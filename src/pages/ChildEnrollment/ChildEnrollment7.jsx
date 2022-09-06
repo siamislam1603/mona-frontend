@@ -204,6 +204,10 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   };
 
   const handleSubmissionRedirection = async () => {
+    localStorage.removeItem('asked_for_consent');
+    localStorage.removeItem('consent_comment');
+    localStorage.removeItem('has_given_consent');
+    
     console.log('UPDATING THE ENROLLMENT STATE!');
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');

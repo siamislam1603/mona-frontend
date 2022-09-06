@@ -107,7 +107,6 @@ const UserManagement = () => {
       }
 
       if (e.target.text === "Activate") {
-        console.log('ACTIVATING USER!')
 
         async function activateUserFromDB() {
           const response = await axios.patch(
@@ -190,6 +189,7 @@ const UserManagement = () => {
       text: 'Name',
       sort: true,
       formatter: (cell) => {
+        console.log('CELL DETAILS:', cell);
         let status = null;
         cell = cell.split(',');
         if (parseInt(cell[3]) === 0) {
@@ -199,15 +199,14 @@ const UserManagement = () => {
         } else if (parseInt(cell[3]) === 2) {
           status = "deleted"
         }
-        console.log('BIG STATUS:', cell[0]);
         return (
           <>
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[0]=='null'? '../img/upload.jpg':cell[0]} alt="" />
+                <img src={cell[0] === 'null'? '../img/upload.jpg':cell[0]} alt="" />
               </span>
               <span className="user-name">
-                {cell[1]} <small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
+                <a href={`/edit-user/${cell[4]}`}>{cell[1]}</a><small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
               </span>
             </div>
           </>
@@ -234,7 +233,6 @@ const UserManagement = () => {
       text: 'Action',
       formatter: (cell) => {
         cell = cell.split(',');
-        console.log('CELL VALUE:', cell);
         return (
           <>
             {
@@ -323,12 +321,11 @@ const UserManagement = () => {
     if (response.status === 200) {
 
       const { users } = response.data;
-      console.log('USERS:', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
-          .join(' ')}, ${dt.is_active}`,
+          .join(' ')}, ${dt.is_active}, ${dt.id}`,
         email: dt.email,
         number: (dt.phone !== null ? dt.phone.slice(1) : null),
         location: dt.city,
@@ -339,9 +336,6 @@ const UserManagement = () => {
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
         action: dt.is_active
       }));
-      console.log('TEMP =>>>>>>>>>>>>>>>>>', tempData);
-      // tempData = tempData.filter((data) => data.is_deleted === 0);
-      // console.log('Temp Data:', tempData);
       if (localStorage.getItem('user_role') === 'guardian') {
         tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
       }
@@ -377,7 +371,6 @@ const UserManagement = () => {
   };
 
   const setUserDataAfterFilter = data => {
-    console.log('DATA:', data);
     let role = localStorage.getItem('user_role');
     let filteredData = null;
 
@@ -393,7 +386,6 @@ const UserManagement = () => {
 
     if (role === 'coordinator') {
       filteredData = data.filter(d => d.role === 'educator' || d.role === 'guardian');
-      console.log('COORDINATOR:', filteredData);
     }
 
     if (role === 'educator') {
@@ -412,9 +404,7 @@ const UserManagement = () => {
 
   const Show_eduactor = async () => {
     let api_url = '';
-    // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
     let filter = Key.key
-    // console.log(alert(filter))
     if (filter) {
       api_url = `${BASE_URL}/role/user/All?filter=${filter}`;
     }
@@ -428,7 +418,6 @@ const UserManagement = () => {
 
     if (response.status === 200) {
       const { users } = response.data;
-      console.log('USERS =>>>>>>>>>>>>>>>>>>:', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
           .split('_')
@@ -470,31 +459,6 @@ const UserManagement = () => {
       setCsvData(csv_data);
     }
   }
-
-
-  // const render_user_filter = async (arg) => {
-  //   let data;
-  //   console.log("datadatadatadatadatadatadatadatadatadata",userData)
-
-  //   var user_role = localStorage.getItem('user_role');
-  //     if(user_role==='franchisor_admin')
-  //       data = arg.filter(d=>d.role!=='franchisor_admin');
-  //     if(user_role==='franchisee_admin')
-  //       data = arg.filter(d=>d.role!=='franchisee_admin' && d.role!=='franchisor_admin')
-  //     if(user_role==='coordinator')
-  //       data = arg.filter(d=>d.role =='educator' && d.role=='guardian')
-  //     if(user_role==='educator')
-  //       data = arg.filter(d=>d.role=='guardian')
-
-
-  //       setUserData(data)
-  // }
-
-
-  // useEffect(() => {
-  //   render_user_filter()
-  // }, [tempData])
-
 
   useEffect(() => {
     Show_eduactor()
@@ -542,12 +506,6 @@ const UserManagement = () => {
 
   const csvLink = useRef();
 
-
-  // userData && console.log('USER DATA:', userData.map(data => data));
-  userEducator && console.log('userEducator DATA:', userEducator.map(data => data))
-  selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
-  // console.log("USER DATA,",userData,"CSV",csvData)
-  console.log("CSV STATE",csvDownloadFlag)
   return (
     <>
       <div id="main">

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Button, Col, Row, Form, Table } from "react-bootstrap";
+import { Button, Col, Row, Form, Table, Modal } from "react-bootstrap";
 import axios from 'axios';
 import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
 import { BASE_URL } from "../../components/App";
 import { useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import { faListSquares } from "@fortawesome/free-solid-svg-icons";
+import UserSignature from "../InputFields/UserSignature";
 
 let nextstep = 3;
 let step = 2;
@@ -22,6 +23,9 @@ let disease_name = [
 ];
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   let { childId: paramsChildId, parentId: paramsParentId } = useParams();
+
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [signatureImage, setSignatureImage] = useState(null);
   const [healthInformation, setHealthInformation] = useState({
     medical_service: "",
     telephone: "",
@@ -48,6 +52,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     has_been_immunized: false,
     has_court_orders: false,
     changes_described: "",
+    name_of_record_viewer: "",
+    signature_of_record_viewer: "",
+    date_of_record_viewing: "",
+    position_of_record_viewer: "",
     log: []
   });
   const [childMedicalInformation, setChildMedicalInformation] = useState({
@@ -171,7 +179,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
       if (response.status === 201 && response.data.status === "success") {
 
-        // SENDING IMMUNIZATION RECORD REQUEST  
+        // SENDING IMMUNISATION RECORD REQUEST  
         response = await axios.post(`${BASE_URL}/enrollment/immunisation-record`, { ...childImmunisationRecord, childId }, {
           headers: {
             "Authorization": `Bearer ${token}`
@@ -257,7 +265,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           has_health_record: child.has_health_record,
           has_been_immunized: child.has_been_immunized,
           has_court_orders: child.has_court_orders,
-          changes_described: child.changes_described
+          changes_described: child.changes_described,
+          name_of_record_viewer: child.name_of_record_viewer,
+          signature_of_record_viewer: child.signature_of_record_viewer,
+          date_of_record_viewing: child.date_of_record_viewing,
+          position_of_record_viewer: child.position_of_record_viewer,
         }));
 
         // SETTING CHILD IMMUNISATION RECORD
@@ -329,20 +341,43 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     // nextStep();
   };
 
+  // SAVING THE SIGNATURE IMAGE
+  const saveSignatureImage = async () => {
+    let data = new FormData();
+
+    if(signatureImage) {
+      setShowSignatureDialog(false);
+      console.log('Saving Signature Image!');
+      const blob = await fetch(signatureImage).then((res) => res.blob());
+      data.append('image', blob);
+    }
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/record-viewer/signature/${paramsChildId}`, data);
+
+    console.log('SIGNATURE RESPONSE:', response);
+    if(response.status === 201 && response.data.status === "success") {
+      let { signature_of_record_viewer: signatureURL } = response.data;
+      setChildDetails(prevState => ({
+        ...prevState,
+        signature_of_record_viewer: signatureURL
+      }));
+    }
+  }
+
+  useEffect(() => {
+    // setShowSignatureDialog(false);
+    saveSignatureImage();
+  }, [signatureImage])
+
+
   useEffect(() => {
     console.log('FETCHING CHILD DATA AND POPULATE!');
     window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
+  
+  childDetails && console.log('CHILD DATA:', childDetails);
 
-  // formStepData && console.log('FORM STEP:', formStepData);
-  // healthInformation && console.log('HEALTH INFORMATION:', healthInformation);
-  // childImmunisationRecord && console.log('IMMUNISATION RECORD LATEST:', childImmunisationRecord);
-  // childDetails && console.log('CHILD DETAILS:', childDetails);
-  // childMedicalInformation && console.log('CHILD MEDICAL INFORMATION:', childMedicalInformation);
-  // parentMedicationPermission && console.log('HAS MY CONSENT:', parentMedicationPermission);
-  // idList && console.log('ID LIST:', idList);
-  parentData && console.log('PARENT DATA:', parentData);
   return (
     <>
       <div className="enrollment-form-sec">
@@ -510,7 +545,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="tel"
                         name="telephone"
-                        maxLength={10}
+                        maxLength={20}
                         value={healthInformation?.telephone || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
@@ -628,7 +663,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           onChange={() => {
                             setChildDetails(prevState => ({
                               ...prevState,
-                              has_health_record: false
+                              has_health_record: false,
+                              name_of_record_viewer: "",
+                              date_of_record_viewing: "",
+                              position_of_record_viewer: ""
                             }));
 
                             if (!childDetails.log.includes("has_health_record")) {
@@ -646,33 +684,70 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </Col>
 
                   {
-                    healthInformation.has_health_record &&
+                    childDetails.has_health_record &&
                     <Col md={12}>
                       <Form.Group className="mb-3">
                         <Form.Label>Name and position of person at the service who has sighted the child’s health record</Form.Label>
                         <Row>
-                          <Col md={4}>
+                          <Col md={6}>
                             <div className="mb-3">
                               <Form.Label>Name</Form.Label>
-                              <Form.Control type="text" />
+                              <Form.Control 
+                                type="text"
+                                name="name_of_record_viewer"
+                                value={childDetails?.name_of_record_viewer || ""}
+                                onChange={(e) => {
+                                  setChildDetails(prevState => ({
+                                    ...prevState,
+                                    name_of_record_viewer: e.target.value
+                                  }))
+                                }} />
                             </div>
                           </Col>
-                          <Col md={4}>
+
+                          <Col md={6}>
                             <div className="mb-3">
-                              <Form.Label>Signature & Date</Form.Label>
-                              <Form.Control type="text" />
+                              <Form.Label>Signature</Form.Label>
+                              {
+                                <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign!</p>
+                              }
+                              {
+                                childDetails?.signature_of_record_viewer &&
+                                <img src={childDetails?.signature_of_record_viewer} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                              }
                             </div>
                           </Col>
-                          <Col md={4}>
+                          
+                          <Col md={6}>
                             <div className="mb-3">
-                              <Form.Label>&nbsp;</Form.Label>
-                              <Form.Control type="date" placeholder="" name="dob" />
+                              <Form.Label>Date</Form.Label>
+                              <Form.Control 
+                                type="date" 
+                                placeholder=""
+                                value={childDetails?.date_of_record_viewing || ""}
+                                name="date_of_record_viewing"
+                                onChange={(e) => {
+                                  setChildDetails(prevState => ({
+                                    ...prevState,
+                                    date_of_record_viewing: e.target.value
+                                  }))
+                                }} />
                             </div>
                           </Col>
-                          <Col md={4}>
+                          
+                          <Col md={6}>
                             <div className="mb-3">
                               <Form.Label>Position</Form.Label>
-                              <Form.Control type="text" />
+                              <Form.Control 
+                                type="text"
+                                value={childDetails?.position_of_record_viewer || ""}
+                                name="position_of_record_viewer"
+                                onChange={(e) => {
+                                  setChildDetails(prevState => ({
+                                    ...prevState,
+                                    position_of_record_viewer: e.target.value
+                                  }))
+                                }} />
                             </div>
                           </Col>
                         </Row>
@@ -681,7 +756,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   }
                 </Row>
               </div>
-              <h2 className="title-xs mt-4 mb-4">Child's immunization record R 162 (F)</h2>
+              <h2 className="title-xs mt-4 mb-4">Child's immunisation record R 162 (F)</h2>
               <div className="grayback">
                 <Row>
                   <Col md={12}>
@@ -770,7 +845,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </ol>
                 </div> */}
 
-                  <h2 className="title-xs mt-4 mb-4">Child's Immunization Record</h2>
+                  <h2 className="title-xs mt-4 mb-4">Child's Immunisation Record</h2>
 
                   <div className="grayback">
                     <Table responsive="md" className="text-left">
@@ -2517,7 +2592,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
                         <tr>
                           <td colspan="8">
-                            Additional immunizations for Aboriginals and Torres Strait Islander Children (If required)
+                            Additional immunisations for Aboriginals and Torres Strait Islander Children (If required)
                           </td>
                         </tr>
                       </tbody>
@@ -3181,6 +3256,25 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           </Form>
         </div>
       </div>
+      {
+        <Modal
+          size="lg"
+          show={showSignatureDialog}
+          onHide={() => setShowSignatureDialog(false)}>
+          <Modal.Header>
+            <Modal.Title>Consent Signature</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <Row>
+              <UserSignature
+                field_label="Signature:"
+                onChange={setSignatureImage}
+                setShowSignatureDialog={setShowSignatureDialog} />
+            </Row>
+          </Modal.Body>
+        </Modal>
+      }
     </>
   );
 };

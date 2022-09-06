@@ -14,10 +14,9 @@ const selectRow = {
 };
 
 const FileRepodAddbyMe = () => {
-
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-   
+
 
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}`, {
@@ -25,12 +24,9 @@ const FileRepodAddbyMe = () => {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })
-        if (response) {
-            setfullLoaderStatus(false)
-        }
+
         if (response.status === 200) {
             const users = response.data.dataDetails;
-
             let tempData = users.map((dt) => ({
                 name: `${dt.categoryId}, ${dt.count}`,
                 createdAt: dt.updatedAt,
@@ -123,7 +119,6 @@ const FileRepodAddbyMe = () => {
     }, []);
     return (
         <div>
-            <FullLoader loading={fullLoaderStatus} />
             {userData.length > 0 ? (
                 <ToolkitProvider
                     keyField="name"

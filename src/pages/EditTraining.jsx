@@ -19,6 +19,7 @@ import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
 
 const animatedComponents = makeAnimated();
 
+
 const timeqty = [
   {
     value: 'minutes',
@@ -146,7 +147,7 @@ const EditTraining = () => {
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
     let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
-    const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${f}]`);
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -242,7 +243,7 @@ const EditTraining = () => {
           }
         });
 
-      } else if (typeof croppedImage === 'string') {
+      } else if (typeof croppedImage === 'object') {
         imgSaveResponse = await axios.patch(
           `${BASE_URL}/training/updateCoverImgString`, { croppedImage, trainingId }, {
           headers: {
@@ -370,17 +371,35 @@ const EditTraining = () => {
   };
 
   const handleTrainingFileDelete = async (fileId) => {
-    console.log(`Delete file with id: ${fileId}`);
     let token = localStorage.getItem('token');
-    const deleteResponse = await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
+    await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
-    });
-    setFileDeleteResponse(deleteResponse);
-    // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
-    // }
+    }).then(function () {
+      setFileDeleteResponse();
+    })
+      .catch(error => {
+        console.log(error)
+      });
   }
+  useEffect(() => {
+    handleTrainingFileDelete();
+  }, [fetchedRelatedFiles])
+
+
+  // const handleTrainingFileDelete = async (fileId) => {
+  //   console.log(`Delete file with id: ${fileId}`);
+  //   let token = localStorage.getItem('token');
+  //   const deleteResponse = await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
+  //     headers: {
+  //       "Authorization": `Bearer ${token}`
+  //     }
+  //   });
+  //   setFileDeleteResponse(deleteResponse);
+  //   // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
+  //   // }
+  // }
 
   useEffect(() => {
     fetchUserRoles();
@@ -400,6 +419,7 @@ const EditTraining = () => {
     fetchTrainingFormData();
   }, [fileDeleteResponse]);
 
+  fetchedRelatedFiles && console.log('FETCHED RELATED FILES:', fetchedRelatedFiles);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -627,7 +647,7 @@ const EditTraining = () => {
                                   return (
                                     <div className="file-container">
                                       <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
-                                      <p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p>
+                                      <a href={file.file}><p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p></a>
                                       <img
                                         onClick={() => handleTrainingFileDelete(file.id)}
                                         className="file-remove"
