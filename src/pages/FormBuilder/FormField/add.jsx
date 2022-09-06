@@ -1813,7 +1813,7 @@ const AddFormField = (props) => {
                                                 <div
                                                   className="sharing signatories-toggle"
                                                   style={{
-                                                    marginTop: '-10px',
+                                                    marginTop: '10px',
                                                     marginBottom: '10px',
                                                   }}
                                                 >

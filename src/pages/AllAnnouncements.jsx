@@ -256,35 +256,24 @@ useEffect(() =>{
    
                                 
                                 
-            
-{details?.announcement_files?.length>0 ? <>
-                { details?.announcement_files[0]?.fileType === ".mp4" ||details?.announcement_files[0].fileType === ".mkv" ? 
+                                       
+               {details?.announcement_files?.length>0 ? <>
+                    { details?.announcement_files[0]?.fileType === ".mp4" ||details?.announcement_files[0].fileType === ".mkv" ? 
                                   (
                                     null
+                                    // <div className="head">Related Files :</div>
+
                                   ):
                                   (
                                     <div className="head">Related Files :</div>
                                   )}
-           
-               
-              </>
-            :(
-              null
-            )
+                                               
+                                            </>
+                                          :(
+                                            null
+                                          )
 
-             }  
-
-
-                               
-                                  {/* // ( <div className="head">Related Files :</div> )
-                                  // :(null)}                      */}
-                                  {/* {
-                                    realtedFile.length>0 ? (
-                                      <h2>dsa</h2>
-                                    ):(
-                                      <h1>d</h1>
-                                    )
-                                  } */}
+                                          }    
                                      <div className="cont">
                                      <div className="related-files">
                                        {details?.announcement_files?.map((detail,index) =>(

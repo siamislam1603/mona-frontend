@@ -2,7 +2,7 @@
 font-family: 'Rubik', sans-serif;
 font-family: 'Noto Sans', sans-serif;
 font-family: 'Manrope', sans-serif;
-*/cta-col
+*/
 :root {
   --black: #333333;
   --white: #ffffff;
@@ -291,6 +291,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .extra-btn .btn-btn-outline,.extra-btn .ctaact{border-radius:5px;border-color:var(--primary);padding:5px 1rem;line-height:33px;min-width:inherit}
 .filter-ico{margin-top:-2px;background:url("../img/filter-ico.svg") no-repeat;width:23px;height:20px;display:inline-block;vertical-align:middle}
 .user-list{display:flex;align-items:center}
+.childern-list .user-list{margin-top: 1rem;}
+.childern-list .user-list:first-child{margin-top: 0;}
 .user-list .user-pic{flex:0 0 44px;max-width:44px;margin-right:1rem;overflow:hidden;border-radius:100%;min-height:44px}
 .user-list .user-pic-tow{flex:0 0 44px;max-width:44px;margin-right:1rem;overflow:hidden;border-radius:0;min-height:44px}
 .user-list .user-name small{display:block;font-size:var(--fontsm);opacity:.5}

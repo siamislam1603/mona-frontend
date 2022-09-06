@@ -9,6 +9,8 @@ import TopHeader from '../components/TopHeader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
+import { FullLoader } from '../components/Loader';
+
 let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
@@ -22,6 +24,7 @@ const DynamicForm = () => {
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
   const [formPermission, setFormPermission] = useState({});
+  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
   const [targetUser, setTargetUser] = useState([]);
   const [behalfOf, setBehalfOf] = useState('');
   const [childId, setChildId] = useState();
@@ -151,9 +154,13 @@ const DynamicForm = () => {
         });
         setForm(formsData);
         setFormData(data);
-        console.log(res.result);
+        if(result)
+        {
+          setfullLoaderStatus(false);
+        }
       })
       .catch((error) => console.log('error', error));
+      
   };
   const onSubmit = (e) => {
     e.preventDefault();
@@ -248,6 +255,7 @@ const DynamicForm = () => {
                         : id;
                   }}
                 />
+                <FullLoader loading={fullLoaderStatus} />
                 <Row>
                   <div className="forms-managment-left new-form-title">
                     <h6>

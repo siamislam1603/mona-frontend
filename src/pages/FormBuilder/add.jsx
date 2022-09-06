@@ -24,6 +24,10 @@ function AddFormBuilder(props) {
     if (location?.state?.id) {
       getParticularFormData();
     }
+    else
+    {
+      setfullLoaderStatus(false);
+    }
     getFormData();
     getFormCategory();
     getUserRoleData();

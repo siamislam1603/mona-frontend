@@ -267,8 +267,8 @@ const Children = () => {
                             </div> :
                             (cell.educators || []).map((item)=>{
                                return (
-                                <div>
-                                    <div className="user-list mt-3">
+                                <div className="childern-list">
+                                    <div className="user-list">
                                         <span className="user-pic">
                                             <img src={item.profile_photo ? item.profile_photo : "../img/user.png" } alt='' />
                                         </span>
