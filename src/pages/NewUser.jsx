@@ -752,7 +752,7 @@ const NewUser = () => {
                               <Form.Control
                                 type="tel"
                                 name="phone"
-                                maxLength={10}
+                                maxLength={20}
                                 value={formData.phone}
                                 onChange={(e) => {
 

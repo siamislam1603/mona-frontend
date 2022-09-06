@@ -8,7 +8,7 @@ import Select from 'react-select';
 import { BASE_URL } from "../../components/App";
 import { childFormValidator, parentFormValidator  } from "../../helpers/enrollmentValidation";
 import { useParams } from 'react-router-dom';
-import moment from "moment";
+import DragDropMultiple from '../../components/DragDropMultiple';
 
 let nextstep = 2;
 let step = 1;
@@ -67,6 +67,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [languageData, setLanguageData] = useState(null);
   const [countryData, setCountryData] = useState(null);
   const [formStepData, setFormStepData] = useState(step);
+  const [inclusionSupportForm, setInclusionSupportForm] = useState(null);
 
   // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
 
@@ -316,6 +317,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }, [])
 
+  inclusionSupportForm && console.log('INCLUSION SUPPORT FORM:', inclusionSupportForm);
+
   return (
     <>
       <div className="enrollment-form-sec error-sec my-5">
@@ -417,6 +420,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           usually_called: e.target.value
                         }));
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          usually_called: null,
+                        })) 
                         // } else {
                         //   setFormOneChildData(prevState => ({
                         //     ...prevState,
@@ -432,6 +439,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }));
                         }
                       }} />
+                      { childFormErrors?.usually_called !== null && <span className="error">{childFormErrors?.usually_called}</span> }
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -704,10 +712,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           setFormOneChildData(prevState => ({
                             ...prevState,
                             developmental_delay: false,
-                            child_medical_no: null,
-                            child_crn: null,
-                            parent_crn_1: null,
-                            parent_crn_2: null
                           }));
                           if(!formOneChildData.log.includes("developmental_delay")) {
                             setFormOneChildData(prevState => ({
@@ -720,96 +724,105 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Text className="text-muted">
                       if ‘Yes’ please provide information (Inclusion Support Form if applicable)
                     </Form.Text>
+                    
+                    {
+                      formOneChildData?.developmental_delay &&
+                      <Form.Group className="col-md-6 mb-3 mt-3">
+                        <Form.Label>Upload Support Form</Form.Label>
+                        <DragDropMultiple 
+                          module="child-enrollment"
+                          fileLimit={1}
+                          onSave={setInclusionSupportForm} />
+                        <small className="fileinput">(Upload 1 file)</small>
+                      </Form.Group>
+                    }
                   </Form.Group>
                 </Col>
-                {
-                  formOneChildData.developmental_delay &&
-                  <>
-                    <Col md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Child Medical No. *</Form.Label>
-                        <Form.Control
-                          type="text"
-                          name="child_medical_no"
-                          value={formOneChildData.child_medical_no || ""}
-                          onChange={(e) => {
-                            handleChildData(e);
-                          }} 
-                          onBlur={(e) => {
-                            if(!formOneChildData.log.includes("child_medical_no")) {
-                              setFormOneChildData(prevState => ({
-                                ...prevState,
-                                log: [...formOneChildData.log, "child_medical_no"]
-                              }));
-                            }
-                          }} />
-                      </Form.Group>
-                    </Col>
 
-                    <Col md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Child CRN *</Form.Label>
-                        <Form.Control
-                          type="text"
-                          name="child_crn"
-                          value={formOneChildData.child_crn || ""}
-                          onChange={(e) => {
-                            handleChildData(e);
-                          }} 
-                          onBlur={(e) => {
-                            if(!formOneChildData.log.includes("child_crn")) {
-                              setFormOneChildData(prevState => ({
-                                ...prevState,
-                                log: [...formOneChildData.log, "child_crn"]
-                              }));
-                            }
-                          }} />
-                      </Form.Group>
-                    </Col>
-                    
-                    <Col md={6}>
-                      <Form.Group className="mb-3 relative">
-                        <Form.Label>Parents CRN 1 *</Form.Label>
-                        <Form.Control
-                          type="text"
-                          name="parent_crn_1"
-                          value={formOneChildData.parent_crn_1 || ""}
-                          onChange={(e) => {
-                            handleChildData(e);
-                          }} 
-                          onBlur={(e) => {
-                            if(!formOneChildData.log.includes("parent_crn_1")) {
-                              setFormOneChildData(prevState => ({
-                                ...prevState,
-                                log: [...formOneChildData.log, "parent_crn_1"]
-                              }));
-                            }
-                          }} />
-                      </Form.Group>
-                    </Col>
-                    
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Parents CRN 2 *</Form.Label>
-                        <Form.Control
-                          type="text"
-                          name="parent_crn_2"
-                          value={formOneChildData.parent_crn_2 || ""}
-                          onChange={(e) => {
-                            handleChildData(e);
-                          }} 
-                          onBlur={(e) => {
-                            if(!formOneChildData.log.includes("parent_crn_2")) {
-                              setFormOneChildData(prevState => ({
-                                ...prevState,
-                                log: [...formOneChildData.log, "parent_crn_2"]
-                              }));
-                            }
-                          }} />
-                      </Form.Group>
-                    </Col>
-                  </>
-                }
+                <Col md={6}>
+                  <Form.Group className="mb-3 relative">
+                    <Form.Label>Child Medical No. *</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="child_medical_no"
+                      value={formOneChildData.child_medical_no || ""}
+                      onChange={(e) => {
+                        handleChildData(e);
+                      }} 
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("child_medical_no")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "child_medical_no"]
+                          }));
+                        }
+                      }} />
+                  </Form.Group>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Group className="mb-3 relative">
+                    <Form.Label>Child CRN *</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="child_crn"
+                      value={formOneChildData.child_crn || ""}
+                      onChange={(e) => {
+                        handleChildData(e);
+                      }} 
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("child_crn")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "child_crn"]
+                          }));
+                        }
+                      }} />
+                  </Form.Group>
+                </Col>
+                
+                <Col md={6}>
+                  <Form.Group className="mb-3 relative">
+                    <Form.Label>Parents CRN 1 *</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="parent_crn_1"
+                      value={formOneChildData.parent_crn_1 || ""}
+                      onChange={(e) => {
+                        handleChildData(e);
+                      }} 
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("parent_crn_1")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "parent_crn_1"]
+                          }));
+                        }
+                      }} />
+                  </Form.Group>
+                </Col>
+                
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Parents CRN 2 *</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="parent_crn_2"
+                      value={formOneChildData.parent_crn_2 || ""}
+                      onChange={(e) => {
+                        handleChildData(e);
+                      }} 
+                      onBlur={(e) => {
+                        if(!formOneChildData.log.includes("parent_crn_2")) {
+                          setFormOneChildData(prevState => ({
+                            ...prevState,
+                            log: [...formOneChildData.log, "parent_crn_2"]
+                          }));
+                        }
+                      }} />
+                  </Form.Group>
+                </Col>
+
                 <Col md={12}>
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Is the child using another service?</Form.Label>
@@ -1277,7 +1290,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             // style={parentFormErrors?.telephone ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                             autoFocus={parentFormErrors?.telephone ? true : false}
                             name="telephone"
-                            maxLength={10}
+                            maxLength={20}
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
                               handleParentData(e);
