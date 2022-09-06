@@ -23,7 +23,7 @@ const Children = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = (id, educators) =>{
-        let defEducators = educators.map((edu)=>{
+        let defEducators = educators.map((edu) => {
             return edu.id 
         })
         localStorage.setItem("SelectedChild",id)

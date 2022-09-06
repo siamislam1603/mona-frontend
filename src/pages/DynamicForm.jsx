@@ -24,7 +24,7 @@ const DynamicForm = () => {
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
   const [formPermission, setFormPermission] = useState({});
-  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [targetUser, setTargetUser] = useState([]);
   const [behalfOf, setBehalfOf] = useState('');
   const [childId, setChildId] = useState();
@@ -32,38 +32,43 @@ const DynamicForm = () => {
   let training_id = location.search
     ? location.search.split('?')[1].split('=')[1]
     : null;
-  const setField = (section, field, value,type) => {
-    console.log("section",section);
-    console.log("field",field);
-    console.log("value",value);
-    console.log("type",type);
-    if(type==="date")
-    {
-      value=moment(value).format("DD-MM-YYYY");
-      setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
+  const setField = (section, field, value, type) => {
+    console.log('section', section);
+    console.log('field', field);
+    console.log('value', value);
+    console.log('type', type);
+    if (type === 'date') {
+      value = moment(value).format('DD-MM-YYYY');
+      setForm({
+        ...form,
+        [section]: { ...form[`${section}`], [field]: value },
+      });
     }
-    if(type==="checkbox")
-    {
-      value=value.slice(0, -1)
-      setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
+    if (type === 'checkbox') {
+      value = value.slice(0, -1);
+      setForm({
+        ...form,
+        [section]: { ...form[`${section}`], [field]: value },
+      });
+    } else {
+      setForm({
+        ...form,
+        [section]: { ...form[`${section}`], [field]: value },
+      });
     }
-    else{
-      setForm({ ...form, [section]: { ...form[`${section}`], [field]: value } });
-    }
-    
+
     if (!!errors[field]) {
       setErrors({
         ...errors,
         [field]: null,
       });
     }
-    
 
     // if (field === 'hobby') {
     //   values.includes(value) ? values.pop(value) : values.push(value);
     //   setForm({ ...form, [field]: values });
 
-      // console.log('Values', values);
+    // console.log('Values', values);
     // }
   };
   useEffect(() => {
@@ -154,13 +159,14 @@ const DynamicForm = () => {
         });
         setForm(formsData);
         setFormData(data);
-        if(result)
-        {
+        if (result) {
           setfullLoaderStatus(false);
         }
       })
-      .catch((error) => console.log('error', error));
-      
+      .catch((error) => {
+        console.log('error', error);
+        setfullLoaderStatus(false);
+      });
   };
   const onSubmit = (e) => {
     e.preventDefault();
@@ -216,7 +222,7 @@ const DynamicForm = () => {
                   if (
                     result?.message === 'You can add only one time form data!!'
                   ) {
-                      toast.error(result?.message);
+                    toast.error(result?.message);
                   } else {
                     navigate('/training');
                   }
@@ -226,7 +232,7 @@ const DynamicForm = () => {
             if (result?.message === 'You can add only one time form data!!') {
               toast.error(result?.message);
             } else {
-              navigate('/form',{state:{message: result.message}});
+              navigate('/form', { state: { message: result.message } });
             }
           }
         })
@@ -235,7 +241,7 @@ const DynamicForm = () => {
   };
   return (
     <>
-    {console.log("Hello------>",form)}
+      {console.log('Hello------>', form)}
       <div id="main">
         <ToastContainer />
         <section className="mainsection">
@@ -270,7 +276,7 @@ const DynamicForm = () => {
                   </div>
                 </Row>
                 <Form>
-                  <Row className='set-layout-row'>
+                  <Row className="set-layout-row">
                     {!(
                       formPermission?.target_user?.includes(
                         localStorage.getItem('user_role') === 'guardian'
@@ -366,12 +372,14 @@ const DynamicForm = () => {
                               0 ? (
                               <>
                                 {index === 0 && (
-                                  <h6 className="text-capitalize">{item.split("_").join(" ")}</h6>
+                                  <h6 className="text-capitalize">
+                                    {item.split('_').join(' ')}
+                                  </h6>
                                 )}
                                 <InputFields
                                   {...inner_item}
                                   error={errors}
-                                  onChange={(key, value,type) => {
+                                  onChange={(key, value, type) => {
                                     setField(item, key, value, type);
                                   }}
                                 />

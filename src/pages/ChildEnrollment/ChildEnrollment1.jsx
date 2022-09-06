@@ -265,7 +265,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         place_of_birth: parentData[0]?.place_of_birth,
         ethnicity: parentData[0]?.ethnicity,
         primary_language: parentData[0]?.primary_language,
-        occupation: parentData[0]?.occupation,
+        occupation: parentData[0]?.occupation.charAt(0).toUpperCase() + parentData[0]?.occupation.slice(1),
         address_similar_to_child: parentData[0]?.address_similar_to_child
       }));
 
@@ -275,8 +275,17 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
 
   // GIVING CONSENT FOR CHANGE
-  const giveConsentForChange = async () => {
-    const response = await axios.post(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`)
+  const giveConsentForChanges = async () => {
+    const response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${paramsParentId}`, { childId: paramsChildId }, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+      console.log('Consent given successfully!');
+      setShowConsentCommentDialog(false);
+    }
   }
 
 
@@ -314,7 +323,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
           <div className="enrollment-form-column">
             <div className="grayback">
               <h2 className="title-xs mb-2">Information about the child</h2>
-              <p className="form_info mb-4">A parent or guardian who ns lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
+              <p className="form_info mb-4">A parent or guardian who's a lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
@@ -722,7 +731,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         <Form.Control
                           type="text"
                           name="child_medical_no"
-                          placeholder="Child Medical No."
                           value={formOneChildData.child_medical_no || ""}
                           onChange={(e) => {
                             handleChildData(e);
@@ -1539,7 +1547,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
             <Modal.Footer>
               <button 
                 className="modal-button"
-                onClick={() => setShowConsentCommentDialog(false)}>Ok</button>
+                onClick={() => giveConsentForChanges()}>Ok</button>
             </Modal.Footer>
         </Modal>
       }
