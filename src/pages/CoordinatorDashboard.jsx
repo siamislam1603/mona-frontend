@@ -355,7 +355,7 @@ const CoordinatorDashboard = () => {
                                 )}
                               </ToolkitProvider>
                             </>) : (<>
-                              <div className="text-center mb-5 mt-5"><strong>No children enrolled yet !</strong></div>
+                              <div className="text-center mb-5 mt-5"><strong>No children with additional needs</strong></div>
                             </>)}
                           </div>
                         </div>

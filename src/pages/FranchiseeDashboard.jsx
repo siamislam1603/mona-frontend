@@ -365,7 +365,7 @@ const FranchiseeDashboard = () => {
                                     />
                                   )}
                                 </ToolkitProvider>
-                              </>) : (<><div className="text-center mb-5 mt-5"><strong>No Children Enrolled Yet</strong></div></>)}
+                              </>) : (<><div className="text-center mb-5 mt-5"><strong>No children with additional needs</strong></div></>)}
 
                           </div>
                         </div>
@@ -394,7 +394,7 @@ const FranchiseeDashboard = () => {
                             </div>
                             <div className="listing">
                               <a href="/children-all" className="item">
-                                <span className="name">New Enrollments</span>
+                                <span className="name">New Enrolments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser?.newEnrollments}</span>
                               </a>
@@ -410,7 +410,7 @@ const FranchiseeDashboard = () => {
                         </div>
                         <div className="enrollments-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
-                            <h4 className="title-sm mb-0"><strong>New Enrollments</strong></h4>
+                            <h4 className="title-sm mb-0"><strong>New Enrolments</strong></h4>
                             <Link to="/children-all" className="viewall">View All</Link>
                           </header>
                           <div className="column-table user-management-sec">
@@ -429,7 +429,7 @@ const FranchiseeDashboard = () => {
                                 )}
 
                               </ToolkitProvider>
-                            </>) : (<><div className="text-center mb-5 mt-5"><strong>No Enrollments</strong></div></>)}
+                            </>) : (<><div className="text-center mb-5 mt-5"><strong>No New Enrolments</strong></div></>)}
 
                           </div>
                         </div>

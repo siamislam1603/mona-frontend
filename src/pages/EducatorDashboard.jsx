@@ -236,7 +236,7 @@ const EducatorDashboard = () => {
                                   columns={columns}
                                 />
                               ) : (
-                                <div className="text-center mb-5 mt-5"><strong>No children enrolled yet !</strong></div>
+                                <div className="text-center mb-5 mt-5"><strong>No children enroled yet !</strong></div>
 
                               )
                             }
