@@ -12,6 +12,7 @@ import moment from 'moment';
 const MyAnnouncements = (props) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
+  const [topErrorMessage, setTopErrorMessage] = useState(null);
   
   const [myAnnouncement,setmyAnnouncement] = useState([]);
   // const {id} = useParams
@@ -159,14 +160,28 @@ const MyAnnouncements = (props) => {
 //     setmyAnnouncement(props.loadData)
 //   }
 // },[props.loadData])
+// useEffect(() =>{
+//   setTimeout(() => {
+//     setTopErrorMessage(null);
+//   }, 3000)
+// },[topErrorMessage])
  console.log("THE MY ANNOUNCEMENT DATA",myAnnouncement)
-  return (
+ console.log("2022-09-05T11:52:00.000Z")
+ const event = new Date("2022-09-07T08:25:00.000Z")
+ const todydate = new Date()
+
+  console.log(todydate >event)
+// {myAnnouncement &&  console.log("schedule time",myAnnouncement[0].scheduled_date)}
+ return (
+ 
     <div className="announcement-accordion">
-        {/* <h1> My Announcement</h1> */}
+    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
     <Accordion defaultActiveKey="0">
       { myAnnouncement &&
        myAnnouncement.length !== 0 ? (
-        myAnnouncement.map((data,index) => (
+        myAnnouncement.map((data,index) => 
+        (
+
           <Accordion.Item eventKey={index} key={index}>
           <Accordion.Header>
             <div className="head-title">
@@ -186,6 +201,7 @@ const MyAnnouncements = (props) => {
                                   
                              </span>
                              {data.user.fullname[0].toUpperCase()+data.user.fullname.slice(1)}
+                             {data.scheduled_date}
                   
                           {/* {data.is_event === 1 ?<span style ={{color:"black",fontWeight:"bold"}}> Event</span>:<span style ={{color:"black",fontWeight:"900"}}> Announcement</span> } */}
                             
@@ -193,11 +209,6 @@ const MyAnnouncements = (props) => {
                           </div>              
               <div className="date">
                  
-                  {/* <Dropdown.Toggle id="extrabtn" className="ctaact">
-                      <NavLink to="/edit-announcement">
-                        <img src="../img/dot-ico.svg" alt=""/>
-                      </NavLink>
-                   </Dropdown.Toggle> */}
                       {
                     userRole === "franchisor_admin" || userRole === "franchisee_admin" ?
                     (
@@ -205,8 +216,19 @@ const MyAnnouncements = (props) => {
                       <Dropdown.Toggle id="extrabtn" className="ctaact">
                         <img src="../img/dot-ico.svg" alt=""/>
                       </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
+                      <Dropdown.Menu>                        
+                        <Dropdown.Item href={
+                          new Date(data?.scheduled_date)>new Date() ? (
+                            `/edit-announcement/${data.id}`  
+
+                          ):
+                          (
+                              null     
+                            
+                          )
+                        }
+                      
+                        >Edit</Dropdown.Item>                                          
                            
                       
                         <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
