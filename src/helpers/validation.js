@@ -497,9 +497,6 @@ export const UserFormValidation = (formObj) => {
 
   if (!phone) errors.phone = 'Phone number is required';
 
-  if (phone.length > 0 && phone.length < 10)
-    errors.phone = 'Phone number must be 10-digits long.'
-
   return errors;
 };
 
@@ -530,11 +527,7 @@ export const personValidation = (personValidationForm) => {
   if (!telephone) errors.telephone = 'Please complete mandatory field';
 
   if(!(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits"; 
-
-  if(telephone.length > 0 && telephone.length < 10) 
-    errors.telephone = "Field should contain 10 digits!";
-
+    errors.telephone = "Field should only contain digits";
 
   if (!relationship_to_the_child)
     errors.relationship_to_the_child =
@@ -553,10 +546,6 @@ export const personValidation2 = (personValidationForm) => {
 
   if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Field should only contain digits!";
-
-
-  if(telephone.length > 0 && telephone.length < 10) 
-    errors.telephone = "Field should contain 10 digits!";
 
   return errors;
 }

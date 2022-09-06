@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave,Files, setErrors, title="Files", type="file",  module="usual" }) {
+export default function DropAllFile({ onSave,Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5 }) {
   let typeObj;
 
   if(type === "video") {
@@ -26,8 +26,8 @@ export default function DropAllFile({ onSave,Files, setErrors, title="Files", ty
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    maxFiles: 5,
-    multiple: true,
+    maxFiles: fileLimit,
+    multiple: fileLimit === 1 ? false : true,
     // accept:'.doc, .pdf, , .png, .jpg',
     // accept: {
     //   'image/*, audio/*, video/*': ['.png', '.jpg', '.jpeg','.pdf','.doc','.txt','.wpd'],

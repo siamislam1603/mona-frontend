@@ -363,8 +363,7 @@ const AddNewTraining = () => {
   //   }))
   // }, [croppedImage])
 
-  croppedImage && console.log('CROPPED IMAGE:', croppedImage);
-
+  trainingData && console.log('TRAINING DATA:', trainingData);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">

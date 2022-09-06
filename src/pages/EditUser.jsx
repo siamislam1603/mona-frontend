@@ -748,8 +748,7 @@ const EditUser = () => {
                               <Form.Control
                                 type="tel"
                                 name="phone"
-                                maxLength={10}
-                                placeholder="XXX XXX XXXX"
+                                maxLength={20}
                                 value={formData.phone}
                                 onChange={(e) => {
                                   if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
@@ -793,6 +792,7 @@ const EditUser = () => {
                               placeholder={"Select"}
                               closeMenuOnSelect={true}
                               options={franchiseeData}
+                              isDisabled={localStorage.getItem('user_role') !== 'franchisor_admin'}
                               // isMulti
                               value={franchiseeData?.filter(data => parseInt(data.id) === parseInt(formData?.franchisee_id))}
                               onChange={(e) => {

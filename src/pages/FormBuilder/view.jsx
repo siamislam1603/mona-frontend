@@ -230,9 +230,10 @@ function ViewFormBuilder(props) {
                       {(localStorage.getItem('user_role') ===
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
-                          'franchisor_admin' ||
-                        localStorage.getItem('user_role') ===
-                          'coordinator') && (
+                          'franchisor_admin' 
+                        // || localStorage.getItem('user_role') ===
+                        //   'coordinator'
+                          ) && (
                         <div className="forms-create">
                           <Button
                             variant="primary"
@@ -775,14 +776,16 @@ function ViewFormBuilder(props) {
                         <Tab eventKey="form-templates" title="Form Templates">
                           <div className="tab-created">
                             <Tabs
-                              defaultActiveKey={key}
+                              defaultActiveKey={localStorage.getItem('user_role') ===
+                          'coordinator' ? "created-by-others" : key}
                               id="uncontrolled-tab-example"
                               className="mb-3"
                               onSelect={(k) => {
                                 setKey(k);
                               }}
                             >
-                              <Tab
+                              {!localStorage.getItem('user_role') ===
+                          'coordinator' && <Tab
                                 className="create-me create_by_me_list"
                                 eventKey="created-by-me"
                                 title="Created by me"
@@ -946,7 +949,7 @@ function ViewFormBuilder(props) {
                                     );
                                   })}
                                 </div>
-                              </Tab>
+                              </Tab>}
                               <Tab
                                 className="create-me"
                                 eventKey="created-by-others"
