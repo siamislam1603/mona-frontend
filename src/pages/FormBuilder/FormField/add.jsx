@@ -1,4 +1,4 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
 import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
@@ -59,12 +59,10 @@ const AddFormField = (props) => {
   useEffect(() => {
     setFormSettingFlag(false);
     if (form_name) {
-        getFormField();
-        getFormData();
-        getUserRoleAndFranchiseeData();
-    }
-    else
-    {
+      getFormField();
+      getFormData();
+      getUserRoleAndFranchiseeData();
+    } else {
       setfullLoaderStatus(false);
     }
   }, [user]);
@@ -412,8 +410,9 @@ const AddFormField = (props) => {
       .then((result) => console.log('delete data successfully!'))
       .catch((error) => console.log('error', error));
   };
-  const onSubmit = (e) => {
+  const onSubmit = (e,form_submit_status) => {
     e.preventDefault();
+    console.log("form_submit_status--->",form_submit_status);
     const newErrors = createFormFieldValidation(form);
     console.log('form---->', form);
     let flag = false;
@@ -432,7 +431,7 @@ const AddFormField = (props) => {
       }
     });
     if (flag === true) {
-      toast.error('Label name must be different!!');
+      toast.error('Label name must be different.');
     } else {
       let error_flag = false;
       newErrors.map((item) => {
@@ -499,12 +498,29 @@ const AddFormField = (props) => {
         })
           .then((res) => res.json())
           .then((res) => {
-            navigate('/form', {
-              state: {
-                message: 'Form added successfully.',
-                form_template: true,
-              },
-            });
+            if(form_submit_status===true)
+            {
+              navigate('/form', {
+                state: {
+                  message: 'Form added successfully.',
+                  form_template: true,
+                },
+              });
+
+            }
+            else
+            {
+              navigate(
+                `/form/preview/${location?.state?.form_name}`,
+                {
+                  state: {
+                    id: location?.state?.id,
+                    form_name: location?.state?.form_name,
+                  },
+                }
+              );
+            }
+            
 
             res?.result?.map((item) => {
               if (item.option) {
@@ -583,6 +599,7 @@ const AddFormField = (props) => {
                     localStorage.setItem('f_id', id);
                   }}
                 />
+                <ToastContainer />
                 <FullLoader loading={fullLoaderStatus} />
                 <Row>
                   <Col sm={8}>
@@ -955,8 +972,10 @@ const AddFormField = (props) => {
                                         setIndex(index);
                                       }}
                                     >
-                                      <FontAwesomeIcon icon={faPlus} />
-                                      Add to Group
+                                      
+                                      {item?.section_name
+                                        ? <u><FontAwesomeIcon icon={faPen} />{"Section: " + item.section_name}</u>
+                                        : <><FontAwesomeIcon icon={faPlus} /> Add to Group</>}
                                     </Button>
                                   </div>
                                   <div className="required">
@@ -1006,21 +1025,13 @@ const AddFormField = (props) => {
                       <div className="button mb-5">
                         <Button
                           className="preview"
-                          onClick={() => {
-                            navigate(
-                              `/form/preview/${location?.state?.form_name}`,
-                              {
-                                state: {
-                                  id: location?.state?.id,
-                                  form_name: location?.state?.form_name,
-                                },
-                              }
-                            );
+                          onClick={(e) => {
+                            onSubmit(e,false);
                           }}
                         >
                           Preview
                         </Button>
-                        <Button className="saveForm" onClick={onSubmit}>
+                        <Button className="saveForm" onClick={(e)=>{onSubmit(e,true)}}>
                           Save Form
                         </Button>
                       </div>
