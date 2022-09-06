@@ -23,7 +23,7 @@ const Children = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = (id, educators) =>{
-        let defEducators = educators.map((edu)=>{
+        let defEducators = educators.map((edu) => {
             return edu.id 
         })
         localStorage.setItem("SelectedChild",id)
@@ -267,8 +267,8 @@ const Children = () => {
                             </div> :
                             (cell.educators || []).map((item)=>{
                                return (
-                                <div>
-                                    <div className="user-list mt-3">
+                                <div className="childern-list">
+                                    <div className="user-list">
                                         <span className="user-pic">
                                             <img src={item.profile_photo ? item.profile_photo : "../img/user.png" } alt='' />
                                         </span>
