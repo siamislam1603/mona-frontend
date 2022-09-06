@@ -335,13 +335,7 @@ const createAnnouncement = async (data) => {
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
   });
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
+
     useEffect(() =>{
       const role = localStorage.getItem("user_role")
       setUserRole(role)
@@ -349,6 +343,13 @@ const createAnnouncement = async (data) => {
       // theDate()
     },[])
 
+
+
+const start = moment(new Date());
+const end = moment(new Date());
+ 
+const valid = start.add(10, 'minutes').isAfter(end);
+console.log("valid",valid)
 
    
 
@@ -560,8 +561,8 @@ const createAnnouncement = async (data) => {
                   <Form.Control 
                     type="time"
                     name="start_time"
-                    onChange={handleAnnouncementData}
-                    defaultValue={hour()}
+                    onChange={handleAnnouncementData}                    
+                    defaultValue={moment().add(10, 'minutes').format('HH:mm')}
                     // min={moment().add(6, "hours")}
                     onInvalid={!!error.start_time}
                   />

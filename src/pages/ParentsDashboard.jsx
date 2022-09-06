@@ -258,7 +258,7 @@ const ParentsDashboard = () => {
                             </>
                           })
                         ) : (
-                        <div className="text-center mb-5 mt-5"><strong>No Educators</strong></div>
+                        <div className="text-center mb-5 mt-5"><strong>No educators assigned</strong></div>
                         )}
                             <header className="title-head mb-4 justify-content-between">
                               <h4 className="title-sm mb-0"><strong>Events</strong></h4>
