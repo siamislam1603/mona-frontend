@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from 'axios';
-import { childDailyRoutineValidation } from '../../helpers/validation';
 import { useParams } from 'react-router-dom';
 
 let nextstep = 6;
 let step = 5;
-console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 5);
 
 const ChildEnrollment5 = ({ nextStep, prevStep }) => {
   let { childId: paramsChildId, parentId: paramsParentId } = useParams();
@@ -132,17 +130,10 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    
-    let childDailyRoutineErrorObj = childDailyRoutineValidation(childDailyRoutineData);
-    if(Object.keys(childDailyRoutineErrorObj).length > 0) {
-      window.scrollTo(0, 0);
-      setChildDailyRoutineError(childDailyRoutineErrorObj);
+    if(formStepData >= step) {
+      updateFormFiveData();
     } else {
-      if(formStepData >= step) {
-        updateFormFiveData();
-      } else {
-        saveFormFiveData();
-      }
+      saveFormFiveData();
     }
   };
 
@@ -281,17 +272,16 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Sleep Time *</Form.Label>
+                    <Form.Label>Sleep Time</Form.Label>
                     <Form.Control 
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="sleep_time"
                       value={childDailyRoutineData?.sleep_time || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          sleep_time: null
-                        }));
                       }}
                       
                       onBlur={(e) => {
@@ -302,23 +292,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.sleep_time !== null && <span className="error">{childDailyRoutineError?.sleep_time}</span> }
                   </Form.Group>
                 </Col>
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Bottle Time/Breast Feeding Arrangements *</Form.Label>
+                    <Form.Label>Bottle Time/Breast Feeding Arrangements</Form.Label>
                     <Form.Control 
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       value={childDailyRoutineData?.bottle_time || ""}
                       name="bottle_time"
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          bottle_time: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -329,23 +317,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.bottle_time !== null && <span className="error">{childDailyRoutineError?.bottle_time}</span> }
                   </Form.Group>
                 </Col>
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Toileting *</Form.Label>
+                    <Form.Label>Toileting</Form.Label>
                     <Form.Control 
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="toileting"
                       value={childDailyRoutineData?.toileting || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          toileting: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -356,23 +342,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.toileting !== null && <span className="error">{childDailyRoutineError?.toileting}</span> }
                   </Form.Group>
                 </Col>
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Routines *</Form.Label>
+                    <Form.Label>Routines</Form.Label>
                     <Form.Control 
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="routines"
                       value={childDailyRoutineData?.routines || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          routines: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -383,23 +367,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.routines !== null && <span className="error">{childDailyRoutineError?.routines}</span> }
                   </Form.Group>
                 </Col>
 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Likes/Dislikes *</Form.Label>
+                    <Form.Label>Likes/Dislikes</Form.Label>
                     <Form.Control 
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="likes_dislikes"
                       value={childDailyRoutineData?.likes_dislikes || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          likes_dislikes: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -410,23 +392,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.likes_dislikes !== null && <span className="error">{childDailyRoutineError?.likes_dislikes}</span> }
                   </Form.Group>
                 </Col>
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Comforter *</Form.Label>
+                    <Form.Label>Comforter</Form.Label>
                     <Form.Control 
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="comforter"
                       value={childDailyRoutineData?.comforter || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          comforter: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -437,23 +417,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.comforter !== null && <span className="error">{childDailyRoutineError?.comforter}</span> }
                   </Form.Group>
                 </Col>
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Religion *</Form.Label>
+                    <Form.Label>Religion</Form.Label>
                     <Form.Control 
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="religion"
                       value={childDailyRoutineData?.religion || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          religion: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -464,23 +442,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.religion !== null && <span className="error">{childDailyRoutineError?.religion}</span> }
                   </Form.Group>
                 </Col>
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Dietary Requirement *</Form.Label>
+                    <Form.Label>Dietary Requirement</Form.Label>
                     <Form.Control 
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="dietary_requirement"
                       value={childDailyRoutineData?.dietary_requirement || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          dietary_requirement: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -491,23 +467,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.dietary_requirement !== null && <span className="error">{childDailyRoutineError?.dietary_requirement}</span> }
                   </Form.Group>
                 </Col>
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Allergy *</Form.Label>
-                    <Form.Control 
+                    <Form.Label>Allergy</Form.Label>
+                    <Form.Control
+                      style={{ resize: "none" }}  
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="allergy"
                       value={childDailyRoutineData?.allergy || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          allergy: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -518,23 +492,21 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.allergy !== null && <span className="error">{childDailyRoutineError?.allergy}</span> }
                   </Form.Group>
                 </Col>
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Comment *</Form.Label>
-                    <Form.Control 
+                    <Form.Label>Comment</Form.Label>
+                    <Form.Control
+                      style={{ resize: "none" }} 
                       type="text"
+                      as="textarea"
+                      rows={5}
                       name="comment"
                       value={childDailyRoutineData?.comment || ""}
                       onChange={(e) => {
                         handleDailyRoutineData(e);
-                        setChildDailyRoutineError(prevState => ({
-                          ...prevState,
-                          comment: null
-                        }));
                       }}
 
                       onBlur={(e) => {
@@ -545,7 +517,6 @@ const ChildEnrollment5 = ({ nextStep, prevStep }) => {
                           }));
                         }
                       }} />
-                    { childDailyRoutineError?.comment !== null && <span className="error">{childDailyRoutineError?.comment}</span> }
                   </Form.Group>
                 </Col>
               </Row>
