@@ -13,33 +13,56 @@ const selectRow = {
     clickToSelect: true,
 };
 
-const FileRepodAddbyMe = () => {
+const FileRepodAddbyMe = ({ selectedFranchisee }) => {
 
+    console.log(selectedFranchisee, "selectedFranchisee")
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-   
+
 
     const GetData = async () => {
-        let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}`, {
-            headers: {
-                authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        })
-        if (response) {
+        try {
+
+            let id = selectedFranchisee === "All" || selectedFranchisee === "all" ? localStorage.getItem('user_id') : selectedFranchisee;
+            console.log(id, "selectedFranchiseeselectedFranchisee")
+            // console.log(localStorage.getItem('user_id'), "selectedFranchiseeselectedFranchisee")
+
+            // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
+            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${id}`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            })
+            if (response) {
+                setfullLoaderStatus(false)
+            }
+            if (response.status === 200) {
+                const users = response.data.dataDetails;
+                let tempData = users.map((dt) => ({
+                    name: `${dt.categoryId}, ${dt.count}`,
+                    createdAt: dt.updatedAt,
+                    userID: dt.id,
+                    creatorName: dt.ModifierName + "," + dt.updatedBy
+                }));
+                setUserData(tempData);
+            }
+        } catch (err) {
             setfullLoaderStatus(false)
         }
-        if (response.status === 200) {
-            const users = response.data.dataDetails;
 
-            let tempData = users.map((dt) => ({
-                name: `${dt.categoryId}, ${dt.count}`,
-                createdAt: dt.updatedAt,
-                userID: dt.id,
-                creatorName: dt.ModifierName + "," + dt.updatedBy
-            }));
-            setUserData(tempData);
-        }
     }
+    useEffect(() => {
+        GetData();
+    }, []);
+
+
+    useEffect(() => {
+        if (selectedFranchisee) {
+            GetData();
+            setUserData();
+        }
+    }, [selectedFranchisee]);
+
     const [columns, setColumns] = useState([
         {
             dataField: 'name',
@@ -118,13 +141,11 @@ const FileRepodAddbyMe = () => {
             // },
         },
     ]);
-    useEffect(() => {
-        GetData();
-    }, []);
+
     return (
         <div>
             <FullLoader loading={fullLoaderStatus} />
-            {userData.length > 0 ? (
+            {userData?.length > 0 ? (
                 <ToolkitProvider
                     keyField="name"
                     data={userData}
@@ -143,7 +164,6 @@ const FileRepodAddbyMe = () => {
 
                 </ToolkitProvider>
             ) : (<div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>)}
-
         </div>
     )
 }

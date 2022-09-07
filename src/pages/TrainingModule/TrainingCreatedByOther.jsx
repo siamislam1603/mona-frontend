@@ -70,7 +70,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     category_id: null,
     search: ""
   });
-  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(false);
 
 
   const fetchTrainingCategories = async () => {

@@ -13,9 +13,12 @@ const AllEvent = (props) => {
   const [allEventData,setAllEventData] = useState([])
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
+  const [topMessage,setTopMessage] = useState(null);
+
   const [userRole,setUserRole]=useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const [topErrorMessage, setTopErrorMessage] = useState(null);
 
  
 
@@ -106,7 +109,13 @@ const deleteAnnouncement = async (id) =>{
   console.log("The response after delete",response)
   if(response.status === 200){
       console.log("Delete succussfully")
+
       allEvent()
+      setTopMessage("Delete succussfully")
+
+      setTimeout(() =>{
+        setTopMessage(null)
+    },3000)
   }
 }
 
@@ -128,9 +137,17 @@ useEffect(() =>{
     
   }
 },[props.loadEvent])
-console.log("THE EVENT PROPS",props.allEvent)
+useEffect(() =>{
+  setTimeout(() => {
+    setTopErrorMessage(null);
+  }, 3000)
+},[topErrorMessage])
+
   return (
     <div className="announcement-accordion">
+   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
+
     <Accordion defaultActiveKey="0">
       { allEventData &&
        allEventData?.length !== 0 ? (
@@ -168,7 +185,28 @@ console.log("THE EVENT PROPS",props.allEvent)
                         <img src="../img/dot-ico.svg" alt=""/>
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
+                        <Dropdown.Item 
+                         href={
+                          new Date(data?.scheduled_date)>new Date() ? (
+                            `/edit-announcement/${data.id}`  
+
+                          ):
+                          (
+                              null     
+                            
+                          )
+                        }
+                        onClick={() =>  
+                          new Date(data?.scheduled_date)>new Date() ? (
+                            setTopErrorMessage(null)
+
+                          ):(
+                            setTopErrorMessage("Can not edit")
+
+                          )
+                          }
+                        
+                        >Edit</Dropdown.Item>                                          
                            
                       
                         <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>

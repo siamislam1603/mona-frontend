@@ -958,7 +958,7 @@ const ChildrenEnrol = () => {
                         </ToolkitProvider>
                         : (
                           <div className="text-center mb-5 mt-5"><strong>
-                            No Child enroll Yet!
+                            No Child enrol Yet!
                           </strong></div>
 
                         )

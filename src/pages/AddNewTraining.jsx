@@ -9,7 +9,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
-import { TrainingFormValidation } from '../helpers/validation';
+import { TrainingFormValidation } from '../helpers/validation'
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
 
@@ -97,7 +97,7 @@ const AddNewTraining = () => {
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
 
-  
+
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
   // LOG MESSAGES
@@ -201,7 +201,7 @@ const AddNewTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
 
-  
+
   const fetchFranchiseeUsers = async (franchisee_id) => {
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`);
     if (response.status === 200 && response.data.status === "success") {
@@ -539,9 +539,6 @@ const AddNewTraining = () => {
                           </div>
                           {errors.time_required_to_complete !== null && <span className="error">{errors.time_required_to_complete}</span>}
                         </Form.Group>
-                        {/* <Form.Control.Feedback type="invalid">
-                            {errors.select_hour}
-                          </Form.Control.Feedback> */}
                       </Col>
 
                       <Col md={6} className="mb-3 relative">

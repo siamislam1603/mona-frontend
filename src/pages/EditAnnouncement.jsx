@@ -318,7 +318,7 @@ const selectFranhise = () =>{
     copyFetchedData();
     AnnouncementDetails()
 },[fileDeleteResponse])
-
+  console.log("My annoucnement",announcementData)
   
   return (
     <>

@@ -19,7 +19,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  const [page,setPage] = useState(6)
+  const [page, setPage] = useState(6)
 
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
@@ -62,7 +62,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }
   };
 
-  console.log('THE filter',filter)
+  console.log('THE filter', filter)
   const handleTrainingSharing = async () => {
     let token = localStorage.getItem('token');
     let user_id = localStorage.getItem('user_id')
@@ -94,7 +94,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       ]);
     }
   };
-  const trainingCreatedByMe = async() =>{
+  const trainingCreatedByMe = async () => {
     try {
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
@@ -104,13 +104,13 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
           "Authorization": "Bearer " + token
         }
       });
-      console.log('Training created by me',response)
-      if(response.status===200 && response.data.status === "success"){
-        const {searchedData} = response.data
+      console.log('Training created by me', response)
+      if (response.status === 200 && response.data.status === "success") {
+        const { searchedData } = response.data
         setMyTrainingData(searchedData)
         setfullLoaderStatus(false)
-  
-        
+
+
       }
     } catch (error) {
       console.log("Error create by me",error)
@@ -118,27 +118,28 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }
 
   }
-  const trainingCreatedByOther = async() =>{
+  const trainingCreatedByOther = async () => {
     try {
       let user_id = localStorage.getItem('user_id');
-    let token = localStorage.getItem('token');
-    console.log("Search inside training other",filter.search)
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    console.log('Training created by OTHER',response)
-    if(response.status===200 && response.data.status === "success"){
-      const {searchedData} = response.data
-      setOtherTrainingData(searchedData)
-      setfullLoaderStatus(false)
+      let token = localStorage.getItem('token');
+      console.log("Search inside training other", filter.search)
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      console.log('Training created by OTHER', response)
+      if (response.status === 200 && response.data.status === "success") {
+        const { searchedData } = response.data
+        setOtherTrainingData(searchedData)
+        setfullLoaderStatus(false)
 
-      
-    }
+
+      }
     } catch (error) {
       setfullLoaderStatus(false)
       setOtherTrainingData([])
+
     }
 
   }
@@ -189,7 +190,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       assigned_franchisee: training?.shares[0]?.franchisee,
       applicable_to: training?.shares[0]?.applicable_to,
       send_to_all_franchisee: training?.shares[0]?.franchisee === 'all' ? true : false,
-    }));  
+    }));
 
     fetchFranchiseeUsers(training?.shares[0]?.franchisee[0]);
   }
@@ -207,13 +208,14 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   useEffect(() => {
     fetchUserList();
   }, [selectedFranchisee]);
-  useEffect(() =>{
+  useEffect(() => {
     trainingCreatedByMe()
+
   },[filter,page,trainingDeleteMessage,selectedFranchisee])
 
-  useEffect(() =>{
+  useEffect(() => {
     trainingCreatedByOther()
-  },[filter,page,trainingDeleteMessage])
+  }, [filter, page, trainingDeleteMessage])
 
   useEffect(() => {
     fetchFranchiseeList();
@@ -240,18 +242,18 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   return (
     <>
       <div id="main">
-      <FullLoader loading={fullLoaderStatus} />
+        <FullLoader loading={fullLoaderStatus} />
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
         <div className="training-column">
           <Row style={{ marginBottom: '40px' }}>
             {/* {myTrainingData?.length > 0 && <h1></h1>} */}
             <header className="title-head mb-4 justify-content-between">
-                            {myTrainingData?.length > 0 && 
-                            <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
-                            
-                            }
-                          { myTrainingData?.length >0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
-                          </header>
+              {myTrainingData?.length > 0 &&
+                <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
+
+              }
+              {myTrainingData?.length > 0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
+            </header>
             {myTrainingData?.map((training) => {
               return (
                 <Col lg={4} md={6} key={training.id}>
@@ -290,9 +292,9 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                 </Col>
               );
             })}
-             
+
           </Row>
-            
+
           <Row>
             {/* {
               otherTrainingData?.length > 0 && <h1 style={{ marginBottom: '25px' }}>Created by others</h1>
@@ -329,7 +331,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                          <Dropdown.Item onClick={() => {
+                            <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
                                 handleTrainingDelete(training.id)
                             }}>Delete</Dropdown.Item>
@@ -354,12 +356,12 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
               );
             })}
           </Row>
-          {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
-          null
-            :     
-                   !fullLoaderStatus &&  <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
+          {otherTrainingData?.length > 0 || myTrainingData?.length > 0 ?
+            null
+            :
+            !fullLoaderStatus && <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
           }
-             {/* {
+          {/* {
 
              }
               otherTrainingData?.length>0 && myTrainingData?.length>0 ? (
@@ -370,7 +372,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
             } */}
         </div>
       </div>
-      
+
       {
         formSettings &&
         <Modal
@@ -521,7 +523,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                       <>
                         <Form.Label className="d-block">Select User Roles</Form.Label>
                         <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
-                        <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
                             <Form.Check
                               type="checkbox"
                               checked={formSettings?.assigned_roles?.includes("franchisee_admin")}

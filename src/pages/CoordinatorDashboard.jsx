@@ -302,17 +302,21 @@ const CoordinatorDashboard = () => {
                             <h4 className="title-sm mb-0"><strong>Onboarding</strong></h4>
                           </header>
                           <div className="activitylist relative two-col">
-                            {onboarding.newEducators === 0 ? (<></>) : (<><div className="item">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
-                                <span className="name">New Educator Enrolled</span>
-                                <span className="separator">|</span>
-                                <span className="num">{onboarding?.newEducators}</span>
-                              </a>
-                            </div></>)}
+                            {onboarding?.newEducators === 0 ? (<></>) : (
+                              <>
+                                <div className="item">
+                                  <a className="item" href="/user-management/Educator">
+                                    <span className="name">New Educator Enrolled</span>
+                                    <span className="separator">|</span>
+                                    <span className="num">{onboarding?.newEducators}</span>
+                                  </a>
+                                </div>
+                              </>
+                            )}
 
                             <div className="item">
                               <a href="/user-management/Guardian" className="item">
-                                <span className="name">New Parents Enrolled</span>
+                                <span className="name">New Parents Enroled</span>
                                 <span className="separator">|</span>
                                 <span className="num">{onboarding?.newParents}</span>
                               </a>
@@ -392,7 +396,7 @@ const CoordinatorDashboard = () => {
                             </div>
                             <div className="listing">
                               <a className="item" href="/children-all" >
-                                <span className="name">New Enrollments</span>
+                                <span className="name">New Enrolments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count?.newEnrollments}</span>
                               </a>
@@ -430,97 +434,12 @@ const CoordinatorDashboard = () => {
                                 :
                                 (
                                   <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
-
                                 )
                             }
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+                        
                           </div>
                         </div>
-                        {/*<div className="files-sec pb-5">
-                          <header className="title-head mb-4 justify-content-between">
-                            <h4 className="title-sm mb-0"><strong>Files</strong></h4>
-                          </header>
-                          <div className="column-list files-list">
-                            <div className="item">
-                              <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-                              <div className="name">Getting and staying organized <span className="time">3 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/audio-ico.png" alt=""/></div>
-                              <div className="name">Getting and staying organized <span className="time">3 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/sound-ico.png" alt=""/></div>
-                              <div className="name">Getting and staying organized <span className="time">3 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-                              <div className="name">Getting and staying organized <span className="time">3 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="item">
-                              <div className="pic"><img src="../img/book-ico.png" alt=""/></div>
-                              <div className="name">Getting and staying organized <span className="time">3 Hours</span></div>
-                              <div className="cta-col">
-                                <Dropdown>
-                                  <Dropdown.Toggle variant="transparent" id="ctacol">
-                                    <img src="../img/dot-ico.svg" alt=""/>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            </div>
-                            <div className="kidsart">
-                              <img src="../img/kid-art.svg" alt=""/>
-                            </div>
-                          </div>
-                        </div>*/}
+ 
                       </aside>
                     </Col>
                   </Row>

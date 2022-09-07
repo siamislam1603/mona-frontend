@@ -84,7 +84,6 @@ const UserManagement = () => {
       // }
 
       if (e.target.text === "Deactivate") {
-
         async function deactivateUserFromDB() {
           const response = await axios.patch(
             `${BASE_URL}/auth/user/status/${row.userID}`,

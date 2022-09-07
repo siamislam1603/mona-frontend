@@ -12,7 +12,8 @@ import moment from 'moment';
 const MyAnnouncements = (props) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  
+  const [topErrorMessage, setTopErrorMessage] = useState(null);
+  const [topMessage,setTopMessage] = useState(null);
   const [myAnnouncement,setmyAnnouncement] = useState([]);
   // const {id} = useParams
   const [userRole,setUserRole]=useState(null)
@@ -57,7 +58,11 @@ const MyAnnouncements = (props) => {
     console.log("The response after delete",response)
     if(response.status === 200){
         console.log("Delete succussfully")
+        setTopMessage("Delete succussfully")
         myAnnouncementData()
+        setTimeout(() =>{
+          setTopMessage(null)
+      },3000)
     }
   }
   const userName = localStorage.getItem("user_name");
@@ -130,43 +135,27 @@ const MyAnnouncements = (props) => {
       }
   },[props.myAnnouncementData])
   console.log("MY ANNOUNCEMENT DATA props",props.myAnnouncementData)
-  
-  // useEffect(() =>{
-  //   if(!props.searchValue){
-  //     myAnnouncementData()
-  //     console.log("The search value is not found",props.searchValue)
-  //   }
-  //   else if(props.franchisee.searchData){
-  //     console.log("The search value have something",props.searchValue)
-  //     // setAnnouncementDetail(props.search)
-  //     setmyAnnouncement(props.franchisee.searchData)
-  //   }
-  //   else{
-  //     console.log("The search value have something",props.searchValue)
-  //     setmyAnnouncement(props.search)
-  //   }
-  // },[props.search])
-//   useEffect(() =>{
-//     if(props.franchisee.status === 404){
-//       console.log("Don't have fanrhise")
-//     }
-//     setmyAnnouncement(props.franchisee.searchedData)
-//     console.log("The frnahise under all announcement",props.franchisee)
-    
-// },[props.franchisee])
-// useEffect(() =>{
-//   if(props.loadData.length>0){
-//     setmyAnnouncement(props.loadData)
-//   }
-// },[props.loadData])
- console.log("THE MY ANNOUNCEMENT DATA",myAnnouncement)
-  return (
+
+
+useEffect(() =>{
+  setTimeout(() => {
+    setTopErrorMessage(null);
+  }, 3000)
+},[topErrorMessage])
+
+// {myAnnouncement &&  console.log("schedule time",myAnnouncement[0].scheduled_date)}
+ return (
+ 
     <div className="announcement-accordion">
-        {/* <h1> My Announcement</h1> */}
+    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
+   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+
     <Accordion defaultActiveKey="0">
       { myAnnouncement &&
        myAnnouncement.length !== 0 ? (
-        myAnnouncement.map((data,index) => (
+        myAnnouncement.map((data,index) => 
+        (
+
           <Accordion.Item eventKey={index} key={index}>
           <Accordion.Header>
             <div className="head-title">
@@ -193,11 +182,6 @@ const MyAnnouncements = (props) => {
                           </div>              
               <div className="date">
                  
-                  {/* <Dropdown.Toggle id="extrabtn" className="ctaact">
-                      <NavLink to="/edit-announcement">
-                        <img src="../img/dot-ico.svg" alt=""/>
-                      </NavLink>
-                   </Dropdown.Toggle> */}
                       {
                     userRole === "franchisor_admin" || userRole === "franchisee_admin" ?
                     (
@@ -205,8 +189,28 @@ const MyAnnouncements = (props) => {
                       <Dropdown.Toggle id="extrabtn" className="ctaact">
                         <img src="../img/dot-ico.svg" alt=""/>
                       </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
+                      <Dropdown.Menu>                        
+                        <Dropdown.Item href={
+                          new Date(data?.scheduled_date)>new Date() ? (
+                            `/edit-announcement/${data.id}`  
+
+                          ):
+                          (
+                              null  
+                             
+                          )
+                        }
+                        onClick={() =>  
+                          new Date(data?.scheduled_date)>new Date() ? (
+                            setTopErrorMessage(null)
+
+                          ):(
+                            setTopErrorMessage("Can not edit")
+
+                          )
+                          }
+                      
+                        >Edit</Dropdown.Item>                                          
                            
                       
                         <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>

@@ -117,7 +117,9 @@ const RepoEdit = () => {
         if (response.status === 200 && response.data.status === "success") {
             if (typeof data.image === 'string') {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
+                console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
+                    console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
                     navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
             }
@@ -255,16 +257,16 @@ const RepoEdit = () => {
 
     const isAllRolesChecked = () => {
         let bool = false;
-        if (getUser_Role == "franchisor_admin") {
+        if (getUser_Role === "franchisor_admin") {
             bool = ["guardian", "educator", "coordinator", "franchisee_admin"].every(item => data?.shared_role?.includes(item))
         }
-        else if (getUser_Role == "franchisee_admin") {
+        else if (getUser_Role === "franchisee_admin") {
             bool = ["guardian", "educator", "coordinator"].every(item => data?.shared_role?.includes(item))
         }
-        else if (getUser_Role == "coordinator") {
+        else if (getUser_Role === "coordinator") {
             bool = ["guardian", "educator"].every(item => data?.shared_role?.includes(item))
         }
-        else if (getUser_Role == "educator") {
+        else if (getUser_Role === "educator") {
             bool = ["guardian"].every(item => data?.shared_role?.includes(item))
         }
 
@@ -283,6 +285,7 @@ const RepoEdit = () => {
         childList()
         getUser();
     }, [data.franchise])
+
 
 
 
@@ -583,6 +586,7 @@ const RepoEdit = () => {
                                                                             </label>) : null}
                                                                             {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
                                                                                 Coordinators
+                                                                                {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                                 <input
                                                                                     type="checkbox"
                                                                                     name="shared_role"
