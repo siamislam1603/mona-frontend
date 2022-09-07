@@ -8,7 +8,6 @@ import DropAllFile from "../components/DragDropMultiple";
 import DropOneFile from '../components/DragDrop';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
-import { useParams } from 'react-router-dom';
 import {AddNewAnnouncementValidation} from "../helpers/validation" 
 import Select from 'react-select';
 import MyEditor from './CKEditor';
@@ -29,38 +28,13 @@ const AddNewAnnouncements = () => {
     today = yyyy + '-' + mm + '-' + dd;
     return today
   }
-  const hour = () =>{
-    let time 
-    let min 
-    var date = new Date();
-    let currentHours = date.getHours();
-    currentHours = ("0" + currentHours).slice(-2);
-     min = date.getMinutes()+10
-
-    if(min>60){
-      let currentHours = date.getHours()+1;
-       let newd=min- 60
-      currentHours = ("0" + currentHours).slice(-2);
-       time = currentHours + ":" + newd;
-
-    }
-    else {
-      min = ("0" + min).slice(-2);
-
-
-       time = currentHours + ":" + min
-    }
-    return time;
-
-    
-   } 
-
 
 
 const handleSaveAndClose = () => setShow(false);
 
 // CUSTOM STATES
 const location = useLocation();
+
 const [loader, setLoader] = useState(false);
 const [timeError,setTimeError] = useState()
 const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
@@ -82,6 +56,7 @@ const [titleError,setTitleError] = useState();
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
   const [titleChecking,setTitleChecking] = useState(false)
+  const [topMessage,setTopMessage] = useState(null);
 
 
 const createAnnouncement = async (data) => {
@@ -143,7 +118,9 @@ const createAnnouncement = async (data) => {
     } 
   
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
-    window.location.href="/announcements";
+      localStorage.setItem('success_msg', 'Announcement Created Successfully!');
+      localStorage.setItem('active_tab', '/created-announcement');
+      window.location.href="/announcements";
         
     }
    } catch (error) {
@@ -201,22 +178,6 @@ const createAnnouncement = async (data) => {
       fetchFranchiseeList();
     }, []);
 
-    const handelSingleFranhisee = (event) =>{
-      setAnnouncementData((prevState) => ({
-        ...prevState,
-      franchise: []
-        
-      }))
-    }
-    const handleAnnouncementFranchisee = (event) => {
-      // localStorage.getItem('user_role') === 'franchisor_admin' ?
-
-      setAnnouncementData((prevState) => ({
-        ...prevState,
-        franchise: [...event.map(option => option.id + "")]
-      }));
-     
-    };
 
     const announcementDescription = (field, value) => {
       setAnnouncementData({ ...announcementData, [field]: value });
@@ -319,25 +280,14 @@ const createAnnouncement = async (data) => {
 
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
-  const [allowSubmit, setAllowSubmit] = useState(false);
-  const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
-  const [ImageloaderFlag, setImageLoaderFlag] = useState(false);
-  const [videoloaderFlag, setVideoLoaderFlag] = useState(false);
-  const [filesLoaderFlag, setFilesLoaderFlag] = useState(false);
+
   const [relatedFiles, setRelatedFiles] = useState([]);
-  const [formSettingFlag, setFormSettingFlag] = useState(false);
-  const [formSettingError, setFormSettingError] = useState({});
-  const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
   const [userRole,setUserRole] = useState("");
-  const [operatingManualData, setOperatingManualData] = useState({
-    related_files: [],
-  });
+
 
     useEffect(() =>{
       const role = localStorage.getItem("user_role")
       setUserRole(role)
-      // hour()
-      // theDate()
     },[])
 
 
@@ -355,6 +305,8 @@ console.log("ds",ds,cureent)
   return (
     
     <>
+   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
      
       <div id="main">
@@ -382,6 +334,7 @@ console.log("ds",ds,cureent)
                           name="title"
                           onChange={handleAnnouncementData} 
                           onBlur={handleTitle} 
+                          
 
                           isInvalid = {!!error.title || titleError}
                           />
@@ -515,23 +468,11 @@ console.log("ds",ds,cureent)
                         <MyEditor
                               errors={error}
                               name ="meta_description"
-                              // data={announcementData.meta_description} 
-                             
-
                               handleChange={(e, data) => {
                                 announcementDescription(e, data);
                               }}
                             />
                            {error.meta_description && <p className="form-errors">{error.meta_description}</p>}
-                            {/* <Form.Control
-                          type="text" 
-                          name="meta_description"
-                          onChange={handleAnnouncementData} 
-                          isInvalid = {!!error.meta_description}
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {error.meta_description}
-                          </Form.Control.Feedback> */}
                         </Form.Group>
                       </Col>
                     </Row>
@@ -639,26 +580,6 @@ console.log("ds",ds,cureent)
                           <DropAllFile onSave={setRelatedFiles}/>
                         </Form.Group>
                       </Col>
-                  {/* <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                  <Form.Group className="mb-3 form-group">
-                  <Form.Label>Schedule Date</Form.Label>
-                  <Form.Control 
-                   type="date"
-                   name="start_date"
-                  onChange={handleAnnouncementData}
-                  />
-                </Form.Group>
-              </Col>
-              <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                <Form.Group className="mb-3 form-group">
-                  <Form.Label>Schedule Time</Form.Label>
-                  <Form.Control 
-                  type="time"
-                  name="start_time"
-                  onChange={handleAnnouncementData}
-                  />
-                </Form.Group>
-              </Col> */}
                       <Col md={12}>
                         <div className="cta text-center mt-5 mb-5">
                         <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>

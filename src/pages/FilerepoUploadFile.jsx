@@ -91,7 +91,7 @@ const FilerepoUploadFile = () => {
     //======================== GET User List==================
     const getUser = async () => {
         let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees/`, { franchisee_id: franchiseeArr }, {
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisees/`, { franchisee_id: franchiseeArr || [] }, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -227,7 +227,7 @@ const FilerepoUploadFile = () => {
                 );
                 formdata.append(
                     'assigned_users',
-                    selectedUserId.slice(0, -1) == "" ? null : selectedUserId.slice(0, -1)
+                    selectedUserId.slice(0, -1) == "" ? [] : selectedUserId.slice(0, -1)
                 );
                 formdata.append(
                     'accessibleToRole',
@@ -421,7 +421,7 @@ const FilerepoUploadFile = () => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
                                                 >
-                                                    <option value="">Select</option>
+                                                    <option value="8">Select</option>
                                                     <option value="8" selected={true}>General</option>
                                                 </Form.Select>
                                             </>) : (

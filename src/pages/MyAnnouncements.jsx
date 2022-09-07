@@ -13,7 +13,7 @@ const MyAnnouncements = (props) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
-  
+  const [topMessage,setTopMessage] = useState(null);
   const [myAnnouncement,setmyAnnouncement] = useState([]);
   // const {id} = useParams
   const [userRole,setUserRole]=useState(null)
@@ -58,7 +58,11 @@ const MyAnnouncements = (props) => {
     console.log("The response after delete",response)
     if(response.status === 200){
         console.log("Delete succussfully")
+        setTopMessage("Delete succussfully")
         myAnnouncementData()
+        setTimeout(() =>{
+          setTopMessage(null)
+      },3000)
     }
   }
   const userName = localStorage.getItem("user_name");
@@ -131,51 +135,21 @@ const MyAnnouncements = (props) => {
       }
   },[props.myAnnouncementData])
   console.log("MY ANNOUNCEMENT DATA props",props.myAnnouncementData)
-  
-  // useEffect(() =>{
-  //   if(!props.searchValue){
-  //     myAnnouncementData()
-  //     console.log("The search value is not found",props.searchValue)
-  //   }
-  //   else if(props.franchisee.searchData){
-  //     console.log("The search value have something",props.searchValue)
-  //     // setAnnouncementDetail(props.search)
-  //     setmyAnnouncement(props.franchisee.searchData)
-  //   }
-  //   else{
-  //     console.log("The search value have something",props.searchValue)
-  //     setmyAnnouncement(props.search)
-  //   }
-  // },[props.search])
-//   useEffect(() =>{
-//     if(props.franchisee.status === 404){
-//       console.log("Don't have fanrhise")
-//     }
-//     setmyAnnouncement(props.franchisee.searchedData)
-//     console.log("The frnahise under all announcement",props.franchisee)
-    
-// },[props.franchisee])
-// useEffect(() =>{
-//   if(props.loadData.length>0){
-//     setmyAnnouncement(props.loadData)
-//   }
-// },[props.loadData])
-// useEffect(() =>{
-//   setTimeout(() => {
-//     setTopErrorMessage(null);
-//   }, 3000)
-// },[topErrorMessage])
- console.log("THE MY ANNOUNCEMENT DATA",myAnnouncement)
- console.log("2022-09-05T11:52:00.000Z")
- const event = new Date("2022-09-07T08:25:00.000Z")
- const todydate = new Date()
 
-  console.log(todydate >event)
+
+useEffect(() =>{
+  setTimeout(() => {
+    setTopErrorMessage(null);
+  }, 3000)
+},[topErrorMessage])
+
 // {myAnnouncement &&  console.log("schedule time",myAnnouncement[0].scheduled_date)}
  return (
  
     <div className="announcement-accordion">
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
+   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+
     <Accordion defaultActiveKey="0">
       { myAnnouncement &&
        myAnnouncement.length !== 0 ? (
@@ -201,7 +175,6 @@ const MyAnnouncements = (props) => {
                                   
                              </span>
                              {data.user.fullname[0].toUpperCase()+data.user.fullname.slice(1)}
-                             {data.scheduled_date}
                   
                           {/* {data.is_event === 1 ?<span style ={{color:"black",fontWeight:"bold"}}> Event</span>:<span style ={{color:"black",fontWeight:"900"}}> Announcement</span> } */}
                             
@@ -223,10 +196,19 @@ const MyAnnouncements = (props) => {
 
                           ):
                           (
-                              null     
-                            
+                              null  
+                             
                           )
                         }
+                        onClick={() =>  
+                          new Date(data?.scheduled_date)>new Date() ? (
+                            setTopErrorMessage(null)
+
+                          ):(
+                            setTopErrorMessage("Can not edit")
+
+                          )
+                          }
                       
                         >Edit</Dropdown.Item>                                          
                            
