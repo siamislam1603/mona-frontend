@@ -39,7 +39,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState();
     const [shareType, setShareType] = useState("roles");
     const [applicableToAll, setApplicableToAll] = useState(false);
-    const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+    const [selectedFranchisees, setSelectedFranchisee] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
     const [formSettings, setFormSettings] = useState({
