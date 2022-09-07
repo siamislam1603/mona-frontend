@@ -39,7 +39,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [franchiseeList, setFranchiseeList] = useState();
     const [shareType, setShareType] = useState("roles");
     const [applicableToAll, setApplicableToAll] = useState(false);
-
+    const [selectedFranchisees, setSelectedFranchisee] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
     const [formSettings, setFormSettings] = useState({
@@ -399,7 +399,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                 <LeftNavbar />
                             </aside>
                             <div className="sec-column">
-                                <TopHeader />
+                                <TopHeader
+                                    setSelectedFranchisee={setSelectedFranchisee}
+                                />
                                 <FullLoader loading={fullLoaderStatus} />
                                 <div className="entry-container">
                                     <div className="user-management-sec repository-sec">

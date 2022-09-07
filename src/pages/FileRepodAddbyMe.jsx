@@ -22,13 +22,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee }) => {
 
     const GetData = async () => {
         try {
-
-            let id = selectedFranchisee === "All" || selectedFranchisee === "all" ? localStorage.getItem('user_id') : selectedFranchisee;
-            console.log(id, "selectedFranchiseeselectedFranchisee")
-            // console.log(localStorage.getItem('user_id'), "selectedFranchiseeselectedFranchisee")
-
-            // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${id}`, {
+            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}`, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
