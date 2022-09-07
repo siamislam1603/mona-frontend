@@ -814,7 +814,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Child Medical No. *</Form.Label>
+                    <Form.Label>Child Medicare No. *</Form.Label>
                     <Form.Control
                       type="text"
                       name="child_medical_no"

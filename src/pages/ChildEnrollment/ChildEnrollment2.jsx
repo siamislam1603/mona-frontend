@@ -2799,7 +2799,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               <div className="enrollment-form-sec">
                 <Form onSubmit={submitFormData}>
                   <div className="enrollment-form-column">
-                    <h2 className="title-xs mb-4 mt-4">Child's Medicare Information</h2>
+                    <h2 className="title-xs mb-4 mt-4">Child's Medical Information</h2>
                     <div className="grayback">
                       <div className="single-col">
                         <p>Does your child have any special needs?</p>
