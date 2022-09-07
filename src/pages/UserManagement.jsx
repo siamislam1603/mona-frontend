@@ -84,7 +84,6 @@ const UserManagement = () => {
       // }
 
       if (e.target.text === "Deactivate") {
-
         async function deactivateUserFromDB() {
           const response = await axios.patch(
             `${BASE_URL}/auth/user/status/${row.userID}`,
@@ -491,15 +490,9 @@ const UserManagement = () => {
       }, 3000);
     }
   }, []);
-  
-  useEffect(() => {
-    if(localStorage.getItem('guardian')) {
-      window.location.href=`/parents-dashboard`;
-    }
-  }, []);
 
   useEffect(() => {
-    if(localStorage.getItem('guardian')) {
+    if(localStorage.getItem('user_role') === 'guardian') {
       window.location.href=`/parents-dashboard`;
     }
   }, [])

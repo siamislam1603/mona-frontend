@@ -187,7 +187,7 @@ const NewFranchisees = () => {
                                                     type="text" 
                                                     maxLength={11}
                                                     minLength={11}
-                                                    placeholder="45 666 777 888"
+                                                    placeholder="45666777888"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -296,7 +296,7 @@ const NewFranchisees = () => {
                                                     type="text" 
                                                     maxLength={9}
                                                     minLength={9}
-                                                    placeholder="666 777 888"
+                                                    placeholder="666777888"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({

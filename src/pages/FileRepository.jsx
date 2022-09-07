@@ -18,6 +18,7 @@ let selectedFranchisee = [
 const FileRepository = () => {
   const [tabLinkPath, setTabLinkPath] = useState("/available-Files");
   const [userData, setUserData] = useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [filterData, setFilterData] = useState({
     category_id: null,
     search: ""
@@ -39,7 +40,9 @@ const FileRepository = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader
+                  setSelectedFranchisee={setSelectedFranchisee}
+                />
                 <div className="entry-container">
                   <div className="user-management-sec repository-sec">
                     <ToolkitProvider
@@ -78,7 +81,8 @@ const FileRepository = () => {
                             {tabLinkPath === "/created-by-me"
                               && <FileRepodAddbyMe
                                 filter={filterData}
-                                selectedFranchisee={selectedFranchisee} />}
+                                selectedFranchisee={selectedFranchisee}
+                              />}
                           </div>
                         </>
                       )}

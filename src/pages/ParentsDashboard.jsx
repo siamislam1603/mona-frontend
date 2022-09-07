@@ -137,9 +137,10 @@ const ParentsDashboard = () => {
   }
   
 
-  const handleParentLogout = () => {
+  const handleParentLogout = async () => {
     setLogUserOutDialog(false);
-    logoutUser();
+    await localStorage.clear();
+    await logoutUser();
   }
 
   const fetchUserChildrenDetails = async () => {

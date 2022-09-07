@@ -19,7 +19,6 @@ import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
 
 const animatedComponents = makeAnimated();
 
-
 const timeqty = [
   {
     value: 'minutes',
@@ -147,7 +146,7 @@ const EditTraining = () => {
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
     let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f}`);
+    const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${f}]`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -378,14 +377,13 @@ const EditTraining = () => {
       }
     }).then(function () {
       setFileDeleteResponse();
+      setFetchedRelatedFiles();
     })
       .catch(error => {
         console.log(error)
       });
   }
-  useEffect(() => {
-    handleTrainingFileDelete();
-  }, [fetchedRelatedFiles])
+
 
 
   // const handleTrainingFileDelete = async (fileId) => {
@@ -419,7 +417,6 @@ const EditTraining = () => {
     fetchTrainingFormData();
   }, [fileDeleteResponse]);
 
-  fetchedRelatedFiles && console.log('FETCHED RELATED FILES:', fetchedRelatedFiles);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -572,7 +569,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload Cover Image :</Form.Label>
+                            <Form.Label>Upload Cover Image</Form.Label>
                             {console.log(croppedImage, "croppedImage")}
                             <DragDropTraning
                               croppedImage={croppedImage}
@@ -582,7 +579,6 @@ const EditTraining = () => {
                               setFetchedCoverImage={setFetchedCoverImage}
                               fetchedPhoto={""}
                             />
-                            <small className="fileinput mt-1">(png, jpg & jpeg)</small>
 
                             {
                               popupVisible &&
@@ -597,8 +593,7 @@ const EditTraining = () => {
                             </>) :
                               (<></>)
                             }
-
-                            {/* {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />} */}
+                            <small className="fileinput mt-1">(png, jpg & jpeg)</small>
                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
                         </Col>
@@ -611,7 +606,7 @@ const EditTraining = () => {
                               type="video"
                               onSave={setVideoTutorialFiles}
                             />
-                            <small className="fileinput">(mp4, flv & mkv)</small>
+
                             <div className="media-container">
                               {
                                 fetchedVideoTutorialFiles &&
@@ -630,7 +625,9 @@ const EditTraining = () => {
                                 })
                               }
                             </div>
+                            <small className="fileinput">(mp4, flv & mkv)</small>
                           </Form.Group>
+
                         </Col>
 
                         <Col md={6} className="mb-3">
@@ -639,7 +636,6 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
-                            <small className="fileinput">(pdf, doc & xslx)</small>
                             <div className="media-container">
                               {
                                 fetchedRelatedFiles &&
@@ -647,7 +643,7 @@ const EditTraining = () => {
                                   return (
                                     <div className="file-container">
                                       <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
-                                      <a href={file.file}><p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p></a>
+                                      <p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p>
                                       <img
                                         onClick={() => handleTrainingFileDelete(file.id)}
                                         className="file-remove"
@@ -658,6 +654,7 @@ const EditTraining = () => {
                                 })
                               }
                             </div>
+                            <small className="fileinput">(pdf, doc & xslx)</small>
                           </Form.Group>
                         </Col>
                         <Col md={12}>
@@ -768,7 +765,7 @@ const EditTraining = () => {
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Send to all franchises:</Form.Label>
+                    <Form.Label>Send to all franchises</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
                         <label for="all">
@@ -847,7 +844,7 @@ const EditTraining = () => {
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Applicable to:</Form.Label>
+                    <Form.Label>Applicable to</Form.Label>
                     <div className="new-form-radio">
                       <div className="new-form-radio-box">
                         <label htmlFor="yes1">
