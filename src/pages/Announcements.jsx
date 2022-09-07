@@ -49,6 +49,7 @@ const Announcements =  () => {
   const [eventLength,setEventLength] = useState(null)
   const [eventCount,setEventCount] = useState(null)
   const [allEvent,setAllEvent] = useState([])
+  const [topMessage,setTopMessage] = useState(null);
 
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
@@ -626,7 +627,16 @@ useEffect(() =>{
   useEffect(() =>{
     setEventLength(loadMoreEvent.length)
   },[loadMoreEvent])
-  
+  useEffect(() => {
+    if (localStorage.getItem('success_msg')) {
+      setTopMessage(localStorage.getItem('success_msg'));
+      localStorage.removeItem('success_msg');
+
+      setTimeout(() => {
+        setTopMessage(null);
+      }, 3000);
+    }
+  }, []);
 
   // console.log("USER ROLE",userRole)
   console.log("THE COUNT AND COMMON",theCount,theCommon)
@@ -644,6 +654,8 @@ useEffect(() =>{
   // console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,loadMoreData)
   return (
     <>
+   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+
       <div id="main">
         <section className="mainsection">
           <Container>

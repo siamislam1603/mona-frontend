@@ -13,7 +13,7 @@ const MyAnnouncements = (props) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
-  
+  const [topMessage,setTopMessage] = useState(null);
   const [myAnnouncement,setmyAnnouncement] = useState([]);
   // const {id} = useParams
   const [userRole,setUserRole]=useState(null)
@@ -58,7 +58,11 @@ const MyAnnouncements = (props) => {
     console.log("The response after delete",response)
     if(response.status === 200){
         console.log("Delete succussfully")
+        setTopMessage("Delete succussfully")
         myAnnouncementData()
+        setTimeout(() =>{
+          setTopMessage(null)
+      },3000)
     }
   }
   const userName = localStorage.getItem("user_name");
@@ -144,6 +148,8 @@ useEffect(() =>{
  
     <div className="announcement-accordion">
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
+   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
+
     <Accordion defaultActiveKey="0">
       { myAnnouncement &&
        myAnnouncement.length !== 0 ? (

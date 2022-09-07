@@ -176,6 +176,9 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
     newErrors.title = 'Contain unwanted space';
 
   }  
+  if(meta_description.match(re)){
+    newErrors.meta_description="Contain unwanted space"
+  }
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
   if(titleError){
     newErrors.title = "Anouncement title already exit"
@@ -211,6 +214,13 @@ export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise)
 
   console.log('All valiatiion', title, start_date, meta_description);
   if (!title || title === ' ') newErrors.title = 'Title is Required';
+  let re = /^\s|\s$/
+
+  if(title.match(re)){
+    // console.log("contains spaces");
+  newErrors.title = 'Contain unwanted space';
+
+}  
   // if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Description is Required';
