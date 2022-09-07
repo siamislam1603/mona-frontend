@@ -2579,6 +2579,7 @@ li.child_tag {
     align-items: center;
     padding: 15px 20px 16px 20px;
     border-bottom: 1px solid #7a7a7a30;
+    cursor: pointer;
 }
 
 .create-by-heading h5 {
