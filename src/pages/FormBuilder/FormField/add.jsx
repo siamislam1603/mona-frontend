@@ -955,7 +955,7 @@ const AddFormField = (props) => {
                                           setForm(tempArr);
                                         }}
                                       >
-                                        Apply Condition
+                                        {item.apply_condition===true ? "Applied Condition" : "Apply Condition"}
                                       </Button>
                                       <ToastContainer />
                                     </>
@@ -1337,6 +1337,9 @@ const AddFormField = (props) => {
                           <Button
                             className="done"
                             onClick={() => {
+                              let data=[...form];
+                              data[Index]['apply_condition']=true;
+                              setForm(data);
                               setConditionFlag(false);
                               counter++;
                               setCount(counter);
@@ -1925,6 +1928,7 @@ const AddFormField = (props) => {
                                 setGroupFlag(!groupFlag);
 
                                 let data = [...form];
+                                
                                 if (data[Index]['signatories'] === true) {
                                   let flag = false;
                                   data.map((item) => {
@@ -1951,6 +1955,7 @@ const AddFormField = (props) => {
                                     });
                                 }
                                 setForm(data);
+                                
                               }}
                             >
                               Done

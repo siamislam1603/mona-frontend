@@ -230,10 +230,9 @@ function ViewFormBuilder(props) {
                       {(localStorage.getItem('user_role') ===
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
-                          'franchisor_admin' 
+                          'franchisor_admin') && (
                         // || localStorage.getItem('user_role') ===
                         //   'coordinator'
-                          ) && (
                         <div className="forms-create">
                           <Button
                             variant="primary"
@@ -436,7 +435,6 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
-
                                             inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(
@@ -777,209 +775,50 @@ function ViewFormBuilder(props) {
                         <Tab eventKey="form-templates" title="Form Templates">
                           <div className="tab-created">
                             <Tabs
-                              defaultActiveKey={localStorage.getItem('user_role') ===
-                          'coordinator' ? "created-by-others" : key}
+                              defaultActiveKey={
+                                localStorage.getItem('user_role') ===
+                                'coordinator'
+                                  ? 'created-by-others'
+                                  : key
+                              }
                               id="uncontrolled-tab-example"
                               className="mb-3"
                               onSelect={(k) => {
                                 setKey(k);
                               }}
                             >
-                              {!localStorage.getItem('user_role') ===
-                          'coordinator' && <Tab
-                                className="create-me create_by_me_list"
-                                eventKey="created-by-me"
-                                title="Created by me"
-                              >
-                                <div className="forms-content-section">
-                                  {MeFormData?.map((item, index) => {
-                                    return (
-                                      <>
-                                        <Row>
-                                          <div className="col-lg-12">
-                                            <h2 className="page_title">
-                                              {item.category}
-                                            </h2>
-                                          </div>
-                                        </Row>
-                                        <Row>
-                                          {item?.forms?.map(
-                                            (inner_item, inner_index) => {
-                                              return (
-                                                inner_item.created_by ===
-                                                  parseInt(
-                                                    localStorage.getItem(
-                                                      'user_id'
-                                                    )
-                                                  ) && (
-                                                  <Col lg={4}>
-                                                    <div className="forms-content create-other">
-                                                      <div className="content-icon-section">
-                                                        <img
-                                                          src={
-                                                            item.category ===
-                                                            'Parent Forms'
-                                                              ? '../img/survey_icon.png'
-                                                              : item.category ===
-                                                                'Talent Management'
-                                                              ? '../img/blue_survey.png'
-                                                              : item.category ===
-                                                                'Child Care Forms'
-                                                              ? '../img/green_survey.png'
-                                                              : item.category ===
-                                                                'Business Operations'
-                                                              ? '../img/dark_green_survey.png'
-                                                              : item.category ===
-                                                                'Customer Service'
-                                                              ? '../img/gray_survey.png'
-                                                              : item.category ===
-                                                                'Governance & Compliance'
-                                                              ? '../img/pink_survey.png'
-                                                              : item.category ===
-                                                                'General'
-                                                              ? '../img/orange_survey.png'
-                                                              : '../img/survey_icon.png'
-                                                          }
-                                                        />
-                                                      </div>
-                                                      <div className="content-title-section">
-                                                        <h6>
-                                                          {inner_item.form_name}
-                                                        </h6>
-                                                        <h4>
-                                                          Created on:{' '}
-                                                          {moment(
-                                                            inner_item.createdAt
-                                                          ).format(
-                                                            'DD/MM/YYYY'
-                                                          )}
-                                                        </h4>
-                                                      </div>
-                                                      <div className="content-toogle">
-                                                        <div
-                                                          className="user-img"
-                                                          onClick={() => {
-                                                            setViewResponseFlag(
-                                                              true
-                                                            );
-                                                            setInnerIndex(
-                                                              inner_index
-                                                            );
-                                                            setIndex(index);
-                                                          }}
-                                                        >
-                                                          <img
-                                                            src="../img/form-user-round.svg"
-                                                            onClick={() => {
-                                                              seenFormResponse(
-                                                                item?.forms[
-                                                                  inner_index
-                                                                ]?.form_data
-                                                              );
-                                                            }}
-                                                          />
-                                                          <span
-                                                            onClick={() => {
-                                                              seenFormResponse(
-                                                                item?.forms[
-                                                                  inner_index
-                                                                ]?.form_data
-                                                              );
-                                                            }}
-                                                          >
-                                                            {
-                                                              inner_item?.seen_count
-                                                            }
-                                                          </span>
-                                                        </div>
-                                                        <Dropdown>
-                                                          <Dropdown.Toggle id="dropdown-basic1">
-                                                            <FontAwesomeIcon
-                                                              icon={
-                                                                faEllipsisVertical
-                                                              }
-                                                            />
-                                                          </Dropdown.Toggle>
-
-                                                          <Dropdown.Menu>
-                                                            <Dropdown.Item
-                                                              onClick={() => {
-                                                                navigate(
-                                                                  '/form/add',
-                                                                  {
-                                                                    state: {
-                                                                      id: inner_item.id,
-                                                                    },
-                                                                  }
-                                                                );
-                                                              }}
-                                                            >
-                                                              <FontAwesomeIcon
-                                                                icon={faPen}
-                                                              />{' '}
-                                                              Edit
-                                                            </Dropdown.Item>
-                                                            {inner_item.id !==
-                                                              formId && (
-                                                              <Dropdown.Item
-                                                                onClick={() => {
-                                                                  deleteForm(
-                                                                    inner_item.id
-                                                                  );
-                                                                }}
-                                                              >
-                                                                <FontAwesomeIcon
-                                                                  icon={
-                                                                    faRemove
-                                                                  }
-                                                                />{' '}
-                                                                Remove
-                                                              </Dropdown.Item>
-                                                            )}
-                                                          </Dropdown.Menu>
-                                                        </Dropdown>
-                                                      </div>
-                                                    </div>
-                                                  </Col>
-                                                )
-                                              );
-                                            }
-                                          )}
-                                        </Row>
-                                      </>
-                                    );
-                                  })}
-                                </div>
-                              </Tab>}
-                              <Tab
-                                className="create-me"
-                                eventKey="created-by-others"
-                                title="Created by others"
-                              >
-                                <div className="forms-content-section">
-                                  {OthersFormData?.map((item, index) => {
-                                    return (
-                                      <>
-                                        <Row>
-                                          <div className="col-lg-12">
-                                            <h2 className="page_title">
-                                              {item.category}
-                                            </h2>
-                                          </div>
-                                        </Row>
-                                        <Row>
-                                          {item?.forms?.map(
-                                            (inner_item, inner_index) => {
-                                              return (
-                                                inner_item.created_by !==
-                                                  parseInt(
-                                                    localStorage.getItem(
-                                                      'user_id'
-                                                    )
-                                                  ) && (
-                                                  <Col lg={4}>
-                                                    <div className="forms-content">
-                                                      <div className="create-other">
+                              {!(
+                                localStorage.getItem('user_role') ===
+                                'coordinator'
+                              ) && (
+                                <Tab
+                                  className="create-me create_by_me_list"
+                                  eventKey="created-by-me"
+                                  title="Created by me"
+                                >
+                                  <div className="forms-content-section">
+                                    {MeFormData?.map((item, index) => {
+                                      return (
+                                        <>
+                                          <Row>
+                                            <div className="col-lg-12">
+                                              <h2 className="page_title">
+                                                {item.category}
+                                              </h2>
+                                            </div>
+                                          </Row>
+                                          <Row>
+                                            {item?.forms?.map(
+                                              (inner_item, inner_index) => {
+                                                return (
+                                                  inner_item.created_by ===
+                                                    parseInt(
+                                                      localStorage.getItem(
+                                                        'user_id'
+                                                      )
+                                                    ) && (
+                                                    <Col lg={4}>
+                                                      <div className="forms-content create-other">
                                                         <div className="content-icon-section">
                                                           <img
                                                             src={
@@ -1039,12 +878,6 @@ function ViewFormBuilder(props) {
                                                             <img
                                                               src="../img/form-user-round.svg"
                                                               onClick={() => {
-                                                                console.log(
-                                                                  'item?.forms--->343243',
-                                                                  item?.forms[
-                                                                    inner_index
-                                                                  ]
-                                                                );
                                                                 seenFormResponse(
                                                                   item?.forms[
                                                                     inner_index
@@ -1052,10 +885,6 @@ function ViewFormBuilder(props) {
                                                                 );
                                                               }}
                                                             />
-                                                            {console.log(
-                                                              'item?.forms---->',
-                                                              item?.forms
-                                                            )}
                                                             <span
                                                               onClick={() => {
                                                                 seenFormResponse(
@@ -1070,96 +899,314 @@ function ViewFormBuilder(props) {
                                                               }
                                                             </span>
                                                           </div>
-                                                          {localStorage.getItem(
-                                                            'user_role'
-                                                          ) ===
-                                                            'franchisor_admin' && (
-                                                            <Dropdown>
-                                                              <Dropdown.Toggle id="dropdown-basic1">
-                                                                <FontAwesomeIcon
-                                                                  icon={
-                                                                    faEllipsisVertical
-                                                                  }
-                                                                />
-                                                              </Dropdown.Toggle>
+                                                          <Dropdown>
+                                                            <Dropdown.Toggle id="dropdown-basic1">
+                                                              <FontAwesomeIcon
+                                                                icon={
+                                                                  faEllipsisVertical
+                                                                }
+                                                              />
+                                                            </Dropdown.Toggle>
 
-                                                              <Dropdown.Menu>
+                                                            <Dropdown.Menu>
+                                                              <Dropdown.Item
+                                                                onClick={() => {
+                                                                  navigate(
+                                                                    '/form/add',
+                                                                    {
+                                                                      state: {
+                                                                        id: inner_item.id,
+                                                                      },
+                                                                    }
+                                                                  );
+                                                                }}
+                                                              >
+                                                                <FontAwesomeIcon
+                                                                  icon={faPen}
+                                                                />{' '}
+                                                                Edit
+                                                              </Dropdown.Item>
+                                                              {inner_item.id !==
+                                                                formId && (
                                                                 <Dropdown.Item
                                                                   onClick={() => {
-                                                                    navigate(
-                                                                      '/form/add',
-                                                                      {
-                                                                        state: {
-                                                                          id: inner_item.id,
-                                                                        },
-                                                                      }
+                                                                    deleteForm(
+                                                                      inner_item.id
                                                                     );
                                                                   }}
                                                                 >
                                                                   <FontAwesomeIcon
-                                                                    icon={faPen}
+                                                                    icon={
+                                                                      faRemove
+                                                                    }
                                                                   />{' '}
-                                                                  Edit
+                                                                  Remove
                                                                 </Dropdown.Item>
-                                                                {inner_item.id !==
-                                                                  formId && (
+                                                              )}
+                                                            </Dropdown.Menu>
+                                                          </Dropdown>
+                                                        </div>
+                                                      </div>
+                                                    </Col>
+                                                  )
+                                                );
+                                              }
+                                            )}
+                                          </Row>
+                                        </>
+                                      );
+                                    })}
+                                  </div>
+                                </Tab>
+                              )}
+                              <Tab
+                                className="create-me"
+                                eventKey="created-by-others"
+                                title="Created by others"
+                              >
+                                <div className="forms-content-section">
+                                  {OthersFormData?.map((item, index) => {
+                                    {
+                                      item['title_flag'] = false;
+                                    }
+                                    return (
+                                      <>
+                                        <Row>
+                                          {item?.forms?.map(
+                                            (inner_item, inner_index) => {
+                                              return (
+                                                inner_item.created_by !==
+                                                  parseInt(
+                                                    localStorage.getItem(
+                                                      'user_id'
+                                                    )
+                                                  ) &&
+                                                ((
+                                                  inner_item
+                                                    ?.form_permissions[0]
+                                                    ?.response_visibility || []
+                                                ).includes(
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
+                                                ) ||
+                                                  (
+                                                    inner_item
+                                                      ?.form_permissions[0]
+                                                      ?.response_visibility ||
+                                                    []
+                                                  ).includes(
+                                                    localStorage.getItem(
+                                                      'user_role'
+                                                    )
+                                                  )) && (
+                                                  <>
+                                                    {item.title_flag ===
+                                                      false && (
+                                                      <>
+                                                        {
+                                                          (item[
+                                                            'title_flag'
+                                                          ] = true)
+                                                        }
+                                                        <Col lg={12}>
+                                                          <h2 className="page_title">
+                                                            {item.category}
+                                                          </h2>
+                                                        </Col>
+                                                      </>
+                                                    )}
+                                                    <Col lg={4}>
+                                                      {console.log(
+                                                        'inner_item--->',
+                                                        inner_item
+                                                      )}
+                                                      <div className="forms-content">
+                                                        <div className="create-other">
+                                                          <div className="content-icon-section">
+                                                            <img
+                                                              src={
+                                                                item.category ===
+                                                                'Parent Forms'
+                                                                  ? '../img/survey_icon.png'
+                                                                  : item.category ===
+                                                                    'Talent Management'
+                                                                  ? '../img/blue_survey.png'
+                                                                  : item.category ===
+                                                                    'Child Care Forms'
+                                                                  ? '../img/green_survey.png'
+                                                                  : item.category ===
+                                                                    'Business Operations'
+                                                                  ? '../img/dark_green_survey.png'
+                                                                  : item.category ===
+                                                                    'Customer Service'
+                                                                  ? '../img/gray_survey.png'
+                                                                  : item.category ===
+                                                                    'Governance & Compliance'
+                                                                  ? '../img/pink_survey.png'
+                                                                  : item.category ===
+                                                                    'General'
+                                                                  ? '../img/orange_survey.png'
+                                                                  : '../img/survey_icon.png'
+                                                              }
+                                                            />
+                                                          </div>
+                                                          <div className="content-title-section">
+                                                            <h6>
+                                                              {
+                                                                inner_item.form_name
+                                                              }
+                                                            </h6>
+                                                            <h4>
+                                                              Created on:{' '}
+                                                              {moment(
+                                                                inner_item.createdAt
+                                                              ).format(
+                                                                'DD/MM/YYYY'
+                                                              )}
+                                                            </h4>
+                                                          </div>
+                                                          <div className="content-toogle">
+                                                            <div
+                                                              className="user-img"
+                                                              onClick={() => {
+                                                                setViewResponseFlag(
+                                                                  true
+                                                                );
+                                                                setInnerIndex(
+                                                                  inner_index
+                                                                );
+                                                                setIndex(index);
+                                                              }}
+                                                            >
+                                                              <img
+                                                                src="../img/form-user-round.svg"
+                                                                onClick={() => {
+                                                                  console.log(
+                                                                    'item?.forms--->343243',
+                                                                    item?.forms[
+                                                                      inner_index
+                                                                    ]
+                                                                  );
+                                                                  seenFormResponse(
+                                                                    item?.forms[
+                                                                      inner_index
+                                                                    ]?.form_data
+                                                                  );
+                                                                }}
+                                                              />
+                                                              {console.log(
+                                                                'item?.forms---->',
+                                                                item?.forms
+                                                              )}
+                                                              <span
+                                                                onClick={() => {
+                                                                  seenFormResponse(
+                                                                    item?.forms[
+                                                                      inner_index
+                                                                    ]?.form_data
+                                                                  );
+                                                                }}
+                                                              >
+                                                                {
+                                                                  inner_item?.seen_count
+                                                                }
+                                                              </span>
+                                                            </div>
+                                                            {localStorage.getItem(
+                                                              'user_role'
+                                                            ) ===
+                                                              'franchisor_admin' && (
+                                                              <Dropdown>
+                                                                <Dropdown.Toggle id="dropdown-basic1">
+                                                                  <FontAwesomeIcon
+                                                                    icon={
+                                                                      faEllipsisVertical
+                                                                    }
+                                                                  />
+                                                                </Dropdown.Toggle>
+
+                                                                <Dropdown.Menu>
                                                                   <Dropdown.Item
                                                                     onClick={() => {
-                                                                      deleteForm(
-                                                                        inner_item.id
+                                                                      navigate(
+                                                                        '/form/add',
+                                                                        {
+                                                                          state:
+                                                                            {
+                                                                              id: inner_item.id,
+                                                                            },
+                                                                        }
                                                                       );
                                                                     }}
                                                                   >
                                                                     <FontAwesomeIcon
                                                                       icon={
-                                                                        faRemove
+                                                                        faPen
                                                                       }
                                                                     />{' '}
-                                                                    Remove
+                                                                    Edit
                                                                   </Dropdown.Item>
-                                                                )}
-                                                              </Dropdown.Menu>
-                                                            </Dropdown>
-                                                          )}
+                                                                  {inner_item.id !==
+                                                                    formId && (
+                                                                    <Dropdown.Item
+                                                                      onClick={() => {
+                                                                        deleteForm(
+                                                                          inner_item.id
+                                                                        );
+                                                                      }}
+                                                                    >
+                                                                      <FontAwesomeIcon
+                                                                        icon={
+                                                                          faRemove
+                                                                        }
+                                                                      />{' '}
+                                                                      Remove
+                                                                    </Dropdown.Item>
+                                                                  )}
+                                                                </Dropdown.Menu>
+                                                              </Dropdown>
+                                                            )}
+                                                          </div>
+                                                        </div>
+                                                        <div className="create-by">
+                                                          <div className="create-by-heading">
+                                                            {' '}
+                                                            <h5>
+                                                              Created by:
+                                                            </h5>{' '}
+                                                          </div>
+                                                          <div className="user-img-other">
+                                                            <img
+                                                              src={
+                                                                inner_item?.user
+                                                                  ?.profile_photo
+                                                                  ? inner_item
+                                                                      ?.user
+                                                                      ?.profile_photo
+                                                                  : '../../img/user-other.svg'
+                                                              }
+                                                            ></img>
+                                                          </div>
+                                                          <div className="user-name-other">
+                                                            <p>
+                                                              {
+                                                                inner_item?.user
+                                                                  ?.fullname
+                                                              }
+                                                              ,
+                                                            </p>
+                                                            <span className="text-capitalize">
+                                                              {' ' +
+                                                                inner_item?.user?.role
+                                                                  .split('_')
+                                                                  .join(' ')}
+                                                            </span>
+                                                          </div>
                                                         </div>
                                                       </div>
-                                                      <div className="create-by">
-                                                        <div className="create-by-heading">
-                                                          {' '}
-                                                          <h5>
-                                                            Created by:
-                                                          </h5>{' '}
-                                                        </div>
-                                                        <div className="user-img-other">
-                                                          <img
-                                                            src={
-                                                              inner_item?.user
-                                                                ?.profile_photo
-                                                                ? inner_item
-                                                                    ?.user
-                                                                    ?.profile_photo
-                                                                : '../../img/user-other.svg'
-                                                            }
-                                                          ></img>
-                                                        </div>
-                                                        <div className="user-name-other">
-                                                          <p>
-                                                            {
-                                                              inner_item?.user
-                                                                ?.fullname
-                                                            }
-                                                            ,
-                                                          </p>
-                                                          <span className="text-capitalize">
-                                                            {' ' +
-                                                              inner_item?.user?.role
-                                                                .split('_')
-                                                                .join(' ')}
-                                                          </span>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  </Col>
+                                                    </Col>
+                                                  </>
                                                 )
                                               );
                                             }

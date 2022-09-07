@@ -85,7 +85,6 @@ const [titleError,setTitleError] = useState();
 
 
 const createAnnouncement = async (data) => {
-  titleCheck()
   try {
     const token = localStorage.getItem('token');
 
@@ -276,6 +275,8 @@ const createAnnouncement = async (data) => {
     }
     const handleTitle = (e) =>{
       titleCheck()
+    }
+    const handleSubmit = (e) =>{
       handleDataSubmit(e)
     }
     const handleDataSubmit = event => {
@@ -380,12 +381,15 @@ console.log("ds",ds,cureent)
                           type="text" 
                           name="title"
                           onChange={handleAnnouncementData} 
+                          onBlur={handleTitle} 
+                          
+
                           isInvalid = {!!error.title || titleError}
                           />
                           <Form.Control.Feedback type="invalid">
                             {error.title}
                           </Form.Control.Feedback>
-                          {titleError && <div className="error">{titleError}</div>} 
+                          {!error.title &&titleError && <div className="error">{titleError}</div>} 
                          
                         </Form.Group>
                         {
@@ -660,7 +664,7 @@ console.log("ds",ds,cureent)
                         <div className="cta text-center mt-5 mb-5">
                         <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>
 
-                          <Button variant="primary" type="submit" onClick={handleTitle}>Save</Button>
+                          <Button variant="primary" type="submit" onClick={handleSubmit}>Save</Button>
                         </div>
                       </Col>
                     </Row>
