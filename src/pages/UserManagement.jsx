@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
+import { userRoles } from '../assets/data/userRoles';
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
@@ -54,6 +55,8 @@ const UserManagement = () => {
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [parentFranchiseeId, setParentFranchiseeId] = useState(null);
+  const [userRoleData, setUserRoleData] = useState(userRoles);
+  const [displayRoles, setDisplayRoles] = useState(null);
 
  
   const rowEvents = {
@@ -188,7 +191,6 @@ const UserManagement = () => {
       text: 'Name',
       sort: true,
       formatter: (cell) => {
-        console.log('CELL DETAILS:', cell);
         let status = null;
         cell = cell.split(',');
         if (parseInt(cell[3]) === 0) {
@@ -459,6 +461,37 @@ const UserManagement = () => {
     }
   }
 
+  const trimRoleList = () => {
+    let currentRole = localStorage.getItem('user_role');
+    let newRoleList = userRoleData;
+
+    if(currentRole === "educator") {
+      newRoleList = newRoleList.filter(role => role.id === 4);
+      setDisplayRoles(newRoleList);
+    }
+
+    if(currentRole === "coordinator") {
+      newRoleList = newRoleList.filter(role => role.id > 3);
+      setDisplayRoles(newRoleList);
+    }
+
+    if(currentRole === "franchisee_admin") {
+      newRoleList = newRoleList.filter(role => role.id > 2);
+      setDisplayRoles(newRoleList);
+    }
+
+    if(currentRole === 'franchisor_admin') {
+      newRoleList = newRoleList.filter(role => role.id > 1);
+      setDisplayRoles(newRoleList);
+    }
+
+    if(currentRole === "guardian") {
+      newRoleList = newRoleList.filter(role => role.id === 5);
+      setDisplayRoles(newRoleList);
+    }
+  }
+
+
   useEffect(() => {
     Show_eduactor()
   }, [])
@@ -496,6 +529,18 @@ const UserManagement = () => {
       window.location.href=`/parents-dashboard`;
     }
   }, [])
+
+  useEffect(() => {
+    console.log('ROLES HAVE BEEN POPULATED')
+    console.log('USER ROLE DATA:', userRoleData);
+    trimRoleList();
+  }, [userRoleData]);
+
+  useEffect(() => {
+    if(displayRoles) {
+      console.log('DISPLAY ROLES:', displayRoles);
+    }
+  }, [displayRoles]) 
 
   const csvLink = useRef();
 
@@ -560,68 +605,26 @@ const UserManagement = () => {
                                 <div className="custom-radio btn-radio mb-2">
                                   <label>Users:</label>
                                   <Form.Group>
-                                    <Form.Check
-                                      inline
-                                      label="Franchisor Admin"
-                                      value="Franchisor_Admin"
-                                      name="users"
-                                      type="radio"
-                                      id="one"
-                                      checked={filter === "Franchisor_Admin"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-                                    <Form.Check
-                                      inline
-                                      label="Franchisee Admin"
-                                      value="Franchisee_Admin"
-                                      name="users"
-                                      type="radio"
-                                      id="five"
-                                      checked={filter === "Franchisee_Admin"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-                                    <Form.Check
-                                      inline
-                                      label="Co-ordinator"
-                                      value="Coordinator"
-                                      name="users"
-                                      type="radio"
-                                      id="two"
-                                      checked={filter === "Coordinator"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-                                    <Form.Check
-                                      inline
-                                      label="Educator"
-                                      value="Educator"
-                                      name="users"
-                                      type="radio"
-                                      id="three"
-                                      s
-                                      checked={filter === "Educator"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-
-                                    <Form.Check
-                                      inline
-                                      label="Parent/Guardian"
-                                      value="Guardian"
-                                      name="users"
-                                      type="radio"
-                                      id="four"
-                                      checked={filter === "Guardian"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
+                                    {
+                                      displayRoles &&
+                                      displayRoles.map((role, index) => {
+                                        return (
+                                          <Form.Check
+                                            inline
+                                            label={role.label}
+                                            value={role.value}
+                                            name="users"
+                                            type="radio"
+                                            id={`${role.value}-${index}`}
+                                            checked={filter === `${role.value}`}
+                                            onChange={(event) => {
+                                              console.log(event.target.value);
+                                              setFilter(event.target.value)
+                                            }}
+                                          />
+                                        );
+                                      })   
+                                    }
                                   </Form.Group>
                                 </div>
                                 {/* <div className="custom-radio">
