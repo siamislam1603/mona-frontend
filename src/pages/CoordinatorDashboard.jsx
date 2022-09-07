@@ -302,13 +302,17 @@ const CoordinatorDashboard = () => {
                             <h4 className="title-sm mb-0"><strong>Onboarding</strong></h4>
                           </header>
                           <div className="activitylist relative two-col">
-                            {onboarding.newEducators === 0 ? (<></>) : (<><div className="item">
-                              <a className="item" style={{ cursor: "not-allowed" }}>
-                                <span className="name">New Educator Enroled</span>
-                                <span className="separator">|</span>
-                                <span className="num">{onboarding?.newEducators}</span>
-                              </a>
-                            </div></>)}
+                            {onboarding?.newEducators === 0 ? (<></>) : (
+                              <>
+                                <div className="item">
+                                  <a className="item" href="/user-management/Educator">
+                                    <span className="name">New Educator Enrolled</span>
+                                    <span className="separator">|</span>
+                                    <span className="num">{onboarding?.newEducators}</span>
+                                  </a>
+                                </div>
+                              </>
+                            )}
 
                             <div className="item">
                               <a href="/user-management/Guardian" className="item">
