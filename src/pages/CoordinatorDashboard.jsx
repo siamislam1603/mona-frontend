@@ -312,7 +312,7 @@ const CoordinatorDashboard = () => {
 
                             <div className="item">
                               <a href="/user-management/Guardian" className="item">
-                                <span className="name">New Parents Enrolled</span>
+                                <span className="name">New Parents Enroled</span>
                                 <span className="separator">|</span>
                                 <span className="num">{onboarding?.newParents}</span>
                               </a>
@@ -392,7 +392,7 @@ const CoordinatorDashboard = () => {
                             </div>
                             <div className="listing">
                               <a className="item" href="/children-all" >
-                                <span className="name">New Enrollments</span>
+                                <span className="name">New Enrolments</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count?.newEnrollments}</span>
                               </a>

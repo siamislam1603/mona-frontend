@@ -146,6 +146,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
+
                                 <Form.Label>Child's First Name *</Form.Label>
                                 <Form.Control
                                   type="text"

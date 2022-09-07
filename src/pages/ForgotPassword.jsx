@@ -80,6 +80,7 @@ const ForgotPassword = () => {
                     <Form.Control
                       type="email"
                       className="form_input"
+
                       onChange={handleChange}
                       name="email"
                       value={email?.email} 

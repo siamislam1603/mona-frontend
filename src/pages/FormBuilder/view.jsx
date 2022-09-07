@@ -436,6 +436,7 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem('user_id')
                                           ) &&
                                           ((
+
                                             inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(

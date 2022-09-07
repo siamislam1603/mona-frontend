@@ -50,7 +50,6 @@ const LeftNavbar = () => {
 
     console.log('MENU LIST:', sortedData);
 
-
     // console.log('REFORMED:', menu_list.filter(permission => permission.controller.show_in_menu === true));
     setPermissionList(sortedData.filter(permission => permission.controller.show_in_menu === true));
 

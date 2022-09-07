@@ -175,6 +175,11 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
     newErrors.start_date = 'Start Date Required';
   if (!start_time || start_time === 'undefined')
     newErrors.start_time = 'Start Time Required';
+  if(start_time){
+    if(start_time<moment().add(10,"minutes").format("HH:mm")){
+      newErrors.start_time = "You can only create an announcement past 10 minutes from the current date and time."
+    }
+  }
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Announcement Description is Required';
 
