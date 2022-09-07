@@ -785,8 +785,7 @@ function ViewFormBuilder(props) {
                                 setKey(k);
                               }}
                             >
-                              {!localStorage.getItem('user_role') ===
-                          'coordinator' && <Tab
+                              {!(localStorage.getItem('user_role') === 'coordinator') && <Tab
                                 className="create-me create_by_me_list"
                                 eventKey="created-by-me"
                                 title="Created by me"
