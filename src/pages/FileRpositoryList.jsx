@@ -11,6 +11,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import axios from "axios";
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
+import { FullLoader } from "../components/Loader";
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem('franchisee_id')
 
@@ -29,13 +30,13 @@ const FileRpositoryList = () => {
     const [userData, setUserData] = useState([]);
     const [user, setUser] = useState([]);
     const [franchiseeList, setFranchiseeList] = useState();
-
+    const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [formSettings, setFormSettings] = useState({
         user_roles: [],
         assigned_franchisee: [],
         assigned_users: []
     });
-    
+
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
     const [child, setChild] = useState([]);
 
@@ -69,20 +70,26 @@ const FileRpositoryList = () => {
             headers: myHeaders,
         };
         const ID_array = selectedFranchisee?.split(",");
-        let data = ID_array?.length > 1 ? ID_array?.slice(1) : ID_array;
-        let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=${data}`, requestOptions)
-        response = await response.json();
-        setUser(response.result)
-
-        const users = response.result.files;
-        let tempData = users.map((dt) => ({
-            name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
-            createdAt: dt.createdAt,
-            userID: dt.id,
-            creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
-            Shaired: dt.repository.repository_files[0].length,
-        }));
-        setUserData(tempData);
+        try {
+            let data = ID_array?.length > 1 ? ID_array?.slice(1) : ID_array;
+            let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=${data}`, requestOptions)
+            response = await response.json();
+            setUser(response.result)
+            if (response) {
+                setfullLoaderStatus(false)
+            }
+            const users = response.result.files;
+            let tempData = users.map((dt) => ({
+                name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
+                createdAt: dt.createdAt,
+                userID: dt.id,
+                creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
+                Shaired: dt.repository.repository_files[0].length,
+            }));
+            setUserData(tempData);
+        } catch (e) {
+            setfullLoaderStatus(false)
+        }
     }
 
     const getFileCategory = async () => {
@@ -311,6 +318,7 @@ const FileRpositoryList = () => {
     return (
         <>
             <div id="main">
+                <FullLoader loading={fullLoaderStatus} />
                 <section className="mainsection">
                     <Container>
                         <div className="admin-wrapper">
