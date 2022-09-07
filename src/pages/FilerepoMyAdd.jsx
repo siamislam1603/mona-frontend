@@ -124,24 +124,27 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         selectedUser.splice(index, 1);
     }
     const GetFile = async () => {
-        let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, {headers:{ "Authorization": "Bearer " + localStorage.getItem('token') }})
+        try {
+            let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
+            if (response) {
+                setfullLoaderStatus(false)
+            }
 
-        if (response) {
+            if (response.status === 200 && response.data.status === "success") {
+                const { files } = response.data;
+
+                let tempData = files.map((dt) => ({
+                    name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                    createdAt: dt.createdAt,
+                    userID: dt.id,
+                    creatorName: dt.creatorName + "," + dt.creatorRole,
+                    Shaired: dt?.repository?.repository_shares?.length,
+                    categoryId: dt.categoryId
+                }));
+                setUserData(tempData);
+            }
+        } catch (err) {
             setfullLoaderStatus(false)
-        }
-
-        if (response.status === 200 && response.data.status === "success") {
-            const {files} = response.data;
-
-            let tempData = files.map((dt) => ({
-                name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
-                createdAt: dt.createdAt,
-                userID: dt.id,
-                creatorName: dt.creatorName + "," + dt.creatorRole,
-                Shaired: dt?.repository?.repository_shares?.length,
-                categoryId: dt.categoryId
-            }));
-            setUserData(tempData);
         }
     }
 

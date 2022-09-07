@@ -421,7 +421,7 @@ const FilerepoUploadFile = () => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
                                                 >
-                                                    <option value="">Select</option>
+                                                    <option value="8">Select</option>
                                                     <option value="8" selected={true}>General</option>
                                                 </Form.Select>
                                             </>) : (

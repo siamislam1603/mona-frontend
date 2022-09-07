@@ -19,25 +19,37 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const GetData = async () => {
-    let response = await axios.get(`${BASE_URL}/fileRepo/`, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    })
-    if (response) {
+
+    try {
+      let User = localStorage.getItem('user_role');
+      // id =
+      let URL = User === "guardian" ? `${BASE_URL}/fileRepo?childId=[${localStorage.getItem('user_id')}]` : `${BASE_URL}/fileRepo/`
+      // let ulr = `${BASE_URL}/fileRepo/`
+
+      let response = await axios.get(URL, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+      if (response) {
+        setfullLoaderStatus(false)
+      }
+
+      if (response.status === 200) {
+        const users = response.data.dataDetails;
+        let tempData = users.map((dt) => ({
+          name: `${dt.categoryId}, ${dt.count}`,
+          createdAt: dt.updatedAt,
+          userID: dt.id,
+          creatorName: dt.ModifierName + "," + dt.updatedBy
+        }));
+        setUserData(tempData);
+      }
+
+    } catch (e) {
       setfullLoaderStatus(false)
     }
 
-    if (response.status === 200) {
-      const users = response.data.dataDetails;
-      let tempData = users.map((dt) => ({
-        name: `${dt.categoryId}, ${dt.count}`,
-        createdAt: dt.updatedAt,
-        userID: dt.id,
-        creatorName: dt.ModifierName + "," + dt.updatedBy
-      }));
-      setUserData(tempData);
-    }
   }
   const [columns, setColumns] = useState([
     {
