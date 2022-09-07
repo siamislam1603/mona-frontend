@@ -169,6 +169,13 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   console.log('The tile valdiation', start_date);
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required s';
+    let re = /^\s|\s$/
+
+    if(title.match(re)){
+      // console.log("contains spaces");
+    newErrors.title = 'Contain unwanted space';
+
+  }  
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
   if(titleError){
     newErrors.title = "Anouncement title already exit"

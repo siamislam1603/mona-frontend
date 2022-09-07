@@ -382,6 +382,7 @@ console.log("ds",ds,cureent)
                           name="title"
                           onChange={handleAnnouncementData} 
                           onBlur={handleTitle} 
+                          
 
                           isInvalid = {!!error.title || titleError}
                           />
