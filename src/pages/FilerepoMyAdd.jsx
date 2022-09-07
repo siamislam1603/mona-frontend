@@ -189,7 +189,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         getUser();
         getChildren();
         handleTrainingDelete();
-    }, [, formSettings.franchisee])
+    }, [formSettings.franchisee])
 
 
     useEffect(() => {
