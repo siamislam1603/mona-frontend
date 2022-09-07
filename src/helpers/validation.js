@@ -447,6 +447,9 @@ export const FranchiseeFormValidation = (formObj) => {
     errors.contact = 'Contact number is required';
   }
 
+  if(contact?.length > 0 && !(/^[0-9]+$/i.test(contact)))
+    errors.contact = "Field should only contain digits"; 
+
   return errors;
 };
 
@@ -454,7 +457,7 @@ export const acceptPointValidator = (value) => {
   let errors = {};
 
   if(value === false)
-    errors.value = "Please give your consent";
+    errors.value = "Please give your acknowledgement";
 
   return errors;
 }
@@ -474,7 +477,7 @@ export const UserFormValidation = (formObj) => {
   if (!city) errors.city = 'Suburb is required';
 
   if (password && confirm_password && password !== confirm_password) {
-    errors.password = "Passwords don't match!";
+    errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }
 
@@ -500,7 +503,7 @@ export const editUserValidation = (form) => {
   let { password, confirm_password } = form;
 
   if (password && confirm_password && password !== confirm_password) {
-    errors.password = "Passwords don't match!";
+    errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }
 
@@ -521,7 +524,7 @@ export const personValidation = (personValidationForm) => {
 
   if (!telephone) errors.telephone = 'Please complete mandatory field';
 
-  if(!(/^[0-9]+$/i.test(telephone)))
+  if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
     errors.telephone = "Field should only contain digits";
 
   if (!relationship_to_the_child)
@@ -540,20 +543,20 @@ export const personValidation2 = (personValidationForm) => {
     personValidationForm;
 
   if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits!";
+    errors.telephone = "Field should only contain digits";
 
   return errors;
 }
 
-export const person2Validation = (obj) => {
-  let errors = {};
-  let { telephone } = obj;
+// export const person2Validation = (obj) => {
+//   let errors = {};
+//   let { telephone } = obj;
 
-  if(telephone?.length > 1 && telephone?.length < 10)
-    errors.telephone = 'Telephone number must be at least 10-digit long'
+//   if(telephone?.length > 1 && telephone?.length < 10)
+//     errors.telephone = 'Telephone number must be at least 10-digit long'
 
-  return errors;
-};
+//   return errors;
+// };
 
 export const digitalSignatureValidator = (form) => {
   let errors = {};

@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import { faListSquares } from "@fortawesome/free-solid-svg-icons";
 import UserSignature from "../InputFields/UserSignature";
+import DragDropMultiple from '../../components/DragDropMultiple';
 
 let nextstep = 3;
 let step = 2;
@@ -54,7 +55,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     changes_described: "",
     name_of_record_viewer: "",
     signature_of_record_viewer: "",
-    date_of_record_viewing: "",
+    date_of_record_viewing: null,
     position_of_record_viewer: "",
     log: []
   });
@@ -85,6 +86,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     immunisation_record_id: null
   });
   const [loader, setLoader] = useState(false);
+  const [immunisationRecordDetails, setImmunisationRecordDetails] = useState(null);
+  const [immunisationRecord, setImmunisationRecord] = useState(null);
+  const [courtOrders, setCourtOrders] = useState(null);
+  const [courtOrderDetails, setCourtOrderDetails] = useState(null);
+
+  const [immunisationRecordDeleteMessage, setImmunisationRecordDeleteMessage] = useState(null);
+  const [courtOrdersDeleteMessage, setCourtOrdersDeleteMessage] = useState(null);
 
   // UPDATEING FORM TWO DATA
   const updateFormTwoData = async () => {
@@ -364,6 +372,74 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     }
   }
 
+  // IMMUNISATION RECORD
+  const handleChildFileDelete = async (fileId) => {
+    console.log('Delete file:', fileId)
+    const response = await axios.delete(`${BASE_URL}/enrollment/child/file-delete/${fileId}`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    if(response.status === 201 && response.data.status === 'success') {
+      let { token } = response.data;
+      
+      if(token === 'immunisation-record') {
+        setImmunisationRecordDeleteMessage("Immunisation record deleted successfully.");
+      } else {
+        setCourtOrdersDeleteMessage("Court order deleted successfully.")
+      }
+    }
+  }
+
+  // UPLOADING SUPPORT FORM
+  const uploadImmunisationRecord = async () => {
+    let data = new FormData();
+    data.append('images', immunisationRecord[0]);
+    data.append('category', 'immunisation-record');
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
+      setImmunisationRecord(null);
+      setImmunisationRecordDetails(supportForm);
+    }
+  }
+
+  // COURT ORDERS
+  // IMMUNISATION RECORD
+
+  // UPLOADING SUPPORT FORM
+  const uploadCourtOrders = async () => {
+    let data = new FormData();
+
+    courtOrders.forEach(order => {
+      data.append('images', order);
+    });
+    data.append('category', 'court-order');
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
+      setCourtOrders(null);
+      setCourtOrderDetails(supportForm);
+    }
+  }
+
   useEffect(() => {
     // setShowSignatureDialog(false);
     saveSignatureImage();
@@ -375,11 +451,51 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     window.scrollTo(0, 0);
     fetchChildDataAndPopulate();
   }, [localStorage.getItem('enrolled_child_id') !== null]);
+
+
+  // IMMUNISATION RECORD UPLOAD
+  useEffect(() => {
+    if(immunisationRecord) {
+      uploadImmunisationRecord();
+    }
+  }, [immunisationRecord]);
+
+  useEffect(() => {
+    if(immunisationRecordDeleteMessage) {
+      setImmunisationRecordDetails(null);
+      setTimeout(() => {
+        setImmunisationRecordDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [immunisationRecordDeleteMessage])
   
-  childDetails && console.log('CHILD DATA:', childDetails);
+  // COURT ORDERS 
+  // useEffect(() => {
+  //   if(courtOrders) {
+  //     uploadCourtOrders();
+  //   }
+  // }, [courtOrders]);
+
+  // useEffect(() => {
+  //   if(courtOrdersDeleteMessage) {
+  //     setCourtOrderDetails(null);
+  //     setTimeout(() => {
+  //       setCourtOrdersDeleteMessage(null);
+  //     }, 3000); 
+  //   }
+
+  // }, [courtOrdersDeleteMessage])
+
 
   return (
     <>
+      {
+        immunisationRecordDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{immunisationRecordDeleteMessage}</p>
+      }
+      {/* {
+        courtOrdersDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{courtOrdersDeleteMessage}</p>
+      } */}
       <div className="enrollment-form-sec">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
@@ -448,6 +564,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <Form.Label>Please describe these changes and provide the contact details of any person given these powers: </Form.Label>
                         <Form.Control
                           as="textarea"
+                          style={{ resize: "none" }} 
                           rows={3}
                           value={childDetails?.changes_described || ""}
                           name="changes_described"
@@ -490,6 +607,31 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           </ul>
                           <p>b)	give these powers to someone else</p>
                         </p>
+                        {/* <>
+                          <Form.Group className="col-md-6 mb-3 mt-3">
+                            <Form.Label>Attach any Court Orders, Parenting Orders and/or Parenting Plans that are in place</Form.Label>
+                            <DragDropMultiple 
+                              module="court-orders"
+                              fileLimit={2}
+                              supportFormDetails={courtOrderDetails}
+                              onSave={setCourtOrders} />
+                            <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
+                          </Form.Group>
+                          {
+                            immunisationRecordDetails &&
+                            (
+                              <div>
+                                <a href={immunisationRecordDetails?.file}><p>{immunisationRecordDetails?.originalName}</p></a>
+                                <img
+                                  onClick={() => handleChildFileDelete(immunisationRecordDetails?.id)}
+                                  // className="file-remove"
+                                  style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                  src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                  alt="" />
+                              </div>
+                            )
+                          }
+                        </> */}
                       </Form.Group>
                     </Col>
                   </>
@@ -709,7 +851,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <div className="mb-3">
                               <Form.Label>Signature</Form.Label>
                               {
-                                <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign!</p>
+                                <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061", fontSize: "1rem" }}>Click Here</strong> to sign</p>
                               }
                               {
                                 childDetails?.signature_of_record_viewer &&
@@ -761,7 +903,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                 <Row>
                   <Col md={12}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Has the child been immunized?</Form.Label>
+                      <Form.Label>Has the child been immunised?</Form.Label>
                       <div className="btn-radio inline-col">
                         <Form.Check
                           type="radio"
@@ -805,8 +947,37 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           }} />
                       </div>
                       <Form.Text className="text-muted">
-                        if ‘Yes’ please provide the details.
+                        if 'Yes' please provide the details.
                       </Form.Text>
+
+                      {
+                        childDetails.has_been_immunized &&
+                        <>
+                          <Form.Group className="col-md-6 mb-3 mt-3">
+                            <Form.Label>Please attach your child's immunisation records</Form.Label>
+                            <DragDropMultiple 
+                              module="child-enrollment"
+                              fileLimit={1}
+                              supportFormDetails={immunisationRecordDetails}
+                              onSave={setImmunisationRecord} />
+                            <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
+                          </Form.Group>
+                          {
+                            immunisationRecordDetails &&
+                            (
+                              <div>
+                                <a href={immunisationRecordDetails?.file}><p>{immunisationRecordDetails?.originalName}</p></a>
+                                <img
+                                  onClick={() => handleChildFileDelete(immunisationRecordDetails?.id)}
+                                  // className="file-remove"
+                                  style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                  src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                  alt="" />
+                              </div>
+                            )
+                          }
+                        </>
+                      }
                     </Form.Group>
                   </Col>
                 </Row>
@@ -826,7 +997,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                 <>
                   <h2 className="title-xs mb-4 mt-4">Information about the child</h2>
                   <div className="grayback">
-                    <p>A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
+                    <p>A parent or guardian who has lawful authority in relation to the child must comple ’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
                   </div>
 
                   {/* <h2 className="title-xs mt-4 mb-4">Court orders relating to the child</h2> */}
@@ -2628,7 +2799,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               <div className="enrollment-form-sec">
                 <Form onSubmit={submitFormData}>
                   <div className="enrollment-form-column">
-                    <h2 className="title-xs mb-4 mt-4">Child's Medical Information</h2>
+                    <h2 className="title-xs mb-4 mt-4">Child's Medicare Information</h2>
                     <div className="grayback">
                       <div className="single-col">
                         <p>Does your child have any special needs?</p>
@@ -2695,6 +2866,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control
                               name="special_need_details"
                               as="textarea"
+                              style={{ resize: "none" }} 
                               rows={3}
                               value={childMedicalInformation?.special_need_details}
                               onChange={(e) => setChildMedicalInformation(prevState => ({
@@ -2760,7 +2932,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       }
 
                       <div className="single-col mb-3">
-                        <p>Does Your Child have any senstivity</p>
+                        <p>Does Your Child have any senstivity?</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
                             <Form.Check
@@ -2820,6 +2992,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control
                               name="details_of_allergies"
                               as="textarea"
+                              style={{ resize: "none" }} 
                               value={childMedicalInformation?.details_of_allergies || ""}
                               rows={3}
                               onChange={(e) => {
@@ -2940,7 +3113,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       {
                         childMedicalInformation.has_autoinjection_device &&
                         <div className="single-col mb-3">
-                          <p>If yes, has the anaphylaxis medical management plan been provided to the service</p>
+                          <p>If yes, has the anaphylaxis medical management plan been provided to the service?</p>
                           <Form.Group className="ms-auto">
                             <div className="btn-radio inline-col mb-0">
                               <Form.Check
@@ -2987,7 +3160,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         </div>
                       }
                       <div className="single-col mb-3">
-                        <p>Has a risk management plan been completed by the service in consultation with you</p>
+                        <p>Has a risk management plan been completed by the service in consultation with you?</p>
                         <Form.Group className="ms-auto">
                           <div className="btn-radio inline-col mb-0">
                             <Form.Check
@@ -3092,6 +3265,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           <Form.Control
                             name="detail_of_other_condition"
                             as="textarea"
+                            style={{ resize: "none" }} 
                             rows={3}
                             value={childMedicalInformation?.detail_of_other_condition || ""}
                             onChange={(e) => {
@@ -3170,6 +3344,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           <Form.Control
                             name="details_of_restrictions"
                             as="textarea"
+                            style={{ resize: "none" }} 
                             rows={3}
                             value={childMedicalInformation?.details_of_restrictions || ""}
                             onChange={(e) => {

@@ -68,6 +68,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [countryData, setCountryData] = useState(null);
   const [formStepData, setFormStepData] = useState(step);
   const [inclusionSupportForm, setInclusionSupportForm] = useState(null);
+  const [ supportFormDetails, setSupportFormDetails ] = useState(null);
 
   // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
 
@@ -78,6 +79,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // MODAL DIALOG STATES
   const [showSubmissionSuccessModal, setShowSubmissionSuccessModal] = useState(false);
   const [showConsentCommentDialog, setShowConsentCommentDialog] = useState(false);
+  const [supportFormDeleteMessage, setSupportFormDeleteMessage] = useState(null);
   const [loader, setLoader] = useState(false);
 
   // FUNCTION TO UPDATE THIS FORM DATA
@@ -289,6 +291,40 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }
 
+  const handleChildFileDelete = async (fileId) => {
+    console.log('Delete file:', fileId)
+    const response = await axios.delete(`${BASE_URL}/enrollment/child/file-delete/${fileId}`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    if(response.status === 201 && response.data.status === 'success') {
+      setSupportFormDeleteMessage("Support form deleted successfully.");
+    }
+  }
+
+  // UPLOADING SUPPORT FORM
+  const uploadSupportForm = async () => {
+    let data = new FormData();
+    data.append('images', inclusionSupportForm[0]);
+    data.append('category', 'support_form');
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
+      setInclusionSupportForm(null);
+      setSupportFormDetails(supportForm);
+    }
+  }
+
 
   useEffect(() => {
     fetchOccupationData();
@@ -317,16 +353,35 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }, [])
 
-  inclusionSupportForm && console.log('INCLUSION SUPPORT FORM:', inclusionSupportForm);
+  useEffect(() => {
+    if(inclusionSupportForm) {
+      uploadSupportForm();
+    }
+  }, [inclusionSupportForm]);
 
+  useEffect(() => {
+    if(supportFormDeleteMessage) {
+      setSupportFormDetails(null);
+      setTimeout(() => {
+        setSupportFormDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [supportFormDeleteMessage])
+
+  inclusionSupportForm && console.log('INCLUSION SUPPORT FORM:', inclusionSupportForm);
+  supportFormDetails && console.log('SUPPORT FORM DETAILS:', supportFormDetails);
   return (
     <>
+    {
+        supportFormDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{supportFormDeleteMessage}</p>
+      }
       <div className="enrollment-form-sec error-sec my-5">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <div className="grayback">
               <h2 className="title-xs mb-2">Information about the child</h2>
-              <p className="form_info mb-4">A parent or guardian who's a lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
+              <p className="form_info mb-4">A parent or guardian who has a lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
@@ -727,14 +782,31 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     
                     {
                       formOneChildData?.developmental_delay &&
-                      <Form.Group className="col-md-6 mb-3 mt-3">
-                        <Form.Label>Upload Support Form</Form.Label>
-                        <DragDropMultiple 
-                          module="child-enrollment"
-                          fileLimit={1}
-                          onSave={setInclusionSupportForm} />
-                        <small className="fileinput">(Upload 1 file)</small>
-                      </Form.Group>
+                      <>
+                        <Form.Group className="col-md-6 mb-3 mt-3">
+                          <Form.Label>Upload Support Form</Form.Label>
+                          <DragDropMultiple 
+                            module="child-enrollment"
+                            fileLimit={1}
+                            supportFormDetails={supportFormDetails}
+                            onSave={setInclusionSupportForm} />
+                          <small className="fileinput">(Upload 1 file)</small>
+                        </Form.Group>
+                        {
+                          supportFormDetails &&
+                          (
+                            <div>
+                              <a href={supportFormDetails?.file}><p>{supportFormDetails?.originalName}</p></a>
+                              <img
+                                onClick={() => handleChildFileDelete(supportFormDetails?.id)}
+                                // className="file-remove"
+                                style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                alt="" />
+                            </div>
+                          )
+                        }
+                      </>
                     }
                   </Form.Group>
                 </Col>
@@ -748,6 +820,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       value={formOneChildData.child_medical_no || ""}
                       onChange={(e) => {
                         handleChildData(e);
+
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          child_medical_no: null,
+                        })) 
                       }} 
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("child_medical_no")) {
@@ -757,6 +834,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }));
                         }
                       }} />
+
+                      { childFormErrors?.child_medical_no !== null && <span className="error">{childFormErrors?.child_medical_no}</span> }
                   </Form.Group>
                 </Col>
 
@@ -769,6 +848,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       value={formOneChildData.child_crn || ""}
                       onChange={(e) => {
                         handleChildData(e);
+
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          child_crn: null,
+                        })) 
                       }} 
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("child_crn")) {
@@ -778,6 +862,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }));
                         }
                       }} />
+
+                      { childFormErrors?.child_crn !== null && <span className="error">{childFormErrors?.child_crn}</span> }
                   </Form.Group>
                 </Col>
                 
@@ -790,6 +876,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       value={formOneChildData.parent_crn_1 || ""}
                       onChange={(e) => {
                         handleChildData(e);
+
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          parent_crn_1: null,
+                        })) 
                       }} 
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("parent_crn_1")) {
@@ -799,6 +890,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }));
                         }
                       }} />
+
+                      { childFormErrors?.parent_crn_1 !== null && <span className="error">{childFormErrors?.parent_crn_1}</span> }
                   </Form.Group>
                 </Col>
                 
@@ -811,6 +904,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       value={formOneChildData.parent_crn_2 || ""}
                       onChange={(e) => {
                         handleChildData(e);
+
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          parent_crn_2: null,
+                        })) 
                       }} 
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("parent_crn_2")) {
@@ -820,6 +918,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           }));
                         }
                       }} />
+
+                      { childFormErrors?.parent_crn_2 !== null && <span className="error">{childFormErrors?.parent_crn_2}</span> }
                   </Form.Group>
                 </Col>
 
@@ -829,7 +929,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <div className="btn-radio inline-col">
                       <Form.Check
                         type="radio"
-                        name="anotherser"
+                        name="another_service"
                         id="yess"
                         checked={formOneChildData?.another_service === true}
                         className="ps-0"
