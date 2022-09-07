@@ -131,46 +131,14 @@ const MyAnnouncements = (props) => {
       }
   },[props.myAnnouncementData])
   console.log("MY ANNOUNCEMENT DATA props",props.myAnnouncementData)
-  
-  // useEffect(() =>{
-  //   if(!props.searchValue){
-  //     myAnnouncementData()
-  //     console.log("The search value is not found",props.searchValue)
-  //   }
-  //   else if(props.franchisee.searchData){
-  //     console.log("The search value have something",props.searchValue)
-  //     // setAnnouncementDetail(props.search)
-  //     setmyAnnouncement(props.franchisee.searchData)
-  //   }
-  //   else{
-  //     console.log("The search value have something",props.searchValue)
-  //     setmyAnnouncement(props.search)
-  //   }
-  // },[props.search])
-//   useEffect(() =>{
-//     if(props.franchisee.status === 404){
-//       console.log("Don't have fanrhise")
-//     }
-//     setmyAnnouncement(props.franchisee.searchedData)
-//     console.log("The frnahise under all announcement",props.franchisee)
-    
-// },[props.franchisee])
-// useEffect(() =>{
-//   if(props.loadData.length>0){
-//     setmyAnnouncement(props.loadData)
-//   }
-// },[props.loadData])
-// useEffect(() =>{
-//   setTimeout(() => {
-//     setTopErrorMessage(null);
-//   }, 3000)
-// },[topErrorMessage])
- console.log("THE MY ANNOUNCEMENT DATA",myAnnouncement)
- console.log("2022-09-05T11:52:00.000Z")
- const event = new Date("2022-09-07T08:25:00.000Z")
- const todydate = new Date()
 
-  console.log(todydate >event)
+
+useEffect(() =>{
+  setTimeout(() => {
+    setTopErrorMessage(null);
+  }, 3000)
+},[topErrorMessage])
+
 // {myAnnouncement &&  console.log("schedule time",myAnnouncement[0].scheduled_date)}
  return (
  
@@ -201,7 +169,6 @@ const MyAnnouncements = (props) => {
                                   
                              </span>
                              {data.user.fullname[0].toUpperCase()+data.user.fullname.slice(1)}
-                             {data.scheduled_date}
                   
                           {/* {data.is_event === 1 ?<span style ={{color:"black",fontWeight:"bold"}}> Event</span>:<span style ={{color:"black",fontWeight:"900"}}> Announcement</span> } */}
                             
@@ -223,10 +190,19 @@ const MyAnnouncements = (props) => {
 
                           ):
                           (
-                              null     
-                            
+                              null  
+                             
                           )
                         }
+                        onClick={() =>  
+                          new Date(data?.scheduled_date)>new Date() ? (
+                            setTopErrorMessage(null)
+
+                          ):(
+                            setTopErrorMessage("Can not edit")
+
+                          )
+                          }
                       
                         >Edit</Dropdown.Item>                                          
                            
