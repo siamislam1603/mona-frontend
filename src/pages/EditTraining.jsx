@@ -19,6 +19,7 @@ import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
 
 const animatedComponents = makeAnimated();
 
+
 const timeqty = [
   {
     value: 'minutes',
@@ -242,7 +243,7 @@ const EditTraining = () => {
           }
         });
 
-      } else if (typeof croppedImage === 'string') {
+      } else if (typeof croppedImage === 'object') {
         imgSaveResponse = await axios.patch(
           `${BASE_URL}/training/updateCoverImgString`, { croppedImage, trainingId }, {
           headers: {
@@ -370,17 +371,35 @@ const EditTraining = () => {
   };
 
   const handleTrainingFileDelete = async (fileId) => {
-    console.log(`Delete file with id: ${fileId}`);
     let token = localStorage.getItem('token');
-    const deleteResponse = await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
+    await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
-    });
-    setFileDeleteResponse(deleteResponse);
-    // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
-    // }
+    }).then(function () {
+      setFileDeleteResponse();
+    })
+      .catch(error => {
+        console.log(error)
+      });
   }
+  useEffect(() => {
+    handleTrainingFileDelete();
+  }, [fetchedRelatedFiles])
+
+
+  // const handleTrainingFileDelete = async (fileId) => {
+  //   console.log(`Delete file with id: ${fileId}`);
+  //   let token = localStorage.getItem('token');
+  //   const deleteResponse = await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
+  //     headers: {
+  //       "Authorization": `Bearer ${token}`
+  //     }
+  //   });
+  //   setFileDeleteResponse(deleteResponse);
+  //   // if(deleteRespone.status === 200 && deleteRespone.data.status === "success") {
+  //   // }
+  // }
 
   useEffect(() => {
     fetchUserRoles();

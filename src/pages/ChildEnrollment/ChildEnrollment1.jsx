@@ -227,6 +227,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     if(response.status === 200 && response.data.status === 'success') {
       let { child } = response.data;
       let { parent } = response.data;
+
       let parentData = child.parents.filter(p => parseInt(p.user_parent_id) === parseInt(paramsParentId));
 
       setFormOneChildData(prevState => ({

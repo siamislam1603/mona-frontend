@@ -535,10 +535,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                       );
                     })}
                   </Dropdown.Menu>
-                </Dropdown>
-              </div>
+                </Dropdown >
+              </div >
           }
-        </div>
+        </div >
 
         <div className="rpanel ms-auto">
           <div className="search-bar">
@@ -717,7 +717,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
             </ul>
           </div>
         </div>
-      </div>
+    </div>
 
       {/* {
         notificationDialog === true &&
