@@ -276,6 +276,8 @@ const createAnnouncement = async (data) => {
     }
     const handleTitle = (e) =>{
       titleCheck()
+    }
+    const handleSubmit = (e) =>{
       handleDataSubmit(e)
     }
     const handleDataSubmit = event => {
@@ -380,6 +382,8 @@ console.log("ds",ds,cureent)
                           type="text" 
                           name="title"
                           onChange={handleAnnouncementData} 
+                          onBlur={handleTitle} 
+
                           isInvalid = {!!error.title || titleError}
                           />
                           <Form.Control.Feedback type="invalid">
@@ -660,7 +664,7 @@ console.log("ds",ds,cureent)
                         <div className="cta text-center mt-5 mb-5">
                         <Button className="preview" onClick={() =>window.location.href="/announcements" }>Cancel</Button>
 
-                          <Button variant="primary" type="submit" onClick={handleTitle}>Save</Button>
+                          <Button variant="primary" type="submit" onClick={handleSubmit}>Save</Button>
                         </div>
                       </Col>
                     </Row>

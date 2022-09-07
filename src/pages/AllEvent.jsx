@@ -168,7 +168,19 @@ console.log("THE EVENT PROPS",props.allEvent)
                         <img src="../img/dot-ico.svg" alt=""/>
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item href={`/edit-announcement/${data.id}`}>Edit</Dropdown.Item>                                          
+                        <Dropdown.Item 
+                         href={
+                          new Date(data?.scheduled_date)>new Date() ? (
+                            `/edit-announcement/${data.id}`  
+
+                          ):
+                          (
+                              null     
+                            
+                          )
+                        }
+                        
+                        >Edit</Dropdown.Item>                                          
                            
                       
                         <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
