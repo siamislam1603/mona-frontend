@@ -170,7 +170,9 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required s';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
-
+  if(titleError){
+    newErrors.title = "Anouncement title already exit"
+  }
   if (!start_date || start_date === 'undefined')
     newErrors.start_date = 'Start Date Required';
   if (!start_time || start_time === 'undefined')

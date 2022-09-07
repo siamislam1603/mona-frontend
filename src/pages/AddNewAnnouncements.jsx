@@ -85,7 +85,6 @@ const [titleError,setTitleError] = useState();
 
 
 const createAnnouncement = async (data) => {
-  titleCheck()
   try {
     const token = localStorage.getItem('token');
 
@@ -389,7 +388,7 @@ console.log("ds",ds,cureent)
                           <Form.Control.Feedback type="invalid">
                             {error.title}
                           </Form.Control.Feedback>
-                          {titleError && <div className="error">{titleError}</div>} 
+                          {!error.title &&titleError && <div className="error">{titleError}</div>} 
                          
                         </Form.Group>
                         {
