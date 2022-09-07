@@ -304,7 +304,7 @@ const CoordinatorDashboard = () => {
                           <div className="activitylist relative two-col">
                             {onboarding.newEducators === 0 ? (<></>) : (<><div className="item">
                               <a className="item" style={{ cursor: "not-allowed" }}>
-                                <span className="name">New Educator Enrolled</span>
+                                <span className="name">New Educator Enroled</span>
                                 <span className="separator">|</span>
                                 <span className="num">{onboarding?.newEducators}</span>
                               </a>
