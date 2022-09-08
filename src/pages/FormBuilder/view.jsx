@@ -1294,9 +1294,9 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item[0].createdAt).format('DD/MM/YYYY')}{' '}
+                                {moment(item[0]?.createdAt).format('DD/MM/YYYY')}{' '}
                                 -{' '}
-                                {item[0].createdAt
+                                {item[0]?.createdAt
                                   .split('T')[1]
                                   .split('.')[0]
                                   .split(':', 2)
@@ -1366,9 +1366,9 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item[0].createdAt).utcOffset('+11:00').format('DD/MM/YYYY')}{' '}
+                                {moment(item[0]?.createdAt).utcOffset('+11:00').format('DD/MM/YYYY')}{' '}
                                 -{' '}
-                                {item[0].createdAt
+                                {item[0]?.createdAt
                                   .split('T')[1]
                                   .split('.')[0]
                                   .split(':', 2)
