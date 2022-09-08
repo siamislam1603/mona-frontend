@@ -379,7 +379,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .column-table.user-management-sec .table tr td:nth-child(2n){width:40%}
 .column-table.user-management-sec .table tr td:last-child{width:10%}
 .column-list{position:relative}
-.kidsart{position:absolute;left:-70px;bottom:25px;max-width:85px}
+.kidsart{position:absolute;left:-70px;bottom:-25px;max-width:85px}
 .column-list .item{display:flex;padding:16px;margin-bottom:1rem;background-color:var(--offwhite);border-radius:16px}
 .column-list.event-list .item{box-shadow:0 0 10px 0 rgba(0,0,0,.1);background-color:var(--white)}
 .column-list .item .flex{display:flex;align-items:center;width:100%}
