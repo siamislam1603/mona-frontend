@@ -733,7 +733,7 @@ const AddNewTraining = () => {
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Send to all franchises:</Form.Label>
+                  <Form.Label>Send to all franchises</Form.Label>
                   <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
                       <label for="all">
@@ -812,7 +812,7 @@ const AddNewTraining = () => {
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Applicable to:</Form.Label>
+                  <Form.Label>Applicable to</Form.Label>
                   <div>
                     <div className="new-form-radio-box">
                       <label htmlFor="yes1">

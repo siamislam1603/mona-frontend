@@ -234,33 +234,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
 
 
-  const logout = async () => {
-    const response = await axios.get(`${BASE_URL}/auth/logout`);
-    if (response.status === 200) {
-      // localStorage.setItem('is_user_logged_in', 'logged_out');
-      // localStorage.removeItem('token');
-      // localStorage.removeItem('user_id');
-      // localStorage.removeItem('user_name');
-      // localStorage.removeItem('user_role');
-      // localStorage.removeItem('menu_list');
-      // localStorage.removeItem('active_tab');
-      // localStorage.removeItem('selectedFranchisee');
-      // localStorage.removeItem("attempts")
-      // localStorage.removeItem("enrolled_parent_id")
-      // localStorage.removeItem("enrolled_child_id")
-      // localStorage.removeItem("redirectURL")
-      // localStorage.removeItem("SelectedChild")
-      // localStorage.removeItem("DefaultEducators")
-      // localStorage.removeItem("DefaultParents")
-      // localStorage.removeItem('has_given_consent');
-      // logoutUser();
-      window.location.href = '/';
-
-    }
-  };
-
   const handleLogout = (event) => {
     logoutUser()
+    window.location.href = '/';
+
     // logout();
   };
 

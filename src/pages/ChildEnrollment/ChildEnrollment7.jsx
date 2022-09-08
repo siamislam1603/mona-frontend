@@ -406,7 +406,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Label>Signature</Form.Label>
                   {
                     (localStorage.getItem('user_role') === 'guardian' && (localStorage.getItem('user_id') === localStorage.getItem('enrolled_parent_id'))) &&
-                    <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the consent form!</p>
+                    <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061", fontSize: "1rem" }}>Click Here</strong> to sign the consent form</p>
                   }
                   {
                     consentData?.consent_signature &&

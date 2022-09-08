@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
@@ -150,6 +150,7 @@ const FranchiseeDashboard = () => {
   const [countUser, setcountUser] = React.useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [enrollments, setEnrollments] = useState([])
+  const [topSuccessMessage, setTopSuccessMessage] = useState(null)
 
 
   const announcement = () => {
@@ -289,8 +290,37 @@ const FranchiseeDashboard = () => {
     // count_Api();
     Enrollments();
   }, []);
+
+
+
+  
+
+useEffect(() => {
+
+    if (localStorage.getItem('success_msg')) {
+
+      setTopSuccessMessage(localStorage.getItem('success_msg'));
+
+      localStorage.removeItem('success_msg');
+      setTimeout(() => {
+
+        setTopSuccessMessage(null);
+
+      }, 3000);
+
+    }
+
+  }, []);
+
+
+
   return (
     <>
+
+      {
+        topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+      }
+
       <div id="main">
         <section className="mainsection">
           <Container>

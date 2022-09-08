@@ -80,6 +80,7 @@ const EducatorDashboard = () => {
   const [training, setTraining] = useState([])
   const [coordinator, setCoordinator] = useState([])
   const [childrenData, setChildrenData] = useState([])
+  const [topSuccessMessage, setTopSuccessMessage] = useState(null)
 
   const first = training[0];
   const second = training[1];
@@ -184,6 +185,23 @@ const EducatorDashboard = () => {
 
   }
 
+
+  useEffect(() => {
+    if (localStorage.getItem('success_msg')) {
+      setTopSuccessMessage(localStorage.getItem('success_msg'));
+
+      localStorage.removeItem('success_msg');
+      setTimeout(() => {
+
+        setTopSuccessMessage(null);
+
+      }, 3000);
+
+    }
+  }, []);
+
+
+
   useEffect(() => {
     Userannouncements();
     Training();
@@ -194,6 +212,9 @@ const EducatorDashboard = () => {
   console.log("Childeren data", childrenData)
   return (
     <>
+      {
+        topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+      }
       <div id="main">
         <section className="mainsection">
           <Container>
