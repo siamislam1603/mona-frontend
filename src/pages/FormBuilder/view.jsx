@@ -44,9 +44,8 @@ function ViewFormBuilder(props) {
   const [key, setKey] = useState('created-by-me');
   const token = localStorage.getItem('token');
   const location = useLocation();
-  let hrFlag = false;
-  let title_flag = false;
-  let form_id;
+  let no_record=false;
+  let form_history_no_record=false;
   useEffect(() => {
     getAllForm();
     if (location?.state?.message) {
@@ -317,11 +316,12 @@ function ViewFormBuilder(props) {
                                           //     localStorage.getItem('user_id')
                                           //   ) ||
                                           // localStorage.getItem('user_role') ===
-                                          //   'franchisor_admin'
+                                          //   'franchisor_admin' 
                                           <>
                                             {item.title_flag === false && (
                                               <>
                                                 {(item['title_flag'] = true)}
+                                                {(no_record=true)}
                                                 <Col lg={12}>
                                                   <h2 className="page_title">
                                                     {item.category}
@@ -467,6 +467,7 @@ function ViewFormBuilder(props) {
                                             {item.title_flag === false && (
                                               <>
                                                 {(item['title_flag'] = true)}
+                                                {(no_record=true)}
                                                 <Col lg={12}>
                                                   <h2 className="page_title">
                                                     {item.category}
@@ -538,9 +539,10 @@ function ViewFormBuilder(props) {
                                   </Row>
                                 </>
                               )
-                            );
-                          })}
+                              );
+                            })}
                         </div>
+                        {no_record===false && <Row><p>No Record founds</p></Row>}
                       </Tab>
                       <Tab eventKey="forms-history" title="Forms History">
                         <div className="forms-content-section">
@@ -598,6 +600,7 @@ function ViewFormBuilder(props) {
                                             {item.title_flag === false && (
                                               <>
                                                 {(item['title_flag'] = true)}
+                                                {(form_history_no_record=true)}
                                                 <div className="col-lg-12">
                                                   <h2 className="page_title">
                                                     {item.category}
@@ -764,6 +767,7 @@ function ViewFormBuilder(props) {
                             );
                           })}
                         </div>
+                        {form_history_no_record===false && <Row><p>No Record founds</p></Row>}
                       </Tab>
                       {(localStorage.getItem('user_role') ===
                         'franchisee_admin' ||
