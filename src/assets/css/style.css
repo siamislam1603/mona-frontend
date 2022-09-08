@@ -484,7 +484,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .thumb-vid a{display:block;position:relative}
 .thumb-vid a:before{position:absolute;content:'';top:0;left:0;width:100%;height:100%;background-position:center;background-image:url("../img/video-ico.svg");background-repeat:no-repeat}
 .thumb-vid a:after{position:absolute;content:'';top:0;left:0;width:100%;height:100%;background:-moz-linear-gradient(top,rgba(0,0,0,0) 0,#000 100%);background:-webkit-linear-gradient(top,rgba(0,0,0,0) 0,#000 100%);background:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 100%);opacity:.7}
-.grayback{border-radius:16px;padding:35px 50px;background-color:var(--offwhite)}
+.form-check { padding-right: 1.5em; padding-left: 0; }
+.grayback{border-radius:16px;padding:30px;background-color:var(--offwhite)}
 .grayback .form-label{display:block}
 .grayback .form-control{background-color:var(--white)}
 .css-1pahdxg-control,.grayback .css-1s2u09g-control{background-color:var(--white)!important}
@@ -511,6 +512,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .grayback .single-col{display:flex}
 .grayback .single-col .ms-auto{flex:0 0 200px;text-align:right}
 .grayback p{font-size:var(--fontsm);line-height:1.6}
+.grayback ul{margin: 0;}
+.grayback p p, .grayback li{margin-bottom: 7px;}
 .grayback .single-field{display:flex;align-items:center}
 .grayback .single-field .form-label{flex:0 0 auto;margin-right:1rem;margin-bottom:0}
 .whiteback{border-radius:16px;border:1px solid var(--black);padding:25px}
