@@ -150,12 +150,12 @@ export const createOperatingManualValidation = (form) => {
   let newErrors = {};
   let { title, description, order } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
-  if (!description || description === '')
-    newErrors.description = 'Description is Required';
   if (order < 0) newErrors.order = 'Order must be greater than 0';
   if (order === 0 || order === '0')
     newErrors.order = 'Order must be greater than 0';
   if (!order || order === '') newErrors.order = 'Position is Required';
+  if (!description || description === '')
+    newErrors.description = 'Description is Required';
 
   return newErrors;
 };
