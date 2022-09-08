@@ -11,7 +11,7 @@ import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import Select from 'react-select';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider ,{Search}from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import makeAnimated from 'react-select/animated';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
@@ -22,23 +22,11 @@ import { useNavigate } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
+import filterFactory,{textFilter} from 'react-bootstrap-table2-filter';
 import moment from 'moment';
 // const { ExportCSVButton } = CSVExport;
 
-const animatedComponents = makeAnimated();
 
-const training = [
-  {
-    value: 'sydney',
-    label: 'Sydney',
-  },
-  {
-    value: 'melbourne',
-    label: 'Melbourne',
-  },
-];
-
-let DeleteId = [];
 
 const ChildrenEnrol = () => {
   const Key = useParams()
@@ -53,11 +41,17 @@ const ChildrenEnrol = () => {
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true)
-  const [formData, setFormData] = useState([])
+ const [datad,setDatad] = useState([])
 
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
+  const { SearchBar } = Search;
+  let nameFilter;
+let priceFilter;
+let stockFilter;
+let originFilter;
+
 
 
   const ChildernEnrolled = async () => {
@@ -100,135 +94,69 @@ const ChildrenEnrol = () => {
       console.log("ERROR child enroll", error)
     }
   }
-
-  const rowEvents = {
-    onClick: (e, row, rowIndex) => {
-      // if (e.target.text === 'Delete') {
-
-      //   async function deleteUserFromDB() {
-      //     const response = await axios.patch(
-      //       `${BASE_URL}/auth/user/status/${row.userID}`,
-      //       {
-      //         is_active: 2,
-      //       }, {
-      //       headers: {
-      //         "Authorization": `Bearer ${localStorage.getItem('token')}`
-      //       }
-      //     });
-
-      //     if(response.status === 201 && response.data.status === "success") {
-      //       fetchUserDetails();
-      //     }
-      //   }
-
-      //   if (window.confirm('Are you sure you want to delete this user?')) {
-      //     deleteUserFromDB();
-      //   }
-
-      //   // fetchUserDetails();
-      // }
-
-      if (e.target.text === "Deactivate") {
-
-        async function deactivateUserFromDB() {
-          const response = await axios.patch(
-            `${BASE_URL}/auth/user/status/${row.userID}`,
-            {
-              is_active: 0,
-            }, {
-            headers: {
-              "Authorization": `Bearer ${localStorage.getItem('token')}`
-            }
-          });
-
-          if (response.status === 201 && response.data.status === "success") {
-            fetchUserDetails();
-          }
+  const columns21 = [
+    {
+      dataField: "name",
+      text: "Product Name",
+      filter: textFilter({
+        getFilter: filter => {
+          nameFilter = filter;
         }
-
-        if (window.confirm('Are you sure you want to deactivate this user?')) {
-          deactivateUserFromDB();
+      })
+    },
+    {
+      dataField: "price",
+      text: "Price",
+      filter: textFilter({
+        getFilter: filter => {
+          priceFilter = filter;
         }
-      }
-
-      if (e.target.text === "Activate") {
-        console.log('ACTIVATING USER!')
-
-        async function activateUserFromDB() {
-          const response = await axios.patch(
-            `${BASE_URL}/auth/user/status/${row.userID}`,
-            {
-              is_active: 1,
-            }, {
-            headers: {
-              "Authorization": `Bearer ${localStorage.getItem('token')}`
-            }
-          });
-
-          if (response.status === 201 && response.data.status === "success") {
-            fetchUserDetails();
-          }
+      }),
+      sort: true
+    },
+    {
+      dataField: "stock",
+      text: "Stock",
+      filter: textFilter({
+        getFilter: filter => {
+          stockFilter = filter;
         }
-
-        if (window.confirm('Are you sure you want to activate this user?')) {
-          activateUserFromDB();
+      })
+    },
+    {
+      dataField: "origin",
+      text: "Origin",
+      filter: textFilter({
+        getFilter: filter => {
+          originFilter = filter;
         }
-
-        // fetchUserDetails();
-      }
-
-      if (e.target.text === "Edit") {
-        navigate(`/edit-user/${row.userID}`);
-      }
-
+      })
     }
-  }
-  const columns = [
-    {
-      dataField: 'name',
-      text: 'Name',
-      sort: true,
-      formatter: (cell) => {
-
-        // console.log('BIG STATUS:', status);
-        return (
-          <>
-            <div className="user-list">
-              <span className="user-name">
-                {cell} <small>{cell}</small> <small></small>
-              </span>
-            </div>
-          </>
-        );
-      },
-    },
-    {
-      dataField: 'parentName',
-      text: 'Parent Name',
-      sort: true,
-    },
-    {
-      dataField: 'educatorassisgned',
-      text: 'Educator Assigned',
-      sort: true,
-    },
-    {
-      dataField: 'specailneed',
-      text: 'Special Need',
-      sort: true,
-    },
-    {
-      dataField: 'franchise',
-      text: 'Franchise ',
-      formatter: (cell) => {
-        console.log("EDUCATIN CELL", cell)
-        cell = cell.split(",");
-        return (<><div className="user-list"><span className="user-pic"><img src={cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
-      },
-    },
-
-
   ];
+
+  const products = [
+    {
+      name: "apple",
+      price: 100,
+      stock: 10,
+      origin: "japan"
+    },
+    {
+      name: "orange",
+      price: 150,
+      stock: 35,
+      origin: "spain"
+    },
+    {
+      name: "pineapple",
+      price: 300,
+      stock: 4,
+      origin: "america"
+    }
+  ];
+
+
+
 
   const columns1 = [
     {
@@ -238,6 +166,8 @@ const ChildrenEnrol = () => {
         console.log("name cell", cell)
         return (<><div className="user-list"><span className="user-name">{cell}</span></div></>)
       },
+
+
     },
     {
       dataField: 'parentName',
@@ -359,106 +289,31 @@ const ChildrenEnrol = () => {
     },
   ];
 
-  //   const columns = [
-  //     {
-  //       dataField: 'name',
-  //       text: 'Name',
-  //       sort: true,
-  //       formatter: (cell) => {
-  //         let status = null;
-  //         cell = cell.split(',');
-  //         if (parseInt(cell[3]) === 0) {
-  //           status = "inactive"
-  //         } else if (parseInt(cell[3]) === 1) {
-  //           status = "active"
-  //         } else if (parseInt(cell[3]) === 2) {
-  //           status = "deleted"
-  //         }
-  //         console.log('BIG STATUS:', status);
-  //         return (
-  //           <>
-  //             <div className="user-list">
-  //               <span className="user-pic">
-  //                 <img src={cell[0]} alt="" />
-  //               </span>
-  //               <span className="user-name">
-  //                 {cell[1]} <small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
-  //               </span>
-  //             </div>
-  //           </>
-  //         );
-  //       },
-  //     },
-  //     {
-  //       dataField: 'email',
-  //       text: 'Email',
-  //       sort: true,
-  //     },
-  //     {
-  //       dataField: 'number',
-  //       text: 'Phone',
-  //       sort: true,
-  //     },
-  //     {
-  //       dataField: 'location',
-  //       text: 'Location',
-  //       sort: true,
-  //     },
-  //     {
-  //       dataField: 'roleDetail',
-  //       text: 'Action',
-  //       formatter: (cell) => {
-  //         cell = cell.split(',');
-  //         return (
-  //           <>
-  //             {
-  //               (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === "franchisee_admin" || localStorage.getItem('user_role') === 'coordinator') &&
-  //                 (cell[0] === "guardian" && cell[1] == 0) ? (
-  //                 <button className='btn btn-outline-danger' onClick={() => navigate(`/child-enrollment-init/${cell[3]}`)}>
-  //                   New Children
-  //                 </button>
-  //               ) : (cell[0] === "guardian" && cell[1] != 0) ?
-  //                 (<button className='btn btn-outline-secondary' onClick={() => navigate(`/children/${cell[3]}`, { state: { franchisee_id: cell[2] } })}>
-  //                   View Children
-  //                 </button>
-  //                 ) : ""
-  //             }
-  //           </>
-  //         );
-  //       },
-  //     },
-  //     {
-  //       dataField: 'action',
-  //       text: '',
-  //       formatter: (cell) => {
-  //         let button = null;
 
-  //         if (cell === 1) {
-  //           button = "Deactivate";
-  //         } else if (cell === 0) {
-  //           button = "Activate";
-  //         }
-  //         return (
-  //           <>
-  //             <div className="cta-col">
-  //               <Dropdown>
-  //                 <Dropdown.Toggle variant="transparent" id="ctacol">
-  //                   <img src="../img/dot-ico.svg" alt="" />
-  //                 </Dropdown.Toggle>
-  //                 <Dropdown.Menu>
-  //                   <Dropdown.Item href="#">{button}</Dropdown.Item>
-  //                   {cell === 1 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
-  //                 </Dropdown.Menu>
-  //               </Dropdown>
-  //             </div>
-  //           </>
-  //         );
-  //       },
-  //     },
-  //   ];
+
   const onFilter = debounce(() => {
     fetchUserDetails();
   }, 200);
+
+  const getData = () =>{
+    axios("https://jsonplaceholder.typicode.com/comments").then((res) =>
+    {
+      console.log("dumby",res.data)
+      setDatad(res.data)
+    }
+
+    )
+  }
+  const columnsee = [{
+    dataField:"id",
+    text:"Product Id",
+ 
+  },
+  {
+    dataField:"email",
+    text:"Email"
+  }
+]
 
 
   const fetchUserDetails = async () => {
@@ -638,12 +493,17 @@ const ChildrenEnrol = () => {
       setCsvData(csv_data);
     }
   }
-
+  const columns = [
+    { dataField: 'id', text: 'Id' },
+    { dataField: 'name', text: 'Name' },
+    { dataField: 'animal', text: 'Animal' },
+  ]
 
 
   useEffect(() => {
     Show_eduactor()
     ChildernEnrolled()
+    getData()
   }, [])
 
 
@@ -707,228 +567,26 @@ const ChildrenEnrol = () => {
                         <h1 className="title-lg">Children Enroled</h1>
                         <div className="othpanel">
                           <div className="extra-btn">
-                            {/* <div className="data-search me-3">
-                              <Form.Group
-                                className="d-flex"
-                                style={{ position: 'relative' }}
-                              >
-                                <div className="user-search">
-                                  <img
-                                    src="./img/search-icon-light.svg"
-                                    alt=""
-                                  />
-                                </div>
-                                <Form.Control
-                                  className="searchBox"
-                                  type="text"
-                                  placeholder="Search"
-                                  name="search"
-                                  onChange={(e) => {
-                                    setSearch(e.target.value);
-                                    onFilter();
-                                  }}
-                                />
-                              </Form.Group>
-                            </div> */}
-                            {/* <Dropdown className="filtercol me-3">
-                              <Dropdown.Toggle
-                                id="extrabtn"
-                                variant="btn-outline"
-                              >
-                                <i className="filter-ico"></i> Add Filters
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu>
-                                <header>Filter by:</header>
-                                <div className="custom-radio btn-radio mb-2">
-                                  <label>Users:</label>
-                                  <Form.Group>
-                                    <Form.Check
-                                      inline
-                                      label="Franchisor Admin"
-                                      value="Franchisor_Admin"
-                                      name="users"
-                                      type="radio"
-                                      id="one"
-                                      checked={filter === "Franchisor_Admin"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-                                    <Form.Check
-                                      inline
-                                      label="Franchisee Admin"
-                                      value="Franchisee_Admin"
-                                      name="users"
-                                      type="radio"
-                                      id="five"
-                                      checked={filter === "Franchisee_Admin"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-                                    <Form.Check
-                                      inline
-                                      label="Co-ordinator"
-                                      value="Coordinator"
-                                      name="users"
-                                      type="radio"
-                                      id="two"
-                                      checked={filter === "Coordinator"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-                                    <Form.Check
-                                      inline
-                                      label="Educator"
-                                      value="Educator"
-                                      name="users"
-                                      type="radio"
-                                      id="three"
-                                      s
-                                      checked={filter === "Educator"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-
-                                    <Form.Check
-                                      inline
-                                      label="Parent/Guardian"
-                                      value="Guardian"
-                                      name="users"
-                                      type="radio"
-                                      id="four"
-                                      checked={filter === "Guardian"}
-                                      onChange={(event) =>
-                                        setFilter(event.target.value)
-                                      }
-                                    />
-                                  </Form.Group>
-                                </div>
-                                {/* <div className="custom-radio">
-                                      <label className="mb-2">Location:</label>
-                                      <Form.Group>
-                                        <Select
-                                          closeMenuOnSelect={false}
-                                          components={animatedComponents}
-                                          isMulti
-                                          options={training}
-                                          onChange={(event) =>
-                                            setFilter((prevState) => ({
-                                              ...prevState,
-                                              location: [
-                                                ...event.map(
-                                                  (data) => data.label
-                                                ),
-                                              ],
-                                            }))
-                                          }
-                                        />
-                                      </Form.Group>
-                                    </div> */}
-                            {/* <footer>
-                                  <Button
-                                    variant="transparent"
-                                    type="submit"
-                                    onClick={() => { setFilter(''); }}
-                                  >
-                                    Reset
-                                  </Button>
-                                  <Button
-                                    variant="primary"
-                                    type="submit"
-                                    onClick={() => { handleApplyFilter(filter) }}
-                                  >
-                                    Apply
-                                  </Button>
-                                </footer> */}
-                            {/* </Dropdown.Menu> */}
-                            {/* </Dropdown> */}
-                            {/* {
-                              verifyPermission("user_management", "add") &&
-                              <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
-                            } */}
-                            {/* <Dropdown>
-                              <Dropdown.Toggle
-                                id="extrabtn"
-                                className="ctaact"
-                              >
-                                <img src="../img/dot-ico.svg" alt="" />
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu>
-                                <Dropdown.Item
-                                  onClick={() => {
-                                    setCsvDownloadFlag(true);
-                                  }}
-                                >
-                                  Export CSV!!
-                                  {csvDownloadFlag && (
-                                    <CSVDownload
-                                      data={csvData}
-                                      filename="user_management.csv"
-                                      ref={csvLink}
-                                    >
-                                      {setCsvDownloadFlag(false)}
-                                    </CSVDownload>
-                                  )}
-                                </Dropdown.Item>
-                                <Dropdown.Item onClick={() => { onDeleteAll() }}>
-                                  Delete All Row
-                                </Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown> */}
+   
+   
                           </div>
                         </div>
                       </header>
-                      {/* userEducator */}
-                      {/* {!Key.key ? (
-                        <>
-                          <ToolkitProvider
-                            keyField="name"
-                            data={userData}
-                            columns={columns}
-                          >
-                            {(props) => (
-                              <>
-                                <BootstrapTable
-                                  {...props.baseProps}
-                                  rowEvents={rowEvents}
-                                  selectRow={selectRow}
-                                  pagination={paginationFactory()}
-                                />
-                              </>
-                            )}
-                          </ToolkitProvider>
-
-                        </>) :
-                        (<>
-                          <ToolkitProvider
-                            keyField="name"
-                            data={userEducator}
-                            columns={columns}
-                          >
-                            {(props) => (
-                              <>
-                                <BootstrapTable
-                                  {...props.baseProps}
-                                  rowEvents={rowEvents}
-                                  selectRow={selectRow}
-                                  pagination={paginationFactory()}
-                                />
-                              </>
-                            )}
-                          </ToolkitProvider>
-                        </>)} */}
+ 
 
                     </>
-                    {/* {
-                              formData?.length > 0 ?
+  
+                    {
+                              chidlEnroll?.length > 0 ?
                                 (
                                   <BootstrapTable
                                     keyField="name"
                                     data={chidlEnroll}
                                     columns={columns1}
+                                    pagination={paginationFactory()}
+                                    filter={filterFactory()} 
+
+
                                   />
                                 ) : (
                                   <div className="text-center mb-5 mt-5"><strong>
@@ -936,20 +594,32 @@ const ChildrenEnrol = () => {
                                   </strong></div>
 
                                 )
-                            } */}
+                            }
 
-                    {
+
+                    {/* {
                       chidlEnroll?.length > 0 ?
                         <ToolkitProvider
-                          keyField="name"
+                        bootstrap4
+                        keyField="name"
                           data={chidlEnroll}
                           columns={columns1}
+                          search
                         >
                           {(props) => (
+
                             <>
+
                               <BootstrapTable
                                 {...props.baseProps}
+                              // filter ={filterFactory()}
+                              filter={filterFactory()} 
+                              noDataIndication="There is no solution"
+
                                 // rowEvents={rowEvents}
+                              
+
+
                                 // selectRow={selectRow}
                                 pagination={paginationFactory()}
                               />
@@ -962,7 +632,7 @@ const ChildrenEnrol = () => {
                           </strong></div>
 
                         )
-                    }
+                    } */}
 
 
                   </div>
