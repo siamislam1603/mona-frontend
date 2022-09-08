@@ -369,7 +369,7 @@ const selectFranhise = () =>{
                             <Col lg={3} sm={6}>
                             <Form.Group className="col-md-12">
                               <div className="btn-radio inline-col">
-                       <Form.Label>Send to all Franchises :</Form.Label>
+                       <Form.Label>Send to all Franchises </Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
@@ -426,7 +426,7 @@ const selectFranhise = () =>{
                         }
                
                         <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Franchise</Form.Label>
+                            <Form.Label>Select Franchise(s)</Form.Label>
                           {
                             localStorage.getItem('user_role') === 'franchisor_admin' ? (
                               <div className="select-with-plus">
@@ -636,7 +636,7 @@ const selectFranhise = () =>{
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Upload Video
+                            Upload Videos
                           </Form.Label>
                           {/* <DropOneFile onSave={setVideoTutorialFiles}
 

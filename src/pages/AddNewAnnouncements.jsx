@@ -349,7 +349,7 @@ console.log("ds",ds,cureent)
                             
                             <Form.Group className="col-md-6 mb-3">
                               <div className="btn-radio inline-col">
-                                <Form.Label>Send to all Franchises:</Form.Label>
+                                <Form.Label>Send to all Franchises</Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
@@ -397,7 +397,9 @@ console.log("ds",ds,cureent)
                           )
                         }
                             <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Franchise</Form.Label>
+                            
+                            
+                            <Form.Label>Select Franchise(s)</Form.Label>
         
                             {
                             localStorage.getItem('user_role') === 'franchisor_admin' ?
@@ -561,7 +563,7 @@ console.log("ds",ds,cureent)
                     <Row>
                       <Col sm={6}>
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label> Cover Image </Form.Label>
+                          <Form.Label>Upload Cover Image </Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
                           />
@@ -570,7 +572,7 @@ console.log("ds",ds,cureent)
                       </Col>
                       <Col sm={6}>
                         <Form.Group className="mb-3 form-group">
-                          <Form.Label>Upload Video </Form.Label>
+                          <Form.Label>Upload Videos </Form.Label>
                           <DropVideo onSave={setVideoTutorialFiles} />
                         </Form.Group>
                       </Col>
