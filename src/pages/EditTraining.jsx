@@ -81,7 +81,6 @@ const EditTraining = () => {
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({});
   const [trainingSettings, setTrainingSettings] = useState({});
-
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
@@ -103,8 +102,6 @@ const EditTraining = () => {
   const [image, setImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
-
-
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
@@ -210,7 +207,7 @@ const EditTraining = () => {
     setFetchedVideoTutorialFiles(training?.training_files?.filter(file => file.fileType === ".mp4"));
     setFetchedRelatedFiles(training?.training_files?.filter(file => file.fileType !== '.mp4'));
   }
-  console.log(coverImage, "coverImage")
+
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const updateTraining = async (data) => {
@@ -223,14 +220,13 @@ const EditTraining = () => {
       }
     }
     );
-
+    console.log(response, "response")
     if (response.status === 201 && response.data.status === "success") {
       let data = new FormData();
-
       let imgSaveResponse;
 
-      if (typeof croppedImage === 'object') {
 
+      if (typeof croppedImage === 'object') {
         data.append('id', trainingId);
         imgSaveResponse = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
         data.append('image', imgSaveResponse);
@@ -242,7 +238,7 @@ const EditTraining = () => {
           }
         });
 
-      } else if (typeof croppedImage === 'object') {
+      } else if (typeof croppedImage === 'string') {
         imgSaveResponse = await axios.patch(
           `${BASE_URL}/training/updateCoverImgString`, { croppedImage, trainingId }, {
           headers: {
@@ -250,6 +246,7 @@ const EditTraining = () => {
           }
         });
       }
+      console.log(imgSaveResponse, "imgSaveResponse")
 
       if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
         setLoader(false)
@@ -257,7 +254,8 @@ const EditTraining = () => {
         localStorage.setItem('success_msg', 'Training Updated Successfully!');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href = "/training";
-      } else {
+      }
+      else {
         setLoader(false)
         setCreateTrainingModal(false);
         setTopErrorMessage("unable to save cover image!");
