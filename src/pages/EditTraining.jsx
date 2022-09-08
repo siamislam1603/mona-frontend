@@ -569,9 +569,8 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-
-                            <Form.Label>Upload Cover Image:</Form.Label>
-
+                            <Form.Label>Upload Cover Image</Form.Label>
+                            {console.log(croppedImage, "croppedImage")}
                             <DragDropTraning
                               croppedImage={croppedImage}
                               setCroppedImage={setCroppedImage}
@@ -601,7 +600,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload Video</Form.Label>
+                            <Form.Label>Upload Videos</Form.Label>
                             <DropAllFile
                               title="Videos"
                               type="video"
@@ -633,7 +632,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload File</Form.Label>
+                            <Form.Label>Upload Files</Form.Label>
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
@@ -766,7 +765,7 @@ const EditTraining = () => {
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Send to all franchises:</Form.Label>
+                    <Form.Label>Send to all franchises</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
                         <label for="all">
@@ -845,7 +844,7 @@ const EditTraining = () => {
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Applicable to:</Form.Label>
+                    <Form.Label>Applicable to</Form.Label>
                     <div className="new-form-radio">
                       <div className="new-form-radio-box">
                         <label htmlFor="yes1">

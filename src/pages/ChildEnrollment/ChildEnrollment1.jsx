@@ -9,17 +9,52 @@ import { BASE_URL } from "../../components/App";
 import { childFormValidator, parentFormValidator  } from "../../helpers/enrollmentValidation";
 import { useParams } from 'react-router-dom';
 import DragDropMultiple from '../../components/DragDropMultiple';
+import { isEmpty } from "lodash";
 
 let nextstep = 2;
 let step = 1;
+
+// HELPER FUNCTION
+function isNullEmpty(obj) {
+  let arr = [];
+
+  for(let val of Object.values(obj)) {
+    if(val)
+      arr.push(val);
+  }
+
+  console.log('ARRAY LENGTH:', arr.length);
+  if(arr.length === 0)
+    return true;
+
+  return false;
+}
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   let { childId: paramsChildId, parentId: paramsParentId } = useParams();
   let errorChild = null;
   let errorParent = null;
+
   // USING REFs
-  const fullnameRef = useRef(null);
-  const familynameRef = useRef(null);
+  const fullname = useRef(null);
+  const family_name = useRef(null);
+  const dob = useRef(null);
+  const home_address = useRef(null);
+  const language = useRef(null);
+  const country_of_birth = useRef(null);
+  const child_medical_no = useRef(null);
+  const child_crn = useRef(null);
+  const parent_crn_1 = useRef(null);
+  const parent_crn_2 = useRef(null);
+
+  const parent_family_name = useRef(null);
+  const given_name = useRef(null);
+  const telephone = useRef(null); 
+  const email = useRef(null); 
+  const place_of_birth = useRef(null); 
+  const ethnicity = useRef(null);
+  const primary_language = useRef(null); 
+  const occupation = useRef(null); 
 
   // STATE TO HANDLE CHILD DATA
   const [formOneChildData, setFormOneChildData] = useState({
@@ -48,7 +83,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // STATE TO HANDLE PARENT DATA
   const [formOneParentData, setFormOneParentData] = useState({
     relation_type: "parent",
-    family_name: "",
+    parent_family_name: "",
     given_name: "",
     dob: "",
     address_as_per_child: "",
@@ -68,6 +103,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [countryData, setCountryData] = useState(null);
   const [formStepData, setFormStepData] = useState(step);
   const [inclusionSupportForm, setInclusionSupportForm] = useState(null);
+  const [ supportFormDetails, setSupportFormDetails ] = useState(null);
 
   // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
 
@@ -78,6 +114,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   // MODAL DIALOG STATES
   const [showSubmissionSuccessModal, setShowSubmissionSuccessModal] = useState(false);
   const [showConsentCommentDialog, setShowConsentCommentDialog] = useState(false);
+  const [supportFormDeleteMessage, setSupportFormDeleteMessage] = useState(null);
   const [loader, setLoader] = useState(false);
 
   // FUNCTION TO UPDATE THIS FORM DATA
@@ -157,9 +194,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     errorParent = parentFormValidator(formOneParentData);
 
     if(Object.keys(errorChild).length > 0 || Object.keys(errorParent).length > 0) {
-      window.scrollTo(0, 0);
+      // window.scrollTo(0, 0);
       setChildFormErrors(errorChild);
       setParentFormErrors(errorParent);
+
     } else {
       setLoader(true);
       updateFormOneData(formOneChildData, formOneParentData);
@@ -256,7 +294,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
       setFormOneParentData(prevState => ({
         ...prevState,
-        family_name: parentData[0]?.family_name || parent.fullname?.split(" ")[0],
+        parent_family_name: parentData[0]?.parent_family_name || parent.fullname?.split(" ")[0],
         given_name: parentData[0]?.given_name || parent.fullname?.split(" ")?.slice(1).join(" "),
         relation_type: parentData[0]?.relation_type,
         address_as_per_child: parentData[0]?.address_as_per_child || parent.address,
@@ -290,7 +328,192 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }
 
+  const handleChildFileDelete = async (fileId) => {
+    console.log('Delete file:', fileId)
+    const response = await axios.delete(`${BASE_URL}/enrollment/child/file-delete/${fileId}`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
 
+    if(response.status === 201 && response.data.status === 'success') {
+      setSupportFormDeleteMessage("Support form deleted successfully.");
+    }
+  }
+
+  // UPLOADING SUPPORT FORM
+  const uploadSupportForm = async () => {
+    let data = new FormData();
+    data.append('images', inclusionSupportForm[0]);
+    data.append('category', 'support_form');
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
+      setInclusionSupportForm(null);
+      setSupportFormDetails(supportForm);
+    }
+  }
+
+  const focusOnChildErrors = (refName) => {
+    console.log('REFNAME TO HIT:', refName);
+
+    if(refName === "fullname") {
+      fullname?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "family_name") {
+      family_name?.current?.focus();
+
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "dob") {
+      dob?.current?.focus();
+
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "home_address") {
+      home_address?.current?.focus();
+
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "language") {
+      language?.current?.focus();
+
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "country_of_birth") {
+      country_of_birth?.current?.focus();
+
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "child_medical_no") {
+      child_medical_no?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "child_crn") {
+      child_crn?.current?.focus();
+    
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "parent_crn_1") {
+      parent_crn_1?.current?.focus();
+    
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+    
+    if(refName === "parent_crn_2") {
+      parent_crn_2?.current?.focus();
+    
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+  }
+
+  const focusOnParentErrors = (refName) => {
+    console.log('REFNAME TO HIT:', refName);
+
+    if(refName === "parent_family_name") {
+      parent_family_name?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "given_name") {
+      given_name?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "telephone") {
+      telephone?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "email") {
+      email?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "place_of_birth") {
+      place_of_birth?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "ethnicity") {
+      ethnicity?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "primary_language") {
+      primary_language?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "occupation") {
+      occupation?.current?.focus();
+      
+      if(childFormErrors[`${refName}`] === null) {
+        delete childFormErrors[`${refName}`];
+      }
+    } 
+  };
+ 
   useEffect(() => {
     fetchOccupationData();
     fetchEthnicityData();
@@ -318,16 +541,54 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }, [])
 
-  inclusionSupportForm && console.log('INCLUSION SUPPORT FORM:', inclusionSupportForm);
+  useEffect(() => {
+    if(inclusionSupportForm) {
+      uploadSupportForm();
+    }
+  }, [inclusionSupportForm]);
 
+  useEffect(() => {
+    if(supportFormDeleteMessage) {
+      setSupportFormDetails(null);
+      setTimeout(() => {
+        setSupportFormDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [supportFormDeleteMessage]);
+
+  useEffect(() => {
+    if(childFormErrors) {
+      let refName = Object.keys(childFormErrors)[0];
+      
+      if(childFormErrors[`${refName}`] !== null)
+        focusOnChildErrors(refName);
+    }
+  }, [childFormErrors]);
+
+  useEffect(() => {
+    
+    if((childFormErrors === null || Object.keys(childFormErrors).length === 0) && parentFormErrors !== null) {
+      console.log('CHILD ERROR OBJECT EMPTY')
+      let refName = Object.keys(parentFormErrors)[0];
+      
+      if(parentFormErrors[`${refName}`] !== null)
+        focusOnParentErrors(refName);
+    }
+  }, [parentFormErrors])
+
+  childFormErrors && console.log('CHILD FOR ERRORS:', childFormErrors);
   return (
     <>
+    {
+        supportFormDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{supportFormDeleteMessage}</p>
+      }
       <div className="enrollment-form-sec error-sec my-5">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <div className="grayback">
               <h2 className="title-xs mb-2">Information about the child</h2>
-              <p className="form_info mb-4">A parent or guardian who's a lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
+              <p className="form_info mb-4">A parent or guardian who has a lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
@@ -335,26 +596,15 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       type="text"
                       name="fullname"
-                      ref={fullnameRef}
+                      ref={fullname}
                       // style={childFormErrors?.fullname ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                       maxLength={50}
                       value={formOneChildData?.fullname || ""}
                       onChange={(e) => {
-                        // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
                         setFormOneChildData(prevState => ({
                           ...prevState,
                           fullname: e.target.value
-                        }));
-                        setChildFormErrors(prevState => ({
-                          ...prevState,
-                          fullname: null,
-                        })) 
-                        // } else {
-                        //   setFormOneChildData(prevState => ({
-                        //     ...prevState,
-                        //     fullname: e.target.value.slice(0, -1)
-                        //   }));
-                        // }
+                        })); 
                       }}
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("fullname")) {
@@ -363,16 +613,20 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             log: [...formOneChildData.log, "fullname"]
                           }));
                         }
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          fullname: null,
+                        }))
                       }} />
                     { childFormErrors?.fullname !== null && <span className="error">{childFormErrors?.fullname}</span> }
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Family Name *</Form.Label>
+                    <Form.Label>Child's Family Name *</Form.Label>
                     <Form.Control
                       type="text"
-                      ref={familynameRef}
+                      ref={family_name}
                       // style={childFormErrors?.family_name ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}}
                       minLenth={3}
                       maxLength={50}
@@ -384,10 +638,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           ...prevState,
                           family_name: e.target.value
                         }));
-                        setChildFormErrors(prevState => ({
-                          ...prevState,
-                          family_name: null,
-                        })) 
                         // } else {
                         //   setFormOneChildData(prevState => ({
                         //     ...prevState,
@@ -402,6 +652,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             log: [...formOneChildData.log, "family_name"]
                           }));
                         }
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          family_name: null,
+                        })) 
                       }} />
                     { childFormErrors?.family_name !== null && <span className="error">{childFormErrors?.family_name}</span> }
                   </Form.Group>
@@ -449,6 +703,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       type="date"
                       name="dob"
+                      ref={dob}
                       max={new Date().toISOString().slice(0, 10)}
                       value={formOneChildData?.dob || ""}
                       onChange={(e) => {
@@ -519,14 +774,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       as="textarea"
                       rows={3}
+                      ref={home_address}
                       name="home_address"
                       value={formOneChildData?.home_address || ""}
                       onChange={(e) => {
                         handleChildData(e);
-                        setChildFormErrors(prevState => ({
-                          ...prevState,
-                          home_address: null
-                        }))
                       }}
                       onBlur={(e) => {
                         if(!formOneChildData.log.includes("home_address")) {
@@ -535,6 +787,10 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             log: [...formOneChildData.log, "home_address"]
                           }));
                         }
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          home_address: null
+                        }))
                       }} />
                     { childFormErrors?.home_address !== null && <span className="error">{childFormErrors?.home_address}</span> }
                   </Form.Group>
@@ -575,6 +831,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       placeholder={formOneChildData?.country_of_birth || "Select"}
                       closeMenuOnSelect={true}
                       options={countryData}
+                      ref={country_of_birth}
                       onChange={(e) => {
                         setFormOneChildData((prevState) => ({
                           ...prevState,
@@ -728,24 +985,42 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     
                     {
                       formOneChildData?.developmental_delay &&
-                      <Form.Group className="col-md-6 mb-3 mt-3">
-                        <Form.Label>Upload Support Form</Form.Label>
-                        <DragDropMultiple 
-                          module="child-enrollment"
-                          fileLimit={1}
-                          onSave={setInclusionSupportForm} />
-                        <small className="fileinput">(Upload 1 file)</small>
-                      </Form.Group>
+                      <>
+                        <Form.Group className="col-md-6 mb-3 mt-3">
+                          <Form.Label>Upload Support Form</Form.Label>
+                          <DragDropMultiple 
+                            module="child-enrollment"
+                            fileLimit={1}
+                            supportFormDetails={supportFormDetails}
+                            onSave={setInclusionSupportForm} />
+                          <small className="fileinput">(Upload 1 file)</small>
+                        </Form.Group>
+                        {
+                          supportFormDetails &&
+                          (
+                            <div>
+                              <a href={supportFormDetails?.file}><p>{supportFormDetails?.originalName}</p></a>
+                              <img
+                                onClick={() => handleChildFileDelete(supportFormDetails?.id)}
+                                // className="file-remove"
+                                style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                alt="" />
+                            </div>
+                          )
+                        }
+                      </>
                     }
                   </Form.Group>
                 </Col>
 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Child Medical No. *</Form.Label>
+                    <Form.Label>Child Medicare No. *</Form.Label>
                     <Form.Control
                       type="text"
                       name="child_medical_no"
+                      ref={child_medical_no}
                       value={formOneChildData.child_medical_no || ""}
                       onChange={(e) => {
                         handleChildData(e);
@@ -757,7 +1032,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             log: [...formOneChildData.log, "child_medical_no"]
                           }));
                         }
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          child_medical_no: null,
+                        })) 
                       }} />
+
+                      { childFormErrors?.child_medical_no !== null && <span className="error">{childFormErrors?.child_medical_no}</span> }
                   </Form.Group>
                 </Col>
 
@@ -767,6 +1048,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       type="text"
                       name="child_crn"
+                      ref={child_crn}
                       value={formOneChildData.child_crn || ""}
                       onChange={(e) => {
                         handleChildData(e);
@@ -778,7 +1060,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             log: [...formOneChildData.log, "child_crn"]
                           }));
                         }
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          child_crn: null,
+                        })) 
                       }} />
+
+                      { childFormErrors?.child_crn !== null && <span className="error">{childFormErrors?.child_crn}</span> }
                   </Form.Group>
                 </Col>
                 
@@ -788,6 +1076,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       type="text"
                       name="parent_crn_1"
+                      REF={parent_crn_1}
                       value={formOneChildData.parent_crn_1 || ""}
                       onChange={(e) => {
                         handleChildData(e);
@@ -799,7 +1088,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             log: [...formOneChildData.log, "parent_crn_1"]
                           }));
                         }
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          parent_crn_1: null,
+                        })) 
                       }} />
+
+                      { childFormErrors?.parent_crn_1 !== null && <span className="error">{childFormErrors?.parent_crn_1}</span> }
                   </Form.Group>
                 </Col>
                 
@@ -809,6 +1104,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       type="text"
                       name="parent_crn_2"
+                      ref={parent_crn_2}
                       value={formOneChildData.parent_crn_2 || ""}
                       onChange={(e) => {
                         handleChildData(e);
@@ -820,7 +1116,13 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             log: [...formOneChildData.log, "parent_crn_2"]
                           }));
                         }
+                        setChildFormErrors(prevState => ({
+                          ...prevState,
+                          parent_crn_2: null,
+                        })) 
                       }} />
+
+                      { childFormErrors?.parent_crn_2 !== null && <span className="error">{childFormErrors?.parent_crn_2}</span> }
                   </Form.Group>
                 </Col>
 
@@ -830,7 +1132,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <div className="btn-radio inline-col">
                       <Form.Check
                         type="radio"
-                        name="anotherser"
+                        name="another_service"
                         id="yess"
                         checked={formOneChildData?.another_service === true}
                         className="ps-0"
@@ -1147,19 +1449,20 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Label>First Name *</Form.Label>
                           <Form.Control 
                             type="text" 
-                            name="family_name"
+                            name="parent_family_name"
                             minLenth={3}
+                            ref={parent_family_name}
                             maxLength={50}
-                            value={formOneParentData.family_name ||  ""}
+                            value={formOneParentData.parent_family_name ||  ""}
                             onChange={(e) => {
                               // if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
                               setFormOneParentData(prevState => ({
                                 ...prevState,
-                                family_name: e.target.value
+                                parent_family_name: e.target.value
                               }));
                               setParentFormErrors(prevState => ({
                                 ...prevState,
-                                family_name: null,
+                                parent_family_name: null,
                               })) 
                               // } else {
                               //   setFormOneParentData(prevState => ({
@@ -1178,7 +1481,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                               }
                             }}
                           />
-                          { parentFormErrors?.family_name !== null && <span className="error">{parentFormErrors?.family_name}</span> }
+                          { parentFormErrors?.parent_family_name !== null && <span className="error">{parentFormErrors?.parent_family_name}</span> }
                         </Form.Group>
                         
                         <Form.Group className="mb-3 relative">
@@ -1186,6 +1489,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Control 
                             type="text" 
                             name="given_name"
+                            ref={given_name}
                             minLenth={3}
                             maxLength={50}
                             value={formOneParentData.given_name || ""}
@@ -1292,6 +1596,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             autoFocus={parentFormErrors?.telephone ? true : false}
                             name="telephone"
                             maxLength={20}
+                            ref={telephone}
                             value={formOneParentData?.telephone || ""}
                             onChange={(e) => {
                               handleParentData(e);
@@ -1318,6 +1623,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             type="email" 
                             value={formOneParentData?.email || ""}
                             name="email"
+                            ref={email}
                             onChange={(e) => {
                               handleParentData(e);
                               setParentFormErrors(prevState => ({
@@ -1388,6 +1694,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             closeMenuOnSelect={true}
                             options={countryData}
                             name="place_of_birth"
+                            ref={place_of_birth}
                             onChange={(e) => {
                               setFormOneParentData((prevState) => ({
                                 ...prevState,
@@ -1415,6 +1722,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             closeMenuOnSelect={true}
                             options={ethnicityData}
                             name="ethinicity"
+                            ref={ethnicity}
                             onChange={(e) => {
                               setFormOneParentData((prevState) => ({
                                 ...prevState,
@@ -1444,6 +1752,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             closeMenuOnSelect={true}
                             options={languageData}
                             name="primary_language"
+                            ref={primary_language}
                             onChange={(e) => {
                               setFormOneParentData((prevState) => ({
                                 ...prevState,
@@ -1472,6 +1781,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             closeMenuOnSelect={true}
                             options={occupationData}
                             name="occupation"
+                            ref={occupation}
                             onChange={(e) => {
                               setFormOneParentData((prevState) => ({
                                 ...prevState,

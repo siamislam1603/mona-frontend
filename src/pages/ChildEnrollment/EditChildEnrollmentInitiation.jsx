@@ -177,7 +177,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                             
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Family Name *</Form.Label>
+                                <Form.Label>Child's Family Name *</Form.Label>
                                 <Form.Control
                                   type="text"
                                   minLenth={3}

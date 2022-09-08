@@ -132,7 +132,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
                 <Form.Group className="mb-3 relative">
                   <Form.Label>Signature</Form.Label>
                   {
-                    <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061" }}>Click Here</strong> to sign the office-use form!</p>
+                    <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061", fontSize: "1rem" }}>Click Here</strong> to sign the office-use form</p>
                   }
                   {
                     officeUseData?.signature &&

@@ -82,6 +82,7 @@ function returnDashboard(role) {
     <SignIn />
 }
 
+
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') ? true : false);
 
@@ -151,32 +152,6 @@ const Main = () => {
             </Protected>
           }
         />
-
-        <Route
-          path="/notification"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildNotifications />
-            </Protected>
-          }
-        />
-
-
-        <Route
-          path="/child-enrollment/notification"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <ChildNotifications />
-            </Protected>
-          }
-        />
-
-
-
-
-
 
         <Route
           path="/child-enrollment"
@@ -251,7 +226,7 @@ const Main = () => {
         <Route
           path="/new-franchisees"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="franchisee_management" action="Add">
               <SignIn />
               <NewFranchisees />
             </Protected>
@@ -271,7 +246,7 @@ const Main = () => {
         <Route
           path="/all-franchisees"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="franchisee_management" action="listing">
               <SignIn />
               <AllFranchisees />
             </Protected>
@@ -281,7 +256,7 @@ const Main = () => {
         <Route
           path="/user-management"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="user_management" action="listing">
               <SignIn />
               <UserManagement />
             </Protected>
@@ -290,7 +265,7 @@ const Main = () => {
         <Route
           path="/user-management/:key"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="user_management" action="listing">
               <SignIn />
               <UserManagement />
             </Protected>
@@ -300,7 +275,7 @@ const Main = () => {
         <Route
           path="/new-user"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="user_management" action="add">
               <SignIn />
               <NewUser />
             </Protected>
@@ -310,7 +285,7 @@ const Main = () => {
         <Route
           path="/edit-user/:userId"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="user_management" action="edit">
               <SignIn />
               <EditUser />
             </Protected>
@@ -508,7 +483,7 @@ const Main = () => {
         <Route
           path="/training-created-other"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller='training_files' action='listing'>
               <SignIn />
               <TrainingCreatedByOther />
             </Protected>
@@ -517,27 +492,19 @@ const Main = () => {
         <Route
           path="/training-createdby-me"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller='training_files' action='listing'>
               <SignIn />
               <TrainingCreatedByMe />
             </Protected>
           }
         />
 
-        <Route
-          path="/training"
-          element={
-            <Protected isLoggedIn={isLoggedIn}>
-              <SignIn />
-              <Training />
-            </Protected>
-          }
-        />
+
 
         <Route
           path="/new-training"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller='training_files' action='listing'>
               <SignIn />
               <AddNewTraining />
             </Protected>
@@ -547,7 +514,7 @@ const Main = () => {
         <Route
           path="/edit-training/:trainingId"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller='training_files' action='edit'>
               <SignIn />
               <EditTraining />
             </Protected>
@@ -557,7 +524,7 @@ const Main = () => {
         <Route
           path="/training-detail/:trainingId"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller='training_files' action='view_detail'>
               <SignIn />
               <TrainingDetail />
             </Protected>
@@ -577,7 +544,7 @@ const Main = () => {
         <Route
           path="/all-announcements"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller='training_files' action='listing'>
               <SignIn />
               <AllAnnouncements />
             </Protected>
@@ -597,7 +564,7 @@ const Main = () => {
         <Route
           path="/notifications"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="notification_management" action="listing">
               <SignIn />
               <Noticefication />
             </Protected>
@@ -627,7 +594,7 @@ const Main = () => {
         <Route
           path="/file-repository"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller='file_repository' action='listing'>
               <SignIn />
               <FileRepository />
             </Protected>
@@ -636,7 +603,7 @@ const Main = () => {
         <Route
           path="/file-repository-List-me/:id"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller='file_repository' action='listing'>
               <SignIn />
               <FilerepoMyAdd />
             </Protected>
@@ -654,32 +621,32 @@ const Main = () => {
         <Route
           path="/announcements"
           element={
-            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
-              <Announcements />
-            ) : (
-              <Navigate to="/" />
-            )
+            <Protected isLoggedIn={isLoggedIn} controller='announcements' action='listing'>
+            <SignIn />
+            <Announcements />
+          </Protected>
+           
           }
         />
 
         <Route
           path="/new-announcements"
           element={
-            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
-              <AddNewAnnouncements />
-            ) : (
-              <Navigate to="/" />
-            )
+            <Protected isLoggedIn={isLoggedIn} controller='announcements' action='add'>
+            <SignIn />
+            <AddNewAnnouncements />
+          </Protected>
+
           }
         />
         <Route
           path="/edit-announcement/:id"
           element={
-            typeof isLoggedIn === 'undefined' || isLoggedIn === true ? (
-              <EditAnnouncement />
-            ) : (
-              <Navigate to="/" />
-            )
+            <Protected isLoggedIn={isLoggedIn} controller='announcements' action='edit'>
+            <SignIn />
+            <EditAnnouncement />
+          </Protected>
+
           }
         />
         <Route

@@ -3,10 +3,15 @@ export const childFormValidator = (childForm) => {
   let {
     fullname,
     family_name,
+    usually_called,
     dob,
     home_address,
     language,
-    country_of_birth
+    country_of_birth,
+    child_medical_no,
+    child_crn,
+    parent_crn_1,
+    parent_crn_2
   } = childForm;
 
   if(!fullname)
@@ -17,8 +22,11 @@ export const childFormValidator = (childForm) => {
 
   if(!family_name)
     errors.family_name = "Please complete mandatory field";
+
+  if(usually_called.length > 0 && !(/^[a-zA-Z ]+$/i.test(usually_called)))
+    errors.usually_called = "Field shouldn't contain numbers & special characters"
   
-  if(!(/^[a-zA-Z ]+$/i.test(family_name)))
+  if(family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(family_name)))
     errors.family_name = "Field shouldn't contain numbers & special characters"
 
   if(!dob)
@@ -33,16 +41,27 @@ export const childFormValidator = (childForm) => {
   if(!country_of_birth)
     errors.country_of_birth = "Please complete mandatory field"
 
+  if(!child_medical_no)
+    errors.child_medical_no = "Please complete mandatory field"
+  
+  if(!child_crn)
+    errors.child_crn = "Please complete mandatory field"
+  
+  if(!parent_crn_1)
+    errors.parent_crn_1 = "Please complete mandatory field"
+  
+  if(!parent_crn_2)
+    errors.parent_crn_2 = "Please complete mandatory field"
+
   return errors;
 };
 
 export const parentFormValidator = (parentForm) => {
   let errors = {};
   let {
-    family_name,
+    parent_family_name,
     given_name,
     dob,
-    usually_called,
     address_as_per_child,
     telephone,
     email,
@@ -52,14 +71,11 @@ export const parentFormValidator = (parentForm) => {
     occupation,
   } = parentForm;
 
-  if(!family_name)
+  if(!parent_family_name)
     errors.family_name = "Please complete mandatory field";
 
-  if(family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(family_name)))
+  if(parent_family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(parent_family_name)))
     errors.fullname = "Field shouldn't contain numbers & special characters"
-
-  if(usually_called.length > 0 && !(/^[a-zA-Z ]+$/i.test(usually_called)))
-    errors.usually_called = "Field shouldn't contain numbers & special characters"
 
   if(!given_name)
     errors.given_name = "Please complete mandatory field";
