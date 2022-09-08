@@ -600,7 +600,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload Video</Form.Label>
+                            <Form.Label>Upload Videos</Form.Label>
                             <DropAllFile
                               title="Videos"
                               type="video"
@@ -632,7 +632,7 @@ const EditTraining = () => {
 
                         <Col md={6} className="mb-3">
                           <Form.Group>
-                            <Form.Label>Upload File</Form.Label>
+                            <Form.Label>Upload Files</Form.Label>
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />

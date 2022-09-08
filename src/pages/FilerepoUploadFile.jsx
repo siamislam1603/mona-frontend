@@ -377,7 +377,7 @@ const FilerepoUploadFile = () => {
                                 <Row>
                                     <Col md={12}>
                                         <Form.Group>
-                                            <Form.Label>Upload File:*</Form.Label>
+                                            <Form.Label>Upload File*</Form.Label>
                                             <DragDropFileEdit onChange={setField} />
                                             {/* <DragDropRepository onChange={setField} /> */}
                                             {error && !formSettingData?.setting_files && < span className="error"> File  is required!</span>}
@@ -452,7 +452,7 @@ const FilerepoUploadFile = () => {
                                     <Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
-                                                <Form.Label>Send to all Franchisee:</Form.Label>
+                                                <Form.Label>Send to all Franchises</Form.Label>
                                                 <div className="new-form-radio d-block">
                                                     <div className="new-form-radio-box">
                                                         <label for="all">
@@ -538,7 +538,7 @@ const FilerepoUploadFile = () => {
                                     <Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
-                                                <Form.Label>Accessible to:</Form.Label>
+                                                <Form.Label>Accessible to</Form.Label>
                                                 <div className="new-form-radio d-block">
                                                     <div className="new-form-radio-box">
                                                         <label for="yes">
