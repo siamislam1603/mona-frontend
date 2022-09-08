@@ -26,7 +26,7 @@ export const childFormValidator = (childForm) => {
   if(usually_called.length > 0 && !(/^[a-zA-Z ]+$/i.test(usually_called)))
     errors.usually_called = "Field shouldn't contain numbers & special characters"
   
-  if(!(/^[a-zA-Z ]+$/i.test(family_name)))
+  if(family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(family_name)))
     errors.family_name = "Field shouldn't contain numbers & special characters"
 
   if(!dob)
@@ -59,7 +59,7 @@ export const childFormValidator = (childForm) => {
 export const parentFormValidator = (parentForm) => {
   let errors = {};
   let {
-    family_name,
+    parent_family_name,
     given_name,
     dob,
     address_as_per_child,
@@ -71,10 +71,10 @@ export const parentFormValidator = (parentForm) => {
     occupation,
   } = parentForm;
 
-  if(!family_name)
+  if(!parent_family_name)
     errors.family_name = "Please complete mandatory field";
 
-  if(family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(family_name)))
+  if(parent_family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(parent_family_name)))
     errors.fullname = "Field shouldn't contain numbers & special characters"
 
   if(!given_name)
