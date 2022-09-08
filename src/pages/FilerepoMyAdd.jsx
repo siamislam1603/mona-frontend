@@ -50,7 +50,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     });
     const [child, setChild] = useState([]);
 
-
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${BASE_URL}/role/franchisee`, {
@@ -125,7 +124,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }
     const GetFile = async () => {
         try {
-            let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=all`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
+            let franchiseeId = selectedFranchisees === "All" ? "all" || selectedFranchisees === "null" || selectedFranchisees === "All" : selectedFranchisees;
+            console.log(franchiseeId, "selectedFranchisees")
+
+            let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
             if (response) {
                 setfullLoaderStatus(false)
             }
@@ -147,7 +149,11 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             setfullLoaderStatus(false)
         }
     }
-
+    useEffect(() => {
+        if (selectedFranchisees) {
+            GetFile();
+        }
+    }, [selectedFranchisees]);
     const getUser = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
