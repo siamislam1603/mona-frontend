@@ -53,7 +53,7 @@ function ViewFormBuilder(props) {
       toast.success(location?.state?.message);
       navigate('/form', { state: { message: null } });
     }
-    getFormData('');
+    getFormData(localStorage.getItem('franchisee_id'));
   }, []);
   const getAllForm = () => {
     var myHeaders = new Headers();
@@ -94,11 +94,11 @@ function ViewFormBuilder(props) {
       .then((response) => response.json())
       .then((result) => {
         toast.success(result?.message);
-        getFormData('');
+        getFormData('',localStorage.getItem('franchisee_id'));
       })
       .catch((error) => console.log('error', error));
   };
-  const getFormData = (search) => {
+  const getFormData = (search,franchisee_id) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
@@ -112,7 +112,7 @@ function ViewFormBuilder(props) {
         'user_id'
       )}&role=${localStorage.getItem(
         'user_role'
-      )}&franchisee_id=${localStorage.getItem('franchisee_id')}`,
+      )}&franchisee_id=${franchisee_id}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -183,7 +183,6 @@ function ViewFormBuilder(props) {
   };
   return (
     <>
-      {console.log('form_id--->', formId)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -199,7 +198,7 @@ function ViewFormBuilder(props) {
                       localStorage.getItem('user_role') === 'guardian'
                         ? localStorage.getItem('franchisee_id')
                         : id;
-                    getFormData('');
+                    getFormData('',id);
                     setSelectedFranchisee(id);
                     localStorage.setItem('f_id', id);
                   }}
@@ -222,7 +221,7 @@ function ViewFormBuilder(props) {
                             placeholder="Search..."
                             name="search"
                             onChange={(e) => {
-                              getFormData(e.target.value);
+                              getFormData(e.target.value,localStorage.getItem('franchisee_id'));
                             }}
                           />
                         </Form.Group>
@@ -318,7 +317,7 @@ function ViewFormBuilder(props) {
                                           //     localStorage.getItem('user_id')
                                           //   ) ||
                                           // localStorage.getItem('user_role') ===
-                                          //   'franchisor_admin'
+                                          //   'franchisor_admin' 
                                           <>
                                             {item.title_flag === false && (
                                               <>
@@ -1231,7 +1230,7 @@ function ViewFormBuilder(props) {
         show={viewResponseFlag}
         onHide={() => {
           setViewResponseFlag(false);
-          getFormData('');
+          getFormData('',localStorage.getItem('franchisee_id'));
         }}
         backdrop="static"
         keyboard={false}
