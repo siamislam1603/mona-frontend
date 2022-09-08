@@ -239,9 +239,7 @@ function FormResponse(props) {
                                 <div className="responses-header-right">
                                   <p>
                                     Completed on: <br />
-                                    {moment(item[0].createdAt).format(
-                                      'DD/MM/YYYY'
-                                    ) +
+                                    {moment(item[0].createdAt).utcOffset('+11:00').format('DD/MM/YYYY') +
                                       ', ' +
                                       item[0].createdAt
                                         .split('T')[1]
