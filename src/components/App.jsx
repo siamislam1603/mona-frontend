@@ -20,4 +20,4 @@ function App() {
 }
 
 export default App;
-export { BASE_URL, FRONT_BASE_URL,IGNORE_REMOVE_FORM };
+export { BASE_URL, FRONT_BASE_URL, IGNORE_REMOVE_FORM };

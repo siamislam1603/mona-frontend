@@ -96,9 +96,18 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const [immunisationRecord, setImmunisationRecord] = useState(null);
   const [courtOrders, setCourtOrders] = useState(null);
   const [courtOrderDetails, setCourtOrderDetails] = useState(null);
+  const [specialNeedsFormDetails, setSpecialNeedsFormDetails] = useState(null);
+  const [specialNeedsForm, setSpecialNeedsForm] = useState(null);
+  const [allergyFormDetails, setAllergyFormDetails] = useState(null);
+  const [allergyForm, setAllergyForm] = useState(null);
+  const [medicalPlanDetails, setMedicalPlanDetails] = useState(null);
+  const [medicalPlan, setMedicalPlan] = useState(null);
 
   const [immunisationRecordDeleteMessage, setImmunisationRecordDeleteMessage] = useState(null);
   const [courtOrdersDeleteMessage, setCourtOrdersDeleteMessage] = useState(null);
+  const [specialNeedsFormDeleteMessage, setSpecialNeedsFormDeleteMessage] = useState(null);
+  const [allergyFormDeleteMessage, setAllergyFormDeleteMessage] = useState(null);
+  const [medicalPlanDeleteMessage, setMedicalPlanDeleteMessage] = useState(null);
 
   // UPDATEING FORM TWO DATA
   const updateFormTwoData = async () => {
@@ -392,8 +401,18 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       
       if(token === 'immunisation-record') {
         setImmunisationRecordDeleteMessage("Immunisation record deleted successfully.");
-      } else {
-        setCourtOrdersDeleteMessage("Court order deleted successfully.")
+      } 
+
+      if(token === "special-needs") {
+        setSpecialNeedsFormDeleteMessage("Special needs form deleted successfully.");
+      }
+
+      if(token === 'allergy') {
+        setAllergyFormDeleteMessage("Allergy form deleted successfully.")
+      }
+
+      if(token === 'medical-plan') {
+        setMedicalPlanDeleteMessage("Medical plan deleted successfully.")
       }
     }
   }
@@ -423,13 +442,34 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   // IMMUNISATION RECORD
 
   // UPLOADING SUPPORT FORM
-  const uploadCourtOrders = async () => {
-    let data = new FormData();
+  // const uploadCourtOrders = async () => {
+  //   let data = new FormData();
 
-    courtOrders.forEach(order => {
-      data.append('images', order);
-    });
-    data.append('category', 'court-order');
+  //   courtOrders.forEach(order => {
+  //     data.append('images', order);
+  //   });
+  //   data.append('category', 'court-order');
+
+  //   let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+  //     headers: {
+  //       "Authorization": "Bearer " + localStorage.getItem('token')
+  //     }
+  //   });
+
+  //   console.log('FILE UPLOAD RESPONSE:', response);
+  //   if(response.status === 201 && response.data.status === 'success') {
+  //     console.log('INSIDE RESPONSE');
+  //     let { supportForm } = response.data;
+  //     setCourtOrders(null);
+  //     setCourtOrderDetails(supportForm);
+  //   }
+  // }
+
+  // UPLOADING SPECIAL NEEDS FORM
+  const uploadSpecialNeedsForm = async () => {
+    let data = new FormData();
+    data.append('images', specialNeedsForm[0]);
+    data.append('category', 'special-needs');
 
     let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
       headers: {
@@ -441,10 +481,66 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     if(response.status === 201 && response.data.status === 'success') {
       console.log('INSIDE RESPONSE');
       let { supportForm } = response.data;
-      setCourtOrders(null);
-      setCourtOrderDetails(supportForm);
+      setSpecialNeedsForm(null);
+      setSpecialNeedsFormDetails(supportForm);
     }
   }
+
+  // UPLOADING ALLERGY FORM
+  const uploadAllergyForm = async () => {
+    let data = new FormData();
+    data.append('images', allergyForm[0]);
+    data.append('category', 'allergy');
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
+      setAllergyForm(null);
+      setAllergyFormDetails(supportForm);
+    }
+  }
+
+  const uploadMedicalPlan = async () => {
+    let data = new FormData();
+    data.append('images', medicalPlan[0]);
+    data.append('category', 'medical-plan');
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
+      setMedicalPlan(null);
+      setMedicalPlanDetails(supportForm);
+    }
+  } 
+
+  // COURT ORDERS
+  const uploadCourtOrders = async () => {
+    let data = new FormData();
+
+    courtOrders.forEach(d => {
+      data.append('images', d);
+    })
+    data.append('category', 'court-orders');
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-multi-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+  };
 
   useEffect(() => {
     // setShowSignatureDialog(false);
@@ -476,6 +572,42 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   }, [immunisationRecordDeleteMessage])
 
+  // SPECIAL NEEDS SUPPORT FORM
+  useEffect(() => {
+    if(specialNeedsForm) {
+      uploadSpecialNeedsForm();
+    }
+  }, [specialNeedsForm]);
+
+  useEffect(() => {
+    if(specialNeedsFormDeleteMessage) {
+      setSpecialNeedsFormDetails(null);
+      setTimeout(() => {
+        setSpecialNeedsFormDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [specialNeedsFormDeleteMessage])
+
+  // ALLERGY SUPPORT FORM
+  useEffect(() => {
+    if(allergyForm) {
+      uploadAllergyForm();
+    }
+  }, [allergyForm]);
+
+  useEffect(() => {
+    if(allergyFormDeleteMessage) {
+      setAllergyFormDetails(null);
+      setTimeout(() => {
+        setAllergyFormDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [allergyFormDeleteMessage])
+
+
+  // ELEMENT FOCUS FUNCTION
   const focusOnHealthInfoErrors = (refName) => {
     if(refName === "medical_service") {
       medical_service?.current?.focus();
@@ -509,13 +641,30 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       }
     }
   }
+
+  // MEDICAL PLAN
+  useEffect(() => {
+    if(medicalPlanDeleteMessage) {
+      setMedicalPlanDetails(null);
+      setTimeout(() => {
+        setMedicalPlanDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [medicalPlanDeleteMessage])
+
+  useEffect(() => {
+    if(medicalPlan) {
+      uploadMedicalPlan();
+    }
+  }, [medicalPlan])
   
   // COURT ORDERS 
-  // useEffect(() => {
-  //   if(courtOrders) {
-  //     uploadCourtOrders();
-  //   }
-  // }, [courtOrders]);
+  useEffect(() => {
+    if(courtOrders) {
+      uploadCourtOrders();
+    }
+  }, [courtOrders]);
 
   // useEffect(() => {
   //   if(courtOrdersDeleteMessage) {
@@ -539,6 +688,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     <>
       {
         immunisationRecordDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{immunisationRecordDeleteMessage}</p>
+      }
+      {
+        specialNeedsFormDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{specialNeedsFormDeleteMessage}</p>
+      }
+      {
+        allergyFormDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{allergyFormDeleteMessage}</p>
+      }
+      {
+        medicalPlanDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{medicalPlanDeleteMessage}</p>
       }
       {/* {
         courtOrdersDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{courtOrdersDeleteMessage}</p>
@@ -654,31 +812,33 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           </ul>
                           <p>b)	give these powers to someone else</p>
                         </p>
-                        {/* <>
+                        <>
                           <Form.Group className="col-md-6 mb-3 mt-3">
                             <Form.Label>Attach any Court Orders, Parenting Orders and/or Parenting Plans that are in place</Form.Label>
                             <DragDropMultiple 
                               module="court-orders"
-                              fileLimit={2}
+                              fileLimit={5}
                               supportFormDetails={courtOrderDetails}
                               onSave={setCourtOrders} />
-                            <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
+                            <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 5 files max.)</small>
                           </Form.Group>
                           {
-                            immunisationRecordDetails &&
-                            (
-                              <div>
-                                <a href={immunisationRecordDetails?.file}><p>{immunisationRecordDetails?.originalName}</p></a>
-                                <img
-                                  onClick={() => handleChildFileDelete(immunisationRecordDetails?.id)}
-                                  // className="file-remove"
-                                  style={{ width: "25px", height: "auto", cursor: "pointer" }}
-                                  src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
-                                  alt="" />
-                              </div>
-                            )
+                            courtOrderDetails &&
+                            courtOrderDetails.map(co => {
+                              return (
+                                <div>
+                                  <a href={co?.file}><p>{co?.originalName}</p></a>
+                                  <img
+                                    onClick={() => handleChildFileDelete(co?.id)}
+                                    // className="file-remove"
+                                    style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                    src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                    alt="" />
+                                </div>
+                              );
+                            })
                           }
-                        </> */}
+                        </>
                       </Form.Group>
                     </Col>
                   </>
@@ -2932,7 +3092,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 }
                               }} />
                           </Form.Group>
-                          <div className="single-col mb-3">
+                          <div className="single-col">
                             <p>Inclusion Support Form (If applicable)</p>
                             <Form.Group className="ms-auto">
                               <div className="btn-radio inline-col mb-0">
@@ -2978,6 +3138,34 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               </div>
                             </Form.Group>
                           </div>
+                          {
+                            childMedicalInformation?.inclusion_support_form_of_special_needs &&
+                            <>
+                              <Form.Group className="col-md-6 mb-3">
+                                <Form.Label>Upload Support Form</Form.Label>
+                                <DragDropMultiple 
+                                  module="child-enrollment"
+                                  fileLimit={1}
+                                  supportFormDetails={specialNeedsFormDetails}
+                                  onSave={setSpecialNeedsForm} />
+                                <small className="fileinput">(Upload 1 file)</small>
+                              </Form.Group>
+                              {
+                                specialNeedsFormDetails &&
+                                (
+                                  <div>
+                                    <a href={specialNeedsFormDetails?.file}><p>{specialNeedsFormDetails?.originalName}</p></a>
+                                    <img
+                                      onClick={() => handleChildFileDelete(specialNeedsFormDetails?.id)}
+                                      // className="file-remove"
+                                      style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                      src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                      alt="" />
+                                  </div>
+                                )
+                              }
+                            </>
+                          }
                         </>
                       }
 
@@ -3059,7 +3247,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 }
                               }} />
                           </Form.Group>
-                          <div className="single-col mb-3">
+                          <div className="single-col">
                             <p>Inclusion Support Form (If applicable)</p>
                             <Form.Group className="ms-auto">
                               <div className="btn-radio inline-col mb-0">
@@ -3105,6 +3293,34 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               </div>
                             </Form.Group>
                           </div>
+                          {
+                            childMedicalInformation?.inclusion_support_form_of_allergies &&
+                            <>
+                              <Form.Group className="col-md-6 mb-3">
+                                <Form.Label>Upload Support Form</Form.Label>
+                                <DragDropMultiple 
+                                  module="child-enrollment"
+                                  fileLimit={1}
+                                  supportFormDetails={allergyFormDetails}
+                                  onSave={setAllergyForm} />
+                                <small className="fileinput">(Upload 1 file)</small>
+                              </Form.Group>
+                              {
+                                allergyFormDetails &&
+                                (
+                                  <div>
+                                    <a href={allergyFormDetails?.file}><p>{allergyFormDetails?.originalName}</p></a>
+                                    <img
+                                      onClick={() => handleChildFileDelete(allergyFormDetails?.id)}
+                                      // className="file-remove"
+                                      style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                      src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                      alt="" />
+                                  </div>
+                                )
+                              }
+                            </>
+                          }
                         </>
                       }
 
@@ -3162,52 +3378,82 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       </div>
                       {
                         childMedicalInformation.has_autoinjection_device &&
-                        <div className="single-col mb-3">
-                          <p>If yes, has the anaphylaxis medical management plan been provided to the service?</p>
-                          <Form.Group className="ms-auto">
-                            <div className="btn-radio inline-col mb-0">
-                              <Form.Check
-                                type="radio"
-                                name="service"
-                                id="yesm"
-                                label="Yes"
-                                checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === true}
-                                onChange={() => {
-                                  setChildMedicalInformation(prevState => ({
-                                    ...prevState,
-                                    has_anaphylaxis_medical_plan_been_provided: true
-                                  }));
-
-                                  if (!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
+                        <>
+                          <div className="single-col mb-3">
+                            <p>If yes, has the anaphylaxis medical management plan been provided to the service?</p>
+                            <Form.Group className="ms-auto">
+                              <div className="btn-radio inline-col mb-0">
+                                <Form.Check
+                                  type="radio"
+                                  name="service"
+                                  id="yesm"
+                                  label="Yes"
+                                  checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === true}
+                                  onChange={() => {
                                     setChildMedicalInformation(prevState => ({
                                       ...prevState,
-                                      log: [...childMedicalInformation.log, "has_anaphylaxis_medical_plan_been_provided"]
+                                      has_anaphylaxis_medical_plan_been_provided: true
                                     }));
-                                  }
-                                }} />
-                              <Form.Check
-                                type="radio"
-                                name="service"
-                                id="nom"
-                                label="No"
-                                checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === false}
-                                defaultChecked
-                                onChange={() => {
-                                  setChildMedicalInformation(prevState => ({
-                                    ...prevState,
-                                    has_anaphylaxis_medical_plan_been_provided: false
-                                  }));
 
-                                  if (!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
+                                    if (!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
+                                      setChildMedicalInformation(prevState => ({
+                                        ...prevState,
+                                        log: [...childMedicalInformation.log, "has_anaphylaxis_medical_plan_been_provided"]
+                                      }));
+                                    }
+                                  }} />
+                                <Form.Check
+                                  type="radio"
+                                  name="service"
+                                  id="nom"
+                                  label="No"
+                                  checked={childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided === false}
+                                  defaultChecked
+                                  onChange={() => {
                                     setChildMedicalInformation(prevState => ({
                                       ...prevState,
-                                      log: [...childMedicalInformation.log, "has_anaphylaxis_medical_plan_been_provided"]
+                                      has_anaphylaxis_medical_plan_been_provided: false
                                     }));
-                                  }
-                                }} />
-                            </div>
-                          </Form.Group>
-                        </div>
+
+                                    if (!childMedicalInformation.log.includes("has_anaphylaxis_medical_plan_been_provided")) {
+                                      setChildMedicalInformation(prevState => ({
+                                        ...prevState,
+                                        log: [...childMedicalInformation.log, "has_anaphylaxis_medical_plan_been_provided"]
+                                      }));
+                                    }
+                                  }} />
+                              </div>
+                            </Form.Group>
+                          </div>
+                          {
+                            childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided &&
+                            <>
+                              <Form.Group className="col-md-6 mb-3">
+                                <Form.Label>Upload Support Form</Form.Label>
+                                <DragDropMultiple 
+                                  module="child-enrollment"
+                                  fileLimit={1}
+                                  supportFormDetails={medicalPlanDetails}
+                                  onSave={setMedicalPlan} />
+                                <small className="fileinput">(Upload 1 file)</small>
+                              </Form.Group>
+                              {
+                                medicalPlanDetails &&
+                                (
+                                  <div>
+                                    <a href={medicalPlanDetails?.file}><p>{medicalPlanDetails?.originalName}</p></a>
+                                    <img
+                                      onClick={() => handleChildFileDelete(medicalPlanDetails?.id)}
+                                      // className="file-remove"
+                                      style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                      src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                      alt="" />
+                                  </div>
+                                )
+                              }
+                            </>
+                          }
+                        </>
                       }
                       <div className="single-col mb-3">
                         <p>Has a risk management plan been completed by the service in consultation with you?</p>

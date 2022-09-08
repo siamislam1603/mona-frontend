@@ -229,6 +229,7 @@ const EditTraining = () => {
 
       let imgSaveResponse;
 
+
       if (typeof croppedImage === 'object') {
 
         data.append('id', trainingId);
@@ -242,7 +243,7 @@ const EditTraining = () => {
           }
         });
 
-      } else if (typeof croppedImage === 'object') {
+      } else if (typeof croppedImage === 'string') {
         imgSaveResponse = await axios.patch(
           `${BASE_URL}/training/updateCoverImgString`, { croppedImage, trainingId }, {
           headers: {
@@ -250,6 +251,7 @@ const EditTraining = () => {
           }
         });
       }
+      console.log(imgSaveResponse, "imgSaveResponse")
 
       if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
         setLoader(false)
@@ -257,7 +259,8 @@ const EditTraining = () => {
         localStorage.setItem('success_msg', 'Training Updated Successfully!');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href = "/training";
-      } else {
+      }
+      else {
         setLoader(false)
         setCreateTrainingModal(false);
         setTopErrorMessage("unable to save cover image!");
