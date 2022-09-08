@@ -248,12 +248,16 @@ const CoordinatorDashboard = () => {
 
       localStorage.removeItem('success_msg');
       setTimeout(() => {
-
         setTopSuccessMessage(null);
-
       }, 3000);
-
     }
+
+    // Redirect to baseurl when not not specific Role
+    if (localStorage.getItem('user_role')!=='coordinator') {
+      window.location.href = '/';
+    }
+
+
   }, []);
 
 
