@@ -3077,7 +3077,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           {
                             childMedicalInformation?.inclusion_support_form_of_special_needs &&
                             <>
-                              <Form.Group className="col-md-6 mb-3 mt-3">
+                              <Form.Group className="col-md-6 mb-3">
                                 <Form.Label>Upload Support Form</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
@@ -3183,7 +3183,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 }
                               }} />
                           </Form.Group>
-                          <div className="single-col mb-3">
+                          <div className="single-col">
                             <p>Inclusion Support Form (If applicable)</p>
                             <Form.Group className="ms-auto">
                               <div className="btn-radio inline-col mb-0">
@@ -3232,7 +3232,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           {
                             childMedicalInformation?.inclusion_support_form_of_allergies &&
                             <>
-                              <Form.Group className="col-md-6 mb-3 mt-3">
+                              <Form.Group className="col-md-6 mb-3">
                                 <Form.Label>Upload Support Form</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"

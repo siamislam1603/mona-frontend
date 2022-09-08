@@ -1550,7 +1550,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         
                         <Form.Group className="mb-3 relative">
                           <Form.Label>Address *</Form.Label>
-                          <div style={{ paddingLeft: "-1.5rem", marginBottom: ".5rem" }}>
+                          <div className="btn-checkbox">
                             <Form.Check
                               type="checkbox"
                               id="update"
