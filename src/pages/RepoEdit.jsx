@@ -430,7 +430,7 @@ const RepoEdit = () => {
                                                         <Row className="mt-4">
                                                             <Col lg={3} md={6}>
                                                                 <Form.Group>
-                                                                    <Form.Label>Send to all franchisee:</Form.Label>
+                                                                    <Form.Label>Send to all franchises</Form.Label>
                                                                     <div className="new-form-radio d-block">
                                                                         <div className="new-form-radio-box">
                                                                             <label for="all">
@@ -507,11 +507,10 @@ const RepoEdit = () => {
                                                                 </Form.Group>
                                                             </Col>
                                                         </Row>
-
                                                         <Row className="mt-4">
                                                             <Col lg={3} md={6}>
                                                                 <Form.Group>
-                                                                    <Form.Label>Accessible to:</Form.Label>
+                                                                    <Form.Label>Accessible to</Form.Label>
                                                                     <div className="new-form-radio d-block">
                                                                         <div className="new-form-radio-box">
                                                                             <label for="yes">
