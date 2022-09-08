@@ -527,7 +527,7 @@ function ViewFormBuilder(props) {
                                                     Created on:{' '}
                                                     {moment(
                                                       inner_item.createdAt
-                                                    ).format('DD/MM/YYYY')}
+                                                    ).utcOffset('+11:00').format('DD/MM/YYYY')}
                                                   </h4>
                                                 </div>
                                               </div>
@@ -666,7 +666,7 @@ function ViewFormBuilder(props) {
                                                     Created on:{' '}
                                                     {moment(
                                                       inner_item.createdAt
-                                                    ).format('DD/MM/YYYY')}
+                                                    ).utcOffset('+11:00').format('DD/MM/YYYY')}
                                                   </h4>
                                                 </div>
                                                 <div className="content-toogle">
@@ -857,9 +857,7 @@ function ViewFormBuilder(props) {
                                                             Created on:{' '}
                                                             {moment(
                                                               inner_item.createdAt
-                                                            ).format(
-                                                              'DD/MM/YYYY'
-                                                            )}
+                                                            ).utcOffset('+11:00').format('DD/MM/YYYY')}
                                                           </h4>
                                                         </div>
                                                         <div className="content-toogle">
@@ -1061,9 +1059,7 @@ function ViewFormBuilder(props) {
                                                               Created on:{' '}
                                                               {moment(
                                                                 inner_item.createdAt
-                                                              ).format(
-                                                                'DD/MM/YYYY'
-                                                              )}
+                                                              ).utcOffset('+11:00').format('DD/MM/YYYY')}
                                                             </h4>
                                                           </div>
                                                           <div className="content-toogle">
@@ -1370,7 +1366,7 @@ function ViewFormBuilder(props) {
                                   'bold-user-info'
                                 }
                               >
-                                {moment(item[0].createdAt).format('DD/MM/YYYY')}{' '}
+                                {moment(item[0].createdAt).utcOffset('+11:00').format('DD/MM/YYYY')}{' '}
                                 -{' '}
                                 {item[0].createdAt
                                   .split('T')[1]
