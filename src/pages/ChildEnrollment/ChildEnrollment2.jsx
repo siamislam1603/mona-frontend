@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button, Col, Row, Form, Table, Modal } from "react-bootstrap";
 import axios from 'axios';
 import { healthInformationFormValidator } from '../../helpers/enrollmentValidation';
@@ -24,6 +24,12 @@ let disease_name = [
 ];
 const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   let { childId: paramsChildId, parentId: paramsParentId } = useParams();
+
+  // REFS
+  const medical_service = useRef(null);
+  const telephone = useRef(null);
+  const medical_service_address = useRef(null);
+  const maternal_and_child_health_centre = useRef(null);
 
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [signatureImage, setSignatureImage] = useState(null);
@@ -90,9 +96,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const [immunisationRecord, setImmunisationRecord] = useState(null);
   const [courtOrders, setCourtOrders] = useState(null);
   const [courtOrderDetails, setCourtOrderDetails] = useState(null);
+  const [specialNeedsFormDetails, setSpecialNeedsFormDetails] = useState(null);
+  const [specialNeedsForm, setSpecialNeedsForm] = useState(null);
+  const [allergyFormDetails, setAllergyFormDetails] = useState(null);
+  const [allergyForm, setAllergyForm] = useState(null);
 
   const [immunisationRecordDeleteMessage, setImmunisationRecordDeleteMessage] = useState(null);
   const [courtOrdersDeleteMessage, setCourtOrdersDeleteMessage] = useState(null);
+  const [specialNeedsFormDeleteMessage, setSpecialNeedsFormDeleteMessage] = useState(null);
+  const [allergyFormDeleteMessage, setAllergyFormDeleteMessage] = useState(null);
 
   // UPDATEING FORM TWO DATA
   const updateFormTwoData = async () => {
@@ -334,7 +346,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
     const errors = healthInformationFormValidator(healthInformation, parentData?.i_give_medication_permission);
     if (Object.keys(errors).length > 0) {
-      window.scrollTo(0, 0);
+      // window.scrollTo(0, 0);
       setHealthInfoFormErrors(errors);
     } else {
       if (formStepData && formStepData > step) {
@@ -386,8 +398,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       
       if(token === 'immunisation-record') {
         setImmunisationRecordDeleteMessage("Immunisation record deleted successfully.");
-      } else {
-        setCourtOrdersDeleteMessage("Court order deleted successfully.")
+      } 
+
+      if(token === "special-needs") {
+        setSpecialNeedsFormDeleteMessage("Special needs form deleted successfully.");
+      }
+
+      if(token === 'allergy') {
+        setAllergyFormDeleteMessage("Allergy form deleted successfully.")
       }
     }
   }
@@ -417,13 +435,34 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   // IMMUNISATION RECORD
 
   // UPLOADING SUPPORT FORM
-  const uploadCourtOrders = async () => {
-    let data = new FormData();
+  // const uploadCourtOrders = async () => {
+  //   let data = new FormData();
 
-    courtOrders.forEach(order => {
-      data.append('images', order);
-    });
-    data.append('category', 'court-order');
+  //   courtOrders.forEach(order => {
+  //     data.append('images', order);
+  //   });
+  //   data.append('category', 'court-order');
+
+  //   let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+  //     headers: {
+  //       "Authorization": "Bearer " + localStorage.getItem('token')
+  //     }
+  //   });
+
+  //   console.log('FILE UPLOAD RESPONSE:', response);
+  //   if(response.status === 201 && response.data.status === 'success') {
+  //     console.log('INSIDE RESPONSE');
+  //     let { supportForm } = response.data;
+  //     setCourtOrders(null);
+  //     setCourtOrderDetails(supportForm);
+  //   }
+  // }
+
+  // UPLOADING SPECIAL NEEDS FORM
+  const uploadSpecialNeedsForm = async () => {
+    let data = new FormData();
+    data.append('images', specialNeedsForm[0]);
+    data.append('category', 'special-needs');
 
     let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
       headers: {
@@ -435,10 +474,31 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     if(response.status === 201 && response.data.status === 'success') {
       console.log('INSIDE RESPONSE');
       let { supportForm } = response.data;
-      setCourtOrders(null);
-      setCourtOrderDetails(supportForm);
+      setSpecialNeedsForm(null);
+      setSpecialNeedsFormDetails(supportForm);
     }
   }
+
+  // UPLOADING ALLERGY FORM
+  const uploadAllergyForm = async () => {
+    let data = new FormData();
+    data.append('images', allergyForm[0]);
+    data.append('category', 'allergy');
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
+      setAllergyForm(null);
+      setAllergyFormDetails(supportForm);
+    }
+  } 
 
   useEffect(() => {
     // setShowSignatureDialog(false);
@@ -469,6 +529,76 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     }
 
   }, [immunisationRecordDeleteMessage])
+
+  // SPECIAL NEEDS SUPPORT FORM
+  useEffect(() => {
+    if(specialNeedsForm) {
+      uploadSpecialNeedsForm();
+    }
+  }, [specialNeedsForm]);
+
+  useEffect(() => {
+    if(specialNeedsFormDeleteMessage) {
+      setSpecialNeedsFormDetails(null);
+      setTimeout(() => {
+        setSpecialNeedsFormDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [specialNeedsFormDeleteMessage])
+
+  // ALLERGY SUPPORT FORM
+  useEffect(() => {
+    if(allergyForm) {
+      uploadAllergyForm();
+    }
+  }, [allergyForm]);
+
+  useEffect(() => {
+    if(allergyFormDeleteMessage) {
+      setAllergyFormDetails(null);
+      setTimeout(() => {
+        setAllergyFormDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [allergyFormDeleteMessage])
+
+
+  // ELEMENT FOCUS FUNCTION
+  const focusOnHealthInfoErrors = (refName) => {
+    if(refName === "medical_service") {
+      medical_service?.current?.focus();
+      
+      if(healthInfoFormErrors[`${refName}`] === null) {
+        delete healthInfoFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "telephone") {
+      telephone?.current?.focus();
+      
+      if(healthInfoFormErrors[`${refName}`] === null) {
+        delete healthInfoFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "medical_service_address") {
+      medical_service_address?.current?.focus();
+      
+      if(healthInfoFormErrors[`${refName}`] === null) {
+        delete healthInfoFormErrors[`${refName}`];
+      }
+    }
+
+    if(refName === "maternal_and_child_health_centre") {
+      maternal_and_child_health_centre?.current?.focus();
+      
+      if(healthInfoFormErrors[`${refName}`] === null) {
+        delete healthInfoFormErrors[`${refName}`];
+      }
+    }
+  }
   
   // COURT ORDERS 
   // useEffect(() => {
@@ -486,12 +616,25 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   //   }
 
   // }, [courtOrdersDeleteMessage])
-
+  useEffect(() => {
+    if(healthInfoFormErrors) {
+      let refName = Object.keys(healthInfoFormErrors)[0];
+      
+      if(healthInfoFormErrors[`${refName}`] !== null)
+        focusOnHealthInfoErrors(refName);
+    }
+  }, [healthInfoFormErrors]);
 
   return (
     <>
       {
         immunisationRecordDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{immunisationRecordDeleteMessage}</p>
+      }
+      {
+        specialNeedsFormDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{specialNeedsFormDeleteMessage}</p>
+      }
+      {
+        allergyFormDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{allergyFormDeleteMessage}</p>
       }
       {/* {
         courtOrdersDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{courtOrdersDeleteMessage}</p>
@@ -657,17 +800,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="text"
                         name="medical_service"
+                        ref={medical_service}
                         value={healthInformation?.medical_service || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
                             medical_service: e.target.value
                           }))
-
-                          setHealthInfoFormErrors(prevState => ({
-                            ...prevState,
-                            medical_service: null
-                          }));
                         }}
                         onBlur={(e) => {
                           if (!childDetails.log.includes("medical_service")) {
@@ -676,6 +815,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               log: [...childDetails.log, "medical_service"]
                             }));
                           }
+
+                          setHealthInfoFormErrors(prevState => ({
+                            ...prevState,
+                            medical_service: null
+                          }));
                         }} />
                       {healthInfoFormErrors?.medical_service !== null && <span className="error">{healthInfoFormErrors?.medical_service}</span>}
                     </Form.Group>
@@ -687,16 +831,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="tel"
                         name="telephone"
+                        ref={telephone}
                         maxLength={20}
                         value={healthInformation?.telephone || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
                             telephone: e.target.value
-                          }));
-                          setHealthInfoFormErrors(prevState => ({
-                            ...prevState,
-                            telephone: null
                           }));
                         }}
                         onBlur={(e) => {
@@ -706,6 +847,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               log: [...childDetails.log, "telephone"]
                             }));
                           }
+
+                          setHealthInfoFormErrors(prevState => ({
+                            ...prevState,
+                            telephone: null
+                          }));
                         }} />
                       {healthInfoFormErrors?.telephone !== null && <span className="error">{healthInfoFormErrors?.telephone}</span>}
                     </Form.Group>
@@ -717,16 +863,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="text"
                         name="medical_service_address"
+                        ref={medical_service_address}
                         value={healthInformation?.medical_service_address || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
                             medical_service_address: e.target.value
-                          }));
-
-                          setHealthInfoFormErrors(prevState => ({
-                            ...prevState,
-                            medical_service_address: null
                           }));
                         }}
                         onBlur={(e) => {
@@ -736,6 +878,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               log: [...childDetails.log, "medical_service_address"]
                             }));
                           }
+                          setHealthInfoFormErrors(prevState => ({
+                            ...prevState,
+                            medical_service_address: null
+                          }));
                         }} />
                       {healthInfoFormErrors?.medical_service_address !== null && <span className="error">{healthInfoFormErrors?.medical_service_address}</span>}
                     </Form.Group>
@@ -747,16 +893,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Control
                         type="text"
                         name="maternal_and_child_health_centre"
+                        ref={maternal_and_child_health_centre}
                         value={healthInformation.maternal_and_child_health_centre || ""}
                         onChange={(e) => {
                           setHealthInformation(prevState => ({
                             ...prevState,
                             maternal_and_child_health_centre: e.target.value
-                          }));
-
-                          setHealthInfoFormErrors(prevState => ({
-                            ...prevState,
-                            maternal_and_child_health_centre: null
                           }));
                         }}
                         onBlur={(e) => {
@@ -766,6 +908,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               log: [...childDetails.log, "maternal_and_child_health_centre"]
                             }));
                           }
+                          setHealthInfoFormErrors(prevState => ({
+                            ...prevState,
+                            maternal_and_child_health_centre: null
+                          }));
                         }} />
                       {healthInfoFormErrors?.maternal_and_child_health_centre !== null && <span className="error">{healthInfoFormErrors?.maternal_and_child_health_centre}</span>}
                     </Form.Group>
@@ -954,7 +1100,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         childDetails.has_been_immunized &&
                         <>
                           <Form.Group className="col-md-6 mb-3 mt-3">
-                            <Form.Label>Please attach your child's immunisation records</Form.Label>
+                            <Form.Label>Please attach your child's immunisation record</Form.Label>
                             <DragDropMultiple 
                               module="child-enrollment"
                               fileLimit={1}
@@ -2882,7 +3028,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 }
                               }} />
                           </Form.Group>
-                          <div className="single-col mb-3">
+                          <div className="single-col">
                             <p>Inclusion Support Form (If applicable)</p>
                             <Form.Group className="ms-auto">
                               <div className="btn-radio inline-col mb-0">
@@ -2928,6 +3074,34 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               </div>
                             </Form.Group>
                           </div>
+                          {
+                            childMedicalInformation?.inclusion_support_form_of_special_needs &&
+                            <>
+                              <Form.Group className="col-md-6 mb-3 mt-3">
+                                <Form.Label>Upload Support Form</Form.Label>
+                                <DragDropMultiple 
+                                  module="child-enrollment"
+                                  fileLimit={1}
+                                  supportFormDetails={specialNeedsFormDetails}
+                                  onSave={setSpecialNeedsForm} />
+                                <small className="fileinput">(Upload 1 file)</small>
+                              </Form.Group>
+                              {
+                                specialNeedsFormDetails &&
+                                (
+                                  <div>
+                                    <a href={specialNeedsFormDetails?.file}><p>{specialNeedsFormDetails?.originalName}</p></a>
+                                    <img
+                                      onClick={() => handleChildFileDelete(specialNeedsFormDetails?.id)}
+                                      // className="file-remove"
+                                      style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                      src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                      alt="" />
+                                  </div>
+                                )
+                              }
+                            </>
+                          }
                         </>
                       }
 
@@ -3055,6 +3229,34 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               </div>
                             </Form.Group>
                           </div>
+                          {
+                            childMedicalInformation?.inclusion_support_form_of_allergies &&
+                            <>
+                              <Form.Group className="col-md-6 mb-3 mt-3">
+                                <Form.Label>Upload Support Form</Form.Label>
+                                <DragDropMultiple 
+                                  module="child-enrollment"
+                                  fileLimit={1}
+                                  supportFormDetails={allergyFormDetails}
+                                  onSave={setAllergyForm} />
+                                <small className="fileinput">(Upload 1 file)</small>
+                              </Form.Group>
+                              {
+                                allergyFormDetails &&
+                                (
+                                  <div>
+                                    <a href={allergyFormDetails?.file}><p>{allergyFormDetails?.originalName}</p></a>
+                                    <img
+                                      onClick={() => handleChildFileDelete(allergyFormDetails?.id)}
+                                      // className="file-remove"
+                                      style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                      src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                      alt="" />
+                                  </div>
+                                )
+                              }
+                            </>
+                          }
                         </>
                       }
 
@@ -3205,7 +3407,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           </div>
                         </Form.Group>
                       </div>
-                      <p className="mb-3">In case of anaphylaxis, you are required to provide the service with an individual medical management plan for your child signed by the medical practitioner. This will be attached to your child’s enrolment form. More information is available at <a href="www.education.vic.gov.au/anaphyaxis">www.education.vic.gov.au/anaphyaxis</a>.</p>
+                      <p className="mb-3">In case of anaphylaxis, you are required to provide the service with an individual medical management plan for your child signed by the medical practitioner. This will be attached to your child’s enrolment form. More information is available at <a style={{ fontWeight: 'bold', textDecoration: "underline", color: "blue" }}href="www.education.vic.gov.au/anaphyaxis">www.education.vic.gov.au/anaphyaxis</a>.</p>
                       <div className="single-col mb-3">
                         <p>Does your child have any other medical conditions? (e.g. asthma, epilepsy, and diabetes, etc. that are relevant to the care of your child)</p>
                         <Form.Group className="ms-auto">
