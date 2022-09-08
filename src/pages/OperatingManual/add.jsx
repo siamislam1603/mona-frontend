@@ -226,6 +226,8 @@ const AddOperatingManual = () => {
     const newErrors = createOperatingManualValidation(operatingManualData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      console.log("newErrors--->",Object.keys(newErrors)[0]);
+      document.getElementById(Object.keys(newErrors)[0]).focus();
     } else {
       upperRoleUser = getUpperRoleUser();
       var myHeaders = new Headers();
@@ -543,6 +545,7 @@ const AddOperatingManual = () => {
                           <Form.Control
                             type="text"
                             name="title"
+                            id="title"
                             value={operatingManualData?.title}
                             // placeholder="Enter Title"
                             onChange={(e) => {
@@ -567,7 +570,7 @@ const AddOperatingManual = () => {
                             type="number"
                             name="order"
                             min={1}
-                            
+                            id="order"
                             value={operatingManualData?.order}
                             placeholder="1"
                             onChange={(e) => {
@@ -587,7 +590,7 @@ const AddOperatingManual = () => {
                     <Row>
                       <Col sm={12}>
                         <Form.Group>
-                          <Form.Label className="formlabel">
+                          <Form.Label id="description" className="formlabel">
                             Description
                           </Form.Label>
                           {location?.state?.id &&
@@ -595,6 +598,7 @@ const AddOperatingManual = () => {
                           operatingManualData?.description ? (
                             <MyEditor
                               name="description"
+                              id="description"
                               operatingManual={{ ...operatingManualData }}
                               errors={errors}
                               handleChange={(e, data) => {
@@ -802,7 +806,7 @@ const AddOperatingManual = () => {
                     {localStorage.getItem('user_role') ===
                       'franchisor_admin' && (
                       <label className="container">
-                        Franchise Admin
+                        Franchisee Admin
                         <input
                           type="checkbox"
                           name="shared_role"

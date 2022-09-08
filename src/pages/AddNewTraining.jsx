@@ -180,8 +180,8 @@ const AddNewTraining = () => {
       if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
         setLoader(false)
         localStorage.setItem('success_msg', 'Training Created Successfully!');
-        localStorage.setItem('active_tab', '/created-training');
-        window.location.href = "/training";
+        // localStorage.setItem('active_tab', '/created-training');
+        window.location.href = "/training-createdby-me";
       } else {
         setTopErrorMessage("unable to save cover image!");
         setTimeout(() => {
@@ -600,7 +600,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3 relative">
                         <Form.Group>
-                          <Form.Label>Upload Video</Form.Label>
+                          <Form.Label>Upload Videos</Form.Label>
                           <DropAllFile
                             title="Video"
                             type="video"
@@ -612,7 +612,7 @@ const AddNewTraining = () => {
 
                       <Col md={6} className="mb-3 relative">
                         <Form.Group>
-                          <Form.Label>Upload File</Form.Label>
+                          <Form.Label>Upload Files</Form.Label>
                           <DropAllFile
                             onSave={setRelatedFiles}
                           />
@@ -687,6 +687,7 @@ const AddNewTraining = () => {
                   <Form.Control
                     type="time"
                     name="start_time"
+                    style={{ zIndex: "9999999 !important" }}
                     value={trainingSettings?.start_time}
                     onChange={(e) => {
                       handleTrainingSettings(e);
