@@ -449,6 +449,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
+                      style={{ resize: "none" }} 
                       as="textarea" 
                       value={emergencyContactData?.address || ""}
                       rows={3}
@@ -536,7 +537,10 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Address</Form.Label>
-                    <Form.Control as="textarea" rows={3} />
+                    <Form.Control 
+                      as="textarea" 
+                      style={{ resize: "none" }} 
+                      rows={3} />
                     { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                   
@@ -597,6 +601,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
+                      style={{ resize: "none" }} 
                       as="textarea" 
                       value={authorizedNomineeData?.address || ""}
                       rows={3}
@@ -685,7 +690,10 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Address</Form.Label>
-                    <Form.Control as="textarea" rows={3} />
+                    <Form.Control 
+                      as="textarea" 
+                      style={{ resize: "none" }} 
+                      rows={3} />
                     { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                   
@@ -748,6 +756,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
+                      style={{ resize: "none" }} 
                       as="textarea" 
                       value={authorizedPersonData?.address || ""}
                       rows={3}
@@ -836,7 +845,10 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Address</Form.Label>
-                    <Form.Control as="textarea" rows={3} />
+                    <Form.Control 
+                      as="textarea" 
+                      rows={3}
+                      style={{ resize: "none" }}  />
                     { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                   
@@ -898,6 +910,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="address" 
                       as="textarea" 
+                      style={{ resize: "none" }} 
                       value={otherAuthorizedPersonData?.address || ""}
                       rows={3}
                       onChange={(e) => {
@@ -985,7 +998,10 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
 
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Address</Form.Label>
-                    <Form.Control as="textarea" rows={3} />
+                    <Form.Control 
+                      as="textarea" 
+                      rows={3}
+                      style={{ resize: "none" }}  />
                     { emergencyContactError?.temp !== null && <span className="error">{emergencyContactError?.temp}</span> }
                   </Form.Group>
                   

@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave,Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5 }) {
+export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null }) {
   let typeObj;
 
   if(type === "video") {
@@ -56,9 +56,16 @@ export default function DropAllFile({ onSave,Files, setErrors, title="Files", ty
   useEffect(() => {
     onSave(data);
   }, [data]);
+
   useEffect(() =>{
     setTheFiles(Files)
   },[Files])
+
+  useEffect(() => {
+    if(supportFormDetails) {
+      setData([]);
+    }
+  }, [supportFormDetails])
     
   const getRelatedFileName = (str) => {
       let arr = str.split("/");
@@ -99,7 +106,7 @@ export default function DropAllFile({ onSave,Files, setErrors, title="Files", ty
         <div className="showfiles">
         <ul>
           {
-            data.map((file, index) => (
+            data && data?.map((file, index) => (
               <li className="mt-3" key={index}>
                 {file.path}
                 {/* {file.path} - {file.size} bytes */}

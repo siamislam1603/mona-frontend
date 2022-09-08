@@ -58,7 +58,7 @@ const validateTrainingSettings = (trainingSettings) => {
   return errors;
 }
 
-const     AddNewTraining = () => {
+const AddNewTraining = () => {
   // const [show, setShow] = useState(false);
   // const handleClose = () => setShow(false);
 
@@ -97,7 +97,7 @@ const     AddNewTraining = () => {
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
 
-  
+
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
   // LOG MESSAGES
@@ -201,7 +201,7 @@ const     AddNewTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
 
-  
+
   const fetchFranchiseeUsers = async (franchisee_id) => {
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`);
     if (response.status === 200 && response.data.status === "success") {
@@ -539,9 +539,6 @@ const     AddNewTraining = () => {
                           </div>
                           {errors.time_required_to_complete !== null && <span className="error">{errors.time_required_to_complete}</span>}
                         </Form.Group>
-                        {/* <Form.Control.Feedback type="invalid">
-                            {errors.select_hour}
-                          </Form.Control.Feedback> */}
                       </Col>
 
                       <Col md={6} className="mb-3 relative">
@@ -736,7 +733,7 @@ const     AddNewTraining = () => {
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Send to all franchises:</Form.Label>
+                  <Form.Label>Send to all franchises</Form.Label>
                   <div className="new-form-radio d-block">
                     <div className="new-form-radio-box">
                       <label for="all">
@@ -815,7 +812,7 @@ const     AddNewTraining = () => {
             <Row className="mt-4">
               <Col lg={3} md={6}>
                 <Form.Group>
-                  <Form.Label>Applicable to:</Form.Label>
+                  <Form.Label>Applicable to</Form.Label>
                   <div>
                     <div className="new-form-radio-box">
                       <label htmlFor="yes1">
