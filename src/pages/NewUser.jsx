@@ -33,6 +33,7 @@ const NewUser = () => {
   const [formData, setFormData] = useState({
     fullname: "",
     role: "",
+    state: "",
     city: "",
     address: "",
     postalCode: "",
@@ -48,6 +49,7 @@ const NewUser = () => {
     open_coordinator: false
   });
   const [countryData, setCountryData] = useState([]);
+  const [stateData, setStateData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
   const [cityData, setCityData] = useState(suburbData);
   const [topErrorMessage, setTopErrorMessage] = useState('');
@@ -424,6 +426,19 @@ const NewUser = () => {
     }
   }; 
 
+  const fetchStateList = async () => {
+    let response = await axios.get(`${BASE_URL}/api/state/data`);
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { states } = response.data;
+      setStateData(states.map(d => ({
+        id: d.id,
+        value: d.name,
+        label: d.name
+      })));
+    }
+  }
+
   const fetchBuinessAssets = async () => {
     const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
     
@@ -501,6 +516,7 @@ const NewUser = () => {
     fetchProfessionalDevelopementCategories();
     fetchBuinessAssets();
     fetchFranchiseeList();
+    fetchStateList();
   }, []);
 
   useEffect(() => {
@@ -627,6 +643,28 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>State</Form.Label>
+                            <Select
+                              placeholder="Select"
+                              closeMenuOnSelect={true}
+                              options={stateData}
+                              value={stateData?.filter(d => d.label === formData?.state)}
+                              onChange={(e) => {
+                                setFormData(prevState => ({
+                                  ...prevState,
+                                  state: e.value
+                                }));
+
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  city: null
+                                }));
+                              }}
+                            />
+                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
+                          </Form.Group>
+
+                          <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Suburb</Form.Label>
                             <Select
                               placeholder="Select"
@@ -650,6 +688,7 @@ const NewUser = () => {
                             />
                             { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
                           </Form.Group>
+                          
 
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Address</Form.Label>
