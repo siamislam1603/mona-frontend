@@ -124,7 +124,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }
     const GetFile = async () => {
         try {
-            let franchiseeId = selectedFranchisees === "All" ? "all" || selectedFranchisees === "null" || selectedFranchisees === "All" : selectedFranchisees;
+            let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
             console.log(franchiseeId, "selectedFranchisees")
 
             let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
