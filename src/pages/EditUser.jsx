@@ -291,6 +291,7 @@ const EditUser = () => {
     event.preventDefault();
 
     let error = editUserValidation(formData);
+    
     if(Object.keys(error).length > 0) {
       setFormErrors(error);
     } else {
@@ -303,12 +304,11 @@ const EditUser = () => {
 
       let blob;
       if(croppedImage) {
+
         if(typeof croppedImage === "object") {
-          console.log('Image Type: Object');
           blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
           data.append('images', blob);
         } else {
-          console.log('Image Type: String');
           blob = croppedImage
           data.append('profile_photo', blob);
         }
@@ -589,7 +589,6 @@ const EditUser = () => {
                           setCroppedImage={setCroppedImage}
                           onSave={setImage}
                           setPopupVisible={setPopupVisible}
-
                           fetchedPhoto={formData?.profile_photo || ""}
                         />
                         <span className="error">

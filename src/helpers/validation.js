@@ -150,12 +150,12 @@ export const createOperatingManualValidation = (form) => {
   let newErrors = {};
   let { title, description, order } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
-  if (!description || description === '')
-    newErrors.description = 'Description is Required';
   if (order < 0) newErrors.order = 'Order must be greater than 0';
   if (order === 0 || order === '0')
     newErrors.order = 'Order must be greater than 0';
   if (!order || order === '') newErrors.order = 'Position is Required';
+  if (!description || description === '')
+    newErrors.description = 'Description is Required';
 
   return newErrors;
 };
@@ -170,7 +170,13 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required s';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
-
+  let reg = /^\s|\s$/
+  if(title.match(reg)){
+    // console.log("contains spaces");
+    newErrors.title = 'Contain unwanted space';
+     
+    }
+  
   if (!start_date || start_date === 'undefined')
     newErrors.start_date = 'Start Date Required';
   if (!start_time || start_time === 'undefined')
@@ -178,6 +184,11 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Announcement Description is Required';
 
+
+  if(meta_description.match(reg)){
+     
+      newErrors.meta_description = 'Contain unwanted space';     
+  }
   if (!franchise || franchise.length === 0) {
     if (!allFranchise) {
       newErrors.franchise = "Please Select Franchise"
@@ -197,9 +208,20 @@ export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise)
 
   console.log('All valiatiion', title, start_date, meta_description);
   if (!title || title === ' ') newErrors.title = 'Title is Required';
+  let reg = /^\s|\s$/
+  if(title.match(reg)){
+    // console.log("contains spaces");
+    newErrors.title = 'Contain unwanted space';
+     
+    }
   // if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Description is Required';
+
+    if(meta_description.match(reg)){
+      // console.log("contains spaces");
+      newErrors.meta_description = 'Contain unwanted space';
+      } 
   if ((start_date === ' ' && !start_date) || start_date === ' ')
     newErrors.start_date = 'Start Date Required';
   if ((start_time === ' ' && !start_time) || start_time === ' ')
