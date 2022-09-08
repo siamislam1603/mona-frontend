@@ -250,7 +250,7 @@ const EditTraining = () => {
           }
         });
       }
-
+      console.log("Image response",imgSaveResponse)
       if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
         setLoader(false)
         setCreateTrainingModal(false);

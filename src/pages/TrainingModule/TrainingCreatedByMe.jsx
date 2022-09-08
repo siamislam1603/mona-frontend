@@ -138,7 +138,7 @@ const TrainingCreatedByMe = ({filter}) => {
     setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All"? "all":selectedFranchisee}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=100&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All"? "all":selectedFranchisee}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
