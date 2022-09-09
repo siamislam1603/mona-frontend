@@ -188,15 +188,15 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
 
                   {/* <FullLoader loading={fullLoaderStatus} /> */}
                 <div className="entry-container">
-                  <header className="title-head mb-3">
-                  <Button
+                  <header className="title-head mynewForm-heading mb-3">
+                  <Button className="me-3"
                         onClick={() => {
                           navigate('/training');
                         }}
                       >
                         <img src="../../img/back-arrow.svg" />
                       </Button>
-                    <h1 className="title-lg">
+                    <h1 className="title-lg mb-0">
                       
                       Training Created by Other</h1>
                     
