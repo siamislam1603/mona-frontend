@@ -158,13 +158,13 @@ useEffect(() =>{
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
               <div className="title-xxs">{data.title}<small><span>
               <span className="timesec">{getAddedTime(data.createdAt)}</span>
-              {
+              {/* {
                                          data.user.role.split('_')
                                          .map(
                                           (data) =>
                                            data.charAt(0).toUpperCase() + data.slice(1)
                                           ).join(' ')
-                                      } : 
+                                      } :  */}
                                   
                              </span>
                              {data.user.fullname[0].toUpperCase()+data.user.fullname.slice(1)}
@@ -201,7 +201,7 @@ useEffect(() =>{
                             setTopErrorMessage(null)
 
                           ):(
-                            setTopErrorMessage("Can not edit")
+                            setTopErrorMessage("Cannot edit started announcement")
 
                           )
                           }
