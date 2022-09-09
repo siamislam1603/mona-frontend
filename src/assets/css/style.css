@@ -485,6 +485,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .thumb-vid a:before{position:absolute;content:'';top:0;left:0;width:100%;height:100%;background-position:center;background-image:url("../img/video-ico.svg");background-repeat:no-repeat}
 .thumb-vid a:after{position:absolute;content:'';top:0;left:0;width:100%;height:100%;background:-moz-linear-gradient(top,rgba(0,0,0,0) 0,#000 100%);background:-webkit-linear-gradient(top,rgba(0,0,0,0) 0,#000 100%);background:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 100%);opacity:.7}
 .form-check:first-child { padding-left: 0; }
+.col .form-check:first-child { padding-left: 1.5em; }
 .form-group .form-check { padding-right: 1.5em; }
 .grayback{border-radius:16px;padding:30px;background-color:var(--offwhite)}
 .grayback .form-label{display:block}
