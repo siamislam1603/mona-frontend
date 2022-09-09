@@ -308,7 +308,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .cta-col .dropdown-toggle{min-width:inherit;padding:0;background-color:transparent;border-color:transparent;width:30px}
 .cta-col .dropdown-toggle:active,.cta-col .dropdown-toggle:hover,.cta-col .show>.btn-primary.dropdown-toggle{background-color:transparent}
 .user-management-sec .table-bordered{border:none}
-.user-management-sec .table>:not(caption)>*>*{border:none;padding:25px 15px;vertical-align:middle;overflow-wrap: break-word;word-break: break-all;}
+.user-management-sec .table>:not(caption)>*>*{border:none;padding:25px 15px;vertical-align:middle;}
+.user-management-sec .table td{ overflow-wrap: break-word;word-break: break-all;}
 .user-management-sec .table-bordered>:not(caption)>*{border-width:0}
 .user-management-sec .table>:not(:first-child){border-top:none}
 .user-management-sec .table th{font-weight:400;opacity:.7;padding:10px 15px}
