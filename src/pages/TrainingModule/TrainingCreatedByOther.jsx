@@ -1,12 +1,13 @@
-/* eslint-disable react/jsx-no-comment-textnodes */
+
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 // import { Button, Container, Form, Dropdown } from "react-bootstrap";
 // import LeftNavbar from "../components/LeftNavbar";
 import { Col, Row, Dropdown, Container,Modal, Form, Button } from "react-bootstrap";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import TopHeader from "../../components/TopHeader";
-import { useLocation } from 'react-router-dom';
+import { useLocation ,useNavigate} from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 // import { verifyPermission } from '../helpers/roleBasedAccess';
@@ -40,6 +41,8 @@ const animatedComponents = makeAnimated();
 
 const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   let location = useLocation();
+  const navigate = useNavigate();
+
   const [otherTrainingData, setOtherTrainingData] = useState([]);
   const [applicableToAll, setApplicableToAll] = useState(false);
   const [franchiseeList, setFranchiseeList] = useState();
@@ -111,7 +114,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=&search=${filterData.search}&category_id=${filterData.category_id}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -164,7 +167,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   }, []);
   useEffect(() =>{
     trainingCreatedByOther() 
-  },[filterData.search,filterData.category_id])
+  },[filterData.search,filterData.category_id,page])
 
   console.log("TRAIING DATA",myTrainingData)
 
@@ -183,14 +186,23 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                   // setSelectedFranchisee={setSelectedFranchisee} 
                   />
 
-                  <FullLoader loading={fullLoaderStatus} />
+                  {/* <FullLoader loading={fullLoaderStatus} /> */}
                 <div className="entry-container">
                   <header className="title-head mb-3">
-                    <h1 className="title-lg">Training Created by Other</h1>
+                  <Button
+                        onClick={() => {
+                          navigate('/training');
+                        }}
+                      >
+                        <img src="../../img/back-arrow.svg" />
+                      </Button>
+                    <h1 className="title-lg">
+                      
+                      Training Created by Other</h1>
                     
                     <div className="othpanel">
                       <div className="extra-btn">
-                        <div className="data-search me-3">
+                        <div className="data-search ">
                           <label for="search-bar" className="search-label">
                             <input
                               id="search-bar"
@@ -259,11 +271,23 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                       </Form.Group>
                     </div>
                   </div>
+                  <InfiniteScroll
+                  style={{
+                    overflow: "hidden"
+                  }}
+                        dataLength={otherTrainingData.length} //This is important field to render the next data
+                        next={() => setPage(page+5)}
+                        hasMore={true}
+                        // loader={<h4>Loading...</h4>}
+                        // endMessage={
+                        //   <p style={{ textAlign: 'center' }}>
+                        //     <b>Yay! You have seen it all</b>
+                        //   </p>
+                        // }
+                       
+                      >
                   <div className="training-column">
-                  {/* <h3 className="title-sm mb-0"><strong></strong></h3> */}
 
-         
-            
           <Row>
            
             {otherTrainingData?.map((training) => {
@@ -281,7 +305,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                      <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -313,6 +337,16 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
               );
             })}
           </Row>
+          </div>
+
+          </InfiniteScroll>
+          {fullLoaderStatus && 
+                              <div className="text-center">
+                              <img src="/img/loader.svg" style={{maxWidth:"100px"}} alt="Loader"></img>
+                            </div>
+                      }
+
+
           {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
           null
             :     
@@ -327,7 +361,6 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                   <div className="text-center mb-5 mt-5">  <strong>No trainings assigned to you!</strong> </div>
       
             } */}
-        </div>
                
                 </div>
               </div>

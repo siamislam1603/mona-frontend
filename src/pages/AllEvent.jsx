@@ -201,7 +201,7 @@ useEffect(() =>{
                             setTopErrorMessage(null)
 
                           ):(
-                            setTopErrorMessage("Can not edit")
+                            setTopErrorMessage("Cannot edit started announcement")
 
                           )
                           }

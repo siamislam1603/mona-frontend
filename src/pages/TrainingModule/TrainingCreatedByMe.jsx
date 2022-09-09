@@ -5,8 +5,9 @@ import React, { useState } from "react";
 // import LeftNavbar from "../components/LeftNavbar";
 import { Col, Row, Dropdown, Container, Modal, Form, Button } from "react-bootstrap";
 
+
 import TopHeader from "../../components/TopHeader";
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 // import { verifyPermission } from '../helpers/roleBasedAccess';
@@ -21,6 +22,7 @@ import { Link } from "react-router-dom";
 import { FullLoader } from "../../components/Loader";
 // import { FixedSizeList } from "react-window";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Hidden } from "@material-ui/core";
 // const animatedComponents = makeAnimated();
 const styles = {
   option: (styles, state) => ({
@@ -48,13 +50,12 @@ const TrainingCreatedByMe = ({ filter }) => {
   const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [saveTrainingId, setSaveTrainingId] = useState(null);
-  const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
-  const [shareType, setShareType] = useState("roles");
-  const [userList, setUserList] = useState();
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [page, setPage] = useState(5)
+  const [noMore,setNoMore] = useState(true)
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const navigate = useNavigate();
 
   // const [trainingCategory, setTrainingCategory] = useState([]);
 
@@ -138,7 +139,7 @@ const TrainingCreatedByMe = ({ filter }) => {
       setfullLoaderStatus(true)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -148,32 +149,28 @@ const TrainingCreatedByMe = ({ filter }) => {
         const { searchedData } = response.data
         console.log("Searched Data", searchedData)
         setMyTrainingData(searchedData)
-
         setfullLoaderStatus(false)
-
-
-
+     
       }
     } catch (error) {
       if (error.response.status === 404) {
-        setMyTrainingData([])
-
         setfullLoaderStatus(false)
+
+        setMyTrainingData([])
+        setNoMore(false)
+
 
       }
       console.log("error created by me", error)
     }
   }
   useEffect(() => {
-
-    // trainingCreatedByMe()
-    // CreatedByme()
     fetchTrainingCategories()
     console.log("Traingin created")
   }, []);
   useEffect(() => {
     CreatedByme()
-  }, [filterData.search, filterData.category_id, selectedFranchisee])
+  }, [filterData.search, filterData.category_id, selectedFranchisee,page])
 
   console.log("TRAIING DATA", filterData.category_id)
   console.log("Rohan", fullLoaderStatus, !fullLoaderStatus)
@@ -195,36 +192,24 @@ const TrainingCreatedByMe = ({ filter }) => {
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
 
-                <FullLoader loading={fullLoaderStatus} />
-                {/* <InfiniteScroll
-                  dataLength={this.state.items.length}
-                  next={this.fetchMoreData}
-                  hasMore={true}
-                  loader={<h4>Loading...</h4>}
-                >
-
-                </InfiniteScroll> */}
+                {/* <FullLoader loading={fullLoaderStatus} /> */}
+  
                 <div className="entry-container">
-                  <header className="title-head">
-                    <h1 className="title-lg">Trainings Created By Me</h1>
-                    <div className="selectdropdown ms-auto d-flex align-items-center">
-                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
-                        <Form.Label className="d-block me-2">Choose Category</Form.Label>
-                        <Select
-                          closeMenuOnSelect={true}
-                          components={animatedComponents}
-                          options={trainingCategory}
-                          className="selectdropdown-col"
-                          onChange={(e) => setFilterData(prevState => ({
-                            ...prevState,
-                            category_id: e.id === 0 ? null : e.id
-                          }))}
-                        />
-                      </Form.Group>
-                    </div>
+                  <header className="title-head mynewForm-heading">
+                  <Button
+                        onClick={() => {
+                          navigate('/training');
+                        }}
+                      >
+                        <img src="../../img/back-arrow.svg" />
+                      </Button>
+                    <h1 className="title-lg">
+                    
+                      Trainings Created By Me</h1>
+                 
                     <div className="othpanel">
                       <div className="extra-btn">
-                        <div className="data-search me-3">
+                        <div className="data-search ">
                           <label for="search-bar" className="search-label">
                             <input
                               id="search-bar"
@@ -276,9 +261,43 @@ const TrainingCreatedByMe = ({ filter }) => {
                       </div>
                     </div>
                   </header>
-                  <div className="training-column">
+                  <div className="training-cat d-md-flex align-items-center mb-3">
 
-                    <Row style={{ marginBottom: '40px' }}>
+                  <div className="selectdropdown ms-auto d-flex align-items-center">
+                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                        <Form.Label className="d-block me-2">Choose Category</Form.Label>
+                        <Select
+                          closeMenuOnSelect={true}
+                          components={animatedComponents}
+                          options={trainingCategory}
+                          className="selectdropdown-col"
+                          onChange={(e) => setFilterData(prevState => ({
+                            ...prevState,
+                            category_id: e.id === 0 ? null : e.id
+                          }))}
+                        />
+                      </Form.Group>
+                    </div>
+                    </div>
+
+                  <InfiniteScroll
+                  style={{
+                    overflow: "hidden"
+                  }}
+                        dataLength={myTrainingData.length} //This is important field to render the next data
+                        next={() => setPage(page+5)}
+                        hasMore={true}
+                        // loader={<h4>Loading...</h4>}
+                        // endMessage={
+                        //   <p style={{ textAlign: 'center' }}>
+                        //     <b>Yay! You have seen it all</b>
+                        //   </p>
+                        // }
+                       
+                      >
+                         <div className="training-column">
+
+    <Row style={{ marginBottom: '40px' }}>
 
                       {myTrainingData?.map((training) => {
                         return (
@@ -318,12 +337,66 @@ const TrainingCreatedByMe = ({ filter }) => {
                           </Col>
                         );
                       })}
+                      </Row>
+                      </div>
+                     
+                      </InfiniteScroll>
+           
+
+                      {fullLoaderStatus && 
+                              <div className="text-center">
+                              <img src="/img/loader.svg" style={{maxWidth:"100px"}} alt="Loader"></img>
+                            </div>
+                      }
+
+                  <div className="training-column">
+
+                    <Row style={{ marginBottom: '40px' }}>
+{/* 
+                      {myTrainingData?.map((training) => {
+                        return (
+                          <Col lg={4} md={6} key={training.id}>
+                            <div className="item mt-3 mb-3">
+                              <div className="pic">
+                                <a href={`/training-detail/${training.id}`}>
+                                  <img src={training.coverImage} alt="" />
+                                  <span className="lthumb">
+                                    <img src="../img/logo-thumb.png" alt="" />
+                                  </span>
+                                </a>
+                              </div>
+                              <div className="fixcol">
+                                <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                                <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this training?"))
+                                          handleTrainingDelete(training.id)
+                                      }}>Delete</Dropdown.Item>
+                                      {training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
+                                      <Dropdown.Item href="#" onClick={() => {
+                                        setSaveTrainingId(training.id);
+                                        setShowModal(true)
+                                      }}>Share</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
+                              </div>
+                            </div>
+                          </Col>
+                        );
+                      })} */}
 
                     </Row>
                     {myTrainingData?.length > 0 ?
                       null
                       :
-                      !fullLoaderStatus && <div className="text-center mb-5 mt-5"> <strong>No trainings available !</strong> </div>
+                      fullLoaderStatus? null:  <div className="text-center mb-5 mt-5"> <strong>No trainings available !</strong> </div>
                     }
                   </div>
 
