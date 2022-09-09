@@ -48,7 +48,8 @@ const columns = [
     formatter: (cell) => {
       console.log("THE ECUTOR", cell)
       cell = cell.split(",");
-      return (<>
+      return (
+      <>
         <div className="user-list">
           <span className="user-pic">
 
@@ -58,7 +59,31 @@ const columns = [
           <span className="user-name">
             {cell[0]}
           </span>
-        </div> <br />
+
+          </div> 
+           {
+          cell[1] === "undefined" || cell[1] === "null" ? (
+            <>
+
+            </>
+          ) : (
+            <>
+              <div className="user-list">
+                <span className="user-pic">
+
+                  {/* <img src={cell[3]} alt='' /> */}
+                  {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
+
+                </span>
+                <span className="user-name">
+                  {cell[1] === " " || cell[1] === "undefined" ? (null) : (cell[1])}
+
+                </span>
+              </div>
+            </>
+          )
+        }
+      
         {
           cell[1] === "undefined" || cell[1] === "null" ? (
             <>
