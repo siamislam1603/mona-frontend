@@ -2,7 +2,22 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
-export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null }) {
+const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
+
+function fileSizeValidator(file) {
+  let fileSize = bytesToMegaBytes(file.size);
+  console.log('FILE SIZE:', fileSize);
+  if(fileSize > 1024) {
+    return {
+      code: "file-too-large",
+      message: `File is larger than ${1} GB`
+    };
+  }
+
+  return null
+}
+
+export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null, setUploadError=() => {} }) {
   let typeObj;
 
   if(type === "video") {
@@ -24,7 +39,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
   }, []);
    
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, fileRejections } = useDropzone({
     onDrop,
     maxFiles: fileLimit,
     multiple: fileLimit === 1 ? false : true,
@@ -32,7 +47,8 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     // accept: {
     //   'image/*, audio/*, video/*': ['.png', '.jpg', '.jpeg','.pdf','.doc','.txt','.wpd'],
     // },
-    accept: typeObj
+    accept: typeObj,
+    validator: fileSizeValidator
   });
 
   const handleFileDelete = (file) => {
@@ -40,6 +56,18 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     temp.splice(temp.indexOf(file), 1);
     setData(temp);
   }
+
+  const fileRejectionItems = fileRejections.map(({ file, errors }) => (
+    <li key={file.path}>
+      {file.path} - {file.size} bytes
+      <ul>
+        {errors.map(e => (
+          <li key={e.code}>{e.message}</li>
+        ))}
+      </ul>
+    </li>
+  ));
+
   const handleDelete =(file) =>{
     console.log("The file e4",file)
     let temp = [...theFiles];
@@ -67,6 +95,14 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     }
   }, [supportFormDetails])
     
+  // Setting Errors
+  useEffect(() => {
+    let rejectionArray = fileRejections.map(d => ({
+      error: d.errors.map(e => e)
+    }));
+    setUploadError(rejectionArray);
+  }, [fileRejections]);
+
   const getRelatedFileName = (str) => {
       let arr = str.split("/");
       let fileName = arr[arr.length - 1].split("_")[0];
@@ -93,6 +129,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
                  <p>{file.path}</p>
                  {getRelatedFileName(file.file)}
                  <span className="ms-2">
+                  <ul>{fileRejectionItems}</ul>
                    <Link to="#" onClick={() => handleDelete(file)}>
                        <img src="../img/removeIcon.svg" alt="" />
                    </Link>
