@@ -153,7 +153,7 @@ img.custom_facebook{padding-left:22px}
 .login-bg{min-height:100vh}
 .login-bg .container{display:flex;min-height:100vh}
 .custom_submit{position:relative;padding-top:15px}
-.custom_submit .kids-art{position:absolute;left:-100px}
+.custom_submit .kids-art{position:absolute; left: -80px; bottom: -150px; max-width: 110px;}
 .separator{text-align:center;margin:37px 0;color:var(--black);font-size:16px;font-weight:500;line-height:19px;opacity:.5}
 .separator span{position:relative}
 .separator span::before{content:"";height:1px;width:155px;background-color:var(--black);position:absolute;left:28px;top:10px;opacity:.5}
@@ -291,6 +291,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .extra-btn .btn-btn-outline,.extra-btn .ctaact{border-radius:5px;border-color:var(--primary);padding:5px 1rem;line-height:33px;min-width:inherit}
 .filter-ico{margin-top:-2px;background:url("../img/filter-ico.svg") no-repeat;width:23px;height:20px;display:inline-block;vertical-align:middle}
 .user-list{display:flex;align-items:center}
+.user-list{margin-top: 1rem;}
+.user-list:first-child{margin-top: 0;}
 .childern-list .user-list{margin-top: 1rem;}
 .childern-list .user-list:first-child{margin-top: 0;}
 .user-list .user-pic{flex:0 0 44px;max-width:44px;margin-right:1rem;overflow:hidden;border-radius:100%;min-height:44px}
@@ -308,7 +310,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .cta-col .dropdown-toggle{min-width:inherit;padding:0;background-color:transparent;border-color:transparent;width:30px}
 .cta-col .dropdown-toggle:active,.cta-col .dropdown-toggle:hover,.cta-col .show>.btn-primary.dropdown-toggle{background-color:transparent}
 .user-management-sec .table-bordered{border:none}
-.user-management-sec .table>:not(caption)>*>*{border:none;padding:25px 15px;vertical-align:middle;overflow-wrap: break-word;word-break: break-all;}
+.user-management-sec .table>:not(caption)>*>*{border:none;padding:25px 15px;vertical-align:middle;}
+.user-management-sec .table td{ overflow-wrap: break-word;word-break: break-all;}
 .user-management-sec .table-bordered>:not(caption)>*{border-width:0}
 .user-management-sec .table>:not(:first-child){border-top:none}
 .user-management-sec .table th{font-weight:400;opacity:.7;padding:10px 15px}
@@ -485,6 +488,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .thumb-vid a:before{position:absolute;content:'';top:0;left:0;width:100%;height:100%;background-position:center;background-image:url("../img/video-ico.svg");background-repeat:no-repeat}
 .thumb-vid a:after{position:absolute;content:'';top:0;left:0;width:100%;height:100%;background:-moz-linear-gradient(top,rgba(0,0,0,0) 0,#000 100%);background:-webkit-linear-gradient(top,rgba(0,0,0,0) 0,#000 100%);background:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 100%);opacity:.7}
 .form-check:first-child { padding-left: 0; }
+.col .form-check:first-child { padding-left: 1.5em; }
 .form-group .form-check { padding-right: 1.5em; }
 .grayback{border-radius:16px;padding:30px;background-color:var(--offwhite)}
 .grayback .form-label{display:block}

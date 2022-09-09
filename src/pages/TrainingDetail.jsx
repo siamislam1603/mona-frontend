@@ -39,18 +39,19 @@ const TrainingDetail = () => {
     console.log("The response", response)
 
     if (response.status === 200 && response.data.status === "success") {
+      console.log('SUCCESS TRAINING DETAIL');
       const { training } = response.data;
       setTrainingDetails(training);
-    } else {
-      localStorage.setItem('success_msg', 'Training Created Successfully!');
-      // localStorage.setItem('active_tab', '/created-training');
-      window.location.href = "/training";
-    }
+    }// } else {
+    //   localStorage.setItem('success_msg', 'Training Created Successfully!');
+    //   // localStorage.setItem('active_tab', '/created-training');
+    //   window.location.href = "/training";
+    // }
   }
 
   const handleFinishTraining = (event) => {
 
-    if(typeof relatedForms === 'undefined') {
+    if(relatedForms === null) {
       updateFinishTraining();
     } else {
       setTimeout(() => {
@@ -105,6 +106,7 @@ const TrainingDetail = () => {
   const fetchTrainingFormDetails = async (id) => {
     const response = await axios.get(`${BASE_URL}/training/form/training/${id}`);
 
+    console.log('TRAINING FORM RESPONSE:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { formData } = response.data;
       setRelatedForms(formData);
@@ -148,8 +150,8 @@ const TrainingDetail = () => {
       window.location.href=`/parents-dashboard`;
     }
   }, []);
-  // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-
+  trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
+  relatedForms && console.log('RELATED Forms:', relatedForms);
   return (
     <>
       <div id="main">

@@ -184,13 +184,13 @@ useEffect(() =>{
                                  <small><span>
                                 <span className="timesec">{getAddedTime(details.createdAt)}</span>
                                   
-                                      {
+                                      {/* {
                                          details.user.role.split('_')
                                          .map(
                                           (data) =>
                                            data.charAt(0).toUpperCase() + data.slice(1)
                                           ).join(' ')
-                                      } : 
+                                      } :  */}
                                   
                              </span>
                              {details.user.fullname[0].toUpperCase()+details.user.fullname.slice(1)}
