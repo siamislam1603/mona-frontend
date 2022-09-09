@@ -153,7 +153,7 @@ img.custom_facebook{padding-left:22px}
 .login-bg{min-height:100vh}
 .login-bg .container{display:flex;min-height:100vh}
 .custom_submit{position:relative;padding-top:15px}
-.custom_submit .kids-art{position:absolute;left:-100px}
+.custom_submit .kids-art{position:absolute; left: -80px; bottom: -150px; max-width: 110px;}
 .separator{text-align:center;margin:37px 0;color:var(--black);font-size:16px;font-weight:500;line-height:19px;opacity:.5}
 .separator span{position:relative}
 .separator span::before{content:"";height:1px;width:155px;background-color:var(--black);position:absolute;left:28px;top:10px;opacity:.5}
