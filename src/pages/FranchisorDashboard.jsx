@@ -181,6 +181,13 @@ const FranchisorDashboard = () => {
       }, 3000);
 
     }
+
+    // Redirect to baseurl when not not specific Role
+    if (localStorage.getItem('user_role')!=='franchisor_admin') {
+      window.location.href = '/';
+    }
+
+
   }, []);
 
 

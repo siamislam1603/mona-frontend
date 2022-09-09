@@ -296,9 +296,8 @@ const FranchiseeDashboard = () => {
   
 
 useEffect(() => {
-
+  
     if (localStorage.getItem('success_msg')) {
-
       setTopSuccessMessage(localStorage.getItem('success_msg'));
 
       localStorage.removeItem('success_msg');
@@ -309,6 +308,13 @@ useEffect(() => {
       }, 3000);
 
     }
+
+    // Redirect to baseurl when not not specific Role
+    if (localStorage.getItem('user_role')!=='franchisee_admin') {
+      window.location.href = '/';
+    }
+
+
 
   }, []);
 
