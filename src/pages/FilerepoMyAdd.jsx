@@ -481,7 +481,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                             <Row className="mt-4">
                                 <Col lg={3} md={6}>
                                     <Form.Group>
-                                        <Form.Label>Send to all franchisee:</Form.Label>
+                                        <Form.Label>Send to all franchises</Form.Label>
                                         <div className="new-form-radio d-block">
                                             <div className="new-form-radio-box">
                                                 <label for="all">
@@ -529,7 +529,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
                                 <Col lg={9} md={12}>
                                     <Form.Group>
-                                        <Form.Label>Select Franchisee</Form.Label>
+                                        <Form.Label>Select Franchise(s)</Form.Label>
                                         <div className="select-with-plus">
                                             <Multiselect
                                                 disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}

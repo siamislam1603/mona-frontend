@@ -198,6 +198,13 @@ const EducatorDashboard = () => {
       }, 3000);
 
     }
+
+   // Redirect to baseurl when not not specific Role
+   if (localStorage.getItem('user_role')!=='educator') {
+    window.location.href = '/';
+  }
+
+
   }, []);
 
 

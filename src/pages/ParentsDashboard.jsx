@@ -21,6 +21,7 @@ const ParentsDashboard = () => {
   const [nonEnrolledChildIds, setNonEnrolledChildIds] = useState(null);
   const [enrollmentFormLinks, setEnrollmentFormLinks] = useState(null);
   const [logUserOutDialog, setLogUserOutDialog] = useState(false);
+  const [topSuccessMessage, setTopSuccessMessage] = useState(null)
 
   const checkPendingConsent = async () => {
     let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
@@ -203,6 +204,24 @@ const ParentsDashboard = () => {
 
   useEffect(() => {
     fetchUserChildrenDetails();
+
+    // show toast message
+    if (localStorage.getItem('success_msg')) {
+      setTopSuccessMessage(localStorage.getItem('success_msg'));
+      localStorage.removeItem('success_msg');
+      setTimeout(() => {
+        setTopSuccessMessage(null);
+      }, 3000);
+    }
+
+    // Redirect to baseurl when not not specific Role
+      if (localStorage.getItem('user_role')!=='guardian') {
+        window.location.href = '/';
+    }
+
+
+
+
   }, []);
 
   // useEffect(() => {
@@ -223,8 +242,17 @@ const ParentsDashboard = () => {
     assignededucators();
   }, [selectedFranchisee])
 
+
+
+
+
   return (
     <>
+
+      {
+        topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+      }
+
       <div id="main">
         <section className="mainsection">
           <Container>

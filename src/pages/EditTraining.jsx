@@ -81,6 +81,7 @@ const EditTraining = () => {
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [trainingData, setTrainingData] = useState({});
   const [trainingSettings, setTrainingSettings] = useState({});
+
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
@@ -102,6 +103,8 @@ const EditTraining = () => {
   const [image, setImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
+
+
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
@@ -207,7 +210,7 @@ const EditTraining = () => {
     setFetchedVideoTutorialFiles(training?.training_files?.filter(file => file.fileType === ".mp4"));
     setFetchedRelatedFiles(training?.training_files?.filter(file => file.fileType !== '.mp4'));
   }
-
+  console.log(coverImage, "coverImage")
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const updateTraining = async (data) => {
@@ -220,13 +223,15 @@ const EditTraining = () => {
       }
     }
     );
-    console.log(response, "response")
+
     if (response.status === 201 && response.data.status === "success") {
       let data = new FormData();
+
       let imgSaveResponse;
 
 
       if (typeof croppedImage === 'object') {
+
         data.append('id', trainingId);
         imgSaveResponse = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
         data.append('image', imgSaveResponse);
