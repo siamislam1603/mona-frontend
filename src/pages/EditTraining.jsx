@@ -146,13 +146,8 @@ const EditTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-<<<<<<< HEAD
-    let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f}`);
-=======
     // let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`);
->>>>>>> master
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
