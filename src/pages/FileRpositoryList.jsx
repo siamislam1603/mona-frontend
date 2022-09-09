@@ -38,6 +38,9 @@ const FileRpositoryList = () => {
     });
 
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+
+
+    console.log(selectedFranchisee, "selectedFranchisee")
     const [child, setChild] = useState([]);
 
     const fetchFranchiseeList = async () => {
@@ -70,8 +73,10 @@ const FileRpositoryList = () => {
             headers: myHeaders,
         };
         const ID_array = selectedFranchisee?.split(",");
+        console.log(ID_array, "ID_array")
         try {
             let data = ID_array?.length > 1 ? ID_array?.slice(1) : ID_array;
+
             let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=${data}`, requestOptions)
             response = await response.json();
             setUser(response.result)

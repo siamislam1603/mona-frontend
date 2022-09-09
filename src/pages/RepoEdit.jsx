@@ -12,8 +12,6 @@ import FileRepoVideo from '../components/FileRepoVideo';
 import { FullLoader } from "../components/Loader";
 
 
-const animatedComponents = makeAnimated();
-
 const getUser_Role = localStorage.getItem(`user_role`)
 
 let selectedUserId = '';
@@ -257,17 +255,17 @@ const RepoEdit = () => {
 
     const isAllRolesChecked = () => {
         let bool = false;
-        if (getUser_Role === "franchisor_admin") {
-            bool = ["guardian", "educator", "coordinator", "franchisee_admin"].every(item => data?.shared_role?.includes(item))
+        if (getUser_Role == "franchisor_admin") {
+            bool = data.user_roles.length === 4
         }
-        else if (getUser_Role === "franchisee_admin") {
-            bool = ["guardian", "educator", "coordinator"].every(item => data?.shared_role?.includes(item))
+        else if (getUser_Role == "franchisee_admin") {
+            bool = data.user_roles.length === 3
         }
-        else if (getUser_Role === "coordinator") {
-            bool = ["guardian", "educator"].every(item => data?.shared_role?.includes(item))
+        else if (getUser_Role == "coordinator") {
+            bool = data.user_roles.length === 2
         }
-        else if (getUser_Role === "educator") {
-            bool = ["guardian"].every(item => data?.shared_role?.includes(item))
+        else if (getUser_Role == "educator") {
+            bool = ["guardian"].every(item => data?.user_roles?.includes(item))
         }
 
         return bool;
@@ -512,7 +510,6 @@ const RepoEdit = () => {
                                                                 <Form.Group>
                                                                     <Form.Label>Accessible to</Form.Label>
                                                                     <div className="new-form-radio d-block">
-                                                   
                                                                         <div className="new-form-radio-box">
                                                                             <label for="yes">
                                                                                 <input
@@ -659,7 +656,7 @@ const RepoEdit = () => {
                                                                             </label>) : null}
                                                                             {!['educator', 'guardian'].includes(getUser_Role) ? (<label className="container">
                                                                                 All Roles
-                                                                                <input
+                                                                                {/* <input
                                                                                     type="checkbox"
                                                                                     name="shared_role"
                                                                                     id="all_roles"
@@ -667,6 +664,7 @@ const RepoEdit = () => {
                                                                                     onChange={() => {
                                                                                         if (data.user_roles?.includes("coordinator")
                                                                                             && data.user_roles.includes("educator")
+                                                                                            && data.user_roles.includes("franchisee_admin")
                                                                                             && data.user_roles.includes("guardian")) {
                                                                                             setData(prevState => ({
                                                                                                 ...prevState,
@@ -675,16 +673,90 @@ const RepoEdit = () => {
                                                                                         }
                                                                                         if (!data.user_roles?.includes("coordinator")
                                                                                             && !data.user_roles.includes("educator")
+                                                                                            && !data.user_roles.includes("franchisee_admin")
                                                                                             && !data.user_roles.includes("guardian")
                                                                                         )
                                                                                             setData(prevState => ({
                                                                                                 ...prevState,
-                                                                                                user_roles: ["coordinator", "educator", "guardian"]
+                                                                                                user_roles: ["franchisee_admin", "coordinator", "educator", "guardian"]
                                                                                             })
                                                                                             )
+                                                                                    }} /> */}
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    name="shared_role"
+                                                                                    id="all_roles"
+                                                                                    checked={isAllRolesChecked()}
+                                                                                    onChange={() => {
+                                                                                        if (getUser_Role == 'franchisor_admin') {
+                                                                                            if (data.user_roles?.includes("coordinator")
+                                                                                                && data.user_roles.includes("educator")
+                                                                                                && data.user_roles.includes("guardian")
+                                                                                                && data.user_roles.includes("franchisee_admin")
+                                                                                            ) {
+                                                                                                setData(prevState => ({
+                                                                                                    ...prevState,
+                                                                                                    user_roles: [],
+                                                                                                }));
+                                                                                            }
+
+                                                                                            if (!data.user_roles.includes("coordinator")
+                                                                                                && !data.user_roles.includes("educator")
+                                                                                                && !data.user_roles.includes("guardian")
+                                                                                                && !data.user_roles.includes("franchisee_admin"))
+                                                                                                setData(prevState => ({
+                                                                                                    ...prevState,
+                                                                                                    user_roles: ["coordinator", "educator", "guardian", "franchisee_admin"]
+                                                                                                })
+                                                                                                )
+                                                                                        }
+
+                                                                                        if (getUser_Role == 'franchisee_admin') {
+                                                                                            if (data.user_roles.includes("coordinator")
+                                                                                                && data.user_roles.includes("educator")
+                                                                                                && data.user_roles.includes("guardian")
+                                                                                            ) {
+                                                                                                setData(prevState => ({
+                                                                                                    ...prevState,
+                                                                                                    user_roles: [],
+                                                                                                }));
+                                                                                            }
+
+                                                                                            if (!data.user_roles.includes("coordinator")
+                                                                                                && !data.user_roles.includes("educator")
+                                                                                                && !data.user_roles.includes("guardian")
+                                                                                            )
+                                                                                                setData(prevState => ({
+                                                                                                    ...prevState,
+                                                                                                    user_roles: ["coordinator", "educator", "guardian"]
+                                                                                                })
+                                                                                                )
+                                                                                        }
+
+                                                                                        if (getUser_Role == 'coordinator') {
+                                                                                            if (
+                                                                                                data.user_roles.includes("educator")
+                                                                                                && data.user_roles.includes("guardian")
+                                                                                            ) {
+                                                                                                setData(prevState => ({
+                                                                                                    ...prevState,
+                                                                                                    user_roles: [],
+                                                                                                }));
+                                                                                            }
+
+                                                                                            if (!data.user_roles.includes("educator")
+                                                                                                && !data.user_roles.includes("guardian")
+                                                                                            )
+                                                                                                setData(prevState => ({
+                                                                                                    ...prevState,
+                                                                                                    user_roles: ["educator", "guardian"]
+                                                                                                })
+                                                                                                )
+                                                                                        }
                                                                                     }} />
                                                                                 <span className="checkmark"></span>
                                                                             </label>) : null}
+
                                                                         </div>
                                                                     </Form.Group>
                                                                 ) : null}
