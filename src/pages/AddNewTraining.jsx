@@ -1127,29 +1127,6 @@ const AddNewTraining = () => {
 
                 <Row className="mt-4">
                   <Col lg={3} md={6}>
-                  </Col>
-
-                  <Col lg={9} md={12}>
-                    <Form.Group>
-                      <Form.Label>Select Franchise(s)</Form.Label>
-                      <div className="select-with-plus">
-                        <Multiselect
-                          // disable={trainingSettings?.send_to_all_franchisee === false}
-                          displayValue="key"
-                          disable={true}
-                          selectedValues={franchiseeList?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))}
-                          className="multiselect-box default-arrow-select"
-                          onKeyPressFn={function noRefCheck() { }}
-                          onSearch={function noRefCheck() { }}
-                          options={franchiseeList}
-                        />
-                      </div>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row className="mt-4">
-                  <Col lg={3} md={6}>
                     <Form.Group>
                       <Form.Label>Applicable to</Form.Label>
                       <div>
