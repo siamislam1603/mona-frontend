@@ -213,9 +213,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     userID: dt.id,
                     creatorName: dt.creatorName + "," + dt.creatorRole,
                     categoryId: dt.categoryId,
-                    Shaired: dt.repository_shares ? dt.repository_shares : dt.repository.repository_shares[0].length,
+                    Shaired: dt.repository_shares ? dt.repository_shares.length : dt.repository.repository_shares.length,
                     // Shaired: dt.repository.repository_shares[0].length,
                     filesId: dt.filesId,
+
                 }));
                 setUserData(tempData);
                 console.log('tempData++++++++++++++++++++', tempData)
@@ -435,6 +436,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             text: 'Shared',
             sort: true,
             formatter: (cell) => {
+                console.log("cell", cell)
                 return (
                     <>
                         <div className="user-list">
