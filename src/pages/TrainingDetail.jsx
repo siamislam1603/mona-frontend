@@ -265,31 +265,6 @@ const TrainingDetail = () => {
                         </Col>
 
                         {
-                          relatedForms &&
-                          <Col md={12}>
-                            <div className="related-form-sec mb-5">
-                              <h3 className="title-sm">Training Assessment Form</h3>
-                              <div className="column-list files-list three-col">
-                                <div className="item">
-                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">{relatedForms.form_name}</a></div>
-                                  <div className="cta-col">
-                                    {/* <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
-                                      {/* </Dropdown.Menu> */}
-                                    {/* </Dropdown> */}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </Col>
-                        }
-
-                        {
                           users &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
@@ -336,6 +311,31 @@ const TrainingDetail = () => {
                           </>
                         }
                       </div>
+
+                      {
+                          relatedForms &&
+                          <Col md={12}>
+                            <div className="related-form-sec mb-5">
+                              <h3 className="title-sm">Training Assessment Form</h3>
+                              <div className="column-list files-list three-col">
+                                <div className="item">
+                                  <div className="pic"><a><img src="../img/folder-ico.png" alt="" /></a></div>
+                                  <div className="name"><a>{relatedForms.form_name}</a></div>
+                                  <div className="cta-col">
+                                    {/* <Dropdown>
+                                      <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
+                                      {/* </Dropdown.Menu> */}
+                                    {/* </Dropdown> */}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </Col>
+                        }
                     </div>
                   </div>
                 }
