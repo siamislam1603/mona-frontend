@@ -437,28 +437,28 @@ export const FranchiseeFormValidation = (formObj) => {
     errors.franchisee_name = 'Franchise name is required';
   }
 
+  if (!franchisee_number) {
+    errors.franchisee_number = 'Franchise number is required';
+  }
+  
   if (!abn) {
     errors.abn = 'Australian business number is required';
   }
-
+  
+  if (!acn) {
+    errors.acn = 'Australian company number is required';
+  }
+  
   if (!city) {
     errors.city = 'Suburb is required';
   }
 
-  if (!state) {
-    errors.state = 'State is required';
-  }
-
-  if (!franchisee_number) {
-    errors.franchisee_number = 'Franchise number is required';
-  }
-
-  if (!acn) {
-    errors.acn = 'Australian company number is required';
-  }
-
   if (!address) {
     errors.address = 'Address is required';
+  }
+  
+  if (!state) {
+    errors.state = 'State is required';
   }
 
   if (!postcode) {
@@ -487,37 +487,42 @@ export const acceptPointValidator = (value) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
 
-  let { fullname, role, state, city, address, postalCode, email, phone, franchisee, password, confirm_password } =
-    formObj;
+  let { fullname, role, state, city, address, postalCode, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
+  formObj;
+  
+  if (!email) errors.email = 'Email address is required';
 
+  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
+    errors.email = "Email is invalid";
+  
+  if (!role) errors.role = 'User role is required';
+  
   if (!fullname) errors.fullname = 'Full name is required';
 
-  if (!franchisee) errors.franchisee = 'Franchise is required';
-
-  if (!role) errors.role = 'User role is required';
-
+  if(!state) errors.state = 'State is required';
+  
   if (!city) errors.city = 'Suburb is required';
 
-  if(!state) errors.state = 'State is required';
+  if (!address) errors.address = 'Address is required';
+  
+  if (!postalCode) errors.postalCode = 'Post code is required';
+  
+  if (!phone) errors.phone = 'Phone number is required';
+  
+  if (!franchisee) errors.franchisee = 'Franchise is required';
 
+  if(open_coordinator === true && !coordinator)
+    errors.coordinator = 'Coordinator is required'
+  
   if (password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }
 
-  if (!address) errors.address = 'Address is required';
 
-  if (!postalCode) errors.postalCode = 'Post code is required';
 
-  if (postalCode.length !== 4)
-    errors.postalCodeLength = 'Post code should be 4-digit long';
 
-  if (!email) errors.email = 'Email address is required';
 
-  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
-    errors.email = "Email is invalid";
-
-  if (!phone) errors.phone = 'Phone number is required';
 
   return errors;
 };
