@@ -19,10 +19,8 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const GetData = async () => {
-
     try {
       let User = localStorage.getItem('user_role');
-
       let URL = User === "guardian" ? `${BASE_URL}/fileRepo?childId=[${localStorage.getItem('user_id')}]` : `${BASE_URL}/fileRepo/`
       // let ulr = `${BASE_URL}/fileRepo/`
 

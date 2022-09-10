@@ -51,7 +51,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         franchisee: [],
         assigned_users: [],
         assigned_childs: [],
-        accessibleToRole:1
+        accessibleToRole: 1
     });
     const [child, setChild] = useState([]);
 
@@ -165,7 +165,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
 
         formSettings.franchisee = formSettings.franchisee[0] == "all" ? [] : formSettings.franchisee
-        console.log(saveFileId,"saveFILEID")
+        console.log(saveFileId, "saveFILEID")
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
         }, {
@@ -287,7 +287,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         GetData()
     }, [saveFileId])
 
-   
+
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');
@@ -423,7 +423,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                         <div className="user-list">
                             <span className="user-name">
                                 {cell[0]}
-                                {/* <small>
+                                <small>
                                     {
                                         cell[1] === "franchisor_admin" ? "Franchisor Admin" :
                                             cell[1] === "franchisee_admin" ? "Franchisee Admin" :
@@ -432,7 +432,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         cell[1] === "coordinator" ? "Coordinator" :
                                                             cell[1]
                                     }
-                                </small> */}
+                                </small>
                             </span>
                         </div>
                     </>
@@ -832,12 +832,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                             assigned_role: [],
                                                                         }));
                                                                     }
-                                                                    else{
+                                                                    else {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_role: ["coordinator", "educator", "guardian", "franchisee_admin"]
-                                                                        }))}
-                                                                        
+                                                                        }))
+                                                                    }
+
                                                                 }
 
                                                                 if (getUser_Role == 'franchisee_admin') {
@@ -851,11 +852,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                         }));
                                                                     }
 
-                                                                    else { setFormSettings(prevState => ({
+                                                                    else {
+                                                                        setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_role: ["coordinator", "educator", "guardian"]
                                                                         })
-                                                                        )}
+                                                                        )
+                                                                    }
                                                                 }
 
                                                                 if (getUser_Role == 'coordinator') {
@@ -869,11 +872,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                         }));
                                                                     }
 
-                                                                    else {setFormSettings(prevState => ({
+                                                                    else {
+                                                                        setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_role: ["educator", "guardian"]
                                                                         })
-                                                                        )}
+                                                                        )
+                                                                    }
                                                                 }
                                                             }} />
                                                     </Form.Group>) : null}

@@ -38,9 +38,7 @@ const FileRpositoryList = () => {
     });
 
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-
-
-    console.log(selectedFranchisee, "selectedFranchisee")
+    console.log(selectedFranchisee, "franchiseeList")
     const [child, setChild] = useState([]);
 
     const fetchFranchiseeList = async () => {
@@ -72,12 +70,11 @@ const FileRpositoryList = () => {
             redirect: 'follow',
             headers: myHeaders,
         };
-        const ID_array = selectedFranchisee?.split(",");
-        console.log(ID_array, "ID_array")
         try {
-            let data = ID_array?.length > 1 ? ID_array?.slice(1) : ID_array;
-
-            let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=${data}`, requestOptions)
+            let data = selectedFranchisee === "null" ? "all" : selectedFranchisee;
+            console.log(data, "dataID")
+            console.log(data, "ID")
+            let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]`, requestOptions)
             response = await response.json();
             setUser(response.result)
             if (response) {
@@ -164,7 +161,7 @@ const FileRpositoryList = () => {
         getFileCategory();
         getUser();
         fetchFranchiseeList();
-    }, [])
+    }, [selectedFranchisee])
 
     useEffect(() => {
         getUser();
