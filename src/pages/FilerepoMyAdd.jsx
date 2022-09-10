@@ -168,8 +168,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
             if (response.status === 200 && response.data.status === "success") {
                 const { files } = response.data;
-                console.log(files, "response+++++++++++++++++++++++++++++++++++++")
-                console.log(files, "files")
                 let tempData = files.map((dt) => ({
                     name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
                     createdAt: dt.createdAt,
@@ -348,7 +346,17 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 <span className="user-name">
                                                     {cell[1]}.Doc
                                                 </span>
-                                            </> : cell[0]
+                                            </>
+                                            : <>
+                                                <span className="user-pic-tow">
+                                                    <a href={cell[2]} download >
+                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                    </a>
+                                                </span>
+                                                <span className="user-name">
+                                                    {cell[1]}.Doc
+                                                </span>
+                                            </>
                             }
                         </div>
                     </>
