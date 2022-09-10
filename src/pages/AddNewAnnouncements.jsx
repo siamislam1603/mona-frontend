@@ -58,7 +58,11 @@ const [titleError,setTitleError] = useState();
   const [titleChecking,setTitleChecking] = useState(false)
   const [topMessage,setTopMessage] = useState(null);
 
-let title = useRef(null)
+   // REF REFERENCES
+  let title = useRef(null)
+  let franchise = useRef(null)
+  let meta_description = useRef(null)
+
 const createAnnouncement = async (data) => {
   try {
     const token = localStorage.getItem('token');
@@ -173,6 +177,46 @@ const createAnnouncement = async (data) => {
 
       }
     }
+    const setAutoFocus = (errObj) =>{
+      const errArray = Object.keys(errObj);
+      console.log("ErrArrat",errArray)
+
+      if(errArray.includes('title')) {
+        console.log("Title",title.current.focus())
+
+        title.current.focus();
+
+      } 
+      else if(errArray.includes('franchise')){
+        // const executeScroll = () => franchise.current.scrollIntoView() 
+        // executeScroll()
+        // console.log("franhise", document.getElementById('franchise').focus())
+        
+        // franchise.current.focus();
+        // document.getElementById('franchise').focus();
+        window.scrollTo({
+          top: franchise.current.offsetTop,
+          behavior: "smooth",
+          // You can also assign value "auto"
+          // to the behavior parameter.
+        });
+      }
+      else if(errArray.includes('meta_description')){
+        // console.log("MEta description",document.getElementById('meta_description').current.focus())
+        // meta_description.current.focus();
+        // meta_description.current.focus();
+        // document.getElementById('meta_description').focus();
+        window.scrollTo({
+          top: meta_description.current.offsetTop,
+          behavior: "smooth",
+          // You can also assign value "auto"
+          // to the behavior parameter.
+        });
+
+
+      }
+    
+    }
 
     useEffect(() => {
       fetchFranchiseeList();
@@ -246,13 +290,7 @@ const createAnnouncement = async (data) => {
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
         // window.scroll(0,0)
-        console.log("Error Object",errorObj)
-        // const titleDiv = useRef(null)
-        console.log("dsdsads",typeof     Object.keys(errorObj), typeof title)
-        // let res = useRef(Object.keys(errorObj)[0])
-     
-        const executeScroll = () => title.current.scrollIntoView() 
-        executeScroll()
+        setAutoFocus(errorObj)
        }
        else{
         setError({});
@@ -335,10 +373,11 @@ console.log("ds",ds,cureent)
                   </header>
                 </div>
                   <Row >
-                        <Form.Group ref={title} className="col-md-6 mb-3">
+                        <Form.Group className="col-md-6 mb-3">
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                           type="text" 
+                          ref={title} 
                           name="title"
                           onChange={handleAnnouncementData} 
                           onBlur={handleTitle} 
@@ -357,7 +396,7 @@ console.log("ds",ds,cureent)
                             
                             <Form.Group className="col-md-6 mb-3">
                               <div className="btn-radio inline-col">
-                                <Form.Label>Send to all Franchises</Form.Label>
+                                <Form.Label ref ={franchise}>Send to all Franchises</Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
@@ -407,12 +446,15 @@ console.log("ds",ds,cureent)
                             <Form.Group className="col-md-6 mb-3">
                             
                             
-                            <Form.Label>Select Franchise(s)</Form.Label>
+                            <Form.Label >Select Franchise(s)</Form.Label>
         
                             {
                             localStorage.getItem('user_role') === 'franchisor_admin' ?
                             <div className="select-with-plus">
                               <Multiselect
+                              // ref={franchise}
+                            //  id='franchise'
+
                               disable={allFranchise === false?false:true}
                               // singleSelect={true}
                               // placeholder={"Select Franchise Names"}
@@ -447,7 +489,7 @@ console.log("ds",ds,cureent)
                             
                           : <div className="select-with-plus">
                               <Select
-                               
+                              
                                 placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0]?.label || "Which Franchisee?"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
@@ -472,11 +514,13 @@ console.log("ds",ds,cureent)
                           
                       
                         
-                      <Col md={12} className="mb-3">
+                      <Col md={12} className="mb-3" ref={meta_description}
+                      >
                         <Form.Group>
-                        <Form.Label>Announcement Description</Form.Label>
+                        <Form.Label >Announcement Description</Form.Label>
                         <MyEditor
                               errors={error}
+                              
                               name ="meta_description"
                               handleChange={(e, data) => {
                                 announcementDescription(e, data);
