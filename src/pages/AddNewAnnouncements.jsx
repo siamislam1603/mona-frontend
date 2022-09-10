@@ -58,7 +58,7 @@ const [titleError,setTitleError] = useState();
   const [titleChecking,setTitleChecking] = useState(false)
   const [topMessage,setTopMessage] = useState(null);
 
-
+let title = useRef(null)
 const createAnnouncement = async (data) => {
   try {
     const token = localStorage.getItem('token');
@@ -245,8 +245,14 @@ const createAnnouncement = async (data) => {
       let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking);
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
-        window.scroll(0,0)
-        
+        // window.scroll(0,0)
+        console.log("Error Object",errorObj)
+        // const titleDiv = useRef(null)
+        console.log("dsdsads",typeof     Object.keys(errorObj), typeof title)
+        // let res = useRef(Object.keys(errorObj)[0])
+     
+        const executeScroll = () => title.current.scrollIntoView() 
+        executeScroll()
        }
        else{
         setError({});
@@ -283,6 +289,7 @@ const createAnnouncement = async (data) => {
 
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [userRole,setUserRole] = useState("");
+ 
 
 
     useEffect(() =>{
@@ -290,6 +297,7 @@ const createAnnouncement = async (data) => {
       setUserRole(role)
     },[])
 
+ 
 
 
 var ds=moment().add(10,"minutes").format("HH:mm")
@@ -326,8 +334,8 @@ console.log("ds",ds,cureent)
                     <h1 className="title-lg">Add New Announcement <span className="setting-ico"></span></h1>
                   </header>
                 </div>
-                  <Row>
-                        <Form.Group className="col-md-6 mb-3">
+                  <Row >
+                        <Form.Group ref={title} className="col-md-6 mb-3">
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                           type="text" 

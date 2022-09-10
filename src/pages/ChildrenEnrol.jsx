@@ -221,17 +221,20 @@ let originFilter;
     {
       dataField: 'educatorassisgned',
       text: 'Educator Assigned',
+      
       formatter: (cell) => {
-        console.log("Educator", cell)
         cell = cell.split(',');
-
         return (<>
           {
             cell[0] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[1] === "undefined" || cell[3] === "null"  ? "../img/upload.jpg" : cell[1]} />
+                {/* <img src={ cell[1] === "null"  ? "../img/upload.jpg" : cell[1]} /> */}
+
+                <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
+
               </span><span className="user-name">{cell[0]}
+               {/* <span>{cell[1]}</span> */}
               </span>
             </div>
           }
