@@ -22,7 +22,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
 
     try {
       let User = localStorage.getItem('user_role');
-     
+
       let URL = User === "guardian" ? `${BASE_URL}/fileRepo?childId=[${localStorage.getItem('user_id')}]` : `${BASE_URL}/fileRepo/`
       // let ulr = `${BASE_URL}/fileRepo/`
 
@@ -102,7 +102,16 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
             <div className="user-list">
               <span className="user-name">
                 {cell[0]}
-                <small>{cell[1]}</small>
+                <small>
+                  {
+                    cell[1] === "franchisor_admin" ? "Franchisor Admin" :
+                      cell[1] === "franchisee_admin" ? "Franchisee Admin" :
+                        cell[1] === "guardian" ? "Guardian" :
+                          cell[1] === "educator" ? "Educator" :
+                            cell[1] === "coordinator" ? "Coordinator" :
+                              cell[1]
+                  }
+                </small>
               </span>
             </div>
           </>
@@ -148,7 +157,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
             <>
               <BootstrapTable
                 {...props.baseProps}
-                selectRow={selectRow}
+                // selectRow={selectRow}
                 pagination={paginationFactory()}
               />
             </>

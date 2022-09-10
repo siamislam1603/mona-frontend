@@ -19,7 +19,7 @@ let selectedUserId = '';
 
 const selectRow = {
     mode: 'checkbox',
-    clickToSelect: true,
+    // clickToSelect: true,
 };
 
 const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
@@ -168,6 +168,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
             if (response.status === 200 && response.data.status === "success") {
                 const { files } = response.data;
+                console.log(files, "response+++++++++++++++++++++++++++++++++++++")
                 console.log(files, "files")
                 let tempData = files.map((dt) => ({
                     name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
@@ -175,11 +176,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     userID: dt.id,
                     creatorName: dt.creatorName + "," + dt.creatorRole,
                     categoryId: dt.categoryId,
-                    Shaired: dt.repository_shares.length,
+                    Shaired: dt.repository_shares ? dt.repository_shares : dt.repository.repository_shares[0].length,
+                    // Shaired: dt.repository.repository_shares[0].length,
                     filesId: dt.filesId,
                 }));
                 setUserData(tempData);
-                console.log('tempData', tempData)
+                console.log('tempData++++++++++++++++++++', tempData)
             }
         } catch (err) {
             setfullLoaderStatus(false)
@@ -369,7 +371,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                         <div className="user-list">
                             <span className="user-name">
                                 {cell[0]}
-                                <small>{cell[1]}</small>
+                                {/* <small>
+                                    {
+                                        cell[1] === "franchisor_admin" ? "Franchisor Admin" :
+                                            cell[1] === "franchisee_admin" ? "Franchisee Admin" :
+                                                cell[1] === "guardian" ? "Guardian" :
+                                                    cell[1] === "educator" ? "Educator" :
+                                                        cell[1] === "coordinator" ? "Coordinator" :
+                                                            cell[1]
+                                    }
+                                </small> */}
                             </span>
                         </div>
                     </>
@@ -475,7 +486,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                                         Params?.id === "7" ? "Resources" :
                                                                                             Params?.id === "8" ? "General" : "Null"
                                                                 }
-                                                                <small>{userData.length} files</small>
+                                                                <small>{userData?.length} files</small>
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">
@@ -489,7 +500,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     </header>
                                                     <BootstrapTable
                                                         {...props.baseProps}
-                                                        selectRow={selectRow}
+                                                        // selectRow={selectRow}
                                                         pagination={paginationFactory()}
                                                     />
                                                 </>
