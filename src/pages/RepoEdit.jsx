@@ -65,7 +65,7 @@ const RepoEdit = () => {
             categoryId: data?.repository_files[0].categoryId,
             image: data?.repository_files[0].filesPath,
             franchise: data?.repository_shares[0].franchisee,
-            accessibleToRole: data?.repository_shares[0].accessibleToRole,
+            accessibleToRole: data?.repository_shares[0].accessibleToRole || 1,
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
             assigned_users: data?.repository_shares[0].assigned_users,
             user_roles: data?.repository_shares[0].assigned_roles,
@@ -700,15 +700,11 @@ const RepoEdit = () => {
                                                                                                 }));
                                                                                             }
 
-                                                                                            if (!data.user_roles.includes("coordinator")
-                                                                                                && !data.user_roles.includes("educator")
-                                                                                                && !data.user_roles.includes("guardian")
-                                                                                                && !data.user_roles.includes("franchisee_admin"))
-                                                                                                setData(prevState => ({
+                                                                                            else {setData(prevState => ({
                                                                                                     ...prevState,
                                                                                                     user_roles: ["coordinator", "educator", "guardian", "franchisee_admin"]
                                                                                                 })
-                                                                                                )
+                                                                                                )}
                                                                                         }
 
                                                                                         if (getUser_Role == 'franchisee_admin') {
@@ -722,15 +718,11 @@ const RepoEdit = () => {
                                                                                                 }));
                                                                                             }
 
-                                                                                            if (!data.user_roles.includes("coordinator")
-                                                                                                && !data.user_roles.includes("educator")
-                                                                                                && !data.user_roles.includes("guardian")
-                                                                                            )
-                                                                                                setData(prevState => ({
-                                                                                                    ...prevState,
-                                                                                                    user_roles: ["coordinator", "educator", "guardian"]
-                                                                                                })
-                                                                                                )
+                                                                                            else{setData(prevState => ({
+                                                                                                ...prevState,
+                                                                                                user_roles: ["coordinator", "educator", "guardian"]
+                                                                                            })
+                                                                                            )}
                                                                                         }
 
                                                                                         if (getUser_Role == 'coordinator') {
@@ -744,14 +736,12 @@ const RepoEdit = () => {
                                                                                                 }));
                                                                                             }
 
-                                                                                            if (!data.user_roles.includes("educator")
-                                                                                                && !data.user_roles.includes("guardian")
-                                                                                            )
-                                                                                                setData(prevState => ({
-                                                                                                    ...prevState,
-                                                                                                    user_roles: ["educator", "guardian"]
-                                                                                                })
-                                                                                                )
+                                                                                            
+                                                                                            else{setData(prevState => ({
+                                                                                                ...prevState,
+                                                                                                user_roles: ["educator", "guardian"]
+                                                                                            })
+                                                                                            )}
                                                                                         }
                                                                                     }} />
                                                                                 <span className="checkmark"></span>
