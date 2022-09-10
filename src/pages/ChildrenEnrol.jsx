@@ -243,7 +243,7 @@ let originFilter;
             cell[2] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
+                <img src={cell[3] === "undefined" || cell[1].trim() === "null"? "../img/upload.jpg" : cell[3]} />
               </span><span className="user-name">{cell[2]}
               </span>
             </div>
