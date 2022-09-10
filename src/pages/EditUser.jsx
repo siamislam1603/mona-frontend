@@ -258,7 +258,7 @@ const EditUser = () => {
 
   const handleChange = (event) => {
     let { name, value } = event.target;
-    value = value.replace(/\s/g, "");
+    // value = value.replace(/\s/g, "");
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
