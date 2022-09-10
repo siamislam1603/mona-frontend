@@ -31,7 +31,7 @@ const FilerepoUploadFile = () => {
     const [selectedAll, setSelectedAll] = useState(false);
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
-    const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+    const [formSettingData, setFormSettingData] = useState({ shared_role: '',accessible_to_role:1 });
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
