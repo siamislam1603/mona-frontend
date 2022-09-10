@@ -97,6 +97,7 @@ const EditTraining = () => {
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
+  const [videoFileErrorMessage, setVideoFileErrorMessage] = useState(null);
 
   // IMAGECROPER
   const [coverImage, setCoverImage] = useState({});
@@ -145,8 +146,8 @@ const EditTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
-    const response = await axios.get(`${BASE_URL}/auth/users/franchisees?franchiseeId=[${f}]`);
+    // let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -515,13 +516,26 @@ const EditTraining = () => {
                               <Form.Control
                                 style={{ flex: 6 }}
                                 type="number"
-                                min={1}
-                                max={2}
                                 value={trainingData.time_required_to_complete}
-                                onChange={(e) => setTrainingData(prevState => ({
-                                  ...prevState,
-                                  time_required_to_complete: parseInt(e.target.value)
-                                }))}
+                                onChange={(event) => {
+                                  if(parseInt(event.target.value) < 10000) {
+                                    setTrainingData((prevState) => ({
+                                      ...prevState,
+                                      time_required_to_complete: parseInt(event.target.value),
+                                    }));
+  
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      time_required_to_complete: null
+                                    }));
+                                  } else {
+                                    setTrainingData((prevState) => ({
+                                      ...prevState,
+                                      time_required_to_complete: event.target.value.slice(0, -1),
+                                    }));
+                                  }
+  
+                                }}
                               />
                               <Select
                                 style={{ flex: 3 }}
@@ -607,9 +621,17 @@ const EditTraining = () => {
                             <DropAllFile
                               title="Videos"
                               type="video"
+                              setUploadError={setVideoFileErrorMessage}
                               onSave={setVideoTutorialFiles}
                             />
-
+                            {
+                              videoFileErrorMessage  &&
+                              videoFileErrorMessage.map(errorObj => {
+                                return (
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>Error: {errorObj?.error[0].message}</p>
+                                )
+                              })
+                            }
                             <div className="media-container">
                               {
                                 fetchedVideoTutorialFiles &&
@@ -646,7 +668,7 @@ const EditTraining = () => {
                                   return (
                                     <div className="file-container">
                                       <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
-                                      <p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p>
+                                      <a href={file.file}><p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p></a>
                                       <img
                                         onClick={() => handleTrainingFileDelete(file.id)}
                                         className="file-remove"
@@ -899,7 +921,7 @@ const EditTraining = () => {
                         <Form.Check
                           type="checkbox"
                           checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
-                          label="Franchise Admin"
+                          label="Franchisee Admin"
                           onChange={() => {
                             if (trainingSettings.assigned_roles?.includes("franchisee_admin")) {
                               let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");

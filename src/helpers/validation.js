@@ -493,7 +493,7 @@ export const acceptPointValidator = (value) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
 
-  let { fullname, role, city, address, postalCode, email, phone, franchisee, password, confirm_password } =
+  let { fullname, role, state, city, address, postalCode, email, phone, franchisee, password, confirm_password } =
     formObj;
 
   if (!fullname) errors.fullname = 'Full name is required';
@@ -503,6 +503,8 @@ export const UserFormValidation = (formObj) => {
   if (!role) errors.role = 'User role is required';
 
   if (!city) errors.city = 'Suburb is required';
+
+  if(!state) errors.state = 'State is required';
 
   if (password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match";

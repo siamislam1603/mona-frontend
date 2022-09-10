@@ -95,7 +95,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const [immunisationRecordDetails, setImmunisationRecordDetails] = useState(null);
   const [immunisationRecord, setImmunisationRecord] = useState(null);
   const [courtOrders, setCourtOrders] = useState(null);
-  const [courtOrderDetails, setCourtOrderDetails] = useState(null);
+  const [courtOrderDetails, setCourtOrderDetails] = useState([]);
   const [specialNeedsFormDetails, setSpecialNeedsFormDetails] = useState(null);
   const [specialNeedsForm, setSpecialNeedsForm] = useState(null);
   const [allergyFormDetails, setAllergyFormDetails] = useState(null);
@@ -396,8 +396,9 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
+    console.log('RESPONSE DELETE:', response);
     if(response.status === 201 && response.data.status === 'success') {
-      let { token } = response.data;
+      let { token, fileId } = response.data;
       
       if(token === 'immunisation-record') {
         setImmunisationRecordDeleteMessage("Immunisation record deleted successfully.");
@@ -413,6 +414,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
       if(token === 'medical-plan') {
         setMedicalPlanDeleteMessage("Medical plan deleted successfully.")
+      }
+
+      if(token === 'court-order') {
+        let data = courtOrderDetails.filter(file => file.id !== parseInt(fileId));
+        setCourtOrderDetails(data);
+        console.log('COURT ORDER DETAIL AFTER DELETION:', courtOrderDetails);
+        setCourtOrdersDeleteMessage('Court order has been deleted');
+        // if(courtOrderDetails === null || courtOrderDetails.length === 0) {
+        //   console.log('COURT ORDER DETAILS IS EMPTY NOW!');
+        //   setCourtOrderDetails(null);
+        // }
       }
     }
   }
@@ -529,17 +541,36 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   // COURT ORDERS
   const uploadCourtOrders = async () => {
+    console.log('INSIDE THE COURT ORDER UPLOAD FUNCTION:');
+    console.log('FILES:', courtOrders);
     let data = new FormData();
+    let newData = [];
 
-    courtOrders.forEach(d => {
-      data.append('images', d);
+    courtOrders.forEach(courtOrder => {
+      data.append('images', courtOrder);
     })
-    data.append('category', 'court-orders');
+    data.append('category', 'court-order');
+    
+    console.log('INITIATING api to upload court orders');
     let response = await axios.patch(`${BASE_URL}/enrollment/child/file-multi-upload/${paramsChildId}/${paramsParentId}`, data, {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem('token')
       }
     });
+
+    console.log('COURT ORDER RESPONSE:', response);
+    if(response.status === 201 && response.data.status === "success") {
+      let { data } = response.data;
+      setCourtOrders(null);
+      console.log('DATA => COURT ORDER DETAILS:', data);
+      console.log('Court order details:', courtOrderDetails);
+      if(courtOrderDetails === null) {
+        newData = [ ...data ];
+      } else {
+        newData = [...courtOrderDetails, ...data];
+      }
+      setCourtOrderDetails(newData);
+    }
   };
 
   useEffect(() => {
@@ -661,20 +692,22 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   
   // COURT ORDERS 
   useEffect(() => {
+    console.log('COURT ORDERS:', courtOrders);
     if(courtOrders) {
       uploadCourtOrders();
     }
   }, [courtOrders]);
 
-  // useEffect(() => {
-  //   if(courtOrdersDeleteMessage) {
-  //     setCourtOrderDetails(null);
-  //     setTimeout(() => {
-  //       setCourtOrdersDeleteMessage(null);
-  //     }, 3000); 
-  //   }
+  useEffect(() => {
+    if(courtOrdersDeleteMessage) {
+      setCourtOrderDetails(null);
+      setTimeout(() => {
+        setCourtOrdersDeleteMessage(null);
+      }, 3000); 
+    }
 
-  // }, [courtOrdersDeleteMessage])
+  }, [courtOrdersDeleteMessage]);
+
   useEffect(() => {
     if(healthInfoFormErrors) {
       let refName = Object.keys(healthInfoFormErrors)[0];
@@ -684,6 +717,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     }
   }, [healthInfoFormErrors]);
 
+  courtOrderDetails && console.log('COURT ORDER DETAILS:', courtOrderDetails);
+  courtOrderDetails && console.log('TYPE OF STATE:', typeof courtOrderDetails);
   return (
     <>
       {
@@ -698,9 +733,9 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       {
         medicalPlanDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{medicalPlanDeleteMessage}</p>
       }
-      {/* {
+      {
         courtOrdersDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{courtOrdersDeleteMessage}</p>
-      } */}
+      }
       <div className="enrollment-form-sec">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
@@ -824,10 +859,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           </Form.Group>
                           {
                             courtOrderDetails &&
-                            courtOrderDetails.map(co => {
+                            courtOrderDetails?.map(co => {
+                              // console.log('DATA POPULATED:', co);
                               return (
                                 <div>
-                                  <a href={co?.file}><p>{co?.originalName}</p></a>
+                                  <a href={co?.file}><p>{co?.fileName}</p></a>
                                   <img
                                     onClick={() => handleChildFileDelete(co?.id)}
                                     // className="file-remove"
@@ -1076,6 +1112,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               <Form.Control 
                                 type="date" 
                                 placeholder=""
+                                min={new Date().toISOString().slice(0, 10)}
                                 value={childDetails?.date_of_record_viewing || ""}
                                 name="date_of_record_viewing"
                                 onChange={(e) => {

@@ -441,7 +441,7 @@ const Children = () => {
                                             <BootstrapTable
                                                 keyField="id"
                                                 rowEvents={rowEvents}
-                                                selectRow={selectRow}
+                                                // selectRow={selectRow}
                                                 data={productsTow}
                                                 columns={PColumns}
                                             />
