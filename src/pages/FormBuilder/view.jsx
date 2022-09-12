@@ -180,6 +180,15 @@ function ViewFormBuilder(props) {
       .then((result) => console.log(result?.message))
       .catch((error) => console.log('error', error));
   };
+
+  useEffect(() => {
+    if (localStorage.getItem('form_error')) {
+      toast.error(localStorage.getItem('form_error'));
+      localStorage.removeItem('form_error');
+    }
+
+  }, []);
+
   return (
     <>
       <div id="main">
