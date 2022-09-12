@@ -518,7 +518,7 @@ const EditTraining = () => {
                         <Col md={6} className="mb-3">
                           <Form.Group className="relative">
                             <Form.Label>Time required to complete</Form.Label>
-                            <div style={{ display: "flex", gap: "5px" }}>
+                            <div className="timelimit" style={{ display: "flex", gap: "5px" }}>
                               <Form.Control
                                 style={{ flex: 6 }}
                                 type="number"
@@ -631,12 +631,12 @@ const EditTraining = () => {
                               onSave={setVideoTutorialFiles}
                             />
                             <small className="fileinput">(mp4, flv & mkv)</small>
-                            <small className="fileinput">(max 5 files of 1GB each)</small>
+                            <small className="fileinput">(max. 5 video files)</small>
                             {
                               videoFileErrorMessage  &&
                               videoFileErrorMessage.map(errorObj => {
                                 return (
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"Files should be less than 1GB in size."}</p>
                                 )
                               })
                             }
@@ -672,6 +672,8 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
+                            <small className="fileinput">(pdf, doc & xslx)</small>
+                            <small className="fileinput">(max. 5 documents)</small>
                             <div className="media-container">
                               {
                                 fetchedRelatedFiles &&
@@ -694,7 +696,6 @@ const EditTraining = () => {
                                 })
                               }
                             </div>
-                            <small className="fileinput">(pdf, doc & xslx)</small>
                           </Form.Group>
                         </Col>
                         <Col md={12}>
