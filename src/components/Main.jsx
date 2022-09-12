@@ -227,7 +227,7 @@ const Main = () => {
         <Route
           path="/new-franchisees"
           element={
-            <Protected isLoggedIn={isLoggedIn} controller="franchisee_management" action="Add">
+            <Protected isLoggedIn={isLoggedIn} controller="franchisee_management" action="add">
               <SignIn />
               <NewFranchisees />
             </Protected>

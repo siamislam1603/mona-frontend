@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useRef } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
 import { BASE_URL } from "../components/App";
 import TopHeader from '../components/TopHeader';
@@ -64,7 +64,9 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
 
-
+  let title = useRef(null)
+  let franchise = useRef(null)
+  let meta_description = useRef(null)
   const { id } = useParams();
 
   const setAnnouncementFiled = (field, value) => {
@@ -93,13 +95,53 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
       [name]:value
     }))
   };
+  const setAutoFocus = (errObj) =>{
+    const errArray = Object.keys(errObj);
+    console.log("ErrArrat",errArray)
+
+    if(errArray.includes('title')) {
+      console.log("Title",title.current.focus())
+
+      title.current.focus();
+
+    } 
+    else if(errArray.includes('franchise')){
+      // const executeScroll = () => franchise.current.scrollIntoView() 
+      // executeScroll()
+      // console.log("franhise", document.getElementById('franchise').focus())
+      
+      // franchise.current.focus();
+      // document.getElementById('franchise').focus();
+      window.scrollTo({
+        top: franchise.current.offsetTop,
+        behavior: "smooth",
+        // You can also assign value "auto"
+        // to the behavior parameter.
+      });
+    }
+    else if(errArray.includes('meta_description')){
+      // console.log("MEta description",document.getElementById('meta_description').current.focus())
+      // meta_description.current.focus();
+      // meta_description.current.focus();
+      // document.getElementById('meta_description').focus();
+      window.scrollTo({
+        top: meta_description.current.offsetTop,
+        behavior: "smooth",
+        // You can also assign value "auto"
+        // to the behavior parameter.
+      });
+
+
+    }
+  
+  }
   const onSubmit = (e) => {
     e.preventDefault();
  
     const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData,allFranchise);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      window.scroll(0,0)
+      setAutoFocus(newErrors)
     } 
     else{
       setErrors({})
@@ -345,6 +387,7 @@ const selectFranhise = () =>{
                           <Form.Label>Announcement Title</Form.Label>
                           <Form.Control 
                             type="text" 
+                            ref={title} 
                             name="title" 
                             defaultValue={announcementCopyData.title}
                             placeholder="Enter Title"
@@ -369,7 +412,7 @@ const selectFranhise = () =>{
                             <Col lg={3} sm={6}>
                             <Form.Group className="col-md-12">
                               <div className="btn-radio inline-col">
-                       <Form.Label>Send to all Franchises </Form.Label>
+                       <Form.Label ref ={franchise} >Send to all Franchises </Form.Label>
                                 <div>
                                 <Form.Check
                                   type="radio"
@@ -500,10 +543,10 @@ const selectFranhise = () =>{
                   </Row>
                   <div>
                     <Row>
-                      <Col sm={12}>
+                      <Col sm={12} ref={meta_description}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Description
+                          Announcement Description
                           </Form.Label>
                           {/* <MyEditor
                               data={announcementData.meta_description} 
