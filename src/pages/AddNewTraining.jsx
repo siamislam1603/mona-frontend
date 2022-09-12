@@ -191,7 +191,7 @@ const AddNewTraining = () => {
         // localStorage.setItem('active_tab', '/created-training');
         window.location.href = "/training-createdby-me";
       } else {
-        setTopErrorMessage("unable to save cover image!");
+        setTopErrorMessage("unable to save cover image");
         setTimeout(() => {
           setTopErrorMessage(null);
         }, 3000)
@@ -630,7 +630,7 @@ const AddNewTraining = () => {
                               setPopupVisible={setPopupVisible} />
                           }
                           <small className="fileinput mt-1">(png, jpg & jpeg)</small>
-                          {error && !croppedImage && < span className="error"> File is required!</span>}
+                          {error && !croppedImage && < span className="error"> Cover image is required</span>}
                           {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
 
                         </Form.Group>
@@ -646,7 +646,7 @@ const AddNewTraining = () => {
                             onSave={setVideoTutorialFiles}
                           />
                           <small className="fileinput">(mp4, flv & mkv)</small>
-                          <small className="fileinput">(max. 5 files)</small>
+                          <small className="fileinput">(max. 5 video files)</small>
                           {
                             videoFileErrorMessage  &&
                             videoFileErrorMessage.map(errorObj => {
@@ -666,6 +666,7 @@ const AddNewTraining = () => {
                             onSave={setRelatedFiles}
                           />
                           <small className="fileinput">(pdf, doc & xslx)</small>
+                          <small className="fileinput">(max. 5 documents)</small>
                         </Form.Group>
                       </Col>
                       <Col md={12}>

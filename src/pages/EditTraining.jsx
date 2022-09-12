@@ -631,7 +631,7 @@ const EditTraining = () => {
                               onSave={setVideoTutorialFiles}
                             />
                             <small className="fileinput">(mp4, flv & mkv)</small>
-                            <small className="fileinput">(max 5 files)</small>
+                            <small className="fileinput">(max. 5 video files)</small>
                             {
                               videoFileErrorMessage  &&
                               videoFileErrorMessage.map(errorObj => {
@@ -672,6 +672,8 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
+                            <small className="fileinput">(pdf, doc & xslx)</small>
+                            <small className="fileinput">(max. 5 documents)</small>
                             <div className="media-container">
                               {
                                 fetchedRelatedFiles &&
@@ -694,7 +696,6 @@ const EditTraining = () => {
                                 })
                               }
                             </div>
-                            <small className="fileinput">(pdf, doc & xslx)</small>
                           </Form.Group>
                         </Col>
                         <Col md={12}>
