@@ -646,11 +646,13 @@ const AddNewTraining = () => {
                             onSave={setVideoTutorialFiles}
                           />
                           <small className="fileinput">(mp4, flv & mkv)</small>
+                          <small className="fileinput">(max. 5 files)</small>
                           {
                             videoFileErrorMessage  &&
                             videoFileErrorMessage.map(errorObj => {
                               return (
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>Error: {errorObj?.error[0].message}</p>
+                                // errorObj?.error[0].message
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{"Files should be less than 1GB in size."}</p>
                               )
                             })
                           }
@@ -947,7 +949,7 @@ const AddNewTraining = () => {
                           <Form.Check
                             type="checkbox"
                             checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                            label="Coordinators"
+                            label="Coordinator"
                             onChange={() => {
                               if (trainingSettings.assigned_roles.includes("coordinator")) {
                                 let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");

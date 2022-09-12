@@ -8,10 +8,10 @@ export const childFormValidator = (childForm, inclusionSupportForm) => {
     home_address,
     language,
     country_of_birth,
+    developmental_delay,
     child_medical_no,
     child_crn,
     parent_crn_1,
-    developmental_delay,
     parent_crn_2
   } = childForm;
 
