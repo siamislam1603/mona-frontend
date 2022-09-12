@@ -8,7 +8,6 @@ import DragDropSingle from '../components/DragDropSingle';
 import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import validateForm from '../helpers/validateForm';
 import { BASE_URL } from '../components/App';
 import { suburbData } from '../assets/data/suburbData';
 import { Link } from 'react-router-dom';
@@ -27,6 +26,7 @@ const NewUser = () => {
   let city = useRef(null);
   let address = useRef(null);
   let postalCode = useRef(null);
+  let parent_crn = useRef(null);
   let phone = useRef(null);
   let franchisee = useRef(null);
   let coordinator = useRef(null);
@@ -40,6 +40,7 @@ const NewUser = () => {
     city: "",
     address: "",
     postalCode: "",
+    crn: "",
     email: "",
     phone: "",
     trainingCategories: "",
@@ -164,25 +165,27 @@ const NewUser = () => {
     console.log('ARRAY REFS:', errArray);
 
     if(errArray.includes('email')) {
-      email.current.focus();
-    } else if(errArray.includes('role')) {
-      role.current.focus();
-    } else if(errArray.includes('fullname')) {
-      fullname.current.focus();
-    } else if(errArray.includes('state')) {
-      state.current.focus();
-    } else if(errArray.includes('city')) {
-      city.current.focus();
-    } else if(errArray.includes('address')) {
-      address.current.focus();
-    } else if(errArray.includes('postalCode')) {
-      postalCode.current.focus();
-    } else if(errArray.includes('phone')) {
-      phone.current.focus();
+      email?.current?.focus();
+    } else if(errArray?.includes('role')) {
+      role?.current?.focus();
+    } else if(errArray?.includes('fullname')) {
+      fullname?.current?.focus();
+    } else if(errArray?.includes('state')) {
+      state?.current?.focus();
+    } else if(errArray?.includes('city')) {
+      city?.current?.focus();
+    } else if(errArray?.includes('address')) {
+      address?.current?.focus();
+    } else if(errArray?.includes('postalCode')) {
+      postalCode?.current?.focus();
+    } else if(errArray?.includes('crn')) {
+      parent_crn?.current?.focus();
+    }if(errArray?.includes('phone')) {
+      phone?.current?.focus();
     } else if(errArray.includes('franchisee')) {
-      franchisee.current.focus();
+      franchisee?.current?.focus();
     } else if(errArray.includes('coordinator')) {
-      coordinator.current.focus();
+      coordinator?.current?.focus();
     }
   }
 
@@ -729,6 +732,28 @@ const NewUser = () => {
                             />
                             { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
                           </Form.Group>
+                          
+                          {
+                            formData?.role === 'guardian' &&
+                            <Form.Group className="col-md-6 mb-3">
+                              <Form.Label>CRN</Form.Label>
+                              <Form.Control
+                                type="text"
+                                name="crn"
+                                ref={parent_crn}
+                                value={formData.crn ?? ''}
+                                onChange={(e) => {
+
+                                  handleChange(e);
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    crn: null
+                                  }));
+                                }}
+                              />
+                              { formErrors.crn !== null && <span className="error">{formErrors.postalCode}</span> }
+                            </Form.Group>
+                          }
                             
                           {
                             formData && formData?.role !== 'guardian' &&
