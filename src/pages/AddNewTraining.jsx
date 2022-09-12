@@ -532,7 +532,7 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Time required to complete*</Form.Label>
-                          <div style={{ display: "flex", gap: "5px" }}>
+                          <div className="timelimit" style={{ display: "flex", gap: "5px" }}>
                             <Form.Control
                               style={{ flex: 6 }}
                               type="number"

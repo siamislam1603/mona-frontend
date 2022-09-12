@@ -104,7 +104,7 @@ const createAnnouncement = async (data) => {
               
           setLoader(false)
           localStorage.setItem('success_msg', 'Announcement Created Successfully!');
-          localStorage.setItem('active_tab', '/created-announcement');
+          localStorage.setItem('active_tab', '/my-announcements');
           window.location.href="/announcements";
         
         } else {
@@ -123,7 +123,7 @@ const createAnnouncement = async (data) => {
   
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
       localStorage.setItem('success_msg', 'Announcement Created Successfully!');
-      localStorage.setItem('active_tab', '/created-announcement');
+      localStorage.setItem('active_tab_announcement', '/my-announcements');
       window.location.href="/announcements";
         
     }
@@ -327,6 +327,7 @@ const createAnnouncement = async (data) => {
 
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [userRole,setUserRole] = useState("");
+  const [videoFileErrorMessage, setVideoFileErrorMessage] = useState(null);
  
 
 
@@ -346,7 +347,7 @@ console.log("ds",ds,cureent)
 // const valid = moment().add(10,"minutes").format("HH:mm").isAfter(cureent);
 // console.log("valid",valid)
 
-   console.log("Announcement Data",announcementData)
+   console.log("Announcement Data",videoTutorialFiles)
 
   return (
     
@@ -625,7 +626,23 @@ console.log("ds",ds,cureent)
                       <Col sm={6}>
                         <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Videos </Form.Label>
-                          <DropVideo onSave={setVideoTutorialFiles} />
+                          <DropAllFile
+                            title="Videos"
+                            type="video"
+                            setUploadError={setVideoFileErrorMessage}
+                            onSave={setVideoTutorialFiles}
+                          />
+                          {/* <small className="fileinput">(mp4, flv & mkv)</small> */}
+
+                           {
+                            videoFileErrorMessage  &&
+                            videoFileErrorMessage.map(errorObj => {
+                              return (
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message}</p>
+                              )
+                            })
+                          }
+                          {/* <DropVideo onSave={setVideoTutorialFiles} /> */}
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
