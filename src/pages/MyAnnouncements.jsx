@@ -75,7 +75,9 @@ const MyAnnouncements = (props) => {
     return name;
   }
 
+
   const getAddedTime = (str) =>{
+    console.log("Date rohan",str)
     const Added= moment(str).format('DD/MM/YYYY')
     var today = new Date();
     let d = new Date(today);

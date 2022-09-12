@@ -10,7 +10,18 @@ export default function DropVideo({ image,onSave, setTrainingData, setErrors, se
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
   const [theImage,setTheImage] = useState()
+  const[message,setMessage]= useState()
+  const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
+  function fileSizeValidator(file) {
+    let fileSize = bytesToMegaBytes(file.size);
+    console.log('FILE SIZE:', fileSize);
+    if(fileSize > 1024) {
+        setMessage("File is larger than 1 GB")
+    }
+  
+    return null
+  }
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     acceptedFiles.forEach(file => {
       setData(prevState => [...prevState, file]);
@@ -23,9 +34,8 @@ export default function DropVideo({ image,onSave, setTrainingData, setErrors, se
     multiple: false,
       accept: {
         "video/*" :['.mp4','.mkv']
-      }
-
-   
+      },
+      validator: fileSizeValidator
   });
 
   const handleFileDelete = (file) => {
@@ -99,6 +109,7 @@ export default function DropVideo({ image,onSave, setTrainingData, setErrors, se
             data.map((file, index) => (
               <li className="mt-3" key={index}>
                 {file.path}
+               
 
                 {/* <img src={getBase64(file) || currentURI ||image} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" /> */}
                 <span className="ms-2">
