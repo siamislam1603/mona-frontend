@@ -290,6 +290,9 @@ export const TrainingFormValidation = (form) => {
     errors.title = 'Training title is required';
   }
 
+  if(title.length > 0 && !(/^[a-zA-Z ]+$/i.test(title)))
+    errors.title = "Field shouldn't contain numbers & special characters"
+
   if (title <= 2) {
     errors.title_length = 'Training title should be more than 2 characters';
   }
@@ -487,20 +490,13 @@ export const acceptPointValidator = (value) => {
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
-  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  // let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
-  let { fullname, role, state, city, address, postalCode, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
+  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
 
-  if(email.length > 0 && !regex.test(email)) 
-    errors.email = "Email is invalid";
-    
-  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
-    errors.email = "Email is invalid";
-
-  
   if (!role) errors.role = 'User role is required';
   
   if (!fullname) errors.fullname = 'Full name is required';
@@ -512,12 +508,14 @@ export const UserFormValidation = (formObj) => {
   if (!address) errors.address = 'Address is required';
   
   if (!postalCode) errors.postalCode = 'Post code is required';
+
+  if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   
   if (!phone) errors.phone = 'Phone number is required';
   
   if (!franchisee) errors.franchisee = 'Franchise is required';
 
-  if(open_coordinator === true && !coordinator)
+  if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
   
   if (password && confirm_password && password !== confirm_password) {
