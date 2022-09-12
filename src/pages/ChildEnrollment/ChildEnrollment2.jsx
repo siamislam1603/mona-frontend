@@ -378,7 +378,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       medical_service_address?.current?.focus();
     } else if(errArray.includes('maternal_and_child_health_centre')) {
       maternal_and_child_health_centre?.current?.focus();
-    } 
+    } else if(errArray.includes('courtOrders')) {
+      window.scrollTo(600, 600);
+    } else if(errArray.includes('specialNeeds')) {
+      window.scrollTo(600, 3200);
+    } else if(errArray.includes('allergyError')) {
+      window.scrollTo(600, 3600);
+    } else if(errArray.includes('medicalPlan')) {
+      window.scrollTo(600, 3800);
+    }
   }
 
   const submitFormData = (e) => {

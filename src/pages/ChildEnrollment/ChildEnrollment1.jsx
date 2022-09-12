@@ -44,6 +44,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const child_crn = useRef(null);
   const parent_crn_1 = useRef(null);
   const parent_crn_2 = useRef(null);
+  const supportFormUploader = useRef(null);
 
   const parent_family_name = useRef(null);
   const given_name = useRef(null);
@@ -208,6 +209,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       parent_crn_1?.current?.focus();
     } else if(errArray.includes('parent_crn_2')) {
       parent_crn_2?.current?.focus();
+    } else if(errArray.includes('supportForm')) {
+      window.scrollTo(600, 900);
     }
   };
 
@@ -905,6 +908,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <DragDropMultiple 
                             module="child-enrollment"
                             fileLimit={1}
+                            id="support-form"
                             supportFormDetails={supportFormDetails}
                             onSave={setInclusionSupportForm} />
                           <small className="fileinput">(Upload 1 file)</small>
