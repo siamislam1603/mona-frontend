@@ -250,7 +250,10 @@ const AddOperatingManual = () => {
           if (res?.success === false) {
             let errorData = { ...errors };
             errorData['title'] = res?.message;
+            console.log("Error DATA",errorData)
             setErrors(errorData);
+            document.getElementById(Object.keys(errorData)[0]).focus();
+
           } else {
             setOperatingManualData(res?.result);
             setFormSettingFlag(true);
@@ -445,7 +448,7 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
-console.log("Oepratiing",operatingManualData)
+console.log("Oepratiing",errors)
   return (
     <>
       <div id="main">
