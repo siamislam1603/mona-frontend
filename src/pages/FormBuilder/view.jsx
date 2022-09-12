@@ -1280,7 +1280,7 @@ function ViewFormBuilder(props) {
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">
-                              <img src="../img/user_img.png" alt="" />
+                              <img src={item[0]?.user?.profile_photo ? item[0]?.user?.profile_photo : "../img/user_img.png"} alt="" />
                               <h4
                                 className={
                                   item[0]?.seen_flag === false &&
@@ -1352,7 +1352,7 @@ function ViewFormBuilder(props) {
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">
-                              <img src="../img/user_img.png" alt="" />
+                              <img src={item[0]?.user?.profile_photo ? item[0]?.user?.profile_photo : "../img/user_img.png"} alt="" />
                               <h4
                                 className={
                                   item[0]?.seen_flag === false &&
