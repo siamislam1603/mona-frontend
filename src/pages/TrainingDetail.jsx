@@ -51,7 +51,7 @@ const TrainingDetail = () => {
 
   const handleFinishTraining = (event) => {
 
-    if(relatedForms === null) {
+    if(relatedForms === null || typeof relatedForms === "undefined") {
       updateFinishTraining();
     } else {
       setTimeout(() => {
