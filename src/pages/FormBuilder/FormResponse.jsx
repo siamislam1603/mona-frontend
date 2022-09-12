@@ -160,7 +160,7 @@ function FormResponse(props) {
                               <div className="responses-header-row">
                                 <div className="responses-header-left">
                                   <div className="responses-header-image">
-                                    <img src="../img/small-user.png" alt="" />
+                                    <img src={item[0]?.filled_user?.profile_photo ? item[0]?.filled_user?.profile_photo :"../img/small-user.png"} alt="" />
                                   </div>
                                   {responseData[index]?.map(
                                     (inner_item, inner_index) => {

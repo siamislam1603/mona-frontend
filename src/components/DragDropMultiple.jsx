@@ -18,6 +18,7 @@ function fileSizeValidator(file) {
 }
 
 export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null, setUploadError=() => {} }) {
+
   let typeObj;
 
   if(type === "video") {
