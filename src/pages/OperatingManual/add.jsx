@@ -599,7 +599,8 @@ console.log("Oepratiing",operatingManualData)
                             <MyEditor
                               name="description"
                               id="description"
-                              operatingManual={{ ...operatingManualData }}
+                              // operatingManual={{ ...operatingManualData }}
+                              data={operatingManualData?.description}
                               errors={errors}
                               handleChange={(e, data) => {
                                 setOperatingManualField(e, data);

@@ -89,6 +89,7 @@
 
 .custom-menu-dots .dropdown-toggle {
     min-width: auto;
+    margin: 0 10px;
     padding: 0;
     border: 1px solid #3E5D58;
     background: #F7F7F7;
@@ -1856,7 +1857,7 @@ button.add_operating_button.btn.btn-primary {
     min-width: inherit;
     padding: 4px 15px;
     border-radius: 5px;
-    margin: 0 10px;
+    margin:0 0 0 10px;
 }
 
 .tree_search_box .tree_view_search {
