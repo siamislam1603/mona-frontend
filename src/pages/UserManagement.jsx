@@ -743,7 +743,7 @@ const UserManagement = () => {
                                 <BootstrapTable
                                   {...props.baseProps}
                                   rowEvents={rowEvents}
-                                  selectRow={selectRow}
+                                  // selectRow={selectRow}
                                   pagination={paginationFactory()}
                                 />
                               </>
