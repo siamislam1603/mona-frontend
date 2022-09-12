@@ -490,20 +490,13 @@ export const acceptPointValidator = (value) => {
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
-  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  // let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
   let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
 
-  if(email.length > 0 && !regex.test(email)) 
-    errors.email = "Email is invalid";
-    
-  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
-    errors.email = "Email is invalid";
-
-  
   if (!role) errors.role = 'User role is required';
   
   if (!fullname) errors.fullname = 'Full name is required';
@@ -516,7 +509,7 @@ export const UserFormValidation = (formObj) => {
   
   if (!postalCode) errors.postalCode = 'Post code is required';
 
-  if (!crn) errors.crn = "CRN number is required";
+  if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   
   if (!phone) errors.phone = 'Phone number is required';
   
