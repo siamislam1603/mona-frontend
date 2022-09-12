@@ -1243,7 +1243,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         childDetails.has_been_immunized &&
                         <>
                           <Form.Group className="col-md-6 mb-3 mt-3">
-                            <Form.Label>Please attach your child's immunisation record</Form.Label>
+                            <Form.Label>Upload any supporting documents</Form.Label>
                             <DragDropMultiple 
                               module="child-enrollment"
                               fileLimit={1}
@@ -3222,7 +3222,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             childMedicalInformation?.inclusion_support_form_of_special_needs &&
                             <>
                               <Form.Group className="col-md-6 mb-3">
-                                <Form.Label>Upload Support Form</Form.Label>
+                                <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
                                   fileLimit={1}
@@ -3378,7 +3378,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             childMedicalInformation?.inclusion_support_form_of_allergies &&
                             <>
                               <Form.Group className="col-md-6 mb-3">
-                                <Form.Label>Upload Support Form</Form.Label>
+                                <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
                                   fileLimit={1}
@@ -3511,7 +3511,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided &&
                             <>
                               <Form.Group className="col-md-6 mb-3">
-                                <Form.Label>Upload Support Form</Form.Label>
+                                <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
                                   fileLimit={1}
@@ -3584,7 +3584,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           </div>
                         </Form.Group>
                       </div>
-                      <p className="mb-3">In case of anaphylaxis, you are required to provide the service with an individual medical management plan for your child signed by the medical practitioner. This will be attached to your child’s enrolment form. More information is available at <a style={{ fontWeight: 'bold', textDecoration: "underline", color: "blue" }}href="www.education.vic.gov.au/anaphyaxis">www.education.vic.gov.au/anaphyaxis</a>.</p>
+                      {/* <p className="mb-3">In case of anaphylaxis, you are required to provide the service with an individual medical management plan for your child signed by the medical practitioner. This will be attached to your child’s enrolment form. More information is available at <a style={{ fontWeight: 'bold', textDecoration: "underline", color: "blue" }}href="www.education.vic.gov.au/anaphyaxis">www.education.vic.gov.au/anaphyaxis</a>.</p> */}
                       <div className="single-col mb-3">
                         <p>Does your child have any other medical conditions? (e.g. asthma, epilepsy, and diabetes, etc. that are relevant to the care of your child)</p>
                         <Form.Group className="ms-auto">

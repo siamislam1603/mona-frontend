@@ -113,6 +113,7 @@ const EditUser = () => {
       city: user?.city,
       address: user?.address,
       postalCode: user?.postalCode,
+      crn: user?.crn,
       email: user?.email,
       telcode: user?.phone.split("-")[0],
       phone: user?.phone.split("-")[1],
@@ -712,6 +713,19 @@ const EditUser = () => {
                               onChange={handleChange}
                             />
                           </Form.Group>
+                          
+                          {
+                            formData?.role === "guardian" &&
+                            <Form.Group className="col-md-6 mb-3 relative">
+                              <Form.Label>CRN</Form.Label>
+                              <Form.Control
+                                type="text"
+                                name="crn"
+                                value={formData.crn}
+                                onChange={handleChange}
+                              />
+                            </Form.Group>
+                          }
                           
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Email Address</Form.Label>

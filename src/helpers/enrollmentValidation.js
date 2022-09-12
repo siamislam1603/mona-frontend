@@ -12,7 +12,6 @@ export const childFormValidator = (childForm, inclusionSupportForm) => {
     child_medical_no,
     child_crn,
     parent_crn_1,
-    parent_crn_2
   } = childForm;
 
   if(!fullname)
@@ -53,9 +52,6 @@ export const childFormValidator = (childForm, inclusionSupportForm) => {
   
   if(!parent_crn_1)
     errors.parent_crn_1 = "Please complete mandatory field"
-  
-  if(!parent_crn_2)
-    errors.parent_crn_2 = "Please complete mandatory field"
 
   return errors;
 };
