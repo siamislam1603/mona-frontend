@@ -18,6 +18,8 @@ class PdfComponent extends React.Component {
           <ReactToPrint
             content={() => this.componentRef}
             trigger={() => <Button>Save PDF</Button>}
+            pageStyle="print"
+            documentTitle=''
           />
         </div>
       </div>
