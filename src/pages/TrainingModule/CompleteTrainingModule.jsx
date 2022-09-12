@@ -62,14 +62,18 @@ console.log("filter ",filter.category_id)
                     {
                       (localStorage.getItem('user_role') !== 'coordinator' && localStorage.getItem('user_role') !== 'educator') &&
                       <div className="cta-col">
-                        <Dropdown> 
-                          <Dropdown.Toggle variant="transparent" id="ctacol">
+                        {
+                          (localStorage.getItem('user_role') === 'franchisor_admin' ||
+                          parseInt(localStorage.getItem('user_id')) === parseInt(item.training.user_id)) &&
+                          <Dropdown> 
+                            <Dropdown.Toggle variant="transparent" id="ctacol">
                             <img src="../img/dot-ico.svg" alt=""/>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#">Delete</Dropdown.Item>
-                          </Dropdown.Menu>
+                            </Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                <Dropdown.Item href="#">Delete</Dropdown.Item>
+                            </Dropdown.Menu>
                         </Dropdown>
+                      }
                       </div>
                     }
                   </div>
@@ -79,7 +83,7 @@ console.log("filter ",filter.category_id)
               })
           ):
           (
-            <div className="text-center mb-5 mt-5">  <strong>{fullLoaderStatus === false ? 'No training available!':""}</strong> </div>
+            <div className="text-center mb-5 mt-5">  <strong>{fullLoaderStatus === false ? 'No training available.':""}</strong> </div>
 
           )
             

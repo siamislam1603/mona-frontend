@@ -19,7 +19,7 @@ let selectedUserId = '';
 
 const selectRow = {
     mode: 'checkbox',
-    clickToSelect: true,
+    // clickToSelect: true,
 };
 
 const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
@@ -33,6 +33,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [selectedUser, setSelectedUser] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [saveFileId, setSaveFileId] = useState(null);
+
+
+
+    console.log(saveFileId, "saveFileId")
     const [user, setUser] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
@@ -46,9 +50,46 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         assigned_role: [],
         franchisee: [],
         assigned_users: [],
-        assigned_childs: []
+        assigned_childs: [],
+        accessibleToRole: 1
     });
     const [child, setChild] = useState([]);
+
+    const GetData = async () => {
+        let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+        if (response) {
+            setfullLoaderStatus(false)
+        }
+
+        if (response.status === 200 && response.data.status === "success") {
+            const { file } = response.data;
+            copyFetchedData(file);
+        }
+    }
+    const copyFetchedData = (data) => {
+        setFormSettings(prevState => ({
+            ...prevState,
+            id: data.id,
+            createdAt: data?.createdAt,
+            description: data?.description,
+            title: data?.title,
+            categoryId: data?.repository_files[0].categoryId,
+            image: data?.repository_files[0].filesPath,
+            franchisee: data?.repository_shares[0].franchisee,
+            accessibleToRole: data?.repository_shares[0].accessibleToRole,
+            accessibleToAll: data?.repository_shares[0].accessibleToAll,
+            assigned_users: data?.repository_shares[0].assigned_users,
+            assigned_role: data?.repository_shares[0].assigned_roles,
+            assigned_childs: data?.repository_shares[0].assigned_childs,
+            file_type: data?.repository_files[0].fileType,
+        }));
+        // setCoverImage(data?.repository_files[0].filesPath);
+    }
+
 
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
@@ -67,7 +108,36 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
     };
 
+    // const GetData = async () => {
+    //     let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
+    //         headers: {
+    //             authorization: `Bearer ${localStorage.getItem('token')}`,
+    //         },
+    //     })
 
+    //     if (response.status === 200 && response.data.status === "success") {
+    //         const { file } = response.data;
+    //         copyFetchedData(file);
+    //     }
+    // }
+    // assigned_role: [],
+    // franchisee: [],
+    // assigned_users: [],
+    // assigned_childs: []
+    // const copyFetchedData = (data) => {
+    //     setFormSettings(prevState => ({
+    //         ...prevState,
+    //         franchisee: data?.repository_shares[0].franchisee,
+    //         assigned_role: data?.repository_shares[0].accessibleToRole,
+    //         accessibleToAll: data?.repository_shares[0].accessibleToAll,
+    //         assigned_users: data?.repository_shares[0].assigned_users,
+    //         user_roles: data?.repository_shares[0].assigned_roles,
+    //         assigned_childs: data?.repository_shares[0].assigned_childs,
+    //     }));
+    // }
+    // useEffect(() => {
+    //     GetData();
+    // }, [saveFileId])
 
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
@@ -95,6 +165,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
 
         formSettings.franchisee = formSettings.franchisee[0] == "all" ? [] : formSettings.franchisee
+        console.log(saveFileId, "saveFILEID")
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
         }, {
@@ -108,7 +179,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             window.location.reload()
         } else {
             setLoaderFlag(false);
-
             window.location.reload()
         }
     }
@@ -122,6 +192,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         });
         selectedUser.splice(index, 1);
     }
+
     const GetFile = async () => {
         try {
             let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
@@ -134,26 +205,33 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
             if (response.status === 200 && response.data.status === "success") {
                 const { files } = response.data;
-
                 let tempData = files.map((dt) => ({
                     name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
                     createdAt: dt.createdAt,
                     userID: dt.id,
                     creatorName: dt.creatorName + "," + dt.creatorRole,
-                    Shaired: dt?.repository?.repository_shares?.length,
-                    categoryId: dt.categoryId
+                    categoryId: dt.categoryId,
+                    Shaired: dt.repository_shares ? dt.repository_shares.length : dt.repository.repository_shares.length,
+                    // Shaired: dt.repository.repository_shares[0].length,
+                    filesId: dt.filesId,
+
                 }));
                 setUserData(tempData);
+                console.log('tempData++++++++++++++++++++', tempData)
             }
         } catch (err) {
             setfullLoaderStatus(false)
         }
     }
+
+
+
     useEffect(() => {
         if (selectedFranchisees) {
             GetFile();
         }
     }, [selectedFranchisees]);
+
     const getUser = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -173,6 +251,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         }
     };
+
 
     const getChildren = async () => {
         var myHeaders = new Headers();
@@ -200,10 +279,15 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         handleTrainingDelete();
     }, [formSettings.franchisee])
 
-
     useEffect(() => {
         fetchFranchiseeList();
     }, [])
+
+    useEffect(() => {
+        GetData()
+    }, [saveFileId])
+
+
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');
@@ -305,7 +389,17 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 <span className="user-name">
                                                     {cell[1]}.Doc
                                                 </span>
-                                            </> : cell[0]
+                                            </>
+                                            : <>
+                                                <span className="user-pic-tow">
+                                                    <a href={cell[2]} download >
+                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                    </a>
+                                                </span>
+                                                <span className="user-name">
+                                                    {cell[1]}.Doc
+                                                </span>
+                                            </>
                             }
                         </div>
                     </>
@@ -329,7 +423,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                         <div className="user-list">
                             <span className="user-name">
                                 {cell[0]}
-                                <small>{cell[1]}</small>
+                                <small>
+                                    {
+                                        cell[1] === "franchisor_admin" ? "Franchisor Admin" :
+                                            cell[1] === "franchisee_admin" ? "Franchisee Admin" :
+                                                cell[1] === "guardian" ? "Guardian" :
+                                                    cell[1] === "educator" ? "Educator" :
+                                                        cell[1] === "coordinator" ? "Coordinator" :
+                                                            cell[1]
+                                    }
+                                </small>
                             </span>
                         </div>
                     </>
@@ -341,6 +444,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             text: 'Shared',
             sort: true,
             formatter: (cell) => {
+                console.log("cell", cell)
                 return (
                     <>
                         <div className="user-list">
@@ -435,7 +539,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                                         Params?.id === "7" ? "Resources" :
                                                                                             Params?.id === "8" ? "General" : "Null"
                                                                 }
-                                                                <small>{userData.length} files</small>
+                                                                <small>{userData?.length} files</small>
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">
@@ -449,7 +553,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     </header>
                                                     <BootstrapTable
                                                         {...props.baseProps}
-                                                        selectRow={selectRow}
+                                                        // selectRow={selectRow}
                                                         pagination={paginationFactory()}
                                                     />
                                                 </>
@@ -728,16 +832,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                             assigned_role: [],
                                                                         }));
                                                                     }
-
-                                                                    if (!formSettings.assigned_role.includes("coordinator")
-                                                                        && !formSettings.assigned_role.includes("educator")
-                                                                        && !formSettings.assigned_role.includes("guardian")
-                                                                        && !formSettings.assigned_role.includes("franchisee_admin"))
+                                                                    else {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_role: ["coordinator", "educator", "guardian", "franchisee_admin"]
-                                                                        })
-                                                                        )
+                                                                        }))
+                                                                    }
+
                                                                 }
 
                                                                 if (getUser_Role == 'franchisee_admin') {
@@ -751,15 +852,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                         }));
                                                                     }
 
-                                                                    if (!formSettings.assigned_role.includes("coordinator")
-                                                                        && !formSettings.assigned_role.includes("educator")
-                                                                        && !formSettings.assigned_role.includes("guardian")
-                                                                    )
+                                                                    else {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_role: ["coordinator", "educator", "guardian"]
                                                                         })
                                                                         )
+                                                                    }
                                                                 }
 
                                                                 if (getUser_Role == 'coordinator') {
@@ -773,14 +872,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                         }));
                                                                     }
 
-                                                                    if (!formSettings.assigned_role.includes("educator")
-                                                                        && !formSettings.assigned_role.includes("guardian")
-                                                                    )
+                                                                    else {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_role: ["educator", "guardian"]
                                                                         })
                                                                         )
+                                                                    }
                                                                 }
                                                             }} />
                                                     </Form.Group>) : null}
@@ -788,7 +886,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     {
                                         formSettings.accessibleToRole === 0 ?
                                             (<>
-
                                                 <Form.Group>
                                                     <Form.Label>Select User</Form.Label>
                                                     <div className="select-with-plus">

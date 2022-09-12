@@ -39,18 +39,19 @@ const TrainingDetail = () => {
     console.log("The response", response)
 
     if (response.status === 200 && response.data.status === "success") {
+      console.log('SUCCESS TRAINING DETAIL');
       const { training } = response.data;
       setTrainingDetails(training);
-    } else {
-      localStorage.setItem('success_msg', 'Training Created Successfully!');
-      // localStorage.setItem('active_tab', '/created-training');
-      window.location.href = "/training";
-    }
+    }// } else {
+    //   localStorage.setItem('success_msg', 'Training Created Successfully!');
+    //   // localStorage.setItem('active_tab', '/created-training');
+    //   window.location.href = "/training";
+    // }
   }
 
   const handleFinishTraining = (event) => {
 
-    if(typeof relatedForms === 'undefined') {
+    if(relatedForms === null) {
       updateFinishTraining();
     } else {
       setTimeout(() => {
@@ -105,6 +106,7 @@ const TrainingDetail = () => {
   const fetchTrainingFormDetails = async (id) => {
     const response = await axios.get(`${BASE_URL}/training/form/training/${id}`);
 
+    console.log('TRAINING FORM RESPONSE:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { formData } = response.data;
       setRelatedForms(formData);
@@ -148,8 +150,8 @@ const TrainingDetail = () => {
       window.location.href=`/parents-dashboard`;
     }
   }, []);
-  // trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-
+  trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
+  relatedForms && console.log('RELATED Forms:', relatedForms);
   return (
     <>
       <div id="main">
@@ -263,31 +265,6 @@ const TrainingDetail = () => {
                         </Col>
 
                         {
-                          relatedForms &&
-                          <Col md={12}>
-                            <div className="related-form-sec mb-5">
-                              <h3 className="title-sm">Training Assessment Form</h3>
-                              <div className="column-list files-list three-col">
-                                <div className="item">
-                                  <div className="pic"><a href=""><img src="../img/folder-ico.png" alt="" /></a></div>
-                                  <div className="name"><a href="">{relatedForms.form_name}</a></div>
-                                  <div className="cta-col">
-                                    {/* <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
-                                      {/* </Dropdown.Menu> */}
-                                    {/* </Dropdown> */}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </Col>
-                        }
-
-                        {
                           users &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
@@ -334,6 +311,31 @@ const TrainingDetail = () => {
                           </>
                         }
                       </div>
+
+                      {
+                          relatedForms &&
+                          <Col md={12}>
+                            <div className="related-form-sec mb-5">
+                              <h3 className="title-sm">Training Assessment Form</h3>
+                              <div className="column-list files-list three-col">
+                                <div className="item">
+                                  <div className="pic"><a><img src="../img/folder-ico.png" alt="" /></a></div>
+                                  <div className="name"><a>{relatedForms.form_name}</a></div>
+                                  <div className="cta-col">
+                                    {/* <Dropdown>
+                                      <Dropdown.Toggle variant="transparent" id="ctacol">
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
+                                      {/* </Dropdown.Menu> */}
+                                    {/* </Dropdown> */}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </Col>
+                        }
                     </div>
                   </div>
                 }

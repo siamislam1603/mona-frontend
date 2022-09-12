@@ -45,6 +45,7 @@ const EditUser = () => {
   });
   const [countryData, setCountryData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
+  const [stateData, setStateData] = useState([]);
   const [cityData, setCityData] = useState(suburbData);
   const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
@@ -108,6 +109,7 @@ const EditUser = () => {
       id: user?.id,
       fullname: user?.fullname,
       role: user?.role,
+      state: user?.state,
       city: user?.city,
       address: user?.address,
       postalCode: user?.postalCode,
@@ -256,12 +258,26 @@ const EditUser = () => {
 
   const handleChange = (event) => {
     let { name, value } = event.target;
-    value = value.replace(/\s/g, "");
+    // value = value.replace(/\s/g, "");
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
+
+  const fetchStateList = async () => {
+    let response = await axios.get(`${BASE_URL}/api/state/data`);
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { states } = response.data;
+      setStateData(states.map(d => ({
+        id: d.id,
+        value: d.name,
+        label: d.name
+      })));
+    }
+  }
+
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -519,6 +535,7 @@ const EditUser = () => {
     fetchBuinessAssets();
     fetchEditUserData();
     fetchFranchiseeList();
+    fetchStateList();
   }, []);
 
   useEffect(() => {
@@ -622,6 +639,28 @@ const EditUser = () => {
                             <span className="error">
                               {!formData.role && formErrors.role}
                             </span>
+                          </Form.Group>
+
+                          <Form.Group className="col-md-6 mb-3">
+                            <Form.Label>State</Form.Label>
+                            <Select
+                              placeholder="Select"
+                              closeMenuOnSelect={true}
+                              options={stateData}
+                              value={stateData?.filter(d => d.label === formData?.state)}
+                              onChange={(e) => {
+                                setFormData(prevState => ({
+                                  ...prevState,
+                                  state: e.value
+                                }));
+
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  city: null
+                                }));
+                              }}
+                            />
+                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">

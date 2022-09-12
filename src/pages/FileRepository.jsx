@@ -70,7 +70,7 @@ const FileRepository = () => {
 
                               {
                                 verifyPermission("file_repository", "add") &&
-                                <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My A dded Files</a></li>
+                                <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My Added Files</a></li>
                               }
                             </ul>
                           </div>
