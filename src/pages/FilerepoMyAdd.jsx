@@ -211,7 +211,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     userID: dt.id,
                     creatorName: dt.creatorName + "," + dt.creatorRole,
                     categoryId: dt.categoryId,
-                    Shaired: dt.repository_shares ? dt.repository_shares.length : dt.repository.repository_shares.length,
+                    Shaired: dt.repository_shares.length,
                     // Shaired: dt.repository.repository_shares[0].length,
                     filesId: dt.filesId,
 
@@ -475,11 +475,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     <img src="../img/dot-ico.svg" alt="" />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => {
-                                        if (window.confirm("Are you sure you want to delete ?"))
-                                            handleTrainingDelete(cell)
-                                    }}>Delete</Dropdown.Item>
-
                                     <Dropdown.Item href={`/file-repository-Edit/${cell}`}>Edit</Dropdown.Item>
                                     {getUser_Role === "guardian" ? (<></>) : (<>
                                         <Dropdown.Item href="#" onClick={() => {
@@ -487,7 +482,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             setShowModal(true)
                                         }}>Share</Dropdown.Item>
                                     </>)}
-
+                                    <Dropdown.Item onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete ?"))
+                                            handleTrainingDelete(cell)
+                                    }}>Delete</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>

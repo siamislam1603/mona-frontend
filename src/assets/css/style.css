@@ -412,9 +412,9 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .training-column .item .pic{overflow:hidden;border-radius:18px;position:relative}
 .training-column .item .pic a,.training-column .item .pic img{width:100%;display:block}
 .training-column .item .pic .lthumb{position:absolute;right:25px;bottom:25px;z-index:2}
-.training-column .item .fixcol{display:flex;align-items:center;padding:15px}
+.training-column .item .fixcol{display:flex;padding:15px}
 .training-column .item .fixcol .icopic{margin-right:10px;flex:0 0 47px}
-.training-column .item .fixcol .iconame{font-weight:600;font-size:var(--fontlg);line-height:1.6;width:100%}
+.training-column .item .fixcol .iconame{font-weight:600;font-size:var(--fontlg);line-height:1.6;width:100%;min-height: 72px;}
 .training-column .item .fixcol .iconame a{color:var(--primary)}
 .training-column .item .fixcol .iconame a:hover{color:var(--darkblue)}
 .training-column .item .fixcol .date,.training-column .item .fixcol .red-date,.training-column .item .fixcol .time{display:block;font-size:var(--fontxs);font-weight:400}
@@ -719,6 +719,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .passopt .btn-checkbox, .passopt .btn-radio { margin-bottom: 0; }
 .content-icon-section { flex: 0 0 55px; max-width: 55px; }
+
+.timelimit .css-b62m3t-container { flex:0 0 100px; max-width: 100px;}
 
 
 

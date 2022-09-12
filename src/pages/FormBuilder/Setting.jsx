@@ -675,7 +675,7 @@ function Setting(props) {
                                     </td>
                                   </tr>
                                   <tr>
-                                    <td>Franchise admin </td>
+                                    <td>Franchisee Admin </td>
                                     <td className="input_checkbox">
                                       <label className="table-checkbox">
                                         <input

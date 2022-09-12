@@ -126,6 +126,14 @@ const DynamicForm = () => {
       .then((response) => response.text())
       .then((result) => {
         let res = JSON.parse(result);
+
+
+        if(res?.success==false)
+        {
+          localStorage.setItem('form_error', res?.message)
+          window.location.href = '/form';
+        }
+
         setFormData(res.result);
         setFormPermission(res?.form[0]?.form_permissions[0]);
         let formsData = {};
@@ -176,6 +184,8 @@ const DynamicForm = () => {
       localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
       behalfOfFlag
     );
+    console.log("Behalf of is required--->",behalfOfFlag);
+    console.log("new errors--->",newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
@@ -192,8 +202,8 @@ const DynamicForm = () => {
             localStorage.getItem('user_role') === 'guardian'
               ? behalfOfFlag
                 ? childId
-                : behalfOf
-              : behalfOf,
+                : behalfOf ? behalfOf :  localStorage.getItem('user_id')
+              : behalfOf ? behalfOf :  localStorage.getItem('user_id'),
           data: form,
         }),
         redirect: 'follow',
@@ -277,7 +287,7 @@ const DynamicForm = () => {
                 </Row>
                 <Form>
                   <Row className="set-layout-row">
-                    {!(
+                    {formPermission?.target_user && !(
                       formPermission?.target_user?.includes(
                         localStorage.getItem('user_role') === 'guardian'
                           ? 'parent'
@@ -288,6 +298,7 @@ const DynamicForm = () => {
                       )
                     ) && (
                       <Col sm={6}>
+                        {console.log("Hello New once",formPermission?.target_user)}
                         {(behalfOfFlag = true)}
                         <div className="child_info_field sex">
                           <span className="form-label">Behalf of:</span>
@@ -307,7 +318,7 @@ const DynamicForm = () => {
                                 }}
                                 disabled
                               >
-                                <option value="">Select Behalf of</option>
+                                <option value="">Select</option>
                                 {targetUser?.map((item) => {
                                   return (
                                     <>

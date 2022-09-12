@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Col, Row, Form } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from 'axios';
@@ -7,12 +7,33 @@ import { useParams } from 'react-router-dom';
 
 let nextstep = 5;
 let step = 4;
-let fields = ["name", "telephone", "address", "relationship_to_the_child"];
+let fields = ["name",  "address", "telephone", "relationship_to_the_child"];
 
 
 const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
   let { childId: paramsChildId, parentId: paramsParentId } = useParams();
-  console.log('FORM NUMBER:=>>>>>>>>>>>>>>>>>>>>', 4);
+  
+  // USE REF
+  const emergency_name = useRef(null);
+  const emergency_address = useRef(null);
+  const emergency_telephone = useRef(null);
+  const emergency_relationship_to_the_child = useRef(null);
+  
+  const nominee_name = useRef(null);
+  const nominee_address = useRef(null);
+  const nominee_telephone = useRef(null);
+  const nominee_relationship_to_the_child = useRef(null);
+  
+  const person_name = useRef(null);
+  const person_address = useRef(null);
+  const person_telephone = useRef(null);
+  const person_relationship_to_the_child = useRef(null);
+  
+  const other_person_name = useRef(null);
+  const other_person_address = useRef(null);
+  const other_person_telephone = useRef(null);
+  const other_person_relationship_to_the_child = useRef(null);
+
   // REQUIRED STATES
   const [emergencyContactData, setEmergencyContactData] = useState({
     name: "",
@@ -217,6 +238,63 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
     }
   }
 
+  // AUTOFOCUS FUNCTIONS
+  const setFocusOnEmergencyContacts = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+
+    if(errArray.includes("name")) {
+      emergency_name?.current?.focus()
+    } else if(errArray.includes("telephone")) {
+      emergency_telephone?.current?.focus()
+    } else if(errArray.includes("address")) {
+      emergency_address?.current?.focus()
+    } else if(errArray.includes("relationship_to_the_child")) {
+      emergency_relationship_to_the_child?.current?.focus()
+    } 
+  };
+  
+  const setFocusOnAuthorizedNominee = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+
+    if(errArray.includes("name")) {
+      nominee_name?.current?.focus()
+    } else if(errArray.includes("telephone")) {
+      nominee_telephone?.current?.focus()
+    } else if(errArray.includes("address")) {
+      nominee_address?.current?.focus()
+    } else if(errArray.includes("relationship_to_the_child")) {
+      nominee_relationship_to_the_child?.current?.focus()
+    } 
+  };
+  
+  const setFocusOnAuthorizedPerson = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+
+    if(errArray.includes("name")) {
+      person_name?.current?.focus()
+    } else if(errArray.includes("telephone")) {
+      person_telephone?.current?.focus()
+    } else if(errArray.includes("address")) {
+      person_address?.current?.focus()
+    } else if(errArray.includes("relationship_to_the_child")) {
+      person_relationship_to_the_child?.current?.focus()
+    } 
+  };
+  
+  const setFocusOnOtherAuthorizedPerson = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+    console.log('OTHER PERSON ERROR ARRAY', errArray);
+    if(errArray.includes("name")) {
+      other_person_name?.current?.focus()
+    } else if(errArray.includes("telephone")) {
+      other_person_telephone?.current?.focus()
+    } else if(errArray.includes("address")) {
+      other_person_address?.current?.focus()
+    } else if(errArray.includes("relationship_to_the_child")) {
+      other_person_relationship_to_the_child?.current?.focus()
+    } 
+  };
+
   // SAVING THE FORM FOUR DATA
   const submitFormData = (e) => {
     e.preventDefault();
@@ -238,7 +316,6 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
        Object.keys(authorizedNomineeErrorObj2).length > 0 ||
        Object.keys(authorizedPersonErrorObj2).length > 0 ||
        Object.keys(otherAuthorizedPersonErrorObj2).length > 0) {
-        window.scrollTo(0, 0);
         setEmergencyContactError(emergencyContactErrorObj);
         setAuthorizedNomineeError(authorizedNomineeErrorObj);
         setAuthorizedPersonError(authorizedPersonErrorObj);
@@ -247,6 +324,17 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
         setAuthorizedNomineeError2(authorizedNomineeErrorObj2);
         setAuthorizedPersonError2(authorizedPersonErrorObj2);
         setOtherAuthorizedPersonError2(otherAuthorizedPersonErrorObj2);
+
+        setFocusOnEmergencyContacts(emergencyContactErrorObj);
+
+        if(Object.keys(emergencyContactErrorObj).length === 0)
+          setFocusOnAuthorizedNominee(authorizedNomineeErrorObj);
+
+        if(Object.keys(authorizedNomineeErrorObj).length === 0)
+          setFocusOnAuthorizedPerson(authorizedPersonErrorObj);
+
+        if(Object.keys(authorizedPersonErrorObj).length === 0)
+          setFocusOnOtherAuthorizedPerson(otherAuthorizedPersonErrorObj);
     } else {
 
       if(formStepData >= step) {
@@ -425,6 +513,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="name" 
                       type="text"
+                      ref={emergency_name}
                       value={emergencyContactData?.name || ""}
                       onChange={(e) => {
                         handleEmergencyContact(e);
@@ -449,6 +538,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
+                      ref={emergency_address}
                       style={{ resize: "none" }} 
                       as="textarea" 
                       value={emergencyContactData?.address || ""}
@@ -476,6 +566,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
+                      ref={emergency_telephone}
                       maxLength={20}
                       value={emergencyContactData?.telephone || ""}
                       type="tel"
@@ -505,6 +596,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child" 
+                      ref={emergency_relationship_to_the_child}
                       type="text"
                       value={emergencyContactData?.relationship_to_the_child || ""}
                       onChange={(e) => {
@@ -577,6 +669,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="name" 
                       type="text"
+                      ref={nominee_name}
                       value={authorizedNomineeData?.name || ""}
                       onChange={(e) => {
                         handleAuthorizedNominee(e);
@@ -601,6 +694,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
+                      ref={nominee_address}
                       style={{ resize: "none" }} 
                       as="textarea" 
                       value={authorizedNomineeData?.address || ""}
@@ -628,6 +722,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
+                      ref={nominee_telephone}
                       type="tel"
                       maxLength={20}
                       value={authorizedNomineeData?.telephone || ""}
@@ -657,7 +752,8 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                   <Form.Group className="mb-3 relative">
                     <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
-                      name="relationship_to_the_child" 
+                      name="relationship_to_the_child"
+                      ref={nominee_relationship_to_the_child} 
                       type="text"
                       value={authorizedNomineeData?.relationship_to_the_child || ""}
                       onChange={(e) => {
@@ -732,6 +828,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="name" 
                       type="text"
+                      ref={person_name}
                       value={authorizedPersonData?.name || ""}
                       onChange={(e) => {
                         handleAuthorizedPerson(e);
@@ -756,6 +853,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Address *</Form.Label>
                     <Form.Control
                       name="address" 
+                      ref={person_address}
                       style={{ resize: "none" }} 
                       as="textarea" 
                       value={authorizedPersonData?.address || ""}
@@ -783,6 +881,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
+                      ref={person_telephone}
                       value={authorizedPersonData?.telephone || ""}
                       type="tel"
                       maxLength={20}
@@ -814,6 +913,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="relationship_to_the_child" 
                       type="text"
+                      ref={person_relationship_to_the_child}
                       value={authorizedPersonData?.relationship_to_the_child || ""}
                       onChange={(e) => {
                         handleAuthorizedPerson(e);
@@ -885,6 +985,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="name" 
                       type="text"
+                      ref={other_person_name}
                       value={otherAuthorizedPersonData?.name || ""}
                       onChange={(e) => {
                         handleOtherAuthorizedPerson(e);
@@ -910,6 +1011,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Control
                       name="address" 
                       as="textarea" 
+                      ref={other_person_address}
                       style={{ resize: "none" }} 
                       value={otherAuthorizedPersonData?.address || ""}
                       rows={3}
@@ -936,6 +1038,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Telephone *</Form.Label>
                     <Form.Control 
                       name="telephone"
+                      ref={other_person_telephone}
                       value={otherAuthorizedPersonData?.telephone || ""}
                       type="tel"
                       maxLength={20}
@@ -966,6 +1069,7 @@ const ChildEnrollment4 = ({ nextStep, handleFormData, prevStep }) => {
                     <Form.Label>Relationship To The Child *</Form.Label>
                     <Form.Control
                       name="relationship_to_the_child"
+                      ref={other_person_relationship_to_the_child}
                       value={otherAuthorizedPersonData?.relationship_to_the_child || ""} 
                       type="text"
                       onChange={(e) => {

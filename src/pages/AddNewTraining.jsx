@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
@@ -61,6 +61,13 @@ const validateTrainingSettings = (trainingSettings) => {
 const AddNewTraining = () => {
   // const [show, setShow] = useState(false);
   // const handleClose = () => setShow(false);
+
+  // USE REF
+  let title = useRef(null);
+  let category_id = useRef(null);
+  let description = useRef(null);
+  let meta_description = useRef(null);
+  let time_required_to_complete = useRef(null);
 
   // CUSTOM STATES
   const [loader, setLoader] = useState(false);
@@ -276,7 +283,24 @@ const AddNewTraining = () => {
     }));
   };
 
-  const [err, seterr] = useState(false)
+  // const [err, seterr] = useState(false)
+
+  // AUTOFOCUS ON TRAINING
+  const setAutoFocusOnTraining = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+    
+    if(errArray.includes("title")) {
+      title?.current?.focus();
+    } else if(errArray.includes("category_id")) {
+      category_id?.current?.focus();
+    } else if(errArray.includes("description")) {
+      description?.current?.focus();
+    } else if(errArray.includes("meta_description")) {
+      meta_description?.current?.focus();
+    } else if(errArray.includes("time_required_to_complete")) {
+      time_required_to_complete?.current?.focus();
+    } 
+  }
 
   const handleDataSubmit = event => {
     event.preventDefault();
@@ -286,6 +310,7 @@ const AddNewTraining = () => {
     console.log(errorObj);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
+      setAutoFocusOnTraining(errorObj);
     } else {
       setErrors({});
       if (!allowSubmit)
@@ -406,11 +431,7 @@ const AddNewTraining = () => {
                             type="text"
                             maxLength={100}
                             name="title"
-                            // onKeyPress={(e) => {
-                            //     if (e.keyCode === 32) {
-                            //       e.preventDefault();
-                            //     }
-                            // }}
+                            ref={title}
                             onChange={(e) => {
                               // if (trainingData.title.length <= 20) {
                               setTrainingData(prevState => ({
@@ -443,6 +464,7 @@ const AddNewTraining = () => {
                           <Select
                             closeMenuOnSelect={true}
                             placeholder="Select"
+                            ref={category_id}
                             components={animatedComponents}
                             options={trainingCategory}
                             onChange={(event) => {
@@ -467,6 +489,7 @@ const AddNewTraining = () => {
                           <Form.Control
                             as="textarea"
                             name="description"
+                            ref={description}
                             rows={3}
                             onChange={(e) => {
                               handleTrainingData(e);
@@ -486,6 +509,7 @@ const AddNewTraining = () => {
                           <Form.Control
                             as="textarea"
                             name="meta_description"
+                            ref={meta_description}
                             maxLength={255}
                             rows={3}
                             onChange={(e) => {
@@ -508,10 +532,11 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Time required to complete*</Form.Label>
-                          <div style={{ display: "flex", gap: "5px" }}>
+                          <div className="timelimit" style={{ display: "flex", gap: "5px" }}>
                             <Form.Control
                               style={{ flex: 6 }}
                               type="number"
+                              ref={time_required_to_complete}
                               max={9999}
                               value={trainingData?.time_required_to_complete || ""}
                               onChange={(event) => {
