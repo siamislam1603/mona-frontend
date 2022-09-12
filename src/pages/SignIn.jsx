@@ -41,7 +41,7 @@ const SignIn = () => {
         headers: {
           "Authorization": "Bearer " + token
         }
-      })
+      });
 
       if (response.status === 200 && response.data.status === "success") {
         let { permissionsObject } = response.data;
@@ -49,7 +49,10 @@ const SignIn = () => {
         console.log('PERMISSIONS OBJECT:', permissionsObject)
         localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
 
-        response = await axios.patch(`${BASE_URL}/api/first-time-login`, {
+        console.log('TOKEN VALUE:', localStorage.getItem('token'));
+
+        // CHANGING LOGIN FLAG DURING FIRST LOGIN
+        response = await axios.patch(`${BASE_URL}/api/first-time-login`, {data: 1}, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem('token')
           }
