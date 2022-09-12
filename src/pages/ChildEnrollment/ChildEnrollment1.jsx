@@ -104,6 +104,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [formStepData, setFormStepData] = useState(step);
   const [inclusionSupportForm, setInclusionSupportForm] = useState(null);
   const [ supportFormDetails, setSupportFormDetails ] = useState(null);
+  const [ childFiles, setChildFiles ] = useState(null);
 
   // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
 
@@ -310,8 +311,25 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       }));
 
       setFormStepData(child.form_step);
+
+      populateChildFiles();
     }
   };
+
+  const populateChildFiles = async () => {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/get-child-files/${paramsChildId}/${paramsParentId}`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { childFiles } = response.data;
+      setSupportFormDetails(...childFiles.filter(f => f.category === "physical-impairment"));
+    } else {
+      console.log('NO CHILD FILES ATTACHED FOR THIS FORM');
+    }
+  }
 
 
   // GIVING CONSENT FOR CHANGE
@@ -999,7 +1017,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           supportFormDetails &&
                           (
                             <div>
-                              <a href={supportFormDetails?.file}><p>{supportFormDetails?.originalName}</p></a>
+                              <a href={supportFormDetails?.file}><p>{supportFormDetails?.fileName || supportFormDetails?.originalName}</p></a>
                               <img
                                 onClick={() => handleChildFileDelete(supportFormDetails?.id)}
                                 // className="file-remove"

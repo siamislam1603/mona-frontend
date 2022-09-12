@@ -46,6 +46,7 @@ function ViewFormBuilder(props) {
   const location = useLocation();
   let no_record=false;
   let form_history_no_record=false;
+  
   useEffect(() => {
     getAllForm();
     if (location?.state?.message) {
@@ -53,7 +54,10 @@ function ViewFormBuilder(props) {
       navigate('/form', { state: { message: null } });
     }
     getFormData(localStorage.getItem('franchisee_id'));
+
+    
   }, []);
+  
   const getAllForm = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -77,6 +81,7 @@ function ViewFormBuilder(props) {
       })
       .catch((error) => console.log('error', error));
   };
+  
   const deleteForm = (id) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -97,6 +102,7 @@ function ViewFormBuilder(props) {
       })
       .catch((error) => console.log('error', error));
   };
+  
   const getFormData = (search,franchisee_id) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);

@@ -1,8 +1,3 @@
-// const isEmail = (email) => {
-//   console.log('EMAIL DURSING VALIDATION:', email);
-//   return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
-// }
-
 import moment from 'moment';
 
 export const DynamicFormValidation = (
@@ -492,14 +487,19 @@ export const acceptPointValidator = (value) => {
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
+  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
   let { fullname, role, state, city, address, postalCode, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
 
+  if(email.length > 0 && !regex.test(email)) 
+    errors.email = "Email is invalid";
+    
   if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
     errors.email = "Email is invalid";
+
   
   if (!role) errors.role = 'User role is required';
   
