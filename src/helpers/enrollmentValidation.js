@@ -1,4 +1,4 @@
-export const childFormValidator = (childForm) => {
+export const childFormValidator = (childForm, inclusionSupportForm) => {
   let errors = {};
   let {
     fullname,
@@ -11,6 +11,7 @@ export const childFormValidator = (childForm) => {
     child_medical_no,
     child_crn,
     parent_crn_1,
+    developmental_delay,
     parent_crn_2
   } = childForm;
 
@@ -44,6 +45,9 @@ export const childFormValidator = (childForm) => {
   if(!child_medical_no)
     errors.child_medical_no = "Please complete mandatory field"
   
+  if(developmental_delay === true && (!inclusionSupportForm || inclusionSupportForm.length === 0))
+    errors.supportForm = "Please insert physical disability form."
+
   if(!child_crn)
     errors.child_crn = "Please complete mandatory field"
   
@@ -113,7 +117,20 @@ export const parentFormValidator = (parentForm) => {
   return errors;
 };
 
-export const healthInformationFormValidator = (healthInformationForm, i_give_medication_permission) => {
+export const healthInformationFormValidator = (
+  healthInformationForm, 
+  i_give_medication_permission,
+  has_court_orders,
+  courtOrderDetails,
+  has_been_immunised,
+  immunisationRecordDetails,
+  inclusion_support_form_of_special_needs,
+  specialNeedsFormDetails,
+  inclusion_support_form_of_allergies,
+  allergyFormDetails,
+  has_anaphylaxis_medical_plan_been_provided,
+  medicalPlanDetails
+) => {
   let errors = {};
   let {
     medical_service,
@@ -142,6 +159,21 @@ export const healthInformationFormValidator = (healthInformationForm, i_give_med
 
   if(i_give_medication_permission === false)
     errors.i_give_medication_permission = "Please give medication consent"
-    
+  
+  if(has_court_orders === true && (!courtOrderDetails || courtOrderDetails.length === 0))
+    errors.courtOrders = "Please insert court orders."
+  
+  if(has_been_immunised === true && (!immunisationRecordDetails || immunisationRecordDetails.length === 0))
+    errors.immunisationRecord = "Please insert immunisation record."
+  
+  if(inclusion_support_form_of_special_needs === true && (!specialNeedsFormDetails || specialNeedsFormDetails.length === 0))
+    errors.specialNeeds = "Please insert special needs form."
+  
+  if(inclusion_support_form_of_allergies === true && (!allergyFormDetails || allergyFormDetails.length === 0))
+    errors.allergyError = "Please insert allergy detail form."
+  
+  if(has_anaphylaxis_medical_plan_been_provided === true && (!medicalPlanDetails || medicalPlanDetails.length === 0))
+    errors.medicalPlan = "Please insert medical plan."
+
   return errors;
 };

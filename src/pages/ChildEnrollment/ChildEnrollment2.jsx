@@ -366,13 +366,42 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     }
   }
 
+  const setAutoFocusOnHealthErrors = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+    console.log('MEDICAL ERROR ARRAY:', errArray);
+
+    if(errArray.includes('medical_service')) {
+      medical_service?.current?.focus();
+    } else if(errArray.includes('telephone')) {
+      telephone?.current?.focus();
+    } else if(errArray.includes('medical_service_address')) {
+      medical_service_address?.current?.focus();
+    } else if(errArray.includes('maternal_and_child_health_centre')) {
+      maternal_and_child_health_centre?.current?.focus();
+    } 
+  }
+
   const submitFormData = (e) => {
     e.preventDefault();
 
-    const errors = healthInformationFormValidator(healthInformation, parentData?.i_give_medication_permission);
+    const errors = healthInformationFormValidator(
+      healthInformation, 
+      parentData?.i_give_medication_permission, 
+      childDetails?.has_court_orders,
+      courtOrderDetails,
+      childDetails?.has_been_immunised,
+      immunisationRecordDetails,
+      childMedicalInformation?.inclusion_support_form_of_special_needs,
+      specialNeedsFormDetails,
+      childMedicalInformation?.inclusion_support_form_of_allergies,
+      allergyFormDetails,
+      childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided,
+      medicalPlanDetails
+    );  
     if (Object.keys(errors).length > 0) {
       // window.scrollTo(0, 0);
       setHealthInfoFormErrors(errors);
+      setAutoFocusOnHealthErrors(errors);
     } else {
       if (formStepData && formStepData > step) {
         console.log('UPDATING THE EXISTING DATA!');
@@ -683,15 +712,49 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   }, [courtOrdersDeleteMessage]);
 
-  useEffect(() => {
-    if(healthInfoFormErrors) {
-      let refName = Object.keys(healthInfoFormErrors)[0];
+  // useEffect(() => {
+  //   if(healthInfoFormErrors) {
+  //     let refName = Object.keys(healthInfoFormErrors)[0];
       
-      if(healthInfoFormErrors[`${refName}`] !== null)
-        focusOnHealthInfoErrors(refName);
-    }
-  }, [healthInfoFormErrors]);
+  //     if(healthInfoFormErrors[`${refName}`] !== null)
+  //       focusOnHealthInfoErrors(refName);
+  //   }
+  // }, [healthInfoFormErrors]);
 
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      courtOrders: null
+    }));
+  }, [courtOrderDetails]);
+  
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      immunisationRecord: null
+    }));
+  }, [immunisationRecordDetails]);
+  
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      specialNeeds: null
+    }));
+  }, [specialNeedsFormDetails]);
+
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      allergyError: null
+    }));
+  }, [allergyFormDetails]);
+  
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      medicalPlan: null
+    }));
+  }, [medicalPlanDetails]);
 
   courtOrders && console.log('COURT ORDERS:', courtOrders);
   return (
@@ -832,7 +895,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               onSave={setCourtOrders} />
                             <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file max.)</small>
                           </Form.Group>
-                          {console.log('Court Order Details:', courtOrderDetails)}
+                          { healthInfoFormErrors?.courtOrders !== null && <span className="error">{healthInfoFormErrors?.courtOrders}</span> }
                           {
                             courtOrderDetails &&
                               <div>
@@ -1180,6 +1243,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               onSave={setImmunisationRecord} />
                             <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
                           </Form.Group>
+                          { healthInfoFormErrors?.immunisationRecord !== null && <span className="error">{healthInfoFormErrors?.immunisationRecord}</span> }
                           {
                             immunisationRecordDetails &&
                             (
@@ -3158,6 +3222,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setSpecialNeedsForm} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
+                              { healthInfoFormErrors?.specialNeeds !== null && <span className="error">{healthInfoFormErrors?.specialNeeds}</span> }
                               {
                                 specialNeedsFormDetails &&
                                 (
@@ -3313,6 +3378,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setAllergyForm} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
+                              { healthInfoFormErrors?.allergyError !== null && <span className="error">{healthInfoFormErrors?.allergyError}</span> }
                               {
                                 allergyFormDetails &&
                                 (
@@ -3445,6 +3511,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setMedicalPlan} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
+                              { healthInfoFormErrors?.medicalPlan !== null && <span className="error">{healthInfoFormErrors?.medicalPlan}</span> }
                               {
                                 medicalPlanDetails &&
                                 (

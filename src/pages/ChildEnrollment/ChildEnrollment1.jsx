@@ -32,16 +32,14 @@ function isNullEmpty(obj) {
 
 const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   let { childId: paramsChildId, parentId: paramsParentId } = useParams();
-  let errorChild = null;
-  let errorParent = null;
+  let errorChild = {};
+  let errorParent = {};
 
   // USING REFs
   const fullname = useRef(null);
   const family_name = useRef(null);
-  const dob = useRef(null);
+  const usually_called = useRef(null);
   const home_address = useRef(null);
-  const language = useRef(null);
-  const country_of_birth = useRef(null);
   const child_medical_no = useRef(null);
   const child_crn = useRef(null);
   const parent_crn_1 = useRef(null);
@@ -103,8 +101,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const [countryData, setCountryData] = useState(null);
   const [formStepData, setFormStepData] = useState(step);
   const [inclusionSupportForm, setInclusionSupportForm] = useState(null);
-  const [ supportFormDetails, setSupportFormDetails ] = useState(null);
-  const [ childFiles, setChildFiles ] = useState(null);
+  const [supportFormDetails, setSupportFormDetails] = useState(null);
+  const [childFiles, setChildFiles] = useState(null);
 
   // const [parentUserDetailFromEngagebay, setParentUserDetailFromEngagebay] = useState();
 
@@ -189,15 +187,59 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }));
   }
 
+  // AUTOFOCUS FUNCTIONS
+  const setAutoFocusForChild = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+    console.log('ERROR ARRAY CHILD:', errArray);
+
+    if(errArray.includes('fullname')) {
+      fullname?.current?.focus();
+    } else if(errArray.includes('family_name')) {
+      family_name?.current?.focus();
+    } else if(errArray.includes('usually_called')) {
+      usually_called?.current?.focus();
+    } else if(errArray.includes('home_address')) {
+      home_address?.current?.focus();
+    } else if(errArray.includes('child_medical_no')) {
+      child_medical_no?.current?.focus();
+    } else if(errArray.includes('child_crn')) {
+      child_crn?.current?.focus();
+    } else if(errArray.includes('parent_crn_1')) {
+      parent_crn_1?.current?.focus();
+    } else if(errArray.includes('parent_crn_2')) {
+      parent_crn_2?.current?.focus();
+    }
+  };
+
+  const setAutoFocusForParent = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+
+    if(errArray.includes("parent_family_name")) {
+      parent_family_name?.current?.focus();
+    } else if(errArray.includes("given_name")) {
+      given_name?.current?.focus();
+    } else if(errArray.includes("telephone")) {
+      telephone?.current?.focus();
+    } else if(errArray.includes("email")) {
+      email?.current?.focus();
+    }
+  }
+
   const submitFormData = (e) => {
     e.preventDefault();
-    errorChild = childFormValidator(formOneChildData);
+    errorChild = childFormValidator(formOneChildData, supportFormDetails);
     errorParent = parentFormValidator(formOneParentData);
 
     if(Object.keys(errorChild).length > 0 || Object.keys(errorParent).length > 0) {
       // window.scrollTo(0, 0);
       setChildFormErrors(errorChild);
       setParentFormErrors(errorParent);
+
+      setAutoFocusForChild(errorChild);
+      
+      if(Object.keys(errorChild).length === 0) {
+        setAutoFocusForParent(errorParent);
+      }
 
     } else {
       setLoader(true);
@@ -380,158 +422,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     }
   }
 
-  const focusOnChildErrors = (refName) => {
-    console.log('REFNAME TO HIT:', refName);
-
-    if(refName === "fullname") {
-      fullname?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "family_name") {
-      family_name?.current?.focus();
-
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "dob") {
-      dob?.current?.focus();
-
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "home_address") {
-      home_address?.current?.focus();
-
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "language") {
-      language?.current?.focus();
-
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "country_of_birth") {
-      country_of_birth?.current?.focus();
-
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "child_medical_no") {
-      child_medical_no?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "child_crn") {
-      child_crn?.current?.focus();
-    
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "parent_crn_1") {
-      parent_crn_1?.current?.focus();
-    
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-    
-    if(refName === "parent_crn_2") {
-      parent_crn_2?.current?.focus();
-    
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-  }
-
-  const focusOnParentErrors = (refName) => {
-    console.log('REFNAME TO HIT:', refName);
-
-    if(refName === "parent_family_name") {
-      parent_family_name?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "given_name") {
-      given_name?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "telephone") {
-      telephone?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "email") {
-      email?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "place_of_birth") {
-      place_of_birth?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "ethnicity") {
-      ethnicity?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "primary_language") {
-      primary_language?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "occupation") {
-      occupation?.current?.focus();
-      
-      if(childFormErrors[`${refName}`] === null) {
-        delete childFormErrors[`${refName}`];
-      }
-    } 
-  };
- 
   useEffect(() => {
     fetchOccupationData();
     fetchEthnicityData();
@@ -576,26 +466,33 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   }, [supportFormDeleteMessage]);
 
   useEffect(() => {
-    if(childFormErrors) {
-      let refName = Object.keys(childFormErrors)[0];
+    setChildFormErrors(prevState => ({
+      ...prevState,
+      supportForm: null
+    }));
+  }, [supportFormDetails])
+  // useEffect(() => {
+  //   if(childFormErrors) {
+  //     let refName = Object.keys(childFormErrors)[0];
       
-      if(childFormErrors[`${refName}`] !== null)
-        focusOnChildErrors(refName);
-    }
-  }, [childFormErrors]);
+  //     if(childFormErrors[`${refName}`] !== null)
+  //       focusOnChildErrors(refName);
+  //   }
+  // }, [childFormErrors]);
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    if((childFormErrors === null || Object.keys(childFormErrors).length === 0) && parentFormErrors !== null) {
-      console.log('CHILD ERROR OBJECT EMPTY')
-      let refName = Object.keys(parentFormErrors)[0];
+  //   if((childFormErrors === null || Object.keys(childFormErrors).length === 0) && parentFormErrors !== null) {
+  //     console.log('CHILD ERROR OBJECT EMPTY')
+  //     let refName = Object.keys(parentFormErrors)[0];
       
-      if(parentFormErrors[`${refName}`] !== null)
-        focusOnParentErrors(refName);
-    }
-  }, [parentFormErrors])
+  //     if(parentFormErrors[`${refName}`] !== null)
+  //       focusOnParentErrors(refName);
+  //   }
+  // }, [parentFormErrors])
 
   childFormErrors && console.log('CHILD FOR ERRORS:', childFormErrors);
+  inclusionSupportForm && console.log('SUPPORT FORM:', inclusionSupportForm);
   return (
     <>
     {
@@ -685,6 +582,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       type="text"
                       minLenth={3}
                       maxLength={50}
+                      ref={usually_called}
                       name="usually_called"
                       value={formOneChildData?.usually_called || ""}
                       onChange={(e) => {
@@ -721,7 +619,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Form.Control
                       type="date"
                       name="dob"
-                      ref={dob}
                       max={new Date().toISOString().slice(0, 10)}
                       value={formOneChildData?.dob || ""}
                       onChange={(e) => {
@@ -849,7 +746,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       placeholder={formOneChildData?.country_of_birth || "Select"}
                       closeMenuOnSelect={true}
                       options={countryData}
-                      ref={country_of_birth}
                       onChange={(e) => {
                         setFormOneChildData((prevState) => ({
                           ...prevState,
@@ -1013,6 +909,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             onSave={setInclusionSupportForm} />
                           <small className="fileinput">(Upload 1 file)</small>
                         </Form.Group>
+                        { childFormErrors?.supportForm !== null && <span className="error">{childFormErrors?.supportForm}</span> }
                         {
                           supportFormDetails &&
                           (
