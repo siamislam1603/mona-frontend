@@ -364,6 +364,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       setAllergyFormDetails(...childFiles.filter(f => f.category === "allergy"));
       setMedicalPlanDetails(...childFiles.filter(f => f.category === "medical-plan"));
       setImmunisationRecordDetails(...childFiles.filter(f => f.category === "immunisation-record"));
+      setHealthRecordDetails(...childFiles.filter(f => f.category === 'health-record'));
     } else {
       console.log('NO CHILD FILES ATTACHED FOR THIS FORM');
     }
