@@ -290,6 +290,9 @@ export const TrainingFormValidation = (form) => {
     errors.title = 'Training title is required';
   }
 
+  if(title.length > 0 && !(/^[a-zA-Z ]+$/i.test(title)))
+    errors.title = "Field shouldn't contain numbers & special characters"
+
   if (title <= 2) {
     errors.title_length = 'Training title should be more than 2 characters';
   }
