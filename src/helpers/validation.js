@@ -279,9 +279,9 @@ export const TrainingFormValidation = (form) => {
   let errors = {};
   let {
     title,
+    category_id,
     description,
     meta_description,
-    category_id,
     time_required_to_complete,
 
   } = form;
@@ -294,16 +294,16 @@ export const TrainingFormValidation = (form) => {
     errors.title_length = 'Training title should be more than 2 characters';
   }
 
+  if (!category_id) {
+    errors.category_id = 'Training category title is required';
+  }
+
   if (!description) {
     errors.description = 'Training description is required';
   }
 
   if (!meta_description) {
     errors.meta_description = 'Meta description is required';
-  }
-
-  if (!category_id) {
-    errors.category_id = 'Training category title is required';
   }
 
   if (!time_required_to_complete) {
