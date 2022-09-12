@@ -38,6 +38,7 @@ const FileRpositoryList = () => {
     });
 
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+    console.log(selectedFranchisee, "franchiseeList")
     const [child, setChild] = useState([]);
 
     const fetchFranchiseeList = async () => {
@@ -69,10 +70,14 @@ const FileRpositoryList = () => {
             redirect: 'follow',
             headers: myHeaders,
         };
-        const ID_array = selectedFranchisee?.split(",");
         try {
-            let data = ID_array?.length > 1 ? ID_array?.slice(1) : ID_array;
-            let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=${data}`, requestOptions)
+            let data = selectedFranchisee === "null" ? "all" : selectedFranchisee;
+            let user_Role = localStorage.getItem('user_role');
+            console.log(user_Role, "user_Role")
+            let URL = user_Role === "guardian" ? `${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]` :
+                `${BASE_URL}/fileRepo/files-by-category/${Params.id}?limit=20`
+
+            let response = await fetch(URL, requestOptions)
             response = await response.json();
             setUser(response.result)
             if (response) {
@@ -159,7 +164,7 @@ const FileRpositoryList = () => {
         getFileCategory();
         getUser();
         fetchFranchiseeList();
-    }, [])
+    }, [selectedFranchisee])
 
     useEffect(() => {
         getUser();
@@ -211,7 +216,6 @@ const FileRpositoryList = () => {
                                             {cell[1]}.mp3
                                         </span>
                                     </>
-
                                     : cell[0] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
@@ -268,7 +272,16 @@ const FileRpositoryList = () => {
                         <div className="user-list">
                             <span className="user-name">
                                 {cell[0]}
-                                <small>{cell[1]}</small>
+                                <small>
+                                    {
+                                        cell[1] === "franchisor_admin" ? "Franchisor Admin" :
+                                            cell[1] === "franchisee_admin" ? "Franchisee Admin" :
+                                                cell[1] === "guardian" ? "Guardian" :
+                                                    cell[1] === "educator" ? "Educator" :
+                                                        cell[1] === "coordinator" ? "Coordinator" :
+                                                            cell[1]
+                                    }
+                                </small>
                             </span>
                         </div>
                     </>
@@ -369,7 +382,7 @@ const FileRpositoryList = () => {
                                                     </header>
                                                     <BootstrapTable
                                                         {...props.baseProps}
-                                                        selectRow={selectRow}
+                                                        // selectRow={selectRow}
                                                         pagination={paginationFactory()}
                                                     />
                                                 </>

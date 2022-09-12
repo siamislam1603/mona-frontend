@@ -181,7 +181,6 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       copyDataToStates(training);
     }
   };
-
   const copyDataToStates = (training) => {
     setFormSettings(prevState => ({
       ...prevState,
@@ -191,7 +190,6 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       applicable_to: training?.shares[0]?.applicable_to,
       send_to_all_franchisee: training?.shares[0]?.franchisee === 'all' ? true : false,
     }));
-
     fetchFranchiseeUsers(training?.shares[0]?.franchisee[0]);
   }
 
@@ -359,7 +357,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
           {otherTrainingData?.length > 0 || myTrainingData?.length > 0 ?
             null
             :
-            !fullLoaderStatus && <div className="text-center mb-5 mt-5">  <strong>No training available !</strong> </div>
+            !fullLoaderStatus && <div className="text-center mb-5 mt-5">  <strong>No training available.</strong> </div>
           }
           {/* {
 

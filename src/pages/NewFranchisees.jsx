@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Row, Col, Button, Container, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import TopHeader from '../components/TopHeader';
@@ -11,6 +11,17 @@ import { FranchiseeFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
 
 const NewFranchisees = () => {
+
+    // REF REFERENCES
+    let franchisee_name = useRef(null);
+    let abn = useRef(null);
+    let city = useRef(null);
+    let state = useRef(null);
+    let franchisee_number = useRef(null);
+    let acn = useRef(null);
+    let postcode = useRef(null);
+    let address = useRef(null);
+    let contact = useRef(null);
 
     const [franchiseeData, setFranchiseeData] = useState({
         franchisee_name: "",
@@ -105,6 +116,30 @@ const NewFranchisees = () => {
         }
     };
 
+    const setAutoFocus = (errObj) => {
+        const errArray = Object.keys(errObj);
+
+        if(errArray.includes('franchisee_name')) {
+          franchisee_name.current.focus();
+        } else if(errArray.includes('franchisee_number')) {
+          franchisee_number.current.focus();
+        } else if(errArray.includes('abn')) {
+          abn.current.focus();
+        } else if(errArray.includes('acn')) {
+          acn.current.focus();
+        } else if(errArray.includes('city')) {
+          city.current.focus();
+        } else if(errArray.includes('address')) {
+          address.current.focus();
+        } else if(errArray.includes('state')) {
+          state.current.focus();
+        } else if(errArray.includes('postcode')) {
+          postcode.current.focus();
+        } else if(errArray.includes('contact')) {
+          contact.current.focus();
+        } 
+      }
+
     const handleFranchiseeDataSubmission = event => {
         event.preventDefault();
 
@@ -112,6 +147,7 @@ const NewFranchisees = () => {
 
         if(Object.keys(errorObject).length > 0) {
             setFormErrors(errorObject);
+            setAutoFocus(errorObject);
         } else {
             setCreateFranchiseeModal(true);
             setLoader(true)
@@ -170,6 +206,7 @@ const NewFranchisees = () => {
                                                 <Form.Control
                                                     name="franchisee_name" 
                                                     type="text"
+                                                    ref={franchisee_name}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -185,6 +222,7 @@ const NewFranchisees = () => {
                                                 <Form.Control
                                                     name="abn" 
                                                     type="text" 
+                                                    ref={abn}
                                                     maxLength={11}
                                                     minLength={11}
                                                     placeholder="45666777888"
@@ -202,6 +240,7 @@ const NewFranchisees = () => {
                                                 <Form.Label>Suburb</Form.Label>
                                                 <Select
                                                 placeholder="Select"
+                                                ref={city}
                                                 closeMenuOnSelect={true}
                                                 options={cityData}
                                                 onInputChange={(e) => {
@@ -224,6 +263,7 @@ const NewFranchisees = () => {
                                                 <Form.Label>State</Form.Label>
                                                 <Select
                                                 placeholder="Select"
+                                                ref={state}
                                                 closeMenuOnSelect={true}
                                                 options={australianStatesData}
                                                 onChange={(e) => {
@@ -245,6 +285,7 @@ const NewFranchisees = () => {
                                                 <Form.Control 
                                                     name="contact"
                                                     type="text"
+                                                    ref={contact}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -279,6 +320,7 @@ const NewFranchisees = () => {
                                                 <Form.Control 
                                                     name="franchisee_number"
                                                     type="text" 
+                                                    ref={franchisee_name}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -294,6 +336,7 @@ const NewFranchisees = () => {
                                                 <Form.Control
                                                     name="acn" 
                                                     type="text" 
+                                                    ref={acn}
                                                     maxLength={9}
                                                     minLength={9}
                                                     placeholder="666777888"
@@ -312,6 +355,7 @@ const NewFranchisees = () => {
                                                 <Form.Control 
                                                     name="address"
                                                     type="text"
+                                                    ref={address}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -327,6 +371,7 @@ const NewFranchisees = () => {
                                                 <Form.Control
                                                     name="postcode" 
                                                     type="text" 
+                                                    ref={postcode}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({

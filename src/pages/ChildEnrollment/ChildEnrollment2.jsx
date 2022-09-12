@@ -95,7 +95,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const [immunisationRecordDetails, setImmunisationRecordDetails] = useState(null);
   const [immunisationRecord, setImmunisationRecord] = useState(null);
   const [courtOrders, setCourtOrders] = useState(null);
-  const [courtOrderDetails, setCourtOrderDetails] = useState([]);
+  const [courtOrderDetails, setCourtOrderDetails] = useState(null);
   const [specialNeedsFormDetails, setSpecialNeedsFormDetails] = useState(null);
   const [specialNeedsForm, setSpecialNeedsForm] = useState(null);
   const [allergyFormDetails, setAllergyFormDetails] = useState(null);
@@ -338,19 +338,70 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
           i_give_medication_permission: child.parents[0].i_give_medication_permission
         }));
         setFormStepData(child.form_step);
+
+        populateChildFiles();
       }
 
 
     }
   };
 
+  const populateChildFiles = async () => {
+    let response = await axios.get(`${BASE_URL}/enrollment/child/get-child-files/${paramsChildId}/${paramsParentId}`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { childFiles } = response.data;
+      console.log('child files:', childFiles);
+      setCourtOrderDetails(...childFiles.filter(f => f.category === "court-order"));
+      setSpecialNeedsFormDetails(...childFiles.filter(f => f.category === "special-needs"));
+      setAllergyFormDetails(...childFiles.filter(f => f.category === "allergy"));
+      setMedicalPlanDetails(...childFiles.filter(f => f.category === "medical-plan"));
+      setImmunisationRecordDetails(...childFiles.filter(f => f.category === "immunisation-record"));
+    } else {
+      console.log('NO CHILD FILES ATTACHED FOR THIS FORM');
+    }
+  }
+
+  const setAutoFocusOnHealthErrors = (errorObj) => {
+    let errArray = Object.keys(errorObj);
+    console.log('MEDICAL ERROR ARRAY:', errArray);
+
+    if(errArray.includes('medical_service')) {
+      medical_service?.current?.focus();
+    } else if(errArray.includes('telephone')) {
+      telephone?.current?.focus();
+    } else if(errArray.includes('medical_service_address')) {
+      medical_service_address?.current?.focus();
+    } else if(errArray.includes('maternal_and_child_health_centre')) {
+      maternal_and_child_health_centre?.current?.focus();
+    } 
+  }
+
   const submitFormData = (e) => {
     e.preventDefault();
 
-    const errors = healthInformationFormValidator(healthInformation, parentData?.i_give_medication_permission);
+    const errors = healthInformationFormValidator(
+      healthInformation, 
+      parentData?.i_give_medication_permission, 
+      childDetails?.has_court_orders,
+      courtOrderDetails,
+      childDetails?.has_been_immunised,
+      immunisationRecordDetails,
+      childMedicalInformation?.inclusion_support_form_of_special_needs,
+      specialNeedsFormDetails,
+      childMedicalInformation?.inclusion_support_form_of_allergies,
+      allergyFormDetails,
+      childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided,
+      medicalPlanDetails
+    );  
     if (Object.keys(errors).length > 0) {
       // window.scrollTo(0, 0);
       setHealthInfoFormErrors(errors);
+      setAutoFocusOnHealthErrors(errors);
     } else {
       if (formStepData && formStepData > step) {
         console.log('UPDATING THE EXISTING DATA!');
@@ -417,14 +468,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       }
 
       if(token === 'court-order') {
-        let data = courtOrderDetails.filter(file => file.id !== parseInt(fileId));
-        setCourtOrderDetails(data);
-        console.log('COURT ORDER DETAIL AFTER DELETION:', courtOrderDetails);
         setCourtOrdersDeleteMessage('Court order has been deleted');
-        // if(courtOrderDetails === null || courtOrderDetails.length === 0) {
-        //   console.log('COURT ORDER DETAILS IS EMPTY NOW!');
-        //   setCourtOrderDetails(null);
-        // }
       }
     }
   }
@@ -449,33 +493,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       setImmunisationRecordDetails(supportForm);
     }
   }
-
-  // COURT ORDERS
-  // IMMUNISATION RECORD
-
-  // UPLOADING SUPPORT FORM
-  // const uploadCourtOrders = async () => {
-  //   let data = new FormData();
-
-  //   courtOrders.forEach(order => {
-  //     data.append('images', order);
-  //   });
-  //   data.append('category', 'court-order');
-
-  //   let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
-  //     headers: {
-  //       "Authorization": "Bearer " + localStorage.getItem('token')
-  //     }
-  //   });
-
-  //   console.log('FILE UPLOAD RESPONSE:', response);
-  //   if(response.status === 201 && response.data.status === 'success') {
-  //     console.log('INSIDE RESPONSE');
-  //     let { supportForm } = response.data;
-  //     setCourtOrders(null);
-  //     setCourtOrderDetails(supportForm);
-  //   }
-  // }
 
   // UPLOADING SPECIAL NEEDS FORM
   const uploadSpecialNeedsForm = async () => {
@@ -541,35 +558,22 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   // COURT ORDERS
   const uploadCourtOrders = async () => {
-    console.log('INSIDE THE COURT ORDER UPLOAD FUNCTION:');
-    console.log('FILES:', courtOrders);
     let data = new FormData();
-    let newData = [];
-
-    courtOrders.forEach(courtOrder => {
-      data.append('images', courtOrder);
-    })
+    data.append('images', courtOrders[0]);
     data.append('category', 'court-order');
-    
-    console.log('INITIATING api to upload court orders');
-    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-multi-upload/${paramsChildId}/${paramsParentId}`, data, {
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem('token')
       }
     });
 
-    console.log('COURT ORDER RESPONSE:', response);
-    if(response.status === 201 && response.data.status === "success") {
-      let { data } = response.data;
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
       setCourtOrders(null);
-      console.log('DATA => COURT ORDER DETAILS:', data);
-      console.log('Court order details:', courtOrderDetails);
-      if(courtOrderDetails === null) {
-        newData = [ ...data ];
-      } else {
-        newData = [...courtOrderDetails, ...data];
-      }
-      setCourtOrderDetails(newData);
+      setCourtOrderDetails(supportForm);
     }
   };
 
@@ -708,17 +712,51 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   }, [courtOrdersDeleteMessage]);
 
-  useEffect(() => {
-    if(healthInfoFormErrors) {
-      let refName = Object.keys(healthInfoFormErrors)[0];
+  // useEffect(() => {
+  //   if(healthInfoFormErrors) {
+  //     let refName = Object.keys(healthInfoFormErrors)[0];
       
-      if(healthInfoFormErrors[`${refName}`] !== null)
-        focusOnHealthInfoErrors(refName);
-    }
-  }, [healthInfoFormErrors]);
+  //     if(healthInfoFormErrors[`${refName}`] !== null)
+  //       focusOnHealthInfoErrors(refName);
+  //   }
+  // }, [healthInfoFormErrors]);
 
-  courtOrderDetails && console.log('COURT ORDER DETAILS:', courtOrderDetails);
-  courtOrderDetails && console.log('TYPE OF STATE:', typeof courtOrderDetails);
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      courtOrders: null
+    }));
+  }, [courtOrderDetails]);
+  
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      immunisationRecord: null
+    }));
+  }, [immunisationRecordDetails]);
+  
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      specialNeeds: null
+    }));
+  }, [specialNeedsFormDetails]);
+
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      allergyError: null
+    }));
+  }, [allergyFormDetails]);
+  
+  useEffect(() => {
+    setHealthInfoFormErrors(prevState => ({
+      ...prevState,
+      medicalPlan: null
+    }));
+  }, [medicalPlanDetails]);
+
+  courtOrders && console.log('COURT ORDERS:', courtOrders);
   return (
     <>
       {
@@ -852,27 +890,23 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Label>Attach any Court Orders, Parenting Orders and/or Parenting Plans that are in place</Form.Label>
                             <DragDropMultiple 
                               module="court-orders"
-                              fileLimit={5}
+                              fileLimit={1}
                               supportFormDetails={courtOrderDetails}
                               onSave={setCourtOrders} />
-                            <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 5 files max.)</small>
+                            <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file max.)</small>
                           </Form.Group>
+                          { healthInfoFormErrors?.courtOrders !== null && <span className="error">{healthInfoFormErrors?.courtOrders}</span> }
                           {
                             courtOrderDetails &&
-                            courtOrderDetails?.map(co => {
-                              // console.log('DATA POPULATED:', co);
-                              return (
-                                <div>
-                                  <a href={co?.file}><p>{co?.fileName}</p></a>
-                                  <img
-                                    onClick={() => handleChildFileDelete(co?.id)}
-                                    // className="file-remove"
-                                    style={{ width: "25px", height: "auto", cursor: "pointer" }}
-                                    src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
-                                    alt="" />
-                                </div>
-                              );
-                            })
+                              <div>
+                                <a href={ courtOrderDetails?.file}><p>{courtOrderDetails.fileName || courtOrderDetails?.originalName}</p></a>
+                                <img
+                                  onClick={() => handleChildFileDelete(courtOrderDetails?.id)}
+                                  // className="file-remove"
+                                  style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                  src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                  alt="" />
+                              </div>
                           }
                         </>
                       </Form.Group>
@@ -1209,11 +1243,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               onSave={setImmunisationRecord} />
                             <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
                           </Form.Group>
+                          { healthInfoFormErrors?.immunisationRecord !== null && <span className="error">{healthInfoFormErrors?.immunisationRecord}</span> }
                           {
                             immunisationRecordDetails &&
                             (
                               <div>
-                                <a href={immunisationRecordDetails?.file}><p>{immunisationRecordDetails?.originalName}</p></a>
+                                <a href={immunisationRecordDetails?.file}><p>{immunisationRecordDetails?.fileName || immunisationRecordDetails?.originalName}</p></a>
                                 <img
                                   onClick={() => handleChildFileDelete(immunisationRecordDetails?.id)}
                                   // className="file-remove"
@@ -3187,11 +3222,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setSpecialNeedsForm} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
+                              { healthInfoFormErrors?.specialNeeds !== null && <span className="error">{healthInfoFormErrors?.specialNeeds}</span> }
                               {
                                 specialNeedsFormDetails &&
                                 (
                                   <div>
-                                    <a href={specialNeedsFormDetails?.file}><p>{specialNeedsFormDetails?.originalName}</p></a>
+                                    <a href={specialNeedsFormDetails?.file}><p>{specialNeedsFormDetails?.fileName || specialNeedsFormDetails?.originalName}</p></a>
                                     <img
                                       onClick={() => handleChildFileDelete(specialNeedsFormDetails?.id)}
                                       // className="file-remove"
@@ -3342,11 +3378,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setAllergyForm} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
+                              { healthInfoFormErrors?.allergyError !== null && <span className="error">{healthInfoFormErrors?.allergyError}</span> }
                               {
                                 allergyFormDetails &&
                                 (
                                   <div>
-                                    <a href={allergyFormDetails?.file}><p>{allergyFormDetails?.originalName}</p></a>
+                                    <a href={allergyFormDetails?.file}><p>{allergyFormDetails?.fileName || allergyFormDetails?.originalName}</p></a>
                                     <img
                                       onClick={() => handleChildFileDelete(allergyFormDetails?.id)}
                                       // className="file-remove"
@@ -3474,11 +3511,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setMedicalPlan} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
+                              { healthInfoFormErrors?.medicalPlan !== null && <span className="error">{healthInfoFormErrors?.medicalPlan}</span> }
                               {
                                 medicalPlanDetails &&
                                 (
                                   <div>
-                                    <a href={medicalPlanDetails?.file}><p>{medicalPlanDetails?.originalName}</p></a>
+                                    <a href={medicalPlanDetails?.file}><p>{medicalPlanDetails?.fileName || medicalPlanDetails?.originalName}</p></a>
                                     <img
                                       onClick={() => handleChildFileDelete(medicalPlanDetails?.id)}
                                       // className="file-remove"

@@ -83,7 +83,7 @@ console.log("filter ",filter.category_id)
               })
           ):
           (
-            <div className="text-center mb-5 mt-5">  <strong>{fullLoaderStatus === false ? 'No training available!':""}</strong> </div>
+            <div className="text-center mb-5 mt-5">  <strong>{fullLoaderStatus === false? 'No training available.':""}</strong> </div>
 
           )
             

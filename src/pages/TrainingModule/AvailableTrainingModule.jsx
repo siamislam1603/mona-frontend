@@ -383,7 +383,7 @@ const AvailableTraining = ({ filter }) => {
 
             
             {availableTrainingData && dueDataTraining === false && nodueData === false && fullLoaderStatus === false ?
-            <div className="text-center mb-5 mt-5">  <strong>No trainings assigned to you!</strong> </div>
+            <div className="text-center mb-5 mt-5">  <strong>No trainings assigned to you.</strong> </div>
 
             : null }
             {/* {availableTrainingData

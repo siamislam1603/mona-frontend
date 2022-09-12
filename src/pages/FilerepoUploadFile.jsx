@@ -31,7 +31,7 @@ const FilerepoUploadFile = () => {
     const [selectedAll, setSelectedAll] = useState(false);
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
-    const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+    const [formSettingData, setFormSettingData] = useState({ shared_role: '',accessible_to_role:1 });
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
@@ -120,7 +120,7 @@ const FilerepoUploadFile = () => {
             ...prevState,
             assigned_childs: selectedItem
         }));
-     
+
         setSelectedChild(selectedchildarr)
     }
 
@@ -177,7 +177,7 @@ const FilerepoUploadFile = () => {
             'Bearer ' + localStorage.getItem('token')
         );
         const file = formSettingData.setting_files[0];
- 
+
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
 
         var formdata = new FormData();
@@ -253,7 +253,7 @@ const FilerepoUploadFile = () => {
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
                 response.json()
-               
+
                 if (response.statusText === "Created") {
                     setLoaderFlag(false);
                     setShow(false);
@@ -279,13 +279,13 @@ const FilerepoUploadFile = () => {
 
 
     function onSelectUser(optionsList, selectedItem) {
-       
+
         selectedUserId += selectedItem.id + ',';
         selectedUser.push({
             id: selectedItem.id,
             email: selectedItem.email,
         });
-        
+
     }
 
 
@@ -295,7 +295,7 @@ const FilerepoUploadFile = () => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
-       
+
     }
 
     function onRemoveChild(removedItem) {
@@ -307,7 +307,7 @@ const FilerepoUploadFile = () => {
             ...prevState,
             assigned_childs: removedItem
         }));
-      
+
         setSelectedChild(removedchildarr)
     }
 
@@ -576,7 +576,7 @@ const FilerepoUploadFile = () => {
                                             </Form.Group>
                                         </Col>
                                         <Col lg={9} md={12}>
-                                           
+
                                             {formSettingData.accessible_to_role === 1 ? (
                                                 <Form.Group>
                                                     <Form.Label>Select User Roles</Form.Label>
@@ -587,6 +587,7 @@ const FilerepoUploadFile = () => {
                                                                 type="checkbox"
                                                                 name="shared_role"
                                                                 id="franchisee_admin"
+                                                                checked={formSettingData?.shared_role?.toString().includes('franchisee_admin')}
                                                                 onClick={(e) => {
                                                                     let data = { ...formSettingData };
                                                                     if (
@@ -607,9 +608,7 @@ const FilerepoUploadFile = () => {
                                                                     }
                                                                     setFormSettingData(data);
                                                                 }}
-                                                                checked={formSettingData?.shared_role
-                                                                    ?.toString()
-                                                                    .includes('franchisee_admin')}
+                                                                
                                                             />
                                                             <span className="checkmark"></span>
                                                         </label>) : null}
@@ -717,7 +716,7 @@ const FilerepoUploadFile = () => {
                                                                 id="all_roles"
                                                                 onClick={(e) => {
                                                                     let data = { ...formSettingData };
-                                                                 
+
                                                                     if (e.target.checked === true) {
                                                                         if (
                                                                             !data['shared_role']
@@ -754,7 +753,7 @@ const FilerepoUploadFile = () => {
                                                                                 .includes('all')
                                                                         ) {
                                                                             data['shared_role'] += ',';
-                                                                         
+
                                                                         }
                                                                         setFormSettingData(data);
                                                                     } else {

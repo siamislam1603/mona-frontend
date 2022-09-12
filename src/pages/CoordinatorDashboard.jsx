@@ -278,7 +278,7 @@ const CoordinatorDashboard = () => {
     }
 
     // Redirect to baseurl when not not specific Role
-    if (localStorage.getItem('user_role')!=='coordinator') {
+    if (localStorage.getItem('user_role') !== 'coordinator') {
       window.location.href = '/';
     }
 
@@ -431,7 +431,7 @@ const CoordinatorDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a className="item" href="/form/response">
+                              <a className="item" href="/form">
                                 <span className="name">Overdue Forms</span>
                                 <span className="separator">|</span>
                                 <span className="num">{count?.overdueForms}</span>
@@ -486,10 +486,10 @@ const CoordinatorDashboard = () => {
                                   <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
                                 )
                             }
-                        
+
                           </div>
                         </div>
- 
+
                       </aside>
                     </Col>
                   </Row>

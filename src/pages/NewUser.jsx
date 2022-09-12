@@ -17,18 +17,21 @@ import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
 
-const training = [
-  {
-    value: 'by-companies',
-    label: 'By Companies',
-  },
-  {
-    value: 'by-round',
-    label: 'By Round',
-  },
-];
-
 const NewUser = () => {
+
+  // REF DECLARATIONS
+  let email = useRef(null);
+  let role = useRef(null);
+  let fullname = useRef(null);
+  let state = useRef(null);
+  let city = useRef(null);
+  let address = useRef(null);
+  let postalCode = useRef(null);
+  let phone = useRef(null);
+  let franchisee = useRef(null);
+  let coordinator = useRef(null);
+
+  // STATES
   const [formErrors, setFormErrors] = useState([]);
   const [formData, setFormData] = useState({
     fullname: "",
@@ -52,7 +55,6 @@ const NewUser = () => {
   const [stateData, setStateData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
   const [cityData, setCityData] = useState(suburbData);
-  const [topErrorMessage, setTopErrorMessage] = useState('');
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [franchiseeData, setFranchiseeData] = useState(null);
   const [coordinatorData, setCoordinatorData] = useState([]);
@@ -79,32 +81,17 @@ const NewUser = () => {
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
     const token = localStorage.getItem('token');
-
     const response = await axios.post(`${BASE_URL}/auth/signup`, data, {
-
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
-
     console.log('RESPONSE:', response);
-
     if(response.status === 201 && response.data.status === "success") {
       let { data } = response.data;
-      
       setLoaderMessage("Adding the User details to Engagebay Contacts")
       updateEngageBayContactList(data);
       setLoaderMessage("Wrapping Up");
-
-      // setLoader(false);
-      // setCreateUserModal(false);
-      // localStorage.setItem('success_msg', 'User created successfully!');
-
-      // if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
-      //   window.location.href=`/children/${data.id}`;
-      // } else {
-      //   window.location.href="/user-management";
-      // }
 
     } else if(response.status === 200 && response.data.status === "fail") {
       setLoader(false);
@@ -116,15 +103,6 @@ const NewUser = () => {
       })));
     }
   };
-
-  // const validateEmail = (email) => {
-  //   let errors = {};  
-  //   if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
-  //       errors.email= "Enter a valid email"
-  //   }
-  //   return errors;
-
-  // }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -181,6 +159,33 @@ const NewUser = () => {
       reader.onerror = (error) => reject(error);
     });
 
+  const setAutoFocus = (errObj) => {
+    const errArray = Object.keys(errObj);
+    console.log('ARRAY REFS:', errArray);
+
+    if(errArray.includes('email')) {
+      email.current.focus();
+    } else if(errArray.includes('role')) {
+      role.current.focus();
+    } else if(errArray.includes('fullname')) {
+      fullname.current.focus();
+    } else if(errArray.includes('state')) {
+      state.current.focus();
+    } else if(errArray.includes('city')) {
+      city.current.focus();
+    } else if(errArray.includes('address')) {
+      address.current.focus();
+    } else if(errArray.includes('postalCode')) {
+      postalCode.current.focus();
+    } else if(errArray.includes('phone')) {
+      phone.current.focus();
+    } else if(errArray.includes('franchisee')) {
+      franchisee.current.focus();
+    } else if(errArray.includes('coordinator')) {
+      coordinator.current.focus();
+    }
+  }
+
   const handleSubmit = async(event) => {
     event.preventDefault();
     if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
@@ -196,32 +201,18 @@ const NewUser = () => {
     }
     const errorObj = UserFormValidation(formData);
     if(Object.keys(errorObj).length > 0) {
-      console.log('There are errors in the code!');
       setFormErrors(errorObj);
-      // if(croppedImage) {
-      //   setFormErrors(prevState => ({
-      //     ...prevState,
-      //     profile_pic: null
-      //   }));
-      // } else {
-      //   setFormErrors(prevState => ({
-      //     ...prevState,
-      //     profile_pic: 'Image is required!'
-      //   }));
-      // }
+      setAutoFocus(errorObj);
     } else {
       console.log('Erorrs removed!');
       let data=new FormData();
-      let doc=[];
       trainingDocuments?.map(async(item)=>{
         const blob=await fetch(await toBase64(item)).then((res) => res.blob());
-        // doc.push(blob);
         data.append('images', blob);
       })
       
       if(croppedImage) {
         const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
-        // doc.push(blob);
         data.append('images', blob);
       }
       
@@ -229,7 +220,6 @@ const NewUser = () => {
         data.append(item,Object.values(formData)[index]);
       })
       
-      // data.append("images", doc);
       let errorObject = UserFormValidation(formData);
 
       if(Object.keys(errorObject).length > 0) {
@@ -588,6 +578,7 @@ const NewUser = () => {
                             <Form.Control
                               type="email"
                               name="email"
+                              ref={email}
                               value={formData?.email}
                               onChange={(e) => {
                                 handleChange(e);
@@ -607,6 +598,7 @@ const NewUser = () => {
                             <Form.Label>User Role</Form.Label>
                             <Select
                               placeholder="Select"
+                              ref={role}
                               closeMenuOnSelect={true}
                               options={userRoleData}
                               value={userRoleData?.filter(d => d.value === formData?.role)}
@@ -630,6 +622,7 @@ const NewUser = () => {
                             <Form.Control
                               type="text"
                               name="fullname"
+                              ref={fullname}
                               value={formData?.fullname}
                               onChange={(e) => {
                                 handleChange(e);
@@ -648,6 +641,7 @@ const NewUser = () => {
                               placeholder="Select"
                               closeMenuOnSelect={true}
                               options={stateData}
+                              ref={state}
                               value={stateData?.filter(d => d.label === formData?.state)}
                               onChange={(e) => {
                                 setFormData(prevState => ({
@@ -668,6 +662,7 @@ const NewUser = () => {
                             <Form.Label>Suburb</Form.Label>
                             <Select
                               placeholder="Select"
+                              ref={city}
                               closeMenuOnSelect={true}
                               options={cityData}
                               value={cityData?.filter(d => d.label === formData?.city)}
@@ -695,6 +690,7 @@ const NewUser = () => {
                             <Form.Control
                               type="text"
                               name="address"
+                              ref={address}
                               value={formData.address ?? ''}
                               onChange={(e) => {
                                 handleChange(e);
@@ -712,6 +708,7 @@ const NewUser = () => {
                             <Form.Control
                               type="tel"
                               name="postalCode"
+                              ref={postalCode}
                               maxLength="4"
                               value={formData.postalCode ?? ''}
                               onChange={(e) => {
@@ -792,6 +789,7 @@ const NewUser = () => {
                                 type="tel"
                                 name="phone"
                                 maxLength={20}
+                                ref={phone}
                                 value={formData.phone}
                                 onChange={(e) => {
 
@@ -841,6 +839,7 @@ const NewUser = () => {
                               <Select
                                 placeholder="Select"
                                 closeMenuOnSelect={true}
+                                ref={franchisee}
                                 options={franchiseeData}
                                 onChange={(e) => {
                                   setFormData((prevState) => ({
@@ -879,6 +878,7 @@ const NewUser = () => {
                               <Form.Label>Select Primary Coordinator</Form.Label>
                               <Select
                                 isDisabled={formData.role !== 'educator'}
+                                ref={coordinator}
                                 placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Select?" : "Not Applicable"}
                                 closeMenuOnSelect={true}
                                 options={coordinatorData}
@@ -887,8 +887,14 @@ const NewUser = () => {
                                     ...prevState,
                                     coordinator: e.id,
                                   }));
+
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    coordinator: null
+                                  }))
                                 }}
                               />
+                              { formErrors.coordinator !== null && <span className="error">{formErrors.coordinator}</span> }
                             </Form.Group>
                           }
 

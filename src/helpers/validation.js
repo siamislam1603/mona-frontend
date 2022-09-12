@@ -1,8 +1,3 @@
-// const isEmail = (email) => {
-//   console.log('EMAIL DURSING VALIDATION:', email);
-//   return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
-// }
-
 import moment from 'moment';
 
 export const DynamicFormValidation = (
@@ -168,14 +163,18 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   let { title, meta_description, start_date, start_time, franchise } = form;
   console.log('The tile valdiation', start_date);
   if (!title || title === ' ')
-    newErrors.title = 'Announcement Title is Required s';
+    newErrors.title = 'Announcement Title is Required ';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
   let reg = /^\s|\s$/
+  
+ if(title){
   if(title.match(reg)){
     // console.log("contains spaces");
     newErrors.title = 'Contain unwanted space';
      
     }
+ } 
+ 
   
   if (!start_date || start_date === 'undefined')
     newErrors.start_date = 'Start Date Required';
@@ -185,10 +184,10 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
     newErrors.meta_description = 'Announcement Description is Required';
 
 
-  if(meta_description.match(reg)){
+  // if(meta_description.match(reg)){
      
-      newErrors.meta_description = 'Contain unwanted space';     
-  }
+  //     newErrors.meta_description = 'Contain unwanted space';     
+  // }
   if (!franchise || franchise.length === 0) {
     if (!allFranchise) {
       newErrors.franchise = "Please Select Franchise"
@@ -209,11 +208,13 @@ export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise)
   console.log('All valiatiion', title, start_date, meta_description);
   if (!title || title === ' ') newErrors.title = 'Title is Required';
   let reg = /^\s|\s$/
-  if(title.match(reg)){
-    // console.log("contains spaces");
-    newErrors.title = 'Contain unwanted space';
-     
-    }
+  if(title){
+    if(title.match(reg)){
+      // console.log("contains spaces");
+      newErrors.title = 'Contain unwanted space';
+       
+      }
+   } 
   // if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Description is Required';
@@ -278,9 +279,9 @@ export const TrainingFormValidation = (form) => {
   let errors = {};
   let {
     title,
+    category_id,
     description,
     meta_description,
-    category_id,
     time_required_to_complete,
 
   } = form;
@@ -293,16 +294,16 @@ export const TrainingFormValidation = (form) => {
     errors.title_length = 'Training title should be more than 2 characters';
   }
 
+  if (!category_id) {
+    errors.category_id = 'Training category title is required';
+  }
+
   if (!description) {
     errors.description = 'Training description is required';
   }
 
   if (!meta_description) {
     errors.meta_description = 'Meta description is required';
-  }
-
-  if (!category_id) {
-    errors.category_id = 'Training category title is required';
   }
 
   if (!time_required_to_complete) {
@@ -437,28 +438,28 @@ export const FranchiseeFormValidation = (formObj) => {
     errors.franchisee_name = 'Franchise name is required';
   }
 
+  if (!franchisee_number) {
+    errors.franchisee_number = 'Franchise number is required';
+  }
+  
   if (!abn) {
     errors.abn = 'Australian business number is required';
   }
-
+  
+  if (!acn) {
+    errors.acn = 'Australian company number is required';
+  }
+  
   if (!city) {
     errors.city = 'Suburb is required';
   }
 
-  if (!state) {
-    errors.state = 'State is required';
-  }
-
-  if (!franchisee_number) {
-    errors.franchisee_number = 'Franchise number is required';
-  }
-
-  if (!acn) {
-    errors.acn = 'Australian company number is required';
-  }
-
   if (!address) {
     errors.address = 'Address is required';
+  }
+  
+  if (!state) {
+    errors.state = 'State is required';
   }
 
   if (!postcode) {
@@ -486,38 +487,48 @@ export const acceptPointValidator = (value) => {
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
+  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
-  let { fullname, role, state, city, address, postalCode, email, phone, franchisee, password, confirm_password } =
-    formObj;
+  let { fullname, role, state, city, address, postalCode, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
+  formObj;
+  
+  if (!email) errors.email = 'Email address is required';
 
+  if(email.length > 0 && !regex.test(email)) 
+    errors.email = "Email is invalid";
+    
+  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
+    errors.email = "Email is invalid";
+
+  
+  if (!role) errors.role = 'User role is required';
+  
   if (!fullname) errors.fullname = 'Full name is required';
 
-  if (!franchisee) errors.franchisee = 'Franchise is required';
-
-  if (!role) errors.role = 'User role is required';
-
+  if(!state) errors.state = 'State is required';
+  
   if (!city) errors.city = 'Suburb is required';
 
-  if(!state) errors.state = 'State is required';
+  if (!address) errors.address = 'Address is required';
+  
+  if (!postalCode) errors.postalCode = 'Post code is required';
+  
+  if (!phone) errors.phone = 'Phone number is required';
+  
+  if (!franchisee) errors.franchisee = 'Franchise is required';
 
+  if(open_coordinator === true && !coordinator)
+    errors.coordinator = 'Coordinator is required'
+  
   if (password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }
 
-  if (!address) errors.address = 'Address is required';
 
-  if (!postalCode) errors.postalCode = 'Post code is required';
 
-  if (postalCode.length !== 4)
-    errors.postalCodeLength = 'Post code should be 4-digit long';
 
-  if (!email) errors.email = 'Email address is required';
 
-  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
-    errors.email = "Email is invalid";
-
-  if (!phone) errors.phone = 'Phone number is required';
 
   return errors;
 };

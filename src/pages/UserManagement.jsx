@@ -58,7 +58,7 @@ const UserManagement = () => {
   const [userRoleData, setUserRoleData] = useState(userRoles);
   const [displayRoles, setDisplayRoles] = useState(null);
 
- 
+
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
       // if (e.target.text === 'Delete') {
@@ -204,7 +204,7 @@ const UserManagement = () => {
           <>
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[0] === 'null'? '../img/upload.jpg':cell[0]} alt="" />
+                <img src={cell[0] === 'null' ? '../img/upload.jpg' : cell[0]} alt="" />
               </span>
               <span className="user-name">
                 <a href={`/edit-user/${cell[4]}`}>{cell[1]}</a><small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
@@ -406,8 +406,13 @@ const UserManagement = () => {
   const Show_eduactor = async () => {
     let api_url = '';
     let filter = Key.key
+    let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
+
+
+    console.log(selectedFranchisee + "+++++++++++++++++++")
+    console.log(filter, "filter")
     if (filter) {
-      api_url = `${BASE_URL}/role/user/All?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
     }
 
     let response = await axios.get(api_url, {
@@ -465,27 +470,27 @@ const UserManagement = () => {
     let currentRole = localStorage.getItem('user_role');
     let newRoleList = userRoleData;
 
-    if(currentRole === "educator") {
+    if (currentRole === "educator") {
       newRoleList = newRoleList.filter(role => role.id === 4);
       setDisplayRoles(newRoleList);
     }
 
-    if(currentRole === "coordinator") {
+    if (currentRole === "coordinator") {
       newRoleList = newRoleList.filter(role => role.id > 3);
       setDisplayRoles(newRoleList);
     }
 
-    if(currentRole === "franchisee_admin") {
+    if (currentRole === "franchisee_admin") {
       newRoleList = newRoleList.filter(role => role.id > 2);
       setDisplayRoles(newRoleList);
     }
 
-    if(currentRole === 'franchisor_admin') {
+    if (currentRole === 'franchisor_admin') {
       newRoleList = newRoleList.filter(role => role.id > 1);
       setDisplayRoles(newRoleList);
     }
 
-    if(currentRole === "guardian") {
+    if (currentRole === "guardian") {
       newRoleList = newRoleList.filter(role => role.id === 5);
       setDisplayRoles(newRoleList);
     }
@@ -494,7 +499,7 @@ const UserManagement = () => {
 
   useEffect(() => {
     Show_eduactor()
-  }, [])
+  }, [selectedFranchisee])
 
 
   useEffect(() => {
@@ -525,8 +530,8 @@ const UserManagement = () => {
   }, []);
 
   useEffect(() => {
-    if(localStorage.getItem('user_role') === 'guardian') {
-      window.location.href=`/parents-dashboard`;
+    if (localStorage.getItem('user_role') === 'guardian') {
+      window.location.href = `/parents-dashboard`;
     }
   }, [])
 
@@ -537,10 +542,10 @@ const UserManagement = () => {
   }, [userRoleData]);
 
   useEffect(() => {
-    if(displayRoles) {
+    if (displayRoles) {
       console.log('DISPLAY ROLES:', displayRoles);
     }
-  }, [displayRoles]) 
+  }, [displayRoles])
 
   const csvLink = useRef();
 
@@ -623,7 +628,7 @@ const UserManagement = () => {
                                             }}
                                           />
                                         );
-                                      })   
+                                      })
                                     }
                                   </Form.Group>
                                 </div>
@@ -691,9 +696,9 @@ const UserManagement = () => {
                                       ref={csvLink}
                                     >
                                       {/* {setCsvDownloadFlag(false)} */}
-                                  {    setTimeout(() => {
-                                      setCsvDownloadFlag(false)
-                                        
+                                      {setTimeout(() => {
+                                        setCsvDownloadFlag(false)
+
                                       }, 1000)}
                                     </CSVDownload>
                                   )}
@@ -719,7 +724,7 @@ const UserManagement = () => {
                                 <BootstrapTable
                                   {...props.baseProps}
                                   rowEvents={rowEvents}
-                                  selectRow={selectRow}
+                                  // selectRow={selectRow}
                                   pagination={paginationFactory()}
                                 />
                               </>
