@@ -126,6 +126,14 @@ const DynamicForm = () => {
       .then((response) => response.text())
       .then((result) => {
         let res = JSON.parse(result);
+
+
+        if(res?.success==false)
+        {
+          localStorage.setItem('form_error', res?.message)
+          window.location.href = '/form';
+        }
+
         setFormData(res.result);
         setFormPermission(res?.form[0]?.form_permissions[0]);
         let formsData = {};

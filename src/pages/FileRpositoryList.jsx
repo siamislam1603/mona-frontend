@@ -72,9 +72,12 @@ const FileRpositoryList = () => {
         };
         try {
             let data = selectedFranchisee === "null" ? "all" : selectedFranchisee;
-            console.log(data, "dataID")
-            console.log(data, "ID")
-            let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]`, requestOptions)
+            let user_Role = localStorage.getItem('user_role');
+            console.log(user_Role, "user_Role")
+            let URL = user_Role === "guardian" ? `${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]` :
+                `${BASE_URL}/fileRepo/files-by-category/${Params.id}?limit=20`
+
+            let response = await fetch(URL, requestOptions)
             response = await response.json();
             setUser(response.result)
             if (response) {
@@ -213,7 +216,6 @@ const FileRpositoryList = () => {
                                             {cell[1]}.mp3
                                         </span>
                                     </>
-
                                     : cell[0] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
