@@ -1,11 +1,6 @@
 import React, { useEffect, useState, } from 'react';
-import {
-  Button,
-  Container,
-  Dropdown,
-  DropdownButton,
-  Form,
-} from 'react-bootstrap';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
+import { Button, Container, Dropdown, DropdownButton, Form, } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -22,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import moment from 'moment';
 // const { ExportCSVButton } = CSVExport;
 
@@ -47,9 +41,6 @@ const ChildrenEnrol = () => {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
   const { SearchBar } = Search;
-
-
-
 
 
   const ChildernEnrolled = async () => {
@@ -94,16 +85,10 @@ const ChildrenEnrol = () => {
 
 
 
-
-  const columns1 = [
+  const columns = [
     {
       dataField: 'name',
       text: 'Name',
-      // filter: textFilter(),
-      // formatter: (cell) => {
-      //   console.log("name cell", cell)
-      //   return (<><div className="user-list"><span className="user-name">{cell}</span></div></>)
-      // },
     },
     {
       dataField: 'parentName',
@@ -229,10 +214,9 @@ const ChildrenEnrol = () => {
   ];
 
 
-
-  const onFilter = debounce(() => {
-    fetchUserDetails();
-  }, 200);
+  // const onFilter = debounce(() => {
+  //   fetchUserDetails();
+  // }, 200);
 
   const getData = () => {
     axios("https://jsonplaceholder.typicode.com/comments").then((res) => {
@@ -431,12 +415,6 @@ const ChildrenEnrol = () => {
       setCsvData(csv_data);
     }
   }
-  const columns = [
-    { dataField: 'id', text: 'Id' },
-    { dataField: 'name', text: 'Name' },
-    { dataField: 'animal', text: 'Animal' },
-  ]
-
 
   useEffect(() => {
     Show_eduactor()
@@ -493,86 +471,52 @@ const ChildrenEnrol = () => {
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
                 <FullLoader loading={fullLoaderStatus} />
-
-                <div className="entry-container">
-                  <div className="user-management-sec childenrol-table">
-
+                <ToolkitProvider
+                  keyField="name"
+                  data={chidlEnroll}
+                  columns={columns}
+                  search
+                >
+                  {(props) => (
                     <>
-                      {
-                        topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
-                      }
-                      <header className="title-head">
-                        <h1 className="title-lg">Children Enroled</h1>
-                        <div className="othpanel">
-                          <div className="extra-btn">
+                      <div className="entry-container">
+                        <div className="user-management-sec childenrol-table">
 
+                          <>
+                            {
+                              topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+                            }
+                            <header className="title-head">
+                              <h1 className="title-lg">Children Enroled</h1>
+                              <div className="othpanel">
+                                <div className="extra-btn">
+                                  <div className="data-search me-3">
+                                    <SearchBar {...props.searchProps} />
+                                  </div>
+                                </div>
+                              </div>
+                            </header>
+                          </>
 
-                          </div>
+                          {
+                            chidlEnroll?.length > 0 ?
+                              (
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                  pagination={paginationFactory()}
+                                />
+                              ) : (
+                                <div className="text-center mb-5 mt-5"><strong>
+                                  No forms present!
+                                </strong></div>
+
+                              )
+                          }
                         </div>
-                      </header>
-
-
+                      </div>
                     </>
-
-                    {
-                      chidlEnroll?.length > 0 ?
-                        (
-                          <BootstrapTable
-                            keyField="name"
-                            data={chidlEnroll}
-                            columns={columns1}
-                            pagination={paginationFactory()}
-                            // filter={filterFactory()}
-                          />
-                        ) : (
-                          <div className="text-center mb-5 mt-5"><strong>
-                            No forms present!
-                          </strong></div>
-
-                        )
-                    }
-
-
-                    {/* {
-                      chidlEnroll?.length > 0 ?
-                        <ToolkitProvider
-                        bootstrap4
-                        keyField="name"
-                          data={chidlEnroll}
-                          columns={columns1}
-                          search
-                        >
-                          {(props) => (
-
-                            <>
-
-                              <BootstrapTable
-                                {...props.baseProps}
-                              // filter ={filterFactory()}
-                              filter={filterFactory()} 
-                              noDataIndication="There is no solution"
-
-                                // rowEvents={rowEvents}
-                              
-
-
-                                // selectRow={selectRow}
-                                pagination={paginationFactory()}
-                              />
-                            </>
-                          )}
-                        </ToolkitProvider>
-                        : (
-                          <div className="text-center mb-5 mt-5"><strong>
-                            No Child enrol Yet!
-                          </strong></div>
-
-                        )
-                    } */}
-
-
-                  </div>
-                </div>
+                  )}
+                </ToolkitProvider>
               </div>
             </div>
           </Container>
