@@ -187,7 +187,7 @@ const SearchResult = (props) => {
                             
                             <div className="search-user-detail">
   
-                              <h2 className="title-md text-capitalize"><a href={`${BASE_URL}/training-detail/${data.id}`}>{data?.title}</a></h2>
+                              <h2 className="title-md text-capitalize"><a href={`${BASE_URL}/training-detail/${data.id}`}>{data?.training?.title}</a></h2>
                               <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
@@ -237,17 +237,17 @@ const SearchResult = (props) => {
                             <div className="search-item">
                             
                             <div className="search-user-pic">
-                              <a href={`/file-repository-List/${data?.repository_files[0]?.categoryId}`}>
-                                {data?.repository_files[0]?.fileType === "video/mp4" ?
+                              <a href={`/file-repository-List/${data?.repository?.repository_files[0]?.categoryId}`}>
+                                {data?.repository?.repository_files[0]?.fileType === "video/mp4" ?
                                 <figure className="figure"><img alt="" src={ "/img/video-image.png" } className="figure-img img-fluid" /></figure>
                                 :
-                                <figure className="figure"><img alt="" src={data?.repository_files[0]?.filesPath ? data?.repository_files[0]?.filesPath: "/img/related-pic3.png" } className="figure-img img-fluid" /></figure>
+                                <figure className="figure"><img alt="" src={data?.repository?.repository_files[0]?.categoryId?.filesPath ? data?.repository?.repository_files[0]?.categoryId?.filesPath: "/img/related-pic3.png" } className="figure-img img-fluid" /></figure>
                               }
                                 {/* <figure className="figure"><img alt="" src={data?.repository_files[0]?.filesPath ? data?.repository_files[0]?.filesPath: "/img/related-pic3.png" } className="figure-img img-fluid" /></figure> */}
                               </a>
                             </div>
                             <div className="search-user-detail">
-                              <h2 className="title-md text-capitalize"><a href="/file-repository">{data?.title}</a></h2>
+                              <h2 className="title-md text-capitalize"><a href={`/file-repository/`}>{data?.repository?.title}</a></h2>
                               <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
@@ -259,7 +259,7 @@ const SearchResult = (props) => {
                                 </time>
                               </span>
                             </div>
-                              <div className="user-link mt-4"><a href={`/file-repository-List/${data?.repository_files[0]?.categoryId}`}>View Details</a></div>
+                              <div className="user-link mt-4"><a href={`/file-repository-List/${data?.repository?.repository_files[0]?.categoryId}`}>View Details</a></div>
                             </div>
                           </div>
               
@@ -354,7 +354,7 @@ const SearchResult = (props) => {
                                  </a>
                                </div>
                                <div className="search-user-detail">
-                                 <h2 className="title-md text-capitalize"><a href={`/operatingmanual/?selected=${data.id}`}>{data?.title}</a></h2>
+                                 <h2 className="title-md text-capitalize"><a href={`/operatingmanual/?selected=${data.id}`}>{data?.operating_manual?.title}</a></h2>
                                  <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
@@ -418,8 +418,7 @@ const SearchResult = (props) => {
                           </div>
                         </Accordion.Header>
                         <Accordion.Body>
-                          <Row className="mb-4">
-                            
+                          <Row className="mb-4">                            
                           {user?.map((data) => (
                             <div className="search-item">
                             <div className="search-user-pic">
@@ -434,9 +433,7 @@ const SearchResult = (props) => {
                                 <strong>Created At:</strong> <time>
                                   <strong>
                                   {moment(data?.createdAt).fromNow()}
-  
                                   </strong>
-  
                                 </time>
                               </span>
                             </div>
