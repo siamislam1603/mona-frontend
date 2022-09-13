@@ -40,10 +40,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
   const family_name = useRef(null);
   const usually_called = useRef(null);
   const home_address = useRef(null);
+  const language = useRef(null);
+  const country_of_birth = useRef(null);
   const child_medical_no = useRef(null);
   const child_crn = useRef(null);
   const parent_crn_1 = useRef(null);
-  const parent_crn_2 = useRef(null);
 
   const parent_family_name = useRef(null);
   const given_name = useRef(null);
@@ -66,7 +67,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
     child_medical_no: "",
     child_crn: "",
     parent_crn_1: "",
-    parent_crn_2: "",
     gender: "M",
     address_of_school: "",
     name_of_school: "",
@@ -200,14 +200,18 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       usually_called?.current?.focus();
     } else if(errArray.includes('home_address')) {
       home_address?.current?.focus();
-    } else if(errArray.includes('child_medical_no')) {
+    } else if(errArray.includes('language')) {
+      language?.current?.focus();
+    } else if(errArray.includes('country_of_birth')) {
+      country_of_birth?.current?.focus();
+    }else if(errArray.includes('child_medical_no')) {
       child_medical_no?.current?.focus();
     } else if(errArray.includes('child_crn')) {
       child_crn?.current?.focus();
     } else if(errArray.includes('parent_crn_1')) {
       parent_crn_1?.current?.focus();
-    } else if(errArray.includes('parent_crn_2')) {
-      parent_crn_2?.current?.focus();
+    } else if(errArray.includes('supportForm')) {
+      window.scrollTo(600, 900);
     }
   };
 
@@ -222,6 +226,14 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
       telephone?.current?.focus();
     } else if(errArray.includes("email")) {
       email?.current?.focus();
+    } else if(errArray.includes("place_of_birth")) {
+      place_of_birth?.current?.focus();
+    } else if(errArray.includes("ethnicity")) {
+      ethnicity?.current?.focus();
+    } else if(errArray.includes("primary_language")) {
+      primary_language?.current?.focus();
+    } else if(errArray.includes("occupation")) {
+      occupation?.current?.focus();
     }
   }
 
@@ -328,8 +340,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
         school_status: child?.school_status,
         child_medical_no: child?.child_medical_no,
         child_crn: child?.child_crn,
-        parent_crn_1: child?.parent_crn_1,
-        parent_crn_2: child?.parent_crn_2,
+        parent_crn_1: parent?.crn || child?.parent_crn_1,
         date_first_went_to_school: child?.date_first_went_to_school,
         name_of_school: child?.name_of_school,
         address_of_school: child?.address_of_school
@@ -716,6 +727,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     <Select
                       placeholder={formOneChildData?.language || "Select"}
                       closeMenuOnSelect={true}
+                      ref={language}
                       // style={childFormErrors?.language ? { border: "1px solid tomato", backgroundColor: "#FF634750" } : {}} 
                       options={languageData}
                       onChange={(e) => {
@@ -746,6 +758,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       placeholder={formOneChildData?.country_of_birth || "Select"}
                       closeMenuOnSelect={true}
                       options={countryData}
+                      ref={country_of_birth}
                       onChange={(e) => {
                         setFormOneChildData((prevState) => ({
                           ...prevState,
@@ -900,11 +913,12 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     {
                       formOneChildData?.developmental_delay &&
                       <>
-                        <Form.Group className="col-md-6 mb-3 mt-3">
-                          <Form.Label>Upload Support Form</Form.Label>
+                        <Form.Group className="col-md-12 mb-3">
+                          <Form.Label>Upload any supporting documents</Form.Label>
                           <DragDropMultiple 
                             module="child-enrollment"
                             fileLimit={1}
+                            id="support-form"
                             supportFormDetails={supportFormDetails}
                             onSave={setInclusionSupportForm} />
                           <small className="fileinput">(Upload 1 file)</small>
@@ -987,7 +1001,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Parents CRN 1 *</Form.Label>
+                    <Form.Label>Parents 1 CRN *</Form.Label>
                     <Form.Control
                       type="text"
                       name="parent_crn_1"
@@ -1010,34 +1024,6 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                       }} />
 
                       { childFormErrors?.parent_crn_1 !== null && <span className="error">{childFormErrors?.parent_crn_1}</span> }
-                  </Form.Group>
-                </Col>
-                
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Parents CRN 2 *</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="parent_crn_2"
-                      ref={parent_crn_2}
-                      value={formOneChildData.parent_crn_2 || ""}
-                      onChange={(e) => {
-                        handleChildData(e);
-                      }} 
-                      onBlur={(e) => {
-                        if(!formOneChildData.log.includes("parent_crn_2")) {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            log: [...formOneChildData.log, "parent_crn_2"]
-                          }));
-                        }
-                        setChildFormErrors(prevState => ({
-                          ...prevState,
-                          parent_crn_2: null,
-                        })) 
-                      }} />
-
-                      { childFormErrors?.parent_crn_2 !== null && <span className="error">{childFormErrors?.parent_crn_2}</span> }
                   </Form.Group>
                 </Col>
 
@@ -1666,8 +1652,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             placeholder={formOneParentData?.primary_language || "Select"}
                             closeMenuOnSelect={true}
                             options={languageData}
-                            name="primary_language"
                             ref={primary_language}
+                            name="primary_language"
                             onChange={(e) => {
                               setFormOneParentData((prevState) => ({
                                 ...prevState,
@@ -1695,8 +1681,8 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                             placeholder={formOneParentData?.occupation || "Select"}
                             closeMenuOnSelect={true}
                             options={occupationData}
-                            name="occupation"
                             ref={occupation}
+                            name="occupation"
                             onChange={(e) => {
                               setFormOneParentData((prevState) => ({
                                 ...prevState,

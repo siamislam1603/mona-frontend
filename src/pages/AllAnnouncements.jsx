@@ -46,12 +46,18 @@ const [realtedFile,setRelatedFile] = useState(false)
           "Authorization": "Bearer " + token
         }
       });
+      console.log("THe Response 2645",response)
       
       if(response.status === 200 && response.data.status === "success") {
           setAnnouncementDetail(response.data.result.searchedData);
           setIsLoading(true)
          
     
+        }
+        if(response.status === 200 && response.data.status === "fail"){
+          setAnnouncementDetail([])
+          setIsLoading(false)
+
         }
         
     } catch (error) {
@@ -165,6 +171,7 @@ useEffect(() =>{
     // console.log("THE LOAD MORE DATA EMPY ")
   }
 },[props.loadMoreData])
+console.log("Announcemen detal",announcementDetails)
 
   return (
     <div className="announcement-accordion">

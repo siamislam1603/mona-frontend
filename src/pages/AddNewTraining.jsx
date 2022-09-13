@@ -191,7 +191,7 @@ const AddNewTraining = () => {
         // localStorage.setItem('active_tab', '/created-training');
         window.location.href = "/training-createdby-me";
       } else {
-        setTopErrorMessage("unable to save cover image!");
+        setTopErrorMessage("unable to save cover image");
         setTimeout(() => {
           setTopErrorMessage(null);
         }, 3000)
@@ -532,7 +532,7 @@ const AddNewTraining = () => {
                       <Col md={6} className="mb-3 relative">
                         <Form.Group>
                           <Form.Label>Time required to complete*</Form.Label>
-                          <div style={{ display: "flex", gap: "5px" }}>
+                          <div className="timelimit" style={{ display: "flex", gap: "5px" }}>
                             <Form.Control
                               style={{ flex: 6 }}
                               type="number"
@@ -630,7 +630,7 @@ const AddNewTraining = () => {
                               setPopupVisible={setPopupVisible} />
                           }
                           <small className="fileinput mt-1">(png, jpg & jpeg)</small>
-                          {error && !croppedImage && < span className="error"> File is required!</span>}
+                          {error && !croppedImage && < span className="error"> Cover image is required</span>}
                           {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
 
                         </Form.Group>
@@ -646,11 +646,13 @@ const AddNewTraining = () => {
                             onSave={setVideoTutorialFiles}
                           />
                           <small className="fileinput">(mp4, flv & mkv)</small>
+                          <small className="fileinput">(max. 5 video files)</small>
                           {
                             videoFileErrorMessage  &&
                             videoFileErrorMessage.map(errorObj => {
                               return (
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>Error: {errorObj?.error[0].message}</p>
+                                // errorObj?.error[0].message
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{"Video files should be less than 1GB in size."}</p>
                               )
                             })
                           }
@@ -664,6 +666,7 @@ const AddNewTraining = () => {
                             onSave={setRelatedFiles}
                           />
                           <small className="fileinput">(pdf, doc & xslx)</small>
+                          <small className="fileinput">(max. 5 documents)</small>
                         </Form.Group>
                       </Col>
                       <Col md={12}>
@@ -947,7 +950,7 @@ const AddNewTraining = () => {
                           <Form.Check
                             type="checkbox"
                             checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                            label="Coordinators"
+                            label="Coordinator"
                             onChange={() => {
                               if (trainingSettings.assigned_roles.includes("coordinator")) {
                                 let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");

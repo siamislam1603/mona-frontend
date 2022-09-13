@@ -311,6 +311,7 @@ const Announcements =  () => {
         setPage(5)
       }
     }
+
     else{
       console.log('NOT DATA AVIABKLE in thi franhsi')
       setAllAnnouncement([])
@@ -628,6 +629,11 @@ useEffect(() =>{
     setEventLength(loadMoreEvent.length)
   },[loadMoreEvent])
   useEffect(() => {
+          if (localStorage.getItem('user_role') === 'franchisor_admin') {
+        setTabLinkPath('/my-announcements');
+      } else {
+        setTabLinkPath('/all-announcements');
+      }
     if (localStorage.getItem('success_msg')) {
       setTopMessage(localStorage.getItem('success_msg'));
       localStorage.removeItem('success_msg');
@@ -636,23 +642,36 @@ useEffect(() =>{
         setTopMessage(null);
       }, 3000);
     }
+    if (localStorage.getItem('active_tab_announcement')) {
+
+
+      let path = localStorage.getItem('active_tab_announcement');
+      console.log('PATH IS:', path);
+      setTabLinkPath(path);
+    }
     
   }, []);
 
   // console.log("USER ROLE",userRole)
-  console.log("THE COUNT AND COMMON",theCount,theCommon)
-  console.log("MY COUNT AND MY data lenght",myCount,myDataLength,)
+  // console.log("THE COUNT AND COMMON",theCount,theCommon)
+  // console.log("MY COUNT AND MY data lenght",myCount,myDataLength,)
   // // console.log("THE LOAD MORE MY DATA",theMyAnnouncement)
   // console.log("PAGE page and Mypage",page,mypage)
   // console.log("THE New Load More adat,",loadMoreData)
   // console.log("THE LOAD MRE EVENT",loadMoreEvent)
   // console.log("PERMISSION",verifyPermission("announcements", "add"));
 
-  console.log("Event count",eventCount,"lenght ",eventLength )
+  // console.log("Event count",eventCount,"lenght ",eventLength )
+  // if (localStorage.getItem('user_role') === 'franchisor_admin') {
+  //   setTabLinkPath('/my-announcements');
+  // } else {
+  //   setTabLinkPath('/all-announcements');
+  // }
+  console.log("tablink path",tabLinkPath)
   
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)
-  // console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,loadMoreData)
+  console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,)
   return (
     <>
    {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 

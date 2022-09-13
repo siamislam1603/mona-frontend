@@ -312,15 +312,15 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                          <Dropdown.Item onClick={() => {
-                              if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
-                            }}>Delete</Dropdown.Item>
                             <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
                             <Dropdown.Item href="#" onClick={() => {
                               setSaveTrainingId(training.id);
                               setShowModal(true)
                             }}>Share</Dropdown.Item>
+                            <Dropdown.Item onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this training?"))
+                                handleTrainingDelete(training.id)
+                            }}>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </div>

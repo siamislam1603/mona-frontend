@@ -3,7 +3,7 @@ import React from 'react';
 class DataComponent extends React.Component {
   render() {
     {
-      console.log('this.props---->', this.props.description);
+      console.log('this.props---->', this.props.description,this.props);
     }
     return (
       <div
@@ -18,13 +18,15 @@ class DataComponent extends React.Component {
                 </div>
                 ${this.props.cover_image && `<br />`}
                 <div className="module_title">
-                  <h3>
-                   ${this.props.category}
-                  </h3>
-                  <span>
+                  
+               
+                  <span className="title"> 
+                  ${this.props.category}
+                  </span> 
                     <span className="module_dot"> • </span>
+                   
                     ${this.props.title}
-                  </span>
+
                 </div>
               </div><div className="description_wrp">${this.props.description}</div>`,
         }}

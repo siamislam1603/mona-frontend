@@ -151,6 +151,8 @@ function ViewFormBuilder(props) {
           }
         });
         setMeFormData(me);
+        console.log("me---->",me);
+        console.log("me---->2",others);
         setOthersFormData(others);
         if (result) {
           setfullLoaderStatus(false);
@@ -197,6 +199,7 @@ function ViewFormBuilder(props) {
 
   return (
     <>
+    {console.log("others form data----->",OthersFormData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -784,18 +787,15 @@ function ViewFormBuilder(props) {
                         </div>
                         {form_history_no_record===false && <Row><p>No Record founds</p></Row>}
                       </Tab>
-                      {(localStorage.getItem('user_role') ===
-                        'franchisee_admin' ||
-                        localStorage.getItem('user_role') ===
-                          'franchisor_admin' ||
-                        localStorage.getItem('user_role') ===
-                          'coordinator') && (
+                      
                         <Tab eventKey="form-templates" title="Form Templates">
                           <div className="tab-created">
                             <Tabs
                               defaultActiveKey={
                                 localStorage.getItem('user_role') ===
-                                'coordinator'
+                                'coordinator' || localStorage.getItem('user_role') ===
+                                'educator' || localStorage.getItem('user_role') ===
+                                'guardian'
                                   ? 'created-by-others'
                                   : key
                               }
@@ -807,7 +807,9 @@ function ViewFormBuilder(props) {
                             >
                               {!(
                                 localStorage.getItem('user_role') ===
-                                'coordinator'
+                                'coordinator' || localStorage.getItem('user_role') ===
+                                'educator' || localStorage.getItem('user_role') ===
+                                'guardian' 
                               ) && (
                                 <Tab
                                   className="create-me create_by_me_list"
@@ -1015,7 +1017,27 @@ function ViewFormBuilder(props) {
                                                     localStorage.getItem(
                                                       'user_role'
                                                     )
-                                                  )) && (
+                                                  ) || (
+                                                    inner_item
+                                                      ?.form_permissions[0]
+                                                      ?.signatories_role || []
+                                                  ).includes(
+                                                    localStorage.getItem(
+                                                      'user_id'
+                                                    )
+                                                  ) ||
+                                                    (
+                                                      inner_item
+                                                        ?.form_permissions[0]
+                                                        ?.signatories_role ||
+                                                      []
+                                                    ).includes(
+                                                      localStorage.getItem(
+                                                        'user_role'
+                                                      )==="guardian" ? "parent" : localStorage.getItem(
+                                                        'user_role'
+                                                      )
+                                                    )) && (
                                                   <>
                                                     {item.title_flag ===
                                                       false && (
@@ -1234,7 +1256,6 @@ function ViewFormBuilder(props) {
                             </Tabs>
                           </div>
                         </Tab>
-                      )}
                     </Tabs>
                   </div>
                 </div>
@@ -1275,12 +1296,13 @@ function ViewFormBuilder(props) {
                 ? MeFormData[Index]?.forms &&
                   MeFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item) => {
+                      {console.log("item----><><><><>",item)}
                       return (
                         // http://13.237.14.155:4000/form/response?search=&form_id=11&user_id=2&user_role=franchisor_admin
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">
-                              <img src="../img/user_img.png" alt="" />
+                              <img src={item[0]?.user?.profile_photo ? item[0]?.user?.profile_photo : "../img/user_img.png"} alt="" />
                               <h4
                                 className={
                                   item[0]?.seen_flag === false &&
@@ -1345,14 +1367,13 @@ function ViewFormBuilder(props) {
                 : OthersFormData[Index]?.forms &&
                   OthersFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item, index) => {
-                      {
-                        console.log('item[0]-->', item[0]);
-                      }
                       return (
+                        
                         <div className="user_box">
+                          {console.log("item----><><><><>2",item)}
                           <div className="user_name">
                             <div className="user_profile">
-                              <img src="../img/user_img.png" alt="" />
+                              <img src={item[0]?.user?.profile_photo ? item[0]?.user?.profile_photo : "../img/user_img.png"} alt="" />
                               <h4
                                 className={
                                   item[0]?.seen_flag === false &&

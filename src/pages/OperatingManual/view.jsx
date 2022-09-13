@@ -20,6 +20,7 @@ import {
 } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
+import axios from 'axios';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
 import PdfComponent from '../PrintPDF/PdfComponent';
@@ -114,10 +115,6 @@ const OperatingManual = () => {
             setCategory(res?.result);
             setCategoryModalFlag(false);
             getOperatingManual();
-            // getCategory();
-            // let data = operatingManualData;
-            // data['category_name'] = categoryData?.category_name;
-            // setOperatingManualData(data);
           });
       }
     }
@@ -295,27 +292,23 @@ const OperatingManual = () => {
   //     })
   //     .catch((error) => console.log('error', error));
   // };
-  const deleteOperatingManualCategory = (id) => {
-    var myHeaders = new Headers();
-    myHeaders.append('authorization', 'Bearer ' + token);
-    var requestOptions = {
-      method: 'DELETE',
-      redirect: 'follow',
-      headers: myHeaders,
-    };
+  const deleteOperatingManualCategory = async (id) => {
+   try {
+    console.log("Delete Success ROhan Call")
+    let token = localStorage.getItem('token');
 
-    fetch(
-      `${BASE_URL}/operating_manual/category/${id}?shared_by=${localStorage.getItem(
-        'user_id'
-      )}&link=${FRONT_BASE_URL}/operatingmanual`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        getOperatingManual();
-        // getCategory();
-      })
-      .catch((error) => console.log('error', error));
+    const response = await axios.delete(`${BASE_URL}/operating_manual/category/${id}?shared_by=${localStorage.getItem('user_id')}&link=${FRONT_BASE_URL}/operatingmanual`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+    })
+    console.log("Response of delete",response)
+
+   } catch (error) {
+    console.log("ERROR in Delete operatin module",error)
+    
+   }
+
   };
   const deleteOperatingManual = () => {
     var myHeaders = new Headers();
@@ -341,6 +334,7 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   const getOperatingManual = (key, value) => {
+    console.log("Operating mannual set",key,value)
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
@@ -376,6 +370,7 @@ const OperatingManual = () => {
     fetch(api_url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
+        // console.log("The resultdsa",result)
         result = JSON.parse(result);
         setOperatingManualdata(result.result);
         if (category_flag) {
@@ -448,6 +443,10 @@ const OperatingManual = () => {
         });
     }
   };
+  useEffect(() =>{
+    // getOperatingManual()
+    console.log("Skn")
+  },[operatingManualdata])
   console.log("Rohan manual",operatingManualdata)
 
   return (
@@ -749,6 +748,7 @@ const OperatingManual = () => {
                                             alt=""
                                           />
                                           {inner_item.title}
+                                          
                                         </a>
                                       </li>
                                     );

@@ -373,15 +373,21 @@ const EditTraining = () => {
     // console.log('COVER IMAGE:', coverImage[0]);
   };
 
-  const handleTrainingFileDelete = async (fileId) => {
+  const handleTrainingFileDelete = async (fileId, fileType) => {
     let token = localStorage.getItem('token');
     await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     }).then(function () {
-      setFileDeleteResponse();
-      setFetchedRelatedFiles();
+
+      if(fileType === "related_files") {
+        let newData = fetchedRelatedFiles.filter(d => parseInt(d.id) !== parseInt(fileId))
+        setFetchedRelatedFiles(newData);
+      } else if(fileType === "video_files") {
+        let newData = fetchedVideoTutorialFiles.filter(d => parseInt(d.id) === parseInt(fileId))
+        fetchedVideoTutorialFiles(newData); 
+      }
     })
       .catch(error => {
         console.log(error)
@@ -512,7 +518,7 @@ const EditTraining = () => {
                         <Col md={6} className="mb-3">
                           <Form.Group className="relative">
                             <Form.Label>Time required to complete</Form.Label>
-                            <div style={{ display: "flex", gap: "5px" }}>
+                            <div className="timelimit" style={{ display: "flex", gap: "5px" }}>
                               <Form.Control
                                 style={{ flex: 6 }}
                                 type="number"
@@ -624,11 +630,13 @@ const EditTraining = () => {
                               setUploadError={setVideoFileErrorMessage}
                               onSave={setVideoTutorialFiles}
                             />
+                            <small className="fileinput">(mp4, flv & mkv)</small>
+                            <small className="fileinput">(max. 5 video files)</small>
                             {
                               videoFileErrorMessage  &&
                               videoFileErrorMessage.map(errorObj => {
                                 return (
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>Error: {errorObj?.error[0].message}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"Video files should be less than 1GB in size."}</p>
                                 )
                               })
                             }
@@ -641,7 +649,11 @@ const EditTraining = () => {
                                       <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
                                       <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
                                       <img
-                                        onClick={() => handleTrainingFileDelete(video.id)}
+                                        onClick={() => {
+                                          if (window.confirm('Are you sure you want to delete this video?')) {
+                                            handleTrainingFileDelete(video.id, "video_files");
+                                          }
+                                        }}
                                         className="file-remove"
                                         src="../img/removeIcon.svg"
                                         alt="" />
@@ -650,7 +662,6 @@ const EditTraining = () => {
                                 })
                               }
                             </div>
-                            <small className="fileinput">(mp4, flv & mkv)</small>
                           </Form.Group>
 
                         </Col>
@@ -661,6 +672,8 @@ const EditTraining = () => {
                             <DropAllFile
                               onSave={setRelatedFiles}
                             />
+                            <small className="fileinput">(pdf, doc & xslx)</small>
+                            <small className="fileinput">(max. 5 documents)</small>
                             <div className="media-container">
                               {
                                 fetchedRelatedFiles &&
@@ -670,7 +683,11 @@ const EditTraining = () => {
                                       <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
                                       <a href={file.file}><p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p></a>
                                       <img
-                                        onClick={() => handleTrainingFileDelete(file.id)}
+                                        onClick={() => {
+                                          if (window.confirm('Are you sure you want to delete this file?')) {
+                                            handleTrainingFileDelete(file.id, "related_files");
+                                          }
+                                        }}
                                         className="file-remove"
                                         src="../img/removeIcon.svg"
                                         alt="" />
@@ -679,7 +696,6 @@ const EditTraining = () => {
                                 })
                               }
                             </div>
-                            <small className="fileinput">(pdf, doc & xslx)</small>
                           </Form.Group>
                         </Col>
                         <Col md={12}>
@@ -946,7 +962,7 @@ const EditTraining = () => {
                             <Form.Check
                               type="checkbox"
                               checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                              label="Coordinators"
+                              label="Coordinator"
                               onChange={() => {
                                 if (trainingSettings.assigned_roles?.includes("coordinator")) {
                                   let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
