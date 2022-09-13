@@ -1503,6 +1503,9 @@ tr {
 span.module_dot {
     margin: 0 15px;
 }
+.print .module_title{
+    color: #AA0061;
+}
 
 .reference_videos {
     border-radius: 30px;

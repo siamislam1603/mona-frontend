@@ -115,10 +115,6 @@ const OperatingManual = () => {
             setCategory(res?.result);
             setCategoryModalFlag(false);
             getOperatingManual();
-            // getCategory();
-            // let data = operatingManualData;
-            // data['category_name'] = categoryData?.category_name;
-            // setOperatingManualData(data);
           });
       }
     }
@@ -752,6 +748,7 @@ const OperatingManual = () => {
                                             alt=""
                                           />
                                           {inner_item.title}
+                                          
                                         </a>
                                       </li>
                                     );

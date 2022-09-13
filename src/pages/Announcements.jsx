@@ -311,6 +311,7 @@ const Announcements =  () => {
         setPage(5)
       }
     }
+
     else{
       console.log('NOT DATA AVIABKLE in thi franhsi')
       setAllAnnouncement([])
@@ -670,7 +671,7 @@ useEffect(() =>{
   
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)
-  // console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,loadMoreData)
+  console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,)
   return (
     <>
    {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
