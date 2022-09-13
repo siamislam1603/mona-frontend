@@ -115,7 +115,7 @@ function ViewFormBuilder(props) {
       redirect: 'follow',
       headers: myHeaders,
     };
-
+    localStorage.getItem("user_role")==="guardian" ? franchisee_id="all" : franchisee_id=franchisee_id;
     fetch(
       `${BASE_URL}/form?search=${search}&id=${localStorage.getItem(
         'user_id'
@@ -1007,6 +1007,7 @@ function ViewFormBuilder(props) {
                               title="Created by others"
                             >
                               <div className="forms-content-section">
+                                
                                 {OthersFormData?.map((item, index) => {
                                   {
                                     item['title_flag'] = false;
@@ -1016,13 +1017,15 @@ function ViewFormBuilder(props) {
                                       <Row>
                                         {item?.forms?.map(
                                           (inner_item, inner_index) => {
+                                            
+                                            {console.log("inner_item------232132133>>>>",inner_item)}
                                             return (
                                               inner_item.created_by !==
                                                 parseInt(
                                                   localStorage.getItem(
                                                     'user_id'
                                                   )
-                                                ) &&
+                                                ) && 
                                               ((
                                                 inner_item?.form_permissions[0]
                                                   ?.response_visibility || []
