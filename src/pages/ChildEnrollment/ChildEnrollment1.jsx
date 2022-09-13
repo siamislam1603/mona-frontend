@@ -913,7 +913,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     {
                       formOneChildData?.developmental_delay &&
                       <>
-                        <Form.Group className="col-md-6 mb-3 mt-3">
+                        <Form.Group className="col-md-12 mb-3">
                           <Form.Label>Upload any supporting documents</Form.Label>
                           <DragDropMultiple 
                             module="child-enrollment"

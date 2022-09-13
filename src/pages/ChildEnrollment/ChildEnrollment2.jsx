@@ -944,7 +944,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           <p>b)	give these powers to someone else</p>
                         </p>
                         <>
-                          <Form.Group className="col-md-6 mb-3 mt-3">
+                          <Form.Group className="col-md-12 mb-3">
                             <Form.Label>Attach any Court Orders, Parenting Orders and/or Parenting Plans that are in place</Form.Label>
                             <DragDropMultiple 
                               module="court-orders"
@@ -1173,14 +1173,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   {
                     childDetails.has_health_record &&
                     <>
-                      <Form.Group className="col-md-6 mb-3 mt-3">
+                      <Form.Group className="col-md-12 mb-3">
                         <Form.Label>Upload any supporting documents</Form.Label>
                         <DragDropMultiple 
                           module="child-enrollment"
                           fileLimit={1}
                           supportFormDetails={healthRecordDetails}
                           onSave={setHealthRecord} />
-                        <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
+                        <small className="fileinput">(Upload 1 file)</small>
                       </Form.Group>
                       { healthInfoFormErrors?.healthRecord !== null && <span className="error">{healthInfoFormErrors?.healthRecord}</span> }
                       {
@@ -1325,7 +1325,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       {
                         childDetails.has_been_immunized &&
                         <>
-                          <Form.Group className="col-md-6 mb-3 mt-3">
+                          <Form.Group className="col-md-12 mb-3">
                             <Form.Label>Upload any supporting documents</Form.Label>
                             <DragDropMultiple 
                               module="child-enrollment"
@@ -3257,7 +3257,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           </Form.Group>
                           {
                             <>
-                              <Form.Group className="col-md-6 mb-3">
+                              <Form.Group className="col-md-12 mb-3">
                                 <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
@@ -3365,7 +3365,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           </Form.Group>
                           {
                             <>
-                              <Form.Group className="col-md-6 mb-3">
+                              <Form.Group className="col-md-12 mb-3">
                                 <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
@@ -3498,7 +3498,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           {
                             childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided &&
                             <>
-                              <Form.Group className="col-md-6 mb-3">
+                              <Form.Group className="col-md-12 mb-3">
                                 <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
