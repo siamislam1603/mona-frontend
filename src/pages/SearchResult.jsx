@@ -469,12 +469,12 @@ const SearchResult = (props) => {
                                     {formData?.map((data) => (
                           <div className="search-item">
                           <div className="search-user-pic">
-                            <a href="/form">
+                            <a href={`/form/dynamic/${data?.form?.form_name}`}>
                               <figure className="figure"><img alt="" src={data?.coverImage ? data?.coverImage : "../img/blue_survey.png "} className="figure-img img-fluid" /></figure>
                             </a>
                           </div>
                           <div className="search-user-detail">
-                            <h2 className="title-md text-capitalize"><a href="/form">{data?.form?.form_name}</a></h2>
+                            <h2 className="title-md text-capitalize"><a href={`/form/dynamic/${data?.form?.form_name}`}>{data?.form?.form_name}</a></h2>
                             <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
@@ -486,7 +486,7 @@ const SearchResult = (props) => {
                                 </time>
                               </span>
                             </div>
-                            <div className="user-link mt-4"><a href="/form">View Details</a></div>
+                            <div className="user-link mt-4"><a href={`/form/dynamic/${data?.form?.form_name}`}>View Details</a></div>
                           </div>
                         </div>
                         
