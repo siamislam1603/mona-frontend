@@ -972,9 +972,12 @@ function ViewFormBuilder(props) {
                                                               formId && (
                                                               <Dropdown.Item
                                                                 onClick={() => {
-                                                                  deleteForm(
-                                                                    inner_item.id
-                                                                  );
+                                                                  if (window.confirm('Are you sure you want to delete the form?')) {
+                                                                    deleteForm(
+                                                                      inner_item.id
+                                                                    );
+                                                                  }
+                                                                  
                                                                 }}
                                                               >
                                                                 <FontAwesomeIcon
@@ -1215,9 +1218,11 @@ function ViewFormBuilder(props) {
                                                                   formId && (
                                                                   <Dropdown.Item
                                                                     onClick={() => {
-                                                                      deleteForm(
-                                                                        inner_item.id
-                                                                      );
+                                                                      if (window.confirm('Are you sure you want to delete the form?')) {
+                                                                        deleteForm(
+                                                                          inner_item.id
+                                                                        );
+                                                                      }
                                                                     }}
                                                                   >
                                                                     <FontAwesomeIcon
