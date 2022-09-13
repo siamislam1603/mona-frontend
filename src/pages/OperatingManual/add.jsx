@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';

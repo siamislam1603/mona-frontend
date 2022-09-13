@@ -913,7 +913,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                     {
                       formOneChildData?.developmental_delay &&
                       <>
-                        <Form.Group className="col-md-6 mb-3 mt-3">
+                        <Form.Group className="col-md-12 mt-3 mb-3">
                           <Form.Label>Upload any supporting documents</Form.Label>
                           <DragDropMultiple 
                             module="child-enrollment"
@@ -1080,7 +1080,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 {
                   formOneChildData.another_service &&
                   <>
-                    <Form.Group className="mb-3 relative">
+                    <Form.Group className="col-md-12 mb-3 relative">
                       <Form.Label>Name of the Service</Form.Label>
                       <Form.Control
                         type="text"
@@ -1096,8 +1096,9 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                         }} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3 relative">
+                    <Form.Group className="col-md-12 relative">
                       <Form.Label>Day & Hours at the Service</Form.Label>
+                      <Row>
                       <Col xl={3} lg={4} md={6}>
                         <Form.Group className="mb-3 relative">
                           <Form.Label>Monday</Form.Label>
@@ -1146,6 +1147,7 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                           <Form.Control type="number" />
                         </Form.Group>
                       </Col>
+                      </Row>
                     </Form.Group>
                   </>
                 }

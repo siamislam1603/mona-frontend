@@ -70,6 +70,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             copyFetchedData(file);
         }
     }
+
     const copyFetchedData = (data) => {
         setFormSettings(prevState => ({
             ...prevState,
@@ -285,9 +286,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     useEffect(() => {
         GetData()
-    }, [saveFileId])
-
-
+    }, [saveFileId, userData])
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');
@@ -303,13 +302,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 SetfileDeleteMessage("You don't have permission to delete this file !");
             });
     }
-
-
+    
     useEffect(() => {
         setTimeout(() => {
             SetfileDeleteMessage(null)
         }, 3000);
-    }, [fileDeleteMessage])
+    }, [fileDeleteMessage, userData])
 
 
     // FETCH FILE DATA

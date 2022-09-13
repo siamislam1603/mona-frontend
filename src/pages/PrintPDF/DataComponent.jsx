@@ -17,15 +17,17 @@ class DataComponent extends React.Component {
                 } alt="" />`} 
                 </div>
                 ${this.props.cover_image && `<br />`}
-                <div className="module_title">
+                <div class="module_title">
                   
                
-                  <span className="title"> 
+                  <span class="title"> 
                   ${this.props.category}
                   </span> 
                     <span className="module_dot"> • </span>
+                   <span>
+                   ${this.props.title}
                    
-                    ${this.props.title}
+                   </span>
 
                 </div>
               </div><div className="description_wrp">${this.props.description}</div>`,
