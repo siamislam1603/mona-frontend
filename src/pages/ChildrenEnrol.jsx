@@ -1,20 +1,14 @@
 import React, { useEffect, useState, } from 'react';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-import { Button, Container, Dropdown, DropdownButton, Form, } from 'react-bootstrap';
+import { Container, } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import Select from 'react-select';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-import makeAnimated from 'react-select/animated';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
-import { CSVDownload } from 'react-csv';
 import { useRef } from 'react';
-import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
@@ -24,13 +18,9 @@ import moment from 'moment';
 
 const ChildrenEnrol = () => {
   const Key = useParams()
-  console.log('Key+++++++++', Key.key)
-  const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [userEducator, setEducator] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
-  const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
@@ -46,8 +36,11 @@ const ChildrenEnrol = () => {
   const ChildernEnrolled = async () => {
     try {
       let token = localStorage.getItem('token');
+      let USER_ROLE = localStorage.getItem('user_role');
+      console.log("user_role", USER_ROLE)
       // let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/children-listing/all-childrens-enrolled`, {
+      let URL = USER_ROLE === "franchisor_admin" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}` : `${BASE_URL}/children-listing/all-childrens-enrolled`
+      const response = await axios.get(URL, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -317,7 +310,6 @@ const ChildrenEnrol = () => {
         data["name"] = data.name.split(",")[1];
         csv_data[index] = data;
       });
-      setCsvData(csv_data);
     }
   };
 
@@ -354,7 +346,6 @@ const ChildrenEnrol = () => {
     fetchUserDetails();
   }
 
-
   const Show_eduactor = async () => {
     let api_url = '';
     // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
@@ -369,7 +360,6 @@ const ChildrenEnrol = () => {
         authorization: `Bearer ${localStorage.getItem('token')} `,
       },
     });
-
 
     if (response.status === 200) {
       const { users } = response.data;
@@ -400,9 +390,6 @@ const ChildrenEnrol = () => {
       setEducator(tempData);
       setIsLoading(false)
 
-
-
-
       let temp = tempData;
       let csv_data = [];
       temp.map((item, index) => {
@@ -412,7 +399,6 @@ const ChildrenEnrol = () => {
         data["name"] = data.name.split(",")[1];
         csv_data[index] = data;
       });
-      setCsvData(csv_data);
     }
   }
 
@@ -420,7 +406,7 @@ const ChildrenEnrol = () => {
     Show_eduactor()
     ChildernEnrolled()
     getData()
-  }, [])
+  }, [selectedFranchisee])
 
 
   useEffect(() => {
@@ -481,7 +467,6 @@ const ChildrenEnrol = () => {
                     <>
                       <div className="entry-container">
                         <div className="user-management-sec childenrol-table">
-
                           <>
                             {
                               topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
