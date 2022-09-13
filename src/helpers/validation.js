@@ -4,22 +4,34 @@ export const DynamicFormValidation = (
   form,
   data,
   behalf_of,
-  behalf_of_flag
+  behalf_of_flag,
+  signature_access_flag
 ) => {
+  console.log("signature_access_flag",signature_access_flag);
   let newErrors = {};
   Object.keys(data)?.map((item) => {
     // console.log('inner_item_item--->', item);
     data[item].map((inner_item) => {
       // console.log('inner_item', form[item]);
 
+      
+      
       if (inner_item.required) {
-        console.log('inner_item', inner_item);
-        console.log('form-=-->21321313', form);
-        if (!form[item][`${inner_item.field_name}`]) {
+        if(inner_item.field_type==="signature" && signature_access_flag===true && !form[item][`${inner_item.field_name}`])
+        {
           newErrors[
             `${inner_item.field_name}`
           ] = `${inner_item.field_label} is required`;
         }
+        else{
+          if (inner_item.field_type!=="signature" && !form[item][`${inner_item.field_name}`]) {
+            newErrors[
+              `${inner_item.field_name}`
+            ] = `${inner_item.field_label} is required`;
+          }
+        }
+        
+        
       }
     });
   });
@@ -490,20 +502,13 @@ export const acceptPointValidator = (value) => {
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
-  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  // let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
   let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
 
-  if(email.length > 0 && !regex.test(email)) 
-    errors.email = "Email is invalid";
-    
-  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
-    errors.email = "Email is invalid";
-
-  
   if (!role) errors.role = 'User role is required';
   
   if (!fullname) errors.fullname = 'Full name is required';
@@ -516,7 +521,7 @@ export const UserFormValidation = (formObj) => {
   
   if (!postalCode) errors.postalCode = 'Post code is required';
 
-  if (!crn) errors.crn = "CRN number is required";
+  if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   
   if (!phone) errors.phone = 'Phone number is required';
   

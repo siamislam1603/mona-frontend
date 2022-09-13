@@ -1,17 +1,12 @@
 import React, { useEffect, useState, } from 'react';
-import {
-  Button,
-  Container,
-  Dropdown,
-  DropdownButton,
-  Form,
-} from 'react-bootstrap';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
+import { Button, Container, Dropdown, DropdownButton, Form, } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import Select from 'react-select';
-import ToolkitProvider ,{Search}from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import makeAnimated from 'react-select/animated';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
@@ -22,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
-import filterFactory,{textFilter} from 'react-bootstrap-table2-filter';
 import moment from 'moment';
 // const { ExportCSVButton } = CSVExport;
 
@@ -41,17 +35,12 @@ const ChildrenEnrol = () => {
   const [filter, setFilter] = useState(null);
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true)
- const [datad,setDatad] = useState([])
+  const [datad, setDatad] = useState([])
 
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
   const { SearchBar } = Search;
-  let nameFilter;
-let priceFilter;
-let stockFilter;
-let originFilter;
-
 
 
   const ChildernEnrolled = async () => {
@@ -82,9 +71,8 @@ let originFilter;
           franchise: `${dt?.franchisee_id}`,
           enrolldate: `${dt?.enrollment_initiated}`,
           franchise: `${dt?.franchisee?.franchisee_name}`
-
         })
-        
+
         )
         console.log("TEMPDATA", tempData)
         setChildEnroll(tempData)
@@ -94,80 +82,13 @@ let originFilter;
       console.log("ERROR child enroll", error)
     }
   }
-  const columns21 = [
-    {
-      dataField: "name",
-      text: "Product Name",
-      filter: textFilter({
-        getFilter: filter => {
-          nameFilter = filter;
-        }
-      })
-    },
-    {
-      dataField: "price",
-      text: "Price",
-      filter: textFilter({
-        getFilter: filter => {
-          priceFilter = filter;
-        }
-      }),
-      sort: true
-    },
-    {
-      dataField: "stock",
-      text: "Stock",
-      filter: textFilter({
-        getFilter: filter => {
-          stockFilter = filter;
-        }
-      })
-    },
-    {
-      dataField: "origin",
-      text: "Origin",
-      filter: textFilter({
-        getFilter: filter => {
-          originFilter = filter;
-        }
-      })
-    }
-  ];
-
-  const products = [
-    {
-      name: "apple",
-      price: 100,
-      stock: 10,
-      origin: "japan"
-    },
-    {
-      name: "orange",
-      price: 150,
-      stock: 35,
-      origin: "spain"
-    },
-    {
-      name: "pineapple",
-      price: 300,
-      stock: 4,
-      origin: "america"
-    }
-  ];
 
 
 
-
-  const columns1 = [
+  const columns = [
     {
       dataField: 'name',
       text: 'Name',
-      formatter: (cell) => {
-        console.log("name cell", cell)
-        return (<><div className="user-list"><span className="user-name">{cell}</span></div></>)
-      },
-
-
     },
     {
       dataField: 'parentName',
@@ -194,7 +115,7 @@ let originFilter;
             cell[1] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[4] === "undefined"|| cell[3] === "null"  ? "../img/upload.jpg" : cell[4]} />
+                <img src={cell[4] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[4]} />
               </span>
               <span className="user-name">
                 {cell[1] === "undefined" ? null : cell[1]
@@ -221,7 +142,7 @@ let originFilter;
     {
       dataField: 'educatorassisgned',
       text: 'Educator Assigned',
-      
+
       formatter: (cell) => {
         cell = cell.split(',');
         return (<>
@@ -234,7 +155,7 @@ let originFilter;
                 <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
 
               </span><span className="user-name">{cell[0]}
-               {/* <span>{cell[1]}</span> */}
+                {/* <span>{cell[1]}</span> */}
               </span>
             </div>
           }
@@ -243,7 +164,7 @@ let originFilter;
             cell[2] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[3] === "undefined" || cell[1].trim() === "null"? "../img/upload.jpg" : cell[3]} />
+                <img src={cell[3] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[3]} />
               </span><span className="user-name">{cell[2]}
               </span>
             </div>
@@ -287,36 +208,34 @@ let originFilter;
         console.log("frnahise CELL", cell)
         // cell = cell.split(",");
         return (<>
-          <div className="user-list"><span className="user-name">{cell === "undefined" || cell  === "null" ? " ": cell} </span></div></>)
+          <div className="user-list"><span className="user-name">{cell === "undefined" || cell === "null" ? " " : cell} </span></div></>)
       },
     },
   ];
 
 
+  // const onFilter = debounce(() => {
+  //   fetchUserDetails();
+  // }, 200);
 
-  const onFilter = debounce(() => {
-    fetchUserDetails();
-  }, 200);
-
-  const getData = () =>{
-    axios("https://jsonplaceholder.typicode.com/comments").then((res) =>
-    {
-      console.log("dumby",res.data)
+  const getData = () => {
+    axios("https://jsonplaceholder.typicode.com/comments").then((res) => {
+      console.log("dumby", res.data)
       setDatad(res.data)
     }
 
     )
   }
   const columnsee = [{
-    dataField:"id",
-    text:"Product Id",
- 
+    dataField: "id",
+    text: "Product Id",
+
   },
   {
-    dataField:"email",
-    text:"Email"
+    dataField: "email",
+    text: "Email"
   }
-]
+  ]
 
 
   const fetchUserDetails = async () => {
@@ -496,12 +415,6 @@ let originFilter;
       setCsvData(csv_data);
     }
   }
-  const columns = [
-    { dataField: 'id', text: 'Id' },
-    { dataField: 'name', text: 'Name' },
-    { dataField: 'animal', text: 'Animal' },
-  ]
-
 
   useEffect(() => {
     Show_eduactor()
@@ -558,88 +471,51 @@ let originFilter;
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
                 <FullLoader loading={fullLoaderStatus} />
-
-                <div className="entry-container">
-                  <div className="user-management-sec childenrol-table">
-
+                <ToolkitProvider
+                  keyField="name"
+                  data={chidlEnroll}
+                  columns={columns}
+                  search
+                >
+                  {(props) => (
                     <>
-                      {
-                        topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
-                      }
-                      <header className="title-head">
-                        <h1 className="title-lg">Children Enroled</h1>
-                        <div className="othpanel">
-                          <div className="extra-btn">
-   
-   
-                          </div>
-                        </div>
-                      </header>
- 
+                      <div className="entry-container">
+                        <div className="user-management-sec childenrol-table">
 
-                    </>
-  
-                    {
-                              chidlEnroll?.length > 0 ?
-                                (
-                                  <BootstrapTable
-                                    keyField="name"
-                                    data={chidlEnroll}
-                                    columns={columns1}
-                                    pagination={paginationFactory()}
-                                    filter={filterFactory()} 
-
-
-                                  />
-                                ) : (
-                                  <div className="text-center mb-5 mt-5"><strong>
-                                    No forms present!
-                                  </strong></div>
-
-                                )
+                          <>
+                            {
+                              topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
                             }
+                            <header className="title-head">
+                              <h1 className="title-lg">Children Enroled</h1>
+                              <div className="othpanel">
+                                <div className="extra-btn">
+                                  <div className="data-search me-3">
+                                    <SearchBar {...props.searchProps} />
+                                  </div>
+                                </div>
+                              </div>
+                            </header>
+                          </>
+                          {
+                            chidlEnroll?.length > 0 ?
+                              (
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                  pagination={paginationFactory()}
+                                />
+                              ) : (
+                                <div className="text-center mb-5 mt-5"><strong>
+                                  No forms present!
+                                </strong></div>
 
-
-                    {/* {
-                      chidlEnroll?.length > 0 ?
-                        <ToolkitProvider
-                        bootstrap4
-                        keyField="name"
-                          data={chidlEnroll}
-                          columns={columns1}
-                          search
-                        >
-                          {(props) => (
-
-                            <>
-
-                              <BootstrapTable
-                                {...props.baseProps}
-                              // filter ={filterFactory()}
-                              filter={filterFactory()} 
-                              noDataIndication="There is no solution"
-
-                                // rowEvents={rowEvents}
-                              
-
-
-                                // selectRow={selectRow}
-                                pagination={paginationFactory()}
-                              />
-                            </>
-                          )}
-                        </ToolkitProvider>
-                        : (
-                          <div className="text-center mb-5 mt-5"><strong>
-                            No Child enrol Yet!
-                          </strong></div>
-
-                        )
-                    } */}
-
-
-                  </div>
-                </div>
+                              )
+                          }
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </ToolkitProvider>
               </div>
             </div>
           </Container>

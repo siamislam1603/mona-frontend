@@ -13,6 +13,7 @@ import { suburbData } from '../assets/data/suburbData';
 import { Link } from 'react-router-dom';
 import { UserFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
+import { compact } from 'lodash';
 
 const animatedComponents = makeAnimated();
 
@@ -180,7 +181,7 @@ const NewUser = () => {
       postalCode?.current?.focus();
     } else if(errArray?.includes('crn')) {
       parent_crn?.current?.focus();
-    }if(errArray?.includes('phone')) {
+    } else if(errArray?.includes('phone')) {
       phone?.current?.focus();
     } else if(errArray.includes('franchisee')) {
       franchisee?.current?.focus();
@@ -306,6 +307,24 @@ const NewUser = () => {
       }
     }
 
+  }
+
+  const checkIfEmailIsValid = (email) => {
+    let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+    
+    if(!regex.test(email)) {
+      console.log('Email is invalid!');
+      setFormErrors(prevState => ({
+        ...prevState,
+        email: "Email format is invalid"
+      }))
+    } else {
+      console.log('Email.invalid!');
+      setFormErrors(prevState => ({
+        ...prevState,
+        email: null
+      }));
+    }
   }
 
   const fetchCoordinatorData = async (franchisee_id) => {
@@ -536,7 +555,7 @@ const NewUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  formData && console.log('FORM ERRORS:', formData);
+  formErrors && console.log('FORM ERRORS:', formErrors);
   formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
 
   return (
@@ -591,7 +610,8 @@ const NewUser = () => {
                                 }));
                               }}
                               onBlur={(e) => {
-                                checkIfUserExistsAndDeactivated(e.target.value);;
+                                checkIfEmailIsValid(e.target.value);
+                                checkIfUserExistsAndDeactivated(e.target.value);
                               }}
                             />
                             { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
