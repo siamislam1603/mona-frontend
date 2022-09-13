@@ -497,7 +497,6 @@ const ChildrenEnrol = () => {
                               </div>
                             </header>
                           </>
-
                           {
                             chidlEnroll?.length > 0 ?
                               (
