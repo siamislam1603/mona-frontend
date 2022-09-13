@@ -55,7 +55,7 @@ console.log("filter ",filter.category_id)
                     <div className="iconame">
                       <a href={`/training-detail/${item.training.id}`}>{item.training.title}</a>
                       <div className="datecol">
-                        <span className="red-date">Due Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
+                        <span className="red-date">State Date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
                         <span className="time">{ item.training.completion_time }</span>
                       </div>
                     </div>
