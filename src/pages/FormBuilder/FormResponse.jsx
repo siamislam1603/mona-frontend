@@ -456,7 +456,7 @@ function FormResponse(props) {
                                 trim(e);
                               }}
                             >
-                              Trim
+                              Submit
                             </button>
                           </div>
                         </Form.Group>
