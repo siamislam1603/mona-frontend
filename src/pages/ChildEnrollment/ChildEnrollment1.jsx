@@ -2,14 +2,13 @@
 import axios from "axios";
 import React, { useState, useRef } from "react";
 import { useEffect } from "react";
-import { Button, Col, Row, Form, Modal } from "react-bootstrap";
+import { Button, Col, Row, Form, Modal, Table } from "react-bootstrap";
 import Select from 'react-select';
 // import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../../components/App";
 import { childFormValidator, parentFormValidator  } from "../../helpers/enrollmentValidation";
 import { useParams } from 'react-router-dom';
 import DragDropMultiple from '../../components/DragDropMultiple';
-import { isEmpty } from "lodash";
 
 let nextstep = 2;
 let step = 1;
@@ -1001,11 +1000,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 
                 <Col md={6}>
                   <Form.Group className="mb-3 relative">
-                    <Form.Label>Parents 1 CRN *</Form.Label>
+                    <Form.Label>Parent 1 CRN *</Form.Label>
                     <Form.Control
                       type="text"
                       name="parent_crn_1"
-                      REF={parent_crn_1}
+                      ref={parent_crn_1}
                       value={formOneChildData.parent_crn_1 || ""}
                       onChange={(e) => {
                         handleChildData(e);
@@ -1080,74 +1079,148 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
                 {
                   formOneChildData.another_service &&
                   <>
-                    <Form.Group className="col-md-12 mb-3 relative">
-                      <Form.Label>Name of the Service</Form.Label>
-                      <Form.Control
-                        type="text"
-                        minLenth={3}
-                        maxLength={50}
-                        name="name_of_the_service"
-                        value={formOneChildData?.name_of_the_service || ""}
-                        onChange={(e) => {
-                          setFormOneChildData(prevState => ({
-                            ...prevState,
-                            name_of_the_service: e.target.value
-                          })); 
-                        }} />
-                    </Form.Group>
+                    <Col sm={12} md={6} lg={6}>
+                      <Form.Group className="mb-3 relative">
+                        <Form.Label>Name of the Service</Form.Label>
+                        <Form.Control
+                          type="text"
+                          minLenth={3}
+                          maxLength={50}
+                          name="name_of_the_service"
+                          value={formOneChildData?.name_of_the_service || ""}
+                          onChange={(e) => {
+                            setFormOneChildData(prevState => ({
+                              ...prevState,
+                              name_of_the_service: e.target.value
+                            })); 
+                          }} />
+                      </Form.Group>
+                    </Col>
 
-                    <Form.Group className="col-md-12 relative">
-                      <Form.Label>Day & Hours at the Service</Form.Label>
-                      <Row>
-                      <Col xl={3} lg={4} md={6}>
-                        <Form.Group className="mb-3 relative">
-                          <Form.Label>Monday</Form.Label>
-                          <Form.Control type="number" />
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col xl={3} lg={4} md={6}>
-                        <Form.Group className="mb-3 relative">
-                          <Form.Label>Tuesday</Form.Label>
-                          <Form.Control type="number" />
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col xl={3} lg={4} md={6}>
-                        <Form.Group className="mb-3 relative">
-                          <Form.Label>Wednesday</Form.Label>
-                          <Form.Control type="number" />
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col xl={3} lg={4} md={6}>
-                        <Form.Group className="mb-3 relative">
-                          <Form.Label>Thrusday</Form.Label>
-                          <Form.Control type="number" />
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col xl={3} lg={4} md={6}>
-                        <Form.Group className="mb-3 relative">
-                          <Form.Label>Friday</Form.Label>
-                          <Form.Control type="number" />
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col xl={3} lg={4} md={6}>
-                        <Form.Group className="mb-3 relative">
-                          <Form.Label>Saturday</Form.Label>
-                          <Form.Control type="number" />
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={3} lg={4} md={6}>
-                        <Form.Group className="mb-3 relative">
-                          <Form.Label>Sunday</Form.Label>
-                          <Form.Control type="number" />
-                        </Form.Group>
-                      </Col>
-                      </Row>
+                    <Form.Group className="mb-3 relative">
+                      <Form onSubmit={submitFormData}>
+                        <div className="enrollment-form-column">
+                          <h2 className="title-xs mb-4">Day & Hours at the service</h2>
+                          <div className="grayback">
+                            <Table responsive="md">
+                              <thead>
+                                <tr>
+                                  <th>WEEKDAYS</th>
+                                  <th>FROM</th>
+                                  <th>TO</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Monday</td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Tuesday</td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time" />
+                                    </Form.Group>
+                                  </td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Wednesday</td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Thursday</td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Friday</td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Saturday</td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Sunday</td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time"/>
+                                    </Form.Group>
+                                  </td>
+                                  <td>
+                                    <Form.Group>
+                                      <Form.Control 
+                                        type="time" />
+                                    </Form.Group>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </Table>
+                          </div>
+                        </div>
+                      </Form>
                     </Form.Group>
                   </>
                 }
