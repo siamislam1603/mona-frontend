@@ -1462,7 +1462,9 @@ li.branch {
 .module_title {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 1rem;
+ 
+
     /* margin-top: 21px; */
 }
 
@@ -1503,7 +1505,7 @@ tr {
 span.module_dot {
     margin: 0 15px;
 }
-.print .module_title{
+.print .module_title .title{
     color: #AA0061;
 }
 

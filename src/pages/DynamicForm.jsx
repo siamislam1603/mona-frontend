@@ -17,9 +17,9 @@ const DynamicForm = () => {
   const query = new URL(window.location.href);
   console.log('QWUERY:', query);
   console.log('TRAINING ID:', query.searchParams.get('trainingId'));
-
   const location = useLocation();
   const navigate = useNavigate();
+  const [signatureAccessFlag, setSignatureAccessFlag] = useState();
   const [formData, setFormData] = useState([]);
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
@@ -123,9 +123,9 @@ const DynamicForm = () => {
       )}&request=user`,
       requestOptions
     )
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((result) => {
-        let res = JSON.parse(result);
+        let res = result;
 
 
         if(res?.success==false)
@@ -165,6 +165,17 @@ const DynamicForm = () => {
             }
           });
         });
+        if(result.form[0]?.form_permissions[0]?.signatories_role.includes(localStorage.getItem("user_role")==="guardian" ? "parent" : localStorage.getItem("user_role")))
+        {
+          console.log("Hello----12121212---->");
+          setSignatureAccessFlag(true);
+        }
+        else
+        {
+          setSignatureAccessFlag(false);
+        }
+        console.log("formsData---->",result.form[0].form_permissions[0].signatories_role.includes(localStorage.getItem("user_role")),"-----",signatureAccessFlag);
+        
         setForm(formsData);
         setFormData(data);
         if (result) {
@@ -182,7 +193,8 @@ const DynamicForm = () => {
       form,
       formData,
       localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
-      behalfOfFlag
+      behalfOfFlag,
+      signatureAccessFlag
     );
     console.log("Behalf of is required--->",behalfOfFlag);
     console.log("new errors--->",newErrors);
@@ -389,6 +401,7 @@ const DynamicForm = () => {
                                 )}
                                 <InputFields
                                   {...inner_item}
+                                  signature_flag={signatureAccessFlag}
                                   error={errors}
                                   onChange={(key, value, type) => {
                                     setField(item, key, value, type);
@@ -398,6 +411,7 @@ const DynamicForm = () => {
                             ) : (
                               <InputFields
                                 {...inner_item}
+                                signature_flag={signatureAccessFlag}
                                 error={errors}
                                 onChange={(key, value, type) => {
                                   setField(key, value, type);
@@ -411,6 +425,7 @@ const DynamicForm = () => {
                           return (
                             <InputFields
                               {...inner_item}
+                              signature_flag={signatureAccessFlag}
                               error={errors}
                               onChange={(key, value, type) => {
                                 setField(item, key, value, type);

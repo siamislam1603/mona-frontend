@@ -1,27 +1,82 @@
 import moment from 'moment';
-import React, { useState, useEffect } from 'react';
-import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Accordion,
+  Button,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+} from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BASE_URL, IGNORE_REMOVE_FORM } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
 import { FullLoader } from '../../components/Loader';
 import TopHeader from '../../components/TopHeader';
+import SignaturePad from 'react-signature-canvas';
 
 function FormResponse(props) {
   const location = useLocation();
+  const sigPad = useRef({});
   const navigate = useNavigate();
   const [responseData, setResponseData] = useState([]);
   const [formData, setFormData] = useState({});
   const token = localStorage.getItem('token');
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [signatureModel, setSignatureModel] = useState(false);
+  const [Index, setIndex] = useState(0);
 
   useEffect(() => {
+    console.log(':location?.state--->', location?.state);
     if (location?.state?.id) {
       getResponse('');
     } else {
       getAllForm();
     }
   }, []);
+  const clear = (e) => {
+    e.preventDefault();
+    sigPad.current.clear();
+    // props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),"");
+  };
+  const trim = (e, index) => {
+    e.preventDefault();
+    console.log(
+      'index--->',
+      Index,
+      '-----',
+      JSON.parse(responseData[Index][0].fields)
+    );
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('authorization', 'Bearer ' + token);
+    let fields=JSON.parse(responseData[Index][0].fields);
+    console.log("sigpad--------->><<<<<<<<",sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
+    fields["signature"]=sigPad.current.getTrimmedCanvas().toDataURL("image/png");
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify({
+        form_id: responseData[Index][0].form_id,
+        user_id: responseData[Index][0].user_id,
+        behalf_of: responseData[Index][0].behalf_of,
+        data: fields,
+        edit_signature: true,
+        id:responseData[Index][0].id
+      }),
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/form_data`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        getResponse('');
+        setSignatureModel(false);
+      });
+
+    // props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"),"signature");
+  };
   const getAllForm = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -35,12 +90,13 @@ function FormResponse(props) {
     fetch(`${BASE_URL}/form/list`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        result?.result?.map((item)=>{
-          if(item.form_name.toLowerCase()===IGNORE_REMOVE_FORM.toLowerCase())
-          {
+        result?.result?.map((item) => {
+          if (
+            item.form_name.toLowerCase() === IGNORE_REMOVE_FORM.toLowerCase()
+          ) {
             getResponseTow(item.id);
           }
-        })
+        });
       })
       .catch((error) => console.log('error', error));
   };
@@ -160,7 +216,14 @@ function FormResponse(props) {
                               <div className="responses-header-row">
                                 <div className="responses-header-left">
                                   <div className="responses-header-image">
-                                    <img src={item[0]?.filled_user?.profile_photo ? item[0]?.filled_user?.profile_photo :"../img/small-user.png"} alt="" />
+                                    <img
+                                      src={
+                                        item[0]?.filled_user?.profile_photo
+                                          ? item[0]?.filled_user?.profile_photo
+                                          : '../img/small-user.png'
+                                      }
+                                      alt=""
+                                    />
                                   </div>
                                   {responseData[index]?.map(
                                     (inner_item, inner_index) => {
@@ -239,7 +302,9 @@ function FormResponse(props) {
                                 <div className="responses-header-right">
                                   <p>
                                     Completed on: <br />
-                                    {moment(item[0].createdAt).utcOffset('+11:00').format('DD/MM/YYYY') +
+                                    {moment(item[0].createdAt)
+                                      .utcOffset('+11:00')
+                                      .format('DD/MM/YYYY') +
                                       ', ' +
                                       item[0].createdAt
                                         .split('T')[1]
@@ -335,6 +400,16 @@ function FormResponse(props) {
                                   </div>
                                 );
                               })}
+                              {location?.state?.signature_access && (
+                                <Button
+                                  onClick={() => {
+                                    setSignatureModel(true);
+                                    setIndex(index);
+                                  }}
+                                >
+                                  Add Signature
+                                </Button>
+                              )}
                             </Accordion.Body>
                           </Accordion.Item>
                         );
@@ -342,6 +417,56 @@ function FormResponse(props) {
                     </Accordion>
                   }
                 </div>
+                <Modal
+                  className="responses_model"
+                  show={signatureModel}
+                  onHide={() => {
+                    setSignatureModel(false);
+                  }}
+                  backdrop="static"
+                  keyboard={false}
+                >
+                  <Modal.Header closeButton>
+                    <Modal.Title>
+                      <img src="../img/survey.png" />
+                      <h1>Add Signature</h1>
+                    </Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    {location?.state?.signature_access && (
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label>Signature</Form.Label>
+                          <SignaturePad
+                            canvasProps={{
+                              style: {
+                                background: 'white',
+                                border: '1px solid #e5e5e5',
+                                width: '300px',
+                                minHeight: '135px',
+                                display: 'grid',
+                              },
+                            }}
+                            ref={sigPad}
+                          />
+                          <div>
+                            <button onClick={clear}>Clear</button>
+                            <button
+                              onClick={(e) => {
+                                trim(e);
+                              }}
+                            >
+                              Submit
+                            </button>
+                          </div>
+                        </Form.Group>
+                        {/* <p style={{ color: 'red' }}>
+                                    {controls.error[controls.field_name]}
+                                  </p> */}
+                      </Col>
+                    )}
+                  </Modal.Body>
+                </Modal>
               </div>
             </div>
           </Container>
