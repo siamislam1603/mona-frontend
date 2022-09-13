@@ -4,6 +4,7 @@ import SignaturePad from "react-signature-canvas";
 
 const Signature = (props) => {
   const { ...controls } = props;
+  console.log("props--->",props.signature_flag);
   const sigPad = useRef({});
   const clear = (e) => {
     e.preventDefault();
@@ -15,7 +16,7 @@ const Signature = (props) => {
     props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"),"signature");
   };
   return (
-    <Col sm={6}>
+    props.signature_flag && <Col sm={6}>
       <Form.Group>
         <Form.Label>{controls.field_label}</Form.Label>
         <SignaturePad
