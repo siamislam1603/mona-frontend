@@ -150,6 +150,28 @@ const TrainingDetail = () => {
       window.location.href=`/parents-dashboard`;
     }
   }, []);
+
+  useEffect(() => {
+
+    if(localStorage.getItem('user_roles') === 'franchisor_admin' || localStorage.getItem('franchisee_admin')) {
+      if(parseInt(trainingDetails?.addedBy) !== parseInt(localStorage.getItem('user_id'))) {
+        console.log('You cannot access this training right now!');
+        window.location.href = "/training"
+        localStorage.setItem('active_tab', '/available-training')
+      }
+    } else if(moment().isBefore(trainingDetails?.start_date)) {
+      console.log('You cannot access this training right now!');
+      window.location.href = "/training"
+      localStorage.setItem('active_tab', '/available-training')
+    }
+    if(moment().isBefore(trainingDetails?.start_date)) {
+
+    } else {
+  
+    }
+    console.log('IS BEFORE:', moment().isAfter(trainingDetails?.start_date));
+  }, [trainingDetails])
+  
   trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
   relatedForms && console.log('RELATED Forms:', relatedForms);
   return (
@@ -250,11 +272,11 @@ const TrainingDetail = () => {
                                             {`document${index - 1}${data.fileType}`} <span className="time">{trainingDetails.completion_time}</span>
                                           </a>
                                         </div>
-                                        <div className="cta-col">
+                                        {/* <div className="cta-col">
                                           <a href="">
                                             <img src="../img/removeIcon.svg" alt="" />
                                           </a>
-                                        </div>
+                                        </div> */}
                                       </div>
                                     ))
                                   }

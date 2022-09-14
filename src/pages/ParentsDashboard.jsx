@@ -23,41 +23,41 @@ const ParentsDashboard = () => {
   const [logUserOutDialog, setLogUserOutDialog] = useState(false);
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
 
-  const checkPendingConsent = async () => {
-    let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem('token')}`
-      }
-    });
+  // const checkPendingConsent = async () => {
+  //   let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
+  //     headers: {
+  //       "Authorization": `Bearer ${localStorage.getItem('token')}`
+  //     }
+  //   });
 
-    // console.log('RESPONSE CONSENT:', checkPendingConsent);
+  //   // console.log('RESPONSE CONSENT:', checkPendingConsent);
 
-    if (response.status === 200 && response.data.status === "success") {
-      let { parentConsentData } = response.data;
-      console.log('PDATA:', parentConsentData);
-      console.log('PARENT CONSENT DATA:', parentConsentData[0]);
+  //   if (response.status === 200 && response.data.status === "success") {
+  //     let { parentConsentData } = response.data;
+  //     console.log('PDATA:', parentConsentData);
+  //     console.log('PARENT CONSENT DATA:', parentConsentData[0]);
 
-      if (parentConsentData && parentConsentData.length > 0) {
-        localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
-        localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
-        localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
-        localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
-        localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
+  //     if (parentConsentData && parentConsentData.length > 0) {
+  //       localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
+  //       localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
+  //       localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
+  //       localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
+  //       localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
 
-        if (parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
-          console.log('VIEWING ENROLLMENT DIALOG');
-          setViewEnrollmentDialog(true);
-        }
-      } else {
+  //       if (parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
+  //         console.log('VIEWING ENROLLMENT DIALOG');
+  //         setViewEnrollmentDialog(true);
+  //       }
+  //     } else {
 
-      }
-    }
-  }
+  //     }
+  //   }
+  // }
 
-  const handleViewEnrollment = async () => {
-    setViewEnrollmentDialog(false);
-    window.location.href = `/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
-  }
+  // const handleViewEnrollment = async () => {
+  //   setViewEnrollmentDialog(false);
+  //   window.location.href = `/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
+  // }
 
 
 
@@ -144,75 +144,75 @@ const ParentsDashboard = () => {
     await logoutUser();
   }
 
-  const fetchUserChildrenDetails = async () => {
-    let childIds;
-    let parentId = localStorage.getItem('user_id');
-    let response = await axios.get(`${BASE_URL}/enrollment/children/${parentId}`, {
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      }
-    });
+  // const fetchUserChildrenDetails = async () => {
+  //   let childIds;
+  //   let parentId = localStorage.getItem('user_id');
+  //   let response = await axios.get(`${BASE_URL}/enrollment/children/${parentId}`, {
+  //     headers: {
+  //       'Authorization': 'Bearer ' + localStorage.getItem('token')
+  //     }
+  //   });
 
-    if (response.status === 200 && response.data.status === 'success') {
-      let { parentData } = response.data;
-      console.log('PARENT DATA:', parentData);
+  //   if (response.status === 200 && response.data.status === 'success') {
+  //     let { parentData } = response.data;
+  //     console.log('PARENT DATA:', parentData);
 
-      if (parentData !== null && parentData.children.length > 0) {
-        console.log('PARENT DATA ISN\'T NULL');
-        let { children } = parentData;
-        console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
-        // FILTERING THE CHILDREN WHOSE ENROLLMENT FORM HASN'T BEEN FILLED
-        childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 0);
-        console.log('CHILDREN TO BE ENROLLED:', childIds);
-        // FETCHING AN ARRAY OF THEIR IDs.
-        childIds = childIds.map(d => d.id);
-        console.log('ARRAY OF CHILD IDs present:', childIds);
+  //     if (parentData !== null && parentData.children.length > 0) {
+  //       console.log('PARENT DATA ISN\'T NULL');
+  //       let { children } = parentData;
+  //       console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
+  //       // FILTERING THE CHILDREN WHOSE ENROLLMENT FORM HASN'T BEEN FILLED
+  //       childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 0);
+  //       console.log('CHILDREN TO BE ENROLLED:', childIds);
+  //       // FETCHING AN ARRAY OF THEIR IDs.
+  //       childIds = childIds.map(d => d.id);
+  //       console.log('ARRAY OF CHILD IDs present:', childIds);
 
-        if(childIds.length > 0) {
-          setNonEnrolledChildIds(childIds);
-        } else {
-          childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 1);
-          childIds = childIds.map(d => d.id);
+  //       if(childIds.length > 0) {
+  //         setNonEnrolledChildIds(childIds);
+  //       } else {
+  //         childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 1);
+  //         childIds = childIds.map(d => d.id);
 
-          if(childIds.length === 0)
-            setLogUserOutDialog(true);
-        }
-      } else {
-        // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
-        console.log('NO CHILD IS ASSIGNED TO YOU!!!!!!!!!!');
-        setLogUserOutDialog(true)
-      }
-    }
-  }
+  //         if(childIds.length === 0)
+  //           setLogUserOutDialog(true);
+  //       }
+  //     } else {
+  //       // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
+  //       console.log('NO CHILD IS ASSIGNED TO YOU!!!!!!!!!!');
+  //       setLogUserOutDialog(true)
+  //     }
+  //   }
+  // }
 
-  const moveToChildEnrollmentForm = (link) => {
-    window.location.href = link;
-  }
+  // const moveToChildEnrollmentForm = (link) => {
+  //   window.location.href = link;
+  // }
 
-  const createEnrollmentFormLinks = () => {
-    let linkArray = [];
-    let parentId = localStorage.getItem('user_id');
-    nonEnrolledChildIds?.forEach(childId => {
-      let link = `/child-enrollment/${childId}/${parentId}`;
-      console.log('LINK GENERATED:', link);
-      linkArray.push(link);
-    });
+  // const createEnrollmentFormLinks = () => {
+  //   let linkArray = [];
+  //   let parentId = localStorage.getItem('user_id');
+  //   nonEnrolledChildIds?.forEach(childId => {
+  //     let link = `/child-enrollment/${childId}/${parentId}`;
+  //     console.log('LINK GENERATED:', link);
+  //     linkArray.push(link);
+  //   });
 
-    setEnrollmentFormLinks(linkArray);
-    console.log('SETUP LINKS! ===============');
-  }
+  //   setEnrollmentFormLinks(linkArray);
+  //   console.log('SETUP LINKS! ===============');
+  // }
 
   useEffect(() => {
-    fetchUserChildrenDetails();
+    // fetchUserChildrenDetails();
 
     // show toast message
-    if (localStorage.getItem('success_msg')) {
-      setTopSuccessMessage(localStorage.getItem('success_msg'));
-      localStorage.removeItem('success_msg');
-      setTimeout(() => {
-        setTopSuccessMessage(null);
-      }, 3000);
-    }
+    // if (localStorage.getItem('success_msg')) {
+    //   setTopSuccessMessage(localStorage.getItem('success_msg'));
+    //   localStorage.removeItem('success_msg');
+    //   setTimeout(() => {
+    //     setTopSuccessMessage(null);
+    //   }, 3000);
+    // }
 
     // Redirect to baseurl when not not specific Role
       if (localStorage.getItem('user_role')!=='guardian') {
@@ -228,13 +228,13 @@ const ParentsDashboard = () => {
 
   // }, [enrollmentFormLinks]);
 
-  useEffect(() => {
-    createEnrollmentFormLinks();
-  }, [nonEnrolledChildIds]);
+  // useEffect(() => {
+  //   createEnrollmentFormLinks();
+  // }, [nonEnrolledChildIds]);
 
-  useEffect(() => {
-    checkPendingConsent();
-  });
+  // useEffect(() => {
+  //   checkPendingConsent();
+  // });
 
   useEffect(() => {
     events();
@@ -387,7 +387,7 @@ const ParentsDashboard = () => {
           </Container>
         </section>
       </div>
-      {
+      {/* {
         enrollmentFormLinks &&
         enrollmentFormLinks.map(link => {
           return (
@@ -453,7 +453,7 @@ const ParentsDashboard = () => {
             className="modal-button"
             onClick={() => handleViewEnrollment()}>View Enrollment Form</button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
