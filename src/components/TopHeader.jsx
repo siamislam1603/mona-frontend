@@ -564,6 +564,14 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                           </a>
                         </li>
                       ))}
+                       {searchUser?.map((user) => (
+                        <li>
+                          <a href={`/user-management`} className="d-flex">
+                            {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                            <span className="sec-cont"><strong className="text-capitalize">{user?.fullname}</strong></span>
+                          </a>
+                        </li>
+                      ))}
 
 
                       {searchOperatingMannual?.map((operatingData) => (
