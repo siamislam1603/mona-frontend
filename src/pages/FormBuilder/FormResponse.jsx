@@ -15,6 +15,8 @@ import LeftNavbar from '../../components/LeftNavbar';
 import { FullLoader } from '../../components/Loader';
 import TopHeader from '../../components/TopHeader';
 import SignaturePad from 'react-signature-canvas';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function FormResponse(props) {
   const location = useLocation();
@@ -26,6 +28,7 @@ function FormResponse(props) {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [signatureModel, setSignatureModel] = useState(false);
   const [Index, setIndex] = useState(0);
+  let hideFlag=false;
 
   useEffect(() => {
     console.log(':location?.state--->', location?.state);
@@ -51,9 +54,14 @@ function FormResponse(props) {
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
-    let fields=JSON.parse(responseData[Index][0].fields);
-    console.log("sigpad--------->><<<<<<<<",sigPad.current.getTrimmedCanvas().toDataURL("image/png"));
-    fields["signature"]=sigPad.current.getTrimmedCanvas().toDataURL("image/png");
+    let fields = JSON.parse(responseData[Index][0].fields);
+    console.log(
+      'sigpad--------->><<<<<<<<',
+      sigPad.current.getTrimmedCanvas().toDataURL('image/png')
+    );
+    fields['signature'] = sigPad.current
+      .getTrimmedCanvas()
+      .toDataURL('image/png');
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -63,7 +71,7 @@ function FormResponse(props) {
         behalf_of: responseData[Index][0].behalf_of,
         data: fields,
         edit_signature: true,
-        id:responseData[Index][0].id
+        id: responseData[Index][0].id,
       }),
       redirect: 'follow',
     };
@@ -71,8 +79,13 @@ function FormResponse(props) {
     fetch(`${BASE_URL}/form/form_data`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        
         getResponse('');
         setSignatureModel(false);
+        if (result) {
+          toast.success('Signature added successfully');
+          hideFlag=true;
+        }
       });
 
     // props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"),"signature");
@@ -119,11 +132,30 @@ function FormResponse(props) {
     )
       .then((response) => response.json())
       .then((result) => {
-        setResponseData(result?.result);
-        setFormData(result?.form);
+        
         if (result) {
           setfullLoaderStatus(false);
         }
+        result?.result.map((item, index) => {
+          item["signature_button"]=true;
+          console.log("item--->",item);
+          result?.result[index]?.map((inner_item,inner_index)=>{
+            // if(inner_item.fields)
+            Object.keys(JSON.parse(inner_item.fields)).map((field_item)=>{
+              console.log("inner_item--->",field_item);
+              if(field_item==="signature")
+              {
+                item["signature_button"]=false;
+              }
+            })
+          })
+          if(result?.result?.length-1===index)
+          {
+            setResponseData(result?.result);
+            setFormData(result?.form);
+          }
+        });
+        
       })
       .catch((error) => console.log('error', error));
   };
@@ -155,6 +187,7 @@ function FormResponse(props) {
   return (
     <>
       <div id="main">
+        <ToastContainer />
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -400,7 +433,7 @@ function FormResponse(props) {
                                   </div>
                                 );
                               })}
-                              {location?.state?.signature_access && (
+                              {location?.state?.signature_access && item.signature_button && (
                                 <Button
                                   onClick={() => {
                                     setSignatureModel(true);

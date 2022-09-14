@@ -410,55 +410,47 @@ const AddFormField = (props) => {
       .then((result) => console.log('delete data successfully!'))
       .catch((error) => console.log('error', error));
   };
-  const onSubmit = (e, form_submit_status) => {
+  const onSubmit = (e,form_submit_status) => {
     e.preventDefault();
-    console.log('form_submit_status--->', form_submit_status);
+    console.log("form_submit_status--->",form_submit_status);
     const newErrors = createFormFieldValidation(form);
     console.log('form---->', form);
-
-    let error_flag = false;
-    let focus_flag=false;
-    newErrors.map((item,index) => {
-      console.log("item--->",item);
-      if(Object.keys(item).length>0 && focus_flag===false)
-      {
-        document.getElementById(Object.keys(item)[0]+index).focus();
-        focus_flag=true;
-      }
-      if (Object.values(item)[0]) {
-        if (Array.isArray(Object.values(item)[0])) {
-          Object.values(item)[0].map((inner_item) => {
-            if (inner_item || !inner_item === '') {
-              error_flag = true;
+    let flag = false;
+    form.map((item, index) => {
+      if (flag === false) {
+        form.map((inner_item, inner_index) => {
+          if (index !== inner_index) {
+            if (
+              item.field_label.toLowerCase() ===
+              inner_item.field_label.toLowerCase()
+            ) {
+              flag = true;
             }
-          });
-        } else {
-          if (!item === '' || item) {
-            error_flag = true;
           }
-        }
+        });
       }
     });
-    if (error_flag) {
-      setErrors(newErrors);
+    if (flag === true) {
+      toast.error('Label name must be different.');
     } else {
-      let flag = false;
-      form.map((item, index) => {
-        if (flag === false) {
-          form.map((inner_item, inner_index) => {
-            if (index !== inner_index) {
-              if (
-                item.field_label.toLowerCase() ===
-                inner_item.field_label.toLowerCase()
-              ) {
-                flag = true;
+      let error_flag = false;
+      newErrors.map((item) => {
+        if (Object.values(item)[0]) {
+          if (Array.isArray(Object.values(item)[0])) {
+            Object.values(item)[0].map((inner_item) => {
+              if (inner_item || !inner_item === '') {
+                error_flag = true;
               }
+            });
+          } else {
+            if (!item === '' || item) {
+              error_flag = true;
             }
-          });
+          }
         }
       });
-      if (flag === true) {
-        toast.error('Label name must be different.');
+      if (error_flag) {
+        setErrors(newErrors);
       } else {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
@@ -506,21 +498,29 @@ const AddFormField = (props) => {
         })
           .then((res) => res.json())
           .then((res) => {
-            if (form_submit_status === true) {
+            if(form_submit_status===true)
+            {
               navigate('/form', {
                 state: {
                   message: 'Form added successfully.',
                   form_template: true,
                 },
               });
-            } else {
-              navigate(`/form/preview/${location?.state?.form_name}`, {
-                state: {
-                  id: location?.state?.id,
-                  form_name: location?.state?.form_name,
-                },
-              });
+
             }
+            else
+            {
+              navigate(
+                `/form/preview/${location?.state?.form_name}`,
+                {
+                  state: {
+                    id: location?.state?.id,
+                    form_name: location?.state?.form_name,
+                  },
+                }
+              );
+            }
+            
 
             res?.result?.map((item) => {
               if (item.option) {
@@ -678,7 +678,6 @@ const AddFormField = (props) => {
                                   <Form.Control
                                     type="text"
                                     name="field_label"
-                                    id={`field_label`+index}
                                     value={form[index]?.field_label}
                                     onChange={(e) => {
                                       setField(
@@ -828,7 +827,6 @@ const AddFormField = (props) => {
                                             <Form.Control
                                               type="text"
                                               name="option"
-                                              id={`option`+inner_index}
                                               value={Object.keys(item)[0]}
                                               onChange={(e) => {
                                                 setField(
@@ -957,9 +955,7 @@ const AddFormField = (props) => {
                                           setForm(tempArr);
                                         }}
                                       >
-                                        {item.apply_condition === true
-                                          ? 'Applied Condition'
-                                          : 'Apply Condition'}
+                                        Apply Condition
                                       </Button>
                                       <ToastContainer />
                                     </>
@@ -976,17 +972,10 @@ const AddFormField = (props) => {
                                         setIndex(index);
                                       }}
                                     >
-                                      {item?.section_name ? (
-                                        <u>
-                                          <FontAwesomeIcon icon={faPen} />
-                                          {'Section: ' + item.section_name}
-                                        </u>
-                                      ) : (
-                                        <>
-                                          <FontAwesomeIcon icon={faPlus} /> Add
-                                          to Group
-                                        </>
-                                      )}
+                                      
+                                      {item?.section_name
+                                        ? <u><FontAwesomeIcon icon={faPen} />{"Section: " + item.section_name}</u>
+                                        : <><FontAwesomeIcon icon={faPlus} /> Add to Group</>}
                                     </Button>
                                   </div>
                                   <div className="required">
@@ -1037,17 +1026,12 @@ const AddFormField = (props) => {
                         <Button
                           className="preview"
                           onClick={(e) => {
-                            onSubmit(e, false);
+                            onSubmit(e,false);
                           }}
                         >
                           Preview
                         </Button>
-                        <Button
-                          className="saveForm"
-                          onClick={(e) => {
-                            onSubmit(e, true);
-                          }}
-                        >
+                        <Button className="saveForm" onClick={(e)=>{onSubmit(e,true)}}>
                           Save Form
                         </Button>
                       </div>
@@ -1353,9 +1337,6 @@ const AddFormField = (props) => {
                           <Button
                             className="done"
                             onClick={() => {
-                              let data = [...form];
-                              data[Index]['apply_condition'] = true;
-                              setForm(data);
                               setConditionFlag(false);
                               counter++;
                               setCount(counter);
@@ -1944,7 +1925,6 @@ const AddFormField = (props) => {
                                 setGroupFlag(!groupFlag);
 
                                 let data = [...form];
-
                                 if (data[Index]['signatories'] === true) {
                                   let flag = false;
                                   data.map((item) => {

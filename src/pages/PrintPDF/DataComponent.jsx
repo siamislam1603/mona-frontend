@@ -23,7 +23,7 @@ class DataComponent extends React.Component {
                   <span class="title"> 
                   ${this.props.category}
                   </span> 
-                    <span className="module_dot"> • </span>
+                    <span class="module_dot"> • </span>
                    <span>
                    ${this.props.title}
                    

@@ -88,7 +88,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             assigned_childs: data?.repository_shares[0].assigned_childs,
             file_type: data?.repository_files[0].fileType,
         }));
-        // setCoverImage(data?.repository_files[0].filesPath);
+
     }
 
 
@@ -109,40 +109,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
     };
 
-    // const GetData = async () => {
-    //     let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
-    //         headers: {
-    //             authorization: `Bearer ${localStorage.getItem('token')}`,
-    //         },
-    //     })
-
-    //     if (response.status === 200 && response.data.status === "success") {
-    //         const { file } = response.data;
-    //         copyFetchedData(file);
-    //     }
-    // }
-    // assigned_role: [],
-    // franchisee: [],
-    // assigned_users: [],
-    // assigned_childs: []
-    // const copyFetchedData = (data) => {
-    //     setFormSettings(prevState => ({
-    //         ...prevState,
-    //         franchisee: data?.repository_shares[0].franchisee,
-    //         assigned_role: data?.repository_shares[0].accessibleToRole,
-    //         accessibleToAll: data?.repository_shares[0].accessibleToAll,
-    //         assigned_users: data?.repository_shares[0].assigned_users,
-    //         user_roles: data?.repository_shares[0].assigned_roles,
-    //         assigned_childs: data?.repository_shares[0].assigned_childs,
-    //     }));
-    // }
-    // useEffect(() => {
-    //     GetData();
-    // }, [saveFileId])
-
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
-
         setLoaderFlag(true);
         if (
             formSettingData.accessible_to_role === null ||
@@ -160,13 +128,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             } else {
                 formSettings.user_roles = ""
                 formSettings.assigned_users = selectedUserId.slice(0, -1)
-                formSettings.accessibleToRole = formSettingData.accessible_to_role
-                formSettings.accessibleToAll = false
+                // formSettings.accessibleToRole = formSettingData.accessible_to_role
+                // formSettings.accessibleToAll = false
             }
         }
 
         formSettings.franchisee = formSettings.franchisee[0] == "all" ? [] : formSettings.franchisee
-        console.log(saveFileId, "saveFILEID")
+
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
         }, {
@@ -177,14 +145,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         if (response.status === 201 && response.data.status === "success") {
             setLoaderFlag(false);
-            window.location.reload()
+            // window.location.reload()
         } else {
             setLoaderFlag(false);
-            window.location.reload()
+            // window.location.reload()
         }
     }
-
-
 
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
@@ -197,28 +163,28 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const GetFile = async () => {
         try {
             let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
-            console.log(franchiseeId, "selectedFranchisees")
+            if (franchiseeId) {
+                let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
+                if (response) {
+                    setfullLoaderStatus(false)
+                }
 
-            let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
-            if (response) {
-                setfullLoaderStatus(false)
-            }
+                if (response.status === 200 && response.data.status === "success") {
+                    const { files } = response.data;
+                    let tempData = files.map((dt) => ({
+                        name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                        createdAt: dt.createdAt,
+                        userID: dt.id,
+                        creatorName: dt.creatorName + "," + dt.creatorRole,
+                        categoryId: dt.categoryId,
+                        Shaired: dt.repository_shares.length,
+                        // Shaired: dt.repository.repository_shares[0].length,
+                        filesId: dt.filesId,
 
-            if (response.status === 200 && response.data.status === "success") {
-                const { files } = response.data;
-                let tempData = files.map((dt) => ({
-                    name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
-                    createdAt: dt.createdAt,
-                    userID: dt.id,
-                    creatorName: dt.creatorName + "," + dt.creatorRole,
-                    categoryId: dt.categoryId,
-                    Shaired: dt.repository_shares.length,
-                    // Shaired: dt.repository.repository_shares[0].length,
-                    filesId: dt.filesId,
-
-                }));
-                setUserData(tempData);
-                console.log('tempData++++++++++++++++++++', tempData)
+                    }));
+                    setUserData(tempData);
+                    console.log('tempData++++++++++++++++++++', tempData)
+                }
             }
         } catch (err) {
             setfullLoaderStatus(false)
@@ -286,7 +252,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     useEffect(() => {
         GetData()
-    }, [saveFileId, userData])
+    }, [saveFileId])
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');
@@ -302,7 +268,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 SetfileDeleteMessage("You don't have permission to delete this file !");
             });
     }
-    
+
     useEffect(() => {
         setTimeout(() => {
             SetfileDeleteMessage(null)

@@ -27,7 +27,7 @@ const InputFields = (props) => {
     case "instruction_text":
       inputElement = <TextArea {...controls} />;
       break;
-    case "select":
+    case "dropdown_selection":
       inputElement = <Select {...controls} />;
       break;
     case "signature":

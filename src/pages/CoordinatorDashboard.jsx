@@ -137,12 +137,7 @@ const columns = [
 ];
 
 const CoordinatorDashboard = () => {
-  const [count, setcount] = React.useState({
-    educatorsLoggedIn: 0,
-    overdueForms: 0,
-    overdueTrainings: 0,
-    newEnrollments: 0,
-  });
+  const [count, setcount] = React.useState();
 
   const [user, setUser] = useState([]);
   const [userData, setUserData] = useState([]);
@@ -222,14 +217,7 @@ const CoordinatorDashboard = () => {
     }
 
   }
-  const [onboarding, setonboarding] = useState(
-    {
-      newEducators: 0,
-      newParents: 0,
-      newForms: 0,
-      newFiles: 0,
-    }
-  );
+  const [onboarding, setonboarding] = useState();
 
   const newonboarding = async () => {
     var myHeaders = new Headers();

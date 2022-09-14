@@ -1462,13 +1462,8 @@ li.branch {
 .module_title {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
-    justify-content: space-between;
-    min-width: 172px;
-    width: 192px;
-
-    /* margin-top: 21px; */
-}
+    margin-bottom: 1rem;
+ }
 
 .module_title h3 {
     font-family: 'Noto Sans';
