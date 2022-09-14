@@ -1463,10 +1463,7 @@ li.branch {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
- 
-
-    /* margin-top: 21px; */
-}
+ }
 
 .module_title h3 {
     font-family: 'Noto Sans';
