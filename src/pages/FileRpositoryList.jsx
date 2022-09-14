@@ -78,7 +78,7 @@ const FileRpositoryList = () => {
             let user_Role = localStorage.getItem('user_role');
             console.log(user_Role, "user_Role")
             let URL = user_Role === "guardian" ? `${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]?limit=20` :
-                `${BASE_URL}/fileRepo/files-by-category/${Params.id}?limit=20`
+                `${BASE_URL}/fileRepo/files-by-category/${Params.id}&limit=20`
 
             let response = await fetch(URL, requestOptions)
             response = await response.json();
