@@ -53,13 +53,14 @@ const ChildrenEnrol = () => {
           let tempData = data.map((dt, index) =>
 
           ({
-            name: `${dt.child_name} ,${dt?.enrollment_initiated}`,
-            DBO: `${dt.dob}`,
+            name: `${dt.child_name} ,${dt.dob}`,
+
             //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
             parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[2]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
             educatorassisgned: `${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
             specailneed: `${dt?.child_medical_information?.has_special_needs}`,
             franchise: `${dt?.franchisee_id}`,
+            enrolldate: `${dt?.enrollment_initiated}`,
             franchise: `${dt?.franchisee?.franchisee_name}`
           })
 
@@ -88,7 +89,7 @@ const ChildrenEnrol = () => {
               {cell[0]}
               <small>
                 {/* EnrolmentInitiated<br /> */}
-                {moment(cell[1]).format('DD/MM/YYYY')}
+                DBO: {moment(cell[1]).format('DD/MM/YYYY')}
               </small>
             </span>
           </div>
@@ -190,21 +191,21 @@ const ChildrenEnrol = () => {
         </>}</span></div></>)
       },
     },
-    {
-      dataField: 'DBO',
-      text: 'Date Of Birth',
-    },
     // {
-    //   dataField: 'enrolldate',
-    //   text: 'Enrolment Initiated ',
-    //   formatter: (cell) => {
-    //     return (<><div className="user-list">
-    //       <span className="user-name">
-    //         {moment(cell).format('DD/MM/YYYY')} </span>
-    //     </div>
-    //     </>)
-    //   },
+    //   dataField: 'DBO',
+    //   text: 'Date Of Birth',
     // },
+    {
+      dataField: 'enrolldate',
+      text: 'Enrolment Initiated ',
+      formatter: (cell) => {
+        return (<><div className="user-list">
+          <span className="user-name">
+            {moment(cell).format('DD/MM/YYYY')} </span>
+        </div>
+        </>)
+      },
+    },
     {
       dataField: 'franchise',
       text: 'Franchise ',
