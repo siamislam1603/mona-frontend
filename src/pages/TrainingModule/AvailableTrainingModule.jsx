@@ -383,7 +383,7 @@ const AvailableTraining = ({ filter }) => {
 
             
             {availableTrainingData && dueDataTraining === false && nodueData === false && fullLoaderStatus === false ?
-            <div className="text-center mb-5 mt-5">  <strong>No trainings assigned to you.</strong> </div>
+            <div className="text-center mb-5 mt-5">  <strong>No training assigned to you.</strong> </div>
 
             : null }
             {/* {availableTrainingData
@@ -453,7 +453,7 @@ const AvailableTraining = ({ filter }) => {
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Send to all franchisee:</Form.Label>
+                    <Form.Label>Send to all franchises</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
                         <label for="all">
@@ -499,7 +499,7 @@ const AvailableTraining = ({ filter }) => {
 
                 <Col lg={9} md={12}>
                   <Form.Group>
-                    <Form.Label>Select Franchisee</Form.Label>
+                    <Form.Label>Select Franchise(s)</Form.Label>
                     <div className="select-with-plus">
                       <Multiselect
                         disable={formSettings?.send_to_all_franchisee === true}
@@ -532,7 +532,7 @@ const AvailableTraining = ({ filter }) => {
               <Row className="mt-4">
                 <Col lg={3} md={6}>
                   <Form.Group>
-                    <Form.Label>Applicable to:</Form.Label>
+                    <Form.Label>Applicable to</Form.Label>
                     <div className="new-form-radio d-block">
                       <div className="new-form-radio-box">
                         <label for="roles">
@@ -606,7 +606,7 @@ const AvailableTraining = ({ filter }) => {
                             <Form.Check
                               type="checkbox"
                               checked={formSettings?.assigned_roles?.includes("coordinator")}
-                              label="Co-ordinators"
+                              label="Coordinator"
                               onChange={() => {
                                 if (formSettings.assigned_roles.includes("coordinator")) {
                                   let data = formSettings.assigned_roles.filter(t => t !== "coordinator");
