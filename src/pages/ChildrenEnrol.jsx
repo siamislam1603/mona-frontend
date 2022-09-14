@@ -491,7 +491,7 @@ const ChildrenEnrol = () => {
                                 />
                               ) : (
                                 <div className="text-center mb-5 mt-5"><strong>
-                                  No forms present!
+                                  No child enrol yet
                                 </strong></div>
 
                               )

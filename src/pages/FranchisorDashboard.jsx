@@ -14,15 +14,7 @@ import moment from 'moment';
 
 const FranchisorDashboard = () => {
   const navigate = useNavigate();
-  const [count, setcount] = React.useState({
-
-    totalFranchisees: 0,
-    totalUsers: 0,
-    totalChildren: 0,
-    totalLocations: 0,
-    noOfEnrollmentFormsSignedInPast7Days: 0,
-    usersYetToLogin: 0
-  });
+  const [count, setcount] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
