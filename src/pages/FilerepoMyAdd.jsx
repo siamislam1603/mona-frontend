@@ -254,7 +254,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     useEffect(() => {
         GetData()
-    }, [saveFileId, userData])
+    }, [saveFileId])
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');
