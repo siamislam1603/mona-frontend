@@ -1243,7 +1243,7 @@ const AddNewTraining = () => {
                           <Form.Check
                             type="checkbox"
                             checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                            label="Coordinators"
+                            label="Coordinator"
                             onChange={() => {
                               if (trainingSettings.assigned_roles.includes("coordinator")) {
                                 let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
