@@ -179,10 +179,12 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
         setSearchLoaderFlag(true)
 
 
-        const response = await axios.get(`${BASE_URL}/globalSearch/?search=${searchKey}`, {
-          headers: { "Authorization": "Bearer " + token }
-        });
+        const response = await axios.get(`${BASE_URL}/globalSearch`, {
+          headers: { "Authorization": "Bearer " + token },
+          "search":`${searchKey}`
 
+        });
+        
         if (response.status === 200 && response.data.status === "success") {
 
           setSearchResult(response.data.data[0])
