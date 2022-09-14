@@ -95,10 +95,6 @@ const ChildrenEnrol = () => {
         </>)
       }
     },
-    {
-      dataField: 'DBO',
-      text: 'Date Of Birth',
-    },
 
     {
       dataField: 'parentName',
@@ -193,6 +189,10 @@ const ChildrenEnrol = () => {
           }
         </>}</span></div></>)
       },
+    },
+    {
+      dataField: 'DBO',
+      text: 'Date Of Birth',
     },
     // {
     //   dataField: 'enrolldate',
