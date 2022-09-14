@@ -1,4 +1,3 @@
-
 import {
   faEllipsisVertical,
   faPen,
@@ -33,7 +32,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 let upperRoleUser = '';
 let selectedUserId = '';
-let count=0;
+let count = 0;
 const OperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -158,7 +157,8 @@ const OperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      if (selectedFranchisee === 'All' || selectedFranchisee === 'all') api_url = `${BASE_URL}/auth/users`;
+      if (selectedFranchisee === 'All' || selectedFranchisee === 'all')
+        api_url = `${BASE_URL}/auth/users`;
       else
         api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
@@ -172,7 +172,8 @@ const OperatingManual = () => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.data);
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all')
+            setUser(result?.data);
           else setUser(result?.users);
         } else setUser(result?.data);
       })
@@ -293,22 +294,41 @@ const OperatingManual = () => {
   //     .catch((error) => console.log('error', error));
   // };
   const deleteOperatingManualCategory = async (id) => {
-   try {
-    console.log("Delete Success ROhan Call")
-    let token = localStorage.getItem('token');
+    try {
+      var myHeaders = new Headers();
+      myHeaders.append('authorization', 'Bearer ' + token);
+      var requestOptions = {
+        method: 'DELETE',
+        redirect: 'follow',
+        headers: myHeaders,
+      };
 
-    const response = await axios.delete(`${BASE_URL}/operating_manual/category/${id}?shared_by=${localStorage.getItem('user_id')}&link=${FRONT_BASE_URL}/operatingmanual`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-    })
-    console.log("Response of delete",response)
+      fetch(
+        `${BASE_URL}/operating_manual/category/${id}?shared_by=${localStorage.getItem(
+          'user_id'
+        )}&link=${FRONT_BASE_URL}/operatingmanual`,
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          getOperatingManual();
+        })
+        .catch((error) => console.log('error', error));
+      // console.log("Delete Success ROhan Call")
+      // let token = localStorage.getItem('token');
 
-   } catch (error) {
-    console.log("ERROR in Delete operatin module",error)
-    
-   }
-
+      // const response = await axios.delete(`${BASE_URL}/operating_manual/category/${id}?shared_by=${localStorage.getItem('user_id')}&link=${FRONT_BASE_URL}/operatingmanual`, {
+      //     headers: {
+      //       "Authorization": "Bearer " + token
+      //     }
+      // })
+      // if(response)
+      // {
+      //   getOperatingManual();
+      // }
+    } catch (error) {
+      console.log('ERROR in Delete operatin module', error);
+    }
   };
   const deleteOperatingManual = () => {
     var myHeaders = new Headers();
@@ -334,7 +354,7 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   const getOperatingManual = (key, value) => {
-    console.log("Operating mannual set",key,value)
+    console.log('Operating mannual set', key, value);
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
@@ -406,6 +426,7 @@ const OperatingManual = () => {
   const onModelSubmit = (e) => {
     e.preventDefault();
     let data = singleOperatingManual;
+    
     if (!data?.id) {
       toast.error('Please save the details of operating manual!!');
     } else {
@@ -413,6 +434,7 @@ const OperatingManual = () => {
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
+        formSettingData.shared_role =  formSettingData.shared_role ? formSettingData.shared_role.replace("all,","") : null;
         data['shared_role'] = formSettingData.shared_role
           ? formSettingData.shared_role.slice(0, -1)
           : null;
@@ -443,16 +465,16 @@ const OperatingManual = () => {
         });
     }
   };
-  useEffect(() =>{
+  useEffect(() => {
     // getOperatingManual()
-    console.log("Skn")
-  },[operatingManualdata])
-  console.log("Rohan manual",operatingManualdata)
+    console.log('Skn');
+  }, [operatingManualdata]);
+  console.log('Rohan manual', operatingManualdata);
 
   return (
     <>
       <div id="main">
-        <ToastContainer/>
+        <ToastContainer />
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -541,7 +563,9 @@ const OperatingManual = () => {
                                   // {
                                   //   item['access'] = false;
                                   // }
-                                  {count=0;}
+                                  {
+                                    count = 0;
+                                  }
                                   return categoryFilter ===
                                     item.category_name ? (
                                     <div className="module-drop-down">
@@ -563,21 +587,34 @@ const OperatingManual = () => {
                                       {item.operating_manuals.length > 0 &&
                                         item.operating_manuals.map(
                                           (inner_item) => {
-                                            {verifyPermission(
-                                              'operating_manual',
-                                              'add'
-                                            ) &&
-                                            (inner_item.created_by ===
-                                              parseInt(
-                                                localStorage.getItem(
-                                                  'user_id'
-                                                )
-                                              ) ||
-                                              inner_item.upper_role.includes
-                                                (localStorage.getItem(
-                                                  'user_role'
-                                                ))) ? inner_item["allow_access_to_edit"]=true : inner_item["allow_access_to_edit"]=false }
-                                                {inner_item["allow_access_to_edit"]===true && count++;}
+                                            {
+                                              verifyPermission(
+                                                'operating_manual',
+                                                'add'
+                                              ) &&
+                                              (inner_item.created_by ===
+                                                parseInt(
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
+                                                ) ||
+                                                inner_item.upper_role.includes(
+                                                  localStorage.getItem(
+                                                    'user_role'
+                                                  )
+                                                ))
+                                                ? (inner_item[
+                                                    'allow_access_to_edit'
+                                                  ] = true)
+                                                : (inner_item[
+                                                    'allow_access_to_edit'
+                                                  ] = false);
+                                            }
+                                            {
+                                              inner_item[
+                                                'allow_access_to_edit'
+                                              ] === true && count++;
+                                            }
                                             return (
                                               verifyPermission(
                                                 'operating_manual',
@@ -589,10 +626,15 @@ const OperatingManual = () => {
                                                     'user_id'
                                                   )
                                                 ) ||
-                                                inner_item.upper_role.includes
-                                                  (localStorage.getItem(
+                                                inner_item.upper_role.includes(
+                                                  localStorage.getItem(
                                                     'user_role'
-                                                  ))) && inner_item["allow_access_to_edit"]===true && count===1 &&   (
+                                                  )
+                                                )) &&
+                                              inner_item[
+                                                'allow_access_to_edit'
+                                              ] === true &&
+                                              count === 1 && (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -644,21 +686,34 @@ const OperatingManual = () => {
                                       {item?.operating_manuals?.length > 0 &&
                                         item.operating_manuals.map(
                                           (inner_item) => {
-                                            {verifyPermission(
-                                              'operating_manual',
-                                              'add'
-                                            ) &&
-                                            (inner_item.created_by ===
-                                              parseInt(
-                                                localStorage.getItem(
-                                                  'user_id'
-                                                )
-                                              ) ||
-                                              inner_item.upper_role.includes
-                                                (localStorage.getItem(
-                                                  'user_role'
-                                                ))) ? inner_item["allow_access_to_edit"]=true : inner_item["allow_access_to_edit"]=false }
-                                                {inner_item["allow_access_to_edit"]===true && count++;}
+                                            {
+                                              verifyPermission(
+                                                'operating_manual',
+                                                'add'
+                                              ) &&
+                                              (inner_item.created_by ===
+                                                parseInt(
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
+                                                ) ||
+                                                inner_item.upper_role.includes(
+                                                  localStorage.getItem(
+                                                    'user_role'
+                                                  )
+                                                ))
+                                                ? (inner_item[
+                                                    'allow_access_to_edit'
+                                                  ] = true)
+                                                : (inner_item[
+                                                    'allow_access_to_edit'
+                                                  ] = false);
+                                            }
+                                            {
+                                              inner_item[
+                                                'allow_access_to_edit'
+                                              ] === true && count++;
+                                            }
                                             return (
                                               verifyPermission(
                                                 'operating_manual',
@@ -670,10 +725,15 @@ const OperatingManual = () => {
                                                     'user_id'
                                                   )
                                                 ) ||
-                                                inner_item.upper_role.includes
-                                                  (localStorage.getItem(
+                                                inner_item.upper_role.includes(
+                                                  localStorage.getItem(
                                                     'user_role'
-                                                  ))) && inner_item["allow_access_to_edit"]===true && count===1 && (
+                                                  )
+                                                )) &&
+                                              inner_item[
+                                                'allow_access_to_edit'
+                                              ] === true &&
+                                              count === 1 && (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -748,7 +808,6 @@ const OperatingManual = () => {
                                             alt=""
                                           />
                                           {inner_item.title}
-                                          
                                         </a>
                                       </li>
                                     );
