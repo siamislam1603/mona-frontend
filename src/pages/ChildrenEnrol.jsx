@@ -1,5 +1,5 @@
 import React, { useEffect, useState, } from 'react';
-import { Container, } from 'react-bootstrap';
+import { Container, Button, Dropdown, Form } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -8,88 +8,104 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/rea
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 // const { ExportCSVButton } = CSVExport;
 
-
-
 const ChildrenEnrol = () => {
   const Key = useParams()
-  const [userData, setUserData] = useState([]);
+
   const [userEducator, setEducator] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [filter, setFilter] = useState(null);
-  const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true)
-  const [datad, setDatad] = useState([])
-
-  const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
+  const [Filters, setFilters] = useState();
+  const [AppyFilter, setApplyFilte] = useState();
   const { SearchBar } = Search;
 
+  const handelApply = () => {
+    setApplyFilte(Filters);
+  }
+  console.log(typeof AppyFilter, "AppyFilter")
 
   const ChildernEnrolled = async () => {
     try {
       let token = localStorage.getItem('token');
       let USER_ROLE = localStorage.getItem('user_role');
-      console.log("user_role", USER_ROLE)
-      // let token = localStorage.getItem('token');
       let URL = USER_ROLE === "franchisor_admin" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}` : `${BASE_URL}/children-listing/all-childrens-enrolled`
-      const response = await axios.get(URL, {
-        headers: {
-          "Authorization": "Bearer " + token
+      let FilterUrl = AppyFilter === "0" || AppyFilter === "1" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/special-needs=${AppyFilter}` : URL;
+      if (URL) {
+        const response = await axios.get(FilterUrl, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+        if (response) {
+          setfullLoaderStatus(false)
         }
-      });
-      console.log("response cdsada", response)
-      if (response.status === 200 && response.data.status === "success") {
-        let data = response.data.childrenEnrolled;
-        // setChildEnroll(response.data.childrenEnrolled)
-        // data.map((dt,index) =>{
-        //     console.log("dt",dt.parents[index].user.parent_name)
-        // })
-        console.log("Franchise name", data[0]?.franchisee.franchisee_name)
-        let tempData = data.map((dt, index) =>
+        if (response.status === 200 && response.data.status === "success") {
+          let data = response.data.childrenEnrolled;
 
-        ({
-          name: `${dt.child_name}`,
-          //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
-          parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[2]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
-          educatorassisgned: `${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
-          specailneed: `${dt?.child_medical_information?.has_special_needs}`,
-          franchise: `${dt?.franchisee_id}`,
-          enrolldate: `${dt?.enrollment_initiated}`,
-          franchise: `${dt?.franchisee?.franchisee_name}`
-        })
+          let tempData = data.map((dt, index) =>
 
-        )
-        console.log("TEMPDATA", tempData)
-        setChildEnroll(tempData)
+          ({
+            name: `${dt.child_name} ,${dt?.enrollment_initiated}`,
+            DBO: `${dt.dob}`,
+            //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
+            parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[2]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
+            educatorassisgned: `${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
+            specailneed: `${dt?.child_medical_information?.has_special_needs}`,
+            franchise: `${dt?.franchisee_id}`,
+            franchise: `${dt?.franchisee?.franchisee_name}`
+          })
+
+          )
+          setChildEnroll(tempData)
+        }
       }
     }
     catch (error) {
+      setfullLoaderStatus(false)
       console.log("ERROR child enroll", error)
     }
   }
-
-
-
+  useEffect(() => {
+    ChildernEnrolled()
+  }, [selectedFranchisee, AppyFilter, Filters])
   const columns = [
     {
       dataField: 'name',
       text: 'Name',
+      formatter: (cell) => {
+        cell = cell.split(',');
+        return (<>
+          <div className="user-list">
+            <span className="user-name">
+              {cell[0]}
+              <small>
+                {/* EnrolmentInitiated<br /> */}
+                {moment(cell[1]).format('DD/MM/YYYY')}
+              </small>
+            </span>
+          </div>
+        </>)
+      }
     },
+    {
+      dataField: 'DBO',
+      text: 'Date Of Birth',
+    },
+
     {
       dataField: 'parentName',
       text: 'Parent Name',
       formatter: (cell) => {
 
         cell = cell.split(',');
-        console.log("Cell image", cell[3])
 
         return (<>
           {
@@ -178,27 +194,21 @@ const ChildrenEnrol = () => {
         </>}</span></div></>)
       },
     },
-    {
-      dataField: 'enrolldate',
-      text: 'Enrolment Initiated ',
-      formatter: (cell) => {
-        console.log("frnahise CELL", cell)
-        // cell = cell.split(",");
-        return (<><div className="user-list">
-          <span className="user-name">
-
-            {moment(cell).format('DD/MM/YYYY')} </span>
-        </div>
-
-
-        </>)
-      },
-    },
+    // {
+    //   dataField: 'enrolldate',
+    //   text: 'Enrolment Initiated ',
+    //   formatter: (cell) => {
+    //     return (<><div className="user-list">
+    //       <span className="user-name">
+    //         {moment(cell).format('DD/MM/YYYY')} </span>
+    //     </div>
+    //     </>)
+    //   },
+    // },
     {
       dataField: 'franchise',
       text: 'Franchise ',
       formatter: (cell) => {
-        console.log("frnahise CELL", cell)
         // cell = cell.split(",");
         return (<>
           <div className="user-list"><span className="user-name">{cell === "undefined" || cell === "null" ? " " : cell} </span></div></>)
@@ -207,229 +217,11 @@ const ChildrenEnrol = () => {
   ];
 
 
-  // const onFilter = debounce(() => {
-  //   fetchUserDetails();
-  // }, 200);
-
-  const getData = () => {
-    axios("https://jsonplaceholder.typicode.com/comments").then((res) => {
-      console.log("dumby", res.data)
-      setDatad(res.data)
-    }
-
-    )
-  }
-  const columnsee = [{
-    dataField: "id",
-    text: "Product Id",
-
-  },
-  {
-    dataField: "email",
-    text: "Email"
-  }
-  ]
-
-
-  const fetchUserDetails = async () => {
-    let api_url = '';
-    let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-
-    if (search) {
-      api_url = `${BASE_URL}/role/user/${id}?search=${search}`;
-    }
-    if (filter) {
-      api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
-    }
-    if (search && filter) {
-      api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
-    }
-
-    if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user/${id}`;
-    }
-
-    let response = await axios.get(api_url, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-
-    if (response) {
-      setfullLoaderStatus(false)
-    }
-    if (response.status === 200) {
-
-      const { users } = response.data;
-      console.log('USERS:', users);
-      let tempData = users.map((dt) => ({
-        name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
-          .split('_')
-          .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
-          .join(' ')}, ${dt.is_active}`,
-        email: dt.email,
-        number: (dt.phone !== null ? dt.phone.slice(1) : null),
-        location: dt.city,
-        role: dt.role,
-        is_deleted: dt.is_deleted,
-        role: dt.role,
-        userID: dt.id,
-        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
-        action: dt.is_active
-      }));
-      console.log('TEMP =>>>>>>>>>>>>>>>>>', tempData);
-      // tempData = tempData.filter((data) => data.is_deleted === 0);
-      // console.log('Temp Data:', tempData);
-      if (localStorage.getItem('user_role') === 'guardian') {
-        tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
-      }
-
-      if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
-        tempData = tempData.filter(d => d.action === 1);
-      }
-
-      setUserDataAfterFilter(tempData);
-      setIsLoading(false)
-
-      let temp = tempData;
-      let csv_data = [];
-      temp.map((item, index) => {
-        // item['Name'] = item['name'];
-        // item['Email'] = item['email'];
-        // item['Phone Number'] = item['number'];
-        // item['Location'] = item['location'];
-        // delete item['name'];
-        // delete item['email'];
-        // delete item['number'];
-        // delete item['location'];
-
-        delete item.is_deleted;
-        // delete item.user_id;
-        csv_data.push(item);
-        let data = { ...csv_data[index] };
-        data["name"] = data.name.split(",")[1];
-        csv_data[index] = data;
-      });
-    }
-  };
-
-  const setUserDataAfterFilter = data => {
-    console.log('DATA:', data);
-    let role = localStorage.getItem('user_role');
-    let filteredData = null;
-
-    if (role === 'franchisor_admin') {
-      filteredData = data.filter(d => d.role !== 'franchisor_admin');
-    }
-
-    if (role === 'franchisee_admin') {
-      filteredData = data.filter(d => d.role !== 'franchisor_admin')
-      filteredData = filteredData.filter(d => d.role !== 'franchisee_admin')
-
-    }
-
-    if (role === 'coordinator') {
-      filteredData = data.filter(d => d.role === 'educator' || d.role === 'guardian');
-      console.log('COORDINATOR:', filteredData);
-    }
-
-    if (role === 'educator') {
-      filteredData = data.filter(d => d.role === 'guardian');
-    }
-
-    setUserData(filteredData);
-  };
-
-
-
-  const handleApplyFilter = async () => {
-    fetchUserDetails();
-  }
-
-  const Show_eduactor = async () => {
-    let api_url = '';
-    // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-    let filter = Key.key
-    // console.log(alert(filter))
-    if (filter) {
-      api_url = `${BASE_URL}/role/user/All?filter=${filter}`;
-    }
-
-    let response = await axios.get(api_url, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem('token')} `,
-      },
-    });
-
-    if (response.status === 200) {
-      const { users } = response.data;
-      console.log('USERS =>>>>>>>>>>>>>>>>>>:', users);
-      let tempData = users.map((dt) => ({
-        name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
-          .split('_')
-          .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
-          .join(' ')
-          }, ${dt.is_active} `,
-        email: dt.email,
-        number: (dt.phone !== null ? dt.phone.slice(1) : null),
-        location: dt.city,
-        is_deleted: dt.is_deleted,
-        userID: dt.id,
-        role: dt.role,
-        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
-        action: dt.is_active
-      }));
-
-      if (localStorage.getItem('user_role') === 'guardian') {
-        tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
-      }
-
-      if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
-        tempData = tempData.filter(d => d.action === 1);
-      }
-      setEducator(tempData);
-      setIsLoading(false)
-
-      let temp = tempData;
-      let csv_data = [];
-      temp.map((item, index) => {
-        delete item.is_deleted;
-        csv_data.push(item);
-        let data = { ...csv_data[index] };
-        data["name"] = data.name.split(",")[1];
-        csv_data[index] = data;
-      });
-    }
-  }
-
-  useEffect(() => {
-    Show_eduactor()
-    ChildernEnrolled()
-    getData()
-  }, [selectedFranchisee])
-
-
-  useEffect(() => {
-    if (selectedFranchisee) {
-      fetchUserDetails();
-    }
-  }, [selectedFranchisee]);
-
-  useEffect(() => {
-    if (deleteResponse !== null)
-      fetchUserDetails();
-  }, [deleteResponse]);
-
-  useEffect(() => {
-    if (filter === "")
-      fetchUserDetails();
-  }, [filter]);
 
   useEffect(() => {
     if (localStorage.getItem('success_msg')) {
       setTopSuccessMessage(localStorage.getItem('success_msg'));
       localStorage.removeItem('success_msg');
-
       setTimeout(() => {
         setTopSuccessMessage(null);
       }, 3000);
@@ -437,12 +229,6 @@ const ChildrenEnrol = () => {
   }, []);
 
   const csvLink = useRef();
-
-
-  userData && console.log('USER DATA:', userData.map(data => data));
-  userEducator && console.log('userEducator DATA:', userEducator.map(data => data))
-  selectedFranchisee && console.log('Selected Franchisee:', selectedFranchisee);
-  console.log("Child enorrled", chidlEnroll)
   return (
     <>
       <div id="main">
@@ -478,6 +264,66 @@ const ChildrenEnrol = () => {
                                   <div className="data-search me-3">
                                     <SearchBar {...props.searchProps} />
                                   </div>
+                                  <Dropdown className="filtercol me-3">
+                                    <Dropdown.Toggle
+                                      id="extrabtn"
+                                      variant="btn-outline"
+                                    >
+                                      <i className="filter-ico"></i> Add Filters
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <header>Filter by:</header>
+
+                                      <div className="custom-radio btn-radio mb-2">
+                                        <label>Special Need:</label>
+                                        <Form.Group inline>
+
+                                          <Form.Check
+                                            inline
+                                            label="Yes"
+                                            value="1"
+                                            name="users"
+                                            type="radio"
+                                            id="yes-1"
+                                            checked={Filters === "1"}
+                                            onChange={(event) => {
+                                              setFilters("1")
+                                            }}
+                                          />
+                                          <Form.Check
+                                            inline
+                                            label="No"
+                                            value="0"
+                                            name="users"
+                                            type="radio"
+                                            id="No-0"
+                                            checked={Filters === "0"}
+                                            onChange={(event) => {
+                                              setFilters("0")
+                                            }}
+                                          />
+                                          {console.log(Filters)}
+                                        </Form.Group>
+                                      </div>
+
+                                      <footer>
+                                        <Button
+                                          variant="transparent"
+                                          type="submit"
+                                          onClick={() => { setFilter(''); }}
+                                        >
+                                          Reset
+                                        </Button>
+                                        <Button
+                                          variant="primary"
+                                          type="submit"
+                                          onClick={handelApply}
+                                        >
+                                          Apply
+                                        </Button>
+                                      </footer>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
                                 </div>
                               </div>
                             </header>
