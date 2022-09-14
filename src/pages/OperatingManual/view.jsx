@@ -426,6 +426,7 @@ const OperatingManual = () => {
   const onModelSubmit = (e) => {
     e.preventDefault();
     let data = singleOperatingManual;
+    
     if (!data?.id) {
       toast.error('Please save the details of operating manual!!');
     } else {
@@ -433,6 +434,7 @@ const OperatingManual = () => {
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
+        formSettingData.shared_role =  formSettingData.shared_role ? formSettingData.shared_role.replace("all,","") : null;
         data['shared_role'] = formSettingData.shared_role
           ? formSettingData.shared_role.slice(0, -1)
           : null;
